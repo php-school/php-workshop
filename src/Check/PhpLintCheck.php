@@ -3,8 +3,8 @@
 namespace PhpWorkshop\PhpWorkshop\Check;
 
 use PhpWorkshop\PhpWorkshop\Exercise\ExerciseInterface;
-use PhpWorkshop\PhpWorkshop\Success;
-use PhpWorkshop\PhpWorkshop\Fail;
+use PhpWorkshop\PhpWorkshop\Result\Success;
+use PhpWorkshop\PhpWorkshop\Result\Failure;
 use Symfony\Component\Process\Process;
 
 /**
@@ -27,9 +27,9 @@ class PhpLintCheck implements CheckInterface
         $process->run();
 
         if ($process->isSuccessful()) {
-            return new Success($exercise);
+            return new Success;
         }
 
-        return new Fail($exercise, $process->getErrorOutput());
+        return new Failure($process->getErrorOutput());
     }
 }

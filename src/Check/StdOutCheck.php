@@ -4,8 +4,9 @@ namespace PhpWorkshop\PhpWorkshop\Check;
 
 use PhpWorkshop\PhpWorkshop\Exception\SolutionExecutionException;
 use PhpWorkshop\PhpWorkshop\Exercise\ExerciseInterface;
-use PhpWorkshop\PhpWorkshop\Fail;
-use PhpWorkshop\PhpWorkshop\Success;
+use PhpWorkshop\PhpWorkshop\Result\Failure;
+use PhpWorkshop\PhpWorkshop\Result\ResultInterface;
+use PhpWorkshop\PhpWorkshop\Result\Success;
 use RuntimeException;
 use Symfony\Component\Process\Process;
 
@@ -20,7 +21,7 @@ class StdOutCheck implements CheckInterface
     /**
      * @param ExerciseInterface $exercise
      * @param string $fileName
-     * @return Fail|Success
+     * @return ResultInterface
      */
     public function check(ExerciseInterface $exercise, $fileName)
     {
@@ -29,7 +30,7 @@ class StdOutCheck implements CheckInterface
         try {
             $userOutput = $this->executePhpFile($fileName, $args);
         } catch (RuntimeException $e) {
-            return new Fail($exercise, sprintf('PHP Code failed to execute. Error: "%s"', $e->getMessage()));
+            return new Failure(sprintf('PHP Code failed to execute. Error: "%s"', $e->getMessage()));
         }
 
         try {
@@ -39,11 +40,10 @@ class StdOutCheck implements CheckInterface
         }
 
         if ($solutionOutput === $userOutput) {
-            return new Success($exercise);
+            return new Success;
         }
 
-        return new Fail(
-            $exercise,
+        return new Failure(
             sprintf('Output did not match. Expected: "%s". Received: "%s"', $solutionOutput, $userOutput)
         );
     }

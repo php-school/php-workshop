@@ -2,6 +2,10 @@
 
 namespace PhpWorkshop\PhpWorkshop;
 
+use PhpWorkshop\PhpWorkshop\Result\Failure;
+use PhpWorkshop\PhpWorkshop\Result\ResultInterface;
+use PhpWorkshop\PhpWorkshop\Result\Success;
+
 /**
  * Class ResultAggregator
  * @package PhpWorkshop\PhpWorkshop
@@ -10,26 +14,15 @@ namespace PhpWorkshop\PhpWorkshop;
 class ResultAggregator
 {
     /**
-     * @var Fail[]|Success[]
+     * @var ResultInterface[]
      */
     private $results = [];
 
     /**
-     * @param Fail|Success $result
+     * @param ResultInterface $result
      */
-    public function add($result)
+    public function add(ResultInterface $result)
     {
-        if (!$result instanceof Fail && !$result instanceof Success) {
-            throw new \InvalidArgumentException(
-                sprintf(
-                    'Expected instance of "%s" or "%s". Received: "%s"',
-                    Success::class,
-                    Fail::class,
-                    is_object($result) ? get_class($result) : gettype($result)
-                )
-            );
-        }
-
         $this->results[] = $result;
     }
 
@@ -51,11 +44,11 @@ class ResultAggregator
     public function getErrors()
     {
         return array_map(
-            function (Fail $fail) {
-                return $fail->getReason();
+            function (Failure $failure) {
+                return $failure->getReason();
             },
             array_filter($this->results, function ($result) {
-                return $result instanceof Fail;
+                return $result instanceof Failure;
             })
         );
     }

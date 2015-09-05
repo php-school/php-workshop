@@ -3,8 +3,7 @@
 namespace PhpWorkshop\PhpWorkshop\Check;
 
 use PhpWorkshop\PhpWorkshop\Exercise\ExerciseInterface;
-use PhpWorkshop\PhpWorkshop\Fail;
-use PhpWorkshop\PhpWorkshop\Success;
+use PhpWorkshop\PhpWorkshop\Result\ResultInterface;
 
 /**
  * Class CheckInterface
@@ -17,7 +16,7 @@ interface CheckInterface
     /**
      * @param ExerciseInterface $exercise
      * @param string $fileName
-     * @return Fail|Success
+     * @return ResultInterface
      */
     public function check(ExerciseInterface $exercise, $fileName);
 }

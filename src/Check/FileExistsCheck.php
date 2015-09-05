@@ -3,9 +3,9 @@
 namespace PhpWorkshop\PhpWorkshop\Check;
 
 use PhpWorkshop\PhpWorkshop\Exercise\ExerciseInterface;
-use PhpWorkshop\PhpWorkshop\Success;
-use PhpWorkshop\PhpWorkshop\Fail;
-use Symfony\Component\Process\Process;
+use PhpWorkshop\PhpWorkshop\Result\Failure;
+use PhpWorkshop\PhpWorkshop\Result\ResultInterface;
+use PhpWorkshop\PhpWorkshop\Result\Success;
 
 /**
  * Class FileExistsCheck
@@ -19,14 +19,14 @@ class FileExistsCheck implements CheckInterface
     /**
      * @param ExerciseInterface $exercise
      * @param string $fileName
-     * @return Fail|Success
+     * @return ResultInterface
      */
     public function check(ExerciseInterface $exercise, $fileName)
     {
         if (file_exists($fileName)) {
-            return new Success($exercise);
+            return new Success;
         }
 
-        return new Fail($exercise, sprintf('File: "%s" does not exist', $fileName));
+        return new Failure(sprintf('File: "%s" does not exist', $fileName));
     }
 }
