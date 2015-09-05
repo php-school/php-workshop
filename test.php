@@ -9,9 +9,13 @@ use PhpWorkshop\PhpWorkshop\Check\PhpLintCheck;
 use PhpWorkshop\PhpWorkshop\Check\StdOutCheck;
 use PhpWorkshop\PhpWorkshop\Exercise\BabySteps;
 use PhpWorkshop\PhpWorkshop\Exercise\HelloWorld;
+use PhpWorkshop\PhpWorkshop\ExerciseCheck\StdOutExerciseCheck;
 use PhpWorkshop\PhpWorkshop\ExerciseRunner;
 
-$runner = new ExerciseRunner(new FileExistsCheck, new PhpLintCheck, new StdOutCheck);
+$runner = new ExerciseRunner();
+$runner->registerCheck(new FileExistsCheck);
+$runner->registerCheck(new PhpLintCheck);
+$runner->registerCheck(new StdOutCheck, StdOutExerciseCheck::class);
 
 echo "====HELLO WORLD====\n\n";
 $helloWorld = new HelloWorld;

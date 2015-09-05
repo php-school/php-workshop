@@ -29,4 +29,12 @@ class FileExistsCheck implements CheckInterface
 
         return new Failure(sprintf('File: "%s" does not exist', $fileName));
     }
+
+    /**
+     * @return bool
+     */
+    public function breakChainOnFailure()
+    {
+        return true;
+    }
 }

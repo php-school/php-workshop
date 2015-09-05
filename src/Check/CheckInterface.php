@@ -19,4 +19,9 @@ interface CheckInterface
      * @return ResultInterface
      */
     public function check(ExerciseInterface $exercise, $fileName);
+
+    /**
+     * @return bool
+     */
+    public function breakChainOnFailure();
 }

@@ -32,4 +32,12 @@ class PhpLintCheck implements CheckInterface
 
         return new Failure($process->getErrorOutput());
     }
+
+    /**
+     * @return bool
+     */
+    public function breakChainOnFailure()
+    {
+        return true;
+    }
 }

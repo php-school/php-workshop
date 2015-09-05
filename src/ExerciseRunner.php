@@ -2,11 +2,13 @@
 
 namespace PhpWorkshop\PhpWorkshop;
 
+use PhpWorkshop\PhpWorkshop\Check\CheckInterface;
 use PhpWorkshop\PhpWorkshop\Check\FileExistsCheck;
 use PhpWorkshop\PhpWorkshop\Check\PhpLintCheck;
 use PhpWorkshop\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpWorkshop\PhpWorkshop\Check\StdOutCheck;
 use PhpWorkshop\PhpWorkshop\ExerciseCheck\StdOutExerciseCheck;
+use PhpWorkshop\PhpWorkshop\Result\Failure;
 
 /**
  * Class ExerciseRunner
@@ -16,33 +18,33 @@ use PhpWorkshop\PhpWorkshop\ExerciseCheck\StdOutExerciseCheck;
 class ExerciseRunner
 {
     /**
-     * @var FileExistsCheck
+     * @var CheckInterface[]
      */
-    private $fileExistsCheck;
+    private $checks = [];
 
     /**
-     * @var PhpLintCheck
+     * @var array
      */
-    private $lintCheck;
+    private $checkMap = [];
 
     /**
-     * @var StdOutCheck
+     * @param CheckInterface $check
+     * @param string $exerciseInterface
      */
-    private $stdOutCheck;
+    public function registerCheck(CheckInterface $check, $exerciseInterface = null)
+    {
+        if (null !== $exerciseInterface && !is_string($exerciseInterface)) {
+            throw new \InvalidArgumentException(
+                sprintf(
+                    'Expected a string. Got: "%s"',
+                    is_object($exerciseInterface) ? get_class($exerciseInterface) : gettype($exerciseInterface)
+                )
+            );
+        }
 
-    /**
-     * @param PhpLintCheck $lintCheck
-     * @param StdOutCheck $stdOutCheck
-     * @param FileExistsCheck $fileExistsCheck
-     */
-    public function __construct(
-        FileExistsCheck $fileExistsCheck,
-        PhpLintCheck $lintCheck,
-        StdOutCheck $stdOutCheck
-    ) {
-        $this->fileExistsCheck  = $fileExistsCheck;
-        $this->lintCheck        = $lintCheck;
-        $this->stdOutCheck      = $stdOutCheck;
+        $checkClass                     = get_class($check);
+        $this->checks[$checkClass]      = $check;
+        $this->checkMap[$checkClass]    = $exerciseInterface;
     }
 
     /**
@@ -52,29 +54,25 @@ class ExerciseRunner
      */
     public function runExercise(ExerciseInterface $exercise, $fileName)
     {
-
         $resultAggregator = new ResultAggregator;
 
-        $result = $this->fileExistsCheck->check($exercise, $fileName);
-        $resultAggregator->add($result);
+        foreach ($this->checks as $check) {
 
-        //return early
-        if ($result instanceof Fail) {
-            return $resultAggregator;
-        }
+            $exerciseInterface = $this->checkMap[get_class($check)];
 
-        $result = $this->lintCheck->check($exercise, $fileName);
-        $resultAggregator->add($result);
+            if ($check instanceof FileExistsCheck || $check instanceof PhpLintCheck) {
+                $result = $check->check($exercise, $fileName);
+            } elseif (!is_subclass_of($exercise, $exerciseInterface)) {
+                continue;
+            } else {
+                $result = $check->check($exercise, $fileName);
+            }
 
-        //return early
-        if ($result instanceof Fail) {
-            return $resultAggregator;
-        }
+            $resultAggregator->add($result);
 
-        if ($exercise instanceof StdOutExerciseCheck) {
-            $resultAggregator->add(
-                $this->stdOutCheck->check($exercise, $fileName)
-            );
+            if ($result instanceof Failure && $check->breakChainOnFailure()) {
+                return $resultAggregator;
+            }
         }
 
         return $resultAggregator;
