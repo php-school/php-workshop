@@ -1,22 +1,23 @@
 <?php
 
-namespace PhpWorkshop\PhpWorkshop\Comparator;
+namespace PhpWorkshop\PhpWorkshop\Check;
+
 use PhpWorkshop\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpWorkshop\PhpWorkshop\Fail;
-use Success;
+use PhpWorkshop\PhpWorkshop\Success;
 
 /**
- * Class ComparatorInterface
+ * Class CheckInterface
  * @package PhpWorkshop\PhpWorkshop\Comparator
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
 
-interface ComparatorInterface
+interface CheckInterface
 {
     /**
      * @param ExerciseInterface $exercise
      * @param string $fileName
      * @return Fail|Success
      */
-    public function compare(ExerciseInterface $exercise, $fileName);
+    public function check(ExerciseInterface $exercise, $fileName);
 }

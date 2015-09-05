@@ -1,6 +1,6 @@
 <?php
 
-namespace PhpWorkshop\PhpWorkshop\Comparator;
+namespace PhpWorkshop\PhpWorkshop\Check;
 
 use PhpWorkshop\PhpWorkshop\Exception\SolutionExecutionException;
 use PhpWorkshop\PhpWorkshop\Exercise\ExerciseInterface;
@@ -10,11 +10,11 @@ use RuntimeException;
 use Symfony\Component\Process\Process;
 
 /**
- * Class StdOut
+ * Class StdOutCheck
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
 
-class StdOut implements ComparatorInterface
+class StdOutCheck implements CheckInterface
 {
 
     /**
@@ -22,7 +22,7 @@ class StdOut implements ComparatorInterface
      * @param string $fileName
      * @return Fail|Success
      */
-    public function compare(ExerciseInterface $exercise, $fileName)
+    public function check(ExerciseInterface $exercise, $fileName)
     {
         $args = $exercise->getArgs();
 
@@ -33,11 +33,9 @@ class StdOut implements ComparatorInterface
         }
 
         try {
-
-
             $solutionOutput = $this->executePhpFile($exercise->getSolution(), $args);
         } catch (RuntimeException $e) {
-            throw new SolutionExecutionException($exercise->getSolution());
+            throw new SolutionExecutionException($e->getMessage());
         }
 
         if ($solutionOutput === $userOutput) {
@@ -59,7 +57,6 @@ class StdOut implements ComparatorInterface
     {
         $cmd        = sprintf('%s %s %s', PHP_BINARY, $fileName, implode(' ', $args));
         $process    = new Process($cmd, dirname($fileName));
-
         $process->run();
 
         if (!$process->isSuccessful()) {

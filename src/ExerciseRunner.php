@@ -2,9 +2,11 @@
 
 namespace PhpWorkshop\PhpWorkshop;
 
-use PhpWorkshop\PhpWorkshop\Comparator\StdOut;
+use PhpWorkshop\PhpWorkshop\Check\FileExistsCheck;
+use PhpWorkshop\PhpWorkshop\Check\PhpLintCheck;
 use PhpWorkshop\PhpWorkshop\Exercise\ExerciseInterface;
-use PhpWorkshop\PhpWorkshop\ExerciseCheck\StdOutCheck;
+use PhpWorkshop\PhpWorkshop\Check\StdOutCheck;
+use PhpWorkshop\PhpWorkshop\ExerciseCheck\StdOutExerciseCheck;
 
 /**
  * Class ExerciseRunner
@@ -14,16 +16,33 @@ use PhpWorkshop\PhpWorkshop\ExerciseCheck\StdOutCheck;
 class ExerciseRunner
 {
     /**
-     * @var StdOut
+     * @var FileExistsCheck
      */
-    private $stdOutComparator;
+    private $fileExistsCheck;
 
     /**
-     * @param StdOut $stdOutComparator
+     * @var PhpLintCheck
      */
-    public function __construct(StdOut $stdOutComparator)
-    {
-        $this->stdOutComparator = $stdOutComparator;
+    private $lintCheck;
+
+    /**
+     * @var StdOutCheck
+     */
+    private $stdOutCheck;
+
+    /**
+     * @param PhpLintCheck $lintCheck
+     * @param StdOutCheck $stdOutCheck
+     * @param FileExistsCheck $fileExistsCheck
+     */
+    public function __construct(
+        FileExistsCheck $fileExistsCheck,
+        PhpLintCheck $lintCheck,
+        StdOutCheck $stdOutCheck
+    ) {
+        $this->fileExistsCheck  = $fileExistsCheck;
+        $this->lintCheck        = $lintCheck;
+        $this->stdOutCheck      = $stdOutCheck;
     }
 
     /**
@@ -36,15 +55,25 @@ class ExerciseRunner
 
         $resultAggregator = new ResultAggregator;
 
-        if (!file_exists($fileName)) {
-            $resultAggregator->add(new Fail($exercise, sprintf('File: "%s" does not exist', $fileName)));
+        $result = $this->fileExistsCheck->check($exercise, $fileName);
+        $resultAggregator->add($result);
+
+        //return early
+        if ($result instanceof Fail) {
+            return $resultAggregator;
         }
 
-        //TODO: Lint?
+        $result = $this->lintCheck->check($exercise, $fileName);
+        $resultAggregator->add($result);
 
-        if ($exercise instanceof StdOutCheck) {
+        //return early
+        if ($result instanceof Fail) {
+            return $resultAggregator;
+        }
+
+        if ($exercise instanceof StdOutExerciseCheck) {
             $resultAggregator->add(
-                $this->stdOutComparator->compare($exercise, $fileName)
+                $this->stdOutCheck->check($exercise, $fileName)
             );
         }
 

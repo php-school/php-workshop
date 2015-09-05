@@ -2,14 +2,14 @@
 
 namespace PhpWorkshop\PhpWorkshop\Exercise;
 
-use PhpWorkshop\PhpWorkshop\ExerciseCheck\StdOutCheck;
+use PhpWorkshop\PhpWorkshop\ExerciseCheck\StdOutExerciseCheck;
 
 /**
  * Class BabySteps
  * @package PhpWorkshop\PhpWorkshop\Exercise
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
-class BabySteps implements ExerciseInterface, StdOutCheck
+class BabySteps implements ExerciseInterface, StdOutExerciseCheck
 {
 
     /**

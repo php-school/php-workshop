@@ -2,14 +2,14 @@
 
 namespace PhpWorkshop\PhpWorkshop\Exercise;
 
-use PhpWorkshop\PhpWorkshop\ExerciseCheck\StdOutCheck;
+use PhpWorkshop\PhpWorkshop\ExerciseCheck\StdOutExerciseCheck;
 
 /**
  * Class HelloWorld
  * @package PhpWorkshop\PhpWorkshop\Exercise
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
-class HelloWorld implements ExerciseInterface, StdOutCheck
+class HelloWorld implements ExerciseInterface, StdOutExerciseCheck
 {
 
     /**

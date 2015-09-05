@@ -3,10 +3,10 @@
 namespace PhpWorkshop\PhpWorkshop\ExerciseCheck;
 
 /**
- * Interface StdOutCheck
+ * Interface StdOutExerciseCheck
  * @package PhpWorkshop\PhpWorkshop\ExerciseCheck
  */
-interface StdOutCheck
+interface StdOutExerciseCheck
 {
 
 }

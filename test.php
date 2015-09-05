@@ -1,13 +1,17 @@
 <?php
 
+ini_set('display_errors', 1);
+
 require_once __DIR__ . '/vendor/autoload.php';
 
-use PhpWorkshop\PhpWorkshop\Comparator\StdOut;
+use PhpWorkshop\PhpWorkshop\Check\FileExistsCheck;
+use PhpWorkshop\PhpWorkshop\Check\PhpLintCheck;
+use PhpWorkshop\PhpWorkshop\Check\StdOutCheck;
 use PhpWorkshop\PhpWorkshop\Exercise\BabySteps;
 use PhpWorkshop\PhpWorkshop\Exercise\HelloWorld;
 use PhpWorkshop\PhpWorkshop\ExerciseRunner;
 
-$runner = new ExerciseRunner(new StdOut);
+$runner = new ExerciseRunner(new FileExistsCheck, new PhpLintCheck, new StdOutCheck);
 
 echo "====HELLO WORLD====\n\n";
 $helloWorld = new HelloWorld;
