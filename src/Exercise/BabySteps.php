@@ -25,7 +25,7 @@ class BabySteps implements ExerciseInterface, StdOutExerciseCheck
      */
     public function getDescription()
     {
-        return 'NASA Level Programming';
+        return 'Simple Addition';
     }
 
     /**
@@ -34,6 +34,14 @@ class BabySteps implements ExerciseInterface, StdOutExerciseCheck
     public function getSolution()
     {
         return __DIR__ . '/../../res/solutions/baby-steps/solution.php';
+    }
+
+    /**
+     * @return string
+     */
+    public function getProblem()
+    {
+        return __DIR__ . '/../../res/problems/baby-steps/problem.md';
     }
 
     /**

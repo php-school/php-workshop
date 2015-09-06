@@ -3,11 +3,7 @@
 namespace PhpWorkshop\PhpWorkshop;
 
 use PhpWorkshop\PhpWorkshop\Check\CheckInterface;
-use PhpWorkshop\PhpWorkshop\Check\FileExistsCheck;
-use PhpWorkshop\PhpWorkshop\Check\PhpLintCheck;
 use PhpWorkshop\PhpWorkshop\Exercise\ExerciseInterface;
-use PhpWorkshop\PhpWorkshop\Check\StdOutCheck;
-use PhpWorkshop\PhpWorkshop\ExerciseCheck\StdOutExerciseCheck;
 use PhpWorkshop\PhpWorkshop\Result\Failure;
 
 /**
@@ -42,9 +38,9 @@ class ExerciseRunner
             );
         }
 
-        $checkClass                     = get_class($check);
-        $this->checks[$checkClass]      = $check;
-        $this->checkMap[$checkClass]    = $exerciseInterface;
+        $lookUp                     = spl_object_hash($check);
+        $this->checks[$lookUp]      = $check;
+        $this->checkMap[$lookUp]    = $exerciseInterface;
     }
 
     /**
@@ -57,17 +53,13 @@ class ExerciseRunner
         $resultAggregator = new ResultAggregator;
 
         foreach ($this->checks as $check) {
+            $exerciseInterface = $this->checkMap[spl_object_hash($check)];
 
-            $exerciseInterface = $this->checkMap[get_class($check)];
-
-            if ($check instanceof FileExistsCheck || $check instanceof PhpLintCheck) {
-                $result = $check->check($exercise, $fileName);
-            } elseif (!is_subclass_of($exercise, $exerciseInterface)) {
+            if (!is_subclass_of($exercise, $exerciseInterface)) {
                 continue;
-            } else {
-                $result = $check->check($exercise, $fileName);
             }
 
+            $result = $check->check($exercise, $fileName);
             $resultAggregator->add($result);
 
             if ($result instanceof Failure && $check->breakChainOnFailure()) {

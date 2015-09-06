@@ -33,9 +33,9 @@ class ResultAggregator
     {
         return count(
             array_filter($this->results, function ($result) {
-                return $result instanceof Success;
+                return $result instanceof Failure;
             })
-        ) > 0;
+        ) === 0;
     }
 
     /**
@@ -43,13 +43,13 @@ class ResultAggregator
      */
     public function getErrors()
     {
-        return array_map(
+        return array_values(array_map(
             function (Failure $failure) {
                 return $failure->getReason();
             },
             array_filter($this->results, function ($result) {
                 return $result instanceof Failure;
             })
-        );
+        ));
     }
 }

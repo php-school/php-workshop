@@ -28,16 +28,17 @@ class StdOutCheck implements CheckInterface
         $args = $exercise->getArgs();
 
         try {
+            $solutionOutput = $this->executePhpFile($exercise->getSolution(), $args);
+        } catch (RuntimeException $e) {
+            throw new SolutionExecutionException($e->getMessage());
+        }
+
+        try {
             $userOutput = $this->executePhpFile($fileName, $args);
         } catch (RuntimeException $e) {
             return new Failure(sprintf('PHP Code failed to execute. Error: "%s"', $e->getMessage()));
         }
 
-        try {
-            $solutionOutput = $this->executePhpFile($exercise->getSolution(), $args);
-        } catch (RuntimeException $e) {
-            throw new SolutionExecutionException($e->getMessage());
-        }
 
         if ($solutionOutput === $userOutput) {
             return new Success;

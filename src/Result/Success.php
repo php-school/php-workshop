@@ -2,8 +2,6 @@
 
 namespace PhpWorkshop\PhpWorkshop\Result;
 
-use PhpWorkshop\PhpWorkshop\Result\ResultInterface;
-
 /**
  * Class Fail
  * @package PhpWorkshop\PhpWorkshop

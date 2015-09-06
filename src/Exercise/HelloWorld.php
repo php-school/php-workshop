@@ -25,7 +25,7 @@ class HelloWorld implements ExerciseInterface, StdOutExerciseCheck
      */
     public function getDescription()
     {
-        return 'NASA Level Programming';
+        return 'Simple Hello World exercise';
     }
 
     /**
@@ -34,6 +34,14 @@ class HelloWorld implements ExerciseInterface, StdOutExerciseCheck
     public function getSolution()
     {
         return __DIR__ . '/../../res/solutions/hello-world/solution.php';
+    }
+
+    /**
+     * @return string
+     */
+    public function getProblem()
+    {
+        return __DIR__ . '/../../res/problems/hello-world/problem.md';
     }
 
     /**

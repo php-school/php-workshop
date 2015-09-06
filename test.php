@@ -4,6 +4,7 @@ ini_set('display_errors', 1);
 
 require_once __DIR__ . '/vendor/autoload.php';
 
+use PhpWorkshop\PhpWorkshop\Check\CheckInterface;
 use PhpWorkshop\PhpWorkshop\Check\FileExistsCheck;
 use PhpWorkshop\PhpWorkshop\Check\PhpLintCheck;
 use PhpWorkshop\PhpWorkshop\Check\StdOutCheck;
@@ -13,8 +14,8 @@ use PhpWorkshop\PhpWorkshop\ExerciseCheck\StdOutExerciseCheck;
 use PhpWorkshop\PhpWorkshop\ExerciseRunner;
 
 $runner = new ExerciseRunner();
-$runner->registerCheck(new FileExistsCheck);
-$runner->registerCheck(new PhpLintCheck);
+$runner->registerCheck(new FileExistsCheck, CheckInterface::class);
+$runner->registerCheck(new PhpLintCheck, CheckInterface::class);
 $runner->registerCheck(new StdOutCheck, StdOutExerciseCheck::class);
 
 echo "====HELLO WORLD====\n\n";
@@ -38,7 +39,7 @@ var_dump($result->isSuccessful());
 echo "Errors\n";
 var_dump($result->getErrors());
 
-echo "====HELLO WORLD====\n\n";
+echo "====BABY STEPS====\n\n";
 $babySteps = new BabySteps;
 
 echo "____FAIL___\n\n";

@@ -27,6 +27,11 @@ interface ExerciseInterface
     public function getSolution();
 
     /**
+     * @return string
+     */
+    public function getProblem();
+
+    /**
      * @return array
      */
     public function getArgs();
