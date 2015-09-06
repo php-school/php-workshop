@@ -1,8 +1,6 @@
 PHP Workshop Application
 ===========
-[![Build Status](https://travis-ci.org/Vendor/Lib.png?branch=master)](https://travis-ci.org/Vendor/Lib)
-[![Coverage Status](https://coveralls.io/repos/Vendor/Lib/badge.png)](https://coveralls.io/r/WeareJH/Flexitime)
-[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/Vendor/Lib/badges/quality-score.png)](https://scrutinizer-ci.com/g/Vendor/Lib/)
-[![Dependency Status](https://www.versioneye.com/user/projects/hash/badge.png)](https://www.versioneye.com/user/projects/hash)
-[![Latest Stable Version](https://poser.pugx.org/vendor/lib/version.png)](https://packagist.org/packages/aydin-hassan/magento-core-mapper)
-[![Latest Untable Version](https://poser.pugx.org/vendor/lib/v/unstable.png)](https://packagist.org/packages/aydin-hassan/magento-core-mapper)
+[![Build Status](https://img.shields.io/travis/mikeymike/php-workshop.svg?style=flat)](https://travis-ci.org/mikeymike/php-workshop)
+[![Coverage Status](https://img.shields.io/codecov/c/github/mikeymike/php-workshop.svg?style=flat)](https://coveralls.io/r/mikeymike/php-workshop)
+[![Scrutinizer Code Quality](https://img.shields.io/scrutinizer/g/mikeymike/php-workshop.svg?style=flat)](https://scrutinizer-ci.com/g/mikeymike/php-workshop/)
+[![Dependency Status](https://img.shields.io/versioneye/d/mikeymike/php-workshop.svg?style=flat)](https://www.versioneye.com/user/projects/55ec9c10211c6b0014001146)
