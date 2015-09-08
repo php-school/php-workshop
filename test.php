@@ -2,21 +2,11 @@
 
 ini_set('display_errors', 1);
 
-require_once __DIR__ . '/vendor/autoload.php';
+$runner = require_once __DIR__ . '/app/bootstrap.php';
 
-use PhpWorkshop\PhpWorkshop\Check\CheckInterface;
-use PhpWorkshop\PhpWorkshop\Check\FileExistsCheck;
-use PhpWorkshop\PhpWorkshop\Check\PhpLintCheck;
-use PhpWorkshop\PhpWorkshop\Check\StdOutCheck;
 use PhpWorkshop\PhpWorkshop\Exercise\BabySteps;
 use PhpWorkshop\PhpWorkshop\Exercise\HelloWorld;
-use PhpWorkshop\PhpWorkshop\ExerciseCheck\StdOutExerciseCheck;
-use PhpWorkshop\PhpWorkshop\ExerciseRunner;
 
-$runner = new ExerciseRunner();
-$runner->registerCheck(new FileExistsCheck, CheckInterface::class);
-$runner->registerCheck(new PhpLintCheck, CheckInterface::class);
-$runner->registerCheck(new StdOutCheck, StdOutExerciseCheck::class);
 
 echo "====HELLO WORLD====\n\n";
 $helloWorld = new HelloWorld;
