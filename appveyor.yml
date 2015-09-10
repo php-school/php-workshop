@@ -1,0 +1,24 @@
+build: false
+platform: 'x86'
+clone_folder: C:\projects\php-workshop
+branches:
+  except:
+    - gh-pages
+
+install:
+  - SET PATH=C:\Program Files\OpenSSL;%PATH%
+  - cinst php
+  - cd c:\tools\php
+  - copy php.ini-production php.ini
+  - echo date.timezone="UTC" >> php.ini
+  - echo extension_dir=ext >> php.ini
+  - echo extension=php_openssl.dll >> php.ini
+  - SET PATH=C:\tools\php;%PATH%
+  - cd C:\projects\php-workshop
+  - php -r "readfile('http://getcomposer.org/installer');" | php
+  - php composer.phar update
+
+test_script:
+  - ps: cd C:\projects\php-workshop
+  - ps: gl
+  - vendor\bin\phpunit.bat
