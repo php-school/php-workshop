@@ -78,10 +78,10 @@ class FunctionRequirementsCheck implements CheckInterface
 
         if (!$visitor->hasMetFunctionRequirements()) {
             return new Failure(
-               sprintf(
-                   'Some function requirements were missing. You should use the functions: "%s"',
-                   implode('", "', $visitor->getMissingRequirements())
-               )
+                sprintf(
+                    'Some function requirements were missing. You should use the functions: "%s"',
+                    implode('", "', $visitor->getMissingRequirements())
+                )
             );
         }
 

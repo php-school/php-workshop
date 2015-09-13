@@ -48,7 +48,6 @@ class FunctionVisitor extends NodeVisitorAbstract
     public function leaveNode(Node $node)
     {
         if ($node instanceof FuncCall) {
-
             $name = $node->name->__toString();
             if (in_array($name, $this->requiredFunctions)) {
                 $this->requiredUsages[] = $node;
@@ -99,11 +98,11 @@ class FunctionVisitor extends NodeVisitorAbstract
     public function getMissingRequirements()
     {
         return array_filter($this->requiredFunctions, function ($function) {
-           foreach ($this->getRequiredUsages() as $usage) {
-               if ($usage->name->__toString() === $function) {
-                   return false;
-               }
-           }
+            foreach ($this->getRequiredUsages() as $usage) {
+                if ($usage->name->__toString() === $function) {
+                    return false;
+                }
+            }
             return true;
         });
     }
