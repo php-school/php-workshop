@@ -51,4 +51,11 @@ class HelloWorld implements ExerciseInterface, StdOutExerciseCheck
     {
         return [];
     }
+
+    /**
+     * @return void
+     */
+    public function tearDown()
+    {
+    }
 }

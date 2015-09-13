@@ -58,4 +58,11 @@ class BabySteps implements ExerciseInterface, StdOutExerciseCheck
 
         return $args;
     }
+
+    /**
+     * @return void
+     */
+    public function tearDown()
+    {
+    }
 }
