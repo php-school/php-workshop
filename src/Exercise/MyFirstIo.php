@@ -74,8 +74,7 @@ class MyFirstIo implements
      */
     public function getArgs()
     {
-        $path = sprintf('%s/%s', sys_get_temp_dir(), str_replace('\\', '_', __CLASS__));
-
+        $path = $this->getTemporaryPath();
         $paragraphs = $this->faker->paragraphs(rand(5, 50), true);
         $this->filesystem->dumpFile($path, $paragraphs);
 
@@ -87,8 +86,7 @@ class MyFirstIo implements
      */
     public function tearDown()
     {
-        $path = sprintf('%/%s', sys_get_temp_dir(), str_replace('\\', '_', __CLASS__));
-        $this->filesystem->remove($path);
+        $this->filesystem->remove($this->getTemporaryPath());
     }
 
     /**
@@ -105,5 +103,13 @@ class MyFirstIo implements
     public function getBannedFunctions()
     {
         return ['file'];
+    }
+
+    /**
+     * @return string
+     */
+    private function getTemporaryPath()
+    {
+        return sprintf('%s/%s', realpath(sys_get_temp_dir()), str_replace('\\', '_', __CLASS__));
     }
 }

@@ -27,5 +27,6 @@ class BabyStepsTest extends PHPUnit_Framework_TestCase
 
         $this->assertFileExists(realpath($e->getSolution()));
         $this->assertFileExists(realpath($e->getProblem()));
+        $this->assertNull($e->tearDown());
     }
 }

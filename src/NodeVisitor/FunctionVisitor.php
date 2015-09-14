@@ -60,6 +60,14 @@ class FunctionVisitor extends NodeVisitorAbstract
     }
 
     /**
+     * @return bool
+     */
+    public function hasUsedBannedFunctions()
+    {
+        return count($this->bannedUsages) > 0;
+    }
+
+    /**
      * @return array
      */
     public function getBannedUsages()

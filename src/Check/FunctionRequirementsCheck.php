@@ -15,11 +15,13 @@ use PhpWorkshop\PhpWorkshop\Result\Success;
 
 /**
  * Class FunctionRequirementsCheck
- * @author Aydin Hassan <aydin@hotmail.co.uk>
+ * @package PhpWorkshop\PhpWorkshop\Check
+ * @author  Aydin Hassan <aydin@hotmail.co.uk>
  */
-
 class FunctionRequirementsCheck implements CheckInterface
 {
+
+
     /**
      * @var Parser
      */
@@ -61,7 +63,7 @@ class FunctionRequirementsCheck implements CheckInterface
 
         $traverser->traverse($ast);
 
-        if (count($visitor->getBannedUsages()) > 0) {
+        if ($visitor->hasUsedBannedFunctions()) {
             //used some banned functions
             return new Failure(
                 sprintf(
@@ -69,7 +71,7 @@ class FunctionRequirementsCheck implements CheckInterface
                     implode(
                         '", "',
                         array_map(function (FuncCall $node) {
-                            return sprintf('Function: "%s" on Line: "%s"', $node->name->__toString(), $node->getLine());
+                            return sprintf('Function: "%s" on line: "%s"', $node->name->__toString(), $node->getLine());
                         }, $visitor->getBannedUsages())
                     )
                 )
