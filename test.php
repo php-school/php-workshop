@@ -8,7 +8,7 @@ $runner = $container->get('application');
 use PhpWorkshop\PhpWorkshop\Exercise\BabySteps;
 use PhpWorkshop\PhpWorkshop\Exercise\HelloWorld;
 use PhpWorkshop\PhpWorkshop\Exercise\MyFirstIo;
-
+use PhpWorkshop\PhpWorkshop\Exercise\FilteredLs;
 
 echo "====HELLO WORLD====\n\n";
 $helloWorld = new HelloWorld;
@@ -72,3 +72,25 @@ var_dump($result->isSuccessful());
 
 echo "Errors\n";
 var_dump($result->getErrors());
+
+echo "====Filtered LS====\n\n";
+$filteredLs = $container->get(FilteredLs::class);
+
+echo "____FAIL___\n\n";
+$result = $runner->runExercise($filteredLs, __DIR__ . '/test/res/filtered-ls-fail.php');
+
+echo "Successful?\n";
+var_dump($result->isSuccessful());
+
+echo "Errors\n";
+var_dump($result->getErrors());
+
+echo "____PASS___\n\n";
+$result = $runner->runExercise($filteredLs, __DIR__ . '/test/res/filtered-ls-pass.php');
+
+echo "Successful?\n";
+var_dump($result->isSuccessful());
+
+echo "Errors\n";
+var_dump($result->getErrors());
+

@@ -12,6 +12,8 @@ use PhpWorkshop\PhpWorkshop\Check\FunctionRequirementsCheck;
 use PhpWorkshop\PhpWorkshop\Check\PhpLintCheck;
 use PhpWorkshop\PhpWorkshop\Check\StdOutCheck;
 use PhpWorkshop\PhpWorkshop\Exercise\BabySteps;
+use PhpWorkshop\PhpWorkshop\Exercise\ExerciseInterface;
+use PhpWorkshop\PhpWorkshop\Exercise\FilteredLs;
 use PhpWorkshop\PhpWorkshop\Exercise\HelloWorld;
 use PhpWorkshop\PhpWorkshop\Exercise\MyFirstIo;
 use PhpWorkshop\PhpWorkshop\ExerciseCheck\FunctionRequirementsExerciseCheck;
@@ -32,8 +34,8 @@ return [
     }),
     'checks' => factory(function (ContainerInterface $c) {
         return [
-            [$c->get(FileExistsCheck::class), CheckInterface::class],
-            [$c->get(PhpLintCheck::class), CheckInterface::class],
+            [$c->get(FileExistsCheck::class), ExerciseInterface::class],
+            [$c->get(PhpLintCheck::class), ExerciseInterface::class],
             [$c->get(StdOutCheck::class), StdOutExerciseCheck::class],
             [$c->get(FunctionRequirementsCheck::class), FunctionRequirementsExerciseCheck::class],
         ];
@@ -59,6 +61,7 @@ return [
             BabySteps::class,
             HelloWorld::class,
             MyFirstIo::class,
+            FilteredLs::class,
         ];
     }),
 
@@ -73,5 +76,8 @@ return [
     HelloWorld::class   => object(HelloWorld::class),
     MyFirstIo::class    => factory(function (ContainerInterface $c) {
         return new MyFirstIo($c->get(Filesystem::class), FakerFactory::create());
+    }),
+    FilteredLs::class   => factory(function (ContainerInterface $c) {
+        return new FilteredLs($c->get(Filesystem::class));
     }),
 ];
