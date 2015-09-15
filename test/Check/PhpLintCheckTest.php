@@ -1,8 +1,9 @@
 <?php
 
+namespace PhpWorkshop\PhpWorkshopTest\Check;
 
-namespace PhpWorkshop\PhpWorkshopTest;
-
+use PhpParser\Lexer\Emulative;
+use PhpParser\Parser;
 use PHPUnit_Framework_TestCase;
 use PhpWorkshop\PhpWorkshop\Check\PhpLintCheck;
 use PhpWorkshop\PhpWorkshop\Exercise\ExerciseInterface;

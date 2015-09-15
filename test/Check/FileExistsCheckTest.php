@@ -1,7 +1,6 @@
 <?php
 
-
-namespace PhpWorkshop\PhpWorkshopTest;
+namespace PhpWorkshop\PhpWorkshopTest\Check;
 
 use PHPUnit_Framework_TestCase;
 use PhpWorkshop\PhpWorkshop\Check\FileExistsCheck;

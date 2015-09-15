@@ -25,4 +25,4 @@ $containerBuilder->useAutowiring(false);
 $containerBuilder->useAnnotations(false);
 
 $container = $containerBuilder->build();
-return $container->get('application');
+return $container;

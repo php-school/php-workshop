@@ -67,6 +67,8 @@ class ExerciseRunner
             }
         }
 
+        $exercise->tearDown();
+
         return $resultAggregator;
     }
 }

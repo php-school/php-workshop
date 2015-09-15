@@ -35,4 +35,9 @@ interface ExerciseInterface
      * @return array
      */
     public function getArgs();
+
+    /**
+     * @return void
+     */
+    public function tearDown();
 }
