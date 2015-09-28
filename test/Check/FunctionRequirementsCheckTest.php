@@ -5,6 +5,7 @@ namespace PhpWorkshop\PhpWorkshopTest\Check;
 use InvalidArgumentException;
 use PhpParser\Lexer\Emulative;
 use PhpParser\Parser;
+use PhpParser\ParserFactory;
 use PHPUnit_Framework_TestCase;
 use PhpWorkshop\PhpWorkshop\Check\FunctionRequirementsCheck;
 use PhpWorkshop\PhpWorkshop\Exercise\ExerciseInterface;
@@ -36,7 +37,8 @@ class FunctionRequirementsCheckTest extends PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->parser = new Parser(new Emulative);
+        $parserFactory = new ParserFactory;
+        $this->parser = $parserFactory->create(ParserFactory::PREFER_PHP7);
         $this->check = new FunctionRequirementsCheck($this->parser);
         $this->assertFalse($this->check->breakChainOnFailure());
 
