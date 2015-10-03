@@ -4,8 +4,52 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "00e8a1974773121742edc0833e688d5c",
+    "hash": "8632ec64117edba20d3c649a7a0aacef",
+    "content-hash": "0a505741ad84817b98a639bf30645da9",
     "packages": [
+        {
+            "name": "aydin-hassan/cli-md-renderer",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/AydinHassan/cli-md-renderer.git",
+                "reference": "06e7ee384319335db0fc7d64decd2b82f90792dd"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/AydinHassan/cli-md-renderer/zipball/06e7ee384319335db0fc7d64decd2b82f90792dd",
+                "reference": "06e7ee384319335db0fc7d64decd2b82f90792dd",
+                "shasum": ""
+            },
+            "require": {
+                "league/commonmark": "^0.11.3",
+                "php": ">=5.5",
+                "php-school/psx": "dev-master"
+            },
+            "require-dev": {
+                "nikic/php-parser": "dev-master as 2.0.0-alpha1",
+                "phpunit/phpunit": "~4.1",
+                "squizlabs/php_codesniffer": "~2.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "AydinHassan\\CliMdRenderer\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Aydin Hassan",
+                    "email": "aydin@hotmail.co.uk"
+                }
+            ],
+            "description": "A CLI Markdown Render for league/commonmark compatibile AST",
+            "time": "2015-10-03 18:59:40"
+        },
         {
             "name": "container-interop/container-interop",
             "version": "1.1.0",
@@ -86,6 +130,57 @@
             "time": "2015-05-29 06:29:14"
         },
         {
+            "name": "kevinlebrun/colors.php",
+            "version": "0.4.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/kevinlebrun/colors.php.git",
+                "reference": "d132f36d06e48ea080855af19b4bcb1fb615224a"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/kevinlebrun/colors.php/zipball/d132f36d06e48ea080855af19b4bcb1fb615224a",
+                "reference": "d132f36d06e48ea080855af19b4bcb1fb615224a",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "3.7.*",
+                "satooshi/php-coveralls": "dev-master",
+                "squizlabs/php_codesniffer": "1.*"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "Colors": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Kevin Le Brun",
+                    "email": "lebrun.k@gmail.com",
+                    "homepage": "http://kevinlebrun.fr",
+                    "role": "developer"
+                }
+            ],
+            "description": "Colors for PHP CLI scripts",
+            "homepage": "https://github.com/kevinlebrun/colors.php",
+            "keywords": [
+                "cli",
+                "color",
+                "colors",
+                "console",
+                "shell"
+            ],
+            "time": "2014-12-23 01:23:37"
+        },
+        {
             "name": "league/climate",
             "version": "3.2.0",
             "source": {
@@ -137,33 +232,150 @@
             "time": "2015-08-13 16:50:51"
         },
         {
-            "name": "nikic/php-parser",
-            "version": "v1.4.0",
+            "name": "league/commonmark",
+            "version": "0.11.3",
             "source": {
                 "type": "git",
-                "url": "https://github.com/nikic/PHP-Parser.git",
-                "reference": "196f177cfefa0f1f7166c0a05d8255889be12418"
+                "url": "https://github.com/thephpleague/commonmark.git",
+                "reference": "d22d6a6a4b049faccc2f8e491cce6076eeb165c7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/nikic/PHP-Parser/zipball/196f177cfefa0f1f7166c0a05d8255889be12418",
-                "reference": "196f177cfefa0f1f7166c0a05d8255889be12418",
+                "url": "https://api.github.com/repos/thephpleague/commonmark/zipball/d22d6a6a4b049faccc2f8e491cce6076eeb165c7",
+                "reference": "d22d6a6a4b049faccc2f8e491cce6076eeb165c7",
+                "shasum": ""
+            },
+            "require": {
+                "ext-mbstring": "*",
+                "php": ">=5.4.8"
+            },
+            "replace": {
+                "colinodell/commonmark-php": "*"
+            },
+            "require-dev": {
+                "erusev/parsedown": "~1.0",
+                "jgm/commonmark": "0.22",
+                "jgm/smartpunct": "0.22",
+                "michelf/php-markdown": "~1.4",
+                "mikehaertl/php-shellcommand": "~1.1.0",
+                "phpunit/phpunit": "~4.3",
+                "phpunit/phpunit-mock-objects": "2.3.0",
+                "symfony/finder": "~2.3"
+            },
+            "bin": [
+                "bin/commonmark"
+            ],
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "0.12-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "League\\CommonMark\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "authors": [
+                {
+                    "name": "Colin O'Dell",
+                    "email": "colinodell@gmail.com",
+                    "homepage": "http://www.colinodell.com",
+                    "role": "Lead Developer"
+                }
+            ],
+            "description": "Markdown parser for PHP based on the CommonMark spec",
+            "homepage": "https://github.com/thephpleague/commonmark",
+            "keywords": [
+                "commonmark",
+                "markdown",
+                "parser"
+            ],
+            "time": "2015-09-25 12:40:32"
+        },
+        {
+            "name": "mikeymike/cli-menu",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/mikeymike/cli-menu.git",
+                "reference": "1e53948769d2751e0e65b3e1e29037a19fc62191"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/mikeymike/cli-menu/zipball/1e53948769d2751e0e65b3e1e29037a19fc62191",
+                "reference": "1e53948769d2751e0e65b3e1e29037a19fc62191",
+                "shasum": ""
+            },
+            "require-dev": {
+                "phpunit/phpunit": "~4.1",
+                "squizlabs/php_codesniffer": "1.4.*"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "MikeyMike\\CliMenu\\": "src"
+                }
+            },
+            "autoload-dev": {
+                "psr-4": {
+                    "MikeyMike\\CliMenu\\": "test/"
+                }
+            },
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Michael Woodward",
+                    "email": "mikeymike.mw@gmail.com"
+                }
+            ],
+            "description": "A command line menu helper in PHP",
+            "support": {
+                "source": "https://github.com/mikeymike/cli-menu/tree/master",
+                "issues": "https://github.com/mikeymike/cli-menu/issues"
+            },
+            "time": "2015-10-02 20:47:59"
+        },
+        {
+            "name": "nikic/php-parser",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/nikic/PHP-Parser.git",
+                "reference": "98d28d7aa04e2d92fea2b375373878d0b1fce992"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/nikic/PHP-Parser/zipball/98d28d7aa04e2d92fea2b375373878d0b1fce992",
+                "reference": "98d28d7aa04e2d92fea2b375373878d0b1fce992",
                 "shasum": ""
             },
             "require": {
                 "ext-tokenizer": "*",
-                "php": ">=5.3"
+                "php": ">=5.4"
             },
+            "require-dev": {
+                "phpunit/phpunit": "~4.0"
+            },
+            "bin": [
+                "bin/php-parse"
+            ],
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "1.4-dev"
+                    "dev-master": "2.0-dev"
                 }
             },
             "autoload": {
-                "files": [
-                    "lib/bootstrap.php"
-                ]
+                "psr-4": {
+                    "PhpParser\\": "lib/PhpParser"
+                }
             },
             "notification-url": "https://packagist.org/downloads/",
             "license": [
@@ -179,20 +391,20 @@
                 "parser",
                 "php"
             ],
-            "time": "2015-07-14 17:31:05"
+            "time": "2015-10-03 10:17:41"
         },
         {
             "name": "php-di/invoker",
-            "version": "1.1.0",
+            "version": "1.1.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/PHP-DI/Invoker.git",
-                "reference": "67ad285484a1f783ba2ce26866b5d48f171d3abf"
+                "reference": "7b2d2cd0e40b1583fe6601fb343a280c378669c9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/PHP-DI/Invoker/zipball/67ad285484a1f783ba2ce26866b5d48f171d3abf",
-                "reference": "67ad285484a1f783ba2ce26866b5d48f171d3abf",
+                "url": "https://api.github.com/repos/PHP-DI/Invoker/zipball/7b2d2cd0e40b1583fe6601fb343a280c378669c9",
+                "reference": "7b2d2cd0e40b1583fe6601fb343a280c378669c9",
                 "shasum": ""
             },
             "require": {
@@ -222,7 +434,7 @@
                 "invoke",
                 "invoker"
             ],
-            "time": "2015-09-12 09:14:11"
+            "time": "2015-09-17 09:57:25"
         },
         {
             "name": "php-di/php-di",
@@ -319,6 +531,48 @@
             "time": "2015-06-01 14:23:20"
         },
         {
+            "name": "php-school/psx",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/php-school/psx.git",
+                "reference": "0de5481cefc641815c4a3867abffbdeb353a6226"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/php-school/psx/zipball/0de5481cefc641815c4a3867abffbdeb353a6226",
+                "reference": "0de5481cefc641815c4a3867abffbdeb353a6226",
+                "shasum": ""
+            },
+            "require": {
+                "kevinlebrun/colors.php": "^0.4.1",
+                "nikic/php-parser": "dev-master as 2.0.0-alpha1",
+                "php": ">=5.5"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "~4.1",
+                "squizlabs/php_codesniffer": "~2.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "PhpSchool\\PSX\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Aydin Hassan",
+                    "email": "aydin@hotmail.co.uk"
+                }
+            ],
+            "description": "PHP CLI Syntax Highlighter",
+            "time": "2015-10-03 15:10:43"
+        },
+        {
             "name": "seld/cli-prompt",
             "version": "1.0.0",
             "source": {
@@ -368,16 +622,16 @@
         },
         {
             "name": "symfony/filesystem",
-            "version": "v2.7.4",
+            "version": "v2.7.5",
             "source": {
                 "type": "git",
-                "url": "https://github.com/symfony/Filesystem.git",
-                "reference": "f079e9933799929584200b9a926f72f29e291654"
+                "url": "https://github.com/symfony/filesystem.git",
+                "reference": "a17f8a17c20e8614c15b8e116e2f4bcde102cfab"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/Filesystem/zipball/f079e9933799929584200b9a926f72f29e291654",
-                "reference": "f079e9933799929584200b9a926f72f29e291654",
+                "url": "https://api.github.com/repos/symfony/filesystem/zipball/a17f8a17c20e8614c15b8e116e2f4bcde102cfab",
+                "reference": "a17f8a17c20e8614c15b8e116e2f4bcde102cfab",
                 "shasum": ""
             },
             "require": {
@@ -413,20 +667,20 @@
             ],
             "description": "Symfony Filesystem Component",
             "homepage": "https://symfony.com",
-            "time": "2015-08-27 07:03:44"
+            "time": "2015-09-09 17:42:36"
         },
         {
             "name": "symfony/process",
-            "version": "v2.7.4",
+            "version": "v2.7.5",
             "source": {
                 "type": "git",
-                "url": "https://github.com/symfony/Process.git",
-                "reference": "f7b3f73f70a7f8f49a1c838dc3debbf054732d8e"
+                "url": "https://github.com/symfony/process.git",
+                "reference": "b27c8e317922cd3cdd3600850273cf6b82b2e8e9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/Process/zipball/f7b3f73f70a7f8f49a1c838dc3debbf054732d8e",
-                "reference": "f7b3f73f70a7f8f49a1c838dc3debbf054732d8e",
+                "url": "https://api.github.com/repos/symfony/process/zipball/b27c8e317922cd3cdd3600850273cf6b82b2e8e9",
+                "reference": "b27c8e317922cd3cdd3600850273cf6b82b2e8e9",
                 "shasum": ""
             },
             "require": {
@@ -462,7 +716,7 @@
             ],
             "description": "Symfony Process Component",
             "homepage": "https://symfony.com",
-            "time": "2015-08-27 06:45:45"
+            "time": "2015-09-19 19:59:23"
         }
     ],
     "packages-dev": [
@@ -631,16 +885,16 @@
         },
         {
             "name": "phpunit/php-code-coverage",
-            "version": "2.2.2",
+            "version": "2.2.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/php-code-coverage.git",
-                "reference": "2d7c03c0e4e080901b8f33b2897b0577be18a13c"
+                "reference": "ef1ca6835468857944d5c3b48fa503d5554cff2f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/php-code-coverage/zipball/2d7c03c0e4e080901b8f33b2897b0577be18a13c",
-                "reference": "2d7c03c0e4e080901b8f33b2897b0577be18a13c",
+                "url": "https://api.github.com/repos/sebastianbergmann/php-code-coverage/zipball/ef1ca6835468857944d5c3b48fa503d5554cff2f",
+                "reference": "ef1ca6835468857944d5c3b48fa503d5554cff2f",
                 "shasum": ""
             },
             "require": {
@@ -689,7 +943,7 @@
                 "testing",
                 "xunit"
             ],
-            "time": "2015-08-04 03:42:39"
+            "time": "2015-09-14 06:51:16"
         },
         {
             "name": "phpunit/php-file-iterator",
@@ -822,16 +1076,16 @@
         },
         {
             "name": "phpunit/php-token-stream",
-            "version": "1.4.6",
+            "version": "1.4.8",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/php-token-stream.git",
-                "reference": "3ab72c62e550370a6cd5dc873e1a04ab57562f5b"
+                "reference": "3144ae21711fb6cac0b1ab4cbe63b75ce3d4e8da"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/php-token-stream/zipball/3ab72c62e550370a6cd5dc873e1a04ab57562f5b",
-                "reference": "3ab72c62e550370a6cd5dc873e1a04ab57562f5b",
+                "url": "https://api.github.com/repos/sebastianbergmann/php-token-stream/zipball/3144ae21711fb6cac0b1ab4cbe63b75ce3d4e8da",
+                "reference": "3144ae21711fb6cac0b1ab4cbe63b75ce3d4e8da",
                 "shasum": ""
             },
             "require": {
@@ -867,20 +1121,20 @@
             "keywords": [
                 "tokenizer"
             ],
-            "time": "2015-08-16 08:51:00"
+            "time": "2015-09-15 10:49:45"
         },
         {
             "name": "phpunit/phpunit",
-            "version": "4.8.6",
+            "version": "4.8.10",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit.git",
-                "reference": "2246830f4a1a551c67933e4171bf2126dc29d357"
+                "reference": "463163747474815c5ccd4ae12b5b355ec12158e8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/2246830f4a1a551c67933e4171bf2126dc29d357",
-                "reference": "2246830f4a1a551c67933e4171bf2126dc29d357",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/463163747474815c5ccd4ae12b5b355ec12158e8",
+                "reference": "463163747474815c5ccd4ae12b5b355ec12158e8",
                 "shasum": ""
             },
             "require": {
@@ -939,20 +1193,20 @@
                 "testing",
                 "xunit"
             ],
-            "time": "2015-08-24 04:09:38"
+            "time": "2015-10-01 09:14:30"
         },
         {
             "name": "phpunit/phpunit-mock-objects",
-            "version": "2.3.7",
+            "version": "2.3.8",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit-mock-objects.git",
-                "reference": "5e2645ad49d196e020b85598d7c97e482725786a"
+                "reference": "ac8e7a3db35738d56ee9a76e78a4e03d97628983"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit-mock-objects/zipball/5e2645ad49d196e020b85598d7c97e482725786a",
-                "reference": "5e2645ad49d196e020b85598d7c97e482725786a",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit-mock-objects/zipball/ac8e7a3db35738d56ee9a76e78a4e03d97628983",
+                "reference": "ac8e7a3db35738d56ee9a76e78a4e03d97628983",
                 "shasum": ""
             },
             "require": {
@@ -995,7 +1249,7 @@
                 "mock",
                 "xunit"
             ],
-            "time": "2015-08-19 09:14:08"
+            "time": "2015-10-02 06:51:40"
         },
         {
             "name": "sebastian/comparator",
@@ -1444,16 +1698,16 @@
         },
         {
             "name": "symfony/yaml",
-            "version": "v2.7.4",
+            "version": "v2.7.5",
             "source": {
                 "type": "git",
-                "url": "https://github.com/symfony/Yaml.git",
-                "reference": "2dc7b06c065df96cc686c66da2705e5e18aef661"
+                "url": "https://github.com/symfony/yaml.git",
+                "reference": "31cb2ad0155c95b88ee55fe12bc7ff92232c1770"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/Yaml/zipball/2dc7b06c065df96cc686c66da2705e5e18aef661",
-                "reference": "2dc7b06c065df96cc686c66da2705e5e18aef661",
+                "url": "https://api.github.com/repos/symfony/yaml/zipball/31cb2ad0155c95b88ee55fe12bc7ff92232c1770",
+                "reference": "31cb2ad0155c95b88ee55fe12bc7ff92232c1770",
                 "shasum": ""
             },
             "require": {
@@ -1489,12 +1743,24 @@
             ],
             "description": "Symfony Yaml Component",
             "homepage": "https://symfony.com",
-            "time": "2015-08-24 07:13:45"
+            "time": "2015-09-14 14:14:09"
         }
     ],
-    "aliases": [],
+    "aliases": [
+        {
+            "alias": "2.0.0-alpha1",
+            "alias_normalized": "2.0.0.0-alpha1",
+            "version": "9999999-dev",
+            "package": "nikic/php-parser"
+        }
+    ],
     "minimum-stability": "stable",
-    "stability-flags": [],
+    "stability-flags": {
+        "nikic/php-parser": 20,
+        "aydin-hassan/cli-md-renderer": 20,
+        "php-school/psx": 20,
+        "mikeymike/cli-menu": 20
+    },
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {

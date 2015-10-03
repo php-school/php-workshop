@@ -10,17 +10,19 @@ The list of files should be printed to the console, one file per line.
 The `DirectoryIterator` class takes a pathname as its first argument. Using an iterator in a `foreach` loop will provide you with a `SplFileInfo` object for each file.
 
 ```php
+<?php
 foreach (new DirectoryIterator('/some/path') as $file) {
     
 }
 ```
 
 Documentation on the `SplFileInfo` class can be found by pointing your browser here:
-  {http://php.net/manual/en/class.splfileinfo.php}
+
+[http://php.net/manual/en/class.splfileinfo.php]()
 
 You may also find `SplFileInfo`'s `getExtension()` method helpful
 
 Documentation on the `getExtension()` method can be found by pointing your browser here:
-  {http://php.net/manual/en/splfileinfo.getextension.php}
+[http://php.net/manual/en/splfileinfo.getextension.php]()
 
 ----------------------------------------------------------------------
