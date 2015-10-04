@@ -38,6 +38,7 @@ use PhpWorkshop\PhpWorkshop\ExerciseRepository;
 use PhpWorkshop\PhpWorkshop\ExerciseRunner;
 use PhpWorkshop\PhpWorkshop\Factory\MarkdownCliRendererFactory;
 use PhpWorkshop\PhpWorkshop\MarkdownRenderer;
+use PhpWorkshop\PhpWorkshop\Menu;
 use PhpWorkshop\PhpWorkshop\Output;
 use PhpWorkshop\PhpWorkshop\UserState;
 use PhpWorkshop\PhpWorkshop\UserStateSerializer;
@@ -96,7 +97,7 @@ return [
 
     //commands
     MenuCommand::class => factory(function (ContainerInterface $c) {
-        return new MenuCommand($c->get(CliMenu::class));
+        return new MenuCommand($c->get(Menu::class));
     }),
 
     HelpCommand::class => factory(function (ContainerInterface $c) {
@@ -156,12 +157,9 @@ return [
     }),
 
     TerminalInterface::class => factory([TerminalFactory::class, 'fromSystem']),
-    CliMenu::class => factory(function (ContainerInterface $c) {
-        return new CliMenu(
-            'PHP School Workshop',
-            array_map(function ($exerciseName) {
-                return new MenuItem($exerciseName);
-            }, $c->get(ExerciseRepository::class)->getAllNames()),
+    Menu::class => factory(function (ContainerInterface $c) {
+        return new Menu(
+            $c->get(ExerciseRepository::class),
             $c->get(ExerciseRenderer::class)
         );
     }),
