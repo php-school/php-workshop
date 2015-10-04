@@ -1,47 +1,31 @@
 <?php
 
-use AydinHassan\CliMdRenderer\CliRenderer;
-use AydinHassan\CliMdRenderer\Highlighter\PhpHighlighter;
-use AydinHassan\CliMdRenderer\InlineRenderer\CodeRenderer;
-use AydinHassan\CliMdRenderer\InlineRenderer\EmphasisRenderer;
-use AydinHassan\CliMdRenderer\InlineRenderer\LinkRenderer;
-use AydinHassan\CliMdRenderer\InlineRenderer\NewlineRenderer;
-use AydinHassan\CliMdRenderer\InlineRenderer\StrongRenderer;
-use AydinHassan\CliMdRenderer\InlineRenderer\TextRenderer;
-use AydinHassan\CliMdRenderer\Renderer\DocumentRenderer;
-use AydinHassan\CliMdRenderer\Renderer\FencedCodeRenderer;
-use AydinHassan\CliMdRenderer\Renderer\HeaderRenderer;
-use AydinHassan\CliMdRenderer\Renderer\HorizontalRuleRenderer;
-use AydinHassan\CliMdRenderer\Renderer\ParagraphRenderer;
+
 use Colors\Color;
 use function DI\object;
 use function DI\factory;
 use Faker\Factory as FakerFactory;
 use Interop\Container\ContainerInterface;
-use League\CommonMark\Block\Element\Document;
-use League\CommonMark\Block\Element\FencedCode;
-use League\CommonMark\Block\Element\Header;
-use League\CommonMark\Block\Element\HorizontalRule;
-use League\CommonMark\Block\Element\Paragraph;
+
+use AydinHassan\CliMdRenderer\CliRenderer;
 use League\CommonMark\DocParser;
-use League\CommonMark\Inline\Element\Code;
-use League\CommonMark\Inline\Element\Emphasis;
-use League\CommonMark\Inline\Element\Link;
-use League\CommonMark\Inline\Element\Newline;
-use League\CommonMark\Inline\Element\Strong;
-use League\CommonMark\Inline\Element\Text;
+use League\CommonMark\Environment;
 use MikeyMike\CliMenu\CliMenu;
 use MikeyMike\CliMenu\MenuItem\MenuItem;
 use MikeyMike\CliMenu\Terminal\TerminalFactory;
 use MikeyMike\CliMenu\Terminal\TerminalInterface;
 use PhpParser\Parser;
 use PhpParser\ParserFactory;
-use PhpSchool\PSX\Factory as PSXFactory;
-use PhpWorkshop\PhpWorkshop\Check\CheckInterface;
 use PhpWorkshop\PhpWorkshop\Check\FileExistsCheck;
 use PhpWorkshop\PhpWorkshop\Check\FunctionRequirementsCheck;
 use PhpWorkshop\PhpWorkshop\Check\PhpLintCheck;
 use PhpWorkshop\PhpWorkshop\Check\StdOutCheck;
+use PhpWorkshop\PhpWorkshop\Command\HelpCommand;
+use PhpWorkshop\PhpWorkshop\Command\MenuCommand;
+use PhpWorkshop\PhpWorkshop\Command\PrintCommand;
+use PhpWorkshop\PhpWorkshop\Command\VerifyCommand;
+use PhpWorkshop\PhpWorkshop\CommandDefinition;
+use PhpWorkshop\PhpWorkshop\CommandRouter;
 use PhpWorkshop\PhpWorkshop\Exercise\BabySteps;
 use PhpWorkshop\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpWorkshop\PhpWorkshop\Exercise\FilteredLs;
@@ -49,7 +33,14 @@ use PhpWorkshop\PhpWorkshop\Exercise\HelloWorld;
 use PhpWorkshop\PhpWorkshop\Exercise\MyFirstIo;
 use PhpWorkshop\PhpWorkshop\ExerciseCheck\FunctionRequirementsExerciseCheck;
 use PhpWorkshop\PhpWorkshop\ExerciseCheck\StdOutExerciseCheck;
+use PhpWorkshop\PhpWorkshop\ExerciseRenderer;
+use PhpWorkshop\PhpWorkshop\ExerciseRepository;
 use PhpWorkshop\PhpWorkshop\ExerciseRunner;
+use PhpWorkshop\PhpWorkshop\Factory\MarkdownCliRendererFactory;
+use PhpWorkshop\PhpWorkshop\MarkdownRenderer;
+use PhpWorkshop\PhpWorkshop\Output;
+use PhpWorkshop\PhpWorkshop\UserState;
+use PhpWorkshop\PhpWorkshop\UserStateSerializer;
 use Symfony\Component\Filesystem\Filesystem;
 
 return [
@@ -72,10 +63,62 @@ return [
         ];
     }),
     'application' => factory(function (ContainerInterface $c) {
-        //TODO this is where we would create some CLI Instance
         //which displays exercies
         //and parses args
-        return $c->get(ExerciseRunner::class);
+        return new CommandRouter(
+            [
+                new CommandDefinition('run', [], MenuCommand::class),
+                new CommandDefinition('help', [], HelpCommand::class),
+                new CommandDefinition('print', [], PrintCommand::class),
+                new CommandDefinition('verify', ['program'], VerifyCommand::class)
+            ],
+            'run',
+            $c
+        );
+    }),
+
+    Color::class => factory(function (ContainerInterface $c) {
+        $colors = new Color;
+        $colors->setForceStyle(true);
+        return $colors;
+    }),
+    Output::class => factory(function (ContainerInterface $c) {
+        return new Output($c->get(Color::class));
+    }),
+
+    ExerciseRepository::class => factory(function (ContainerInterface $c) {
+        return new ExerciseRepository(
+            array_map(function ($exerciseClass) use ($c) {
+                return $c->get($exerciseClass);
+            }, $c->get('exercises'))
+        );
+    }),
+
+    //commands
+    MenuCommand::class => factory(function (ContainerInterface $c) {
+        return new MenuCommand($c->get(CliMenu::class));
+    }),
+
+    HelpCommand::class => factory(function (ContainerInterface $c) {
+        return new HelpCommand;
+    }),
+
+    PrintCommand::class => factory(function (ContainerInterface $c) {
+        return new PrintCommand(
+            $c->get(ExerciseRepository::class),
+            $c->get(UserState::class),
+            $c->get(MarkdownRenderer::class),
+            $c->get(Output::class)
+        );
+    }),
+
+    VerifyCommand::class => factory(function (ContainerInterface $c) {
+        return new VerifyCommand(
+            $c->get(ExerciseRepository::class),
+            $c->get(ExerciseRunner::class),
+            $c->get(UserState::class),
+            $c->get(Output::class)
+        );
     }),
 
     //checks
@@ -86,11 +129,10 @@ return [
         return new FunctionRequirementsCheck($c->get(Parser::class));
     }),
 
-
     'exercises' => factory(function (ContainerInterface $c) {
         return [
-            BabySteps::class,
             HelloWorld::class,
+            BabySteps::class,
             MyFirstIo::class,
             FilteredLs::class,
         ];
@@ -116,50 +158,32 @@ return [
     TerminalInterface::class => factory([TerminalFactory::class, 'fromSystem']),
     CliMenu::class => factory(function (ContainerInterface $c) {
         return new CliMenu(
-            'Basic CLI Menu',
-            array(
-                new MenuItem('First Item'),
-                new MenuItem('Second Item'),
-                new MenuItem('Third Item')
-            ),
-            function (CliMenu $menu) {
-                echo sprintf(
-                    "\n%s\n",
-                    $menu->getSelectedItem()->getText()
-                );
-            }
+            'PHP School Workshop',
+            array_map(function ($exerciseName) {
+                return new MenuItem($exerciseName);
+            }, $c->get(ExerciseRepository::class)->getAllNames()),
+            $c->get(ExerciseRenderer::class)
         );
     }),
-    DocParser::class => factory(function (ContainerInterface $c) {
-        return new DocParser(\League\CommonMark\Environment::createCommonMarkEnvironment());
+    ExerciseRenderer::class => factory(function (ContainerInterface $c) {
+        return new ExerciseRenderer(
+            $c->get(ExerciseRepository::class),
+            $c->get(UserState::class),
+            $c->get(UserStateSerializer::class),
+            $c->get(MarkdownRenderer::class),
+            $c->get(Color::class),
+            $c->get(Output::class)
+        );
     }),
-    CliRenderer::class => factory(function (ContainerInterface $c) {
-        $terminal = $c->get(TerminalInterface::class);
-
-        $highlighterFactory = new PSXFactory;
-        $codeRender = new FencedCodeRenderer();
-        $codeRender->addSyntaxHighlighter('php', new PhpHighlighter($highlighterFactory->__invoke()));
-
-        $blockRenderers = [
-            Document::class         => new DocumentRenderer,
-            Header::class           => new HeaderRenderer,
-            HorizontalRule::class   => new HorizontalRuleRenderer($terminal->getWidth()),
-            Paragraph::class        => new ParagraphRenderer,
-            FencedCode::class       => $codeRender,
-        ];
-
-        $inlineBlockRenderers = [
-            Text::class             => new TextRenderer,
-            Code::class             => new CodeRenderer,
-            Emphasis::class         => new EmphasisRenderer,
-            Strong::class           => new StrongRenderer,
-            Newline::class          => new NewlineRenderer,
-            Link::class             => new LinkRenderer,
-        ];
-
-        $colors = new Color;
-        $colors->setForceStyle(true);
-
-        return new CliRenderer($blockRenderers, $inlineBlockRenderers, $colors);
+    MarkdownRenderer::class => factory(function (ContainerInterface $c) {
+        $docParser =   new DocParser(Environment::createCommonMarkEnvironment());
+        $cliRenderer = (new MarkdownCliRendererFactory)->__invoke($c);
+        return new MarkdownRenderer($docParser, $cliRenderer);
+    }),
+    UserStateSerializer::class => factory(function () {
+        return new UserStateSerializer(sprintf('%s/.phpschool.json', getenv('HOME')));
+    }),
+    UserState::class => factory(function (ContainerInterface $c) {
+        return $c->get(UserStateSerializer::class)->deSerialize();
     }),
 ];

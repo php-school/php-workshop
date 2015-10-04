@@ -303,12 +303,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/mikeymike/cli-menu.git",
-                "reference": "1e53948769d2751e0e65b3e1e29037a19fc62191"
+                "reference": "309d14f9579e94dd20bb3786b73e0a56af8878fa"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/mikeymike/cli-menu/zipball/1e53948769d2751e0e65b3e1e29037a19fc62191",
-                "reference": "1e53948769d2751e0e65b3e1e29037a19fc62191",
+                "url": "https://api.github.com/repos/mikeymike/cli-menu/zipball/309d14f9579e94dd20bb3786b73e0a56af8878fa",
+                "reference": "309d14f9579e94dd20bb3786b73e0a56af8878fa",
                 "shasum": ""
             },
             "require-dev": {
@@ -340,7 +340,7 @@
                 "source": "https://github.com/mikeymike/cli-menu/tree/master",
                 "issues": "https://github.com/mikeymike/cli-menu/issues"
             },
-            "time": "2015-10-02 20:47:59"
+            "time": "2015-10-04 11:43:15"
         },
         {
             "name": "nikic/php-parser",
@@ -536,12 +536,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/php-school/psx.git",
-                "reference": "0de5481cefc641815c4a3867abffbdeb353a6226"
+                "reference": "cfb597ac481eb8ed5dcf8c915269c1ea9d3117d5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/php-school/psx/zipball/0de5481cefc641815c4a3867abffbdeb353a6226",
-                "reference": "0de5481cefc641815c4a3867abffbdeb353a6226",
+                "url": "https://api.github.com/repos/php-school/psx/zipball/cfb597ac481eb8ed5dcf8c915269c1ea9d3117d5",
+                "reference": "cfb597ac481eb8ed5dcf8c915269c1ea9d3117d5",
                 "shasum": ""
             },
             "require": {
@@ -570,7 +570,7 @@
                 }
             ],
             "description": "PHP CLI Syntax Highlighter",
-            "time": "2015-10-03 15:10:43"
+            "time": "2015-10-03 20:59:21"
         },
         {
             "name": "seld/cli-prompt",
