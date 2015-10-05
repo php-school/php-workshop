@@ -9,6 +9,9 @@ namespace PhpWorkshop\PhpWorkshop\Command;
 
 class HelpCommand
 {
+    /**
+     * @return void
+     */
     public function __invoke()
     {
         echo "HELPPPP\n";

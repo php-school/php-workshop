@@ -62,7 +62,7 @@ class CommandRouter
 
     /**
      * @param array $args
-     * @return mixed
+     * @return int
      * @throws CliRouteNotExists
      */
     public function route(array $args = null)
@@ -89,13 +89,13 @@ class CommandRouter
             throw new MissingArgumentException($commandName, $missingArgs);
         }
 
-        return $this->resolveCallable($command, $args);
+        return $this->resolveCallable($command, array_merge([$appName], $args));
     }
 
     /**
      * @param CommandDefinition $command
      * @param array $args
-     * @return mixed
+     * @return int
      */
     private function resolveCallable(CommandDefinition $command, array $args)
     {
@@ -119,7 +119,13 @@ class CommandRouter
             throw new \RuntimeException('Service not callable');
         }
 
-        return $this->callCommand($commandCallable, $args);
+        $return = $this->callCommand($commandCallable, $args);
+
+        if (is_int($return)) {
+            return $return;
+        }
+
+        return 0;
     }
 
     /**

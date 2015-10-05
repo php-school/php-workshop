@@ -23,7 +23,7 @@ class ExerciseRenderer
     private $markdownRenderer;
 
     /**
-     * @var \Faker\Provider\zh_TW\Color
+     * @var Color
      */
     private $color;
 
@@ -71,8 +71,7 @@ class ExerciseRenderer
      */
     public function __invoke(CliMenu $menu)
     {
-
-        $item = $menu->getSelectedItem();
+        $item           = $menu->getSelectedItem();
         $exercise       = $this->exerciseRepository->findByName($item->getText());
         $exercises      = $this->exerciseRepository->findAll();
 

@@ -9,7 +9,6 @@ use PhpWorkshop\PhpWorkshop\Exercise\ExerciseInterface;
  * @package PhpWorkshop\PhpWorkshop
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
-
 class ExerciseRepository
 {
     /**

@@ -7,11 +7,16 @@ namespace PhpWorkshop\PhpWorkshop;
  * @package PhpWorkshop\PhpWorkshop
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
-
 class UserStateSerializer
 {
+    /**
+     * @var string
+     */
     private $path;
 
+    /**
+     * @param string $path
+     */
     public function __construct($path)
     {
         $this->path = $path;
@@ -27,6 +32,9 @@ class UserStateSerializer
         touch($path);
     }
 
+    /**
+     * @param UserState $state
+     */
     public function serialize(UserState $state)
     {
         file_put_contents($this->path, json_encode([
@@ -35,6 +43,9 @@ class UserStateSerializer
         ]));
     }
 
+    /**
+     * @return UserState
+     */
     public function deSerialize()
     {
         if (!file_exists($this->path)) {
@@ -89,6 +100,9 @@ class UserStateSerializer
         );
     }
 
+    /**
+     * Remove the file
+     */
     private function wipeFile()
     {
         unlink($this->path);

@@ -52,11 +52,14 @@ class PrintCommand
         $this->exerciseRepository = $exerciseRepository;
     }
 
+    /**
+     * @return int|void
+     */
     public function __invoke()
     {
         if (!$this->userState->isAssignedExercise()) {
             $this->output->printError("No active exercises. Select one from the menu");
-            exit();
+            return 1;
         }
 
         $currentExercise = $this->userState->getCurrentExercise();

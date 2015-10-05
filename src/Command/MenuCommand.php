@@ -2,7 +2,6 @@
 
 namespace PhpWorkshop\PhpWorkshop\Command;
 
-use MikeyMike\CliMenu\CliMenu;
 use PhpWorkshop\PhpWorkshop\Menu;
 
 /**
@@ -13,7 +12,7 @@ use PhpWorkshop\PhpWorkshop\Menu;
 class MenuCommand
 {
     /**
-     * @var CliMenu
+     * @var Menu
      */
     private $menu;
 
@@ -26,7 +25,7 @@ class MenuCommand
     }
 
     /**
-     * Run Menu
+     * @return void
      */
     public function __invoke()
     {

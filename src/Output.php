@@ -9,7 +9,6 @@ use Colors\Color;
  * @package PhpWorkshop\PhpWorkshop
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
-
 class Output
 {
     /**
