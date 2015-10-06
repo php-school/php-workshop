@@ -26,18 +26,18 @@ class UserStateSerializer
         }
 
         if (!file_exists(dirname($path))) {
-            mkdir(dirname($path), 0777);
+            mkdir(dirname($path), 0777, true);
         }
-
-        touch($path);
     }
 
     /**
      * @param UserState $state
+     *
+     * @return int
      */
     public function serialize(UserState $state)
     {
-        file_put_contents($this->path, json_encode([
+        return file_put_contents($this->path, json_encode([
             'completed_exercises'   => $state->getCompletedExercises(),
             'current_exercise'      => $state->getCurrentExercise(),
         ]));

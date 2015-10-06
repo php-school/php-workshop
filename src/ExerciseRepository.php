@@ -21,7 +21,10 @@ class ExerciseRepository
      */
     public function __construct(array $exercises)
     {
-        $this->exercises = $exercises;
+        //type safety
+        $this->exercises = array_map(function (ExerciseInterface $e) {
+            return $e;
+        }, $exercises);
     }
 
     /**
