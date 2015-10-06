@@ -28,10 +28,10 @@ class CommandDefinition
      * CommandDefinition constructor.
      *
      * @param string $name
-     * @param $args
+     * @param array $args
      * @param string|callable $commandCallable
      */
-    public function __construct($name, array $args = [], $commandCallable)
+    public function __construct($name, array $args, $commandCallable)
     {
         $this->name = $name;
         $this->args = $args;

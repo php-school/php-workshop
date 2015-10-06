@@ -15,7 +15,8 @@ class CommandDefinitionTest extends PHPUnit_Framework_TestCase
 
     public function testGettersSetters()
     {
-        $callable = function () {};
+        $callable = function () {
+        };
         $definition = new CommandDefinition('animal', ['name'], $callable);
 
         $this->assertSame($definition->getName(), 'animal');
@@ -23,4 +24,3 @@ class CommandDefinitionTest extends PHPUnit_Framework_TestCase
         $this->assertSame($callable, $definition->getCommandCallable());
     }
 }
-

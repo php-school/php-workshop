@@ -89,7 +89,8 @@ class CommandRouterTest extends PHPUnit_Framework_TestCase
         );
 
         $c = $this->getMock(ContainerInterface::class);
-        $router = new CommandRouter([new CommandDefinition('cmd', [], function () {}),], 'cmd', $c);
+        $router = new CommandRouter([new CommandDefinition('cmd', [], function () {
+        }),], 'cmd', $c);
         $router->route(['app', 'not-a-cmd']);
     }
 
@@ -102,7 +103,8 @@ class CommandRouterTest extends PHPUnit_Framework_TestCase
 
         $c = $this->getMock(ContainerInterface::class);
         $router = new CommandRouter(
-            [new CommandDefinition('verify', ['exercise', 'program'], function () {}),],
+            [new CommandDefinition('verify', ['exercise', 'program'], function () {
+            }),],
             'verify',
             $c
         );
@@ -118,7 +120,8 @@ class CommandRouterTest extends PHPUnit_Framework_TestCase
 
         $c = $this->getMock(ContainerInterface::class);
         $router = new CommandRouter(
-            [new CommandDefinition('verify', ['exercise', 'program'], function () {}),],
+            [new CommandDefinition('verify', ['exercise', 'program'], function () {
+            }),],
             'verify',
             $c
         );
