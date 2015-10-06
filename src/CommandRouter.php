@@ -74,11 +74,10 @@ class CommandRouter
         $appName = array_shift($args);
 
         if (empty($args)) {
-            return $this->resolveCallable($this->commands[$this->defaultCommand], $args);
+            return $this->resolveCallable($this->commands[$this->defaultCommand], array_merge([$appName], $args));
         }
 
         $commandName = array_shift($args);
-
         if (!isset($this->commands[$commandName])) {
             throw new CliRouteNotExists($commandName);
         }

@@ -115,6 +115,11 @@ class UserStateSerializerTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals($expected['completed_exercises'], $state->getCompletedExercises());
         $this->assertEquals($expected['current_exercise'], $state->getCurrentExercise());
+
+        if (file_exists($this->tmpFile)) {
+            unlink($this->tmpFile);
+        }
+        rmdir($this->tmpDir);
     }
 
     public function deserializerProvider()
