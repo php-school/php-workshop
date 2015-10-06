@@ -105,20 +105,20 @@ class CommandRouter
         }
 
         if (!is_string($commandCallable)) {
-            throw new \RuntimeException('Callable must be a callable or a string referencing a callable service');
+            throw new \RuntimeException('Callable must be a callable or a container entry for a callable service');
         }
 
         if (!$this->container->has($commandCallable)) {
-            throw new \RuntimeException('Callable does not exist');
+            throw new \RuntimeException(sprintf('Container has no entry named: "%s"', $commandCallable));
         }
 
-        $commandCallable = $this->container->get($commandCallable);
+        $callable = $this->container->get($commandCallable);
 
-        if (!is_callable($commandCallable)) {
-            throw new \RuntimeException('Service not callable');
+        if (!is_callable($callable)) {
+            throw new \RuntimeException(sprintf('Container entry: "%s" not callable', $commandCallable));
         }
 
-        $return = $this->callCommand($commandCallable, $args);
+        $return = $this->callCommand($callable, $args);
 
         if (is_int($return)) {
             return $return;
@@ -130,7 +130,7 @@ class CommandRouter
     /**
      * @param callable $command
      * @param array $arguments
-     * @return mixed
+     * @return int
      */
     private function callCommand(callable $command, array $arguments)
     {

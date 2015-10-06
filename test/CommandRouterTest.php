@@ -10,6 +10,7 @@ use PhpWorkshop\PhpWorkshop\CommandDefinition;
 use PhpWorkshop\PhpWorkshop\CommandRouter;
 use PhpWorkshop\PhpWorkshop\Exception\CliRouteNotExists;
 use PhpWorkshop\PhpWorkshop\Exception\MissingArgumentException;
+use RuntimeException;
 
 /**
  * Class CommandRouterTest
@@ -139,5 +140,138 @@ class CommandRouterTest extends PHPUnit_Framework_TestCase
             $c
         );
         $router->route(['app', 'verify', 'some-exercise', 'program.php']);
+    }
+
+    public function testExceptionIsThrownIfCallableNotCallableAndNotContainerReference()
+    {
+        $this->setExpectedException(
+            RuntimeException::class,
+            'Callable must be a callable or a container entry for a callable service'
+        );
+
+        $c = $this->getMock(ContainerInterface::class);
+        $router = new CommandRouter(
+            [new CommandDefinition('verify', ['exercise', 'program'], new \stdClass),],
+            'verify',
+            $c
+        );
+        $router->route(['app', 'verify', 'some-exercise', 'program.php']);
+    }
+
+    public function testExceptionIsThrownIfCallableNotCallableAndNotExistingContainerEntry()
+    {
+        $this->setExpectedException(
+            RuntimeException::class,
+            'Container has no entry named: "some.service"'
+        );
+
+        $c = $this->getMock(ContainerInterface::class);
+
+        $c
+            ->expects($this->once())
+            ->method('has')
+            ->with('some.service')
+            ->will($this->returnValue(false));
+
+        $router = new CommandRouter(
+            [new CommandDefinition('verify', ['exercise', 'program'], 'some.service'),],
+            'verify',
+            $c
+        );
+        $router->route(['app', 'verify', 'some-exercise', 'program.php']);
+    }
+
+    public function testExceptionIsThrownIfContainerEntryNotCallable()
+    {
+        $this->setExpectedException(
+            RuntimeException::class,
+            'Container entry: "some.service" not callable'
+        );
+
+        $c = $this->getMock(ContainerInterface::class);
+
+        $c
+            ->expects($this->once())
+            ->method('has')
+            ->with('some.service')
+            ->will($this->returnValue(true));
+
+        $c
+            ->expects($this->once())
+            ->method('get')
+            ->with('some.service')
+            ->will($this->returnValue(null));
+
+        $router = new CommandRouter(
+            [new CommandDefinition('verify', ['exercise', 'program'], 'some.service'),],
+            'verify',
+            $c
+        );
+        $router->route(['app', 'verify', 'some-exercise', 'program.php']);
+    }
+
+    public function testCallableFromContainer()
+    {
+        $c = $this->getMock(ContainerInterface::class);
+
+        $mock = $this->getMock('stdClass', array('cb'));
+        $mock->expects($this->once())
+            ->method('cb')
+            ->with('app', 'some-exercise', 'program.php')
+            ->will($this->returnValue(true));
+
+        $cb = [$mock, 'cb'];
+
+        $c
+            ->expects($this->once())
+            ->method('has')
+            ->with('some.service')
+            ->will($this->returnValue(true));
+
+        $c
+            ->expects($this->once())
+            ->method('get')
+            ->with('some.service')
+            ->will($this->returnValue($cb));
+
+        $router = new CommandRouter(
+            [new CommandDefinition('verify', ['exercise', 'program'], 'some.service'),],
+            'verify',
+            $c
+        );
+        $router->route(['app', 'verify', 'some-exercise', 'program.php']);
+    }
+
+    public function testCallableFromContainerWithIntegerReturnCode()
+    {
+        $c = $this->getMock(ContainerInterface::class);
+
+        $mock = $this->getMock('stdClass', array('cb'));
+        $mock->expects($this->once())
+            ->method('cb')
+            ->with('app', 'some-exercise', 'program.php')
+            ->will($this->returnValue(10));
+
+        $cb = [$mock, 'cb'];
+
+        $c
+            ->expects($this->once())
+            ->method('has')
+            ->with('some.service')
+            ->will($this->returnValue(true));
+
+        $c
+            ->expects($this->once())
+            ->method('get')
+            ->with('some.service')
+            ->will($this->returnValue($cb));
+
+        $router = new CommandRouter(
+            [new CommandDefinition('verify', ['exercise', 'program'], 'some.service'),],
+            'verify',
+            $c
+        );
+        $res = $router->route(['app', 'verify', 'some-exercise', 'program.php']);
+        $this->assertEquals(10, $res);
     }
 }
