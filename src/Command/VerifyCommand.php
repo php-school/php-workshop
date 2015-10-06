@@ -2,6 +2,8 @@
 
 namespace PhpWorkshop\PhpWorkshop\Command;
 
+use Colors\Color;
+use MikeyMike\CliMenu\Terminal\UnixTerminal;
 use PhpWorkshop\PhpWorkshop\ExerciseRepository;
 use PhpWorkshop\PhpWorkshop\ExerciseRunner;
 use PhpWorkshop\PhpWorkshop\Output;
@@ -77,5 +79,34 @@ class VerifyCommand
         $result = $this->runner->runExercise($exercise, $program);
         var_dump($result->isSuccessful());
         var_dump($result->getErrors());
+
+
+
+
+        $color = new Color;
+        $terminal = new UnixTerminal;
+        $width = $terminal->getWidth();
+        $middle = $width / 2;
+
+
+        $lineLength = ($width - 30);
+        echo "               "  . $color(str_repeat("─", $lineLength))->yellow() . "\n";
+
+
+
+
+        $parts = [
+            " _ __ _ ",
+            "/ |..| \\",
+            '\\/ || \\/',
+            " |_''_| "
+        ];
+
+        foreach ($parts as $elephant) {
+            $half = strlen($elephant) / 2;
+            $pad = $middle - $half;
+            echo str_repeat(" ", $pad);
+            echo $color($elephant)->green() . "\n";
+        }
     }
 }
