@@ -7,6 +7,7 @@ use MikeyMike\CliMenu\Terminal\UnixTerminal;
 use PhpWorkshop\PhpWorkshop\ExerciseRepository;
 use PhpWorkshop\PhpWorkshop\ExerciseRunner;
 use PhpWorkshop\PhpWorkshop\Output;
+use PhpWorkshop\PhpWorkshop\Result\StdOutFailure;
 use PhpWorkshop\PhpWorkshop\UserState;
 
 /**
@@ -83,6 +84,9 @@ class VerifyCommand
 
 
 
+
+
+
         $color = new Color;
         $terminal = new UnixTerminal;
         $width = $terminal->getWidth();
@@ -90,23 +94,47 @@ class VerifyCommand
 
 
         $lineLength = ($width - 30);
-        echo "               "  . $color(str_repeat("─", $lineLength))->yellow() . "\n";
+        //echo "               "  . $color(str_repeat("─", $lineLength))->yellow() . "\n";
+        echo $color(str_repeat("─", $width))->yellow() . "\n";
 
+        $stdOutFailure = new StdOutFailure('lol', 'CHIPS AND GRAVYYY', 'COFFEE AND CIGARETTES');
+        $partSize = $width / 2;
+        $line = sprintf('  "%s"', $stdOutFailure->getActualOutput());
 
+        $remaining = $partSize - strlen($line);
+
+        //echo $color($line)->red() . "\n";
+
+        echo "  " . $color("ACTUAL\n")->yellow()->bold()->underline();
+
+        $actualOutput = $stdOutFailure->getActualOutput();
+
+        $indent = function ($data) {
+            return implode("\n", array_map(function ($line) {
+                return "  " . $line;
+            }, explode("\n", $data)));
+        };
+
+        echo $indent($color(sprintf('"%s"', $actualOutput))->red());
+
+        echo "\n\n";
+        echo "  " . $color("EXPECTED\n")->yellow()->bold()->underline();
+        echo $indent($color(sprintf('"%s"', $stdOutFailure->getExpectedOutput()))->red());
+        echo "\n\n";
 
 
         $parts = [
             " _ __ _ ",
             "/ |..| \\",
             '\\/ || \\/',
-            " |_''_| "
+            " |_cool''_| "
         ];
 
-        foreach ($parts as $elephant) {
-            $half = strlen($elephant) / 2;
-            $pad = $middle - $half;
-            echo str_repeat(" ", $pad);
-            echo $color($elephant)->green() . "\n";
-        }
+//        foreach ($parts as $elephant) {
+//            $half = strlen($elephant) / 2;
+//            $pad = $middle - $half;
+//            echo str_repeat(" ", $pad);
+//            echo $color($elephant)->green() . "\n";
+//        }
     }
 }
