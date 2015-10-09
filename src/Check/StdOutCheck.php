@@ -6,6 +6,7 @@ use PhpWorkshop\PhpWorkshop\Exception\SolutionExecutionException;
 use PhpWorkshop\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpWorkshop\PhpWorkshop\Result\Failure;
 use PhpWorkshop\PhpWorkshop\Result\ResultInterface;
+use PhpWorkshop\PhpWorkshop\Result\StdOutFailure;
 use PhpWorkshop\PhpWorkshop\Result\Success;
 use RuntimeException;
 use Symfony\Component\Process\Process;
@@ -36,16 +37,18 @@ class StdOutCheck implements CheckInterface
         try {
             $userOutput = $this->executePhpFile($fileName, $args);
         } catch (RuntimeException $e) {
-            return new Failure(sprintf('PHP Code failed to execute. Error: "%s"', $e->getMessage()));
+            return new Failure('Program Output', sprintf('PHP Code failed to execute. Error: "%s"', $e->getMessage()));
         }
 
 
         if ($solutionOutput === $userOutput) {
-            return new Success;
+            return new Success('Program Output');
         }
 
-        return new Failure(
-            sprintf('Output did not match. Expected: "%s". Received: "%s"', $solutionOutput, $userOutput)
+        return new StdOutFailure(
+            sprintf('Output did not match. Expected: "%s". Received: "%s"', $solutionOutput, $userOutput),
+            $solutionOutput,
+            $userOutput
         );
     }
 

@@ -8,5 +8,8 @@ namespace PhpWorkshop\PhpWorkshop\Result;
  */
 interface ResultInterface
 {
-
+    /**
+     * @return string
+     */
+    public function getCheckName();
 }

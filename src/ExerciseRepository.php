@@ -59,4 +59,12 @@ class ExerciseRepository
             return $exercise->getName();
         }, $this->exercises);
     }
+
+    /**
+     * @return int
+     */
+    public function count()
+    {
+        return count($this->exercises);
+    }
 }

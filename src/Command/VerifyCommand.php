@@ -3,11 +3,19 @@
 namespace PhpWorkshop\PhpWorkshop\Command;
 
 use Colors\Color;
+use Failure;
+use MikeyMike\CliMenu\Terminal\TerminalFactory;
 use MikeyMike\CliMenu\Terminal\UnixTerminal;
 use PhpWorkshop\PhpWorkshop\ExerciseRepository;
 use PhpWorkshop\PhpWorkshop\ExerciseRunner;
 use PhpWorkshop\PhpWorkshop\Output;
 use PhpWorkshop\PhpWorkshop\Result\StdOutFailure;
+use PhpWorkshop\PhpWorkshop\Result\Success;
+use PhpWorkshop\PhpWorkshop\ResultAggregator;
+use PhpWorkshop\PhpWorkshop\ResultRenderer\FailureRenderer;
+use PhpWorkshop\PhpWorkshop\ResultRenderer\ResultsRenderer;
+use PhpWorkshop\PhpWorkshop\ResultRenderer\StdOutFailureRenderer;
+use PhpWorkshop\PhpWorkshop\ResultRenderer\SuccessRenderer;
 use PhpWorkshop\PhpWorkshop\UserState;
 
 /**
@@ -75,66 +83,23 @@ class VerifyCommand
             return 1;
         }
 
-        $exercise = $this->exerciseRepository->findByName($this->userState->getCurrentExercise());
-
-        $result = $this->runner->runExercise($exercise, $program);
-        var_dump($result->isSuccessful());
-        var_dump($result->getErrors());
-
-
-
-
-
-
+        $exercise   = $this->exerciseRepository->findByName($this->userState->getCurrentExercise());
+        $results    = $this->runner->runExercise($exercise, $program);
 
         $color = new Color;
+        $color->setForceStyle(true);
         $terminal = new UnixTerminal;
         $width = $terminal->getWidth();
-        $middle = $width / 2;
 
-
-        $lineLength = ($width - 30);
-        //echo "               "  . $color(str_repeat("─", $lineLength))->yellow() . "\n";
         echo $color(str_repeat("─", $width))->yellow() . "\n";
 
-        $stdOutFailure = new StdOutFailure('lol', 'CHIPS AND GRAVYYY', 'COFFEE AND CIGARETTES');
-        $partSize = $width / 2;
-        $line = sprintf('  "%s"', $stdOutFailure->getActualOutput());
+        $resultRenderer = new ResultsRenderer($color, (new TerminalFactory)->fromSystem(), $this->exerciseRepository);
+        $resultRenderer->registerRenderer(StdOutFailure::class, new StdOutFailureRenderer($color));
+        $resultRenderer->registerRenderer(Success::class, new SuccessRenderer);
+        $resultRenderer->registerRenderer(Failure::class, new FailureRenderer);
 
-        $remaining = $partSize - strlen($line);
+        echo $resultRenderer->render($results, $exercise, $this->userState);
 
-        //echo $color($line)->red() . "\n";
-
-        echo "  " . $color("ACTUAL\n")->yellow()->bold()->underline();
-
-        $actualOutput = $stdOutFailure->getActualOutput();
-
-        $indent = function ($data) {
-            return implode("\n", array_map(function ($line) {
-                return "  " . $line;
-            }, explode("\n", $data)));
-        };
-
-        echo $indent($color(sprintf('"%s"', $actualOutput))->red());
-
-        echo "\n\n";
-        echo "  " . $color("EXPECTED\n")->yellow()->bold()->underline();
-        echo $indent($color(sprintf('"%s"', $stdOutFailure->getExpectedOutput()))->red());
-        echo "\n\n";
-
-
-        $parts = [
-            " _ __ _ ",
-            "/ |..| \\",
-            '\\/ || \\/',
-            " |_cool''_| "
-        ];
-
-//        foreach ($parts as $elephant) {
-//            $half = strlen($elephant) / 2;
-//            $pad = $middle - $half;
-//            echo str_repeat(" ", $pad);
-//            echo $color($elephant)->green() . "\n";
-//        }
+        //echo $resultRenderer->render($results);
     }
 }

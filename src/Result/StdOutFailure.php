@@ -27,9 +27,8 @@ class StdOutFailure extends Failure
     {
         $this->expectedOutput = $expectedOutput;
         $this->actualOutput = $actualOutput;
-        parent::__construct($reason);
+        parent::__construct('Program Output', $reason);
     }
-
 
     public function getExpectedOutput()
     {

@@ -24,10 +24,10 @@ class FileExistsCheck implements CheckInterface
     public function check(ExerciseInterface $exercise, $fileName)
     {
         if (file_exists($fileName)) {
-            return new Success;
+            return new Success('File Exists');
         }
 
-        return new Failure(sprintf('File: "%s" does not exist', $fileName));
+        return new Failure('File Exists', sprintf('File: "%s" does not exist', $fileName));
     }
 
     /**

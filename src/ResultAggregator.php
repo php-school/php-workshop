@@ -2,16 +2,17 @@
 
 namespace PhpWorkshop\PhpWorkshop;
 
+use ArrayIterator;
+use IteratorAggregate;
 use PhpWorkshop\PhpWorkshop\Result\Failure;
 use PhpWorkshop\PhpWorkshop\Result\ResultInterface;
-use PhpWorkshop\PhpWorkshop\Result\Success;
 
 /**
  * Class ResultAggregator
  * @package PhpWorkshop\PhpWorkshop
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
-class ResultAggregator
+class ResultAggregator implements IteratorAggregate
 {
     /**
      * @var ResultInterface[]
@@ -51,5 +52,13 @@ class ResultAggregator
                 return $result instanceof Failure;
             })
         ));
+    }
+
+    /**
+     * @return ArrayIterator
+     */
+    public function getIterator()
+    {
+        return new ArrayIterator($this->results);
     }
 }

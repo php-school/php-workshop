@@ -66,6 +66,7 @@ class FunctionRequirementsCheck implements CheckInterface
         if ($visitor->hasUsedBannedFunctions()) {
             //used some banned functions
             return new Failure(
+                'Banned Functions',
                 sprintf(
                     'Some functions were used which should not be used in this exercise: %s',
                     implode(
@@ -80,6 +81,7 @@ class FunctionRequirementsCheck implements CheckInterface
 
         if (!$visitor->hasMetFunctionRequirements()) {
             return new Failure(
+                'Missing Functions',
                 sprintf(
                     'Some function requirements were missing. You should use the functions: "%s"',
                     implode('", "', $visitor->getMissingRequirements())
@@ -87,7 +89,7 @@ class FunctionRequirementsCheck implements CheckInterface
             );
         }
 
-        return new Success;
+        return new Success('Function Requirements');
     }
 
 
