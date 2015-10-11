@@ -3,9 +3,9 @@
 
 namespace PhpWorkshop\PhpWorkshopTest\Command;
 
+use MikeyMike\CliMenu\CliMenu;
 use PHPUnit_Framework_TestCase;
 use PhpWorkshop\PhpWorkshop\Command\MenuCommand;
-use PhpWorkshop\PhpWorkshop\Menu;
 
 /**
  * Class MenuCommandTest
@@ -16,7 +16,7 @@ class MenuCommandTest extends PHPUnit_Framework_TestCase
 {
     public function testInvoke()
     {
-        $menu = $this->getMockBuilder(Menu::class)
+        $menu = $this->getMockBuilder(CliMenu::class)
             ->disableOriginalConstructor()
             ->getMock();
 

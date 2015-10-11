@@ -20,8 +20,19 @@ use PhpWorkshop\PhpWorkshop\UserState;
 class ResultsRenderer
 {
 
+    /**
+     * @var Color
+     */
     private $color;
+
+    /**
+     * @var ExerciseRepository
+     */
     private $exerciseRepository;
+
+    /**
+     * @var TerminalInterface
+     */
     private $terminal;
 
     /**
@@ -29,12 +40,22 @@ class ResultsRenderer
      */
     private $renderers = [];
 
+    /**
+     * @param Color $color
+     * @param TerminalInterface $terminal
+     * @param ExerciseRepository $exerciseRepository
+     */
     public function __construct(Color $color, TerminalInterface $terminal, ExerciseRepository $exerciseRepository)
     {
         $this->color = $color;
         $this->terminal = $terminal;
-        $this->exerciseRepository = $exerciseRepository;}
+        $this->exerciseRepository = $exerciseRepository;
+    }
 
+    /**
+     * @param $resultClass
+     * @param ResultRendererInterface $renderer
+     */
     public function registerRenderer($resultClass, ResultRendererInterface $renderer)
     {
         $this->renderers[$resultClass] = $renderer;
@@ -51,51 +72,58 @@ class ResultsRenderer
             return $this->renderSuccess($results, $exercise, $userState);
         }
 
-        $successes = [];
+        $successes  = [];
+        $failures   = [];
         foreach ($results as $result) {
             if ($result instanceof Success) {
-                $successes[] = sprintf(' ✔ Check: %s', $result->getCheckName());
+                $successes[] = $result;
+            } else {
+                $failures[] = $result;
             }
         }
 
-        $strings = array_map('strlen', $successes);
-
-        $failures = [];
-        foreach ($results as $result) {
-            if ($result instanceof Success) {
-                continue;
-            }
-
-            $string = ' ' . $this->color->__invoke(sprintf(' ✗ Submission results did not match expected! '))->bg('red')->fg('white')->__toString();
-            $strings[] = strlen($string);
-            $failures[] = $string;
-            $failures[] = $this->getRenderer($result)->render($result);
+        $lines = [];
+        foreach ($successes as $success) {
+            $lines[] = sprintf(' ✔ Check: %s', $success->getCheckName());
         }
-        var_dump($strings);
-        $longest = max($strings) + 2;
-        $successes = array_map(function ($line) use ($longest) {
-            return str_pad($line, $longest);
-        }, $successes);
-        $failures = array_map(function ($line) use ($longest) {
-            return str_pad($line, $longest);
-        }, $failures);
 
-        $successes = array_map(function ($line) {
-            return sprintf(' %s', $this->color->__invoke($line)->bg('green')->fg('black')->__toString());
-        }, $successes);
+        $stringLengths = array_map('strlen', $lines);
 
-        $lines = array_merge($successes, $failures);
+        $failuresMessages = [];
+        foreach ($failures as $failure) {
+            $string             = sprintf(' ✗ Check: %s', $failure->getCheckName());
+            $stringLengths[]    = strlen($string);
+            $failuresMessages[] = $string;
+        }
+
+        $longest            = max($stringLengths) + 2;
+        $lines              = $this->padArray($lines, $longest);
+        $failuresMessages   = $this->padArray($failuresMessages, $longest);
+
+        $lines              = $this->styleArray($lines, ['green', 'bg_black', 'bold']);
+        $failuresMessages   = $this->styleArray($failuresMessages, ['red', 'bg_black', 'bold']);
+
+        foreach ($failures as $key => $result) {
+            $lines[] = $failuresMessages[$key];
+            $lines[] = $this->getRenderer($result)->render($result, $this);
+        }
 
         $lines[] = $this->color->__invoke(" FAIL!")->fg('red')->bg('default')->bold()->__toString();
         $lines[] = '';
 
-        $lines[] = 'Your solution to HELLO WORLD didn\'t pass. Try again!';
+        $lines[] = sprintf("Your solution to %s didn't pass. Try again!", $exercise->getName());
         $lines[] = '';
         $lines[] = '';
 
         return implode("\n", $lines);
     }
 
+    /**
+     * @param ResultAggregator $results
+     * @param ExerciseInterface $exercise
+     * @param UserState $userState
+     * @return string
+     */
     private function renderSuccess(ResultAggregator $results, ExerciseInterface $exercise, UserState $userState)
     {
         $lines = [];
@@ -103,20 +131,14 @@ class ResultsRenderer
             $lines[] = sprintf(' ✔ Check: %s', $result->getCheckName());
         }
 
-        $longest = max(array_map('strlen', $lines)) + 2;
-        $lines = array_map(function ($line) use ($longest) {
-            return str_pad($line, $longest);
-        }, $lines);
-
-        $lines = array_map(function ($line) {
-            return sprintf(' %s', $this->color->__invoke($line)->bg('green')->fg('black')->__toString());
-        }, $lines);
+        $lines = $this->padArray($lines, max(array_map('strlen', $lines)) + 2);
+        $lines = $this->styleArray($lines, ['green', 'bg_black']);
 
         $lines[] = '';
         $lines[] = $this->color->__invoke(" PASS!")->fg('green')->bg('default')->bold()->__toString();
         $lines[] = '';
 
-        $lines[] = 'Here\'s the official solution in case you want to compare notes:';
+        $lines[] = "Here's the official solution in case you want to compare notes:";
         $lines[] = $this->color->__invoke(str_repeat("─", $this->terminal->getWidth()))->fg('yellow')->__toString();
 
         $syntaxHighlighter = (new Factory)->__invoke();
@@ -132,6 +154,51 @@ class ResultsRenderer
         $lines[] = sprintf('Type "%s" to show the menu.', $_SERVER['argv'][0]);
         $lines[] = '';
         return implode("\n", $lines) . "\n";
+    }
+
+    /**
+     * @param array $lines
+     * @param int $length
+     * @return array
+     */
+    private function padArray(array $lines, $length)
+    {
+        return array_map(function ($line) use ($length) {
+            return str_pad($line, $length);
+        }, $lines);
+    }
+
+    /**
+     * @param array $lines
+     * @param array $styles
+     * @return array
+     */
+    private function styleArray(array $lines, array $styles)
+    {
+        return array_map(function ($line) use ($styles) {
+            return $this->style($line, $styles);
+        }, $lines);
+    }
+
+    /**
+     * @param string $string
+     * @param array|string $colourOrStyle
+     *
+     * @return string
+     *
+     */
+    public function style($string, $colourOrStyle)
+    {
+        if (is_array($colourOrStyle)) {
+            $this->color->__invoke($string);
+
+            while ($style = array_shift($colourOrStyle)) {
+                $this->color->apply($style);
+            }
+            return $this->color->__toString();
+        }
+
+        return $this->color->__invoke($string)->apply($colourOrStyle, $string);
     }
 
     /**

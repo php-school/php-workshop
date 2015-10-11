@@ -9,14 +9,17 @@ use MikeyMike\CliMenu\Terminal\UnixTerminal;
 use PhpWorkshop\PhpWorkshop\ExerciseRepository;
 use PhpWorkshop\PhpWorkshop\ExerciseRunner;
 use PhpWorkshop\PhpWorkshop\Output;
+use PhpWorkshop\PhpWorkshop\Result\FunctionRequirementsFailure;
 use PhpWorkshop\PhpWorkshop\Result\StdOutFailure;
 use PhpWorkshop\PhpWorkshop\Result\Success;
 use PhpWorkshop\PhpWorkshop\ResultAggregator;
 use PhpWorkshop\PhpWorkshop\ResultRenderer\FailureRenderer;
+use PhpWorkshop\PhpWorkshop\ResultRenderer\FunctionRequirementsFailureRenderer;
 use PhpWorkshop\PhpWorkshop\ResultRenderer\ResultsRenderer;
 use PhpWorkshop\PhpWorkshop\ResultRenderer\StdOutFailureRenderer;
 use PhpWorkshop\PhpWorkshop\ResultRenderer\SuccessRenderer;
 use PhpWorkshop\PhpWorkshop\UserState;
+use PhpWorkshop\PhpWorkshop\UserStateSerializer;
 
 /**
  * Class VerifyCommand
@@ -46,21 +49,29 @@ class VerifyCommand
     private $userState;
 
     /**
+     * @var UserStateSerializer
+     */
+    private $userStateSerializer;
+
+    /**
      * @param ExerciseRepository $exerciseRepository
      * @param ExerciseRunner $runner
      * @param UserState $userState
+     * @param UserStateSerializer $userStateSerializer
      * @param Output $output
      */
     public function __construct(
         ExerciseRepository $exerciseRepository,
         ExerciseRunner $runner,
         UserState $userState,
+        UserStateSerializer $userStateSerializer,
         Output $output
     ) {
         $this->runner               = $runner;
         $this->output               = $output;
         $this->exerciseRepository   = $exerciseRepository;
-        $this->userState = $userState;
+        $this->userState            = $userState;
+        $this->userStateSerializer  = $userStateSerializer;
     }
 
     /**
@@ -86,6 +97,11 @@ class VerifyCommand
         $exercise   = $this->exerciseRepository->findByName($this->userState->getCurrentExercise());
         $results    = $this->runner->runExercise($exercise, $program);
 
+        if ($results->isSuccessful()) {
+            $this->userState->addCompletedExercise($exercise->getName());
+            $this->userStateSerializer->serialize($this->userState);
+        }
+
         $color = new Color;
         $color->setForceStyle(true);
         $terminal = new UnixTerminal;
@@ -95,11 +111,11 @@ class VerifyCommand
 
         $resultRenderer = new ResultsRenderer($color, (new TerminalFactory)->fromSystem(), $this->exerciseRepository);
         $resultRenderer->registerRenderer(StdOutFailure::class, new StdOutFailureRenderer($color));
+        $resultRenderer->registerRenderer(FunctionRequirementsFailure::class, new FunctionRequirementsFailureRenderer($color));
         $resultRenderer->registerRenderer(Success::class, new SuccessRenderer);
         $resultRenderer->registerRenderer(Failure::class, new FailureRenderer);
 
         echo $resultRenderer->render($results, $exercise, $this->userState);
-
-        //echo $resultRenderer->render($results);
+        return $results->isSuccessful() ? 0 : 1;
     }
 }

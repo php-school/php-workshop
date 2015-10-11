@@ -10,6 +10,7 @@ use PhpWorkshop\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpWorkshop\PhpWorkshop\ExerciseCheck\FunctionRequirementsExerciseCheck;
 use PhpWorkshop\PhpWorkshop\NodeVisitor\FunctionVisitor;
 use PhpWorkshop\PhpWorkshop\Result\Failure;
+use PhpWorkshop\PhpWorkshop\Result\FunctionRequirementsFailure;
 use PhpWorkshop\PhpWorkshop\Result\ResultInterface;
 use PhpWorkshop\PhpWorkshop\Result\Success;
 
@@ -54,7 +55,10 @@ class FunctionRequirementsCheck implements CheckInterface
         try {
             $ast = $this->parser->parse($code);
         } catch (Error $e) {
-            return new Failure(sprintf('File: %s could not be parsed. Error: "%s"', $fileName, $e->getMessage()));
+            return new Failure(
+                'Function Requirements Check',
+                sprintf('File: %s could not be parsed. Error: "%s"', $fileName, $e->getMessage())
+            );
         }
 
         $visitor    = new FunctionVisitor($requiredFunctions, $bannedFunctions);
@@ -63,36 +67,25 @@ class FunctionRequirementsCheck implements CheckInterface
 
         $traverser->traverse($ast);
 
+        $bannedFunctions = [];
         if ($visitor->hasUsedBannedFunctions()) {
-            //used some banned functions
-            return new Failure(
-                'Banned Functions',
-                sprintf(
-                    'Some functions were used which should not be used in this exercise: %s',
-                    implode(
-                        '", "',
-                        array_map(function (FuncCall $node) {
-                            return sprintf('Function: "%s" on line: "%s"', $node->name->__toString(), $node->getLine());
-                        }, $visitor->getBannedUsages())
-                    )
-                )
-            );
+            $bannedFunctions = array_map(function (FuncCall $node) {
+                return ['function' => $node->name->__toString(), 'line' => $node->getLine()];
+                //return sprintf('Function: "%s" on line: "%s"', $node->name->__toString(), $node->getLine());
+            }, $visitor->getBannedUsages());
         }
 
+        $missingFunctions = [];
         if (!$visitor->hasMetFunctionRequirements()) {
-            return new Failure(
-                'Missing Functions',
-                sprintf(
-                    'Some function requirements were missing. You should use the functions: "%s"',
-                    implode('", "', $visitor->getMissingRequirements())
-                )
-            );
+            $missingFunctions = $visitor->getMissingRequirements();
+        }
+
+        if (!empty($bannedFunctions) || !empty($missingFunctions)) {
+            return new FunctionRequirementsFailure($bannedFunctions, $missingFunctions);
         }
 
         return new Success('Function Requirements');
     }
-
-
 
     /**
      * @return bool

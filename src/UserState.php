@@ -35,7 +35,9 @@ class UserState
      */
     public function addCompletedExercise($exercise)
     {
-        $this->completedExercises[] = $exercise;
+        if (!in_array($exercise, $this->completedExercises)) {
+            $this->completedExercises[] = $exercise;
+        }
     }
 
     /**
@@ -68,5 +70,14 @@ class UserState
     public function isAssignedExercise()
     {
         return null !== $this->currentExercise;
+    }
+
+    /**
+     * @param string $exercise
+     * @return bool
+     */
+    public function completedExercise($exercise)
+    {
+        return in_array($exercise, $this->completedExercises);
     }
 }

@@ -63,7 +63,7 @@ class ExerciseRunnerTest extends PHPUnit_Framework_TestCase
         $runMe
             ->expects($this->once())
             ->method('check')
-            ->will($this->returnValue(new Success));
+            ->will($this->returnValue(new Success('Some Check')));
 
         $result = $runner->runExercise($this->getMock(HelloWorld::class), 'some-file.php');
         $this->assertInstanceOf(ResultAggregator::class, $result);
@@ -77,7 +77,7 @@ class ExerciseRunnerTest extends PHPUnit_Framework_TestCase
         $runMe
             ->expects($this->once())
             ->method('check')
-            ->will($this->returnValue(new Failure('nope')));
+            ->will($this->returnValue(new Failure('Some Check', 'nope')));
 
         $runMe
             ->expects($this->once())

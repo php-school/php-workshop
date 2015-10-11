@@ -20,19 +20,19 @@ class ResultAggregatorTest extends PHPUnit_Framework_TestCase
         $resultAggregator = new ResultAggregator;
         $this->assertTrue($resultAggregator->isSuccessful());
 
-        $resultAggregator->add(new Success);
+        $resultAggregator->add(new Success('Some Check'));
         $this->assertTrue($resultAggregator->isSuccessful());
 
-        $resultAggregator->add(new Failure('nope'));
+        $resultAggregator->add(new Failure('Some Check', 'nope'));
         $this->assertFalse($resultAggregator->isSuccessful());
     }
 
     public function testGetErrors()
     {
         $resultAggregator = new ResultAggregator;
-        $resultAggregator->add(new Success);
-        $resultAggregator->add(new Failure('nope'));
-        $resultAggregator->add(new Failure('so much nope'));
+        $resultAggregator->add(new Success('Some Check'));
+        $resultAggregator->add(new Failure('Some Check', 'nope'));
+        $resultAggregator->add(new Failure('Some Check', 'so much nope'));
 
         $expected = ['nope','so much nope'];
         $this->assertEquals($expected, $resultAggregator->getErrors());

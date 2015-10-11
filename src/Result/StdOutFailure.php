@@ -19,22 +19,28 @@ class StdOutFailure extends Failure
     private $actualOutput;
 
     /**
-     * @param string $reason
-     * @param        $expectedOutput
-     * @param        $actualOutput
+     * @param string $expectedOutput
+     * @param string $actualOutput
      */
-    public function __construct($reason, $expectedOutput, $actualOutput)
+    public function __construct($expectedOutput, $actualOutput)
     {
         $this->expectedOutput = $expectedOutput;
         $this->actualOutput = $actualOutput;
+        $reason = sprintf('Output did not match. Expected: "%s". Received: "%s"', $expectedOutput, $actualOutput);
         parent::__construct('Program Output', $reason);
     }
 
+    /**
+     * @return string
+     */
     public function getExpectedOutput()
     {
         return $this->expectedOutput;
     }
 
+    /**
+     * @return mixed
+     */
     public function getActualOutput()
     {
         return $this->actualOutput;

@@ -45,11 +45,7 @@ class StdOutCheck implements CheckInterface
             return new Success('Program Output');
         }
 
-        return new StdOutFailure(
-            sprintf('Output did not match. Expected: "%s". Received: "%s"', $solutionOutput, $userOutput),
-            $solutionOutput,
-            $userOutput
-        );
+        return new StdOutFailure($solutionOutput, $userOutput);
     }
 
     /**

@@ -69,4 +69,10 @@ class UserStateTest extends PHPUnit_Framework_TestCase
         $this->assertSame('exercise2', $state->getCurrentExercise());
         $this->assertSame(['exercise1'], $state->getCompletedExercises());
     }
+
+    public function testCompletedExercise()
+    {
+        $state = new UserState(['exercise1']);
+        $this->assertTrue($state->completedExercise('exercise1'));
+    }
 }

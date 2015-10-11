@@ -2,7 +2,7 @@
 
 namespace PhpWorkshop\PhpWorkshop\Command;
 
-use PhpWorkshop\PhpWorkshop\Menu;
+use MikeyMike\CliMenu\CliMenu;
 
 /**
  * Class MenuCommand
@@ -12,14 +12,14 @@ use PhpWorkshop\PhpWorkshop\Menu;
 class MenuCommand
 {
     /**
-     * @var Menu
+     * @var CliMenu
      */
     private $menu;
 
     /**
-     * @param Menu $menu
+     * @param CliMenu $menu
      */
-    public function __construct(Menu $menu)
+    public function __construct(CliMenu $menu)
     {
         $this->menu = $menu;
     }

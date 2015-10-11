@@ -1,17 +1,19 @@
 <?php
 
-
 use Colors\Color;
 use function DI\object;
 use function DI\factory;
 use Faker\Factory as FakerFactory;
 use Interop\Container\ContainerInterface;
-
-use AydinHassan\CliMdRenderer\CliRenderer;
 use League\CommonMark\DocParser;
 use League\CommonMark\Environment;
 use MikeyMike\CliMenu\CliMenu;
+use MikeyMike\CliMenu\CliMenuBuilder;
+use MikeyMike\CliMenu\MenuItem\AsciiArtItem;
 use MikeyMike\CliMenu\MenuItem\MenuItem;
+use MikeyMike\CliMenu\MenuItem\SelectableItem;
+use MikeyMike\CliMenu\MenuItem\StaticItem;
+use MikeyMike\CliMenu\MenuStyle;
 use MikeyMike\CliMenu\Terminal\TerminalFactory;
 use MikeyMike\CliMenu\Terminal\TerminalInterface;
 use PhpParser\Parser;
@@ -38,13 +40,13 @@ use PhpWorkshop\PhpWorkshop\ExerciseRepository;
 use PhpWorkshop\PhpWorkshop\ExerciseRunner;
 use PhpWorkshop\PhpWorkshop\Factory\MarkdownCliRendererFactory;
 use PhpWorkshop\PhpWorkshop\MarkdownRenderer;
-use PhpWorkshop\PhpWorkshop\Menu;
 use PhpWorkshop\PhpWorkshop\Output;
 use PhpWorkshop\PhpWorkshop\UserState;
 use PhpWorkshop\PhpWorkshop\UserStateSerializer;
 use Symfony\Component\Filesystem\Filesystem;
 
 return [
+    'appName' => $_SERVER['argv'][0],
     ExerciseRunner::class => factory(function (ContainerInterface $c) {
         $exerciseRunner = new ExerciseRunner;
 
@@ -64,8 +66,6 @@ return [
         ];
     }),
     'application' => factory(function (ContainerInterface $c) {
-        //which displays exercies
-        //and parses args
         return new CommandRouter(
             [
                 new CommandDefinition('run', [], MenuCommand::class),
@@ -97,7 +97,7 @@ return [
 
     //commands
     MenuCommand::class => factory(function (ContainerInterface $c) {
-        return new MenuCommand($c->get(Menu::class));
+        return new MenuCommand($c->get('menu'));
     }),
 
     HelpCommand::class => factory(function (ContainerInterface $c) {
@@ -118,6 +118,7 @@ return [
             $c->get(ExerciseRepository::class),
             $c->get(ExerciseRunner::class),
             $c->get(UserState::class),
+            $c->get(UserStateSerializer::class),
             $c->get(Output::class)
         );
     }),
@@ -157,11 +158,58 @@ return [
     }),
 
     TerminalInterface::class => factory([TerminalFactory::class, 'fromSystem']),
-    Menu::class => factory(function (ContainerInterface $c) {
-        return new Menu(
-            $c->get(ExerciseRepository::class),
-            $c->get(ExerciseRenderer::class)
-        );
+    'menu' => factory(function (ContainerInterface $c) {
+
+        $userStateSerializer    = $c->get(UserStateSerializer::class);
+        $exerciseRepository     = $c->get(ExerciseRepository::class);
+
+        $subMenu = (new CliMenuBuilder('PHP School Workshop > Options'))
+            //add language menu here
+            ->addItem(
+                new SelectableItem(
+                    'Reset workshop progress',
+                    function (CliMenu $menu) use ($userStateSerializer) {
+                        $userStateSerializer->serialize(new UserState);
+                        echo "Status Reset!";
+                    }
+                )
+            )
+            ->build();
+
+        $art = <<<ART
+  _ __ _
+ / |..| \
+ \/ || \/
+  |_''_|
+
+PHP SCHOOL
+ART;
+        $menuBuilder = (new CliMenuBuilder('PHP School Workshop'))
+            ->addItem(new AsciiArtItem($art, AsciiArtItem::POSITION_CENTER))
+            ->addItem(new StaticItem('Exercises'))
+            ->addItem(new StaticItem('---------'))
+            ->addSubMenuAsAction('OPTIONS', $subMenu)
+            ->setItemCallback($c->get(ExerciseRenderer::class))
+            ->addAction(new SelectableItem('HELP', function () {
+
+            }))
+            ->addAction(new SelectableItem('CREDITS', function () {
+
+            }))
+            ->addAction(new SelectableItem('EXIT', function (CliMenu $menu) {
+                $menu->close();
+            }))
+            ->setMenuStyle(new MenuStyle('black', 'green', 70, 2, 2, ' ', '↳', '[COMPLETED]', true));
+
+        $userState = $userStateSerializer->deSerialize();
+        foreach ($exerciseRepository as $exercise) {
+            $menuBuilder->addItem(new MenuItem(
+                $exercise->getName(),
+                $userState->completedExercise($exercise->getName())
+            ));
+        }
+
+        return $menuBuilder->build();
     }),
     ExerciseRenderer::class => factory(function (ContainerInterface $c) {
         return new ExerciseRenderer(

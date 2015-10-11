@@ -2,13 +2,12 @@
 
 namespace PhpWorkshop\PhpWorkshopTest;
 
-use DI\Container;
 use Interop\Container\ContainerInterface;
 use InvalidArgumentException;
 use PHPUnit_Framework_TestCase;
 use PhpWorkshop\PhpWorkshop\CommandDefinition;
 use PhpWorkshop\PhpWorkshop\CommandRouter;
-use PhpWorkshop\PhpWorkshop\Exception\CliRouteNotExists;
+use PhpWorkshop\PhpWorkshop\Exception\CliRouteNotExistsException;
 use PhpWorkshop\PhpWorkshop\Exception\MissingArgumentException;
 use RuntimeException;
 
@@ -84,7 +83,7 @@ class CommandRouterTest extends PHPUnit_Framework_TestCase
     public function testRouteCommandThrowsExceptionIfCommandWithNameNotExist()
     {
         $this->setExpectedException(
-            CliRouteNotExists::class,
+            CliRouteNotExistsException::class,
             'Command: "not-a-cmd" does not exist'
         );
 

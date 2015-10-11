@@ -9,6 +9,7 @@ use PhpWorkshop\PhpWorkshop\ExerciseRepository;
 use PhpWorkshop\PhpWorkshop\ExerciseRunner;
 use PhpWorkshop\PhpWorkshop\Output;
 use PhpWorkshop\PhpWorkshop\UserState;
+use PhpWorkshop\PhpWorkshop\UserStateSerializer;
 
 /**
  * Class VerifyCommandTest
@@ -28,13 +29,18 @@ class VerifyCommandTest extends PHPUnit_Framework_TestCase
 
         $runner = new ExerciseRunner;
 
+        $programFile = sprintf('%s/%s/program.php', sys_get_temp_dir(), $this->getName());
         $output
             ->expects($this->once())
             ->method('printError')
-            ->with('Could not verify. File: "program.php" does not exist');
+            ->with(sprintf('Could not verify. File: "%s" does not exist', $programFile));
 
-        $command = new VerifyCommand($repo, $runner, $state, $output);
-        $this->assertSame(1, $command->__invoke('appname', 'program.php'));
+        $serializer = $this->getMockBuilder(UserStateSerializer::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $command = new VerifyCommand($repo, $runner, $state, $serializer, $output);
+        $this->assertSame(1, $command->__invoke('appname', $programFile));
     }
 
     public function testVerifyPrintsErrorIfNoExerciseAssigned()
@@ -55,7 +61,11 @@ class VerifyCommandTest extends PHPUnit_Framework_TestCase
             ->method('printError')
             ->with('No active exercises. Select one from the menu');
 
-        $command = new VerifyCommand($repo, $runner, $state, $output);
+        $serializer = $this->getMockBuilder(UserStateSerializer::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $command = new VerifyCommand($repo, $runner, $state, $serializer, $output);
         $this->assertSame(1, $command->__invoke('appname', $file));
 
         unlink($file);
@@ -67,7 +77,7 @@ class VerifyCommandTest extends PHPUnit_Framework_TestCase
         touch($file);
 
         $e = $this->getMock(ExerciseInterface::class);
-        $e->expects($this->once())
+        $e->expects($this->any())
             ->method('getName')
             ->will($this->returnValue('exercise1'));
         $repo = new ExerciseRepository([$e]);
@@ -77,8 +87,12 @@ class VerifyCommandTest extends PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
+        $serializer = $this->getMockBuilder(UserStateSerializer::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
         $runner = new ExerciseRunner;
-        $command = new VerifyCommand($repo, $runner, $state, $output);
+        $command = new VerifyCommand($repo, $runner, $state, $serializer, $output);
         $command->__invoke('appname', $file);
         unlink($file);
     }

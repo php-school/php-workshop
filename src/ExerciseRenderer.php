@@ -13,6 +13,11 @@ use MikeyMike\CliMenu\CliMenu;
 class ExerciseRenderer
 {
     /**
+     * @var string
+     */
+    private $appName;
+
+    /**
      * @var ExerciseRepository
      */
     private $exerciseRepository;
@@ -43,6 +48,7 @@ class ExerciseRenderer
     private $userStateSerializer;
 
     /**
+     * @param string $appName
      * @param ExerciseRepository $exerciseRepository
      * @param UserState $userState
      * @param UserStateSerializer $userStateSerializer
@@ -51,6 +57,7 @@ class ExerciseRenderer
      * @param Output $output
      */
     public function __construct(
+        $appName,
         ExerciseRepository $exerciseRepository,
         UserState $userState,
         UserStateSerializer $userStateSerializer,
@@ -58,6 +65,7 @@ class ExerciseRenderer
         Color $color,
         Output $output
     ) {
+        $this->appName = $appName;
         $this->exerciseRepository = $exerciseRepository;
         $this->markdownRenderer = $markdownRenderer;
         $this->color = $color;
@@ -81,25 +89,25 @@ class ExerciseRenderer
         $numExercises   = count($exercises);
         $exerciseIndex  = array_search($exercise, $exercises) + 1;
 
-        echo "\n";
-        echo $this->color->__invoke(' LEARN YOU THE PHP FOR MUCH WIN! ')->green()->bold() . "\n";
-        echo $this->color->__invoke('*********************************')->green()->bold() . "\n";
-        echo $this->color->__invoke(" " . $exercise->getName())->yellow()->bold() . "\n";
-        echo $this->color->__invoke(sprintf(" Exercise %d of %d\n\n", $exerciseIndex, $numExercises))->yellow();
+        $output  = "\n";
+        $output .= $this->color->__invoke(' LEARN YOU THE PHP FOR MUCH WIN! ')->green()->bold() . "\n";
+        $output .= $this->color->__invoke('*********************************')->green()->bold() . "\n";
+        $output .= $this->color->__invoke(" " . $exercise->getName())->yellow()->bold() . "\n";
+        $output .= $this->color->__invoke(sprintf(" Exercise %d of %d\n\n", $exerciseIndex, $numExercises))->yellow();
 
         $content = file_get_contents($exercise->getProblem());
-        $doc = $this->markdownRenderer->render($content);
-        //todo: get rid of this global
-        $doc = str_replace('{appname}', $_SERVER['argv'][0], $doc);
-        echo $doc;
+        $doc     = $this->markdownRenderer->render($content);
+        $doc     = str_replace('{appname}', $this->appName, $doc);
+        $output .= $doc;
 
-        echo "\n";
-        echo $this->helpLine('To print these instructions again, run', 'print');
-        echo $this->helpLine('To execute your program in a test environment, run', 'run program.php');
-        echo $this->helpLine('To verify your program, run', 'verify program.php');
-        echo $this->helpLine('For help run', 'help');
-        echo "\n\n";
+        $output .= "\n";
+        $output .= $this->helpLine('To print these instructions again, run', 'print');
+        $output .= $this->helpLine('To execute your program in a test environment, run', 'run program.php');
+        $output .= $this->helpLine('To verify your program, run', 'verify program.php');
+        $output .= $this->helpLine('For help run', 'help');
+        $output .= "\n\n";
 
+        $this->output->write($output);
         $menu->close();
     }
 
@@ -110,8 +118,7 @@ class ExerciseRenderer
      */
     private function helpLine($text, $cmd)
     {
-        //todo: and this one BUT ITS SO EASY
-        $cmd = $this->color->__invoke(sprintf('php %s %s', $_SERVER['argv'][0], $cmd))->yellow()->__toString();
+        $cmd = $this->color->__invoke(sprintf('php %s %s', $this->appName, $cmd))->yellow()->__toString();
         return sprintf(
             " %s %s: %s\n",
             $this->color->__invoke("»")->bold()->__toString(),

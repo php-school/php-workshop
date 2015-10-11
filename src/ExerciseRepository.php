@@ -2,6 +2,9 @@
 
 namespace PhpWorkshop\PhpWorkshop;
 
+use ArrayIterator;
+use Countable;
+use IteratorAggregate;
 use PhpWorkshop\PhpWorkshop\Exercise\ExerciseInterface;
 
 /**
@@ -9,7 +12,7 @@ use PhpWorkshop\PhpWorkshop\Exercise\ExerciseInterface;
  * @package PhpWorkshop\PhpWorkshop
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
-class ExerciseRepository
+class ExerciseRepository implements IteratorAggregate, Countable
 {
     /**
      * @var ExerciseInterface[]
@@ -66,5 +69,13 @@ class ExerciseRepository
     public function count()
     {
         return count($this->exercises);
+    }
+
+    /**
+     * @return ArrayIterator
+     */
+    public function getIterator()
+    {
+        return new ArrayIterator($this->exercises);
     }
 }

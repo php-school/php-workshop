@@ -2,7 +2,7 @@
 
 namespace PhpWorkshop\PhpWorkshop;
 
-use PhpWorkshop\PhpWorkshop\Exception\CliRouteNotExists;
+use PhpWorkshop\PhpWorkshop\Exception\CliRouteNotExistsException;
 use PhpWorkshop\PhpWorkshop\Exception\MissingArgumentException;
 use Interop\Container\ContainerInterface;
 use SebastianBergmann\Environment\Runtime;
@@ -79,7 +79,7 @@ class CommandRouter
 
         $commandName = array_shift($args);
         if (!isset($this->commands[$commandName])) {
-            throw new CliRouteNotExists($commandName);
+            throw new CliRouteNotExistsException($commandName);
         }
         $command = $this->commands[$commandName];
         if (count($args) !== count($command->getRequiredArgs())) {

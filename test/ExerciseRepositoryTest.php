@@ -74,4 +74,26 @@ class ExerciseRepositoryTest extends PHPUnit_Framework_TestCase
         $repo = new ExerciseRepository([$exercise1, $exercise2]);
         $this->assertSame(['exercise1', 'exercise2'], $repo->getAllNames());
     }
+
+    public function testCount()
+    {
+        $exercises = [
+            $this->getMock(ExerciseInterface::class),
+            $this->getMock(ExerciseInterface::class),
+        ];
+
+        $repo = new ExerciseRepository($exercises);
+        $this->assertCount(2, $repo);
+    }
+
+    public function testIterator()
+    {
+        $exercises = [
+            $this->getMock(ExerciseInterface::class),
+            $this->getMock(ExerciseInterface::class),
+        ];
+
+        $repo = new ExerciseRepository($exercises);
+        $this->assertEquals($exercises, iterator_to_array($repo));
+    }
 }
