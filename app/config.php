@@ -23,6 +23,7 @@ use PhpWorkshop\PhpWorkshop\Check\FileExistsCheck;
 use PhpWorkshop\PhpWorkshop\Check\FunctionRequirementsCheck;
 use PhpWorkshop\PhpWorkshop\Check\PhpLintCheck;
 use PhpWorkshop\PhpWorkshop\Check\StdOutCheck;
+use PhpWorkshop\PhpWorkshop\Command\CreditsCommand;
 use PhpWorkshop\PhpWorkshop\Command\HelpCommand;
 use PhpWorkshop\PhpWorkshop\Command\MenuCommand;
 use PhpWorkshop\PhpWorkshop\Command\PrintCommand;
@@ -81,7 +82,8 @@ return [
                 new CommandDefinition('run', [], MenuCommand::class),
                 new CommandDefinition('help', [], HelpCommand::class),
                 new CommandDefinition('print', [], PrintCommand::class),
-                new CommandDefinition('verify', ['program'], VerifyCommand::class)
+                new CommandDefinition('verify', ['program'], VerifyCommand::class),
+                new CommandDefinition('credits', [], CreditsCommand::class)
             ],
             'run',
             $c
@@ -131,6 +133,13 @@ return [
             $c->get(UserStateSerializer::class),
             $c->get(Output::class),
             $c->get(ResultsRenderer::class)
+        );
+    }),
+    
+    CreditsCommand::class => factory(function (ContainerInterface $c) {
+        return new CreditsCommand(
+            $c->get(Output::class),
+            $c->get(Color::class)
         );
     }),
 
@@ -204,9 +213,7 @@ ART;
             ->addAction(new SelectableItem('HELP', function () {
 
             }))
-            ->addAction(new SelectableItem('CREDITS', function () {
-
-            }))
+            ->addAction(new SelectableItem('CREDITS', $c->get(CreditsCommand::class)))
             ->addAction(new SelectableItem('EXIT', function (CliMenu $menu) {
                 $menu->close();
             }))
