@@ -33,9 +33,9 @@ class CommandDefinition
      */
     public function __construct($name, array $args, $commandCallable)
     {
-        $this->name = $name;
-        $this->args = $args;
-        $this->commandCallable = $commandCallable;
+        $this->name             = $name;
+        $this->args             = $args;
+        $this->commandCallable  = $commandCallable;
     }
 
     /**

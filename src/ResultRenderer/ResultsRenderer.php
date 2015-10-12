@@ -5,6 +5,7 @@ namespace PhpWorkshop\PhpWorkshop\ResultRenderer;
 use Colors\Color;
 use MikeyMike\CliMenu\Terminal\TerminalInterface;
 use PhpSchool\PSX\Factory;
+use PhpSchool\PSX\SyntaxHighlighter;
 use PhpWorkshop\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpWorkshop\PhpWorkshop\ExerciseRepository;
 use PhpWorkshop\PhpWorkshop\Result\ResultInterface;
@@ -19,6 +20,10 @@ use PhpWorkshop\PhpWorkshop\UserState;
  */
 class ResultsRenderer
 {
+    /**
+     * @var string
+     */
+    private $appName;
 
     /**
      * @var Color
@@ -39,17 +44,31 @@ class ResultsRenderer
      * @var ResultRendererInterface[]
      */
     private $renderers = [];
+    
+    /**
+     * @var SyntaxHighlighter
+     */
+    private $syntaxHighlighter;
 
     /**
+     * @param $appName
      * @param Color $color
      * @param TerminalInterface $terminal
      * @param ExerciseRepository $exerciseRepository
+     * @param SyntaxHighlighter $syntaxHighlighter
      */
-    public function __construct(Color $color, TerminalInterface $terminal, ExerciseRepository $exerciseRepository)
-    {
-        $this->color = $color;
-        $this->terminal = $terminal;
-        $this->exerciseRepository = $exerciseRepository;
+    public function __construct(
+        $appName,
+        Color $color,
+        TerminalInterface $terminal,
+        ExerciseRepository $exerciseRepository,
+        SyntaxHighlighter $syntaxHighlighter
+    ) {
+        $this->color                = $color;
+        $this->terminal             = $terminal;
+        $this->exerciseRepository   = $exerciseRepository;
+        $this->syntaxHighlighter    = $syntaxHighlighter;
+        $this->appName = $appName;
     }
 
     /**
@@ -64,6 +83,7 @@ class ResultsRenderer
     /**
      * @param ResultAggregator $results
      * @param ExerciseInterface $exercise
+     * @param UserState $userState
      * @return string
      */
     public function render(ResultAggregator $results, ExerciseInterface $exercise, UserState $userState)
@@ -141,9 +161,8 @@ class ResultsRenderer
         $lines[] = "Here's the official solution in case you want to compare notes:";
         $lines[] = $this->color->__invoke(str_repeat("─", $this->terminal->getWidth()))->fg('yellow')->__toString();
 
-        $syntaxHighlighter = (new Factory)->__invoke();
-        $code = explode("\n", $syntaxHighlighter->highlight(file_get_contents($exercise->getSolution())));
-        $lines = array_merge($lines, $code);
+        $code   = explode("\n", $this->syntaxHighlighter->highlight(file_get_contents($exercise->getSolution())));
+        $lines  = array_merge($lines, $code);
         $lines[] = $this->color->__invoke(str_repeat("─", $this->terminal->getWidth()))->fg('yellow')->__toString();
 
         $completedCount = count($userState->getCompletedExercises());
@@ -151,7 +170,7 @@ class ResultsRenderer
 
 
         $lines[] = sprintf('You have %d challenges left.', $numExercises - $completedCount);
-        $lines[] = sprintf('Type "%s" to show the menu.', $_SERVER['argv'][0]);
+        $lines[] = sprintf('Type "%s" to show the menu.', $this->appName);
         $lines[] = '';
         return implode("\n", $lines) . "\n";
     }

@@ -61,7 +61,7 @@ class UserStateSerializer
 
         $json = @json_decode($data, true);
 
-        if ($json === null && json_last_error() !== JSON_ERROR_NONE) {
+        if (null === $json && JSON_ERROR_NONE !== json_last_error()) {
             $this->wipeFile();
             return new UserState();
 

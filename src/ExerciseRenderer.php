@@ -65,13 +65,13 @@ class ExerciseRenderer
         Color $color,
         Output $output
     ) {
-        $this->appName = $appName;
-        $this->exerciseRepository = $exerciseRepository;
-        $this->markdownRenderer = $markdownRenderer;
-        $this->color = $color;
-        $this->output = $output;
-        $this->userState = $userState;
-        $this->userStateSerializer = $userStateSerializer;
+        $this->appName              = $appName;
+        $this->exerciseRepository   = $exerciseRepository;
+        $this->markdownRenderer     = $markdownRenderer;
+        $this->color                = $color;
+        $this->output               = $output;
+        $this->userState            = $userState;
+        $this->userStateSerializer  = $userStateSerializer;
     }
 
     /**

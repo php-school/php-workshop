@@ -18,6 +18,7 @@ use MikeyMike\CliMenu\Terminal\TerminalFactory;
 use MikeyMike\CliMenu\Terminal\TerminalInterface;
 use PhpParser\Parser;
 use PhpParser\ParserFactory;
+use PhpSchool\PSX\SyntaxHighlighter;
 use PhpWorkshop\PhpWorkshop\Check\FileExistsCheck;
 use PhpWorkshop\PhpWorkshop\Check\FunctionRequirementsCheck;
 use PhpWorkshop\PhpWorkshop\Check\PhpLintCheck;
@@ -41,6 +42,15 @@ use PhpWorkshop\PhpWorkshop\ExerciseRunner;
 use PhpWorkshop\PhpWorkshop\Factory\MarkdownCliRendererFactory;
 use PhpWorkshop\PhpWorkshop\MarkdownRenderer;
 use PhpWorkshop\PhpWorkshop\Output;
+use PhpWorkshop\PhpWorkshop\Result\FunctionRequirementsFailure;
+use PhpWorkshop\PhpWorkshop\Result\StdOutFailure;
+use PhpWorkshop\PhpWorkshop\Result\Success;
+use PhpWorkshop\PhpWorkshop\Result\Failure;
+use PhpWorkshop\PhpWorkshop\ResultRenderer\FailureRenderer;
+use PhpWorkshop\PhpWorkshop\ResultRenderer\FunctionRequirementsFailureRenderer;
+use PhpWorkshop\PhpWorkshop\ResultRenderer\ResultsRenderer;
+use PhpWorkshop\PhpWorkshop\ResultRenderer\StdOutFailureRenderer;
+use PhpWorkshop\PhpWorkshop\ResultRenderer\SuccessRenderer;
 use PhpWorkshop\PhpWorkshop\UserState;
 use PhpWorkshop\PhpWorkshop\UserStateSerializer;
 use Symfony\Component\Filesystem\Filesystem;
@@ -119,7 +129,8 @@ return [
             $c->get(ExerciseRunner::class),
             $c->get(UserState::class),
             $c->get(UserStateSerializer::class),
-            $c->get(Output::class)
+            $c->get(Output::class),
+            $c->get(ResultsRenderer::class)
         );
     }),
 
@@ -213,6 +224,7 @@ ART;
     }),
     ExerciseRenderer::class => factory(function (ContainerInterface $c) {
         return new ExerciseRenderer(
+            $c->get('appName'),
             $c->get(ExerciseRepository::class),
             $c->get(UserState::class),
             $c->get(UserStateSerializer::class),
@@ -231,5 +243,23 @@ ART;
     }),
     UserState::class => factory(function (ContainerInterface $c) {
         return $c->get(UserStateSerializer::class)->deSerialize();
+    }),
+    SyntaxHighlighter::class => factory(function (ContainerInterface $c) {
+        return (new \PhpSchool\PSX\Factory)->__invoke();
+    }),
+    ResultsRenderer::class => factory(function (ContainerInterface $c) {
+        $renderer = new ResultsRenderer(
+            $c->get('appName'),
+            $c->get(Color::class),
+            $c->get(TerminalInterface::class),
+            $c->get(ExerciseRepository::class),
+            $c->get(SyntaxHighlighter::class)
+        );
+        
+        $renderer->registerRenderer(StdOutFailure::class, new StdOutFailureRenderer);
+        $renderer->registerRenderer(FunctionRequirementsFailure::class, new FunctionRequirementsFailureRenderer);
+        $renderer->registerRenderer(Success::class, new SuccessRenderer);
+        $renderer->registerRenderer(Failure::class, new FailureRenderer);
+        return $renderer;
     }),
 ];

@@ -46,10 +46,10 @@ class PrintCommand
         MarkdownRenderer $markdownRenderer,
         Output $output
     ) {
-        $this->markdownRenderer = $markdownRenderer;
-        $this->output = $output;
-        $this->userState = $userState;
-        $this->exerciseRepository = $exerciseRepository;
+        $this->markdownRenderer     = $markdownRenderer;
+        $this->output               = $output;
+        $this->userState            = $userState;
+        $this->exerciseRepository   = $exerciseRepository;
     }
 
     /**

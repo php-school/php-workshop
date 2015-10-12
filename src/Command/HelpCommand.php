@@ -6,7 +6,6 @@ namespace PhpWorkshop\PhpWorkshop\Command;
  * Class HelpCommand
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
-
 class HelpCommand
 {
     /**

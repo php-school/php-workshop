@@ -52,6 +52,11 @@ class VerifyCommand
      * @var UserStateSerializer
      */
     private $userStateSerializer;
+    
+    /**
+     * @var ResultsRenderer
+     */
+    private $resultsRenderer;
 
     /**
      * @param ExerciseRepository $exerciseRepository
@@ -59,19 +64,22 @@ class VerifyCommand
      * @param UserState $userState
      * @param UserStateSerializer $userStateSerializer
      * @param Output $output
+     * @param ResultsRenderer $resultsRenderer
      */
     public function __construct(
         ExerciseRepository $exerciseRepository,
         ExerciseRunner $runner,
         UserState $userState,
         UserStateSerializer $userStateSerializer,
-        Output $output
+        Output $output,
+        ResultsRenderer $resultsRenderer
     ) {
         $this->runner               = $runner;
         $this->output               = $output;
         $this->exerciseRepository   = $exerciseRepository;
         $this->userState            = $userState;
         $this->userStateSerializer  = $userStateSerializer;
+        $this->resultsRenderer          = $resultsRenderer;
     }
 
     /**
@@ -101,21 +109,8 @@ class VerifyCommand
             $this->userState->addCompletedExercise($exercise->getName());
             $this->userStateSerializer->serialize($this->userState);
         }
-
-        $color = new Color;
-        $color->setForceStyle(true);
-        $terminal = new UnixTerminal;
-        $width = $terminal->getWidth();
-
-        echo $color(str_repeat("─", $width))->yellow() . "\n";
-
-        $resultRenderer = new ResultsRenderer($color, (new TerminalFactory)->fromSystem(), $this->exerciseRepository);
-        $resultRenderer->registerRenderer(StdOutFailure::class, new StdOutFailureRenderer($color));
-        $resultRenderer->registerRenderer(FunctionRequirementsFailure::class, new FunctionRequirementsFailureRenderer($color));
-        $resultRenderer->registerRenderer(Success::class, new SuccessRenderer);
-        $resultRenderer->registerRenderer(Failure::class, new FailureRenderer);
-
-        echo $resultRenderer->render($results, $exercise, $this->userState);
+        
+        $this->output->write($this->resultsRenderer->render($results, $exercise, $this->userState));
         return $results->isSuccessful() ? 0 : 1;
     }
 }

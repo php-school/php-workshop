@@ -71,7 +71,6 @@ class FunctionRequirementsCheck implements CheckInterface
         if ($visitor->hasUsedBannedFunctions()) {
             $bannedFunctions = array_map(function (FuncCall $node) {
                 return ['function' => $node->name->__toString(), 'line' => $node->getLine()];
-                //return sprintf('Function: "%s" on line: "%s"', $node->name->__toString(), $node->getLine());
             }, $visitor->getBannedUsages());
         }
 

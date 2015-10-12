@@ -10,11 +10,12 @@ namespace PhpWorkshop\PhpWorkshop\Result;
 class StdOutFailure extends Failure
 {
     /**
-     * @var
+     * @var string
      */
     private $expectedOutput;
+    
     /**
-     * @var
+     * @var string
      */
     private $actualOutput;
 
