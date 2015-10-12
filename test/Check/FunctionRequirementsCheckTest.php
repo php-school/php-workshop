@@ -11,6 +11,7 @@ use PhpWorkshop\PhpWorkshop\Check\FunctionRequirementsCheck;
 use PhpWorkshop\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpWorkshop\PhpWorkshop\ExerciseCheck\FunctionRequirementsExerciseCheck;
 use PhpWorkshop\PhpWorkshop\Result\Failure;
+use PhpWorkshop\PhpWorkshop\Result\FunctionRequirementsFailure;
 use PhpWorkshop\PhpWorkshop\Result\Success;
 
 /**
@@ -89,10 +90,12 @@ class FunctionRequirementsCheckTest extends PHPUnit_Framework_TestCase
             $this->exercise,
             __DIR__ . '/../res/function-requirements/fail-banned-function.php'
         );
-        $this->assertInstanceOf(Failure::class, $failure);
+        $this->assertInstanceOf(FunctionRequirementsFailure::class, $failure);
 
-        $message = 'Some functions were used which should not be used in this exercise: Function: "file" on line: "3"';
+        $message = 'Function Requirements were not met';
         $this->assertEquals($message, $failure->getReason());
+        $this->assertEquals([['function' => 'file', 'line' => 3]], $failure->getBannedFunctions());
+        $this->assertEquals([], $failure->getMissingFunctions());
     }
 
     public function testFailureIsReturnedIfNotAllRequiredFunctionsHaveBeenUsed()
@@ -113,9 +116,10 @@ class FunctionRequirementsCheckTest extends PHPUnit_Framework_TestCase
         );
         $this->assertInstanceOf(Failure::class, $failure);
 
-        $message  = 'Some function requirements were missing. You should use the functions: ';
-        $message .= '"file_get_contents", "implode"';
+        $message  = 'Function Requirements were not met';
         $this->assertEquals($message, $failure->getReason());
+        $this->assertEquals(['file_get_contents', 'implode'], $failure->getMissingFunctions());
+        $this->assertEquals([], $failure->getBannedFunctions());
     }
 
     public function testSuccess()

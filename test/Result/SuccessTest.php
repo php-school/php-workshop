@@ -15,7 +15,8 @@ class SuccessTest extends PHPUnit_Framework_TestCase
 {
     public function testSuccess()
     {
-        $success = new Success;
+        $success = new Success('Some Check');
         $this->assertInstanceOf(ResultInterface::class, $success);
+        $this->assertEquals('Some Check', $success->getCheckName());
     }
 }

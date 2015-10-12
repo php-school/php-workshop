@@ -15,8 +15,9 @@ class FailureTest extends PHPUnit_Framework_TestCase
 {
     public function testSuccess()
     {
-        $failure = new Failure('Something went wrong yo');
+        $failure = new Failure('Some Check', 'Something went wrong yo');
         $this->assertInstanceOf(ResultInterface::class, $failure);
         $this->assertEquals('Something went wrong yo', $failure->getReason());
+        $this->assertEquals('Some Check', $failure->getCheckName());
     }
 }

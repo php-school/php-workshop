@@ -19,7 +19,11 @@ class BabyStepsTest extends PHPUnit_Framework_TestCase
         $this->assertEquals('Baby Steps', $e->getName());
         $this->assertEquals('Simple Addition', $e->getDescription());
 
-        $args = $e->getArgs();
+        //sometime we don't get any args as number of args is random
+        //we need some args for code-coverage, so just try again
+        do {
+            $args = $e->getArgs();
+        } while (empty($args));
 
         foreach ($args as $arg) {
             $this->assertInternalType('int', $arg);

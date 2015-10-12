@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "8632ec64117edba20d3c649a7a0aacef",
-    "content-hash": "0a505741ad84817b98a639bf30645da9",
+    "hash": "671099964f2f96ded37097e79a8be977",
+    "content-hash": "ca4a4c124868744a5493e9217d2ce721",
     "packages": [
         {
             "name": "aydin-hassan/cli-md-renderer",
@@ -13,12 +13,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/AydinHassan/cli-md-renderer.git",
-                "reference": "06e7ee384319335db0fc7d64decd2b82f90792dd"
+                "reference": "e0aedd00e6e82e5fe7a7dbcc9a499fa6af566d5f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/AydinHassan/cli-md-renderer/zipball/06e7ee384319335db0fc7d64decd2b82f90792dd",
-                "reference": "06e7ee384319335db0fc7d64decd2b82f90792dd",
+                "url": "https://api.github.com/repos/AydinHassan/cli-md-renderer/zipball/e0aedd00e6e82e5fe7a7dbcc9a499fa6af566d5f",
+                "reference": "e0aedd00e6e82e5fe7a7dbcc9a499fa6af566d5f",
                 "shasum": ""
             },
             "require": {
@@ -48,7 +48,7 @@
                 }
             ],
             "description": "A CLI Markdown Render for league/commonmark compatibile AST",
-            "time": "2015-10-03 18:59:40"
+            "time": "2015-10-06 21:56:12"
         },
         {
             "name": "container-interop/container-interop",
@@ -181,57 +181,6 @@
             "time": "2014-12-23 01:23:37"
         },
         {
-            "name": "league/climate",
-            "version": "3.2.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/thephpleague/climate.git",
-                "reference": "834cb907c89eb31e2171b68ee25c0ed26c8f34f4"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/thephpleague/climate/zipball/834cb907c89eb31e2171b68ee25c0ed26c8f34f4",
-                "reference": "834cb907c89eb31e2171b68ee25c0ed26c8f34f4",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=5.4.0",
-                "seld/cli-prompt": "~1.0"
-            },
-            "require-dev": {
-                "mikey179/vfsstream": "~1.4",
-                "mockery/mockery": "dev-master",
-                "phpunit/phpunit": "~4.6"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "League\\CLImate\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Joe Tannenbaum",
-                    "email": "hey@joe.codes",
-                    "homepage": "http://joe.codes/",
-                    "role": "Developer"
-                }
-            ],
-            "description": "PHP's best friend for the terminal. CLImate allows you to easily output colored text, special formats, and more.",
-            "keywords": [
-                "cli",
-                "colors",
-                "command",
-                "php",
-                "terminal"
-            ],
-            "time": "2015-08-13 16:50:51"
-        },
-        {
             "name": "league/commonmark",
             "version": "0.11.3",
             "source": {
@@ -303,12 +252,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/mikeymike/cli-menu.git",
-                "reference": "1e53948769d2751e0e65b3e1e29037a19fc62191"
+                "reference": "631c9dfceb4e381536cb7bdd504b0881569973f4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/mikeymike/cli-menu/zipball/1e53948769d2751e0e65b3e1e29037a19fc62191",
-                "reference": "1e53948769d2751e0e65b3e1e29037a19fc62191",
+                "url": "https://api.github.com/repos/mikeymike/cli-menu/zipball/631c9dfceb4e381536cb7bdd504b0881569973f4",
+                "reference": "631c9dfceb4e381536cb7bdd504b0881569973f4",
                 "shasum": ""
             },
             "require-dev": {
@@ -340,7 +289,7 @@
                 "source": "https://github.com/mikeymike/cli-menu/tree/master",
                 "issues": "https://github.com/mikeymike/cli-menu/issues"
             },
-            "time": "2015-10-02 20:47:59"
+            "time": "2015-10-09 20:40:50"
         },
         {
             "name": "nikic/php-parser",
@@ -536,12 +485,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/php-school/psx.git",
-                "reference": "0de5481cefc641815c4a3867abffbdeb353a6226"
+                "reference": "cfb597ac481eb8ed5dcf8c915269c1ea9d3117d5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/php-school/psx/zipball/0de5481cefc641815c4a3867abffbdeb353a6226",
-                "reference": "0de5481cefc641815c4a3867abffbdeb353a6226",
+                "url": "https://api.github.com/repos/php-school/psx/zipball/cfb597ac481eb8ed5dcf8c915269c1ea9d3117d5",
+                "reference": "cfb597ac481eb8ed5dcf8c915269c1ea9d3117d5",
                 "shasum": ""
             },
             "require": {
@@ -570,55 +519,7 @@
                 }
             ],
             "description": "PHP CLI Syntax Highlighter",
-            "time": "2015-10-03 15:10:43"
-        },
-        {
-            "name": "seld/cli-prompt",
-            "version": "1.0.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/Seldaek/cli-prompt.git",
-                "reference": "fe114c7a6ac5cb0ce76932ae4017024d9842a49c"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/Seldaek/cli-prompt/zipball/fe114c7a6ac5cb0ce76932ae4017024d9842a49c",
-                "reference": "fe114c7a6ac5cb0ce76932ae4017024d9842a49c",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=5.3"
-            },
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "1.x-dev"
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Seld\\CliPrompt\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Jordi Boggiano",
-                    "email": "j.boggiano@seld.be"
-                }
-            ],
-            "description": "Allows you to prompt for user input on the command line, and optionally hide the characters they type",
-            "keywords": [
-                "cli",
-                "console",
-                "hidden",
-                "input",
-                "prompt"
-            ],
-            "time": "2015-04-30 20:24:49"
+            "time": "2015-10-03 20:59:21"
         },
         {
             "name": "symfony/filesystem",
@@ -885,16 +786,16 @@
         },
         {
             "name": "phpunit/php-code-coverage",
-            "version": "2.2.3",
+            "version": "2.2.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/php-code-coverage.git",
-                "reference": "ef1ca6835468857944d5c3b48fa503d5554cff2f"
+                "reference": "eabf68b476ac7d0f73793aada060f1c1a9bf8979"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/php-code-coverage/zipball/ef1ca6835468857944d5c3b48fa503d5554cff2f",
-                "reference": "ef1ca6835468857944d5c3b48fa503d5554cff2f",
+                "url": "https://api.github.com/repos/sebastianbergmann/php-code-coverage/zipball/eabf68b476ac7d0f73793aada060f1c1a9bf8979",
+                "reference": "eabf68b476ac7d0f73793aada060f1c1a9bf8979",
                 "shasum": ""
             },
             "require": {
@@ -943,7 +844,7 @@
                 "testing",
                 "xunit"
             ],
-            "time": "2015-09-14 06:51:16"
+            "time": "2015-10-06 15:47:00"
         },
         {
             "name": "phpunit/php-file-iterator",
@@ -1125,16 +1026,16 @@
         },
         {
             "name": "phpunit/phpunit",
-            "version": "4.8.10",
+            "version": "4.8.11",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit.git",
-                "reference": "463163747474815c5ccd4ae12b5b355ec12158e8"
+                "reference": "bdd199472410fd7e32751f9c814c7e06f2c21bd5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/463163747474815c5ccd4ae12b5b355ec12158e8",
-                "reference": "463163747474815c5ccd4ae12b5b355ec12158e8",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/bdd199472410fd7e32751f9c814c7e06f2c21bd5",
+                "reference": "bdd199472410fd7e32751f9c814c7e06f2c21bd5",
                 "shasum": ""
             },
             "require": {
@@ -1193,7 +1094,7 @@
                 "testing",
                 "xunit"
             ],
-            "time": "2015-10-01 09:14:30"
+            "time": "2015-10-07 10:39:46"
         },
         {
             "name": "phpunit/phpunit-mock-objects",
@@ -1485,16 +1386,16 @@
         },
         {
             "name": "sebastian/global-state",
-            "version": "1.0.0",
+            "version": "1.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/global-state.git",
-                "reference": "c7428acdb62ece0a45e6306f1ae85e1c05b09c01"
+                "reference": "23af31f402993cfd94e99cbc4b782e9a78eb0e97"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/global-state/zipball/c7428acdb62ece0a45e6306f1ae85e1c05b09c01",
-                "reference": "c7428acdb62ece0a45e6306f1ae85e1c05b09c01",
+                "url": "https://api.github.com/repos/sebastianbergmann/global-state/zipball/23af31f402993cfd94e99cbc4b782e9a78eb0e97",
+                "reference": "23af31f402993cfd94e99cbc4b782e9a78eb0e97",
                 "shasum": ""
             },
             "require": {
@@ -1532,7 +1433,7 @@
             "keywords": [
                 "global state"
             ],
-            "time": "2014-10-06 09:23:50"
+            "time": "2015-06-21 15:11:22"
         },
         {
             "name": "sebastian/recursion-context",

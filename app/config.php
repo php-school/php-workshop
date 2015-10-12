@@ -1,47 +1,34 @@
 <?php
 
-use AydinHassan\CliMdRenderer\CliRenderer;
-use AydinHassan\CliMdRenderer\Highlighter\PhpHighlighter;
-use AydinHassan\CliMdRenderer\InlineRenderer\CodeRenderer;
-use AydinHassan\CliMdRenderer\InlineRenderer\EmphasisRenderer;
-use AydinHassan\CliMdRenderer\InlineRenderer\LinkRenderer;
-use AydinHassan\CliMdRenderer\InlineRenderer\NewlineRenderer;
-use AydinHassan\CliMdRenderer\InlineRenderer\StrongRenderer;
-use AydinHassan\CliMdRenderer\InlineRenderer\TextRenderer;
-use AydinHassan\CliMdRenderer\Renderer\DocumentRenderer;
-use AydinHassan\CliMdRenderer\Renderer\FencedCodeRenderer;
-use AydinHassan\CliMdRenderer\Renderer\HeaderRenderer;
-use AydinHassan\CliMdRenderer\Renderer\HorizontalRuleRenderer;
-use AydinHassan\CliMdRenderer\Renderer\ParagraphRenderer;
 use Colors\Color;
 use function DI\object;
 use function DI\factory;
 use Faker\Factory as FakerFactory;
 use Interop\Container\ContainerInterface;
-use League\CommonMark\Block\Element\Document;
-use League\CommonMark\Block\Element\FencedCode;
-use League\CommonMark\Block\Element\Header;
-use League\CommonMark\Block\Element\HorizontalRule;
-use League\CommonMark\Block\Element\Paragraph;
 use League\CommonMark\DocParser;
-use League\CommonMark\Inline\Element\Code;
-use League\CommonMark\Inline\Element\Emphasis;
-use League\CommonMark\Inline\Element\Link;
-use League\CommonMark\Inline\Element\Newline;
-use League\CommonMark\Inline\Element\Strong;
-use League\CommonMark\Inline\Element\Text;
+use League\CommonMark\Environment;
 use MikeyMike\CliMenu\CliMenu;
+use MikeyMike\CliMenu\CliMenuBuilder;
+use MikeyMike\CliMenu\MenuItem\AsciiArtItem;
 use MikeyMike\CliMenu\MenuItem\MenuItem;
+use MikeyMike\CliMenu\MenuItem\SelectableItem;
+use MikeyMike\CliMenu\MenuItem\StaticItem;
+use MikeyMike\CliMenu\MenuStyle;
 use MikeyMike\CliMenu\Terminal\TerminalFactory;
 use MikeyMike\CliMenu\Terminal\TerminalInterface;
 use PhpParser\Parser;
 use PhpParser\ParserFactory;
-use PhpSchool\PSX\Factory as PSXFactory;
-use PhpWorkshop\PhpWorkshop\Check\CheckInterface;
+use PhpSchool\PSX\SyntaxHighlighter;
 use PhpWorkshop\PhpWorkshop\Check\FileExistsCheck;
 use PhpWorkshop\PhpWorkshop\Check\FunctionRequirementsCheck;
 use PhpWorkshop\PhpWorkshop\Check\PhpLintCheck;
 use PhpWorkshop\PhpWorkshop\Check\StdOutCheck;
+use PhpWorkshop\PhpWorkshop\Command\HelpCommand;
+use PhpWorkshop\PhpWorkshop\Command\MenuCommand;
+use PhpWorkshop\PhpWorkshop\Command\PrintCommand;
+use PhpWorkshop\PhpWorkshop\Command\VerifyCommand;
+use PhpWorkshop\PhpWorkshop\CommandDefinition;
+use PhpWorkshop\PhpWorkshop\CommandRouter;
 use PhpWorkshop\PhpWorkshop\Exercise\BabySteps;
 use PhpWorkshop\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpWorkshop\PhpWorkshop\Exercise\FilteredLs;
@@ -49,10 +36,27 @@ use PhpWorkshop\PhpWorkshop\Exercise\HelloWorld;
 use PhpWorkshop\PhpWorkshop\Exercise\MyFirstIo;
 use PhpWorkshop\PhpWorkshop\ExerciseCheck\FunctionRequirementsExerciseCheck;
 use PhpWorkshop\PhpWorkshop\ExerciseCheck\StdOutExerciseCheck;
+use PhpWorkshop\PhpWorkshop\ExerciseRenderer;
+use PhpWorkshop\PhpWorkshop\ExerciseRepository;
 use PhpWorkshop\PhpWorkshop\ExerciseRunner;
+use PhpWorkshop\PhpWorkshop\Factory\MarkdownCliRendererFactory;
+use PhpWorkshop\PhpWorkshop\MarkdownRenderer;
+use PhpWorkshop\PhpWorkshop\Output;
+use PhpWorkshop\PhpWorkshop\Result\FunctionRequirementsFailure;
+use PhpWorkshop\PhpWorkshop\Result\StdOutFailure;
+use PhpWorkshop\PhpWorkshop\Result\Success;
+use PhpWorkshop\PhpWorkshop\Result\Failure;
+use PhpWorkshop\PhpWorkshop\ResultRenderer\FailureRenderer;
+use PhpWorkshop\PhpWorkshop\ResultRenderer\FunctionRequirementsFailureRenderer;
+use PhpWorkshop\PhpWorkshop\ResultRenderer\ResultsRenderer;
+use PhpWorkshop\PhpWorkshop\ResultRenderer\StdOutFailureRenderer;
+use PhpWorkshop\PhpWorkshop\ResultRenderer\SuccessRenderer;
+use PhpWorkshop\PhpWorkshop\UserState;
+use PhpWorkshop\PhpWorkshop\UserStateSerializer;
 use Symfony\Component\Filesystem\Filesystem;
 
 return [
+    'appName' => $_SERVER['argv'][0],
     ExerciseRunner::class => factory(function (ContainerInterface $c) {
         $exerciseRunner = new ExerciseRunner;
 
@@ -72,10 +76,62 @@ return [
         ];
     }),
     'application' => factory(function (ContainerInterface $c) {
-        //TODO this is where we would create some CLI Instance
-        //which displays exercies
-        //and parses args
-        return $c->get(ExerciseRunner::class);
+        return new CommandRouter(
+            [
+                new CommandDefinition('run', [], MenuCommand::class),
+                new CommandDefinition('help', [], HelpCommand::class),
+                new CommandDefinition('print', [], PrintCommand::class),
+                new CommandDefinition('verify', ['program'], VerifyCommand::class)
+            ],
+            'run',
+            $c
+        );
+    }),
+
+    Color::class => factory(function (ContainerInterface $c) {
+        $colors = new Color;
+        $colors->setForceStyle(true);
+        return $colors;
+    }),
+    Output::class => factory(function (ContainerInterface $c) {
+        return new Output($c->get(Color::class));
+    }),
+
+    ExerciseRepository::class => factory(function (ContainerInterface $c) {
+        return new ExerciseRepository(
+            array_map(function ($exerciseClass) use ($c) {
+                return $c->get($exerciseClass);
+            }, $c->get('exercises'))
+        );
+    }),
+
+    //commands
+    MenuCommand::class => factory(function (ContainerInterface $c) {
+        return new MenuCommand($c->get('menu'));
+    }),
+
+    HelpCommand::class => factory(function (ContainerInterface $c) {
+        return new HelpCommand;
+    }),
+
+    PrintCommand::class => factory(function (ContainerInterface $c) {
+        return new PrintCommand(
+            $c->get(ExerciseRepository::class),
+            $c->get(UserState::class),
+            $c->get(MarkdownRenderer::class),
+            $c->get(Output::class)
+        );
+    }),
+
+    VerifyCommand::class => factory(function (ContainerInterface $c) {
+        return new VerifyCommand(
+            $c->get(ExerciseRepository::class),
+            $c->get(ExerciseRunner::class),
+            $c->get(UserState::class),
+            $c->get(UserStateSerializer::class),
+            $c->get(Output::class),
+            $c->get(ResultsRenderer::class)
+        );
     }),
 
     //checks
@@ -86,11 +142,10 @@ return [
         return new FunctionRequirementsCheck($c->get(Parser::class));
     }),
 
-
     'exercises' => factory(function (ContainerInterface $c) {
         return [
-            BabySteps::class,
             HelloWorld::class,
+            BabySteps::class,
             MyFirstIo::class,
             FilteredLs::class,
         ];
@@ -114,52 +169,97 @@ return [
     }),
 
     TerminalInterface::class => factory([TerminalFactory::class, 'fromSystem']),
-    CliMenu::class => factory(function (ContainerInterface $c) {
-        return new CliMenu(
-            'Basic CLI Menu',
-            array(
-                new MenuItem('First Item'),
-                new MenuItem('Second Item'),
-                new MenuItem('Third Item')
-            ),
-            function (CliMenu $menu) {
-                echo sprintf(
-                    "\n%s\n",
-                    $menu->getSelectedItem()->getText()
-                );
-            }
+    'menu' => factory(function (ContainerInterface $c) {
+
+        $userStateSerializer    = $c->get(UserStateSerializer::class);
+        $exerciseRepository     = $c->get(ExerciseRepository::class);
+
+        $subMenu = (new CliMenuBuilder('PHP School Workshop > Options'))
+            //add language menu here
+            ->addItem(
+                new SelectableItem(
+                    'Reset workshop progress',
+                    function (CliMenu $menu) use ($userStateSerializer) {
+                        $userStateSerializer->serialize(new UserState);
+                        echo "Status Reset!";
+                    }
+                )
+            )
+            ->build();
+
+        $art = <<<ART
+  _ __ _
+ / |..| \
+ \/ || \/
+  |_''_|
+
+PHP SCHOOL
+ART;
+        $menuBuilder = (new CliMenuBuilder('PHP School Workshop'))
+            ->addItem(new AsciiArtItem($art, AsciiArtItem::POSITION_CENTER))
+            ->addItem(new StaticItem('Exercises'))
+            ->addItem(new StaticItem('---------'))
+            ->addSubMenuAsAction('OPTIONS', $subMenu)
+            ->setItemCallback($c->get(ExerciseRenderer::class))
+            ->addAction(new SelectableItem('HELP', function () {
+
+            }))
+            ->addAction(new SelectableItem('CREDITS', function () {
+
+            }))
+            ->addAction(new SelectableItem('EXIT', function (CliMenu $menu) {
+                $menu->close();
+            }))
+            ->setMenuStyle(new MenuStyle('black', 'green', 70, 2, 2, ' ', '↳', '[COMPLETED]', true));
+
+        $userState = $userStateSerializer->deSerialize();
+        foreach ($exerciseRepository as $exercise) {
+            $menuBuilder->addItem(new MenuItem(
+                $exercise->getName(),
+                $userState->completedExercise($exercise->getName())
+            ));
+        }
+
+        return $menuBuilder->build();
+    }),
+    ExerciseRenderer::class => factory(function (ContainerInterface $c) {
+        return new ExerciseRenderer(
+            $c->get('appName'),
+            $c->get(ExerciseRepository::class),
+            $c->get(UserState::class),
+            $c->get(UserStateSerializer::class),
+            $c->get(MarkdownRenderer::class),
+            $c->get(Color::class),
+            $c->get(Output::class)
         );
     }),
-    DocParser::class => factory(function (ContainerInterface $c) {
-        return new DocParser(\League\CommonMark\Environment::createCommonMarkEnvironment());
+    MarkdownRenderer::class => factory(function (ContainerInterface $c) {
+        $docParser =   new DocParser(Environment::createCommonMarkEnvironment());
+        $cliRenderer = (new MarkdownCliRendererFactory)->__invoke($c);
+        return new MarkdownRenderer($docParser, $cliRenderer);
     }),
-    CliRenderer::class => factory(function (ContainerInterface $c) {
-        $terminal = $c->get(TerminalInterface::class);
-
-        $highlighterFactory = new PSXFactory;
-        $codeRender = new FencedCodeRenderer();
-        $codeRender->addSyntaxHighlighter('php', new PhpHighlighter($highlighterFactory->__invoke()));
-
-        $blockRenderers = [
-            Document::class         => new DocumentRenderer,
-            Header::class           => new HeaderRenderer,
-            HorizontalRule::class   => new HorizontalRuleRenderer($terminal->getWidth()),
-            Paragraph::class        => new ParagraphRenderer,
-            FencedCode::class       => $codeRender,
-        ];
-
-        $inlineBlockRenderers = [
-            Text::class             => new TextRenderer,
-            Code::class             => new CodeRenderer,
-            Emphasis::class         => new EmphasisRenderer,
-            Strong::class           => new StrongRenderer,
-            Newline::class          => new NewlineRenderer,
-            Link::class             => new LinkRenderer,
-        ];
-
-        $colors = new Color;
-        $colors->setForceStyle(true);
-
-        return new CliRenderer($blockRenderers, $inlineBlockRenderers, $colors);
+    UserStateSerializer::class => factory(function () {
+        return new UserStateSerializer(sprintf('%s/.phpschool.json', getenv('HOME')));
+    }),
+    UserState::class => factory(function (ContainerInterface $c) {
+        return $c->get(UserStateSerializer::class)->deSerialize();
+    }),
+    SyntaxHighlighter::class => factory(function (ContainerInterface $c) {
+        return (new \PhpSchool\PSX\Factory)->__invoke();
+    }),
+    ResultsRenderer::class => factory(function (ContainerInterface $c) {
+        $renderer = new ResultsRenderer(
+            $c->get('appName'),
+            $c->get(Color::class),
+            $c->get(TerminalInterface::class),
+            $c->get(ExerciseRepository::class),
+            $c->get(SyntaxHighlighter::class)
+        );
+        
+        $renderer->registerRenderer(StdOutFailure::class, new StdOutFailureRenderer);
+        $renderer->registerRenderer(FunctionRequirementsFailure::class, new FunctionRequirementsFailureRenderer);
+        $renderer->registerRenderer(Success::class, new SuccessRenderer);
+        $renderer->registerRenderer(Failure::class, new FailureRenderer);
+        return $renderer;
     }),
 ];

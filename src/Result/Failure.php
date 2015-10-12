@@ -9,17 +9,25 @@ namespace PhpWorkshop\PhpWorkshop\Result;
  */
 class Failure implements ResultInterface
 {
+
+    /**
+     * @var string
+     */
+    private $name;
+
     /**
      * @var string
      */
     private $reason;
 
     /**
+     * @param string $name
      * @param string $reason
      */
-    public function __construct($reason)
+    public function __construct($name, $reason)
     {
         $this->reason = $reason;
+        $this->name = $name;
     }
 
     /**
@@ -28,5 +36,13 @@ class Failure implements ResultInterface
     public function getReason()
     {
         return $this->reason;
+    }
+
+    /**
+     * @return string
+     */
+    public function getCheckName()
+    {
+        return $this->name;
     }
 }
