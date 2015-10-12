@@ -15,6 +15,9 @@ class MissingArgumentExceptionTest extends PHPUnit_Framework_TestCase
     public function testException()
     {
         $e = new MissingArgumentException('some-route', ['arg1', 'arg2']);
-        $this->assertEquals('Command: "some-route" is missing the following arguments: "arg1", "arg2"', $e->getMessage());
+        $this->assertEquals(
+            'Command: "some-route" is missing the following arguments: "arg1", "arg2"',
+            $e->getMessage()
+        );
     }
 }

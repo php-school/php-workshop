@@ -37,4 +37,18 @@ class ResultAggregatorTest extends PHPUnit_Framework_TestCase
         $expected = ['nope','so much nope'];
         $this->assertEquals($expected, $resultAggregator->getErrors());
     }
+
+    public function testIterator()
+    {
+        $results = [
+            new Success('Some Check'),
+            new Failure('Some Check', 'nope')
+        ];
+        
+        $resultAggregator = new ResultAggregator;
+        $resultAggregator->add($results[0]);
+        $resultAggregator->add($results[1]);
+        
+        $this->assertEquals($results, iterator_to_array($resultAggregator));
+    }
 }
