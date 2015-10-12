@@ -4,7 +4,10 @@ clone_folder: C:\projects\php-workshop
 branches:
   except:
     - gh-pages
-
+    
+init:
+    - SET COMPOSER_NO_INTERACTION=1
+    
 install:
   - SET PATH=C:\Program Files\OpenSSL;%PATH%
   - cinst php
@@ -17,7 +20,7 @@ install:
   - SET PATH=C:\tools\php;%PATH%
   - cd C:\projects\php-workshop
   - php -r "readfile('http://getcomposer.org/installer');" | php
-  - php composer.phar install
+  - php composer.phar install --prefer-source --no-progress
 
 test_script:
   - ps: cd C:\projects\php-workshop
