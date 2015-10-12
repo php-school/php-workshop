@@ -2,22 +2,10 @@
 
 namespace PhpWorkshop\PhpWorkshop\Command;
 
-use Colors\Color;
-use Failure;
-use MikeyMike\CliMenu\Terminal\TerminalFactory;
-use MikeyMike\CliMenu\Terminal\UnixTerminal;
 use PhpWorkshop\PhpWorkshop\ExerciseRepository;
 use PhpWorkshop\PhpWorkshop\ExerciseRunner;
 use PhpWorkshop\PhpWorkshop\Output;
-use PhpWorkshop\PhpWorkshop\Result\FunctionRequirementsFailure;
-use PhpWorkshop\PhpWorkshop\Result\StdOutFailure;
-use PhpWorkshop\PhpWorkshop\Result\Success;
-use PhpWorkshop\PhpWorkshop\ResultAggregator;
-use PhpWorkshop\PhpWorkshop\ResultRenderer\FailureRenderer;
-use PhpWorkshop\PhpWorkshop\ResultRenderer\FunctionRequirementsFailureRenderer;
 use PhpWorkshop\PhpWorkshop\ResultRenderer\ResultsRenderer;
-use PhpWorkshop\PhpWorkshop\ResultRenderer\StdOutFailureRenderer;
-use PhpWorkshop\PhpWorkshop\ResultRenderer\SuccessRenderer;
 use PhpWorkshop\PhpWorkshop\UserState;
 use PhpWorkshop\PhpWorkshop\UserStateSerializer;
 
