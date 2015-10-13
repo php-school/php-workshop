@@ -40,5 +40,6 @@
             "type": "vcs",
             "url": "https://github.com/mikeymike/cli-menu.git"
         }
-    ]
+    ],
+    "bin": ["bin/php-workshop"]
 }
