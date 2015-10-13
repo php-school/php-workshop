@@ -112,10 +112,6 @@ return [
         return new MenuCommand($c->get('menu'));
     }),
 
-    HelpCommand::class => factory(function (ContainerInterface $c) {
-        return new HelpCommand;
-    }),
-
     PrintCommand::class => factory(function (ContainerInterface $c) {
         return new PrintCommand(
             $c->get(ExerciseRepository::class),
@@ -143,6 +139,14 @@ return [
         );
     }),
 
+    HelpCommand::class => factory(function (ContainerInterface $c) {
+        return new HelpCommand(
+            $c->get('appName'),
+            $c->get(Output::class),
+            $c->get(Color::class)
+        );
+    }),
+    
     //checks
     FileExistsCheck::class              => object(FileExistsCheck::class),
     PhpLintCheck::class                 => object(PhpLintCheck::class),
@@ -210,10 +214,14 @@ ART;
             ->addItem(new StaticItem('---------'))
             ->addSubMenuAsAction('OPTIONS', $subMenu)
             ->setItemCallback($c->get(ExerciseRenderer::class))
-            ->addAction(new SelectableItem('HELP', function () {
-
+            ->addAction(new SelectableItem('HELP', function (CliMenu $menu) use ($c) {
+                $c->get(HelpCommand::class)->__invoke();
+                $menu->close();
             }))
-            ->addAction(new SelectableItem('CREDITS', $c->get(CreditsCommand::class)))
+            ->addAction(new SelectableItem('CREDITS', function (CliMenu $menu) use ($c) {
+                $c->get(CreditsCommand::class)->__invoke();
+                $menu->close();
+            }))
             ->addAction(new SelectableItem('EXIT', function (CliMenu $menu) {
                 $menu->close();
             }))
