@@ -38,7 +38,7 @@
     "repositories": [
         {
             "type": "vcs",
-            "url": "https://github.com/mikeymike/cli-menu.git"
+            "url": "git@github.com:AydinHassan/cli-menu.git"
         }
     ],
     "bin": ["bin/php-workshop"]
