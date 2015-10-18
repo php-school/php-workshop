@@ -4,13 +4,12 @@ namespace PhpWorkshop\PhpWorkshop\Factory;
 
 use Colors\Color;
 use Interop\Container\ContainerInterface;
-use MikeyMike\CliMenu\Terminal\TerminalInterface;
+use PhpSchool\CliMenu\Terminal\TerminalInterface;
 use League\CommonMark\Block\Element\Document;
 use League\CommonMark\Block\Element\FencedCode;
 use League\CommonMark\Block\Element\Header;
 use League\CommonMark\Block\Element\HorizontalRule;
 use League\CommonMark\Block\Element\Paragraph;
-use League\CommonMark\DocParser;
 use League\CommonMark\Inline\Element\Code;
 use League\CommonMark\Inline\Element\Emphasis;
 use League\CommonMark\Inline\Element\Link;

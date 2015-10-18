@@ -2,7 +2,7 @@
 
 namespace PhpWorkshop\PhpWorkshop\Command;
 
-use MikeyMike\CliMenu\CliMenu;
+use PhpSchool\CliMenu\CliMenu;
 
 /**
  * Class MenuCommand

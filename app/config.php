@@ -7,15 +7,11 @@ use Faker\Factory as FakerFactory;
 use Interop\Container\ContainerInterface;
 use League\CommonMark\DocParser;
 use League\CommonMark\Environment;
-use MikeyMike\CliMenu\CliMenu;
-use MikeyMike\CliMenu\CliMenuBuilder;
-use MikeyMike\CliMenu\MenuItem\AsciiArtItem;
-use MikeyMike\CliMenu\MenuItem\MenuItem;
-use MikeyMike\CliMenu\MenuItem\SelectableItem;
-use MikeyMike\CliMenu\MenuItem\StaticItem;
-use MikeyMike\CliMenu\MenuStyle;
-use MikeyMike\CliMenu\Terminal\TerminalFactory;
-use MikeyMike\CliMenu\Terminal\TerminalInterface;
+use PhpSchool\CliMenu\CliMenu;
+use PhpSchool\CliMenu\CliMenuBuilder;
+use PhpSchool\CliMenu\MenuItem\AsciiArtItem;
+use PhpSchool\CliMenu\Terminal\TerminalFactory;
+use PhpSchool\CliMenu\Terminal\TerminalInterface;
 use PhpParser\Parser;
 use PhpParser\ParserFactory;
 use PhpSchool\PSX\SyntaxHighlighter;
@@ -186,6 +182,8 @@ return [
 
         $userStateSerializer    = $c->get(UserStateSerializer::class);
         $exerciseRepository     = $c->get(ExerciseRepository::class);
+        $userState              = $userStateSerializer->deSerialize();
+        $exerciseRenderer       = $c->get(ExerciseRenderer::class);
         
         $art = <<<ART
   _ __ _
@@ -195,39 +193,28 @@ return [
 
 PHP SCHOOL
 ART;
-        $menuBuilder = (new CliMenuBuilder)
+        return (new CliMenuBuilder)
             ->setTitle('PHP School Workshop')
             ->addAsciiArt($art, AsciiArtItem::POSITION_CENTER)
             ->addStaticItem('Exercises')
             ->addStaticItem('---------')
-            ->addSubMenuAsAction('OPTIONS')
-                ->setTitle('PHP School Workshop > Options')
-//                ->addItem(
-//                    new SelectableItem(
-//                        'Reset workshop progress',
-//                        function (CliMenu $menu) use ($userStateSerializer) {
-//                            $userStateSerializer->serialize(new UserState);
-//                            echo "Status Reset!";
-//                        }
-//                    )
-//                )
-                ->addItemCallable(function () {
-                    
-                })
-                ->setGoBackButtonText('GO BACK')
-                ->setExitButtonText('EXIT')
-                ->setWidth(70)
-                ->setUnselectedMarker(' ')
-                ->setSelectedMarker('↳')
-                ->end()
-            ->addItemCallable($c->get(ExerciseRenderer::class))
-            ->addAction('HELP', function (CliMenu $menu) use ($c) {
+            ->addItems(
+                array_map(function (ExerciseInterface $exercise) use ($exerciseRenderer, $userState) {
+                    return [
+                        $exercise->getName(),
+                        $exerciseRenderer,
+                        $userState->completedExercise($exercise->getName())
+                    ];
+                }, $exerciseRepository->findAll())
+            )
+            ->addLineBreak('-')
+            ->addItem('HELP', function (CliMenu $menu) use ($c) {
+                $menu->close();
                 $c->get(HelpCommand::class)->__invoke();
-                $menu->close();
             })
-            ->addAction('CREDITS', function (CliMenu $menu) use ($c) {
-                $c->get(CreditsCommand::class)->__invoke();
+            ->addItem('CREDITS', function (CliMenu $menu) use ($c) {
                 $menu->close();
+                $c->get(CreditsCommand::class)->__invoke();
             })
             ->setExitButtonText('EXIT')
             ->setBackgroundColour('black')
@@ -236,14 +223,20 @@ ART;
             ->setUnselectedMarker(' ')
             ->setSelectedMarker('↳')
             ->setItemExtra('[COMPLETED]')
-            ->displayItemExtra(true);
-        
-        $userState = $userStateSerializer->deSerialize();
-        foreach ($exerciseRepository as $exercise) {
-            $menuBuilder->addItem($exercise->getName(), $userState->completedExercise($exercise->getName()));
-        }
-
-        return $menuBuilder->build();
+            ->addSubMenu('OPTIONS')
+                ->setTitle('PHP School Workshop > Options')
+                ->addItem(
+                    'Reset workshop progress',
+                    function (CliMenu $menu) use ($userStateSerializer) {
+                        $userStateSerializer->serialize(new UserState);
+                        echo "Status Reset!";
+                    }
+                )
+                ->addLineBreak('-')
+                ->setGoBackButtonText('GO BACK')
+                ->setExitButtonText('EXIT')
+                ->end()
+            ->build();
     }),
     ExerciseRenderer::class => factory(function (ContainerInterface $c) {
         return new ExerciseRenderer(

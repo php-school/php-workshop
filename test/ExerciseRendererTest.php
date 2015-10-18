@@ -6,8 +6,8 @@ use AydinHassan\CliMdRenderer\CliRendererFactory;
 use Colors\Color;
 use League\CommonMark\DocParser;
 use League\CommonMark\Environment;
-use MikeyMike\CliMenu\CliMenu;
-use MikeyMike\CliMenu\MenuItem\MenuItem;
+use PhpSchool\CliMenu\CliMenu;
+use PhpSchool\CliMenu\MenuItem\MenuItemInterface;
 use PHPUnit_Framework_TestCase;
 use PhpWorkshop\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpWorkshop\PhpWorkshop\ExerciseRenderer;
@@ -30,7 +30,11 @@ class ExerciseRendererTest extends PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $item = new MenuItem('Exercise 2');
+        $item = $this->getMock(MenuItemInterface::class);
+        $item
+            ->expects($this->any())
+            ->method('getText')
+            ->will($this->returnValue('Exercise 2'));
         $menu
             ->expects($this->once())
             ->method('getSelectedItem')

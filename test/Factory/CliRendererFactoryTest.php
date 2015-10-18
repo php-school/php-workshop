@@ -6,7 +6,7 @@ use AydinHassan\CliMdRenderer\CliRenderer;
 use Colors\Color;
 use PhpWorkshop\PhpWorkshop\Factory\MarkdownCliRendererFactory;
 use Interop\Container\ContainerInterface;
-use MikeyMike\CliMenu\Terminal\TerminalInterface;
+use PhpSchool\CliMenu\Terminal\TerminalInterface;
 use PHPUnit_Framework_TestCase;
 
 /**

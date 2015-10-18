@@ -3,7 +3,7 @@
 namespace PhpWorkshop\PhpWorkshop;
 
 use Colors\Color;
-use MikeyMike\CliMenu\CliMenu;
+use PhpSchool\CliMenu\CliMenu;
 
 /**
  * Class ExerciseRenderer
@@ -79,6 +79,8 @@ class ExerciseRenderer
      */
     public function __invoke(CliMenu $menu)
     {
+        $menu->close();
+
         $item           = $menu->getSelectedItem();
         $exercise       = $this->exerciseRepository->findByName($item->getText());
         $exercises      = $this->exerciseRepository->findAll();
@@ -108,7 +110,6 @@ class ExerciseRenderer
         $output .= "\n\n";
 
         $this->output->write($output);
-        $menu->close();
     }
 
     /**
