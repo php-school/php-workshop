@@ -4,30 +4,30 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "671099964f2f96ded37097e79a8be977",
-    "content-hash": "ca4a4c124868744a5493e9217d2ce721",
+    "hash": "12ec3d1b931787e04d419b3e658620f1",
+    "content-hash": "35fb96fb06525e05e500a684458b8f8f",
     "packages": [
         {
             "name": "aydin-hassan/cli-md-renderer",
-            "version": "dev-master",
+            "version": "1.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/AydinHassan/cli-md-renderer.git",
-                "reference": "e0aedd00e6e82e5fe7a7dbcc9a499fa6af566d5f"
+                "reference": "92248d84ecfd46b5a0271a72cf27c24747aa2f0b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/AydinHassan/cli-md-renderer/zipball/e0aedd00e6e82e5fe7a7dbcc9a499fa6af566d5f",
-                "reference": "e0aedd00e6e82e5fe7a7dbcc9a499fa6af566d5f",
+                "url": "https://api.github.com/repos/AydinHassan/cli-md-renderer/zipball/92248d84ecfd46b5a0271a72cf27c24747aa2f0b",
+                "reference": "92248d84ecfd46b5a0271a72cf27c24747aa2f0b",
                 "shasum": ""
             },
             "require": {
                 "league/commonmark": "^0.11.3",
+                "nikic/php-parser": "dev-master#98d28d7aa04e2d92fea2b375373878d0b1fce992 as 2.0.0-alpha1",
                 "php": ">=5.5",
-                "php-school/psx": "dev-master"
+                "php-school/psx": "~1.0"
             },
             "require-dev": {
-                "nikic/php-parser": "dev-master as 2.0.0-alpha1",
                 "phpunit/phpunit": "~4.1",
                 "squizlabs/php_codesniffer": "~2.0"
             },
@@ -48,7 +48,7 @@
                 }
             ],
             "description": "A CLI Markdown Render for league/commonmark compatibile AST",
-            "time": "2015-10-06 21:56:12"
+            "time": "2015-10-18 19:22:05"
         },
         {
             "name": "container-interop/container-interop",
@@ -481,21 +481,21 @@
         },
         {
             "name": "php-school/psx",
-            "version": "dev-master",
+            "version": "1.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/php-school/psx.git",
-                "reference": "cfb597ac481eb8ed5dcf8c915269c1ea9d3117d5"
+                "reference": "8369bd88cf21a0c7f646509b24e28c519790c958"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/php-school/psx/zipball/cfb597ac481eb8ed5dcf8c915269c1ea9d3117d5",
-                "reference": "cfb597ac481eb8ed5dcf8c915269c1ea9d3117d5",
+                "url": "https://api.github.com/repos/php-school/psx/zipball/8369bd88cf21a0c7f646509b24e28c519790c958",
+                "reference": "8369bd88cf21a0c7f646509b24e28c519790c958",
                 "shasum": ""
             },
             "require": {
                 "kevinlebrun/colors.php": "^0.4.1",
-                "nikic/php-parser": "dev-master as 2.0.0-alpha1",
+                "nikic/php-parser": "dev-master#98d28d7aa04e2d92fea2b375373878d0b1fce992 as 2.0.0-alpha1",
                 "php": ">=5.5"
             },
             "require-dev": {
@@ -519,7 +519,7 @@
                 }
             ],
             "description": "PHP CLI Syntax Highlighter",
-            "time": "2015-10-03 20:59:21"
+            "time": "2015-10-18 19:12:46"
         },
         {
             "name": "symfony/filesystem",
@@ -1026,16 +1026,16 @@
         },
         {
             "name": "phpunit/phpunit",
-            "version": "4.8.11",
+            "version": "4.8.14",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit.git",
-                "reference": "bdd199472410fd7e32751f9c814c7e06f2c21bd5"
+                "reference": "b4900675926860bef091644849305399b986efa2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/bdd199472410fd7e32751f9c814c7e06f2c21bd5",
-                "reference": "bdd199472410fd7e32751f9c814c7e06f2c21bd5",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/b4900675926860bef091644849305399b986efa2",
+                "reference": "b4900675926860bef091644849305399b986efa2",
                 "shasum": ""
             },
             "require": {
@@ -1094,7 +1094,7 @@
                 "testing",
                 "xunit"
             ],
-            "time": "2015-10-07 10:39:46"
+            "time": "2015-10-17 15:03:30"
         },
         {
             "name": "phpunit/phpunit-mock-objects",
@@ -1386,16 +1386,16 @@
         },
         {
             "name": "sebastian/global-state",
-            "version": "1.1.0",
+            "version": "1.1.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/global-state.git",
-                "reference": "23af31f402993cfd94e99cbc4b782e9a78eb0e97"
+                "reference": "bc37d50fea7d017d3d340f230811c9f1d7280af4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/global-state/zipball/23af31f402993cfd94e99cbc4b782e9a78eb0e97",
-                "reference": "23af31f402993cfd94e99cbc4b782e9a78eb0e97",
+                "url": "https://api.github.com/repos/sebastianbergmann/global-state/zipball/bc37d50fea7d017d3d340f230811c9f1d7280af4",
+                "reference": "bc37d50fea7d017d3d340f230811c9f1d7280af4",
                 "shasum": ""
             },
             "require": {
@@ -1433,7 +1433,7 @@
             "keywords": [
                 "global state"
             ],
-            "time": "2015-06-21 15:11:22"
+            "time": "2015-10-12 03:26:01"
         },
         {
             "name": "sebastian/recursion-context",
@@ -1647,20 +1647,11 @@
             "time": "2015-09-14 14:14:09"
         }
     ],
-    "aliases": [
-        {
-            "alias": "2.0.0-alpha1",
-            "alias_normalized": "2.0.0.0-alpha1",
-            "version": "9999999-dev",
-            "package": "nikic/php-parser"
-        }
-    ],
+    "aliases": [],
     "minimum-stability": "stable",
     "stability-flags": {
-        "nikic/php-parser": 20,
-        "aydin-hassan/cli-md-renderer": 20,
-        "php-school/psx": 20,
-        "mikeymike/cli-menu": 20
+        "mikeymike/cli-menu": 20,
+        "nikic/php-parser": 20
     },
     "prefer-stable": false,
     "prefer-lowest": false,

@@ -18,10 +18,10 @@
         "symfony/process": "^2.7",
         "symfony/filesystem": "^2.7",
         "fzaninotto/faker": "^1.5",
-        "nikic/php-parser": "dev-master as 2.0.0-alpha1",
-        "aydin-hassan/cli-md-renderer": "dev-master",
-        "php-school/psx": "dev-master",
-        "mikeymike/cli-menu": "dev-master"
+        "aydin-hassan/cli-md-renderer": "~1.0",
+        "php-school/psx": "~1.0",
+        "mikeymike/cli-menu": "dev-master",
+        "nikic/php-parser": "dev-master#98d28d7aa04e2d92fea2b375373878d0b1fce992"
     },
     "require-dev": {
         "phpunit/phpunit": "~4.1",
