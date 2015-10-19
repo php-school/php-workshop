@@ -36,6 +36,5 @@
         "psr-4": { 
             "PhpSchool\\PhpWorkshopTest\\": "test" 
         }
-    },
-    "bin": ["bin/php-workshop"]
+    }
 }
