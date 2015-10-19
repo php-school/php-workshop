@@ -3,7 +3,6 @@
 use Colors\Color;
 use function DI\object;
 use function DI\factory;
-use Faker\Factory as FakerFactory;
 use Interop\Container\ContainerInterface;
 use League\CommonMark\DocParser;
 use League\CommonMark\Environment;
@@ -26,11 +25,7 @@ use PhpWorkshop\PhpWorkshop\Command\PrintCommand;
 use PhpWorkshop\PhpWorkshop\Command\VerifyCommand;
 use PhpWorkshop\PhpWorkshop\CommandDefinition;
 use PhpWorkshop\PhpWorkshop\CommandRouter;
-use PhpWorkshop\PhpWorkshop\Exercise\BabySteps;
 use PhpWorkshop\PhpWorkshop\Exercise\ExerciseInterface;
-use PhpWorkshop\PhpWorkshop\Exercise\FilteredLs;
-use PhpWorkshop\PhpWorkshop\Exercise\HelloWorld;
-use PhpWorkshop\PhpWorkshop\Exercise\MyFirstIo;
 use PhpWorkshop\PhpWorkshop\ExerciseCheck\FunctionRequirementsExerciseCheck;
 use PhpWorkshop\PhpWorkshop\ExerciseCheck\StdOutExerciseCheck;
 use PhpWorkshop\PhpWorkshop\ExerciseRenderer;
@@ -40,7 +35,6 @@ use PhpWorkshop\PhpWorkshop\Factory\MarkdownCliRendererFactory;
 use PhpWorkshop\PhpWorkshop\MarkdownRenderer;
 use PhpWorkshop\PhpWorkshop\Output;
 use PhpWorkshop\PhpWorkshop\Result\FunctionRequirementsFailure;
-use PhpWorkshop\PhpWorkshop\Result\StdOutFailure;
 use PhpWorkshop\PhpWorkshop\Result\Success;
 use PhpWorkshop\PhpWorkshop\Result\Failure;
 use PhpWorkshop\PhpWorkshop\ResultRenderer\FailureRenderer;
@@ -56,12 +50,9 @@ return [
     'appName' => $_SERVER['argv'][0],
     ExerciseRunner::class => factory(function (ContainerInterface $c) {
         $exerciseRunner = new ExerciseRunner;
-
         foreach ($c->get('checks') as $check) {
-            list($check, $exerciseInterface) = $check;
-            $exerciseRunner->registerCheck($check, $exerciseInterface);
+            $exerciseRunner->registerCheck(...$check);
         }
-
         return $exerciseRunner;
     }),
     'checks' => factory(function (ContainerInterface $c) {
@@ -72,7 +63,7 @@ return [
             [$c->get(FunctionRequirementsCheck::class), FunctionRequirementsExerciseCheck::class],
         ];
     }),
-    'application' => factory(function (ContainerInterface $c) {
+    CommandRouter::class => factory(function (ContainerInterface $c) {
         return new CommandRouter(
             [
                 new CommandDefinition('run', [], MenuCommand::class),
@@ -151,32 +142,13 @@ return [
         return new FunctionRequirementsCheck($c->get(Parser::class));
     }),
 
-    'exercises' => factory(function (ContainerInterface $c) {
-        return [
-            HelloWorld::class,
-            BabySteps::class,
-            MyFirstIo::class,
-            FilteredLs::class,
-        ];
-    }),
-
     //Utils
     Filesystem::class   => object(Filesystem::class),
     Parser::class       => factory(function (ContainerInterface $c) {
         $parserFactory = new ParserFactory;
         return $parserFactory->create(ParserFactory::PREFER_PHP7);
     }),
-
-    //Exercises
-    BabySteps::class    => object(BabySteps::class),
-    HelloWorld::class   => object(HelloWorld::class),
-    MyFirstIo::class    => factory(function (ContainerInterface $c) {
-        return new MyFirstIo($c->get(Filesystem::class), FakerFactory::create());
-    }),
-    FilteredLs::class   => factory(function (ContainerInterface $c) {
-        return new FilteredLs($c->get(Filesystem::class));
-    }),
-
+    
     TerminalInterface::class => factory([TerminalFactory::class, 'fromSystem']),
     'menu' => factory(function (ContainerInterface $c) {
 
@@ -185,32 +157,25 @@ return [
         $userState              = $userStateSerializer->deSerialize();
         $exerciseRenderer       = $c->get(ExerciseRenderer::class);
 
-        $art = <<<ART
-        _ __ _
-       / |..| \
-       \/ || \/
-        |_''_|
+        $builder = (new CliMenuBuilder)
+            ->addLineBreak();
 
-      PHP SCHOOL
-LEARNING FOR ELEPHPANTS
-ART;
-
-        return (new CliMenuBuilder)
-            ->addLineBreak()
-            ->addAsciiArt($art, AsciiArtItem::POSITION_CENTER)
+        if (null !== $c->get('workshopLogo')) {
+            $builder->addAsciiArt($c->get('workshopLogo'), AsciiArtItem::POSITION_CENTER);
+        }
+        
+        $builder
             ->addLineBreak('_')
             ->addLineBreak()
             ->addStaticItem('Exercises')
             ->addStaticItem('---------')
-            ->addItems(
-                array_map(function (ExerciseInterface $exercise) use ($exerciseRenderer, $userState) {
-                    return [
-                        $exercise->getName(),
-                        $exerciseRenderer,
-                        $userState->completedExercise($exercise->getName())
-                    ];
-                }, $exerciseRepository->findAll())
-            )
+            ->addItems(array_map(function (ExerciseInterface $exercise) use ($exerciseRenderer, $userState) {
+                return [
+                    $exercise->getName(),
+                    $exerciseRenderer,
+                    $userState->completedExercise($exercise->getName())
+                ];
+            }, $exerciseRepository->findAll()))
             ->addLineBreak()
             ->addLineBreak('-')
             ->addLineBreak()
@@ -223,33 +188,45 @@ ART;
                 $c->get(CreditsCommand::class)->__invoke();
             })
             ->setExitButtonText('EXIT')
-            ->setBackgroundColour('black')
-            ->setForegroundColour('green')
+            ->setBackgroundColour($c->get('bgColour'))
+            ->setForegroundColour($c->get('fgColour'))
             ->setWidth(70)
             ->setUnselectedMarker(' ')
             ->setSelectedMarker('↳')
-            ->setItemExtra('[COMPLETED]')
-            ->addSubMenu('OPTIONS')
-                ->addLineBreak()
-                ->addAsciiArt($art, AsciiArtItem::POSITION_CENTER)
-                ->addLineBreak('_')
-                ->addLineBreak()
-                ->addStaticItem('Options')
-                ->addStaticItem('-------')
-                ->addItem(
-                    'Reset workshop progress',
-                    function (CliMenu $menu) use ($userStateSerializer) {
-                        $userStateSerializer->serialize(new UserState);
-                        echo "Status Reset!";
-                    }
-                )
-                ->addLineBreak()
-                ->addLineBreak('-')
-                ->addLineBreak()
-                ->setGoBackButtonText('GO BACK')
-                ->setExitButtonText('EXIT')
-                ->end()
-            ->build();
+            ->setItemExtra('[COMPLETED]');
+            
+        $subMenu = $builder
+                ->addSubMenu('OPTIONS')
+                ->addLineBreak();
+
+        if (null !== $c->get('workshopLogo')) {
+            $subMenu->addAsciiArt($c->get('workshopLogo'), AsciiArtItem::POSITION_CENTER);
+        }
+
+        $subMenu
+            ->addLineBreak('_')
+            ->addLineBreak()
+            ->addStaticItem('Options')
+            ->addStaticItem('-------')
+            ->addItem(
+                'Reset workshop progress',
+                function (CliMenu $menu) use ($userStateSerializer) {
+                    $userStateSerializer->serialize(new UserState);
+                    echo "Status Reset!";
+                }
+            )
+            ->addLineBreak()
+            ->addLineBreak('-')
+            ->addLineBreak()
+            ->setGoBackButtonText('GO BACK')
+            ->setExitButtonText('EXIT');
+    
+        if (null !== $c->get('workshopTitle')) {
+            $builder->setTitle($c->get('workshopTitle'));
+            $subMenu->setTitle($c->get('workshopTitle'));
+        }
+        
+        return $builder->build();
     }),
     ExerciseRenderer::class => factory(function (ContainerInterface $c) {
         return new ExerciseRenderer(
@@ -285,10 +262,17 @@ ART;
             $c->get(SyntaxHighlighter::class)
         );
         
-        $renderer->registerRenderer(StdOutFailure::class, new StdOutFailureRenderer);
-        $renderer->registerRenderer(FunctionRequirementsFailure::class, new FunctionRequirementsFailureRenderer);
-        $renderer->registerRenderer(Success::class, new SuccessRenderer);
-        $renderer->registerRenderer(Failure::class, new FailureRenderer);
+        foreach ($c->get('renderers') as $resultRenderer => $resultClass) {
+            $renderer->registerRenderer($resultClass, $resultRenderer);
+        }
         return $renderer;
+    }),
+    'renderers' => factory(function (ContainerInterface $c) {
+        return [
+            [new StdOutFailureRenderer, StdOutFailureRenderer::class],
+            [new FunctionRequirementsFailureRenderer, FunctionRequirementsFailure::class],
+            [new SuccessRenderer, Success::class],
+            [new FailureRenderer, Failure::class],
+        ];
     }),
 ];
