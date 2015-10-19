@@ -1,15 +1,15 @@
 <?php
 
-namespace PhpWorkshop\PhpWorkshop;
+namespace PhpSchool\PhpWorkshop;
 
 use ArrayIterator;
 use Countable;
 use IteratorAggregate;
-use PhpWorkshop\PhpWorkshop\Exercise\ExerciseInterface;
+use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 
 /**
  * Class ExerciseRepository
- * @package PhpWorkshop\PhpWorkshop
+ * @package PhpSchool\PhpWorkshop
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
 class ExerciseRepository implements IteratorAggregate, Countable

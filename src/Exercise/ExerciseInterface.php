@@ -1,10 +1,10 @@
 <?php
 
-namespace PhpWorkshop\PhpWorkshop\Exercise;
+namespace PhpSchool\PhpWorkshop\Exercise;
 
 /**
  * Class ExerciseInterface
- * @package PhpWorkshop\PhpWorkshop\Exercise
+ * @package PhpSchool\PhpWorkshop\Exercise
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
 

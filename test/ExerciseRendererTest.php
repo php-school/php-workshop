@@ -1,6 +1,6 @@
 <?php
 
-namespace PhpWorkshop\PhpWorkshopTest;
+namespace PhpSchool\PhpWorkshopTest;
 
 use AydinHassan\CliMdRenderer\CliRendererFactory;
 use Colors\Color;
@@ -9,17 +9,17 @@ use League\CommonMark\Environment;
 use PhpSchool\CliMenu\CliMenu;
 use PhpSchool\CliMenu\MenuItem\MenuItemInterface;
 use PHPUnit_Framework_TestCase;
-use PhpWorkshop\PhpWorkshop\Exercise\ExerciseInterface;
-use PhpWorkshop\PhpWorkshop\ExerciseRenderer;
-use PhpWorkshop\PhpWorkshop\ExerciseRepository;
-use PhpWorkshop\PhpWorkshop\MarkdownRenderer;
-use PhpWorkshop\PhpWorkshop\Output;
-use PhpWorkshop\PhpWorkshop\UserState;
-use PhpWorkshop\PhpWorkshop\UserStateSerializer;
+use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
+use PhpSchool\PhpWorkshop\ExerciseRenderer;
+use PhpSchool\PhpWorkshop\ExerciseRepository;
+use PhpSchool\PhpWorkshop\MarkdownRenderer;
+use PhpSchool\PhpWorkshop\Output;
+use PhpSchool\PhpWorkshop\UserState;
+use PhpSchool\PhpWorkshop\UserStateSerializer;
 
 /**
  * Class ExerciseRendererTest
- * @package PhpWorkshop\PhpWorkshopTest
+ * @package PhpSchool\PhpWorkshopTest
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
 class ExerciseRendererTest extends PHPUnit_Framework_TestCase

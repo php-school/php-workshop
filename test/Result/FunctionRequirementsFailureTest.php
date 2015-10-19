@@ -1,13 +1,13 @@
 <?php
 
-namespace PhpWorkshop\PhpWorkshopTest\Result;
+namespace PhpSchool\PhpWorkshopTest\Result;
 
 use PHPUnit_Framework_TestCase;
-use PhpWorkshop\PhpWorkshop\Result\FunctionRequirementsFailure;
+use PhpSchool\PhpWorkshop\Result\FunctionRequirementsFailure;
 
 /**
  * Class FunctionRequirementsFailureTest
- * @package PhpWorkshop\PhpWorkshopTest\Result
+ * @package PhpSchool\PhpWorkshopTest\Result
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
 class FunctionRequirementsFailureTest extends PHPUnit_Framework_TestCase

@@ -1,10 +1,10 @@
 <?php
 
-namespace PhpWorkshop\PhpWorkshopTest\Factory;
+namespace PhpSchool\PhpWorkshopTest\Factory;
 
 use AydinHassan\CliMdRenderer\CliRenderer;
 use Colors\Color;
-use PhpWorkshop\PhpWorkshop\Factory\MarkdownCliRendererFactory;
+use PhpSchool\PhpWorkshop\Factory\MarkdownCliRendererFactory;
 use Interop\Container\ContainerInterface;
 use PhpSchool\CliMenu\Terminal\TerminalInterface;
 use PHPUnit_Framework_TestCase;

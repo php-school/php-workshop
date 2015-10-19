@@ -1,10 +1,10 @@
 <?php
 
-namespace PhpWorkshop\PhpWorkshop\Result;
+namespace PhpSchool\PhpWorkshop\Result;
 
 /**
  * Class Fail
- * @package PhpWorkshop\PhpWorkshop
+ * @package PhpSchool\PhpWorkshop
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
 class Success implements ResultInterface

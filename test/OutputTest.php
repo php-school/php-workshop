@@ -1,14 +1,14 @@
 <?php
 
-namespace PhpWorkshop\PhpWorkshopTest;
+namespace PhpSchool\PhpWorkshopTest;
 
 use Colors\Color;
 use PHPUnit_Framework_TestCase;
-use PhpWorkshop\PhpWorkshop\Output;
+use PhpSchool\PhpWorkshop\Output;
 
 /**
  * Class OutputTest
- * @package PhpWorkshop\PhpWorkshopTest
+ * @package PhpSchool\PhpWorkshopTest
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
 class OutputTest extends PHPUnit_Framework_TestCase

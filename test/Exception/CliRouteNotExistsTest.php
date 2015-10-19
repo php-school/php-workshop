@@ -1,13 +1,13 @@
 <?php
 
-namespace PhpWorkshop\PhpWorkshopTest\Exception;
+namespace PhpSchool\PhpWorkshopTest\Exception;
 
 use PHPUnit_Framework_TestCase;
-use PhpWorkshop\PhpWorkshop\Exception\CliRouteNotExistsException;
+use PhpSchool\PhpWorkshop\Exception\CliRouteNotExistsException;
 
 /**
  * Class CliRouteNotExistsTest
- * @package PhpWorkshop\PhpWorkshopTest\Exception
+ * @package PhpSchool\PhpWorkshopTest\Exception
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
 class CliRouteNotExistsTest extends PHPUnit_Framework_TestCase

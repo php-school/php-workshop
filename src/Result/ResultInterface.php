@@ -1,10 +1,10 @@
 <?php
 
-namespace PhpWorkshop\PhpWorkshop\Result;
+namespace PhpSchool\PhpWorkshop\Result;
 
 /**
  * Interface ResultInterface
- * @package PhpWorkshop\PhpWorkshop\Result
+ * @package PhpSchool\PhpWorkshop\Result
  */
 interface ResultInterface
 {

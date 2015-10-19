@@ -1,18 +1,18 @@
 <?php
 
-namespace PhpWorkshop\PhpWorkshop\Command;
+namespace PhpSchool\PhpWorkshop\Command;
 
 use Colors\Color;
 use PHPUnit_Framework_TestCase;
-use PhpWorkshop\PhpWorkshop\Exercise\ExerciseInterface;
-use PhpWorkshop\PhpWorkshop\ExerciseRepository;
-use PhpWorkshop\PhpWorkshop\MarkdownRenderer;
-use PhpWorkshop\PhpWorkshop\Output;
-use PhpWorkshop\PhpWorkshop\UserState;
+use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
+use PhpSchool\PhpWorkshop\ExerciseRepository;
+use PhpSchool\PhpWorkshop\MarkdownRenderer;
+use PhpSchool\PhpWorkshop\Output;
+use PhpSchool\PhpWorkshop\UserState;
 
 /**
  * Class PrintCommandTest
- * @package PhpWorkshop\PhpWorkshop\Command
+ * @package PhpSchool\PhpWorkshop\Command
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
 class PrintCommandTest extends PHPUnit_Framework_TestCase

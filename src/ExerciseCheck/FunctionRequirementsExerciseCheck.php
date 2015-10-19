@@ -1,10 +1,10 @@
 <?php
 
-namespace PhpWorkshop\PhpWorkshop\ExerciseCheck;
+namespace PhpSchool\PhpWorkshop\ExerciseCheck;
 
 /**
  * Interface FunctionRequirementsExerciseCheck
- * @package PhpWorkshop\PhpWorkshop\ExerciseCheck
+ * @package PhpSchool\PhpWorkshop\ExerciseCheck
  */
 interface FunctionRequirementsExerciseCheck
 {

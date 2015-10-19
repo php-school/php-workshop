@@ -1,13 +1,13 @@
 <?php
 
-namespace PhpWorkshop\PhpWorkshop\ResultRenderer;
+namespace PhpSchool\PhpWorkshop\ResultRenderer;
 
-use PhpWorkshop\PhpWorkshop\Result\ResultInterface;
-use PhpWorkshop\PhpWorkshop\Result\StdOutFailure;
+use PhpSchool\PhpWorkshop\Result\ResultInterface;
+use PhpSchool\PhpWorkshop\Result\StdOutFailure;
 
 /**
  * Class StdOutFailureRenderer
- * @package PhpWorkshop\PhpWorkshop\ResultRenderer
+ * @package PhpSchool\PhpWorkshop\ResultRenderer
  */
 class StdOutFailureRenderer implements ResultRendererInterface
 {

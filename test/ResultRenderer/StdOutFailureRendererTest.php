@@ -1,15 +1,15 @@
 <?php
 
-namespace PhpWorkshop\PhpWorkshopTest\ResultRenderer;
+namespace PhpSchool\PhpWorkshopTest\ResultRenderer;
 
 use InvalidArgumentException;
-use PhpWorkshop\PhpWorkshop\Result\ResultInterface;
-use PhpWorkshop\PhpWorkshop\Result\StdOutFailure;
-use PhpWorkshop\PhpWorkshop\ResultRenderer\StdOutFailureRenderer;
+use PhpSchool\PhpWorkshop\Result\ResultInterface;
+use PhpSchool\PhpWorkshop\Result\StdOutFailure;
+use PhpSchool\PhpWorkshop\ResultRenderer\StdOutFailureRenderer;
 
 /**
  * Class StdOutFailureRendererTest
- * @package PhpWorkshop\PhpWorkshopTest\ResultRenderer
+ * @package PhpSchool\PhpWorkshopTest\ResultRenderer
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
 class StdOutFailureRendererTest extends AbstractResultRendererTest

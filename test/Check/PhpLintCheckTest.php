@@ -1,18 +1,18 @@
 <?php
 
-namespace PhpWorkshop\PhpWorkshopTest\Check;
+namespace PhpSchool\PhpWorkshopTest\Check;
 
 use PhpParser\Lexer\Emulative;
 use PhpParser\Parser;
 use PHPUnit_Framework_TestCase;
-use PhpWorkshop\PhpWorkshop\Check\PhpLintCheck;
-use PhpWorkshop\PhpWorkshop\Exercise\ExerciseInterface;
-use PhpWorkshop\PhpWorkshop\Result\Failure;
-use PhpWorkshop\PhpWorkshop\Result\Success;
+use PhpSchool\PhpWorkshop\Check\PhpLintCheck;
+use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
+use PhpSchool\PhpWorkshop\Result\Failure;
+use PhpSchool\PhpWorkshop\Result\Success;
 
 /**
  * Class PhpLintCheckTest
- * @package PhpWorkshop\PhpWorkshopTest
+ * @package PhpSchool\PhpWorkshopTest
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
 class PhpLintCheckTest extends PHPUnit_Framework_TestCase

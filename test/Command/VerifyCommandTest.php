@@ -1,23 +1,23 @@
 <?php
 
-namespace PhpWorkshop\PhpWorkshopTest\Command;
+namespace PhpSchool\PhpWorkshopTest\Command;
 
 use PHPUnit_Framework_TestCase;
-use PhpWorkshop\PhpWorkshop\Command\VerifyCommand;
-use PhpWorkshop\PhpWorkshop\Exercise\ExerciseInterface;
-use PhpWorkshop\PhpWorkshop\ExerciseRepository;
-use PhpWorkshop\PhpWorkshop\ExerciseRunner;
-use PhpWorkshop\PhpWorkshop\Output;
-use PhpWorkshop\PhpWorkshop\Result\Failure;
-use PhpWorkshop\PhpWorkshop\Result\Success;
-use PhpWorkshop\PhpWorkshop\ResultAggregator;
-use PhpWorkshop\PhpWorkshop\ResultRenderer\ResultsRenderer;
-use PhpWorkshop\PhpWorkshop\UserState;
-use PhpWorkshop\PhpWorkshop\UserStateSerializer;
+use PhpSchool\PhpWorkshop\Command\VerifyCommand;
+use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
+use PhpSchool\PhpWorkshop\ExerciseRepository;
+use PhpSchool\PhpWorkshop\ExerciseRunner;
+use PhpSchool\PhpWorkshop\Output;
+use PhpSchool\PhpWorkshop\Result\Failure;
+use PhpSchool\PhpWorkshop\Result\Success;
+use PhpSchool\PhpWorkshop\ResultAggregator;
+use PhpSchool\PhpWorkshop\ResultRenderer\ResultsRenderer;
+use PhpSchool\PhpWorkshop\UserState;
+use PhpSchool\PhpWorkshop\UserStateSerializer;
 
 /**
  * Class VerifyCommandTest
- * @package PhpWorkshop\PhpWorkshop\Command
+ * @package PhpSchool\PhpWorkshop\Command
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
 class VerifyCommandTest extends PHPUnit_Framework_TestCase

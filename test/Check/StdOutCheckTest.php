@@ -1,17 +1,17 @@
 <?php
 
-namespace PhpWorkshop\PhpWorkshopTest\Check;
+namespace PhpSchool\PhpWorkshopTest\Check;
 
 use PHPUnit_Framework_TestCase;
-use PhpWorkshop\PhpWorkshop\Check\StdOutCheck;
-use PhpWorkshop\PhpWorkshop\Exception\SolutionExecutionException;
-use PhpWorkshop\PhpWorkshop\Exercise\ExerciseInterface;
-use PhpWorkshop\PhpWorkshop\Result\Failure;
-use PhpWorkshop\PhpWorkshop\Result\Success;
+use PhpSchool\PhpWorkshop\Check\StdOutCheck;
+use PhpSchool\PhpWorkshop\Exception\SolutionExecutionException;
+use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
+use PhpSchool\PhpWorkshop\Result\Failure;
+use PhpSchool\PhpWorkshop\Result\Success;
 
 /**
  * Class StdOutCheckTest
- * @package PhpWorkshop\PhpWorkshopTest
+ * @package PhpSchool\PhpWorkshopTest
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
 class StdOutCheckTest extends PHPUnit_Framework_TestCase

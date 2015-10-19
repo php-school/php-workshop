@@ -1,13 +1,13 @@
 <?php
 
-namespace PhpWorkshop\PhpWorkshopTest;
+namespace PhpSchool\PhpWorkshopTest;
 
 use PHPUnit_Framework_TestCase;
-use PhpWorkshop\PhpWorkshop\CommandDefinition;
+use PhpSchool\PhpWorkshop\CommandDefinition;
 
 /**
  * Class CommandDefinitionTest
- * @package PhpWorkshop\PhpWorkshopTest
+ * @package PhpSchool\PhpWorkshopTest
  * @author  Aydin Hassan <aydin@hotmail.co.uk>
  */
 class CommandDefinitionTest extends PHPUnit_Framework_TestCase

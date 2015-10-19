@@ -1,15 +1,15 @@
 <?php
 
-namespace PhpWorkshop\PhpWorkshop;
+namespace PhpSchool\PhpWorkshop;
 
-use PhpWorkshop\PhpWorkshop\Exception\CliRouteNotExistsException;
-use PhpWorkshop\PhpWorkshop\Exception\MissingArgumentException;
+use PhpSchool\PhpWorkshop\Exception\CliRouteNotExistsException;
+use PhpSchool\PhpWorkshop\Exception\MissingArgumentException;
 use Interop\Container\ContainerInterface;
 use SebastianBergmann\Environment\Runtime;
 
 /**
  * Class CommandRouter
- * @package PhpWorkshop\PhpWorkshop
+ * @package PhpSchool\PhpWorkshop
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
 class CommandRouter

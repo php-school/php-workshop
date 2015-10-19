@@ -1,10 +1,10 @@
 <?php
 
-namespace PhpWorkshop\PhpWorkshop\Result;
+namespace PhpSchool\PhpWorkshop\Result;
 
 /**
  * Class FunctionRequirementsFailure
- * @package PhpWorkshop\PhpWorkshop\Result
+ * @package PhpSchool\PhpWorkshop\Result
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
 class FunctionRequirementsFailure extends Failure

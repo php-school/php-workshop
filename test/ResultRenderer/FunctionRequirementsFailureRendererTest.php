@@ -1,11 +1,11 @@
 <?php
 
-namespace PhpWorkshop\PhpWorkshopTest\ResultRenderer;
+namespace PhpSchool\PhpWorkshopTest\ResultRenderer;
 
 use InvalidArgumentException;
-use PhpWorkshop\PhpWorkshop\Result\FunctionRequirementsFailure;
-use PhpWorkshop\PhpWorkshop\Result\ResultInterface;
-use PhpWorkshop\PhpWorkshop\ResultRenderer\FunctionRequirementsFailureRenderer;
+use PhpSchool\PhpWorkshop\Result\FunctionRequirementsFailure;
+use PhpSchool\PhpWorkshop\Result\ResultInterface;
+use PhpSchool\PhpWorkshop\ResultRenderer\FunctionRequirementsFailureRenderer;
 
 /**
  * Class FunctionRequirementsFailureRendererTest

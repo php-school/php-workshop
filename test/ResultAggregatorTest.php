@@ -1,16 +1,16 @@
 <?php
 
 
-namespace PhpWorkshop\PhpWorkshopTest;
+namespace PhpSchool\PhpWorkshopTest;
 
 use PHPUnit_Framework_TestCase;
-use PhpWorkshop\PhpWorkshop\Result\Failure;
-use PhpWorkshop\PhpWorkshop\Result\Success;
-use PhpWorkshop\PhpWorkshop\ResultAggregator;
+use PhpSchool\PhpWorkshop\Result\Failure;
+use PhpSchool\PhpWorkshop\Result\Success;
+use PhpSchool\PhpWorkshop\ResultAggregator;
 
 /**
  * Class ResultAggregatorTest
- * @package PhpWorkshop\PhpWorkshopTest
+ * @package PhpSchool\PhpWorkshopTest
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
 class ResultAggregatorTest extends PHPUnit_Framework_TestCase

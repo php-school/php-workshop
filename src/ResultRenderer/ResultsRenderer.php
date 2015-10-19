@@ -1,20 +1,20 @@
 <?php
 
-namespace PhpWorkshop\PhpWorkshop\ResultRenderer;
+namespace PhpSchool\PhpWorkshop\ResultRenderer;
 
 use Colors\Color;
 use PhpSchool\CliMenu\Terminal\TerminalInterface;
 use PhpSchool\PSX\SyntaxHighlighter;
-use PhpWorkshop\PhpWorkshop\Exercise\ExerciseInterface;
-use PhpWorkshop\PhpWorkshop\ExerciseRepository;
-use PhpWorkshop\PhpWorkshop\Result\ResultInterface;
-use PhpWorkshop\PhpWorkshop\Result\Success;
-use PhpWorkshop\PhpWorkshop\ResultAggregator;
-use PhpWorkshop\PhpWorkshop\UserState;
+use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
+use PhpSchool\PhpWorkshop\ExerciseRepository;
+use PhpSchool\PhpWorkshop\Result\ResultInterface;
+use PhpSchool\PhpWorkshop\Result\Success;
+use PhpSchool\PhpWorkshop\ResultAggregator;
+use PhpSchool\PhpWorkshop\UserState;
 
 /**
  * Class ResultsRenderer
- * @package PhpWorkshop\PhpWorkshop\ResultRenderer
+ * @package PhpSchool\PhpWorkshop\ResultRenderer
  */
 class ResultsRenderer
 {

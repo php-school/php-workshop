@@ -1,14 +1,14 @@
 <?php
 
-namespace PhpWorkshop\PhpWorkshopTest\Result;
+namespace PhpSchool\PhpWorkshopTest\Result;
 
 use PHPUnit_Framework_TestCase;
-use PhpWorkshop\PhpWorkshop\Result\ResultInterface;
-use PhpWorkshop\PhpWorkshop\Result\Failure;
+use PhpSchool\PhpWorkshop\Result\ResultInterface;
+use PhpSchool\PhpWorkshop\Result\Failure;
 
 /**
  * Class FailureTest
- * @package PhpWorkshop\PhpWorkshopTest\Result
+ * @package PhpSchool\PhpWorkshopTest\Result
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
 class FailureTest extends PHPUnit_Framework_TestCase

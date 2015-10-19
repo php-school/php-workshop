@@ -1,12 +1,12 @@
 <?php
 
-namespace PhpWorkshop\PhpWorkshop\Command;
+namespace PhpSchool\PhpWorkshop\Command;
 
 use PhpSchool\CliMenu\CliMenu;
 
 /**
  * Class MenuCommand
- * @package PhpWorkshop\PhpWorkshop\Command
+ * @package PhpSchool\PhpWorkshop\Command
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
 class MenuCommand

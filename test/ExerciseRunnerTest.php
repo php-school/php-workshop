@@ -1,23 +1,23 @@
 <?php
 
 
-namespace PhpWorkshop\PhpWorkshopTest;
+namespace PhpSchool\PhpWorkshopTest;
 
 use InvalidArgumentException;
 use PHPUnit_Framework_TestCase;
-use PhpWorkshop\PhpWorkshop\Check\CheckInterface;
-use PhpWorkshop\PhpWorkshop\Exercise\ExerciseInterface;
-use PhpWorkshop\PhpWorkshop\ExerciseCheck\StdOutExerciseCheck;
-use PhpWorkshop\PhpWorkshop\ExerciseRunner;
-use PhpWorkshop\PhpWorkshop\Result\Failure;
-use PhpWorkshop\PhpWorkshop\Result\Success;
-use PhpWorkshop\PhpWorkshop\ResultAggregator;
-use PhpWorkshop\PhpWorkshopTest\Asset\StdOutExercise;
+use PhpSchool\PhpWorkshop\Check\CheckInterface;
+use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
+use PhpSchool\PhpWorkshop\ExerciseCheck\StdOutExerciseCheck;
+use PhpSchool\PhpWorkshop\ExerciseRunner;
+use PhpSchool\PhpWorkshop\Result\Failure;
+use PhpSchool\PhpWorkshop\Result\Success;
+use PhpSchool\PhpWorkshop\ResultAggregator;
+use PhpSchool\PhpWorkshopTest\Asset\StdOutExercise;
 use stdClass;
 
 /**
  * Class ExerciseRunnerTest
- * @package PhpWorkshop\PhpWorkshopTest
+ * @package PhpSchool\PhpWorkshopTest
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
 class ExerciseRunnerTest extends PHPUnit_Framework_TestCase

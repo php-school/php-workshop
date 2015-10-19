@@ -1,16 +1,16 @@
 <?php
 
-namespace PhpWorkshop\PhpWorkshopTest\ResultRenderer;
+namespace PhpSchool\PhpWorkshopTest\ResultRenderer;
 
 use Colors\Color;
 use InvalidArgumentException;
-use PhpWorkshop\PhpWorkshop\Result\Failure;
-use PhpWorkshop\PhpWorkshop\Result\ResultInterface;
-use PhpWorkshop\PhpWorkshop\ResultRenderer\FailureRenderer;
+use PhpSchool\PhpWorkshop\Result\Failure;
+use PhpSchool\PhpWorkshop\Result\ResultInterface;
+use PhpSchool\PhpWorkshop\ResultRenderer\FailureRenderer;
 
 /**
  * Class FailureRendererTest
- * @package PhpWorkshop\PhpWorkshopTest\ResultRenderer
+ * @package PhpSchool\PhpWorkshopTest\ResultRenderer
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
 class FailureRendererTest extends AbstractResultRendererTest

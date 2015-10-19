@@ -1,13 +1,13 @@
 <?php
 
-namespace PhpWorkshop\PhpWorkshop\Command;
+namespace PhpSchool\PhpWorkshop\Command;
 
 use Colors\Color;
-use PhpWorkshop\PhpWorkshop\Output;
+use PhpSchool\PhpWorkshop\Output;
 
 /**
  * Class CreditsCommand
- * @package PhpWorkshop\PhpWorkshop\Command
+ * @package PhpSchool\PhpWorkshop\Command
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
 class CreditsCommand

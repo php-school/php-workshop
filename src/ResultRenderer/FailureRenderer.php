@@ -1,13 +1,13 @@
 <?php
 
-namespace PhpWorkshop\PhpWorkshop\ResultRenderer;
+namespace PhpSchool\PhpWorkshop\ResultRenderer;
 
-use PhpWorkshop\PhpWorkshop\Result\Failure;
-use PhpWorkshop\PhpWorkshop\Result\ResultInterface;
+use PhpSchool\PhpWorkshop\Result\Failure;
+use PhpSchool\PhpWorkshop\Result\ResultInterface;
 
 /**
  * Class FailureRenderer
- * @package PhpWorkshop\PhpWorkshop\ResultRenderer
+ * @package PhpSchool\PhpWorkshop\ResultRenderer
  */
 class FailureRenderer implements ResultRendererInterface
 {

@@ -1,13 +1,13 @@
 <?php
 
-namespace PhpWorkshop\PhpWorkshopTest;
+namespace PhpSchool\PhpWorkshopTest;
 
-use PhpWorkshop\PhpWorkshop\UserState;
-use PhpWorkshop\PhpWorkshop\UserStateSerializer;
+use PhpSchool\PhpWorkshop\UserState;
+use PhpSchool\PhpWorkshop\UserStateSerializer;
 
 /**
  * Class UserStateSerializerTest
- * @package PhpWorkshop\PhpWorkshopTest
+ * @package PhpSchool\PhpWorkshopTest
  * @author  Aydin Hassan <aydin@hotmail.co.uk>
  */
 class UserStateSerializerTest extends \PHPUnit_Framework_TestCase

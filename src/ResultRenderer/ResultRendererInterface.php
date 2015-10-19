@@ -1,12 +1,12 @@
 <?php
 
-namespace PhpWorkshop\PhpWorkshop\ResultRenderer;
+namespace PhpSchool\PhpWorkshop\ResultRenderer;
 
-use PhpWorkshop\PhpWorkshop\Result\ResultInterface;
+use PhpSchool\PhpWorkshop\Result\ResultInterface;
 
 /**
  * Interface ResultRendererInterface
- * @package PhpWorkshop\PhpWorkshop\ResultRenderer
+ * @package PhpSchool\PhpWorkshop\ResultRenderer
  */
 interface ResultRendererInterface
 {
