@@ -1,15 +1,16 @@
 <?php
 
-namespace PhpWorkshop\PhpWorkshop\Exercise;
+namespace PhpWorkshop\PhpWorkshopTest\Asset;
 
+use PhpWorkshop\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpWorkshop\PhpWorkshop\ExerciseCheck\StdOutExerciseCheck;
 
 /**
- * Class BabySteps
- * @package PhpWorkshop\PhpWorkshop\Exercise
+ * Class StdOutExercise
+ * @package PhpWorkshop\PhpWorkshopTest
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
-class BabySteps implements ExerciseInterface, StdOutExerciseCheck
+class StdOutExercise implements ExerciseInterface, StdOutExerciseCheck
 {
 
     /**
@@ -17,7 +18,7 @@ class BabySteps implements ExerciseInterface, StdOutExerciseCheck
      */
     public function getName()
     {
-        return 'Baby Steps';
+        // TODO: Implement getName() method.
     }
 
     /**
@@ -25,7 +26,7 @@ class BabySteps implements ExerciseInterface, StdOutExerciseCheck
      */
     public function getDescription()
     {
-        return 'Simple Addition';
+        // TODO: Implement getDescription() method.
     }
 
     /**
@@ -33,7 +34,7 @@ class BabySteps implements ExerciseInterface, StdOutExerciseCheck
      */
     public function getSolution()
     {
-        return __DIR__ . '/../../res/solutions/baby-steps/solution.php';
+        // TODO: Implement getSolution() method.
     }
 
     /**
@@ -41,7 +42,7 @@ class BabySteps implements ExerciseInterface, StdOutExerciseCheck
      */
     public function getProblem()
     {
-        return __DIR__ . '/../../res/problems/baby-steps/problem.md';
+        // TODO: Implement getProblem() method.
     }
 
     /**
@@ -49,14 +50,7 @@ class BabySteps implements ExerciseInterface, StdOutExerciseCheck
      */
     public function getArgs()
     {
-        $numArgs = rand(0, 10);
-
-        $args = [];
-        for ($i = 0; $i < $numArgs; $i ++) {
-            $args[] = rand(0, 100);
-        }
-
-        return $args;
+        // TODO: Implement getArgs() method.
     }
 
     /**
@@ -64,5 +58,6 @@ class BabySteps implements ExerciseInterface, StdOutExerciseCheck
      */
     public function tearDown()
     {
+        // TODO: Implement tearDown() method.
     }
 }

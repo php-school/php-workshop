@@ -33,7 +33,7 @@
         }
     },
     "autoload-dev": {
-        "psr-4": { "PhpWorkShop\\PhpWorkShopTest\\": "test/" }
+        "psr-4": { "PhpWorkshop\\PhpWorkshopTest\\": "test" }
     },
     "bin": ["bin/php-workshop"]
 }
