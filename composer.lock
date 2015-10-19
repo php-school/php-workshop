@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "6771bc1738afe2a3d61e453ff9656115",
-    "content-hash": "d29d056c8fb69656ae66df02a7179123",
+    "hash": "d98def7fb0dd42a5ae28674d3ecf966f",
+    "content-hash": "b7676b6eedda4bad66393a9cb026562c",
     "packages": [
         {
             "name": "aydin-hassan/cli-md-renderer",
@@ -489,16 +489,16 @@
         },
         {
             "name": "php-school/cli-menu",
-            "version": "1.0.0",
+            "version": "1.0.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/php-school/cli-menu.git",
-                "reference": "888a2ed6ac13199e76df3725c40fa8dcafe3acfc"
+                "reference": "b03ad1a146e7c3e1ddf78750174fd67dcba06c69"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/php-school/cli-menu/zipball/888a2ed6ac13199e76df3725c40fa8dcafe3acfc",
-                "reference": "888a2ed6ac13199e76df3725c40fa8dcafe3acfc",
+                "url": "https://api.github.com/repos/php-school/cli-menu/zipball/b03ad1a146e7c3e1ddf78750174fd67dcba06c69",
+                "reference": "b03ad1a146e7c3e1ddf78750174fd67dcba06c69",
                 "shasum": ""
             },
             "require": {
@@ -506,7 +506,7 @@
             },
             "require-dev": {
                 "phpunit/phpunit": "~4.1",
-                "squizlabs/php_codesniffer": "1.4.*"
+                "squizlabs/php_codesniffer": "~2.0"
             },
             "type": "library",
             "autoload": {
@@ -529,7 +529,7 @@
                 }
             ],
             "description": "A command line menu helper in PHP",
-            "time": "2015-10-19 13:36:02"
+            "time": "2015-10-19 21:44:45"
         },
         {
             "name": "php-school/psx",
