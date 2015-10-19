@@ -1,6 +1,6 @@
 <?php
 
-namespace PhpWorkshop\PhpWorkshop\Factory;
+namespace PhpSchool\PhpWorkshop\Factory;
 
 use Colors\Color;
 use Interop\Container\ContainerInterface;

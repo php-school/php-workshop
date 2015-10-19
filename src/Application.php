@@ -1,16 +1,16 @@
 <?php
 
-namespace PhpWorkshop\PhpWorkshop;
+namespace PhpSchool\PhpWorkshop;
 
 use Assert\Assertion;
 use DI\ContainerBuilder;
-use PhpWorkshop\PhpWorkshop\Check\CheckInterface;
-use PhpWorkshop\PhpWorkshop\Exercise\ExerciseInterface;
-use PhpWorkshop\PhpWorkshop\ResultRenderer\ResultRendererInterface;
+use PhpSchool\PhpWorkshop\Check\CheckInterface;
+use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
+use PhpSchool\PhpWorkshop\ResultRenderer\ResultRendererInterface;
 
 /**
  * Class Application
- * @package PhpWorkshop\PhpWorkshop
+ * @package PhpSchool\PhpWorkshop
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
 final class Application

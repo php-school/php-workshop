@@ -1,13 +1,13 @@
 <?php
 
-namespace PhpWorkshop\PhpWorkshopTest;
+namespace PhpSchool\PhpWorkshopTest;
 
 use PHPUnit_Framework_TestCase;
-use PhpWorkshop\PhpWorkshop\UserState;
+use PhpSchool\PhpWorkshop\UserState;
 
 /**
  * Class UserStateTest
- * @package PhpWorkshop\PhpWorkshopTest
+ * @package PhpSchool\PhpWorkshopTest
  * @author  Aydin Hassan <aydin@hotmail.co.uk>
  */
 class UserStateTest extends PHPUnit_Framework_TestCase

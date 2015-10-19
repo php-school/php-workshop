@@ -1,22 +1,22 @@
 <?php
 
-namespace PhpWorkshop\PhpWorkshopTest\Check;
+namespace PhpSchool\PhpWorkshopTest\Check;
 
 use InvalidArgumentException;
 use PhpParser\Lexer\Emulative;
 use PhpParser\Parser;
 use PhpParser\ParserFactory;
 use PHPUnit_Framework_TestCase;
-use PhpWorkshop\PhpWorkshop\Check\FunctionRequirementsCheck;
-use PhpWorkshop\PhpWorkshop\Exercise\ExerciseInterface;
-use PhpWorkshop\PhpWorkshop\ExerciseCheck\FunctionRequirementsExerciseCheck;
-use PhpWorkshop\PhpWorkshop\Result\Failure;
-use PhpWorkshop\PhpWorkshop\Result\FunctionRequirementsFailure;
-use PhpWorkshop\PhpWorkshop\Result\Success;
+use PhpSchool\PhpWorkshop\Check\FunctionRequirementsCheck;
+use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
+use PhpSchool\PhpWorkshop\ExerciseCheck\FunctionRequirementsExerciseCheck;
+use PhpSchool\PhpWorkshop\Result\Failure;
+use PhpSchool\PhpWorkshop\Result\FunctionRequirementsFailure;
+use PhpSchool\PhpWorkshop\Result\Success;
 
 /**
  * Class FunctionRequirementsCheckTest
- * @package PhpWorkshop\PhpWorkshopTest\Check
+ * @package PhpSchool\PhpWorkshopTest\Check
  * @author  Aydin Hassan <aydin@hotmail.co.uk>
  */
 class FunctionRequirementsCheckTest extends PHPUnit_Framework_TestCase

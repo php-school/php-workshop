@@ -1,10 +1,10 @@
 <?php
 
-namespace PhpWorkshop\PhpWorkshop;
+namespace PhpSchool\PhpWorkshop;
 
-use PhpWorkshop\PhpWorkshop\Check\CheckInterface;
-use PhpWorkshop\PhpWorkshop\Exercise\ExerciseInterface;
-use PhpWorkshop\PhpWorkshop\Result\Failure;
+use PhpSchool\PhpWorkshop\Check\CheckInterface;
+use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
+use PhpSchool\PhpWorkshop\Result\Failure;
 
 /**
  * Class ExerciseRunner

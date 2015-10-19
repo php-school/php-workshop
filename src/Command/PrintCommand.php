@@ -1,12 +1,12 @@
 <?php
 
-namespace PhpWorkshop\PhpWorkshop\Command;
+namespace PhpSchool\PhpWorkshop\Command;
 
-use PhpWorkshop\PhpWorkshop\ExerciseRepository;
-use PhpWorkshop\PhpWorkshop\MarkdownRenderer;
-use PhpWorkshop\PhpWorkshop\Output;
-use PhpWorkshop\PhpWorkshop\UserState;
-use PhpWorkshop\PhpWorkshop\UserStateSerializer;
+use PhpSchool\PhpWorkshop\ExerciseRepository;
+use PhpSchool\PhpWorkshop\MarkdownRenderer;
+use PhpSchool\PhpWorkshop\Output;
+use PhpSchool\PhpWorkshop\UserState;
+use PhpSchool\PhpWorkshop\UserStateSerializer;
 
 /**
  * Class PrintCommand

@@ -1,17 +1,17 @@
 <?php
 
-namespace PhpWorkshop\PhpWorkshopTest\ResultRenderer;
+namespace PhpSchool\PhpWorkshopTest\ResultRenderer;
 
 use Colors\Color;
 use PhpSchool\CliMenu\Terminal\TerminalInterface;
 use PhpSchool\PSX\Factory;
 use PHPUnit_Framework_TestCase;
-use PhpWorkshop\PhpWorkshop\ExerciseRepository;
-use PhpWorkshop\PhpWorkshop\ResultRenderer\ResultsRenderer;
+use PhpSchool\PhpWorkshop\ExerciseRepository;
+use PhpSchool\PhpWorkshop\ResultRenderer\ResultsRenderer;
 
 /**
  * Class AbstractResultRendererTest
- * @package PhpWorkshop\PhpWorkshopTest\ResultRenderer
+ * @package PhpSchool\PhpWorkshopTest\ResultRenderer
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
 abstract class AbstractResultRendererTest extends PHPUnit_Framework_TestCase

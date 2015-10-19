@@ -1,15 +1,15 @@
 <?php
 
 
-namespace PhpWorkshop\PhpWorkshopTest\Command;
+namespace PhpSchool\PhpWorkshopTest\Command;
 
 use PhpSchool\CliMenu\CliMenu;
 use PHPUnit_Framework_TestCase;
-use PhpWorkshop\PhpWorkshop\Command\MenuCommand;
+use PhpSchool\PhpWorkshop\Command\MenuCommand;
 
 /**
  * Class MenuCommandTest
- * @package PhpWorkshop\PhpWorkshop\Command
+ * @package PhpSchool\PhpWorkshop\Command
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
 class MenuCommandTest extends PHPUnit_Framework_TestCase

@@ -1,13 +1,13 @@
 <?php
 
-namespace PhpWorkshop\PhpWorkshop\Check;
+namespace PhpSchool\PhpWorkshop\Check;
 
-use PhpWorkshop\PhpWorkshop\Exception\SolutionExecutionException;
-use PhpWorkshop\PhpWorkshop\Exercise\ExerciseInterface;
-use PhpWorkshop\PhpWorkshop\Result\Failure;
-use PhpWorkshop\PhpWorkshop\Result\ResultInterface;
-use PhpWorkshop\PhpWorkshop\Result\StdOutFailure;
-use PhpWorkshop\PhpWorkshop\Result\Success;
+use PhpSchool\PhpWorkshop\Exception\SolutionExecutionException;
+use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
+use PhpSchool\PhpWorkshop\Result\Failure;
+use PhpSchool\PhpWorkshop\Result\ResultInterface;
+use PhpSchool\PhpWorkshop\Result\StdOutFailure;
+use PhpSchool\PhpWorkshop\Result\Success;
 use RuntimeException;
 use Symfony\Component\Process\Process;
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace PhpWorkshop\PhpWorkshop\Exception;
+namespace PhpSchool\PhpWorkshop\Exception;
 
 use RuntimeException;
 

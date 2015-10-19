@@ -1,17 +1,17 @@
 <?php
 
-namespace PhpWorkshop\PhpWorkshopTest;
+namespace PhpSchool\PhpWorkshopTest;
 
 use AydinHassan\CliMdRenderer\CliRenderer;
 use AydinHassan\CliMdRenderer\CliRendererFactory;
 use League\CommonMark\DocParser;
 use League\CommonMark\Environment;
 use PHPUnit_Framework_TestCase;
-use PhpWorkshop\PhpWorkshop\MarkdownRenderer;
+use PhpSchool\PhpWorkshop\MarkdownRenderer;
 
 /**
  * Class MarkdownRendererTest
- * @package PhpWorkshop\PhpWorkshopTest
+ * @package PhpSchool\PhpWorkshopTest
  * @author  Aydin Hassan <aydin@hotmail.co.uk>
  */
 class MarkdownRendererTest extends PHPUnit_Framework_TestCase

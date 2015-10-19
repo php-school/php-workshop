@@ -1,13 +1,13 @@
 <?php
 
-namespace PhpWorkshop\PhpWorkshop;
+namespace PhpSchool\PhpWorkshop;
 
 use League\CommonMark\DocParser;
 use AydinHassan\CliMdRenderer\CliRenderer;
 
 /**
  * Class MarkdownRenderer
- * @package PhpWorkshop\PhpWorkshop
+ * @package PhpSchool\PhpWorkshop
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
 class MarkdownRenderer

@@ -1,10 +1,10 @@
 <?php
 
-namespace PhpWorkshop\PhpWorkshop;
+namespace PhpSchool\PhpWorkshop;
 
 /**
  * Class UserState
- * @package PhpWorkshop\PhpWorkshop
+ * @package PhpSchool\PhpWorkshop
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
 class UserState

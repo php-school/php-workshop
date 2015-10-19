@@ -1,15 +1,15 @@
 <?php
 
-namespace PhpWorkshop\PhpWorkshop\Check;
+namespace PhpSchool\PhpWorkshop\Check;
 
-use PhpWorkshop\PhpWorkshop\Exercise\ExerciseInterface;
-use PhpWorkshop\PhpWorkshop\Result\Success;
-use PhpWorkshop\PhpWorkshop\Result\Failure;
+use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
+use PhpSchool\PhpWorkshop\Result\Success;
+use PhpSchool\PhpWorkshop\Result\Failure;
 use Symfony\Component\Process\Process;
 
 /**
  * Class PhpLintCheck
- * @package PhpWorkshop\PhpWorkshop\Check
+ * @package PhpSchool\PhpWorkshop\Check
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
 

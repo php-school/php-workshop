@@ -1,6 +1,6 @@
 {
-    "name": "php-workshop/php-workshop",
-    "description": "PHP Workshop Application",
+    "name": "php-school/php-workshop",
+    "description": "PHP Workshop Framework",
     "license": "MIT",
     "authors": [
         {
@@ -29,11 +29,13 @@
     },
     "autoload" : {
         "psr-4" : {
-            "PhpWorkshop\\PhpWorkshop\\": "src"
+            "PhpSchool\\PhpWorkshop\\": "src"
         }
     },
     "autoload-dev": {
-        "psr-4": { "PhpWorkShop\\PhpWorkShopTest\\": "test/" }
+        "psr-4": { 
+            "PhpSchool\\PhpWorkshopTest\\": "test" 
+        }
     },
     "bin": ["bin/php-workshop"]
 }

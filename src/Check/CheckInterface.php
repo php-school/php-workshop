@@ -1,13 +1,13 @@
 <?php
 
-namespace PhpWorkshop\PhpWorkshop\Check;
+namespace PhpSchool\PhpWorkshop\Check;
 
-use PhpWorkshop\PhpWorkshop\Exercise\ExerciseInterface;
-use PhpWorkshop\PhpWorkshop\Result\ResultInterface;
+use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
+use PhpSchool\PhpWorkshop\Result\ResultInterface;
 
 /**
  * Class CheckInterface
- * @package PhpWorkshop\PhpWorkshop\Comparator
+ * @package PhpSchool\PhpWorkshop\Comparator
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
 

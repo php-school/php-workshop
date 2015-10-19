@@ -1,6 +1,6 @@
 <?php
 
-namespace PhpWorkshop\PhpWorkshop\NodeVisitor;
+namespace PhpSchool\PhpWorkshop\NodeVisitor;
 
 use PhpParser\Node;
 use PhpParser\Node\Expr\FuncCall;
@@ -8,7 +8,7 @@ use PhpParser\NodeVisitorAbstract;
 
 /**
  * Class FunctionVisitor
- * @package PhpWorkshop\PhpWorkshop\NodeVisitor
+ * @package PhpSchool\PhpWorkshop\NodeVisitor
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
 class FunctionVisitor extends NodeVisitorAbstract

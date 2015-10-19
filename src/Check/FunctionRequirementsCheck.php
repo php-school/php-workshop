@@ -1,22 +1,22 @@
 <?php
 
-namespace PhpWorkshop\PhpWorkshop\Check;
+namespace PhpSchool\PhpWorkshop\Check;
 
 use PhpParser\Error;
 use PhpParser\Node\Expr\FuncCall;
 use PhpParser\NodeTraverser;
 use PhpParser\Parser;
-use PhpWorkshop\PhpWorkshop\Exercise\ExerciseInterface;
-use PhpWorkshop\PhpWorkshop\ExerciseCheck\FunctionRequirementsExerciseCheck;
-use PhpWorkshop\PhpWorkshop\NodeVisitor\FunctionVisitor;
-use PhpWorkshop\PhpWorkshop\Result\Failure;
-use PhpWorkshop\PhpWorkshop\Result\FunctionRequirementsFailure;
-use PhpWorkshop\PhpWorkshop\Result\ResultInterface;
-use PhpWorkshop\PhpWorkshop\Result\Success;
+use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
+use PhpSchool\PhpWorkshop\ExerciseCheck\FunctionRequirementsExerciseCheck;
+use PhpSchool\PhpWorkshop\NodeVisitor\FunctionVisitor;
+use PhpSchool\PhpWorkshop\Result\Failure;
+use PhpSchool\PhpWorkshop\Result\FunctionRequirementsFailure;
+use PhpSchool\PhpWorkshop\Result\ResultInterface;
+use PhpSchool\PhpWorkshop\Result\Success;
 
 /**
  * Class FunctionRequirementsCheck
- * @package PhpWorkshop\PhpWorkshop\Check
+ * @package PhpSchool\PhpWorkshop\Check
  * @author  Aydin Hassan <aydin@hotmail.co.uk>
  */
 class FunctionRequirementsCheck implements CheckInterface

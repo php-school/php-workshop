@@ -1,24 +1,23 @@
 <?php
 
 
-namespace PhpWorkshop\PhpWorkshopTest;
+namespace PhpSchool\PhpWorkshopTest;
 
 use InvalidArgumentException;
 use PHPUnit_Framework_TestCase;
-use PhpWorkshop\PhpWorkshop\Check\CheckInterface;
-use PhpWorkshop\PhpWorkshop\Check\StdOutCheck;
-use PhpWorkshop\PhpWorkshop\Exercise\ExerciseInterface;
-use PhpWorkshop\PhpWorkshop\Exercise\HelloWorld;
-use PhpWorkshop\PhpWorkshop\ExerciseCheck\StdOutExerciseCheck;
-use PhpWorkshop\PhpWorkshop\ExerciseRunner;
-use PhpWorkshop\PhpWorkshop\Result\Failure;
-use PhpWorkshop\PhpWorkshop\Result\Success;
-use PhpWorkshop\PhpWorkshop\ResultAggregator;
+use PhpSchool\PhpWorkshop\Check\CheckInterface;
+use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
+use PhpSchool\PhpWorkshop\ExerciseCheck\StdOutExerciseCheck;
+use PhpSchool\PhpWorkshop\ExerciseRunner;
+use PhpSchool\PhpWorkshop\Result\Failure;
+use PhpSchool\PhpWorkshop\Result\Success;
+use PhpSchool\PhpWorkshop\ResultAggregator;
+use PhpSchool\PhpWorkshopTest\Asset\StdOutExercise;
 use stdClass;
 
 /**
  * Class ExerciseRunnerTest
- * @package PhpWorkshop\PhpWorkshopTest
+ * @package PhpSchool\PhpWorkshopTest
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
 class ExerciseRunnerTest extends PHPUnit_Framework_TestCase
@@ -65,7 +64,7 @@ class ExerciseRunnerTest extends PHPUnit_Framework_TestCase
             ->method('check')
             ->will($this->returnValue(new Success('Some Check')));
 
-        $result = $runner->runExercise($this->getMock(HelloWorld::class), 'some-file.php');
+        $result = $runner->runExercise(new StdOutExercise, 'some-file.php');
         $this->assertInstanceOf(ResultAggregator::class, $result);
         $this->assertTrue($result->isSuccessful());
     }
@@ -92,7 +91,7 @@ class ExerciseRunnerTest extends PHPUnit_Framework_TestCase
         $runner->registerCheck($runMe, StdOutExerciseCheck::class);
         $runner->registerCheck($doNotRunMe, StdOutExerciseCheck::class);
 
-        $result = $runner->runExercise($this->getMock(HelloWorld::class), 'some-file.php');
+        $result = $runner->runExercise(new StdOutExercise, 'some-file.php');
         $this->assertInstanceOf(ResultAggregator::class, $result);
         $this->assertFalse($result->isSuccessful());
     }

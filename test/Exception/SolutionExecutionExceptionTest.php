@@ -1,13 +1,13 @@
 <?php
 
-namespace PhpWorkshop\PhpWorkshopTest\Exception;
+namespace PhpSchool\PhpWorkshopTest\Exception;
 
 use PHPUnit_Framework_TestCase;
-use PhpWorkshop\PhpWorkshop\Exception\SolutionExecutionException;
+use PhpSchool\PhpWorkshop\Exception\SolutionExecutionException;
 
 /**
  * Class SolutionExecutionExceptionTest
- * @package PhpWorkshop\PhpWorkshopTest\Exception
+ * @package PhpSchool\PhpWorkshopTest\Exception
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
 class SolutionExecutionExceptionTest extends PHPUnit_Framework_TestCase

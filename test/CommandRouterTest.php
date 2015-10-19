@@ -1,19 +1,19 @@
 <?php
 
-namespace PhpWorkshop\PhpWorkshopTest;
+namespace PhpSchool\PhpWorkshopTest;
 
 use Interop\Container\ContainerInterface;
 use InvalidArgumentException;
 use PHPUnit_Framework_TestCase;
-use PhpWorkshop\PhpWorkshop\CommandDefinition;
-use PhpWorkshop\PhpWorkshop\CommandRouter;
-use PhpWorkshop\PhpWorkshop\Exception\CliRouteNotExistsException;
-use PhpWorkshop\PhpWorkshop\Exception\MissingArgumentException;
+use PhpSchool\PhpWorkshop\CommandDefinition;
+use PhpSchool\PhpWorkshop\CommandRouter;
+use PhpSchool\PhpWorkshop\Exception\CliRouteNotExistsException;
+use PhpSchool\PhpWorkshop\Exception\MissingArgumentException;
 use RuntimeException;
 
 /**
  * Class CommandRouterTest
- * @package PhpWorkshop\PhpWorkshopTest
+ * @package PhpSchool\PhpWorkshopTest
  * @author  Aydin Hassan <aydin@hotmail.co.uk>
  */
 class CommandRouterTest extends PHPUnit_Framework_TestCase

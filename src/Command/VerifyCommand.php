@@ -1,23 +1,23 @@
 <?php
 
-namespace PhpWorkshop\PhpWorkshop\Command;
+namespace PhpSchool\PhpWorkshop\Command;
 
-use PhpWorkshop\PhpWorkshop\ExerciseRepository;
-use PhpWorkshop\PhpWorkshop\ExerciseRunner;
-use PhpWorkshop\PhpWorkshop\Output;
-use PhpWorkshop\PhpWorkshop\ResultRenderer\ResultsRenderer;
-use PhpWorkshop\PhpWorkshop\UserState;
-use PhpWorkshop\PhpWorkshop\UserStateSerializer;
+use PhpSchool\PhpWorkshop\ExerciseRepository;
+use PhpSchool\PhpWorkshop\ExerciseRunner;
+use PhpSchool\PhpWorkshop\Output;
+use PhpSchool\PhpWorkshop\ResultRenderer\ResultsRenderer;
+use PhpSchool\PhpWorkshop\UserState;
+use PhpSchool\PhpWorkshop\UserStateSerializer;
 
 /**
  * Class VerifyCommand
- * @package PhpWorkshop\PhpWorkshop\Command
+ * @package PhpSchool\PhpWorkshop\Command
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
 class VerifyCommand
 {
     /**
-     * @var \PhpWorkshop\PhpWorkshop\ExerciseRunner
+     * @var \PhpSchool\PhpWorkshop\ExerciseRunner
      */
     private $runner;
 

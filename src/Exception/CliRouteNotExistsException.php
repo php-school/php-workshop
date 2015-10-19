@@ -1,12 +1,12 @@
 <?php
 
-namespace PhpWorkshop\PhpWorkshop\Exception;
+namespace PhpSchool\PhpWorkshop\Exception;
 
 use RuntimeException;
 
 /**
  * Class CliRouteNotExistsException
- * @package PhpWorkshop\PhpWorkshop\Exception
+ * @package PhpSchool\PhpWorkshop\Exception
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
 class CliRouteNotExistsException extends RuntimeException

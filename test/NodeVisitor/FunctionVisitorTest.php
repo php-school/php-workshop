@@ -1,15 +1,15 @@
 <?php
 
-namespace PhpWorkshop\PhpWorkshopTest\NodeVisitor;
+namespace PhpSchool\PhpWorkshopTest\NodeVisitor;
 
 use PhpParser\Node\Expr\FuncCall;
 use PhpParser\Node\Name;
 use PHPUnit_Framework_TestCase;
-use PhpWorkshop\PhpWorkshop\NodeVisitor\FunctionVisitor;
+use PhpSchool\PhpWorkshop\NodeVisitor\FunctionVisitor;
 
 /**
  * Class FunctionVisitorTest
- * @package PhpWorkshop\PhpWorkshopTest\NodeVisitor
+ * @package PhpSchool\PhpWorkshopTest\NodeVisitor
  * @author  Aydin Hassan <aydin@hotmail.co.uk>
  */
 class FunctionVisitorTest extends PHPUnit_Framework_TestCase

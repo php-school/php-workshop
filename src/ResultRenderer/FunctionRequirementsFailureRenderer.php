@@ -1,13 +1,13 @@
 <?php
 
-namespace PhpWorkshop\PhpWorkshop\ResultRenderer;
+namespace PhpSchool\PhpWorkshop\ResultRenderer;
 
-use PhpWorkshop\PhpWorkshop\Result\FunctionRequirementsFailure;
-use PhpWorkshop\PhpWorkshop\Result\ResultInterface;
+use PhpSchool\PhpWorkshop\Result\FunctionRequirementsFailure;
+use PhpSchool\PhpWorkshop\Result\ResultInterface;
 
 /**
  * Class FunctionRequirementsFailureRenderer
- * @package PhpWorkshop\PhpWorkshop\ResultRenderer
+ * @package PhpSchool\PhpWorkshop\ResultRenderer
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
 class FunctionRequirementsFailureRenderer implements ResultRendererInterface
