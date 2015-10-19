@@ -184,18 +184,22 @@ return [
         $exerciseRepository     = $c->get(ExerciseRepository::class);
         $userState              = $userStateSerializer->deSerialize();
         $exerciseRenderer       = $c->get(ExerciseRenderer::class);
-        
-        $art = <<<ART
-  _ __ _
- / |..| \
- \/ || \/
-  |_''_|
 
-PHP SCHOOL
+        $art = <<<ART
+        _ __ _
+       / |..| \
+       \/ || \/
+        |_''_|
+
+      PHP SCHOOL
+LEARNING FOR ELEPHPANTS
 ART;
+
         return (new CliMenuBuilder)
-            ->setTitle('PHP School Workshop')
+            ->addLineBreak()
             ->addAsciiArt($art, AsciiArtItem::POSITION_CENTER)
+            ->addLineBreak('_')
+            ->addLineBreak()
             ->addStaticItem('Exercises')
             ->addStaticItem('---------')
             ->addItems(
@@ -207,7 +211,9 @@ ART;
                     ];
                 }, $exerciseRepository->findAll())
             )
+            ->addLineBreak()
             ->addLineBreak('-')
+            ->addLineBreak()
             ->addItem('HELP', function (CliMenu $menu) use ($c) {
                 $menu->close();
                 $c->get(HelpCommand::class)->__invoke();
@@ -224,7 +230,12 @@ ART;
             ->setSelectedMarker('↳')
             ->setItemExtra('[COMPLETED]')
             ->addSubMenu('OPTIONS')
-                ->setTitle('PHP School Workshop > Options')
+                ->addLineBreak()
+                ->addAsciiArt($art, AsciiArtItem::POSITION_CENTER)
+                ->addLineBreak('_')
+                ->addLineBreak()
+                ->addStaticItem('Options')
+                ->addStaticItem('-------')
                 ->addItem(
                     'Reset workshop progress',
                     function (CliMenu $menu) use ($userStateSerializer) {
@@ -232,7 +243,9 @@ ART;
                         echo "Status Reset!";
                     }
                 )
+                ->addLineBreak()
                 ->addLineBreak('-')
+                ->addLineBreak()
                 ->setGoBackButtonText('GO BACK')
                 ->setExitButtonText('EXIT')
                 ->end()
