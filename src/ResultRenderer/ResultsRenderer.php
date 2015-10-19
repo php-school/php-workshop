@@ -3,13 +3,11 @@
 namespace PhpWorkshop\PhpWorkshop\ResultRenderer;
 
 use Colors\Color;
-use MikeyMike\CliMenu\Terminal\TerminalInterface;
-use PhpSchool\PSX\Factory;
+use PhpSchool\CliMenu\Terminal\TerminalInterface;
 use PhpSchool\PSX\SyntaxHighlighter;
 use PhpWorkshop\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpWorkshop\PhpWorkshop\ExerciseRepository;
 use PhpWorkshop\PhpWorkshop\Result\ResultInterface;
-use PhpWorkshop\PhpWorkshop\Result\StdOutFailure;
 use PhpWorkshop\PhpWorkshop\Result\Success;
 use PhpWorkshop\PhpWorkshop\ResultAggregator;
 use PhpWorkshop\PhpWorkshop\UserState;

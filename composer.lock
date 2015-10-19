@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "12ec3d1b931787e04d419b3e658620f1",
-    "content-hash": "35fb96fb06525e05e500a684458b8f8f",
+    "hash": "6771bc1738afe2a3d61e453ff9656115",
+    "content-hash": "d29d056c8fb69656ae66df02a7179123",
     "packages": [
         {
             "name": "aydin-hassan/cli-md-renderer",
@@ -49,6 +49,59 @@
             ],
             "description": "A CLI Markdown Render for league/commonmark compatibile AST",
             "time": "2015-10-18 19:22:05"
+        },
+        {
+            "name": "beberlei/assert",
+            "version": "v2.4",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/beberlei/assert.git",
+                "reference": "7281b1fd8118b31cb9162c2fb5a4cc6f01d62ed6"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/beberlei/assert/zipball/7281b1fd8118b31cb9162c2fb5a4cc6f01d62ed6",
+                "reference": "7281b1fd8118b31cb9162c2fb5a4cc6f01d62ed6",
+                "shasum": ""
+            },
+            "require": {
+                "ext-mbstring": "*",
+                "php": ">=5.3"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "@stable"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "2.3-dev"
+                }
+            },
+            "autoload": {
+                "psr-0": {
+                    "Assert": "lib/"
+                },
+                "files": [
+                    "lib/Assert/functions.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-2-Clause"
+            ],
+            "authors": [
+                {
+                    "name": "Benjamin Eberlei",
+                    "email": "kontakt@beberlei.de"
+                }
+            ],
+            "description": "Thin assertion library for input validation in business models.",
+            "keywords": [
+                "assert",
+                "assertion",
+                "validation"
+            ],
+            "time": "2015-08-21 16:50:17"
         },
         {
             "name": "container-interop/container-interop",
@@ -247,51 +300,6 @@
             "time": "2015-09-25 12:40:32"
         },
         {
-            "name": "mikeymike/cli-menu",
-            "version": "dev-master",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/mikeymike/cli-menu.git",
-                "reference": "631c9dfceb4e381536cb7bdd504b0881569973f4"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/mikeymike/cli-menu/zipball/631c9dfceb4e381536cb7bdd504b0881569973f4",
-                "reference": "631c9dfceb4e381536cb7bdd504b0881569973f4",
-                "shasum": ""
-            },
-            "require-dev": {
-                "phpunit/phpunit": "~4.1",
-                "squizlabs/php_codesniffer": "1.4.*"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "MikeyMike\\CliMenu\\": "src"
-                }
-            },
-            "autoload-dev": {
-                "psr-4": {
-                    "MikeyMike\\CliMenu\\": "test/"
-                }
-            },
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Michael Woodward",
-                    "email": "mikeymike.mw@gmail.com"
-                }
-            ],
-            "description": "A command line menu helper in PHP",
-            "support": {
-                "source": "https://github.com/mikeymike/cli-menu/tree/master",
-                "issues": "https://github.com/mikeymike/cli-menu/issues"
-            },
-            "time": "2015-10-09 20:40:50"
-        },
-        {
             "name": "nikic/php-parser",
             "version": "dev-master",
             "source": {
@@ -478,6 +486,50 @@
                 "reflection"
             ],
             "time": "2015-06-01 14:23:20"
+        },
+        {
+            "name": "php-school/cli-menu",
+            "version": "1.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/php-school/cli-menu.git",
+                "reference": "888a2ed6ac13199e76df3725c40fa8dcafe3acfc"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/php-school/cli-menu/zipball/888a2ed6ac13199e76df3725c40fa8dcafe3acfc",
+                "reference": "888a2ed6ac13199e76df3725c40fa8dcafe3acfc",
+                "shasum": ""
+            },
+            "require": {
+                "beberlei/assert": "^2.4"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "~4.1",
+                "squizlabs/php_codesniffer": "1.4.*"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "PhpSchool\\CliMenu\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Michael Woodward",
+                    "email": "mikeymike.mw@gmail.com"
+                },
+                {
+                    "name": "Aydin Hassan",
+                    "email": "aydin@hotmail.com"
+                }
+            ],
+            "description": "A command line menu helper in PHP",
+            "time": "2015-10-19 13:36:02"
         },
         {
             "name": "php-school/psx",
@@ -1650,7 +1702,6 @@
     "aliases": [],
     "minimum-stability": "stable",
     "stability-flags": {
-        "mikeymike/cli-menu": 20,
         "nikic/php-parser": 20
     },
     "prefer-stable": false,

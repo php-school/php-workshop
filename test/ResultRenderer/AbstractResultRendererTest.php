@@ -3,7 +3,7 @@
 namespace PhpWorkshop\PhpWorkshopTest\ResultRenderer;
 
 use Colors\Color;
-use MikeyMike\CliMenu\Terminal\TerminalInterface;
+use PhpSchool\CliMenu\Terminal\TerminalInterface;
 use PhpSchool\PSX\Factory;
 use PHPUnit_Framework_TestCase;
 use PhpWorkshop\PhpWorkshop\ExerciseRepository;

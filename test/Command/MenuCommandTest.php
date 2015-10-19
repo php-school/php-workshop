@@ -3,7 +3,7 @@
 
 namespace PhpWorkshop\PhpWorkshopTest\Command;
 
-use MikeyMike\CliMenu\CliMenu;
+use PhpSchool\CliMenu\CliMenu;
 use PHPUnit_Framework_TestCase;
 use PhpWorkshop\PhpWorkshop\Command\MenuCommand;
 
