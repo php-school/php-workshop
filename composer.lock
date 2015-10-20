@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "d599cc8c4b8b3b3940b5685cffaf48c0",
-    "content-hash": "2815bb960efba09f672e5e15da6a232b",
+    "hash": "21c54b395be45a67453bae1fc4f5d3e3",
+    "content-hash": "31c6198f83f01af3897534c32af9e655",
     "packages": [
         {
             "name": "aydin-hassan/cli-md-renderer",
