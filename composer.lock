@@ -489,16 +489,16 @@
         },
         {
             "name": "php-school/cli-menu",
-            "version": "1.0.1",
+            "version": "1.0.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/php-school/cli-menu.git",
-                "reference": "b03ad1a146e7c3e1ddf78750174fd67dcba06c69"
+                "reference": "b1581981a5943db7a00ea2252207f6c59aed9276"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/php-school/cli-menu/zipball/b03ad1a146e7c3e1ddf78750174fd67dcba06c69",
-                "reference": "b03ad1a146e7c3e1ddf78750174fd67dcba06c69",
+                "url": "https://api.github.com/repos/php-school/cli-menu/zipball/b1581981a5943db7a00ea2252207f6c59aed9276",
+                "reference": "b1581981a5943db7a00ea2252207f6c59aed9276",
                 "shasum": ""
             },
             "require": {
@@ -529,7 +529,7 @@
                 }
             ],
             "description": "A command line menu helper in PHP",
-            "time": "2015-10-19 21:44:45"
+            "time": "2015-10-20 16:02:43"
         },
         {
             "name": "php-school/psx",
