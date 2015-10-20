@@ -29,6 +29,6 @@ class MenuCommand
      */
     public function __invoke()
     {
-        $this->menu->display();
+        $this->menu->open();
     }
 }

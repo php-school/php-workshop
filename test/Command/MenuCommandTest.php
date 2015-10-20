@@ -22,7 +22,7 @@ class MenuCommandTest extends PHPUnit_Framework_TestCase
 
         $menu
             ->expects($this->once())
-            ->method('display');
+            ->method('open');
 
         $command = new MenuCommand($menu);
         $command->__invoke();
