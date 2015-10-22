@@ -84,6 +84,7 @@ class VerifyCommand
             );
             return 1;
         }
+        $program = realpath($program);
 
         if (!$this->userState->isAssignedExercise()) {
             $this->output->printError("No active exercises. Select one from the menu");
