@@ -13,6 +13,7 @@ use PhpSchool\CliMenu\Terminal\TerminalFactory;
 use PhpSchool\CliMenu\Terminal\TerminalInterface;
 use PhpParser\Parser;
 use PhpParser\ParserFactory;
+use PhpSchool\PhpWorkshop\Result\StdOutFailure;
 use PhpSchool\PSX\SyntaxHighlighter;
 use PhpSchool\PhpWorkshop\Check\FileExistsCheck;
 use PhpSchool\PhpWorkshop\Check\FunctionRequirementsCheck;
@@ -269,7 +270,7 @@ return [
     }),
     'renderers' => factory(function (ContainerInterface $c) {
         return [
-            [StdOutFailureRenderer::class, new StdOutFailureRenderer],
+            [StdOutFailure::class, new StdOutFailureRenderer],
             [FunctionRequirementsFailure::class, new FunctionRequirementsFailureRenderer],
             [Success::class, new SuccessRenderer],
             [Failure::class, new FailureRenderer],
