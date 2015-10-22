@@ -262,8 +262,8 @@ return [
             $c->get(SyntaxHighlighter::class)
         );
         
-        foreach ($c->get('renderers') as $renderer) {
-            $renderer->registerRenderer(...$renderer);
+        foreach ($c->get('renderers') as $resultRenderer) {
+            $renderer->registerRenderer(...$resultRenderer);
         }
         return $renderer;
     }),
