@@ -262,17 +262,17 @@ return [
             $c->get(SyntaxHighlighter::class)
         );
         
-        foreach ($c->get('renderers') as $resultRenderer => $resultClass) {
-            $renderer->registerRenderer($resultClass, $resultRenderer);
+        foreach ($c->get('renderers') as $renderer) {
+            $renderer->registerRenderer(...$renderer);
         }
         return $renderer;
     }),
     'renderers' => factory(function (ContainerInterface $c) {
         return [
-            [new StdOutFailureRenderer, StdOutFailureRenderer::class],
-            [new FunctionRequirementsFailureRenderer, FunctionRequirementsFailure::class],
-            [new SuccessRenderer, Success::class],
-            [new FailureRenderer, Failure::class],
+            [StdOutFailureRenderer::class, new StdOutFailureRenderer],
+            [FunctionRequirementsFailure::class, new FunctionRequirementsFailureRenderer],
+            [Success::class, new SuccessRenderer],
+            [Failure::class, new FailureRenderer],
         ];
     }),
 ];
