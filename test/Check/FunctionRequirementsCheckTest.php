@@ -3,7 +3,6 @@
 namespace PhpSchool\PhpWorkshopTest\Check;
 
 use InvalidArgumentException;
-use PhpParser\Lexer\Emulative;
 use PhpParser\Parser;
 use PhpParser\ParserFactory;
 use PHPUnit_Framework_TestCase;
