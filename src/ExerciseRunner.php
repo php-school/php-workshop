@@ -45,7 +45,7 @@ class ExerciseRunner
 
     /**
      * @param ExerciseInterface $exercise
-     * @param $fileName
+     * @param string $fileName
      * @return ResultAggregator
      */
     public function runExercise(ExerciseInterface $exercise, $fileName)
