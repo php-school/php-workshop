@@ -45,7 +45,7 @@ class FunctionRequirementsCheckTest extends PHPUnit_Framework_TestCase
         $this->exercise = $this->getMock([FunctionRequirementsExerciseCheck::class, ExerciseInterface::class]);
     }
 
-    public function testExceptionIsThrownIfNotValidExcercise()
+    public function testExceptionIsThrownIfNotValidExercise()
     {
         $exercise = $this->getMock(ExerciseInterface::class);
         $this->setExpectedException(InvalidArgumentException::class);
