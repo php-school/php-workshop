@@ -13,6 +13,7 @@ use PhpSchool\CliMenu\Terminal\TerminalFactory;
 use PhpSchool\CliMenu\Terminal\TerminalInterface;
 use PhpParser\Parser;
 use PhpParser\ParserFactory;
+use PhpSchool\PhpWorkshop\Command\RunCommand;
 use PhpSchool\PhpWorkshop\Result\StdOutFailure;
 use PhpSchool\PSX\SyntaxHighlighter;
 use PhpSchool\PhpWorkshop\Check\FileExistsCheck;
@@ -67,13 +68,14 @@ return [
     CommandRouter::class => factory(function (ContainerInterface $c) {
         return new CommandRouter(
             [
-                new CommandDefinition('run', [], MenuCommand::class),
+                new CommandDefinition('menu', [], MenuCommand::class),
                 new CommandDefinition('help', [], HelpCommand::class),
                 new CommandDefinition('print', [], PrintCommand::class),
                 new CommandDefinition('verify', ['program'], VerifyCommand::class),
-                new CommandDefinition('credits', [], CreditsCommand::class)
+                new CommandDefinition('credits', [], CreditsCommand::class),
+                new CommandDefinition('run', ['program'], RunCommand::class)
             ],
-            'run',
+            'menu',
             $c
         );
     }),
@@ -117,6 +119,14 @@ return [
             $c->get(UserStateSerializer::class),
             $c->get(Output::class),
             $c->get(ResultsRenderer::class)
+        );
+    }),
+
+    RunCommand::class => factory(function (ContainerInterface $c) {
+        return new RunCommand(
+            $c->get(ExerciseRepository::class),
+            $c->get(UserState::class),
+            $c->get(Output::class)
         );
     }),
     
