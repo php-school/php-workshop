@@ -2,6 +2,7 @@
 
 namespace PhpSchool\PhpWorkshopTest\Check;
 
+use PhpSchool\PhpWorkshopTest\Asset\StdOutExercise;
 use PHPUnit_Framework_TestCase;
 use PhpSchool\PhpWorkshop\Check\StdOutCheck;
 use PhpSchool\PhpWorkshop\Exception\SolutionExecutionException;
@@ -32,7 +33,7 @@ class StdOutCheckTest extends PHPUnit_Framework_TestCase
         $this->check = new StdOutCheck;
         $this->assertFalse($this->check->breakChainOnFailure());
 
-        $this->exercise = $this->getMock(ExerciseInterface::class);
+        $this->exercise = $this->getMock(StdOutExercise::class);
     }
 
     public function testCheckThrowsExceptionIfSolutionFailsExecution()

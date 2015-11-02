@@ -9,6 +9,7 @@ use PhpSchool\PhpWorkshop\Result\Failure;
 use PhpSchool\PhpWorkshop\Result\ResultInterface;
 use PhpSchool\PhpWorkshop\Result\StdOutFailure;
 use PhpSchool\PhpWorkshop\Result\Success;
+use Psr\Http\Message\RequestInterface;
 use RuntimeException;
 use Symfony\Component\Process\Process;
 
@@ -30,12 +31,11 @@ class CgiOutputCheck implements CheckInterface
             throw new \InvalidArgumentException;
         }
 
-        $method = $exercise->getMethod();
-        $args   = $exercise->getArgs();
+        $request = $exercise->getRequest();
 
         try {
             $solutionOutput = $this->parseHttpResponseBody(
-                $this->executePhpFile($exercise->getSolution(), $args, $method)
+                $this->executePhpFile($exercise->getSolution(), $request)
             );
         } catch (RuntimeException $e) {
             throw new SolutionExecutionException($e->getMessage());
@@ -43,7 +43,7 @@ class CgiOutputCheck implements CheckInterface
 
         try {
             $userOutput = $this->parseHttpResponseBody(
-                $this->executePhpFile($fileName, $args, $method)
+                $this->executePhpFile($fileName, $request)
             );
         } catch (RuntimeException $e) {
             return new Failure('Program Output', sprintf('PHP Code failed to execute. Error: "%s"', $e->getMessage()));
@@ -59,36 +59,34 @@ class CgiOutputCheck implements CheckInterface
 
     /**
      * @param $fileName
-     * @param array $args
-     * @param string $method
+     * @param RequestInterface $request
      * @return string
      */
-    private function executePhpFile($fileName, array $args, $method)
+    private function executePhpFile($fileName, RequestInterface $request)
     {
         $env = [
-            'REQUEST_METHOD'  => $method,
+            'REQUEST_METHOD'  => $request->getMethod(),
             'SCRIPT_FILENAME' => $fileName,
             'REDIRECT_STATUS' => 302,
-            'QUERY_STRING'    => http_build_query($args),
+            'QUERY_STRING'    => $request->getUri()->getQuery(),
+            'REQUEST_URI'     => $request->getUri()->getPath()
         ];
         
         $cgi = sprintf('php-cgi%s', DIRECTORY_SEPARATOR === '\\' ? '.exe' : '');
         $cgiBinary  = sprintf(
-            '%s -dalways_populate_raw_post_data=-1',
+            '%s -dalways_populate_raw_post_data=-1 -dhtml_errors=0',
             realpath(sprintf('%s/%s', str_replace('\\', '/', dirname(PHP_BINARY)), $cgi))
         );
-        switch ($method) {
-            case CgiOutputExerciseCheck::METHOD_POST:
-                $content                = http_build_query($args);
-                $env['CONTENT_LENGTH']  = mb_strlen($content);
-                $env['CONTENT_TYPE']    = 'application/x-www-form-urlencoded';
-                $cmd                    = sprintf('echo %s | %s', $content, $cgiBinary);
-                break;
-            case CgiOutputExerciseCheck::METHOD_GET:
-            default:
-                $cmd = sprintf('echo "" | %s', $cgiBinary);
-                break;
+
+        $content                = $request->getBody()->getContents();
+        $cmd                    = sprintf('echo %s | %s', $content, $cgiBinary);
+        $env['CONTENT_LENGTH']  = $request->getBody()->getSize();
+        $env['CONTENT_TYPE']    = $request->getHeaderLine('Content-Type');
+        
+        foreach ($request->getHeaders() as $name => $values) {
+            $env[sprintf('HTTP_%s', strtoupper($name))] = implode(", ", $values);
         }
+        
         $process = new Process($cmd, null, $env);
         $process->run();
 

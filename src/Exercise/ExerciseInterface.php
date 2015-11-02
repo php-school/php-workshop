@@ -32,11 +32,6 @@ interface ExerciseInterface
     public function getProblem();
 
     /**
-     * @return array
-     */
-    public function getArgs();
-
-    /**
      * @return void
      */
     public function tearDown();

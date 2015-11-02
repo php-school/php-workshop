@@ -4,12 +4,15 @@ namespace PhpSchool\PhpWorkshopTest\Check;
 
 use InvalidArgumentException;
 use PhpSchool\PhpWorkshop\Check\CgiOutputCheck;
+use PhpSchool\PhpWorkshop\StringBody;
 use PhpSchool\PhpWorkshopTest\Asset\CgiOutExercise;
 use PHPUnit_Framework_TestCase;
 use PhpSchool\PhpWorkshop\Exception\SolutionExecutionException;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpSchool\PhpWorkshop\Result\Failure;
 use PhpSchool\PhpWorkshop\Result\Success;
+use Zend\Diactoros\Request;
+use Zend\Diactoros\Uri;
 
 /**
  * Class CgiOutputCheckTest
@@ -52,10 +55,14 @@ class CgiOutputCheckTest extends PHPUnit_Framework_TestCase
             ->method('getSolution')
             ->will($this->returnValue(realpath(__DIR__ . '/../res/cgi-out/solution-error.php')));
 
+        $request = (new Request)
+            ->withMethod('GET')
+            ->withUri(new Uri('http://some.site?number=5'));
+
         $this->exercise
             ->expects($this->once())
-            ->method('getArgs')
-            ->will($this->returnValue([]));
+            ->method('getRequest')
+            ->will($this->returnValue($request));
 
         $this->setExpectedExceptionRegExp(
             SolutionExecutionException::class,
@@ -71,15 +78,14 @@ class CgiOutputCheckTest extends PHPUnit_Framework_TestCase
             ->method('getSolution')
             ->will($this->returnValue(realpath(__DIR__ . '/../res/cgi-out/get-solution.php')));
 
+        $request = (new Request)
+            ->withMethod('GET')
+            ->withUri(new Uri('http://some.site?number=5'));
+        
         $this->exercise
             ->expects($this->once())
-            ->method('getArgs')
-            ->will($this->returnValue(['number' => 5]));
-
-        $this->exercise
-            ->expects($this->once())
-            ->method('getMethod')
-            ->will($this->returnValue('GET'));
+            ->method('getRequest')
+            ->will($this->returnValue($request));
 
         $this->assertInstanceOf(
             Success::class,
@@ -94,16 +100,17 @@ class CgiOutputCheckTest extends PHPUnit_Framework_TestCase
             ->method('getSolution')
             ->will($this->returnValue(realpath(__DIR__ . '/../res/cgi-out/post-solution.php')));
 
-        $this->exercise
-            ->expects($this->once())
-            ->method('getArgs')
-            ->will($this->returnValue(['number' => 5]));
+        $request = (new Request)
+            ->withMethod('POST')
+            ->withUri(new Uri('http://some.site'))
+            ->withHeader('Content-Type', 'application/x-www-form-urlencoded')
+            ->withBody(new StringBody('number=5'));
 
         $this->exercise
             ->expects($this->once())
-            ->method('getMethod')
-            ->will($this->returnValue('POST'));
-
+            ->method('getRequest')
+            ->will($this->returnValue($request));
+        
         $this->assertInstanceOf(
             Success::class,
             $this->check->check($this->exercise, realpath(__DIR__ . '/../res/cgi-out/post-solution.php'))
@@ -116,15 +123,14 @@ class CgiOutputCheckTest extends PHPUnit_Framework_TestCase
             ->method('getSolution')
             ->will($this->returnValue(realpath(__DIR__ . '/../res/cgi-out/get-solution.php')));
 
-        $this->exercise
-            ->expects($this->once())
-            ->method('getArgs')
-            ->will($this->returnValue(['number' => 5]));
+        $request = (new Request)
+            ->withMethod('GET')
+            ->withUri(new Uri('http://some.site?number=5'));
 
         $this->exercise
             ->expects($this->once())
-            ->method('getMethod')
-            ->will($this->returnValue('GET'));
+            ->method('getRequest')
+            ->will($this->returnValue($request));
 
         $failure = $this->check->check($this->exercise, realpath(__DIR__ . '/../res/cgi-out/user-error.php'));
 
@@ -142,16 +148,15 @@ class CgiOutputCheckTest extends PHPUnit_Framework_TestCase
             ->method('getSolution')
             ->will($this->returnValue(realpath(__DIR__ . '/../res/cgi-out/get-solution.php')));
 
-        $this->exercise
-            ->expects($this->once())
-            ->method('getArgs')
-            ->will($this->returnValue(['number' => 5]));
+        $request = (new Request)
+            ->withMethod('GET')
+            ->withUri(new Uri('http://some.site?number=5'));
 
         $this->exercise
             ->expects($this->once())
-            ->method('getMethod')
-            ->will($this->returnValue('GET'));
-
+            ->method('getRequest')
+            ->will($this->returnValue($request));
+        
         $failure = $this->check->check($this->exercise, realpath(__DIR__ . '/../res/cgi-out/get-user-wrong.php'));
 
         $this->assertInstanceOf(Failure::class, $failure);
