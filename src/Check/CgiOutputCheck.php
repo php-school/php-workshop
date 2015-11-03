@@ -78,7 +78,7 @@ class CgiOutputCheck implements CheckInterface
             realpath(sprintf('%s/%s', str_replace('\\', '/', dirname(PHP_BINARY)), $cgi))
         );
 
-        $content                = $request->getBody()->getContents();
+        $content                = $request->getBody()->__toString();
         $cmd                    = sprintf('echo %s | %s', $content, $cgiBinary);
         $env['CONTENT_LENGTH']  = $request->getBody()->getSize();
         $env['CONTENT_TYPE']    = $request->getHeaderLine('Content-Type');

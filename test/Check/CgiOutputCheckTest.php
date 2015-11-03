@@ -99,13 +99,14 @@ class CgiOutputCheckTest extends PHPUnit_Framework_TestCase
             ->expects($this->once())
             ->method('getSolution')
             ->will($this->returnValue(realpath(__DIR__ . '/../res/cgi-out/post-solution.php')));
-
+        
         $request = (new Request)
             ->withMethod('POST')
             ->withUri(new Uri('http://some.site'))
-            ->withHeader('Content-Type', 'application/x-www-form-urlencoded')
-            ->withBody(new StringBody('number=5'));
+            ->withHeader('Content-Type', 'application/x-www-form-urlencoded');
 
+        $request->getBody()->write('number=5');
+        
         $this->exercise
             ->expects($this->once())
             ->method('getRequest')
