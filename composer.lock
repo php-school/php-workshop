@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "21c54b395be45a67453bae1fc4f5d3e3",
-    "content-hash": "31c6198f83f01af3897534c32af9e655",
+    "hash": "e6779f73550118da2b218282ef5505c1",
+    "content-hash": "0dde7653e6339db58a67c163e0fc2bb8",
     "packages": [
         {
             "name": "aydin-hassan/cli-md-renderer",
@@ -309,7 +309,7 @@
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/nikic/PHP-Parser/zipball/98d28d7aa04e2d92fea2b375373878d0b1fce992",
+                "url": "https://api.github.com/repos/nikic/PHP-Parser/zipball/33602889c1dbf9087d6b715aa90e95e2a3fc058e",
                 "reference": "98d28d7aa04e2d92fea2b375373878d0b1fce992",
                 "shasum": ""
             },
@@ -574,6 +574,55 @@
             "time": "2015-10-18 19:12:46"
         },
         {
+            "name": "psr/http-message",
+            "version": "1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/php-fig/http-message.git",
+                "reference": "85d63699f0dbedb190bbd4b0d2b9dc707ea4c298"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/php-fig/http-message/zipball/85d63699f0dbedb190bbd4b0d2b9dc707ea4c298",
+                "reference": "85d63699f0dbedb190bbd4b0d2b9dc707ea4c298",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.0"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.0.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Psr\\Http\\Message\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "PHP-FIG",
+                    "homepage": "http://www.php-fig.org/"
+                }
+            ],
+            "description": "Common interface for HTTP messages",
+            "keywords": [
+                "http",
+                "http-message",
+                "psr",
+                "psr-7",
+                "request",
+                "response"
+            ],
+            "time": "2015-05-04 20:22:00"
+        },
+        {
             "name": "symfony/filesystem",
             "version": "v2.7.5",
             "source": {
@@ -670,6 +719,56 @@
             "description": "Symfony Process Component",
             "homepage": "https://symfony.com",
             "time": "2015-09-19 19:59:23"
+        },
+        {
+            "name": "zendframework/zend-diactoros",
+            "version": "1.1.4",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/zendframework/zend-diactoros.git",
+                "reference": "3f0ce6c0ba2106e018fb514a9f09dbb91eb6bfd0"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/zendframework/zend-diactoros/zipball/3f0ce6c0ba2106e018fb514a9f09dbb91eb6bfd0",
+                "reference": "3f0ce6c0ba2106e018fb514a9f09dbb91eb6bfd0",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.4",
+                "psr/http-message": "~1.0"
+            },
+            "provide": {
+                "psr/http-message-implementation": "~1.0.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "~4.6",
+                "squizlabs/php_codesniffer": "^2.3.1"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.0-dev",
+                    "dev-develop": "1.1-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Zend\\Diactoros\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-2-Clause"
+            ],
+            "description": "PSR HTTP Message implementations",
+            "homepage": "https://github.com/zendframework/zend-diactoros",
+            "keywords": [
+                "http",
+                "psr",
+                "psr-7"
+            ],
+            "time": "2015-10-16 15:24:05"
         }
     ],
     "packages-dev": [

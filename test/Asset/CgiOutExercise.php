@@ -4,6 +4,7 @@ namespace PhpSchool\PhpWorkshopTest\Asset;
 
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpSchool\PhpWorkshop\ExerciseCheck\CgiOutputExerciseCheck;
+use Psr\Http\Message\RequestInterface;
 
 /**
  * Class CgiOutExercise
@@ -46,9 +47,9 @@ class CgiOutExercise implements ExerciseInterface, CgiOutputExerciseCheck
     }
 
     /**
-     * @return array
+     * @return RequestInterface
      */
-    public function getArgs()
+    public function getRequest()
     {
         // TODO: Implement getArgs() method.
     }

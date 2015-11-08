@@ -2,6 +2,8 @@
 
 namespace PhpSchool\PhpWorkshop\ExerciseCheck;
 
+use Psr\Http\Message\RequestInterface;
+
 /**
  * Interface CgiOutputExerciseCheck
  * @package PhpSchool\PhpWorkshop\ExerciseCheck
@@ -34,7 +36,7 @@ interface CgiOutputExerciseCheck
     const METHOD_DELETE = 'DELETE';
     
     /**
-     * @return string
+     * @return RequestInterface
      */
-    public function getMethod();
+    public function getRequest();
 }

@@ -13,7 +13,11 @@ use PhpSchool\CliMenu\Terminal\TerminalFactory;
 use PhpSchool\CliMenu\Terminal\TerminalInterface;
 use PhpParser\Parser;
 use PhpParser\ParserFactory;
+use PhpSchool\PhpWorkshop\Result\CgiOutBodyFailure;
+use PhpSchool\PhpWorkshop\Result\CgiOutHeadersFailure;
 use PhpSchool\PhpWorkshop\Result\StdOutFailure;
+use PhpSchool\PhpWorkshop\ResultRenderer\CgiOutHeadersFailureRenderer;
+use PhpSchool\PhpWorkshop\ResultRenderer\OutputFailureRenderer;
 use PhpSchool\PSX\SyntaxHighlighter;
 use PhpSchool\PhpWorkshop\Check\FileExistsCheck;
 use PhpSchool\PhpWorkshop\Check\FunctionRequirementsCheck;
@@ -269,8 +273,12 @@ return [
         return $renderer;
     }),
     'renderers' => factory(function (ContainerInterface $c) {
+        $outputFailureRenderer = new OutputFailureRenderer;
+        
         return [
-            [StdOutFailure::class, new StdOutFailureRenderer],
+            [StdOutFailure::class, $outputFailureRenderer],
+            [CgiOutBodyFailure::class, $outputFailureRenderer],
+            [CgiOutHeadersFailure::class, new CgiOutHeadersFailureRenderer],
             [FunctionRequirementsFailure::class, new FunctionRequirementsFailureRenderer],
             [Success::class, new SuccessRenderer],
             [Failure::class, new FailureRenderer],

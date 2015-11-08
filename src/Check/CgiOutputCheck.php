@@ -5,12 +5,16 @@ namespace PhpSchool\PhpWorkshop\Check;
 use PhpSchool\PhpWorkshop\Exception\SolutionExecutionException;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpSchool\PhpWorkshop\ExerciseCheck\CgiOutputExerciseCheck;
+use PhpSchool\PhpWorkshop\Result\CgiOutBodyFailure;
+use PhpSchool\PhpWorkshop\Result\CgiOutHeadersFailure;
 use PhpSchool\PhpWorkshop\Result\Failure;
 use PhpSchool\PhpWorkshop\Result\ResultInterface;
-use PhpSchool\PhpWorkshop\Result\StdOutFailure;
 use PhpSchool\PhpWorkshop\Result\Success;
+use Psr\Http\Message\RequestInterface;
+use Psr\Http\Message\ResponseInterface;
 use RuntimeException;
 use Symfony\Component\Process\Process;
+use Zend\Diactoros\Response\Serializer as ResponseSerializer;
 
 /**
  * Class CgiOutputCheck
@@ -30,73 +34,90 @@ class CgiOutputCheck implements CheckInterface
             throw new \InvalidArgumentException;
         }
 
-        $method = $exercise->getMethod();
-        $args   = $exercise->getArgs();
+        $request = $exercise->getRequest();
 
         try {
-            $solutionOutput = $this->parseHttpResponseBody(
-                $this->executePhpFile($exercise->getSolution(), $args, $method)
-            );
+            $solutionResponse = $this->executePhpFile($exercise->getSolution(), $request);
         } catch (RuntimeException $e) {
             throw new SolutionExecutionException($e->getMessage());
         }
 
         try {
-            $userOutput = $this->parseHttpResponseBody(
-                $this->executePhpFile($fileName, $args, $method)
-            );
+            $userResponse = $this->executePhpFile($fileName, $request);
         } catch (RuntimeException $e) {
             return new Failure('Program Output', sprintf('PHP Code failed to execute. Error: "%s"', $e->getMessage()));
         }
 
-
-        if ($solutionOutput === $userOutput) {
-            return new Success('Program Output');
+        //compare body
+        if ($solutionResponse->getBody()->__toString() !== $userResponse->getBody()->__toString()) {
+            return new CgiOutBodyFailure(
+                $solutionResponse->getBody()->__toString(),
+                $userResponse->getBody()->__toString()
+            );
         }
-
-        return new StdOutFailure($solutionOutput, $userOutput);
+        
+        //compare headers
+        $solutionHeaders = [];
+        foreach ($solutionResponse->getHeaders() as $name => $values) {
+            $solutionHeaders[$name] = implode(", ", $values);
+        }
+        
+        $userHeaders = [];
+        foreach ($userResponse->getHeaders() as $name => $values) {
+            $userHeaders[$name] = implode(", ", $values);
+        }
+        
+        if ($userHeaders !== $solutionHeaders) {
+            return new CgiOutHeadersFailure($solutionHeaders, $userHeaders);
+        }
+        
+        return new Success('Program Output');
     }
 
     /**
      * @param $fileName
-     * @param array $args
-     * @param string $method
-     * @return string
+     * @param RequestInterface $request
+     * @return ResponseInterface
      */
-    private function executePhpFile($fileName, array $args, $method)
+    private function executePhpFile($fileName, RequestInterface $request)
     {
         $env = [
-            'REQUEST_METHOD'  => $method,
+            'REQUEST_METHOD'  => $request->getMethod(),
             'SCRIPT_FILENAME' => $fileName,
             'REDIRECT_STATUS' => 302,
-            'QUERY_STRING'    => http_build_query($args),
+            'QUERY_STRING'    => $request->getUri()->getQuery(),
+            'REQUEST_URI'     => $request->getUri()->getPath()
         ];
         
         $cgi = sprintf('php-cgi%s', DIRECTORY_SEPARATOR === '\\' ? '.exe' : '');
         $cgiBinary  = sprintf(
-            '%s -dalways_populate_raw_post_data=-1',
+            '%s -dalways_populate_raw_post_data=-1 -dhtml_errors=0',
             realpath(sprintf('%s/%s', str_replace('\\', '/', dirname(PHP_BINARY)), $cgi))
         );
-        switch ($method) {
-            case CgiOutputExerciseCheck::METHOD_POST:
-                $content                = http_build_query($args);
-                $env['CONTENT_LENGTH']  = mb_strlen($content);
-                $env['CONTENT_TYPE']    = 'application/x-www-form-urlencoded';
-                $cmd                    = sprintf('echo %s | %s', $content, $cgiBinary);
-                break;
-            case CgiOutputExerciseCheck::METHOD_GET:
-            default:
-                $cmd = sprintf('echo "" | %s', $cgiBinary);
-                break;
+
+        $content                = $request->getBody()->__toString();
+        $cmd                    = sprintf('echo %s | %s', $content, $cgiBinary);
+        $env['CONTENT_LENGTH']  = $request->getBody()->getSize();
+        $env['CONTENT_TYPE']    = $request->getHeaderLine('Content-Type');
+        
+        foreach ($request->getHeaders() as $name => $values) {
+            $env[sprintf('HTTP_%s', strtoupper($name))] = implode(", ", $values);
         }
+        
         $process = new Process($cmd, null, $env);
         $process->run();
 
         if (!$process->isSuccessful()) {
             throw new RuntimeException($process->getErrorOutput() ? $process->getErrorOutput() : $process->getOutput());
         }
+        
+        //if no status line, pre-pend 200 OK
+        $output = $process->getOutput();
+        if (!preg_match('/^HTTP\/([1-9]\d*\.\d) ([1-5]\d{2})(\s+(.+))?\\r\\n/', $output)) {
+            $output = "HTTP/1.0 200 OK\r\n" . $output;
+        }
 
-        return $process->getOutput();
+        return ResponseSerializer::fromString($output);
     }
     
     /**
@@ -105,30 +126,5 @@ class CgiOutputCheck implements CheckInterface
     public function breakChainOnFailure()
     {
         return false;
-    }
-
-    /**
-     * @param string $response
-     * @return string
-     */
-    private function parseHttpResponseBody($response)
-    {
-        $content    = '';
-        $str        = strtok($response, "\n");
-        $h          = null;
-        while ($str !== false) {
-            if ($h && trim($str) === '') {
-                $h = false;
-                continue;
-            }
-            if ($h !== false && false !== strpos($str, ':')) {
-                $h = true;
-            }
-            if ($h === false) {
-                $content .= $str . "\n";
-            }
-            $str = strtok("\n");
-        }
-        return trim($content);
     }
 }

@@ -4,6 +4,7 @@ namespace PhpSchool\PhpWorkshop\Check;
 
 use PhpSchool\PhpWorkshop\Exception\SolutionExecutionException;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
+use PhpSchool\PhpWorkshop\ExerciseCheck\StdOutExerciseCheck;
 use PhpSchool\PhpWorkshop\Result\Failure;
 use PhpSchool\PhpWorkshop\Result\ResultInterface;
 use PhpSchool\PhpWorkshop\Result\StdOutFailure;
@@ -26,6 +27,9 @@ class StdOutCheck implements CheckInterface
      */
     public function check(ExerciseInterface $exercise, $fileName)
     {
+        if (!$exercise instanceof StdOutExerciseCheck) {
+            throw new \InvalidArgumentException;
+        }
         $args = $exercise->getArgs();
 
         try {

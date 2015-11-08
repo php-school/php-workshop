@@ -2,14 +2,15 @@
 
 namespace PhpSchool\PhpWorkshop\ResultRenderer;
 
+use PhpSchool\PhpWorkshop\Result\CgiOutBodyFailure;
 use PhpSchool\PhpWorkshop\Result\ResultInterface;
 use PhpSchool\PhpWorkshop\Result\StdOutFailure;
 
 /**
- * Class StdOutFailureRenderer
+ * Class OutputFailureRenderer
  * @package PhpSchool\PhpWorkshop\ResultRenderer
  */
-class StdOutFailureRenderer implements ResultRendererInterface
+class OutputFailureRenderer implements ResultRendererInterface
 {
 
     /**
@@ -19,7 +20,7 @@ class StdOutFailureRenderer implements ResultRendererInterface
      */
     public function render(ResultInterface $result, ResultsRenderer $renderer)
     {
-        if (!$result instanceof StdOutFailure) {
+        if (!$result instanceof StdOutFailure && !$result instanceof CgiOutBodyFailure) {
             throw new \InvalidArgumentException(sprintf('Incompatible result type: %s', get_class($result)));
         }
 
