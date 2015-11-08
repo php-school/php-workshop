@@ -40,7 +40,7 @@ class CgiOutBodyFailure extends Failure
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getActualOutput()
     {
