@@ -2,32 +2,22 @@
 
 namespace PhpSchool\PhpWorkshop\Result;
 
+use PhpSchool\PhpWorkshop\Check\CheckInterface;
+
 /**
  * Class Fail
  * @package PhpSchool\PhpWorkshop
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
-class Success implements ResultInterface
+class Success implements SuccessInterface
 {
+    use ResultTrait;
 
     /**
-     * @var string
+     * @param CheckInterface $check
      */
-    private $name;
-
-    /**
-     * @param string $name
-     */
-    public function __construct($name)
+    public function __construct(CheckInterface $check)
     {
-        $this->name = $name;
-    }
-
-    /**
-     * @return string
-     */
-    public function getCheckName()
-    {
-        return $this->name;
+        $this->check = $check;
     }
 }

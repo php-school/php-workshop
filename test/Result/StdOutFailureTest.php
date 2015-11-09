@@ -2,6 +2,7 @@
 
 namespace PhpSchool\PhpWorkshopTest\Result;
 
+use PhpSchool\PhpWorkshop\Check\CheckInterface;
 use PHPUnit_Framework_TestCase;
 use PhpSchool\PhpWorkshop\Result\StdOutFailure;
 
@@ -14,13 +15,15 @@ class StdOutFailureTest extends PHPUnit_Framework_TestCase
 {
     public function testGetters()
     {
-        $failure = new StdOutFailure('Expected Output', 'Actual Output');
-        $this->assertEquals(
-            'Output did not match. Expected: "Expected Output". Received: "Actual Output"',
-            $failure->getReason()
-        );
-
+        $check = $this->getMock(CheckInterface::class);
+        $check
+            ->expects($this->any())
+            ->method('getName')
+            ->will($this->returnValue('Some Check'));
+        
+        $failure = new StdOutFailure($check, 'Expected Output', 'Actual Output');
         $this->assertEquals('Expected Output', $failure->getExpectedOutput());
         $this->assertEquals('Actual Output', $failure->getActualOutput());
+        $this->assertEquals('Some Check', $failure->getCheckName());
     }
 }

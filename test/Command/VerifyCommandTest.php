@@ -2,6 +2,7 @@
 
 namespace PhpSchool\PhpWorkshopTest\Command;
 
+use PhpSchool\PhpWorkshop\Check\CheckInterface;
 use PHPUnit_Framework_TestCase;
 use PhpSchool\PhpWorkshop\Command\VerifyCommand;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
@@ -113,7 +114,12 @@ class VerifyCommandTest extends PHPUnit_Framework_TestCase
             ->getMock();
         
         $results = new ResultAggregator;
-        $results->add(new Success('Some Check'));
+        $check = $this->getMock(CheckInterface::class);
+        $check
+            ->expects($this->any())
+            ->method('getName')
+            ->will($this->returnValue('Some Check'));
+        $results->add(new Success($check));
         
         $runner = $this->getMock(ExerciseRunner::class);
         $runner
@@ -169,7 +175,12 @@ class VerifyCommandTest extends PHPUnit_Framework_TestCase
             ->getMock();
 
         $results = new ResultAggregator;
-        $results->add(new Failure('Some Check', 'cba'));
+        $check = $this->getMock(CheckInterface::class);
+        $check
+            ->expects($this->any())
+            ->method('getName')
+            ->will($this->returnValue('Some Check'));
+        $results->add(new Failure($check, 'cba'));
 
         $runner = $this->getMock(ExerciseRunner::class);
         $runner

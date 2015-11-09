@@ -2,6 +2,7 @@
 
 namespace PhpSchool\PhpWorkshopTest\Result;
 
+use PhpSchool\PhpWorkshop\Check\CheckInterface;
 use PHPUnit_Framework_TestCase;
 use PhpSchool\PhpWorkshop\Result\FunctionRequirementsFailure;
 
@@ -14,8 +15,13 @@ class FunctionRequirementsFailureTest extends PHPUnit_Framework_TestCase
 {
     public function testGetters()
     {
-        $failure = new FunctionRequirementsFailure(['function' => 'file', 'line' => 3], ['explode']);
-        $this->assertEquals('Function Requirements were not met', $failure->getReason());
+        $check = $this->getMock(CheckInterface::class);
+        $check
+            ->expects($this->any())
+            ->method('getName')
+            ->will($this->returnValue('Some Check'));
+        
+        $failure = new FunctionRequirementsFailure($check, ['function' => 'file', 'line' => 3], ['explode']);
         $this->assertEquals(['function' => 'file', 'line' => 3], $failure->getBannedFunctions());
         $this->assertEquals(['explode'], $failure->getMissingFunctions());
     }

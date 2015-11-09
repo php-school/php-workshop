@@ -3,6 +3,7 @@
 namespace PhpSchool\PhpWorkshopTest\Check;
 
 use InvalidArgumentException;
+use PhpSchool\PhpWorkshop\Result\StdOutFailure;
 use PhpSchool\PhpWorkshopTest\Asset\StdOutExercise;
 use PHPUnit_Framework_TestCase;
 use PhpSchool\PhpWorkshop\Check\StdOutCheck;
@@ -35,6 +36,7 @@ class StdOutCheckTest extends PHPUnit_Framework_TestCase
         $this->assertFalse($this->check->breakChainOnFailure());
 
         $this->exercise = $this->getMock(StdOutExercise::class);
+        $this->assertEquals('Command Line Program Output Check', $this->check->getName());
     }
 
     public function testExceptionIsThrownIfNotValidExercise()
@@ -57,10 +59,10 @@ class StdOutCheckTest extends PHPUnit_Framework_TestCase
             ->method('getArgs')
             ->will($this->returnValue([]));
 
-        $this->setExpectedExceptionRegExp(
-            SolutionExecutionException::class,
-            "/^PHP Parse error:  syntax error, unexpected end of file, expecting ',' or ';'/"
-        );
+
+        $regex  = "/^PHP Code failed to execute\\. Error: \"PHP Parse error:  syntax error, unexpected end of file";
+        $regex .= ", expecting ',' or ';'/";
+        $this->setExpectedExceptionRegExp(SolutionExecutionException::class, $regex);
         $this->check->check($this->exercise, '');
     }
 
@@ -117,7 +119,8 @@ class StdOutCheckTest extends PHPUnit_Framework_TestCase
 
         $failure = $this->check->check($this->exercise, __DIR__ . '/../res/std-out/user-wrong.php');
 
-        $this->assertInstanceOf(Failure::class, $failure);
-        $this->assertEquals('Output did not match. Expected: "6". Received: "10"', $failure->getReason());
+        $this->assertInstanceOf(StdOutFailure::class, $failure);
+        $this->assertEquals('6', $failure->getExpectedOutput());
+        $this->assertEquals('10', $failure->getActualOutput());
     }
 }

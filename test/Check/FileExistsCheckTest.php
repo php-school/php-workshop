@@ -38,6 +38,7 @@ class FileExistsCheckTest extends PHPUnit_Framework_TestCase
         $this->assertTrue($this->check->breakChainOnFailure());
 
         $this->exercise = $this->getMock(ExerciseInterface::class);
+        $this->assertEquals('File Exists Check', $this->check->getName());
     }
 
     public function testSuccess()

@@ -3,6 +3,7 @@
 
 namespace PhpSchool\PhpWorkshopTest;
 
+use PhpSchool\PhpWorkshop\Check\CheckInterface;
 use PHPUnit_Framework_TestCase;
 use PhpSchool\PhpWorkshop\Result\Failure;
 use PhpSchool\PhpWorkshop\Result\Success;
@@ -20,19 +21,31 @@ class ResultAggregatorTest extends PHPUnit_Framework_TestCase
         $resultAggregator = new ResultAggregator;
         $this->assertTrue($resultAggregator->isSuccessful());
 
-        $resultAggregator->add(new Success('Some Check'));
+        $check = $this->getMock(CheckInterface::class);
+        $check
+            ->expects($this->any())
+            ->method('getName')
+            ->will($this->returnValue('Some Check'));
+
+        $resultAggregator->add(new Success($check));
         $this->assertTrue($resultAggregator->isSuccessful());
 
-        $resultAggregator->add(new Failure('Some Check', 'nope'));
+        $resultAggregator->add(new Failure($check, 'nope'));
         $this->assertFalse($resultAggregator->isSuccessful());
     }
 
     public function testGetErrors()
     {
+        $check = $this->getMock(CheckInterface::class);
+        $check
+            ->expects($this->any())
+            ->method('getName')
+            ->will($this->returnValue('Some Check'));
+        
         $resultAggregator = new ResultAggregator;
-        $resultAggregator->add(new Success('Some Check'));
-        $resultAggregator->add(new Failure('Some Check', 'nope'));
-        $resultAggregator->add(new Failure('Some Check', 'so much nope'));
+        $resultAggregator->add(new Success($check));
+        $resultAggregator->add(new Failure($check, 'nope'));
+        $resultAggregator->add(new Failure($check, 'so much nope'));
 
         $expected = ['nope','so much nope'];
         $this->assertEquals($expected, $resultAggregator->getErrors());
@@ -40,9 +53,16 @@ class ResultAggregatorTest extends PHPUnit_Framework_TestCase
 
     public function testIterator()
     {
+        $check = $this->getMock(CheckInterface::class);
+        $check
+            ->expects($this->any())
+            ->method('getName')
+            ->will($this->returnValue('Some Check'));
+
+
         $results = [
-            new Success('Some Check'),
-            new Failure('Some Check', 'nope')
+            new Success($check),
+            new Failure($check, 'nope')
         ];
         
         $resultAggregator = new ResultAggregator;
