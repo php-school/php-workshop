@@ -9,7 +9,7 @@ use PhpSchool\PhpWorkshop\Check\CheckInterface;
  * @package PhpSchool\PhpWorkshop\Result
  * @author  Aydin Hassan <aydin@hotmail.co.uk>
  */
-class CgiOutFailure implements ResultInterface
+class CgiOutFailure implements FailureInterface
 {
     use ResultTrait;
     

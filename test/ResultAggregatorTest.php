@@ -42,17 +42,6 @@ class ResultAggregatorTest extends PHPUnit_Framework_TestCase
         $this->assertFalse($resultAggregator->isSuccessful());
     }
 
-    public function testGetErrors()
-    {
-        $resultAggregator = new ResultAggregator;
-        $resultAggregator->add(new Success($this->check));
-        $resultAggregator->add(new Failure($this->check, 'nope'));
-        $resultAggregator->add(new Failure($this->check, 'so much nope'));
-
-        $expected = ['nope','so much nope'];
-        $this->assertEquals($expected, $resultAggregator->getErrors());
-    }
-
     public function testIterator()
     {
         $results = [

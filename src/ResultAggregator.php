@@ -4,7 +4,7 @@ namespace PhpSchool\PhpWorkshop;
 
 use ArrayIterator;
 use IteratorAggregate;
-use PhpSchool\PhpWorkshop\Result\Failure;
+use PhpSchool\PhpWorkshop\Result\FailureInterface;
 use PhpSchool\PhpWorkshop\Result\ResultInterface;
 
 /**
@@ -34,24 +34,9 @@ class ResultAggregator implements IteratorAggregate
     {
         return count(
             array_filter($this->results, function ($result) {
-                return $result instanceof Failure;
+                return $result instanceof FailureInterface;
             })
         ) === 0;
-    }
-
-    /**
-     * @return array
-     */
-    public function getErrors()
-    {
-        return array_values(array_map(
-            function (Failure $failure) {
-                return $failure->getReason();
-            },
-            array_filter($this->results, function ($result) {
-                return $result instanceof Failure;
-            })
-        ));
     }
 
     /**
