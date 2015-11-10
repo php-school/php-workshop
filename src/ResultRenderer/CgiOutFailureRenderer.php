@@ -2,8 +2,9 @@
 
 namespace PhpSchool\PhpWorkshop\ResultRenderer;
 
-use PhpSchool\PhpWorkshop\Result\CgiOutFailure;
+use PhpSchool\PhpWorkshop\Result\CgiOutResult;
 use PhpSchool\PhpWorkshop\Result\ResultInterface;
+use PhpSchool\PhpWorkshop\Result\SuccessInterface;
 
 /**
  * Class CgiOutFailureRenderer
@@ -19,35 +20,41 @@ class CgiOutFailureRenderer implements ResultRendererInterface
      */
     public function render(ResultInterface $result, ResultsRenderer $renderer)
     {
-        if (!$result instanceof CgiOutFailure) {
+        if (!$result instanceof CgiOutResult) {
             throw new \InvalidArgumentException(sprintf('Incompatible result type: %s', get_class($result)));
         }
-        
+
         $output = '';
-        if ($result->headersDifferent()) {
-            $output .= sprintf(
-                "  %s\n%s\n  %s\n%s\n",
-                $renderer->style("ACTUAL", ['bold', 'underline', 'yellow']),
-                $this->headers($result->getActualHeaders(), $renderer),
-                $renderer->style("EXPECTED", ['yellow', 'bold', 'underline']),
-                $this->headers($result->getExpectedHeaders(), $renderer)
-            );
-        }
-        
-        if ($result->bodyDifferent()) {
-            if ($output !== '') {
-                $output .= "\n";
+        foreach ($result as $request) {
+            if ($request instanceof SuccessInterface) {
+                continue;
             }
 
-            $output .= sprintf(
-                "  %s\n%s\n\n  %s\n%s\n",
-                $renderer->style("ACTUAL", ['bold', 'underline', 'yellow']),
-                $this->indent($renderer->style(sprintf('"%s"', $result->getActualOutput()), 'red')),
-                $renderer->style("EXPECTED", ['yellow', 'bold', 'underline']),
-                $this->indent($renderer->style(sprintf('"%s"', $result->getExpectedOutput()), 'red'))
-            );
+            if ($result->headersDifferent()) {
+                $output .= sprintf(
+                    "  %s\n%s\n  %s\n%s\n",
+                    $renderer->style("ACTUAL", ['bold', 'underline', 'yellow']),
+                    $this->headers($result->getActualHeaders(), $renderer),
+                    $renderer->style("EXPECTED", ['yellow', 'bold', 'underline']),
+                    $this->headers($result->getExpectedHeaders(), $renderer)
+                );
+            }
+
+            if ($result->bodyDifferent()) {
+                if ($output !== '') {
+                    $output .= "\n";
+                }
+
+                $output .= sprintf(
+                    "  %s\n%s\n\n  %s\n%s\n",
+                    $renderer->style("ACTUAL", ['bold', 'underline', 'yellow']),
+                    $this->indent($renderer->style(sprintf('"%s"', $result->getActualOutput()), 'red')),
+                    $renderer->style("EXPECTED", ['yellow', 'bold', 'underline']),
+                    $this->indent($renderer->style(sprintf('"%s"', $result->getExpectedOutput()), 'red'))
+                );
+            }
         }
-        
+
         return $output;
     }
 

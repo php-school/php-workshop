@@ -7,6 +7,7 @@ use PhpSchool\PhpWorkshop\Exception\SolutionExecutionException;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpSchool\PhpWorkshop\ExerciseCheck\CgiOutputExerciseCheck;
 use PhpSchool\PhpWorkshop\Result\CgiOutFailure;
+use PhpSchool\PhpWorkshop\Result\CgiOutResult;
 use PhpSchool\PhpWorkshop\Result\Failure;
 use PhpSchool\PhpWorkshop\Result\ResultInterface;
 use PhpSchool\PhpWorkshop\Result\Success;
@@ -43,10 +44,11 @@ class CgiOutputCheck implements CheckInterface
 
         $requests = $exercise->getRequests();
         
-        $results = [];
+        $results = new CgiOutResult($this);
         foreach ($requests as $request) {
-            return $this->checkRequest($exercise, $request, $fileName);
+            $results->add($this->checkRequest($exercise, $request, $fileName));
         }
+        return $results;
     }
 
     /**

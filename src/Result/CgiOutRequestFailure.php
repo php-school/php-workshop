@@ -5,11 +5,11 @@ namespace PhpSchool\PhpWorkshop\Result;
 use PhpSchool\PhpWorkshop\Check\CheckInterface;
 
 /**
- * Class CgiOutBodyFailure
+ * Class CgiOutRequestFailure
  * @package PhpSchool\PhpWorkshop\Result
  * @author  Aydin Hassan <aydin@hotmail.co.uk>
  */
-class CgiOutFailure implements FailureInterface
+class CgiOutRequestFailure implements FailureInterface
 {
     use ResultTrait;
     
