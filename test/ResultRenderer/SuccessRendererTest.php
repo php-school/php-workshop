@@ -29,13 +29,7 @@ class SuccessRendererTest extends AbstractResultRendererTest
 
     public function testRender()
     {
-        $check = $this->getMock(CheckInterface::class);
-        $check
-            ->expects($this->any())
-            ->method('getName')
-            ->will($this->returnValue('Some Check'));
-        
-        $success = new Success($check);
+        $success = new Success($this->getMock(CheckInterface::class));
         $renderer = new SuccessRenderer(new Color);
         $this->assertEquals('', $renderer->render($success, $this->getRenderer()));
     }

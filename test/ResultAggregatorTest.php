@@ -16,36 +16,38 @@ use PhpSchool\PhpWorkshop\ResultAggregator;
  */
 class ResultAggregatorTest extends PHPUnit_Framework_TestCase
 {
+    /**
+     * @var CheckInterface
+     */
+    private $check;
+
+    public function setUp()
+    {
+        $this->check = $this->getMock(CheckInterface::class);
+        $this->check
+            ->expects($this->any())
+            ->method('getName')
+            ->will($this->returnValue('Some Check'));
+    }
+    
     public function testIsSuccessful()
     {
         $resultAggregator = new ResultAggregator;
         $this->assertTrue($resultAggregator->isSuccessful());
 
-        $check = $this->getMock(CheckInterface::class);
-        $check
-            ->expects($this->any())
-            ->method('getName')
-            ->will($this->returnValue('Some Check'));
-
-        $resultAggregator->add(new Success($check));
+        $resultAggregator->add(new Success($this->check));
         $this->assertTrue($resultAggregator->isSuccessful());
 
-        $resultAggregator->add(new Failure($check, 'nope'));
+        $resultAggregator->add(new Failure($this->check, 'nope'));
         $this->assertFalse($resultAggregator->isSuccessful());
     }
 
     public function testGetErrors()
     {
-        $check = $this->getMock(CheckInterface::class);
-        $check
-            ->expects($this->any())
-            ->method('getName')
-            ->will($this->returnValue('Some Check'));
-        
         $resultAggregator = new ResultAggregator;
-        $resultAggregator->add(new Success($check));
-        $resultAggregator->add(new Failure($check, 'nope'));
-        $resultAggregator->add(new Failure($check, 'so much nope'));
+        $resultAggregator->add(new Success($this->check));
+        $resultAggregator->add(new Failure($this->check, 'nope'));
+        $resultAggregator->add(new Failure($this->check, 'so much nope'));
 
         $expected = ['nope','so much nope'];
         $this->assertEquals($expected, $resultAggregator->getErrors());
@@ -53,16 +55,9 @@ class ResultAggregatorTest extends PHPUnit_Framework_TestCase
 
     public function testIterator()
     {
-        $check = $this->getMock(CheckInterface::class);
-        $check
-            ->expects($this->any())
-            ->method('getName')
-            ->will($this->returnValue('Some Check'));
-
-
         $results = [
-            new Success($check),
-            new Failure($check, 'nope')
+            new Success($this->check),
+            new Failure($this->check, 'nope')
         ];
         
         $resultAggregator = new ResultAggregator;

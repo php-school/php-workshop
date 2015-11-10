@@ -20,7 +20,7 @@ class OutputFailureRenderer implements ResultRendererInterface
      */
     public function render(ResultInterface $result, ResultsRenderer $renderer)
     {
-        if (!$result instanceof StdOutFailure && !$result instanceof CgiOutBodyFailure) {
+        if (!$result instanceof StdOutFailure) {
             throw new \InvalidArgumentException(sprintf('Incompatible result type: %s', get_class($result)));
         }
 

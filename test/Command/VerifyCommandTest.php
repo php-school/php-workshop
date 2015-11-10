@@ -24,6 +24,20 @@ use PhpSchool\PhpWorkshop\UserStateSerializer;
 class VerifyCommandTest extends PHPUnit_Framework_TestCase
 {
 
+    /**
+     * @var CheckInterface
+     */
+    private $check;
+    
+    public function setUp()
+    {
+        $this->check = $this->getMock(CheckInterface::class);
+        $this->check
+            ->expects($this->any())
+            ->method('getName')
+            ->will($this->returnValue('Some Check'));
+    }
+
     public function testVerifyPrintsErrorIfProgramDoesNotExist()
     {
         $repo = new ExerciseRepository([]);
@@ -114,12 +128,7 @@ class VerifyCommandTest extends PHPUnit_Framework_TestCase
             ->getMock();
         
         $results = new ResultAggregator;
-        $check = $this->getMock(CheckInterface::class);
-        $check
-            ->expects($this->any())
-            ->method('getName')
-            ->will($this->returnValue('Some Check'));
-        $results->add(new Success($check));
+        $results->add(new Success($this->check));
         
         $runner = $this->getMock(ExerciseRunner::class);
         $runner
@@ -175,12 +184,7 @@ class VerifyCommandTest extends PHPUnit_Framework_TestCase
             ->getMock();
 
         $results = new ResultAggregator;
-        $check = $this->getMock(CheckInterface::class);
-        $check
-            ->expects($this->any())
-            ->method('getName')
-            ->will($this->returnValue('Some Check'));
-        $results->add(new Failure($check, 'cba'));
+        $results->add(new Failure($this->check, 'cba'));
 
         $runner = $this->getMock(ExerciseRunner::class);
         $runner

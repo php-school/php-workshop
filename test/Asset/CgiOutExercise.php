@@ -51,7 +51,7 @@ class CgiOutExercise implements ExerciseInterface, CgiOutputExerciseCheck
      */
     public function getRequests()
     {
-        // TODO: Implement getArgs() method.
+        // TODO: Implement getRequests() method.
     }
 
     /**
