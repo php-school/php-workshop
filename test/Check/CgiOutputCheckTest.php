@@ -191,7 +191,6 @@ class CgiOutputCheckTest extends PHPUnit_Framework_TestCase
         $this->assertInstanceOf(CgiOutFailure::class, $failure);
         $this->assertEquals(
             [
-                'X-Powered-By'  => 'PHP/5.6.14',
                 'Pragma'        => 'cache',
                 'Content-type'  => 'text/html; charset=UTF-8'
             ],
@@ -199,7 +198,6 @@ class CgiOutputCheckTest extends PHPUnit_Framework_TestCase
         );
         $this->assertEquals(
             [
-                'X-Powered-By'  => 'PHP/5.6.14',
                 'Pragma'        => 'no-cache',
                 'Content-type'  => 'text/html; charset=UTF-8'
             ],

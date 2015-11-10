@@ -111,7 +111,7 @@ class CgiOutputCheck implements CheckInterface
         
         $cgi = sprintf('php-cgi%s', DIRECTORY_SEPARATOR === '\\' ? '.exe' : '');
         $cgiBinary  = sprintf(
-            '%s -dalways_populate_raw_post_data=-1 -dhtml_errors=0',
+            '%s -dalways_populate_raw_post_data=-1 -dhtml_errors=0 -dexpose_php=0',
             realpath(sprintf('%s/%s', str_replace('\\', '/', dirname(PHP_BINARY)), $cgi))
         );
 
