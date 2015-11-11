@@ -13,7 +13,10 @@ use PhpSchool\CliMenu\Terminal\TerminalFactory;
 use PhpSchool\CliMenu\Terminal\TerminalInterface;
 use PhpParser\Parser;
 use PhpParser\ParserFactory;
+use PhpSchool\PhpWorkshop\Check\CgiOutputCheck;
+use PhpSchool\PhpWorkshop\ExerciseCheck\CgiOutputExerciseCheck;
 use PhpSchool\PhpWorkshop\Result\CgiOutFailure;
+use PhpSchool\PhpWorkshop\Result\CgiOutResult;
 use PhpSchool\PhpWorkshop\Result\StdOutFailure;
 use PhpSchool\PhpWorkshop\ResultRenderer\CgiOutFailureRenderer;
 use PhpSchool\PhpWorkshop\ResultRenderer\OutputFailureRenderer;
@@ -65,6 +68,7 @@ return [
             [$c->get(PhpLintCheck::class), ExerciseInterface::class],
             [$c->get(StdOutCheck::class), StdOutExerciseCheck::class],
             [$c->get(FunctionRequirementsCheck::class), FunctionRequirementsExerciseCheck::class],
+            [$c->get(CgiOutputCheck::class), CgiOutputExerciseCheck::class],
         ];
     }),
     CommandRouter::class => factory(function (ContainerInterface $c) {
@@ -145,6 +149,7 @@ return [
     FunctionRequirementsCheck::class    => factory(function (ContainerInterface $c) {
         return new FunctionRequirementsCheck($c->get(Parser::class));
     }),
+    CgiOutputCheck::class               => object(CgiOutputCheck::class),
 
     //Utils
     Filesystem::class   => object(Filesystem::class),
@@ -275,7 +280,7 @@ return [
         
         return [
             [StdOutFailure::class, new OutputFailureRenderer],
-            [CgiOutFailure::class, new CgiOutFailureRenderer()],
+            [CgiOutResult::class, new CgiOutFailureRenderer()],
             [FunctionRequirementsFailure::class, new FunctionRequirementsFailureRenderer],
             [Success::class, new SuccessRenderer],
             [Failure::class, new FailureRenderer],
