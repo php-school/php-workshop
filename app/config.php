@@ -44,7 +44,6 @@ use PhpSchool\PhpWorkshop\Result\Failure;
 use PhpSchool\PhpWorkshop\ResultRenderer\FailureRenderer;
 use PhpSchool\PhpWorkshop\ResultRenderer\FunctionRequirementsFailureRenderer;
 use PhpSchool\PhpWorkshop\ResultRenderer\ResultsRenderer;
-use PhpSchool\PhpWorkshop\ResultRenderer\StdOutFailureRenderer;
 use PhpSchool\PhpWorkshop\ResultRenderer\SuccessRenderer;
 use PhpSchool\PhpWorkshop\UserState;
 use PhpSchool\PhpWorkshop\UserStateSerializer;
