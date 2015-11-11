@@ -95,7 +95,7 @@ class CgiOutputCheck implements CheckInterface
     }
 
     /**
-     * @param $fileName
+     * @param string $fileName
      * @param RequestInterface $request
      * @return ResponseInterface
      */
