@@ -2,6 +2,7 @@
 
 namespace PhpSchool\PhpWorkshopTest\Result;
 
+use PhpSchool\PhpWorkshop\Check\CheckInterface;
 use PHPUnit_Framework_TestCase;
 use PhpSchool\PhpWorkshop\Result\ResultInterface;
 use PhpSchool\PhpWorkshop\Result\Success;
@@ -15,7 +16,13 @@ class SuccessTest extends PHPUnit_Framework_TestCase
 {
     public function testSuccess()
     {
-        $success = new Success('Some Check');
+        $check = $this->getMock(CheckInterface::class);
+        $check
+            ->expects($this->any())
+            ->method('getName')
+            ->will($this->returnValue('Some Check'));
+        
+        $success = new Success($check);
         $this->assertInstanceOf(ResultInterface::class, $success);
         $this->assertEquals('Some Check', $success->getCheckName());
     }

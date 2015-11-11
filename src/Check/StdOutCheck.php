@@ -2,6 +2,7 @@
 
 namespace PhpSchool\PhpWorkshop\Check;
 
+use PhpSchool\PhpWorkshop\Exception\CodeExecutionException;
 use PhpSchool\PhpWorkshop\Exception\SolutionExecutionException;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpSchool\PhpWorkshop\ExerciseCheck\StdOutExerciseCheck;
@@ -9,7 +10,6 @@ use PhpSchool\PhpWorkshop\Result\Failure;
 use PhpSchool\PhpWorkshop\Result\ResultInterface;
 use PhpSchool\PhpWorkshop\Result\StdOutFailure;
 use PhpSchool\PhpWorkshop\Result\Success;
-use RuntimeException;
 use Symfony\Component\Process\Process;
 
 /**
@@ -19,6 +19,14 @@ use Symfony\Component\Process\Process;
 
 class StdOutCheck implements CheckInterface
 {
+
+    /**
+     * @return string
+     */
+    public function getName()
+    {
+        return 'Command Line Program Output Check';
+    }
 
     /**
      * @param ExerciseInterface $exercise
@@ -34,22 +42,20 @@ class StdOutCheck implements CheckInterface
 
         try {
             $solutionOutput = $this->executePhpFile($exercise->getSolution(), $args);
-        } catch (RuntimeException $e) {
+        } catch (CodeExecutionException $e) {
             throw new SolutionExecutionException($e->getMessage());
         }
 
         try {
             $userOutput = $this->executePhpFile($fileName, $args);
-        } catch (RuntimeException $e) {
-            return new Failure('Program Output', sprintf('PHP Code failed to execute. Error: "%s"', $e->getMessage()));
+        } catch (CodeExecutionException $e) {
+            return Failure::codeExecutionFailure($this, $e);
         }
-
-
         if ($solutionOutput === $userOutput) {
-            return new Success('Program Output');
+            return new Success($this);
         }
 
-        return new StdOutFailure($solutionOutput, $userOutput);
+        return new StdOutFailure($this, $solutionOutput, $userOutput);
     }
 
     /**
@@ -64,7 +70,7 @@ class StdOutCheck implements CheckInterface
         $process->run();
 
         if (!$process->isSuccessful()) {
-            throw new RuntimeException($process->getErrorOutput() ? $process->getErrorOutput() : $process->getOutput());
+            throw CodeExecutionException::fromProcess($process);
         }
 
         return $process->getOutput();

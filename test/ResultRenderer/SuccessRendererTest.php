@@ -4,6 +4,7 @@ namespace PhpSchool\PhpWorkshopTest\ResultRenderer;
 
 use Colors\Color;
 use InvalidArgumentException;
+use PhpSchool\PhpWorkshop\Check\CheckInterface;
 use PhpSchool\PhpWorkshop\Result\ResultInterface;
 use PhpSchool\PhpWorkshop\Result\Success;
 use PhpSchool\PhpWorkshop\ResultRenderer\SuccessRenderer;
@@ -28,7 +29,7 @@ class SuccessRendererTest extends AbstractResultRendererTest
 
     public function testRender()
     {
-        $success = new Success('Check');
+        $success = new Success($this->getMock(CheckInterface::class));
         $renderer = new SuccessRenderer(new Color);
         $this->assertEquals('', $renderer->render($success, $this->getRenderer()));
     }

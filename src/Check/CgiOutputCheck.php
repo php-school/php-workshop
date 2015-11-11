@@ -2,17 +2,16 @@
 
 namespace PhpSchool\PhpWorkshop\Check;
 
+use PhpSchool\PhpWorkshop\Exception\CodeExecutionException;
 use PhpSchool\PhpWorkshop\Exception\SolutionExecutionException;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpSchool\PhpWorkshop\ExerciseCheck\CgiOutputExerciseCheck;
-use PhpSchool\PhpWorkshop\Result\CgiOutBodyFailure;
-use PhpSchool\PhpWorkshop\Result\CgiOutHeadersFailure;
+use PhpSchool\PhpWorkshop\Result\CgiOutFailure;
 use PhpSchool\PhpWorkshop\Result\Failure;
 use PhpSchool\PhpWorkshop\Result\ResultInterface;
 use PhpSchool\PhpWorkshop\Result\Success;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
-use RuntimeException;
 use Symfony\Component\Process\Process;
 use Zend\Diactoros\Response\Serializer as ResponseSerializer;
 
@@ -22,6 +21,14 @@ use Zend\Diactoros\Response\Serializer as ResponseSerializer;
  */
 class CgiOutputCheck implements CheckInterface
 {
+
+    /**
+     * @return string
+     */
+    public function getName()
+    {
+        return 'CGI Program Output Check';
+    }
 
     /**
      * @param ExerciseInterface $exercise
@@ -34,44 +41,57 @@ class CgiOutputCheck implements CheckInterface
             throw new \InvalidArgumentException;
         }
 
-        $request = $exercise->getRequest();
+        $requests = $exercise->getRequests();
+        
+        $results = [];
+        foreach ($requests as $request) {
+            return $this->checkRequest($exercise, $request, $fileName);
+        }
+    }
 
+    /**
+     * @param ExerciseInterface $exercise
+     * @param RequestInterface $request
+     * @param string $fileName
+     * @return ResultInterface
+     */
+    private function checkRequest(ExerciseInterface $exercise, RequestInterface $request, $fileName)
+    {
         try {
             $solutionResponse = $this->executePhpFile($exercise->getSolution(), $request);
-        } catch (RuntimeException $e) {
+        } catch (CodeExecutionException $e) {
             throw new SolutionExecutionException($e->getMessage());
         }
 
         try {
             $userResponse = $this->executePhpFile($fileName, $request);
-        } catch (RuntimeException $e) {
-            return new Failure('Program Output', sprintf('PHP Code failed to execute. Error: "%s"', $e->getMessage()));
+        } catch (CodeExecutionException $e) {
+            return Failure::codeExecutionFailure($this, $e);
+        }
+        
+        $solutionBody       = (string) $solutionResponse->getBody();
+        $userBody           = (string) $userResponse->getBody();
+        $solutionHeaders    = $this->getHeaders($solutionResponse);
+        $userHeaders        = $this->getHeaders($userResponse);
+        
+        if ($solutionBody !== $userBody || $solutionHeaders !== $userHeaders) {
+            return new CgiOutFailure($this, $solutionBody, $userBody, $solutionHeaders, $userHeaders);
         }
 
-        //compare body
-        if ($solutionResponse->getBody()->__toString() !== $userResponse->getBody()->__toString()) {
-            return new CgiOutBodyFailure(
-                $solutionResponse->getBody()->__toString(),
-                $userResponse->getBody()->__toString()
-            );
+        return new Success($this);
+    }
+
+    /**
+     * @param ResponseInterface $response
+     * @return array
+     */
+    private function getHeaders(ResponseInterface $response)
+    {
+        $headers = [];
+        foreach ($response->getHeaders() as $name => $values) {
+            $headers[$name] = implode(", ", $values);
         }
-        
-        //compare headers
-        $solutionHeaders = [];
-        foreach ($solutionResponse->getHeaders() as $name => $values) {
-            $solutionHeaders[$name] = implode(", ", $values);
-        }
-        
-        $userHeaders = [];
-        foreach ($userResponse->getHeaders() as $name => $values) {
-            $userHeaders[$name] = implode(", ", $values);
-        }
-        
-        if ($userHeaders !== $solutionHeaders) {
-            return new CgiOutHeadersFailure($solutionHeaders, $userHeaders);
-        }
-        
-        return new Success('Program Output');
+        return $headers;
     }
 
     /**
@@ -91,7 +111,7 @@ class CgiOutputCheck implements CheckInterface
         
         $cgi = sprintf('php-cgi%s', DIRECTORY_SEPARATOR === '\\' ? '.exe' : '');
         $cgiBinary  = sprintf(
-            '%s -dalways_populate_raw_post_data=-1 -dhtml_errors=0',
+            '%s -dalways_populate_raw_post_data=-1 -dhtml_errors=0 -dexpose_php=0',
             realpath(sprintf('%s/%s', str_replace('\\', '/', dirname(PHP_BINARY)), $cgi))
         );
 
@@ -108,7 +128,7 @@ class CgiOutputCheck implements CheckInterface
         $process->run();
 
         if (!$process->isSuccessful()) {
-            throw new RuntimeException($process->getErrorOutput() ? $process->getErrorOutput() : $process->getOutput());
+            throw CodeExecutionException::fromProcess($process);
         }
         
         //if no status line, pre-pend 200 OK

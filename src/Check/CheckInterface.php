@@ -10,7 +10,6 @@ use PhpSchool\PhpWorkshop\Result\ResultInterface;
  * @package PhpSchool\PhpWorkshop\Comparator
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
-
 interface CheckInterface
 {
     /**
@@ -24,4 +23,11 @@ interface CheckInterface
      * @return bool
      */
     public function breakChainOnFailure();
+
+    /**
+     * Return the check's name
+     *
+     * @return string
+     */
+    public function getName();
 }

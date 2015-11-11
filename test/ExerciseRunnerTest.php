@@ -22,6 +22,20 @@ use stdClass;
  */
 class ExerciseRunnerTest extends PHPUnit_Framework_TestCase
 {
+    /**
+     * @var CheckInterface
+     */
+    private $check;
+
+    public function setUp()
+    {
+        $this->check = $this->getMock(CheckInterface::class);
+        $this->check
+            ->expects($this->any())
+            ->method('getName')
+            ->will($this->returnValue('Some Check'));
+    }
+    
     public function testRegisterExerciseWithNonStringNonNullThrowsException()
     {
         $runner = new ExerciseRunner;
@@ -58,11 +72,11 @@ class ExerciseRunnerTest extends PHPUnit_Framework_TestCase
         $runner = new ExerciseRunner;
         $runMe = $this->getMock(CheckInterface::class);
         $runner->registerCheck($runMe, StdOutExerciseCheck::class);
-
+        
         $runMe
             ->expects($this->once())
             ->method('check')
-            ->will($this->returnValue(new Success('Some Check')));
+            ->will($this->returnValue(new Success($this->check)));
 
         $result = $runner->runExercise(new StdOutExercise, 'some-file.php');
         $this->assertInstanceOf(ResultAggregator::class, $result);
@@ -76,7 +90,7 @@ class ExerciseRunnerTest extends PHPUnit_Framework_TestCase
         $runMe
             ->expects($this->once())
             ->method('check')
-            ->will($this->returnValue(new Failure('Some Check', 'nope')));
+            ->will($this->returnValue(new Failure($this->check, 'nope')));
 
         $runMe
             ->expects($this->once())

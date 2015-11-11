@@ -4,6 +4,7 @@ namespace PhpSchool\PhpWorkshopTest\ResultRenderer;
 
 use Colors\Color;
 use InvalidArgumentException;
+use PhpSchool\PhpWorkshop\Check\CheckInterface;
 use PhpSchool\PhpWorkshop\Result\Failure;
 use PhpSchool\PhpWorkshop\Result\ResultInterface;
 use PhpSchool\PhpWorkshop\ResultRenderer\FailureRenderer;
@@ -28,7 +29,7 @@ class FailureRendererTest extends AbstractResultRendererTest
 
     public function testRender()
     {
-        $failure = new Failure('Check', 'Something went wrong');
+        $failure = new Failure($this->getMock(CheckInterface::class), 'Something went wrong');
         $renderer = new FailureRenderer(new Color);
         $this->assertEquals('Something went wrong', $renderer->render($failure, $this->getRenderer()));
     }

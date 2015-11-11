@@ -43,6 +43,7 @@ class FunctionRequirementsCheckTest extends PHPUnit_Framework_TestCase
         $this->assertFalse($this->check->breakChainOnFailure());
 
         $this->exercise = $this->getMock([FunctionRequirementsExerciseCheck::class, ExerciseInterface::class]);
+        $this->assertEquals('Function Requirements Check', $this->check->getName());
     }
 
     public function testExceptionIsThrownIfNotValidExercise()
@@ -69,7 +70,7 @@ class FunctionRequirementsCheckTest extends PHPUnit_Framework_TestCase
         $failure = $this->check->check($this->exercise, $file);
         $this->assertInstanceOf(Failure::class, $failure);
 
-        $message = sprintf('File: %s could not be parsed. Error: "Syntax error, unexpected T_ECHO on line 4"', $file);
+        $message = sprintf('File: "%s" could not be parsed. Error: "Syntax error, unexpected T_ECHO on line 4"', $file);
         $this->assertEquals($message, $failure->getReason());
     }
 
@@ -90,9 +91,6 @@ class FunctionRequirementsCheckTest extends PHPUnit_Framework_TestCase
             __DIR__ . '/../res/function-requirements/fail-banned-function.php'
         );
         $this->assertInstanceOf(FunctionRequirementsFailure::class, $failure);
-
-        $message = 'Function Requirements were not met';
-        $this->assertEquals($message, $failure->getReason());
         $this->assertEquals([['function' => 'file', 'line' => 3]], $failure->getBannedFunctions());
         $this->assertEquals([], $failure->getMissingFunctions());
     }
@@ -113,10 +111,8 @@ class FunctionRequirementsCheckTest extends PHPUnit_Framework_TestCase
             $this->exercise,
             __DIR__ . '/../res/function-requirements/fail-banned-function.php'
         );
-        $this->assertInstanceOf(Failure::class, $failure);
-
-        $message  = 'Function Requirements were not met';
-        $this->assertEquals($message, $failure->getReason());
+        $this->assertInstanceOf(FunctionRequirementsFailure::class, $failure);
+        
         $this->assertEquals(['file_get_contents', 'implode'], $failure->getMissingFunctions());
         $this->assertEquals([], $failure->getBannedFunctions());
     }

@@ -5,6 +5,7 @@ namespace PhpSchool\PhpWorkshopTest\Check;
 use InvalidArgumentException;
 use PhpSchool\PhpWorkshop\Check\CgiOutputCheck;
 use PhpSchool\PhpWorkshop\Result\CgiOutBodyFailure;
+use PhpSchool\PhpWorkshop\Result\CgiOutFailure;
 use PhpSchool\PhpWorkshop\Result\CgiOutHeadersFailure;
 use PhpSchool\PhpWorkshop\StringBody;
 use PhpSchool\PhpWorkshopTest\Asset\CgiOutExercise;
@@ -40,6 +41,7 @@ class CgiOutputCheckTest extends PHPUnit_Framework_TestCase
         $this->assertFalse($this->check->breakChainOnFailure());
 
         $this->exercise = $this->getMock(CgiOutExercise::class);
+        $this->assertEquals('CGI Program Output Check', $this->check->getName());
     }
 
     public function testExceptionIsThrownIfNotValidExercise()
@@ -63,13 +65,11 @@ class CgiOutputCheckTest extends PHPUnit_Framework_TestCase
 
         $this->exercise
             ->expects($this->once())
-            ->method('getRequest')
-            ->will($this->returnValue($request));
+            ->method('getRequests')
+            ->will($this->returnValue([$request]));
 
-        $this->setExpectedExceptionRegExp(
-            SolutionExecutionException::class,
-            "/^PHP Parse error:  syntax error, unexpected end of file in/"
-        );
+        $regex  = "/^PHP Code failed to execute\\. Error: \"PHP Parse error:  syntax error, unexpected end of file in/";
+        $this->setExpectedExceptionRegExp(SolutionExecutionException::class, $regex);
         $this->check->check($this->exercise, '');
     }
 
@@ -86,8 +86,8 @@ class CgiOutputCheckTest extends PHPUnit_Framework_TestCase
         
         $this->exercise
             ->expects($this->once())
-            ->method('getRequest')
-            ->will($this->returnValue($request));
+            ->method('getRequests')
+            ->will($this->returnValue([$request]));
 
         $this->assertInstanceOf(
             Success::class,
@@ -111,8 +111,8 @@ class CgiOutputCheckTest extends PHPUnit_Framework_TestCase
         
         $this->exercise
             ->expects($this->once())
-            ->method('getRequest')
-            ->will($this->returnValue($request));
+            ->method('getRequests')
+            ->will($this->returnValue([$request]));
         
         $this->assertInstanceOf(
             Success::class,
@@ -132,8 +132,8 @@ class CgiOutputCheckTest extends PHPUnit_Framework_TestCase
 
         $this->exercise
             ->expects($this->once())
-            ->method('getRequest')
-            ->will($this->returnValue($request));
+            ->method('getRequests')
+            ->will($this->returnValue([$request]));
 
         $failure = $this->check->check($this->exercise, realpath(__DIR__ . '/../res/cgi-out/user-error.php'));
 
@@ -157,13 +157,14 @@ class CgiOutputCheckTest extends PHPUnit_Framework_TestCase
 
         $this->exercise
             ->expects($this->once())
-            ->method('getRequest')
-            ->will($this->returnValue($request));
+            ->method('getRequests')
+            ->will($this->returnValue([$request]));
         
         $failure = $this->check->check($this->exercise, realpath(__DIR__ . '/../res/cgi-out/get-user-wrong.php'));
 
-        $this->assertInstanceOf(CgiOutBodyFailure::class, $failure);
-        $this->assertEquals('Output did not match. Expected: "10". Received: "15"', $failure->getReason());
+        $this->assertInstanceOf(CgiOutFailure::class, $failure);
+        $this->assertEquals('10', $failure->getExpectedOutput());
+        $this->assertEquals('15', $failure->getActualOutput());
     }
 
     public function testFailureIsReturnedIfSolutionOutputHeadersDoesNotMatchUserOutputHeaders()
@@ -179,15 +180,28 @@ class CgiOutputCheckTest extends PHPUnit_Framework_TestCase
 
         $this->exercise
             ->expects($this->once())
-            ->method('getRequest')
-            ->will($this->returnValue($request));
+            ->method('getRequests')
+            ->will($this->returnValue([$request]));
 
         $failure = $this->check->check(
             $this->exercise,
             realpath(__DIR__ . '/../res/cgi-out/get-user-header-wrong.php')
         );
 
-        $this->assertInstanceOf(CgiOutHeadersFailure::class, $failure);
-        $this->assertEquals('Headers did not match.', $failure->getReason());
+        $this->assertInstanceOf(CgiOutFailure::class, $failure);
+        $this->assertEquals(
+            [
+                'Pragma'        => 'cache',
+                'Content-type'  => 'text/html; charset=UTF-8'
+            ],
+            $failure->getExpectedHeaders()
+        );
+        $this->assertEquals(
+            [
+                'Pragma'        => 'no-cache',
+                'Content-type'  => 'text/html; charset=UTF-8'
+            ],
+            $failure->getActualHeaders()
+        );
     }
 }

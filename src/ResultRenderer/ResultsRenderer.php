@@ -4,11 +4,11 @@ namespace PhpSchool\PhpWorkshop\ResultRenderer;
 
 use Colors\Color;
 use PhpSchool\CliMenu\Terminal\TerminalInterface;
+use PhpSchool\PhpWorkshop\Result\SuccessInterface;
 use PhpSchool\PSX\SyntaxHighlighter;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpSchool\PhpWorkshop\ExerciseRepository;
 use PhpSchool\PhpWorkshop\Result\ResultInterface;
-use PhpSchool\PhpWorkshop\Result\Success;
 use PhpSchool\PhpWorkshop\ResultAggregator;
 use PhpSchool\PhpWorkshop\UserState;
 
@@ -93,7 +93,7 @@ class ResultsRenderer
         $successes  = [];
         $failures   = [];
         foreach ($results as $result) {
-            if ($result instanceof Success) {
+            if ($result instanceof SuccessInterface) {
                 $successes[] = $result;
             } else {
                 $failures[] = $result;
@@ -146,6 +146,7 @@ class ResultsRenderer
     {
         $lines = [];
         foreach ($results as $result) {
+            /** @var Success $result */
             $lines[] = sprintf(' ✔ Check: %s', $result->getCheckName());
         }
 

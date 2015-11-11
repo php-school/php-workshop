@@ -3,6 +3,7 @@
 namespace PhpSchool\PhpWorkshopTest\ResultRenderer;
 
 use InvalidArgumentException;
+use PhpSchool\PhpWorkshop\Check\CheckInterface;
 use PhpSchool\PhpWorkshop\Result\ResultInterface;
 use PhpSchool\PhpWorkshop\Result\StdOutFailure;
 use PhpSchool\PhpWorkshop\ResultRenderer\OutputFailureRenderer;
@@ -27,7 +28,7 @@ class OutputFailureRendererTest extends AbstractResultRendererTest
 
     public function testRender()
     {
-        $failure = new StdOutFailure('EXPECTED OUTPUT', 'ACTUAL OUTPUT');
+        $failure = new StdOutFailure($this->getMock(CheckInterface::class), 'EXPECTED OUTPUT', 'ACTUAL OUTPUT');
         $renderer = new OutputFailureRenderer;
 
         $expected  = "  [33m[4m[1mACTUAL[0m[0m[0m\n";

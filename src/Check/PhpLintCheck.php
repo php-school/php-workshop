@@ -17,6 +17,14 @@ class PhpLintCheck implements CheckInterface
 {
 
     /**
+     * @return string
+     */
+    public function getName()
+    {
+        return 'PHP Code Check';
+    }
+
+    /**
      * @param ExerciseInterface $exercise
      * @param string $fileName
      * @return Failure|Success
@@ -27,10 +35,10 @@ class PhpLintCheck implements CheckInterface
         $process->run();
 
         if ($process->isSuccessful()) {
-            return new Success('PHP Code Check');
+            return new Success($this);
         }
 
-        return new Failure('PHP Code Check', $process->getErrorOutput());
+        return new Failure($this, $process->getErrorOutput());
     }
 
     /**

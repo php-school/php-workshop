@@ -21,8 +21,7 @@ use PhpSchool\PhpWorkshop\Result\Success;
  */
 class FunctionRequirementsCheck implements CheckInterface
 {
-
-
+    
     /**
      * @var Parser
      */
@@ -34,6 +33,14 @@ class FunctionRequirementsCheck implements CheckInterface
     public function __construct(Parser $parser)
     {
         $this->parser = $parser;
+    }
+
+    /**
+     * @return string
+     */
+    public function getName()
+    {
+        return 'Function Requirements Check';
     }
 
     /**
@@ -55,10 +62,7 @@ class FunctionRequirementsCheck implements CheckInterface
         try {
             $ast = $this->parser->parse($code);
         } catch (Error $e) {
-            return new Failure(
-                'Function Requirements Check',
-                sprintf('File: %s could not be parsed. Error: "%s"', $fileName, $e->getMessage())
-            );
+            return Failure::codeParseFailure($this, $e, $fileName);
         }
 
         $visitor    = new FunctionVisitor($requiredFunctions, $bannedFunctions);
@@ -80,10 +84,10 @@ class FunctionRequirementsCheck implements CheckInterface
         }
 
         if (!empty($bannedFunctions) || !empty($missingFunctions)) {
-            return new FunctionRequirementsFailure($bannedFunctions, $missingFunctions);
+            return new FunctionRequirementsFailure($this, $bannedFunctions, $missingFunctions);
         }
 
-        return new Success('Function Requirements');
+        return new Success($this);
     }
 
     /**

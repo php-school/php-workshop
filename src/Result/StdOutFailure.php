@@ -2,35 +2,39 @@
 
 namespace PhpSchool\PhpWorkshop\Result;
 
+use PhpSchool\PhpWorkshop\Check\CheckInterface;
+
 /**
  * Class StdOutFailure
  * @package PhpSchool\PhpWorkshop\Result
  * @author  Aydin Hassan <aydin@hotmail.co.uk>
  */
-class StdOutFailure extends Failure
+class StdOutFailure implements FailureInterface
 {
+    use ResultTrait;
+
     /**
      * @var string
      */
     private $expectedOutput;
-    
+
     /**
      * @var string
      */
     private $actualOutput;
 
     /**
+     * @param CheckInterface $check
      * @param string $expectedOutput
      * @param string $actualOutput
      */
-    public function __construct($expectedOutput, $actualOutput)
+    public function __construct(CheckInterface $check, $expectedOutput, $actualOutput)
     {
-        $this->expectedOutput = $expectedOutput;
-        $this->actualOutput = $actualOutput;
-        $reason = sprintf('Output did not match. Expected: "%s". Received: "%s"', $expectedOutput, $actualOutput);
-        parent::__construct('Program Output', $reason);
+        $this->check            = $check;
+        $this->expectedOutput   = $expectedOutput;
+        $this->actualOutput     = $actualOutput;
     }
-
+    
     /**
      * @return string
      */
@@ -40,7 +44,7 @@ class StdOutFailure extends Failure
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getActualOutput()
     {

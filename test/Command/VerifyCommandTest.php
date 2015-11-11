@@ -2,6 +2,7 @@
 
 namespace PhpSchool\PhpWorkshopTest\Command;
 
+use PhpSchool\PhpWorkshop\Check\CheckInterface;
 use PHPUnit_Framework_TestCase;
 use PhpSchool\PhpWorkshop\Command\VerifyCommand;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
@@ -22,6 +23,20 @@ use PhpSchool\PhpWorkshop\UserStateSerializer;
  */
 class VerifyCommandTest extends PHPUnit_Framework_TestCase
 {
+
+    /**
+     * @var CheckInterface
+     */
+    private $check;
+    
+    public function setUp()
+    {
+        $this->check = $this->getMock(CheckInterface::class);
+        $this->check
+            ->expects($this->any())
+            ->method('getName')
+            ->will($this->returnValue('Some Check'));
+    }
 
     public function testVerifyPrintsErrorIfProgramDoesNotExist()
     {
@@ -113,7 +128,7 @@ class VerifyCommandTest extends PHPUnit_Framework_TestCase
             ->getMock();
         
         $results = new ResultAggregator;
-        $results->add(new Success('Some Check'));
+        $results->add(new Success($this->check));
         
         $runner = $this->getMock(ExerciseRunner::class);
         $runner
@@ -169,7 +184,7 @@ class VerifyCommandTest extends PHPUnit_Framework_TestCase
             ->getMock();
 
         $results = new ResultAggregator;
-        $results->add(new Failure('Some Check', 'cba'));
+        $results->add(new Failure($this->check, 'cba'));
 
         $runner = $this->getMock(ExerciseRunner::class);
         $runner

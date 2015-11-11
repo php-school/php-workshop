@@ -2,13 +2,17 @@
 
 namespace PhpSchool\PhpWorkshop\Result;
 
+use PhpSchool\PhpWorkshop\Check\CheckInterface;
+
 /**
  * Class FunctionRequirementsFailure
  * @package PhpSchool\PhpWorkshop\Result
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
-class FunctionRequirementsFailure extends Failure
+class FunctionRequirementsFailure implements FailureInterface
 {
+    use ResultTrait;
+    
     /**
      * @var array
      */
@@ -20,14 +24,14 @@ class FunctionRequirementsFailure extends Failure
     private $missingFunctions;
 
     /**
+     * @param CheckInterface $check
      * @param array $bannedFunctions
      * @param array $missingFunctions
      */
-    public function __construct(array $bannedFunctions, array $missingFunctions)
+    public function __construct(CheckInterface $check, array $bannedFunctions, array $missingFunctions)
     {
-        $reason = 'Function Requirements were not met';
-        parent::__construct('Function Requirements', $reason);
-        $this->bannedFunctions = $bannedFunctions;
+        $this->check            = $check;
+        $this->bannedFunctions  = $bannedFunctions;
         $this->missingFunctions = $missingFunctions;
     }
 
