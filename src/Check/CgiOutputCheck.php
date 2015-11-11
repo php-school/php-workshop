@@ -7,6 +7,7 @@ use PhpSchool\PhpWorkshop\Exception\SolutionExecutionException;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpSchool\PhpWorkshop\ExerciseCheck\CgiOutputExerciseCheck;
 use PhpSchool\PhpWorkshop\Result\CgiOutFailure;
+use PhpSchool\PhpWorkshop\Result\CgiOutRequestFailure;
 use PhpSchool\PhpWorkshop\Result\CgiOutResult;
 use PhpSchool\PhpWorkshop\Result\Failure;
 use PhpSchool\PhpWorkshop\Result\ResultInterface;
@@ -41,14 +42,10 @@ class CgiOutputCheck implements CheckInterface
         if (!$exercise instanceof CgiOutputExerciseCheck) {
             throw new \InvalidArgumentException;
         }
-
-        $requests = $exercise->getRequests();
         
-        $results = new CgiOutResult($this);
-        foreach ($requests as $request) {
-            $results->add($this->checkRequest($exercise, $request, $fileName));
-        }
-        return $results;
+        return new CgiOutResult($this, array_map(function (RequestInterface $request) use ($exercise, $fileName) {
+            return $this->checkRequest($exercise, $request, $fileName);
+        }, $exercise->getRequests()));
     }
 
     /**
@@ -60,7 +57,7 @@ class CgiOutputCheck implements CheckInterface
     private function checkRequest(ExerciseInterface $exercise, RequestInterface $request, $fileName)
     {
         try {
-            $solutionResponse = $this->executePhpFile($exercise->getSolution(), $request);
+            $solutionResponse = $this->executePhpFile(realpath($exercise->getSolution()), $request);
         } catch (CodeExecutionException $e) {
             throw new SolutionExecutionException($e->getMessage());
         }
@@ -77,7 +74,7 @@ class CgiOutputCheck implements CheckInterface
         $userHeaders        = $this->getHeaders($userResponse);
         
         if ($solutionBody !== $userBody || $solutionHeaders !== $userHeaders) {
-            return new CgiOutFailure($this, $solutionBody, $userBody, $solutionHeaders, $userHeaders);
+            return new CgiOutRequestFailure($this, $request, $solutionBody, $userBody, $solutionHeaders, $userHeaders);
         }
 
         return new Success($this);

@@ -30,17 +30,17 @@ class CgiOutFailureRenderer implements ResultRendererInterface
                 continue;
             }
 
-            if ($result->headersDifferent()) {
+            if ($request->headersDifferent()) {
                 $output .= sprintf(
                     "  %s\n%s\n  %s\n%s\n",
                     $renderer->style("ACTUAL", ['bold', 'underline', 'yellow']),
-                    $this->headers($result->getActualHeaders(), $renderer),
+                    $this->headers($request->getActualHeaders(), $renderer),
                     $renderer->style("EXPECTED", ['yellow', 'bold', 'underline']),
-                    $this->headers($result->getExpectedHeaders(), $renderer)
+                    $this->headers($request->getExpectedHeaders(), $renderer)
                 );
             }
 
-            if ($result->bodyDifferent()) {
+            if ($request->bodyDifferent()) {
                 if ($output !== '') {
                     $output .= "\n";
                 }
@@ -48,9 +48,9 @@ class CgiOutFailureRenderer implements ResultRendererInterface
                 $output .= sprintf(
                     "  %s\n%s\n\n  %s\n%s\n",
                     $renderer->style("ACTUAL", ['bold', 'underline', 'yellow']),
-                    $this->indent($renderer->style(sprintf('"%s"', $result->getActualOutput()), 'red')),
+                    $this->indent($renderer->style(sprintf('"%s"', $request->getActualOutput()), 'red')),
                     $renderer->style("EXPECTED", ['yellow', 'bold', 'underline']),
-                    $this->indent($renderer->style(sprintf('"%s"', $result->getExpectedOutput()), 'red'))
+                    $this->indent($renderer->style(sprintf('"%s"', $request->getExpectedOutput()), 'red'))
                 );
             }
         }

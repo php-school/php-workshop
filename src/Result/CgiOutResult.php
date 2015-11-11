@@ -2,6 +2,7 @@
 
 namespace PhpSchool\PhpWorkshop\Result;
 
+use PhpSchool\PhpWorkshop\Check\CheckInterface;
 use PhpSchool\PhpWorkshop\ResultAggregator;
 
 /**
@@ -12,4 +13,17 @@ use PhpSchool\PhpWorkshop\ResultAggregator;
 class CgiOutResult extends ResultAggregator implements ResultInterface
 {
     use ResultTrait;
+
+    /**
+     * CgiOutResult constructor.
+     * @param CheckInterface $check
+     * @param array $requestResults
+     */
+    public function __construct(CheckInterface $check, array $requestResults)
+    {
+        $this->check = $check;
+        foreach ($requestResults as $request) {
+            $this->add($request);
+        }
+    }
 }
