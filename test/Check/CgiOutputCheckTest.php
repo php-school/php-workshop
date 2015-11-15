@@ -4,17 +4,13 @@ namespace PhpSchool\PhpWorkshopTest\Check;
 
 use InvalidArgumentException;
 use PhpSchool\PhpWorkshop\Check\CgiOutputCheck;
-use PhpSchool\PhpWorkshop\Result\CgiOutFailure;
-use PhpSchool\PhpWorkshop\Result\CgiOutHeadersFailure;
 use PhpSchool\PhpWorkshop\Result\CgiOutRequestFailure;
 use PhpSchool\PhpWorkshop\Result\CgiOutResult;
-use PhpSchool\PhpWorkshop\StringBody;
 use PhpSchool\PhpWorkshopTest\Asset\CgiOutExercise;
 use PHPUnit_Framework_TestCase;
 use PhpSchool\PhpWorkshop\Exception\SolutionExecutionException;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpSchool\PhpWorkshop\Result\Failure;
-use PhpSchool\PhpWorkshop\Result\Success;
 use Zend\Diactoros\Request;
 use Zend\Diactoros\Uri;
 
