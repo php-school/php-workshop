@@ -7,10 +7,10 @@ use PhpSchool\PhpWorkshop\Result\ResultInterface;
 use PhpSchool\PhpWorkshop\Result\SuccessInterface;
 
 /**
- * Class CgiOutFailureRenderer
+ * Class CgiOutResultRenderer
  * @package PhpSchool\PhpWorkshop\ResultRenderer
  */
-class CgiOutFailureRenderer implements ResultRendererInterface
+class CgiOutResultRenderer implements ResultRendererInterface
 {
 
     /**
@@ -25,32 +25,30 @@ class CgiOutFailureRenderer implements ResultRendererInterface
         }
 
         $output = '';
-        foreach ($result as $request) {
+        foreach ($result as $key => $request) {
             if ($request instanceof SuccessInterface) {
                 continue;
             }
+            
+            $output .= "\n";
 
             if ($request->headersDifferent()) {
                 $output .= sprintf(
-                    "  %s\n%s\n  %s\n%s\n",
-                    $renderer->style("ACTUAL", ['bold', 'underline', 'yellow']),
+                    "  %s    %s  %s  %s\n",
+                    $renderer->style(sprintf("%d. ACTUAL HEADERS:", $key + 1), ['bold', 'yellow']),
                     $this->headers($request->getActualHeaders(), $renderer),
-                    $renderer->style("EXPECTED", ['yellow', 'bold', 'underline']),
+                    $renderer->style(sprintf("%d. EXPECTED HEADERS:", $key + 1), ['bold', 'yellow']),
                     $this->headers($request->getExpectedHeaders(), $renderer)
                 );
             }
 
             if ($request->bodyDifferent()) {
-                if ($output !== '') {
-                    $output .= "\n";
-                }
-
                 $output .= sprintf(
-                    "  %s\n%s\n\n  %s\n%s\n",
-                    $renderer->style("ACTUAL", ['bold', 'underline', 'yellow']),
-                    $this->indent($renderer->style(sprintf('"%s"', $request->getActualOutput()), 'red')),
-                    $renderer->style("EXPECTED", ['yellow', 'bold', 'underline']),
-                    $this->indent($renderer->style(sprintf('"%s"', $request->getExpectedOutput()), 'red'))
+                    "  %s    %s\n  %s  %s\n",
+                    $renderer->style(sprintf("%d. ACTUAL CONTENT:", $key + 1), ['bold', 'yellow']),
+                    $renderer->style(sprintf('"%s"', $request->getActualOutput()), 'red'),
+                    $renderer->style(sprintf("%d. EXPECTED CONTENT:", $key + 1), ['bold', 'yellow']),
+                    $renderer->style(sprintf('"%s"', $request->getExpectedOutput()), 'red')
                 );
             }
         }
@@ -65,28 +63,17 @@ class CgiOutFailureRenderer implements ResultRendererInterface
      */
     private function headers(array $headers, ResultsRenderer $renderer)
     {
+        $indent = false;
         $output = '';
         foreach ($headers as $name => $value) {
-            $output .= '  ' . $renderer->style(sprintf("%s: %s", $name, $value), 'red') . "\n";
+            if ($indent) {
+                $output .= str_repeat(' ', 24);
+            }
+            
+            $output .=  $renderer->style(sprintf("%s: %s", $name, $value), 'red') . "\n";
+            $indent  = true;
         }
         
         return $output;
-    }
-
-    /**
-     * @param string $string
-     * @return string
-     */
-    private function indent($string)
-    {
-        return implode(
-            "\n",
-            array_map(
-                function ($line) {
-                    return sprintf("  %s", $line);
-                },
-                explode("\n", $string)
-            )
-        );
     }
 }
