@@ -15,10 +15,9 @@ use PhpParser\Parser;
 use PhpParser\ParserFactory;
 use PhpSchool\PhpWorkshop\Check\CgiOutputCheck;
 use PhpSchool\PhpWorkshop\ExerciseCheck\CgiOutputExerciseCheck;
-use PhpSchool\PhpWorkshop\Result\CgiOutFailure;
 use PhpSchool\PhpWorkshop\Result\CgiOutResult;
 use PhpSchool\PhpWorkshop\Result\StdOutFailure;
-use PhpSchool\PhpWorkshop\ResultRenderer\CgiOutFailureRenderer;
+use PhpSchool\PhpWorkshop\ResultRenderer\CgiOutResultRenderer;
 use PhpSchool\PhpWorkshop\ResultRenderer\OutputFailureRenderer;
 use PhpSchool\PSX\SyntaxHighlighter;
 use PhpSchool\PhpWorkshop\Check\FileExistsCheck;
@@ -280,7 +279,7 @@ return [
         
         return [
             [StdOutFailure::class, new OutputFailureRenderer],
-            [CgiOutResult::class, new CgiOutFailureRenderer()],
+            [CgiOutResult::class, new CgiOutResultRenderer],
             [FunctionRequirementsFailure::class, new FunctionRequirementsFailureRenderer],
             [Success::class, new SuccessRenderer],
             [Failure::class, new FailureRenderer],

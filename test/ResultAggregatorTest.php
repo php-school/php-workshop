@@ -4,6 +4,7 @@
 namespace PhpSchool\PhpWorkshopTest;
 
 use PhpSchool\PhpWorkshop\Check\CheckInterface;
+use PhpSchool\PhpWorkshopTest\Asset\ResultResultAggregator;
 use PHPUnit_Framework_TestCase;
 use PhpSchool\PhpWorkshop\Result\Failure;
 use PhpSchool\PhpWorkshop\Result\Success;
@@ -39,6 +40,22 @@ class ResultAggregatorTest extends PHPUnit_Framework_TestCase
         $this->assertTrue($resultAggregator->isSuccessful());
 
         $resultAggregator->add(new Failure($this->check, 'nope'));
+        $this->assertFalse($resultAggregator->isSuccessful());
+    }
+
+    public function testIsSuccessfulWithNestedResults()
+    {
+        $resultAggregator = new ResultAggregator;
+        $this->assertTrue($resultAggregator->isSuccessful());
+        
+        $resultResultAggregator = new ResultResultAggregator;
+        $resultResultAggregator->add(new Success($this->check));
+
+        $resultAggregator->add($resultResultAggregator);
+        $this->assertTrue($resultAggregator->isSuccessful());
+
+        $resultResultAggregator->add(new Failure($this->check, 'nope'));
+
         $this->assertFalse($resultAggregator->isSuccessful());
     }
 
