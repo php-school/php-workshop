@@ -3,6 +3,7 @@
 namespace PhpSchool\PhpWorkshop;
 
 use ArrayIterator;
+use Countable;
 use IteratorAggregate;
 use PhpSchool\PhpWorkshop\Result\FailureInterface;
 use PhpSchool\PhpWorkshop\Result\ResultInterface;
@@ -34,6 +35,9 @@ class ResultAggregator implements IteratorAggregate
     {
         return count(
             array_filter($this->results, function ($result) {
+                if ($result instanceof self) {
+                    return !$result->isSuccessful();
+                }
                 return $result instanceof FailureInterface;
             })
         ) === 0;
