@@ -12,7 +12,7 @@ use PHPUnit_Framework_TestCase;
 use Psr\Http\Message\RequestInterface;
 
 /**
- * 
+ *
  * Class CgiOutResultTest
  * @package PhpSchool\PhpWorkshopTest\Result
  * @author Aydin Hassan <aydin@hotmail.co.uk>
@@ -48,5 +48,5 @@ class CgiOutResultTest extends PHPUnit_Framework_TestCase
         
         $cgiOutResult->add($request);
         $this->assertFalse($cgiOutResult->isSuccessful());
-    }   
+    }
 }

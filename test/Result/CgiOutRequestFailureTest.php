@@ -11,7 +11,7 @@ use PHPUnit_Framework_TestCase;
 use Psr\Http\Message\RequestInterface;
 
 /**
- * 
+ *
  * Class CgiOutFailureTest
  * @package PhpSchool\PhpWorkshopTest\Result
  * @author Aydin Hassan <aydin@hotmail.co.uk>
@@ -40,11 +40,11 @@ class CgiOutRequestFailureTest extends PHPUnit_Framework_TestCase
     public function testWhenOnlyOutputDifferent()
     {
         $failure = new CgiOutRequestFailure(
-            $this->check, 
-            $this->getMock(RequestInterface::class), 
-            'Expected Output', 
-            'Actual Output', 
-            [], 
+            $this->check,
+            $this->getMock(RequestInterface::class),
+            'Expected Output',
+            'Actual Output',
+            [],
             []
         );
         

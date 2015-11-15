@@ -6,6 +6,7 @@ use InvalidArgumentException;
 use PhpSchool\PhpWorkshop\Check\CgiOutputCheck;
 use PhpSchool\PhpWorkshop\Result\CgiOutFailure;
 use PhpSchool\PhpWorkshop\Result\CgiOutHeadersFailure;
+use PhpSchool\PhpWorkshop\Result\CgiOutRequestFailure;
 use PhpSchool\PhpWorkshop\Result\CgiOutResult;
 use PhpSchool\PhpWorkshop\StringBody;
 use PhpSchool\PhpWorkshopTest\Asset\CgiOutExercise;
@@ -136,12 +137,15 @@ class CgiOutputCheckTest extends PHPUnit_Framework_TestCase
             ->will($this->returnValue([$request]));
 
         $failure = $this->check->check($this->exercise, realpath(__DIR__ . '/../res/cgi-out/user-error.php'));
+        $this->assertInstanceOf(CgiOutResult::class, $failure);
+        $this->assertCount(1, $failure);
+        
+        $result = iterator_to_array($failure)[0];
+        $this->assertInstanceOf(Failure::class, $result);
 
         $failureMsg  = "/^PHP Code failed to execute. Error: \"PHP Parse error:  syntax error, unexpected end of file";
         $failureMsg .= " in/";
-        
-        $this->assertInstanceOf(CgiOutResult::class, $failure);
-        //$this->assertRegExp($failureMsg, $failure->getReason());
+        $this->assertRegExp($failureMsg, $result->getReason());
     }
 
     public function testFailureIsReturnedIfSolutionOutputDoesNotMatchUserOutput()
@@ -161,10 +165,15 @@ class CgiOutputCheckTest extends PHPUnit_Framework_TestCase
             ->will($this->returnValue([$request]));
         
         $failure = $this->check->check($this->exercise, realpath(__DIR__ . '/../res/cgi-out/get-user-wrong.php'));
-
         $this->assertInstanceOf(CgiOutResult::class, $failure);
-        //$this->assertEquals('10', $failure->getExpectedOutput());
-        //$this->assertEquals('15', $failure->getActualOutput());
+        $this->assertCount(1, $failure);
+
+        $result = iterator_to_array($failure)[0];
+        $this->assertInstanceOf(CgiOutRequestFailure::class, $result);
+        $this->assertEquals('10', $result->getExpectedOutput());
+        $this->assertEquals('15', $result->getActualOutput());
+        $this->assertEquals(['Content-type' => 'text/html; charset=UTF-8'], $result->getExpectedHeaders());
+        $this->assertEquals(['Content-type' => 'text/html; charset=UTF-8'], $result->getActualHeaders());
     }
 
     public function testFailureIsReturnedIfSolutionOutputHeadersDoesNotMatchUserOutputHeaders()
@@ -189,19 +198,25 @@ class CgiOutputCheckTest extends PHPUnit_Framework_TestCase
         );
 
         $this->assertInstanceOf(CgiOutResult::class, $failure);
-//        $this->assertEquals(
-//            [
-//                'Pragma'        => 'cache',
-//                'Content-type'  => 'text/html; charset=UTF-8'
-//            ],
-//            $failure->getExpectedHeaders()
-//        );
-//        $this->assertEquals(
-//            [
-//                'Pragma'        => 'no-cache',
-//                'Content-type'  => 'text/html; charset=UTF-8'
-//            ],
-//            $failure->getActualHeaders()
-//        );
+        $this->assertCount(1, $failure);
+
+        $result = iterator_to_array($failure)[0];
+        $this->assertInstanceOf(CgiOutRequestFailure::class, $result);
+        
+        $this->assertSame($result->getExpectedOutput(), $result->getActualOutput());
+        $this->assertEquals(
+            [
+                'Pragma'        => 'cache',
+                'Content-type'  => 'text/html; charset=UTF-8'
+            ],
+            $result->getExpectedHeaders()
+        );
+        $this->assertEquals(
+            [
+                'Pragma'        => 'no-cache',
+                'Content-type'  => 'text/html; charset=UTF-8'
+            ],
+            $result->getActualHeaders()
+        );
     }
 }
