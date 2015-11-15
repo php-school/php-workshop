@@ -3,6 +3,7 @@
 namespace PhpSchool\PhpWorkshop;
 
 use ArrayIterator;
+use Countable;
 use IteratorAggregate;
 use PhpSchool\PhpWorkshop\Result\FailureInterface;
 use PhpSchool\PhpWorkshop\Result\ResultInterface;
