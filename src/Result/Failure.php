@@ -13,31 +13,44 @@ use PhpSchool\PhpWorkshop\Exception\CodeExecutionException;
  */
 class Failure implements FailureInterface
 {
-    use ResultTrait;
-
     /**
      * @var string|null
      */
     private $reason;
 
     /**
-     * @param CheckInterface $check
+     * @var string
+     */
+    private $name;
+
+    /**
+     * @param string $name
      * @param string|null $reason
      */
-    public function __construct(CheckInterface $check, $reason = null)
+    public function __construct($name, $reason = null)
     {
-        $this->check    = $check;
+        $this->name     = $name;
         $this->reason   = $reason;
     }
 
+    /**
+     * @param string $name
+     * @param $reason
+     * @return static
+     */
+    public static function fromNameAndReason($name, $reason)
+    {
+        return new static($name, $reason);
+    }
+    
     /**
      * @param CheckInterface $check
      * @param string $reason
      * @return static
      */
-    public static function withReason(CheckInterface $check, $reason)
+    public static function fromCheckAndReason(CheckInterface $check, $reason)
     {
-        return new static($check, $reason);
+        return new static($check->getName(), $reason);
     }
 
     /**
@@ -45,9 +58,9 @@ class Failure implements FailureInterface
      * @param CodeExecutionException $e
      * @return static
      */
-    public static function codeExecutionFailure(CheckInterface $check, CodeExecutionException $e)
+    public static function fromCheckAndCodeExecutionFailure(CheckInterface $check, CodeExecutionException $e)
     {
-        return new static($check, $e->getMessage());
+        return new static($check->getName(), $e->getMessage());
     }
 
     /**
@@ -56,9 +69,20 @@ class Failure implements FailureInterface
      * @param string $file
      * @return static
      */
-    public static function codeParseFailure(CheckInterface $check, ParseErrorException $e, $file)
+    public static function fromCheckAndCodeParseFailure(CheckInterface $check, ParseErrorException $e, $file)
     {
-        return new static($check, sprintf('File: "%s" could not be parsed. Error: "%s"', $file, $e->getMessage()));
+        return new static(
+            $check->getName(),
+            sprintf('File: "%s" could not be parsed. Error: "%s"', $file, $e->getMessage())
+        );
+    }
+
+    /**
+     * @return string
+     */
+    public function getCheckName()
+    {
+        return $this->name;
     }
 
     /**

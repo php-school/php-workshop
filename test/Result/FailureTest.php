@@ -29,13 +29,21 @@ class FailureTest extends PHPUnit_Framework_TestCase
             ->method('getName')
             ->will($this->returnValue('Some Check'));
 
-        $failure = new Failure($this->check, '');
+        $failure = new Failure($this->check->getName(), '');
         $this->assertSame('Some Check', $failure->getCheckName());
     }
     
     public function testFailure()
     {
-        $failure = new Failure($this->check, 'Something went wrong yo');
+        $failure = new Failure($this->check->getName(), 'Something went wrong yo');
+        $this->assertInstanceOf(ResultInterface::class, $failure);
+        $this->assertEquals('Something went wrong yo', $failure->getReason());
+        $this->assertEquals('Some Check', $failure->getCheckName());
+    }
+
+    public function testFailureWithNameAndReason()
+    {
+        $failure = Failure::fromNameAndReason('Some Check', 'Something went wrong yo');
         $this->assertInstanceOf(ResultInterface::class, $failure);
         $this->assertEquals('Something went wrong yo', $failure->getReason());
         $this->assertEquals('Some Check', $failure->getCheckName());
@@ -43,7 +51,7 @@ class FailureTest extends PHPUnit_Framework_TestCase
 
     public function testFailureWithReason()
     {
-        $failure = Failure::withReason($this->check, 'Something went wrong yo');
+        $failure = Failure::fromCheckAndReason($this->check, 'Something went wrong yo');
         $this->assertInstanceOf(ResultInterface::class, $failure);
         $this->assertEquals('Something went wrong yo', $failure->getReason());
         $this->assertEquals('Some Check', $failure->getCheckName());
@@ -52,7 +60,7 @@ class FailureTest extends PHPUnit_Framework_TestCase
     public function testFailureFromCodeExecutionException()
     {
         $e = new CodeExecutionException('Something went wrong yo');
-        $failure = Failure::codeExecutionFailure($this->check, $e);
+        $failure = Failure::fromCheckAndCodeExecutionFailure($this->check, $e);
         $this->assertInstanceOf(ResultInterface::class, $failure);
         $this->assertEquals('Something went wrong yo', $failure->getReason());
         $this->assertEquals('Some Check', $failure->getCheckName());
@@ -61,7 +69,7 @@ class FailureTest extends PHPUnit_Framework_TestCase
     public function testFailureFromCodeParseException()
     {
         $e = new Error('Something went wrong yo');
-        $failure = Failure::codeParseFailure($this->check, $e, 'exercise.php');
+        $failure = Failure::fromCheckAndCodeParseFailure($this->check, $e, 'exercise.php');
         $this->assertInstanceOf(ResultInterface::class, $failure);
         $this->assertEquals(
             'File: "exercise.php" could not be parsed. Error: "Something went wrong yo on unknown line"',

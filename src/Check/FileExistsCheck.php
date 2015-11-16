@@ -30,10 +30,10 @@ class FileExistsCheck implements CheckInterface
     public function check(ExerciseInterface $exercise, $fileName)
     {
         if (file_exists($fileName)) {
-            return new Success($this);
+            return Success::fromCheck($this);
         }
 
-        return Failure::withReason($this, sprintf('File: "%s" does not exist', $fileName));
+        return Failure::fromCheckAndReason($this, sprintf('File: "%s" does not exist', $fileName));
     }
 
     /**

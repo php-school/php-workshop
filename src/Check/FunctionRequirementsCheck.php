@@ -62,7 +62,7 @@ class FunctionRequirementsCheck implements CheckInterface
         try {
             $ast = $this->parser->parse($code);
         } catch (Error $e) {
-            return Failure::codeParseFailure($this, $e, $fileName);
+            return Failure::fromCheckAndCodeParseFailure($this, $e, $fileName);
         }
 
         $visitor    = new FunctionVisitor($requiredFunctions, $bannedFunctions);

@@ -16,13 +16,20 @@ class SuccessTest extends PHPUnit_Framework_TestCase
 {
     public function testSuccess()
     {
+        $success = new Success('Some Check');
+        $this->assertInstanceOf(ResultInterface::class, $success);
+        $this->assertEquals('Some Check', $success->getCheckName());
+    }
+
+    public function testSuccessFromCheck()
+    {
         $check = $this->getMock(CheckInterface::class);
         $check
             ->expects($this->any())
             ->method('getName')
             ->will($this->returnValue('Some Check'));
-        
-        $success = new Success($check);
+
+        $success = Success::fromCheck($check);
         $this->assertInstanceOf(ResultInterface::class, $success);
         $this->assertEquals('Some Check', $success->getCheckName());
     }

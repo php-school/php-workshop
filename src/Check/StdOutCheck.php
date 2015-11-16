@@ -49,7 +49,7 @@ class StdOutCheck implements CheckInterface
         try {
             $userOutput = $this->executePhpFile($fileName, $args);
         } catch (CodeExecutionException $e) {
-            return Failure::codeExecutionFailure($this, $e);
+            return Failure::fromCheckAndCodeExecutionFailure($this, $e);
         }
         if ($solutionOutput === $userOutput) {
             return new Success($this);

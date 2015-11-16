@@ -4,6 +4,7 @@
 namespace PhpSchool\PhpWorkshopTest;
 
 use InvalidArgumentException;
+use PhpSchool\PhpWorkshopTest\Asset\SelfCheckExercise;
 use PHPUnit_Framework_TestCase;
 use PhpSchool\PhpWorkshop\Check\CheckInterface;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
@@ -108,5 +109,21 @@ class ExerciseRunnerTest extends PHPUnit_Framework_TestCase
         $result = $runner->runExercise(new StdOutExercise, 'some-file.php');
         $this->assertInstanceOf(ResultAggregator::class, $result);
         $this->assertFalse($result->isSuccessful());
+    }
+
+    public function testSelfCheck()
+    {
+        $runner = new ExerciseRunner;
+        $runMe = $this->getMock(CheckInterface::class);
+        $runner->registerCheck($runMe, ExerciseInterface::class);
+
+        $runMe
+            ->expects($this->once())
+            ->method('check')
+            ->will($this->returnValue(new Success($this->check->getName())));
+        
+        $result = $runner->runExercise(new SelfCheckExercise, 'some-file.php');
+        $this->assertInstanceOf(ResultAggregator::class, $result);
+        $this->assertCount(2, $result);
     }
 }
