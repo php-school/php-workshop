@@ -127,6 +127,8 @@ return [
     
     CreditsCommand::class => factory(function (ContainerInterface $c) {
         return new CreditsCommand(
+            $c->get('coreContributors'),
+            $c->get('appContributors'),
             $c->get(Output::class),
             $c->get(Color::class)
         );
@@ -284,4 +286,11 @@ return [
             [Failure::class, new FailureRenderer],
         ];
     }),
+    'coreContributors' => [
+        '@AydinHassan' => 'Aydin Hassan',
+        '@mikeymike'   => 'Michael Woodward',
+        '@shakeyShane' => 'Shane Osbourne',
+        '@chris3ailey' => 'Chris Bailey'
+    ],
+    'appContributors' => []
 ];
