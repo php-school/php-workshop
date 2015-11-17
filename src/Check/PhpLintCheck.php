@@ -35,10 +35,10 @@ class PhpLintCheck implements CheckInterface
         $process->run();
 
         if ($process->isSuccessful()) {
-            return new Success($this);
+            return Success::fromCheck($this);
         }
 
-        return new Failure($this, $process->getErrorOutput());
+        return Failure::fromCheckAndReason($this, $process->getErrorOutput());
     }
 
     /**

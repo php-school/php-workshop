@@ -65,7 +65,7 @@ class CgiOutputCheck implements CheckInterface
         try {
             $userResponse = $this->executePhpFile($fileName, $request);
         } catch (CodeExecutionException $e) {
-            return Failure::codeExecutionFailure($this, $e);
+            return Failure::fromCheckAndCodeExecutionFailure($this, $e);
         }
         
         $solutionBody       = (string) $solutionResponse->getBody();

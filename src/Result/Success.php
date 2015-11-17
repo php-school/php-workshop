@@ -11,13 +11,28 @@ use PhpSchool\PhpWorkshop\Check\CheckInterface;
  */
 class Success implements SuccessInterface
 {
-    use ResultTrait;
+    /**
+     * @param string $name
+     */
+    public function __construct($name)
+    {
+        $this->name = $name;
+    }
 
     /**
      * @param CheckInterface $check
+     * @return static
      */
-    public function __construct(CheckInterface $check)
+    public static function fromCheck(CheckInterface $check)
     {
-        $this->check = $check;
+        return new static($check->getName());
+    }
+
+    /**
+     * @return string
+     */
+    public function getCheckName()
+    {
+        return $this->name;
     }
 }

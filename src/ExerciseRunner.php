@@ -4,6 +4,7 @@ namespace PhpSchool\PhpWorkshop;
 
 use PhpSchool\PhpWorkshop\Check\CheckInterface;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
+use PhpSchool\PhpWorkshop\ExerciseCheck\SelfCheck;
 use PhpSchool\PhpWorkshop\Result\Failure;
 
 /**
@@ -65,6 +66,10 @@ class ExerciseRunner
             if ($result instanceof Failure && $check->breakChainOnFailure()) {
                 return $resultAggregator;
             }
+        }
+
+        if ($exercise instanceof SelfCheck) {
+            $resultAggregator->add($exercise->check($fileName));
         }
 
         $exercise->tearDown();
