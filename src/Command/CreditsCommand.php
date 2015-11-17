@@ -9,6 +9,7 @@ use PhpSchool\PhpWorkshop\Output;
  * Class CreditsCommand
  * @package PhpSchool\PhpWorkshop\Command
  * @author Aydin Hassan <aydin@hotmail.co.uk>
+ * @author Michael Woodward <mikeymike.mw@gmail.com>
  */
 class CreditsCommand
 {
@@ -23,13 +24,45 @@ class CreditsCommand
     private $color;
 
     /**
+     * @var array
+     */
+    private $coreContributors;
+
+    /**
+     * @var array
+     */
+    private $appContributors;
+
+    /**
+     * @param array $coreContributors
+     * @param array $appContributors
      * @param Output $output
      * @param Color $color
      */
-    public function __construct(Output $output, Color $color)
+    public function __construct(array $coreContributors, array $appContributors, Output $output, Color $color)
     {
-        $this->output = $output;
-        $this->color = $color;
+        $this->coreContributors = $coreContributors;
+        $this->appContributors  = $appContributors;
+        $this->output           = $output;
+        $this->color            = $color;
+    }
+
+    /**
+     * Output contributors in columns
+     *
+     * @param array $contributors
+     */
+    private function writeContributors(array $contributors)
+    {
+        $nameColumnSize = max(array_map('strlen', array_values($contributors)));
+        $columns        = sprintf('%s  GitHub Username', str_pad('Name', $nameColumnSize));
+
+        $this->output->writeLine($columns);
+        $this->output->writeLine(str_repeat('-', strlen($columns)));
+
+        foreach ($contributors as $gitHubUser => $name) {
+            $this->output->writeLine(sprintf("%s  %s", str_pad($name, $nameColumnSize), $gitHubUser));
+        }
     }
     
     /**
@@ -37,30 +70,20 @@ class CreditsCommand
      */
     public function __invoke()
     {
-        if (!file_exists(__DIR__ . '/../../credits.txt')) {
-            return 1;
-        }
-        
-        $contributors = file(__DIR__ . '/../../credits.txt', FILE_IGNORE_NEW_LINES);
-        $names = [];
-        foreach ($contributors as $contributor) {
-            $parts      = preg_split('/\s/', $contributor);
-            $gitHubUser = array_pop($parts);
-            
-            $names[implode(" ", $parts)] = $gitHubUser;
-        }
-        
-        $longest = max(array_map('strlen', array_flip($names)));
-
         $this->output->writeLine(
-            $this->color->__invoke("PHP School is bought to you by the following hackers")->yellow()
+            $this->color->__invoke("PHP School is bought to you by...")->yellow()->__toString()
         );
         $this->output->writeLine("");
-        $line = sprintf('%s GitHub Username', str_pad('Name', $longest));
-        $this->output->writeLine($line);
-        $this->output->writeLine(str_repeat('-', strlen($line)));
-        foreach ($names as $name => $gitHubUser) {
-            $this->output->writeLine(sprintf("%s %s", str_pad($name, $longest), $gitHubUser));
-        }
+        $this->writeContributors($this->coreContributors);
+
+        $this->output->writeLine("");
+        $this->output->writeLine("");
+
+        $this->output->writeLine(
+            $this->color->__invoke("This workshop is brought to you by...")->yellow()->__toString()
+        );
+        $this->output->writeLine("");
+        $this->writeContributors($this->appContributors);
+
     }
 }

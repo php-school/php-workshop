@@ -1,0 +1,16 @@
+[33mPHP School is bought to you by...[0m
+
+Name              GitHub Username
+---------------------------------
+Aydin Hassan      @AydinHassan
+Michael Woodward  @mikeymike
+Shane Osbourne    @shakeyShane
+Chris Bailey      @chris3ailey
+
+
+[33mThis workshop is brought to you by...[0m
+
+Name              GitHub Username
+---------------------------------
+Aydin Hassan      @AydinHassan
+Michael Woodward  @mikeymike
