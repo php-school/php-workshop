@@ -1,0 +1,31 @@
+[1m[33mUsage[0m[0m
+
+  [32mlearnyouphp[0m
+    Show a menu to interactively select a workshop.
+  [32mlearnyouphp[0m print
+    Print the instructions for the currently selected workshop.
+  [32mlearnyouphp[0m verify program.php
+    Verify your program against the expected output.
+  [32mlearnyouphp[0m help
+    Show this help.
+  [32mlearnyouphp[0m credits
+    Show the people who made this happen.
+
+[1m[33mHaving trouble with a PHPSchool exercise?[0m[0m
+
+  A team of expert helper elves is eagerly waiting to assist you in
+  mastering the basics of PHP, simply go to:
+    https://github.com/php-school/discussions
+  and add a New Issue and let us know what you're having trouble
+  with. There are no dumb questions!
+
+  If you're looking for general help with PHP, the #php
+  channel on Freenode IRC is usually a great place to find someone
+  willing to help. There is also the PHP StackOverflow Chat:
+    https://chat.stackoverflow.com/rooms/11/php
+
+[1m[33mFound a bug with PHPSchool or just want to contribute?[0m[0m
+  The official repository for PHPSchool is:
+    https://github.com/php-school/php-workshop
+  Feel free to file a bug report or (preferably) a pull request.
+
