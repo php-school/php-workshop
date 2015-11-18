@@ -70,6 +70,10 @@ class CreditsCommand
      */
     public function __invoke()
     {
+        if (empty($this->coreContributors)) {
+            return;
+        }
+        
         $this->output->writeLine(
             $this->color->__invoke("PHP School is bought to you by...")->yellow()->__toString()
         );
@@ -79,11 +83,14 @@ class CreditsCommand
         $this->output->writeLine("");
         $this->output->writeLine("");
 
+        if (empty($this->appContributors)) {
+            return;
+        }
+        
         $this->output->writeLine(
             $this->color->__invoke("This workshop is brought to you by...")->yellow()->__toString()
         );
         $this->output->writeLine("");
         $this->writeContributors($this->appContributors);
-
     }
 }
