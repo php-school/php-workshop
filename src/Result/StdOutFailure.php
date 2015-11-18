@@ -11,7 +11,10 @@ use PhpSchool\PhpWorkshop\Check\CheckInterface;
  */
 class StdOutFailure implements FailureInterface
 {
-    use ResultTrait;
+    /**
+     * @var string
+     */
+    private $name;
 
     /**
      * @var string
@@ -24,15 +27,34 @@ class StdOutFailure implements FailureInterface
     private $actualOutput;
 
     /**
-     * @param CheckInterface $check
+     * @param string $name
      * @param string $expectedOutput
      * @param string $actualOutput
      */
-    public function __construct(CheckInterface $check, $expectedOutput, $actualOutput)
+    public function __construct($name, $expectedOutput, $actualOutput)
     {
-        $this->check            = $check;
+        $this->name             = $name;
         $this->expectedOutput   = $expectedOutput;
         $this->actualOutput     = $actualOutput;
+    }
+
+    /**
+     * @param CheckInterface $check
+     * @param $expectedOutput
+     * @param $actualOutput
+     * @return static
+     */
+    public static function fromCheckAndOutput(CheckInterface $check, $expectedOutput, $actualOutput)
+    {
+        return new static($check->getName(), $expectedOutput, $actualOutput);
+    }
+
+    /**
+     * @return string
+     */
+    public function getCheckName()
+    {
+        return $this->name;
     }
     
     /**
