@@ -51,4 +51,21 @@ class CreditsCommandTest extends PHPUnit_Framework_TestCase
 
         $command->__invoke();
     }
+
+    public function testWithNoContributors()
+    {
+        $this->expectOutputString('');
+        
+        $color = new Color;
+        $color->setForceStyle(true);
+        
+        $command = new CreditsCommand(
+            [],
+            [],
+            new Output($color),
+            $color
+        );
+        
+        $command->__invoke();
+    }
 }
