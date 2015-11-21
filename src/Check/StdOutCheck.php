@@ -52,7 +52,7 @@ class StdOutCheck implements CheckInterface
             return Failure::fromCheckAndCodeExecutionFailure($this, $e);
         }
         if ($solutionOutput === $userOutput) {
-            return new Success($this);
+            return Success::fromCheck($this);
         }
 
         return StdOutFailure::fromCheckAndOutput($this, $solutionOutput, $userOutput);

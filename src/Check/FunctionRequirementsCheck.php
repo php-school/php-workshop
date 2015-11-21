@@ -87,7 +87,7 @@ class FunctionRequirementsCheck implements CheckInterface
             return new FunctionRequirementsFailure($this, $bannedFunctions, $missingFunctions);
         }
 
-        return new Success($this);
+        return Success::fromCheck($this);
     }
 
     /**
