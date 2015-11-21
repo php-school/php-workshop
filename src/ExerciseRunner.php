@@ -6,6 +6,7 @@ use PhpParser\Error;
 use PhpParser\Parser;
 use PhpSchool\PhpWorkshop\Check\CheckInterface;
 use PhpSchool\PhpWorkshop\Exception\InvalidArgumentException;
+use PhpSchool\PhpWorkshop\Exercise\AstIntrospectable;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpSchool\PhpWorkshop\Exercise\PreProcessable;
 use PhpSchool\PhpWorkshop\ExerciseCheck\SelfCheck;
@@ -104,17 +105,13 @@ class ExerciseRunner
                 return $resultAggregator;
             }
         }
-        
-        //patch code, maybe
-        if ($exercise instanceof PreProcessable) {
-            $oldContent = file_get_contents($fileName);
-            
-            //pre-check takes care of checking that code can be parsed correctly
-            //if not it would have returned already with a failure
-            $code = $this->codePatcher->patch($oldContent, $exercise->getModifications());
-            file_put_contents($fileName, $code);
-        }
 
+        //patch code
+        //pre-check takes care of checking that code can be parsed correctly
+        //if not it would have returned already with a failure
+        $originalCode = file_get_contents($fileName);
+        file_put_contents($fileName, $this->codePatcher->patch($exercise, $originalCode));
+        
         //run after checks (verifying output and content)
         foreach ($this->checks as $check) {
             $exerciseInterface = $this->checkMap[spl_object_hash($check)];
@@ -135,9 +132,7 @@ class ExerciseRunner
         $exercise->tearDown();
         
         //put back actual code, to remove patched additions
-        if ($exercise instanceof PreProcessable) {
-            file_put_contents($fileName, $oldContent);
-        }
+        file_put_contents($fileName, $originalCode);
         
         return $resultAggregator;
     }

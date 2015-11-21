@@ -13,14 +13,17 @@ use PhpParser\Parser;
 use PhpParser\ParserFactory;
 use PhpSchool\PhpWorkshop\Check\CgiOutputCheck;
 use PhpSchool\PhpWorkshop\Check\CodeParseCheck;
+use PhpSchool\PhpWorkshop\CodeModification as M;
 use PhpSchool\PhpWorkshop\CodePatcher;
 use PhpSchool\PhpWorkshop\ExerciseCheck\CgiOutputExerciseCheck;
 use PhpSchool\PhpWorkshop\Factory\MenuFactory;
 use PhpSchool\PhpWorkshop\MenuItem\ResetProgress;
+use PhpSchool\PhpWorkshop\Patch;
 use PhpSchool\PhpWorkshop\Result\CgiOutResult;
 use PhpSchool\PhpWorkshop\Result\StdOutFailure;
 use PhpSchool\PhpWorkshop\ResultRenderer\CgiOutResultRenderer;
 use PhpSchool\PhpWorkshop\ResultRenderer\OutputFailureRenderer;
+use PhpSchool\PhpWorkshop\SubmissionPatch;
 use PhpSchool\PSX\SyntaxHighlighter;
 use PhpSchool\PhpWorkshop\Check\FileExistsCheck;
 use PhpSchool\PhpWorkshop\Check\FunctionRequirementsCheck;
@@ -165,7 +168,12 @@ return [
         return $parserFactory->create(ParserFactory::PREFER_PHP7);
     }),
     CodePatcher::class  => factory(function (ContainerInterface $c) {
-        return new CodePatcher($c->get(Parser::class), new Standard);    
+        $patch = (new Patch)
+            ->withModification(new M(M::TYPE_BEFORE, 'ini_set("display_errors", 1);'))
+            ->withModification(new M(M::TYPE_BEFORE, 'error_reporting(E_ALL);'))
+            ->withModification(new M(M::TYPE_BEFORE, 'date_default_timezone_set("Europe/London");'));
+        
+        return new CodePatcher($c->get(Parser::class), new Standard, $patch);    
     }),
     
     TerminalInterface::class => factory([TerminalFactory::class, 'fromSystem']),

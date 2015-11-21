@@ -2,18 +2,17 @@
 
 namespace PhpSchool\PhpWorkshopTest\Asset;
 
-use PhpSchool\PhpWorkshop\CodeModification;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpSchool\PhpWorkshop\Exercise\PreProcessable;
-use PhpSchool\PhpWorkshop\Result\ResultInterface;
-use PhpSchool\PhpWorkshop\Result\Success;
+use PhpSchool\PhpWorkshop\Exercise\SubmissionPatchable;
+use PhpSchool\PhpWorkshop\SubmissionPatch;
 
 /**
- * Class PreProcessableExercise
+ * Class PatchableExercise
  * @package PhpSchool\PhpWorkshopTest\Asset
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
-class PreProcessableExercise implements ExerciseInterface, PreProcessable
+class PatchableExercise implements ExerciseInterface, SubmissionPatchable
 {
 
     /**
@@ -57,10 +56,10 @@ class PreProcessableExercise implements ExerciseInterface, PreProcessable
     }
 
     /**
-     * @return CodeModification[]
+     * @return SubmissionPatch
      */
-    public function getModifications()
+    public function getPatch()
     {
-        return [];
+        // TODO: Implement getPatch() method.
     }
 }
