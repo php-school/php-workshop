@@ -15,11 +15,11 @@ use PhpSchool\PhpWorkshop\Result\ResultInterface;
 use PhpSchool\PhpWorkshop\Result\Success;
 
 /**
- * Class FunctionRequirementsCheck
+ * Class CodeParseCheck
  * @package PhpSchool\PhpWorkshop\Check
  * @author  Aydin Hassan <aydin@hotmail.co.uk>
  */
-class FunctionRequirementsCheck implements CheckInterface
+class CodeParseCheck implements CheckInterface
 {
     
     /**
@@ -40,7 +40,7 @@ class FunctionRequirementsCheck implements CheckInterface
      */
     public function getName()
     {
-        return 'Function Requirements Check';
+        return 'Code Parse Check';
     }
 
     /**
@@ -50,43 +50,15 @@ class FunctionRequirementsCheck implements CheckInterface
      */
     public function check(ExerciseInterface $exercise, $fileName)
     {
-        if (!$exercise instanceof FunctionRequirementsExerciseCheck) {
-            throw new \InvalidArgumentException;
-        }
-
-        $requiredFunctions  = $exercise->getRequiredFunctions();
-        $bannedFunctions    = $exercise->getBannedFunctions();
-
+        
         $code = file_get_contents($fileName);
 
         try {
-            $ast = $this->parser->parse($code);
+            $this->parser->parse($code);
         } catch (Error $e) {
             return Failure::fromCheckAndCodeParseFailure($this, $e, $fileName);
         }
-
-        $visitor    = new FunctionVisitor($requiredFunctions, $bannedFunctions);
-        $traverser  = new NodeTraverser;
-        $traverser->addVisitor($visitor);
-
-        $traverser->traverse($ast);
-
-        $bannedFunctions = [];
-        if ($visitor->hasUsedBannedFunctions()) {
-            $bannedFunctions = array_map(function (FuncCall $node) {
-                return ['function' => $node->name->__toString(), 'line' => $node->getLine()];
-            }, $visitor->getBannedUsages());
-        }
-
-        $missingFunctions = [];
-        if (!$visitor->hasMetFunctionRequirements()) {
-            $missingFunctions = $visitor->getMissingRequirements();
-        }
-
-        if (!empty($bannedFunctions) || !empty($missingFunctions)) {
-            return new FunctionRequirementsFailure($this, $bannedFunctions, $missingFunctions);
-        }
-
+        
         return Success::fromCheck($this);
     }
 }

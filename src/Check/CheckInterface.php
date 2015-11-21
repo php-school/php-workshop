@@ -20,11 +20,6 @@ interface CheckInterface
     public function check(ExerciseInterface $exercise, $fileName);
 
     /**
-     * @return bool
-     */
-    public function breakChainOnFailure();
-
-    /**
      * Return the check's name
      *
      * @return string

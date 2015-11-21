@@ -75,12 +75,4 @@ class StdOutCheck implements CheckInterface
 
         return $process->getOutput();
     }
-
-    /**
-     * @return bool
-     */
-    public function breakChainOnFailure()
-    {
-        return false;
-    }
 }

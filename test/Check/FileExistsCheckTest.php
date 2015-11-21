@@ -35,8 +35,6 @@ class FileExistsCheckTest extends PHPUnit_Framework_TestCase
         $this->testDir = sprintf('%s/%s', sys_get_temp_dir(), $this->getName());
         mkdir($this->testDir, 0777, true);
         $this->check = new FileExistsCheck;
-        $this->assertTrue($this->check->breakChainOnFailure());
-
         $this->exercise = $this->getMock(ExerciseInterface::class);
         $this->assertEquals('File Exists Check', $this->check->getName());
     }

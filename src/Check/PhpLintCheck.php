@@ -40,12 +40,4 @@ class PhpLintCheck implements CheckInterface
 
         return Failure::fromCheckAndReason($this, $process->getErrorOutput());
     }
-
-    /**
-     * @return bool
-     */
-    public function breakChainOnFailure()
-    {
-        return true;
-    }
 }
