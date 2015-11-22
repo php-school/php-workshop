@@ -71,9 +71,9 @@ class CodePatcher
     private function applyPatch(Patch $patch, $code)
     {
         $statements = $this->parser->parse($code);
-        foreach ($patch->getModifications() as $modification) {
+        foreach ($patch->getInsertions() as $insertion) {
             try {
-                $codeToInsert = $modification->getCode();
+                $codeToInsert = $insertion->getCode();
                 $codeToInsert = sprintf('<?php %s', preg_replace('/^\s*<\?php/', '', $codeToInsert));
                 $additionalStatements = $this->parser->parse($codeToInsert);
             } catch (Error $e) {
@@ -81,11 +81,11 @@ class CodePatcher
                 continue;
             }
 
-            switch ($modification->getType()) {
-                case CodeModification::TYPE_BEFORE:
+            switch ($insertion->getType()) {
+                case CodeInsertion::TYPE_BEFORE:
                     array_unshift($statements, ...$additionalStatements);
                     break;
-                case CodeModification::TYPE_AFTER:
+                case CodeInsertion::TYPE_AFTER:
                     array_push($statements, ...$additionalStatements);
                     break;
             }

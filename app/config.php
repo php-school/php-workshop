@@ -13,7 +13,7 @@ use PhpParser\Parser;
 use PhpParser\ParserFactory;
 use PhpSchool\PhpWorkshop\Check\CgiOutputCheck;
 use PhpSchool\PhpWorkshop\Check\CodeParseCheck;
-use PhpSchool\PhpWorkshop\CodeModification as M;
+use PhpSchool\PhpWorkshop\CodeInsertion as Insertion;
 use PhpSchool\PhpWorkshop\CodePatcher;
 use PhpSchool\PhpWorkshop\ExerciseCheck\CgiOutputExerciseCheck;
 use PhpSchool\PhpWorkshop\Factory\MenuFactory;
@@ -169,9 +169,9 @@ return [
     }),
     CodePatcher::class  => factory(function (ContainerInterface $c) {
         $patch = (new Patch)
-            ->withModification(new M(M::TYPE_BEFORE, 'ini_set("display_errors", 1);'))
-            ->withModification(new M(M::TYPE_BEFORE, 'error_reporting(E_ALL);'))
-            ->withModification(new M(M::TYPE_BEFORE, 'date_default_timezone_set("Europe/London");'));
+            ->withModification(new Insertion(Insertion::TYPE_BEFORE, 'ini_set("display_errors", 1);'))
+            ->withModification(new Insertion(Insertion::TYPE_BEFORE, 'error_reporting(E_ALL);'))
+            ->withModification(new Insertion(Insertion ::TYPE_BEFORE, 'date_default_timezone_set("Europe/London");'));
         
         return new CodePatcher($c->get(Parser::class), new Standard, $patch);    
     }),

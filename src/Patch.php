@@ -12,9 +12,9 @@ use Closure;
 class Patch
 {
     /**
-     * @var CodeModification[]
+     * @var CodeInsertion[]
      */
-    private $modifications = [];
+    private $insertions = [];
 
     /**
      * @var array
@@ -22,13 +22,13 @@ class Patch
     private $transformers = [];
 
     /**
-     * @param CodeModification $modification
+     * @param CodeInsertion $insertion
      * @return static
      */
-    public function withModification(CodeModification $modification)
+    public function withInsertion(CodeInsertion $insertion)
     {
         $new = clone $this;
-        $new->modifications[] = $modification;
+        $new->insertions[] = $insertion;
         return $new;
     }
 
@@ -46,9 +46,9 @@ class Patch
     /**
      * @return array
      */
-    public function getModifications()
+    public function getInsertions()
     {
-        return $this->modifications;
+        return $this->insertions;
     }
 
     /**

@@ -2,7 +2,7 @@
 
 namespace PhpSchool\PhpWorkshopTest;
 
-use PhpSchool\PhpWorkshop\CodeModification;
+use PhpSchool\PhpWorkshop\CodeInsertion;
 use PhpSchool\PhpWorkshop\Patch;
 use PHPUnit_Framework_TestCase;
 
@@ -13,15 +13,15 @@ use PHPUnit_Framework_TestCase;
  */
 class PatchTest extends PHPUnit_Framework_TestCase
 {
-    public function testWithModification()
+    public function testWithInsertion()
     {
         $patch = new Patch;
-        $modification = new CodeModification(CodeModification::TYPE_BEFORE, 'MEH');
-        $new = $patch->withModification($modification);
+        $insertion = new CodeInsertion(CodeInsertion::TYPE_BEFORE, 'MEH');
+        $new = $patch->withInsertion($insertion);
         
         $this->assertNotSame($patch, $new);
-        $this->assertEmpty($patch->getModifications());
-        $this->assertEquals([$modification], $new->getModifications());
+        $this->assertEmpty($patch->getInsertions());
+        $this->assertEquals([$insertion], $new->getInsertions());
     }
 
     public function testWithTransformer()

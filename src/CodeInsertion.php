@@ -5,11 +5,11 @@ namespace PhpSchool\PhpWorkshop;
 use Assert\Assertion;
 
 /**
- * Class CodeModification
+ * Class CodeInsertion.
  * @package PhpSchool\PhpWorkshop
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
-class CodeModification
+class CodeInsertion
 {
     const TYPE_BEFORE   = 'before';
     const TYPE_AFTER    = 'after';

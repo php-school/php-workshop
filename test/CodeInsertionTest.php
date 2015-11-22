@@ -3,32 +3,32 @@
 namespace PhpSchool\PhpWorkshopTest;
 
 use Assert\InvalidArgumentException;
-use PhpSchool\PhpWorkshop\CodeModification;
+use PhpSchool\PhpWorkshop\CodeInsertion;
 use PHPUnit_Framework_TestCase;
 
 /**
- * Class CodeModificationTest
+ * Class CodeInsertionTest
  * @package PhpSchool\PhpWorkshopTest
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
-class CodeModificationTest extends PHPUnit_Framework_TestCase
+class CodeInsertionTest extends PHPUnit_Framework_TestCase
 {
     public function testInvalidType()
     {
         $this->setExpectedException(InvalidArgumentException::class);
-        new CodeModification('notatype', '');
+        new CodeInsertion('notatype', '');
     }
 
     public function testInvalidCode()
     {
         $this->setExpectedException(InvalidArgumentException::class);
-        new CodeModification(CodeModification::TYPE_BEFORE, new \stdClass);
+        new CodeInsertion(CodeInsertion::TYPE_BEFORE, new \stdClass);
     }
 
     public function testGetters()
     {
-        $mod = new CodeModification(CodeModification::TYPE_BEFORE, '<?php codez');
-        $this->assertEquals(CodeModification::TYPE_BEFORE, $mod->getType());
+        $mod = new CodeInsertion(CodeInsertion::TYPE_BEFORE, '<?php codez');
+        $this->assertEquals(CodeInsertion::TYPE_BEFORE, $mod->getType());
         $this->assertEquals('<?php codez', $mod->getCode());
     }
 }

@@ -13,7 +13,7 @@ use PhpSchool\PhpWorkshop\Exercise\PreProcessable;
 use PhpSchool\PhpWorkshop\Patch;
 use PhpSchool\PhpWorkshopTest\Asset\PatchableExercise;
 use PHPUnit_Framework_TestCase;
-use PhpSchool\PhpWorkshop\CodeModification as M;
+use PhpSchool\PhpWorkshop\CodeInsertion as Insertion;
 
 /**
  * Class CodePatcherTest
@@ -25,7 +25,7 @@ class CodePatcherTest extends PHPUnit_Framework_TestCase
     public function testDefaultPatchIsAppliedIfAvailable()
     {
         $patch = (new Patch)
-            ->withModification(new M(M::TYPE_BEFORE, 'ini_set("display_errors", 1);'));
+            ->withInsertion(new Insertion(Insertion::TYPE_BEFORE, 'ini_set("display_errors", 1);'));
 
         $patcher = new CodePatcher((new ParserFactory)->create(ParserFactory::PREFER_PHP7), new Standard, $patch);
         $exercise = $this->getMock(ExerciseInterface::class);
@@ -74,36 +74,37 @@ class CodePatcherTest extends PHPUnit_Framework_TestCase
     public function codeProvider()
     {
         return [
-            'only-before-modification' => [
+            'only-before-insertion' => [
                 '<?php $original = true;',
-                (new Patch)->withModification(new M(M::TYPE_BEFORE, '$before = "here";')),
+                (new Patch)->withInsertion(new Insertion(Insertion::TYPE_BEFORE, '$before = "here";')),
                 "<?php\n\n\$before = 'here';\n\$original = true;"
             ],
-            'only-after-modification' => [
+            'only-after-insertion' => [
                 '<?php $original = true;',
-                (new Patch)->withModification(new M(M::TYPE_AFTER, '$after = "here";')),
+                (new Patch)->withInsertion(new Insertion(Insertion::TYPE_AFTER, '$after = "here";')),
                 "<?php\n\n\$original = true;\n\$after = 'here';"
             ],
-            'before-and-after-modification' => [
+            'before-and-after-insertion' => [
                 '<?php $original = true;',
                 (new Patch)
-                    ->withModification(new M(M::TYPE_BEFORE, '$before = "here";'))
-                    ->withModification(new M(M::TYPE_AFTER, '$after = "here";')),
+                    ->withInsertion(new Insertion(Insertion::TYPE_BEFORE, '$before = "here";'))
+                    ->withInsertion(new Insertion(Insertion::TYPE_AFTER, '$after = "here";')),
                 "<?php\n\n\$before = 'here';\n\$original = true;\n\$after = 'here';"
             ],
-            'not-parseable-before-modification' => [
+            'not-parseable-before-insertion' => [
                 '<?php $original = true;',
-                (new Patch)->withModification(new M(M::TYPE_BEFORE, '$before = "here"')), //no semicolon at the end
+                (new Patch)->withInsertion(new Insertion(Insertion::TYPE_BEFORE, '$before = "here"')),
+                //no semicolon at the end
                 "<?php\n\n\$original = true;"
             ],
-            'include-open-php-tag-before-modification' => [
+            'include-open-php-tag-before-insertion' => [
                 '<?php $original = true;',
-                (new Patch)->withModification(new M(M::TYPE_BEFORE, '<?php $before = "here";')),
+                (new Patch)->withInsertion(new Insertion(Insertion::TYPE_BEFORE, '<?php $before = "here";')),
                 "<?php\n\n\$before = 'here';\n\$original = true;"
             ],
-            'include-open-php-tag-before-modification2' => [
+            'include-open-php-tag-before-insertion2' => [
                 '<?php $original = true;',
-                (new Patch)->withModification(new M(M::TYPE_BEFORE, '    <?php $before = "here";')),
+                (new Patch)->withInsertion(new Insertion(Insertion::TYPE_BEFORE, '    <?php $before = "here";')),
                 "<?php\n\n\$before = 'here';\n\$original = true;"
             ],
             'transformer' => [
@@ -116,10 +117,10 @@ class CodePatcherTest extends PHPUnit_Framework_TestCase
                     }),
                 "<?php\n\ntry {\n    \$original = true;\n} catch (Exception \$e) {\n}"
             ],
-            'transformer-with-before-mode' => [
+            'transformer-with-before-insertion' => [
                 '<?php $original = true;',
                 (new Patch)
-                    ->withModification(new M(M::TYPE_BEFORE, '$before = "here";'))
+                    ->withInsertion(new Insertion(Insertion::TYPE_BEFORE, '$before = "here";'))
                     ->withTransformer(function (array $statements) {
                         return [
                             new TryCatch($statements, [new Catch_(new Name(\Exception::class), 'e', [])])
