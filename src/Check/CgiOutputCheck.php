@@ -77,7 +77,7 @@ class CgiOutputCheck implements CheckInterface
             return new CgiOutRequestFailure($this, $request, $solutionBody, $userBody, $solutionHeaders, $userHeaders);
         }
 
-        return new Success($this);
+        return Success::fromCheck($this);
     }
 
     /**
