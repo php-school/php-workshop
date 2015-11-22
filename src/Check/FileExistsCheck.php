@@ -35,12 +35,4 @@ class FileExistsCheck implements CheckInterface
 
         return Failure::fromCheckAndReason($this, sprintf('File: "%s" does not exist', $fileName));
     }
-
-    /**
-     * @return bool
-     */
-    public function breakChainOnFailure()
-    {
-        return true;
-    }
 }

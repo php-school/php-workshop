@@ -4,6 +4,8 @@
 namespace PhpSchool\PhpWorkshopTest;
 
 use InvalidArgumentException;
+use PhpSchool\PhpWorkshop\CodePatcher;
+use PhpSchool\PhpWorkshopTest\Asset\PreProcessableExercise;
 use PhpSchool\PhpWorkshopTest\Asset\SelfCheckExercise;
 use PHPUnit_Framework_TestCase;
 use PhpSchool\PhpWorkshop\Check\CheckInterface;
@@ -28,6 +30,21 @@ class ExerciseRunnerTest extends PHPUnit_Framework_TestCase
      */
     private $check;
 
+    /**
+     * @var ExerciseRunner
+     */
+    private $exerciseRunner;
+
+    /**
+     * @var CodePatcher
+     */
+    private $codePatcher;
+
+    /**
+     * @var string
+     */
+    private $file;
+
     public function setUp()
     {
         $this->check = $this->getMock(CheckInterface::class);
@@ -35,95 +52,143 @@ class ExerciseRunnerTest extends PHPUnit_Framework_TestCase
             ->expects($this->any())
             ->method('getName')
             ->will($this->returnValue('Some Check'));
+        
+        $this->codePatcher = $this->getMockBuilder(CodePatcher::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $this->exerciseRunner = new ExerciseRunner($this->codePatcher);
+
+        $this->file = sprintf('%s/%s/submission.php', str_replace('\\', '/', sys_get_temp_dir()), $this->getName());
+        
+        mkdir(dirname($this->file), 0775, true);
+        touch($this->file);
     }
     
-    public function testRegisterExerciseWithNonStringNonNullThrowsException()
+    public function testRegisterCheckExerciseWithNonStringNonNullThrowsException()
     {
-        $runner = new ExerciseRunner;
         $this->setExpectedException(
             InvalidArgumentException::class,
-            'Expected a string. Got: "stdClass"'
+            'Expected: "string" Received: "stdClass"'
         );
-        $runner->registerCheck($this->getMock(CheckInterface::class), new stdClass);
+        $this->exerciseRunner->registerCheck($this->getMock(CheckInterface::class), new stdClass);
+    }
+
+    public function testRegisterPreCheckExerciseWithNonStringNonNullThrowsException()
+    {
+        $this->setExpectedException(
+            InvalidArgumentException::class,
+            'Expected: "string" Received: "stdClass"'
+        );
+        $this->exerciseRunner->registerPreCheck($this->getMock(CheckInterface::class), new stdClass);
     }
 
     public function testRegisterCheck()
     {
-        $runner = new ExerciseRunner;
-        $runner->registerCheck($this->getMock(CheckInterface::class), 'SomeInterface');
+        $this->exerciseRunner->registerCheck($this->getMock(CheckInterface::class), 'SomeInterface');
     }
 
-    public function testRunExerciseOnlyRunsRequiredChecks()
+    public function testRegisterPreCheck()
     {
-        $runner = new ExerciseRunner;
+        $this->exerciseRunner->registerPreCheck($this->getMock(CheckInterface::class), 'SomeInterface');
+    }
+
+    public function testRunExerciseOnlyRunsRequiredChecksAndPreChecks()
+    {
         $doNotRunMe = $this->getMock(CheckInterface::class);
-        $runner->registerCheck($doNotRunMe, StdOutExerciseCheck::class);
 
         $doNotRunMe
             ->expects($this->never())
             ->method('check');
 
-        $result = $runner->runExercise($this->getMock(ExerciseInterface::class), 'some-file.php');
+        $this->exerciseRunner->registerCheck($doNotRunMe, StdOutExerciseCheck::class);
+        $this->exerciseRunner->registerPreCheck($doNotRunMe, StdOutExerciseCheck::class);
+        
+        $result = $this->exerciseRunner->runExercise($this->getMock(ExerciseInterface::class), $this->file);
         $this->assertInstanceOf(ResultAggregator::class, $result);
         $this->assertTrue($result->isSuccessful());
     }
 
     public function testRunExerciseWithRequiredChecks()
     {
-        $runner = new ExerciseRunner;
         $runMe = $this->getMock(CheckInterface::class);
-        $runner->registerCheck($runMe, StdOutExerciseCheck::class);
+        $this->exerciseRunner->registerCheck($runMe, StdOutExerciseCheck::class);
         
         $runMe
             ->expects($this->once())
             ->method('check')
             ->will($this->returnValue(new Success($this->check)));
 
-        $result = $runner->runExercise(new StdOutExercise, 'some-file.php');
+        $result = $this->exerciseRunner->runExercise(new StdOutExercise, $this->file);
         $this->assertInstanceOf(ResultAggregator::class, $result);
         $this->assertTrue($result->isSuccessful());
     }
 
-    public function testReturnEarly()
+    public function testWhenPreChecksFailTheyReturnImmediatelyEarly()
     {
-        $runner = new ExerciseRunner;
         $runMe = $this->getMock(CheckInterface::class);
         $runMe
             ->expects($this->once())
             ->method('check')
             ->will($this->returnValue(new Failure($this->check, 'nope')));
-
-        $runMe
-            ->expects($this->once())
-            ->method('breakChainOnFailure')
-            ->will($this->returnValue(true));
+        
 
         $doNotRunMe = $this->getMock(CheckInterface::class);
         $doNotRunMe
             ->expects($this->never())
             ->method('check');
 
-        $runner->registerCheck($runMe, StdOutExerciseCheck::class);
-        $runner->registerCheck($doNotRunMe, StdOutExerciseCheck::class);
+        $this->exerciseRunner->registerPreCheck($runMe, StdOutExerciseCheck::class);
+        $this->exerciseRunner->registerCheck($doNotRunMe, StdOutExerciseCheck::class);
 
-        $result = $runner->runExercise(new StdOutExercise, 'some-file.php');
+        $result = $this->exerciseRunner->runExercise(new StdOutExercise, $this->file);
         $this->assertInstanceOf(ResultAggregator::class, $result);
         $this->assertFalse($result->isSuccessful());
     }
 
     public function testSelfCheck()
     {
-        $runner = new ExerciseRunner;
         $runMe = $this->getMock(CheckInterface::class);
-        $runner->registerCheck($runMe, ExerciseInterface::class);
+        $this->exerciseRunner->registerCheck($runMe, ExerciseInterface::class);
 
         $runMe
             ->expects($this->once())
             ->method('check')
             ->will($this->returnValue(new Success($this->check->getName())));
         
-        $result = $runner->runExercise(new SelfCheckExercise, 'some-file.php');
+        $result = $this->exerciseRunner->runExercise(new SelfCheckExercise, $this->file);
         $this->assertInstanceOf(ResultAggregator::class, $result);
         $this->assertCount(2, $result);
+    }
+
+    public function testCodeWhichRequiresPatchingIsModifiedOnDiskAfterPreChecksAndThenReverted()
+    {
+        file_put_contents($this->file, 'ORIGINAL CONTENT');
+
+        $exercise = $this->getMock(ExerciseInterface::class);
+        $runMe = $this->getMock(CheckInterface::class);
+        $runMe
+            ->expects($this->once())
+            ->method('check')
+            ->with($exercise, $this->file)
+            ->will($this->returnCallback(function (ExerciseInterface $exercise, $file) {
+                $this->assertStringEqualsFile($file, 'MODIFIED CONTENT');
+                return new Success('test');
+            }));
+        
+        $this->codePatcher
+            ->expects($this->once())
+            ->method('patch')
+            ->with($exercise, 'ORIGINAL CONTENT')
+            ->will($this->returnValue('MODIFIED CONTENT'));
+        
+        $this->exerciseRunner->registerCheck($runMe, ExerciseInterface::class);
+        $this->exerciseRunner->runExercise($exercise, $this->file);
+        $this->assertStringEqualsFile($this->file, 'ORIGINAL CONTENT');
+    }
+
+    public function tearDown()
+    {
+        unlink($this->file);
+        rmdir(dirname($this->file));
     }
 }

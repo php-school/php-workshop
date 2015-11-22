@@ -138,12 +138,4 @@ class CgiOutputCheck implements CheckInterface
 
         return ResponseSerializer::fromString($output);
     }
-    
-    /**
-     * @return bool
-     */
-    public function breakChainOnFailure()
-    {
-        return false;
-    }
 }

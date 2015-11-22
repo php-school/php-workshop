@@ -33,8 +33,6 @@ class StdOutCheckTest extends PHPUnit_Framework_TestCase
     public function setUp()
     {
         $this->check = new StdOutCheck;
-        $this->assertFalse($this->check->breakChainOnFailure());
-
         $this->exercise = $this->getMock(StdOutExercise::class);
         $this->assertEquals('Command Line Program Output Check', $this->check->getName());
     }

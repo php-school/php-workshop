@@ -6,18 +6,24 @@ use function DI\factory;
 use Interop\Container\ContainerInterface;
 use League\CommonMark\DocParser;
 use League\CommonMark\Environment;
+use PhpParser\PrettyPrinter\Standard;
 use PhpSchool\CliMenu\Terminal\TerminalFactory;
 use PhpSchool\CliMenu\Terminal\TerminalInterface;
 use PhpParser\Parser;
 use PhpParser\ParserFactory;
 use PhpSchool\PhpWorkshop\Check\CgiOutputCheck;
+use PhpSchool\PhpWorkshop\Check\CodeParseCheck;
+use PhpSchool\PhpWorkshop\CodeInsertion as Insertion;
+use PhpSchool\PhpWorkshop\CodePatcher;
 use PhpSchool\PhpWorkshop\ExerciseCheck\CgiOutputExerciseCheck;
 use PhpSchool\PhpWorkshop\Factory\MenuFactory;
 use PhpSchool\PhpWorkshop\MenuItem\ResetProgress;
+use PhpSchool\PhpWorkshop\Patch;
 use PhpSchool\PhpWorkshop\Result\CgiOutResult;
 use PhpSchool\PhpWorkshop\Result\StdOutFailure;
 use PhpSchool\PhpWorkshop\ResultRenderer\CgiOutResultRenderer;
 use PhpSchool\PhpWorkshop\ResultRenderer\OutputFailureRenderer;
+use PhpSchool\PhpWorkshop\SubmissionPatch;
 use PhpSchool\PSX\SyntaxHighlighter;
 use PhpSchool\PhpWorkshop\Check\FileExistsCheck;
 use PhpSchool\PhpWorkshop\Check\FunctionRequirementsCheck;
@@ -53,7 +59,11 @@ use Symfony\Component\Filesystem\Filesystem;
 return [
     'appName' => $_SERVER['argv'][0],
     ExerciseRunner::class => factory(function (ContainerInterface $c) {
-        $exerciseRunner = new ExerciseRunner;
+        $exerciseRunner = new ExerciseRunner($c->get(CodePatcher::class));
+        
+        $exerciseRunner->registerPreCheck(new FileExistsCheck, ExerciseInterface::class);
+        $exerciseRunner->registerPreCheck(new PhpLintCheck, ExerciseInterface::class);
+        $exerciseRunner->registerPreCheck(new CodeParseCheck($c->get(Parser::class)), ExerciseInterface::class);
         foreach ($c->get('checks') as $check) {
             $exerciseRunner->registerCheck(...$check);
         }
@@ -61,8 +71,6 @@ return [
     }),
     'checks' => factory(function (ContainerInterface $c) {
         return [
-            [$c->get(FileExistsCheck::class), ExerciseInterface::class],
-            [$c->get(PhpLintCheck::class), ExerciseInterface::class],
             [$c->get(StdOutCheck::class), StdOutExerciseCheck::class],
             [$c->get(FunctionRequirementsCheck::class), FunctionRequirementsExerciseCheck::class],
             [$c->get(CgiOutputCheck::class), CgiOutputExerciseCheck::class],
@@ -144,6 +152,9 @@ return [
     //checks
     FileExistsCheck::class              => object(FileExistsCheck::class),
     PhpLintCheck::class                 => object(PhpLintCheck::class),
+    CodeParseCheck::class               => factory(function (ContainerInterface $c) {
+        return new CodeParseCheck($c->get(Parser::class));
+    }),
     StdOutCheck::class                  => object(StdOutCheck::class),
     FunctionRequirementsCheck::class    => factory(function (ContainerInterface $c) {
         return new FunctionRequirementsCheck($c->get(Parser::class));
@@ -155,6 +166,14 @@ return [
     Parser::class       => factory(function (ContainerInterface $c) {
         $parserFactory = new ParserFactory;
         return $parserFactory->create(ParserFactory::PREFER_PHP7);
+    }),
+    CodePatcher::class  => factory(function (ContainerInterface $c) {
+        $patch = (new Patch)
+            ->withInsertion(new Insertion(Insertion::TYPE_BEFORE, 'ini_set("display_errors", 1);'))
+            ->withInsertion(new Insertion(Insertion::TYPE_BEFORE, 'error_reporting(E_ALL);'))
+            ->withInsertion(new Insertion(Insertion ::TYPE_BEFORE, 'date_default_timezone_set("Europe/London");'));
+        
+        return new CodePatcher($c->get(Parser::class), new Standard, $patch);    
     }),
     
     TerminalInterface::class => factory([TerminalFactory::class, 'fromSystem']),

@@ -46,7 +46,9 @@ class VerifyCommandTest extends PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $runner = new ExerciseRunner;
+        $runner = $this->getMockBuilder(ExerciseRunner::class)
+            ->disableOriginalConstructor()
+            ->getMock();
 
         $programFile = sprintf('%s/%s/program.php', sys_get_temp_dir(), $this->getName());
         $output
@@ -77,7 +79,9 @@ class VerifyCommandTest extends PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $runner = new ExerciseRunner;
+        $runner = $this->getMockBuilder(ExerciseRunner::class)
+            ->disableOriginalConstructor()
+            ->getMock();
 
         $output
             ->expects($this->once())
@@ -129,8 +133,11 @@ class VerifyCommandTest extends PHPUnit_Framework_TestCase
         
         $results = new ResultAggregator;
         $results->add(new Success($this->check));
+
+        $runner = $this->getMockBuilder(ExerciseRunner::class)
+            ->disableOriginalConstructor()
+            ->getMock();
         
-        $runner = $this->getMock(ExerciseRunner::class);
         $runner
             ->expects($this->once())
             ->method('runExercise')
@@ -186,7 +193,10 @@ class VerifyCommandTest extends PHPUnit_Framework_TestCase
         $results = new ResultAggregator;
         $results->add(new Failure($this->check, 'cba'));
 
-        $runner = $this->getMock(ExerciseRunner::class);
+        $runner = $this->getMockBuilder(ExerciseRunner::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        
         $runner
             ->expects($this->once())
             ->method('runExercise')

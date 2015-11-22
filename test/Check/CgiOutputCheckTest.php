@@ -39,8 +39,6 @@ class CgiOutputCheckTest extends PHPUnit_Framework_TestCase
     public function setUp()
     {
         $this->check = new CgiOutputCheck;
-        $this->assertFalse($this->check->breakChainOnFailure());
-
         $this->exercise = $this->getMock(CgiOutExercise::class);
         $this->assertEquals('CGI Program Output Check', $this->check->getName());
     }

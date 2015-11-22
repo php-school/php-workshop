@@ -40,8 +40,6 @@ class FunctionRequirementsCheckTest extends PHPUnit_Framework_TestCase
         $parserFactory = new ParserFactory;
         $this->parser = $parserFactory->create(ParserFactory::PREFER_PHP7);
         $this->check = new FunctionRequirementsCheck($this->parser);
-        $this->assertFalse($this->check->breakChainOnFailure());
-
         $this->exercise = $this->getMock([FunctionRequirementsExerciseCheck::class, ExerciseInterface::class]);
         $this->assertEquals('Function Requirements Check', $this->check->getName());
     }
