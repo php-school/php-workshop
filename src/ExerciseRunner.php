@@ -92,17 +92,13 @@ class ExerciseRunner
         
         //run pre-checks (before patching)
         foreach ($this->preChecks as $check) {
-            $exerciseInterface = $this->preCheckMap[spl_object_hash($check)];
+            if ($this->shouldRunCheck($check, $exercise, $this->preCheckMap)) {
+                $result = $check->check($exercise, $fileName);
+                $resultAggregator->add($result);
 
-            if (!is_subclass_of($exercise, $exerciseInterface)) {
-                continue;
-            }
-
-            $result = $check->check($exercise, $fileName);
-            $resultAggregator->add($result);
-            
-            if ($result instanceof FailureInterface) {
-                return $resultAggregator;
+                if ($result instanceof FailureInterface) {
+                    return $resultAggregator;
+                }
             }
         }
 
@@ -114,14 +110,9 @@ class ExerciseRunner
         
         //run after checks (verifying output and content)
         foreach ($this->checks as $check) {
-            $exerciseInterface = $this->checkMap[spl_object_hash($check)];
-
-            if (!is_subclass_of($exercise, $exerciseInterface)) {
-                continue;
+            if ($this->shouldRunCheck($check, $exercise, $this->checkMap)) {
+                $resultAggregator->add($check->check($exercise, $fileName));
             }
-
-            $result = $check->check($exercise, $fileName);
-            $resultAggregator->add($result);
         }
 
         //self check, for custom checking
@@ -135,5 +126,17 @@ class ExerciseRunner
         file_put_contents($fileName, $originalCode);
         
         return $resultAggregator;
+    }
+
+    /**
+     * @param CheckInterface $check
+     * @param ExerciseInterface $exercise
+     * @param array $checkMap
+     * @return bool
+     */
+    private function shouldRunCheck(CheckInterface $check, ExerciseInterface $exercise, array $checkMap)
+    {
+        $exerciseInterface = $checkMap[spl_object_hash($check)];
+        return is_subclass_of($exercise, $exerciseInterface);
     }
 }
