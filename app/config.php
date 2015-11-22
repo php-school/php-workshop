@@ -6,15 +6,14 @@ use function DI\factory;
 use Interop\Container\ContainerInterface;
 use League\CommonMark\DocParser;
 use League\CommonMark\Environment;
-use PhpSchool\CliMenu\CliMenu;
-use PhpSchool\CliMenu\CliMenuBuilder;
-use PhpSchool\CliMenu\MenuItem\AsciiArtItem;
 use PhpSchool\CliMenu\Terminal\TerminalFactory;
 use PhpSchool\CliMenu\Terminal\TerminalInterface;
 use PhpParser\Parser;
 use PhpParser\ParserFactory;
 use PhpSchool\PhpWorkshop\Check\CgiOutputCheck;
 use PhpSchool\PhpWorkshop\ExerciseCheck\CgiOutputExerciseCheck;
+use PhpSchool\PhpWorkshop\Factory\MenuFactory;
+use PhpSchool\PhpWorkshop\MenuItem\ResetProgress;
 use PhpSchool\PhpWorkshop\Result\CgiOutResult;
 use PhpSchool\PhpWorkshop\Result\StdOutFailure;
 use PhpSchool\PhpWorkshop\ResultRenderer\CgiOutResultRenderer;
@@ -159,84 +158,7 @@ return [
     }),
     
     TerminalInterface::class => factory([TerminalFactory::class, 'fromSystem']),
-    'menu' => factory(function (ContainerInterface $c) {
-
-        $userStateSerializer    = $c->get(UserStateSerializer::class);
-        $exerciseRepository     = $c->get(ExerciseRepository::class);
-        $userState              = $userStateSerializer->deSerialize();
-        $exerciseRenderer       = $c->get(ExerciseRenderer::class);
-
-        $builder = (new CliMenuBuilder)
-            ->addLineBreak();
-
-        if (null !== $c->get('workshopLogo')) {
-            $builder->addAsciiArt($c->get('workshopLogo'), AsciiArtItem::POSITION_CENTER);
-        }
-        
-        $builder
-            ->addLineBreak('_')
-            ->addLineBreak()
-            ->addStaticItem('Exercises')
-            ->addStaticItem('---------')
-            ->addItems(array_map(function (ExerciseInterface $exercise) use ($exerciseRenderer, $userState) {
-                return [
-                    $exercise->getName(),
-                    $exerciseRenderer,
-                    $userState->completedExercise($exercise->getName())
-                ];
-            }, $exerciseRepository->findAll()))
-            ->addLineBreak()
-            ->addLineBreak('-')
-            ->addLineBreak()
-            ->addItem('HELP', function (CliMenu $menu) use ($c) {
-                $menu->close();
-                $c->get(HelpCommand::class)->__invoke();
-            })
-            ->addItem('CREDITS', function (CliMenu $menu) use ($c) {
-                $menu->close();
-                $c->get(CreditsCommand::class)->__invoke();
-            })
-            ->setExitButtonText('EXIT')
-            ->setBackgroundColour($c->get('bgColour'))
-            ->setForegroundColour($c->get('fgColour'))
-            ->setWidth(70)
-            ->setUnselectedMarker(' ')
-            ->setSelectedMarker('↳')
-            ->setItemExtra('[COMPLETED]');
-            
-        $subMenu = $builder
-                ->addSubMenu('OPTIONS')
-                ->addLineBreak();
-
-        if (null !== $c->get('workshopLogo')) {
-            $subMenu->addAsciiArt($c->get('workshopLogo'), AsciiArtItem::POSITION_CENTER);
-        }
-
-        $subMenu
-            ->addLineBreak('_')
-            ->addLineBreak()
-            ->addStaticItem('Options')
-            ->addStaticItem('-------')
-            ->addItem(
-                'Reset workshop progress',
-                function (CliMenu $menu) use ($userStateSerializer) {
-                    $userStateSerializer->serialize(new UserState);
-                    echo "Status Reset!";
-                }
-            )
-            ->addLineBreak()
-            ->addLineBreak('-')
-            ->addLineBreak()
-            ->setGoBackButtonText('GO BACK')
-            ->setExitButtonText('EXIT');
-    
-        if (null !== $c->get('workshopTitle')) {
-            $builder->setTitle($c->get('workshopTitle'));
-            $subMenu->setTitle($c->get('workshopTitle'));
-        }
-        
-        return $builder->build();
-    }),
+    'menu' => factory([new MenuFactory, '__invoke']),
     ExerciseRenderer::class => factory(function (ContainerInterface $c) {
         return new ExerciseRenderer(
             $c->get('appName'),
@@ -261,6 +183,12 @@ return [
     }),
     SyntaxHighlighter::class => factory(function (ContainerInterface $c) {
         return (new \PhpSchool\PSX\Factory)->__invoke();
+    }),
+    ResetProgress::class => factory(function (ContainerInterface $c) {
+        return new ResetProgress(
+            $c->get(UserStateSerializer::class),
+            $c->get(Output::class)
+        );
     }),
     ResultsRenderer::class => factory(function (ContainerInterface $c) {
         $renderer = new ResultsRenderer(
