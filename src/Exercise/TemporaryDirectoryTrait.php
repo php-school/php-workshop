@@ -1,6 +1,5 @@
 <?php
 
-
 namespace PhpSchool\PhpWorkshop\Exercise;
 
 /**
