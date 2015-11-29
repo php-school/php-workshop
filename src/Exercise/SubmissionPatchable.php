@@ -2,7 +2,7 @@
 
 namespace PhpSchool\PhpWorkshop\Exercise;
 
-use PhpSchool\PhpWorkshop\SubmissionPatch;
+use PhpSchool\PhpWorkshop\Patch;
 
 /**
  * Interface SubmissionPatchable
@@ -12,7 +12,7 @@ use PhpSchool\PhpWorkshop\SubmissionPatch;
 interface SubmissionPatchable
 {
     /**
-     * @return SubmissionPatch
+     * @return Patch
      */
     public function getPatch();
 }
