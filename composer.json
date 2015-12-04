@@ -20,7 +20,6 @@
         "fzaninotto/faker": "^1.5",
         "aydin-hassan/cli-md-renderer": "~1.0",
         "php-school/psx": "~1.0",
-        "nikic/php-parser": "dev-master#98d28d7aa04e2d92fea2b375373878d0b1fce992",
         "php-school/cli-menu": "~1.0",
         "beberlei/assert": "^2.4",
         "psr/http-message": "^1.0",
