@@ -2,13 +2,9 @@
 
 namespace PhpSchool\PhpWorkshop;
 
-use PhpParser\Error;
-use PhpParser\Parser;
 use PhpSchool\PhpWorkshop\Check\CheckInterface;
 use PhpSchool\PhpWorkshop\Exception\InvalidArgumentException;
-use PhpSchool\PhpWorkshop\Exercise\AstIntrospectable;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
-use PhpSchool\PhpWorkshop\Exercise\PreProcessable;
 use PhpSchool\PhpWorkshop\ExerciseCheck\SelfCheck;
 use PhpSchool\PhpWorkshop\Result\FailureInterface;
 

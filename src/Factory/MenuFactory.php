@@ -6,7 +6,6 @@ use Interop\Container\ContainerInterface;
 use PhpSchool\CliMenu\CliMenu;
 use PhpSchool\CliMenu\CliMenuBuilder;
 use PhpSchool\CliMenu\MenuItem\AsciiArtItem;
-use PhpSchool\PhpWorkshop\Command\CommandMenuItem;
 use PhpSchool\PhpWorkshop\Command\CreditsCommand;
 use PhpSchool\PhpWorkshop\Command\HelpCommand;
 use PhpSchool\PhpWorkshop\Command\MenuCommandInvoker;

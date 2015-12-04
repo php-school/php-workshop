@@ -5,7 +5,6 @@ namespace PhpSchool\PhpWorkshopTest;
 
 use InvalidArgumentException;
 use PhpSchool\PhpWorkshop\CodePatcher;
-use PhpSchool\PhpWorkshopTest\Asset\PreProcessableExercise;
 use PhpSchool\PhpWorkshopTest\Asset\SelfCheckExercise;
 use PHPUnit_Framework_TestCase;
 use PhpSchool\PhpWorkshop\Check\CheckInterface;

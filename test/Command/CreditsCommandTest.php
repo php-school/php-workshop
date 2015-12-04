@@ -3,7 +3,6 @@
 namespace PhpSchool\PhpWorkshopTest\Command;
 
 use Colors\Color;
-use PhpSchool\CliMenu\CliMenu;
 use PhpSchool\PhpWorkshop\Command\CreditsCommand;
 use PhpSchool\PhpWorkshop\Output;
 use PHPUnit_Framework_TestCase;
