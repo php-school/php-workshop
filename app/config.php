@@ -23,7 +23,6 @@ use PhpSchool\PhpWorkshop\Result\CgiOutResult;
 use PhpSchool\PhpWorkshop\Result\StdOutFailure;
 use PhpSchool\PhpWorkshop\ResultRenderer\CgiOutResultRenderer;
 use PhpSchool\PhpWorkshop\ResultRenderer\OutputFailureRenderer;
-use PhpSchool\PhpWorkshop\SubmissionPatch;
 use PhpSchool\PSX\SyntaxHighlighter;
 use PhpSchool\PhpWorkshop\Check\FileExistsCheck;
 use PhpSchool\PhpWorkshop\Check\FunctionRequirementsCheck;

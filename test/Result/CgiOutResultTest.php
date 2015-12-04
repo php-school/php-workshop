@@ -3,8 +3,6 @@
 namespace PhpSchool\PhpWorkshopTest\Result;
 
 use PhpSchool\PhpWorkshop\Check\CheckInterface;
-use PhpSchool\PhpWorkshop\Result\CgiOutBodyFailure;
-use PhpSchool\PhpWorkshop\Result\CgiOutFailure;
 use PhpSchool\PhpWorkshop\Result\CgiOutRequestFailure;
 use PhpSchool\PhpWorkshop\Result\CgiOutResult;
 use PhpSchool\PhpWorkshop\Result\Success;
