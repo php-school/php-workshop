@@ -28,7 +28,7 @@ class DatabaseCheck implements CheckInterface
     private $databaseDirectory;
 
     /**
-     * @var sting
+     * @var string
      */
     private $userDatabasePath;
 
