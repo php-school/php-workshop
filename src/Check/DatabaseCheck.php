@@ -6,8 +6,8 @@ use PDO;
 use PhpSchool\PhpWorkshop\Exception\CodeExecutionException;
 use PhpSchool\PhpWorkshop\Exception\SolutionExecutionException;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
+use PhpSchool\PhpWorkshop\Exercise\TemporaryDirectoryTrait;
 use PhpSchool\PhpWorkshop\ExerciseCheck\DatabaseExerciseCheck;
-use PhpSchool\PhpWorkshop\ExerciseCheck\StdOutExerciseCheck;
 use PhpSchool\PhpWorkshop\Result\Failure;
 use PhpSchool\PhpWorkshop\Result\ResultInterface;
 use PhpSchool\PhpWorkshop\Result\StdOutFailure;
@@ -18,9 +18,34 @@ use Symfony\Component\Process\Process;
  * Class DatabaseCheck
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
-
 class DatabaseCheck implements CheckInterface
 {
+    use TemporaryDirectoryTrait;
+
+    /**
+     * @var string
+     */
+    private $databaseDirectory;
+
+    /**
+     * @var sting
+     */
+    private $userDatabasePath;
+
+    /**
+     * @var string
+     */
+    private $solutionDatabasePath;
+
+    /**
+     *
+     */
+    public function __construct()
+    {
+        $this->databaseDirectory    = $this->getTemporaryPath();
+        $this->userDatabasePath     = sprintf('%s/user-db.sqlite', $this->databaseDirectory);
+        $this->solutionDatabasePath = sprintf('%s/solution-db.sqlite', $this->databaseDirectory);
+    }
 
     /**
      * @return string
@@ -41,39 +66,44 @@ class DatabaseCheck implements CheckInterface
             throw new \InvalidArgumentException;
         }
 
-        $solutionDbPath = sprintf('sqlite:%s/solution-db.sqlite', $this->getTemporaryPath());
-        $userDbPath     = sprintf('sqlite:%s/user-db.sqlite', $this->getTemporaryPath());
+        if (file_exists($this->databaseDirectory)) {
+            throw new \RuntimeException(
+                sprintf('Database directory: "%s" already exists', $this->databaseDirectory)
+            );
+        }
+        mkdir($this->databaseDirectory, 0777, true);
+        $solutionDsn    = sprintf('sqlite:%s', $this->solutionDatabasePath);
+        $userDsn        = sprintf('sqlite:%s', $this->userDatabasePath);
 
-        $db = new PDO($userDbPath);
+        $db = new PDO($userDsn);
         $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-
         $exercise->seed($db);
         
         //make a copy - so solution can modify without effecting database user has access to
-        copy($userDbPath, $solutionDbPath);
+        copy($this->userDatabasePath, $this->solutionDatabasePath);
         
         $args = $exercise->getArgs();
         
         try {
-            $solutionOutput = $this->executePhpFile($exercise->getSolution(), array_merge([$solutionDbPath], $args));
+            $solutionOutput = $this->executePhpFile($exercise->getSolution(), array_merge([$solutionDsn], $args));
         } catch (CodeExecutionException $e) {
+            $this->cleanup($db);
             throw new SolutionExecutionException($e->getMessage());
         }
 
         try {
-            $userOutput = $this->executePhpFile($fileName, array_merge([$userDbPath], $args));
+            $userOutput = $this->executePhpFile($fileName, array_merge([$userDsn], $args));
         } catch (CodeExecutionException $e) {
+            $this->cleanup($db);
             return Failure::fromCheckAndCodeExecutionFailure($this, $e);
         }
         
         $verifyResult = $exercise->verify($db);
-
-        //cleanup db's
-        unset($db);
-        unlink($userDbPath);
-        unlink($solutionDbPath);
+        
+        $this->cleanup($db);
         
         if (false === $verifyResult) {
+            //TODO: Custom failure describing database verification failures
             return Failure::fromCheckAndReason($this, 'Database verification failed');
         }
         
@@ -103,14 +133,14 @@ class DatabaseCheck implements CheckInterface
     }
 
     /**
-     * @return string
+     * Clean up databases
+     * @param PDO $db
      */
-    private function getTemporaryPath()
+    private function cleanup(PDO $db)
     {
-        return sprintf(
-            '%s/%s',
-            str_replace('\\', '/', realpath(sys_get_temp_dir())),
-            str_replace('\\', '_', __CLASS__)
-        );
+        unset($db);
+        unlink($this->userDatabasePath);
+        unlink($this->solutionDatabasePath);
+        rmdir($this->databaseDirectory);
     }
 }
