@@ -79,7 +79,13 @@ class CommandRouter
 
         $commandName = array_shift($args);
         if (!isset($this->commands[$commandName])) {
-            throw new CliRouteNotExistsException($commandName);
+            $command = $this->findNearestCommand($commandName, $this->commands);
+            
+            if (false === $command) {
+                throw new CliRouteNotExistsException($commandName);
+            }
+            
+            $commandName = $command;
         }
         $command = $this->commands[$commandName];
         if (count($args) !== count($command->getRequiredArgs())) {
@@ -89,6 +95,32 @@ class CommandRouter
         }
 
         return $this->resolveCallable($command, array_merge([$appName], $args));
+    }
+
+    /**
+     * Get the closest command to the one typed, but only if there is 3 or less
+     * characters different
+     *
+     * @param string $commandName
+     * @param array $commands
+     * @return string|false
+     */
+    private function findNearestCommand($commandName, array $commands)
+    {
+        $distances = [];
+        foreach (array_keys($commands) as $command) {
+            $distances[$command] = levenshtein($commandName, $command);
+        }
+        
+        $distances = array_filter(array_unique($distances), function ($distance) {
+            return $distance <= 3;
+        });
+        
+        if (empty($distances)) {
+            return false;
+        }
+        
+        return array_search(min($distances), $distances);
     }
 
     /**

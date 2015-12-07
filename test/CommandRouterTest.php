@@ -276,4 +276,21 @@ class CommandRouterTest extends PHPUnit_Framework_TestCase
         $res = $router->route(['app', 'verify', 'some-exercise', 'program.php']);
         $this->assertEquals(10, $res);
     }
+
+    public function testRouteCommandSpeltIncorrectlyStillRoutes()
+    {
+        $mock = $this->getMock('stdClass', array('cb'));
+        $mock->expects($this->once())
+            ->method('cb')
+            ->with('app', 'some-exercise', 'program.php')
+            ->will($this->returnValue(true));
+
+        $c = $this->getMock(ContainerInterface::class);
+        $router = new CommandRouter(
+            [new CommandDefinition('verify', ['exercise', 'program'], [$mock, 'cb']),],
+            'verify',
+            $c
+        );
+        $router->route(['app', 'verifu', 'some-exercise', 'program.php']);
+    }
 }
