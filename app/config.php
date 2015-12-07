@@ -13,9 +13,11 @@ use PhpParser\Parser;
 use PhpParser\ParserFactory;
 use PhpSchool\PhpWorkshop\Check\CgiOutputCheck;
 use PhpSchool\PhpWorkshop\Check\CodeParseCheck;
+use PhpSchool\PhpWorkshop\Check\DatabaseCheck;
 use PhpSchool\PhpWorkshop\CodeInsertion as Insertion;
 use PhpSchool\PhpWorkshop\CodePatcher;
 use PhpSchool\PhpWorkshop\ExerciseCheck\CgiOutputExerciseCheck;
+use PhpSchool\PhpWorkshop\ExerciseCheck\DatabaseExerciseCheck;
 use PhpSchool\PhpWorkshop\Factory\MenuFactory;
 use PhpSchool\PhpWorkshop\MenuItem\ResetProgress;
 use PhpSchool\PhpWorkshop\Patch;
@@ -73,6 +75,7 @@ return [
             [$c->get(StdOutCheck::class), StdOutExerciseCheck::class],
             [$c->get(FunctionRequirementsCheck::class), FunctionRequirementsExerciseCheck::class],
             [$c->get(CgiOutputCheck::class), CgiOutputExerciseCheck::class],
+            [$c->get(DatabaseCheck::class), DatabaseExerciseCheck::class],
         ];
     }),
     CommandRouter::class => factory(function (ContainerInterface $c) {
@@ -159,6 +162,7 @@ return [
         return new FunctionRequirementsCheck($c->get(Parser::class));
     }),
     CgiOutputCheck::class               => object(CgiOutputCheck::class),
+    DatabaseCheck::class                => object(DatabaseCheck::class),
 
     //Utils
     Filesystem::class   => object(Filesystem::class),

@@ -65,14 +65,14 @@ class StdOutCheck implements CheckInterface
      */
     private function executePhpFile($fileName, array $args)
     {
-        $cmd        = sprintf('%s %s %s', PHP_BINARY, $fileName, implode(' ', $args));
+        $cmd        = sprintf('%s %s %s', PHP_BINARY, $fileName, implode(' ', array_map('escapeshellarg', $args)));
         $process    = new Process($cmd, dirname($fileName));
         $process->run();
 
         if (!$process->isSuccessful()) {
             throw CodeExecutionException::fromProcess($process);
         }
-
+        
         return $process->getOutput();
     }
 }
