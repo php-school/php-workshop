@@ -30,7 +30,7 @@ class SolutionFile
     {
         $this->relativePath  = trim($relativePath, '/');
         $this->baseDirectory = rtrim($baseDirectory, '/');
-        
+
         if (!file_exists($file = $this->getAbsolutePath())) {
             throw new InvalidArgumentException(sprintf('File: "%s" does not exist', $file));
         }
@@ -58,7 +58,7 @@ class SolutionFile
      */
     public function getRelativePath()
     {
-        return $this->relativePath;        
+        return $this->relativePath;
     }
 
     /**

@@ -1,6 +1,7 @@
 <?php
 
 namespace PhpSchool\PhpWorkshop\Solution;
+
 use InvalidArgumentException;
 
 /**
@@ -21,7 +22,7 @@ class DirectorySolution implements SolutionInterface
     private $files = [];
 
     /**
-     * @var string 
+     * @var string
      */
     private $directory;
 
@@ -31,7 +32,7 @@ class DirectorySolution implements SolutionInterface
      * @throws InvalidArgumentException
      */
     public function __construct($directory, $entryPoint)
-    {   
+    {
         $directory  = rtrim($directory, '/');
         $entryPoint = ltrim($entryPoint, '/');
         
