@@ -3,6 +3,7 @@
 namespace PhpSchool\PhpWorkshop\Exercise;
 
 use PhpSchool\PhpWorkshop\Solution\SingleFileSolution;
+use PhpSchool\PhpWorkshop\Solution\SolutionFile;
 use ReflectionClass;
 
 /**
@@ -19,7 +20,7 @@ abstract class AbstractExercise
     abstract public function getName();
 
     /**
-     * @return string
+     * @return SolutionFile
      */
     public function getSolution()
     {

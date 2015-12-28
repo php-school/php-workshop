@@ -11,7 +11,6 @@ use PhpSchool\PhpWorkshop\ExerciseRepository;
 use PhpSchool\PhpWorkshop\Result\ResultInterface;
 use PhpSchool\PhpWorkshop\ResultAggregator;
 use PhpSchool\PhpWorkshop\UserState;
-use PhpSchool\PhpWorkshop\Solution\SolutionInterface;
 
 /**
  * Class ResultsRenderer
@@ -164,9 +163,9 @@ class ResultsRenderer
         $lines[] = $this->color->__invoke($lineBreak)->fg('yellow')->__toString();
         
         foreach ($exercise->getSolution()->getFiles() as $file) {
-            $code       = explode("\n", $this->syntaxHighlighter->highlight($file->getContents()));
-            $code       = preg_replace('/^<\?php/', sprintf('<?php //%s', $file->getRelativePath(), $code));
-            $lines[]    = $code;
+            $code       = $this->syntaxHighlighter->highlight($file->getContents());
+            $code       = preg_replace('/<\?php/', sprintf('<?php //%s', $file->getRelativePath()), $code);
+            array_push($lines, ...explode("\n", $code));
             $lines[]    = $this->color->__invoke($lineBreak)->fg('yellow')->__toString();
         }
         
