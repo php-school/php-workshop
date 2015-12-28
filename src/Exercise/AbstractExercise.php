@@ -2,6 +2,7 @@
 
 namespace PhpSchool\PhpWorkshop\Exercise;
 
+use PhpSchool\PhpWorkshop\Solution\SingleFileSolution;
 use ReflectionClass;
 
 /**
@@ -22,9 +23,15 @@ abstract class AbstractExercise
      */
     public function getSolution()
     {
-        $name = $this->normaliseName($this->getName());
-        $dir  = dirname((new ReflectionClass(static::class))->getFileName());
-        return sprintf('%s/../../res/solutions/%s/solution.php', $dir, $name);
+        return SingleFileSolution::fromFile(
+            realpath(
+                sprintf(
+                    '%s/../../exercises/%s/solution/solution.php',
+                    dirname((new ReflectionClass(static::class))->getFileName()),
+                    $this->normaliseName($this->getName())
+                )
+            )
+        );
     }
 
     /**
@@ -34,7 +41,7 @@ abstract class AbstractExercise
     {
         $name = $this->normaliseName($this->getName());
         $dir  = dirname((new ReflectionClass(static::class))->getFileName());
-        return sprintf('%s/../../res/problems/%s/problem.md', $dir, $name);
+        return sprintf('%s/../../exercises/%s/problem/problem.md', $dir, $name);
     }
 
     /**

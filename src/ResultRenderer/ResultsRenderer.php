@@ -11,6 +11,7 @@ use PhpSchool\PhpWorkshop\ExerciseRepository;
 use PhpSchool\PhpWorkshop\Result\ResultInterface;
 use PhpSchool\PhpWorkshop\ResultAggregator;
 use PhpSchool\PhpWorkshop\UserState;
+use PhpSchool\PhpWorkshop\Solution\SolutionInterface;
 
 /**
  * Class ResultsRenderer
@@ -149,6 +150,8 @@ class ResultsRenderer
             /** @var Success $result */
             $lines[] = sprintf(' ✔ Check: %s', $result->getCheckName());
         }
+        
+        $lineBreak = str_repeat("─", $this->terminal->getWidth());
 
         $lines = $this->padArray($lines, max(array_map('strlen', $lines)) + 2);
         $lines = $this->styleArray($lines, ['green', 'bg_black']);
@@ -158,16 +161,18 @@ class ResultsRenderer
         $lines[] = '';
 
         $lines[] = "Here's the official solution in case you want to compare notes:";
-        $lines[] = $this->color->__invoke(str_repeat("─", $this->terminal->getWidth()))->fg('yellow')->__toString();
-
-        $code   = explode("\n", $this->syntaxHighlighter->highlight(file_get_contents($exercise->getSolution())));
-        $lines  = array_merge($lines, $code);
-        $lines[] = $this->color->__invoke(str_repeat("─", $this->terminal->getWidth()))->fg('yellow')->__toString();
-
+        $lines[] = $this->color->__invoke($lineBreak)->fg('yellow')->__toString();
+        
+        foreach ($exercise->getSolution()->getFiles() as $file) {
+            $code       = explode("\n", $this->syntaxHighlighter->highlight($file->getContents()));
+            $code       = preg_replace('/^<\?php/', sprintf('<?php //%s', $file->getRelativePath(), $code));
+            $lines[]    = $code;
+            $lines[]    = $this->color->__invoke($lineBreak)->fg('yellow')->__toString();
+        }
+        
         $completedCount = count($userState->getCompletedExercises());
         $numExercises = $this->exerciseRepository->count();
-
-
+        
         $lines[] = sprintf('You have %d challenges left.', $numExercises - $completedCount);
         $lines[] = sprintf('Type "%s" to show the menu.', $this->appName);
         $lines[] = '';
