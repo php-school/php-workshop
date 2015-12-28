@@ -6,6 +6,7 @@ use InvalidArgumentException;
 use PhpSchool\PhpWorkshop\Check\CgiOutputCheck;
 use PhpSchool\PhpWorkshop\Result\CgiOutRequestFailure;
 use PhpSchool\PhpWorkshop\Result\CgiOutResult;
+use PhpSchool\PhpWorkshop\Solution\SingleFileSolution;
 use PhpSchool\PhpWorkshopTest\Asset\CgiOutExercise;
 use PHPUnit_Framework_TestCase;
 use PhpSchool\PhpWorkshop\Exception\SolutionExecutionException;
@@ -49,10 +50,11 @@ class CgiOutputCheckTest extends PHPUnit_Framework_TestCase
     
     public function testCheckThrowsExceptionIfSolutionFailsExecution()
     {
+        $solution = SingleFileSolution::fromFile(realpath(__DIR__ . '/../res/cgi-out/solution-error.php'));
         $this->exercise
             ->expects($this->once())
             ->method('getSolution')
-            ->will($this->returnValue(realpath(__DIR__ . '/../res/cgi-out/solution-error.php')));
+            ->will($this->returnValue($solution));
 
         $request = (new Request)
             ->withMethod('GET')
@@ -70,10 +72,11 @@ class CgiOutputCheckTest extends PHPUnit_Framework_TestCase
 
     public function testSuccessIsReturnedIfGetSolutionOutputMatchesUserOutput()
     {
+        $solution = SingleFileSolution::fromFile(realpath(__DIR__ . '/../res/cgi-out/get-solution.php'));
         $this->exercise
             ->expects($this->once())
             ->method('getSolution')
-            ->will($this->returnValue(realpath(__DIR__ . '/../res/cgi-out/get-solution.php')));
+            ->will($this->returnValue($solution));
 
         $request = (new Request)
             ->withMethod('GET')
@@ -92,10 +95,11 @@ class CgiOutputCheckTest extends PHPUnit_Framework_TestCase
 
     public function testSuccessIsReturnedIfPostSolutionOutputMatchesUserOutput()
     {
+        $solution = SingleFileSolution::fromFile(realpath(__DIR__ . '/../res/cgi-out/post-solution.php'));
         $this->exercise
             ->expects($this->once())
             ->method('getSolution')
-            ->will($this->returnValue(realpath(__DIR__ . '/../res/cgi-out/post-solution.php')));
+            ->will($this->returnValue($solution));
         
         $request = (new Request)
             ->withMethod('POST')
@@ -116,10 +120,11 @@ class CgiOutputCheckTest extends PHPUnit_Framework_TestCase
     }
     public function testFailureIsReturnedIfUserSolutionFailsToExecute()
     {
+        $solution = SingleFileSolution::fromFile(realpath(__DIR__ . '/../res/cgi-out/get-solution.php'));
         $this->exercise
             ->expects($this->once())
             ->method('getSolution')
-            ->will($this->returnValue(realpath(__DIR__ . '/../res/cgi-out/get-solution.php')));
+            ->will($this->returnValue($solution));
 
         $request = (new Request)
             ->withMethod('GET')
@@ -144,11 +149,12 @@ class CgiOutputCheckTest extends PHPUnit_Framework_TestCase
 
     public function testFailureIsReturnedIfSolutionOutputDoesNotMatchUserOutput()
     {
+        $solution = SingleFileSolution::fromFile(realpath(__DIR__ . '/../res/cgi-out/get-solution.php'));
         $this->exercise
             ->expects($this->once())
             ->method('getSolution')
-            ->will($this->returnValue(realpath(__DIR__ . '/../res/cgi-out/get-solution.php')));
-
+            ->will($this->returnValue($solution));
+        
         $request = (new Request)
             ->withMethod('GET')
             ->withUri(new Uri('http://some.site?number=5'));
@@ -172,11 +178,12 @@ class CgiOutputCheckTest extends PHPUnit_Framework_TestCase
 
     public function testFailureIsReturnedIfSolutionOutputHeadersDoesNotMatchUserOutputHeaders()
     {
+        $solution = SingleFileSolution::fromFile(realpath(__DIR__ . '/../res/cgi-out/get-solution-header.php'));
         $this->exercise
             ->expects($this->once())
             ->method('getSolution')
-            ->will($this->returnValue(realpath(__DIR__ . '/../res/cgi-out/get-solution-header.php')));
-
+            ->will($this->returnValue($solution));
+        
         $request = (new Request)
             ->withMethod('GET')
             ->withUri(new Uri('http://some.site?number=5'));

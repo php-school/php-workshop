@@ -57,7 +57,7 @@ class DatabaseCheck implements CheckInterface
 
     /**
      * @param ExerciseInterface $exercise
-     * @param string $fileName
+     * @param string q$fileName
      * @return ResultInterface
      */
     public function check(ExerciseInterface $exercise, $fileName)
@@ -85,7 +85,10 @@ class DatabaseCheck implements CheckInterface
         $args = $exercise->getArgs();
         
         try {
-            $solutionOutput = $this->executePhpFile($exercise->getSolution(), array_merge([$solutionDsn], $args));
+            $solutionOutput = $this->executePhpFile(
+                $exercise->getSolution()->getEntryPoint(),
+                array_merge([$solutionDsn], $args)
+            );
         } catch (CodeExecutionException $e) {
             $this->cleanup($db);
             throw new SolutionExecutionException($e->getMessage());
@@ -115,7 +118,7 @@ class DatabaseCheck implements CheckInterface
     }
 
     /**
-     * @param $fileName
+     * @param string $fileName
      * @param array $args
      * @return string
      */
