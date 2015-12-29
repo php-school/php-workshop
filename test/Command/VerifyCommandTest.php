@@ -2,6 +2,7 @@
 
 namespace PhpSchool\PhpWorkshopTest\Command;
 
+use Colors\Color;
 use PhpSchool\PhpWorkshop\Check\CheckInterface;
 use PHPUnit_Framework_TestCase;
 use PhpSchool\PhpWorkshop\Command\VerifyCommand;
@@ -114,10 +115,10 @@ class VerifyCommandTest extends PHPUnit_Framework_TestCase
         $repo = new ExerciseRepository([$e]);
         $state = new UserState;
         $state->setCurrentExercise('exercise1');
-        $output = $this->getMockBuilder(Output::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
+        $color = new Color;
+        $color->setForceStyle(true);
+        $output = new Output($color);
+        
         $serializer = $this->getMockBuilder(UserStateSerializer::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -147,13 +148,8 @@ class VerifyCommandTest extends PHPUnit_Framework_TestCase
         $renderer
             ->expects($this->once())
             ->method('render')
-            ->with($results)
-            ->will($this->returnValue('RESULT OUTPUT'));
+            ->with($results, $e, $state, $output);
         
-        $output
-            ->expects($this->once())
-            ->method('write')
-            ->with('RESULT OUTPUT');
     
         $command = new VerifyCommand($repo, $runner, $state, $serializer, $output, $renderer);
         $this->assertEquals(0, $command->__invoke('appname', $file));
@@ -173,9 +169,9 @@ class VerifyCommandTest extends PHPUnit_Framework_TestCase
         $repo = new ExerciseRepository([$e]);
         $state = new UserState;
         $state->setCurrentExercise('exercise1');
-        $output = $this->getMockBuilder(Output::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $color = new Color;
+        $color->setForceStyle(true);
+        $output = new Output($color);
 
         $serializer = $this->getMockBuilder(UserStateSerializer::class)
             ->disableOriginalConstructor()
@@ -206,13 +202,7 @@ class VerifyCommandTest extends PHPUnit_Framework_TestCase
         $renderer
             ->expects($this->once())
             ->method('render')
-            ->with($results)
-            ->will($this->returnValue('RESULT OUTPUT'));
-
-        $output
-            ->expects($this->once())
-            ->method('write')
-            ->with('RESULT OUTPUT');
+            ->with($results, $e, $state, $output);
 
         $command = new VerifyCommand($repo, $runner, $state, $serializer, $output, $renderer);
         $this->assertEquals(1, $command->__invoke('appname', $file));
