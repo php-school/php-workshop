@@ -57,7 +57,7 @@ class CgiOutputCheck implements CheckInterface
     private function checkRequest(ExerciseInterface $exercise, RequestInterface $request, $fileName)
     {
         try {
-            $solutionResponse = $this->executePhpFile(realpath($exercise->getSolution()), $request);
+            $solutionResponse = $this->executePhpFile($exercise->getSolution()->getEntryPoint(), $request);
         } catch (CodeExecutionException $e) {
             throw new SolutionExecutionException($e->getMessage());
         }

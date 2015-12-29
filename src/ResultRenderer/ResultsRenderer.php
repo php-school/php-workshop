@@ -4,6 +4,7 @@ namespace PhpSchool\PhpWorkshop\ResultRenderer;
 
 use Colors\Color;
 use PhpSchool\CliMenu\Terminal\TerminalInterface;
+use PhpSchool\PhpWorkshop\Output;
 use PhpSchool\PhpWorkshop\Result\SuccessInterface;
 use PhpSchool\PSX\SyntaxHighlighter;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
@@ -82,96 +83,86 @@ class ResultsRenderer
      * @param ResultAggregator $results
      * @param ExerciseInterface $exercise
      * @param UserState $userState
-     * @return string
      */
-    public function render(ResultAggregator $results, ExerciseInterface $exercise, UserState $userState)
+    public function render(ResultAggregator $results, ExerciseInterface $exercise, UserState $userState, Output $output)
     {
         if ($results->isSuccessful()) {
-            return $this->renderSuccess($results, $exercise, $userState);
+            return $this->renderSuccess($results, $exercise, $userState, $output);
         }
 
         $successes  = [];
         $failures   = [];
         foreach ($results as $result) {
             if ($result instanceof SuccessInterface) {
-                $successes[] = $result;
+                $successes[] = sprintf(' ✔ Check: %s', $result->getCheckName());
             } else {
-                $failures[] = $result;
+                $failures[] = [$result, sprintf(' ✗ Check: %s', $result->getCheckName())];
             }
         }
+        
+        $longest  = max(array_map('strlen', array_merge($successes, array_column($failures, 1)))) + 2;
+        $output->explodeAndWrite(
+            $this->padArray($this->styleArray($successes, ['green', 'bg_black', 'bold']), $longest)
+        );
 
-        $lines = [];
-        foreach ($successes as $success) {
-            $lines[] = sprintf(' ✔ Check: %s', $success->getCheckName());
+        foreach ($failures as $result) {
+            list ($failure, $message) = $result;
+            $output->write(str_pad($this->style($message, ['red', 'bg_black', 'bold']), $longest));
+            $output->explodeAndWrite($this->getRenderer($failure)->render($failure, $this));
         }
 
-        $stringLengths = array_map('strlen', $lines);
+        $output->writeLine($this->style(" FAIL!", ['red', 'bg_default', 'bold']));
+        $output->emptyLine();
 
-        $failuresMessages = [];
-        foreach ($failures as $failure) {
-            $string             = sprintf(' ✗ Check: %s', $failure->getCheckName());
-            $stringLengths[]    = strlen($string);
-            $failuresMessages[] = $string;
-        }
-
-        $longest            = max($stringLengths) + 2;
-        $lines              = $this->padArray($lines, $longest);
-        $failuresMessages   = $this->padArray($failuresMessages, $longest);
-
-        $lines              = $this->styleArray($lines, ['green', 'bg_black', 'bold']);
-        $failuresMessages   = $this->styleArray($failuresMessages, ['red', 'bg_black', 'bold']);
-
-        foreach ($failures as $key => $result) {
-            $lines[] = $failuresMessages[$key];
-            $lines[] = $this->getRenderer($result)->render($result, $this);
-        }
-
-        $lines[] = $this->color->__invoke(" FAIL!")->fg('red')->bg('default')->bold()->__toString();
-        $lines[] = '';
-
-        $lines[] = sprintf("Your solution to %s didn't pass. Try again!", $exercise->getName());
-        $lines[] = '';
-        $lines[] = '';
-
-        return implode("\n", $lines);
+        $output->writeLine(sprintf("Your solution to %s didn't pass. Try again!", $exercise->getName()));
+        $output->emptyLine();
+        $output->emptyLine();
     }
 
     /**
      * @param ResultAggregator $results
      * @param ExerciseInterface $exercise
      * @param UserState $userState
-     * @return string
+     * @param Output $output
      */
-    private function renderSuccess(ResultAggregator $results, ExerciseInterface $exercise, UserState $userState)
-    {
+    private function renderSuccess(
+        ResultAggregator $results,
+        ExerciseInterface $exercise,
+        UserState $userState,
+        Output $output
+    ) {
         $lines = [];
         foreach ($results as $result) {
             /** @var Success $result */
             $lines[] = sprintf(' ✔ Check: %s', $result->getCheckName());
         }
+        
+        $lineBreak = str_repeat("─", $this->terminal->getWidth());
 
         $lines = $this->padArray($lines, max(array_map('strlen', $lines)) + 2);
         $lines = $this->styleArray($lines, ['green', 'bg_black']);
-
-        $lines[] = '';
-        $lines[] = $this->color->__invoke(" PASS!")->fg('green')->bg('default')->bold()->__toString();
-        $lines[] = '';
-
-        $lines[] = "Here's the official solution in case you want to compare notes:";
-        $lines[] = $this->color->__invoke(str_repeat("─", $this->terminal->getWidth()))->fg('yellow')->__toString();
-
-        $code   = explode("\n", $this->syntaxHighlighter->highlight(file_get_contents($exercise->getSolution())));
-        $lines  = array_merge($lines, $code);
-        $lines[] = $this->color->__invoke(str_repeat("─", $this->terminal->getWidth()))->fg('yellow')->__toString();
-
+        
+        $output->writeLines($lines);
+        $output->emptyLine();
+        $output->writeLine($this->style(" PASS!", ['green', 'bg_default', 'bold']));
+        $output->emptyLine();
+        
+        $output->writeLine("Here's the official solution in case you want to compare notes:");
+        $output->writeLine($this->style($lineBreak, 'yellow'));
+        
+        foreach ($exercise->getSolution()->getFiles() as $file) {
+            $code       = $this->syntaxHighlighter->highlight($file->getContents());
+            $code       = preg_replace('/<\?php/', sprintf('<?php //%s', $file->getRelativePath()), $code);
+            $output->explodeAndWrite($code);
+            $output->writeLine($this->style($lineBreak, 'yellow'));
+        }
+        
         $completedCount = count($userState->getCompletedExercises());
         $numExercises = $this->exerciseRepository->count();
 
-
-        $lines[] = sprintf('You have %d challenges left.', $numExercises - $completedCount);
-        $lines[] = sprintf('Type "%s" to show the menu.', $this->appName);
-        $lines[] = '';
-        return implode("\n", $lines) . "\n";
+        $output->writeLine(sprintf('You have %d challenges left.', $numExercises - $completedCount));
+        $output->writeLine(sprintf('Type "%s" to show the menu.', $this->appName));
+        $output->emptyLine();
     }
 
     /**

@@ -99,7 +99,7 @@ class VerifyCommand
             $this->userStateSerializer->serialize($this->userState);
         }
         
-        $this->output->write($this->resultsRenderer->render($results, $exercise, $this->userState));
+        $this->resultsRenderer->render($results, $exercise, $this->userState, $this->output);
         return $results->isSuccessful() ? 0 : 1;
     }
 }

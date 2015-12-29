@@ -10,6 +10,7 @@ use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpSchool\PhpWorkshop\Result\Failure;
 use PhpSchool\PhpWorkshop\Result\StdOutFailure;
 use PhpSchool\PhpWorkshop\Result\Success;
+use PhpSchool\PhpWorkshop\Solution\SingleFileSolution;
 use PhpSchool\PhpWorkshopTest\Asset\DatabaseExercise;
 use PHPUnit_Framework_TestCase;
 use RuntimeException;
@@ -49,10 +50,11 @@ class DatabaseCheckTest extends PHPUnit_Framework_TestCase
 
     public function testCheckThrowsExceptionIfSolutionFailsExecution()
     {
+        $solution = SingleFileSolution::fromFile(realpath(__DIR__ . '/../res/std-out/solution-error.php'));
         $this->exercise
             ->expects($this->once())
             ->method('getSolution')
-            ->will($this->returnValue(__DIR__ . '/../res/std-out/solution-error.php'));
+            ->will($this->returnValue($solution));
 
         $this->exercise
             ->expects($this->once())
@@ -68,10 +70,11 @@ class DatabaseCheckTest extends PHPUnit_Framework_TestCase
 
     public function testSuccessIsReturnedIfSolutionOutputMatchesUserOutput()
     {
+        $solution = SingleFileSolution::fromFile(realpath(__DIR__ . '/../res/std-out/solution.php'));
         $this->exercise
             ->expects($this->once())
             ->method('getSolution')
-            ->will($this->returnValue(__DIR__ . '/../res/database/solution.php'));
+            ->will($this->returnValue($solution));
 
         $this->exercise
             ->expects($this->once())
@@ -86,10 +89,11 @@ class DatabaseCheckTest extends PHPUnit_Framework_TestCase
 
     public function testFailureIsReturnedIfUserSolutionFailsToExecute()
     {
+        $solution = SingleFileSolution::fromFile(realpath(__DIR__ . '/../res/std-out/solution.php'));
         $this->exercise
             ->expects($this->once())
             ->method('getSolution')
-            ->will($this->returnValue(__DIR__ . '/../res/database/solution.php'));
+            ->will($this->returnValue($solution));
 
         $this->exercise
             ->expects($this->once())
@@ -107,10 +111,11 @@ class DatabaseCheckTest extends PHPUnit_Framework_TestCase
 
     public function testFailureIsReturnedIfSolutionOutputDoesNotMatchUserOutput()
     {
+        $solution = SingleFileSolution::fromFile(realpath(__DIR__ . '/../res/std-out/solution.php'));
         $this->exercise
             ->expects($this->once())
             ->method('getSolution')
-            ->will($this->returnValue(__DIR__ . '/../res/database/solution.php'));
+            ->will($this->returnValue($solution));
 
         $this->exercise
             ->expects($this->once())
@@ -126,10 +131,11 @@ class DatabaseCheckTest extends PHPUnit_Framework_TestCase
 
     public function testFailureIsReturnedIfDatbaseVerificationFails()
     {
+        $solution = SingleFileSolution::fromFile(realpath(__DIR__ . '/../res/std-out/solution.php'));
         $this->exercise
             ->expects($this->once())
             ->method('getSolution')
-            ->will($this->returnValue(__DIR__ . '/../res/database/solution.php'));
+            ->will($this->returnValue($solution));
 
         $this->exercise
             ->expects($this->once())
@@ -168,10 +174,11 @@ class DatabaseCheckTest extends PHPUnit_Framework_TestCase
 
     public function testAlteringDatabaseInSolutionDoesNotEffectDatabaseInUserSolution()
     {
+        $solution = SingleFileSolution::fromFile(realpath(__DIR__ . '/../res/std-out/solution-alter-db.php'));
         $this->exercise
             ->expects($this->once())
             ->method('getSolution')
-            ->will($this->returnValue(__DIR__ . '/../res/database/solution-alter-db.php'));
+            ->will($this->returnValue($solution));
 
         $this->exercise
             ->expects($this->once())

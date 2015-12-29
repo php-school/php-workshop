@@ -2,6 +2,8 @@
 
 namespace PhpSchool\PhpWorkshop\Exercise;
 
+use PhpSchool\PhpWorkshop\Solution\SolutionInterface;
+
 /**
  * Class ExerciseInterface
  * @package PhpSchool\PhpWorkshop\Exercise
@@ -22,7 +24,7 @@ interface ExerciseInterface
     public function getDescription();
 
     /**
-     * @return string
+     * @return SolutionInterface
      */
     public function getSolution();
 

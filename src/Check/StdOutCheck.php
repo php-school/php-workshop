@@ -41,7 +41,7 @@ class StdOutCheck implements CheckInterface
         $args = $exercise->getArgs();
 
         try {
-            $solutionOutput = $this->executePhpFile($exercise->getSolution(), $args);
+            $solutionOutput = $this->executePhpFile($exercise->getSolution()->getEntryPoint(), $args);
         } catch (CodeExecutionException $e) {
             throw new SolutionExecutionException($e->getMessage());
         }
@@ -59,7 +59,7 @@ class StdOutCheck implements CheckInterface
     }
 
     /**
-     * @param $fileName
+     * @param string $fileName
      * @param array $args
      * @return string
      */

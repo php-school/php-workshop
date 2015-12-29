@@ -4,6 +4,7 @@ namespace PhpSchool\PhpWorkshopTest\Check;
 
 use InvalidArgumentException;
 use PhpSchool\PhpWorkshop\Result\StdOutFailure;
+use PhpSchool\PhpWorkshop\Solution\SingleFileSolution;
 use PhpSchool\PhpWorkshopTest\Asset\StdOutExercise;
 use PHPUnit_Framework_TestCase;
 use PhpSchool\PhpWorkshop\Check\StdOutCheck;
@@ -47,17 +48,17 @@ class StdOutCheckTest extends PHPUnit_Framework_TestCase
 
     public function testCheckThrowsExceptionIfSolutionFailsExecution()
     {
+        $solution = SingleFileSolution::fromFile(realpath(__DIR__ . '/../res/std-out/solution-error.php'));
         $this->exercise
             ->expects($this->once())
             ->method('getSolution')
-            ->will($this->returnValue(__DIR__ . '/../res/std-out/solution-error.php'));
+            ->will($this->returnValue($solution));
 
         $this->exercise
             ->expects($this->once())
             ->method('getArgs')
             ->will($this->returnValue([]));
-
-
+        
         $regex  = "/^PHP Code failed to execute\\. Error: \"PHP Parse error:  syntax error, unexpected end of file";
         $regex .= ", expecting ',' or ';'/";
         $this->setExpectedExceptionRegExp(SolutionExecutionException::class, $regex);
@@ -66,10 +67,11 @@ class StdOutCheckTest extends PHPUnit_Framework_TestCase
 
     public function testSuccessIsReturnedIfSolutionOutputMatchesUserOutput()
     {
+        $solution = SingleFileSolution::fromFile(realpath(__DIR__ . '/../res/std-out/solution.php'));
         $this->exercise
             ->expects($this->once())
             ->method('getSolution')
-            ->will($this->returnValue(__DIR__ . '/../res/std-out/solution.php'));
+            ->will($this->returnValue($solution));
 
         $this->exercise
             ->expects($this->once())
@@ -84,10 +86,11 @@ class StdOutCheckTest extends PHPUnit_Framework_TestCase
 
     public function testFailureIsReturnedIfUserSolutionFailsToExecute()
     {
+        $solution = SingleFileSolution::fromFile(realpath(__DIR__ . '/../res/std-out/solution.php'));
         $this->exercise
             ->expects($this->once())
             ->method('getSolution')
-            ->will($this->returnValue(__DIR__ . '/../res/std-out/solution.php'));
+            ->will($this->returnValue($solution));
 
         $this->exercise
             ->expects($this->once())
@@ -105,11 +108,12 @@ class StdOutCheckTest extends PHPUnit_Framework_TestCase
 
     public function testFailureIsReturnedIfSolutionOutputDoesNotMatchUserOutput()
     {
+        $solution = SingleFileSolution::fromFile(realpath(__DIR__ . '/../res/std-out/solution.php'));
         $this->exercise
             ->expects($this->once())
             ->method('getSolution')
-            ->will($this->returnValue(__DIR__ . '/../res/std-out/solution.php'));
-
+            ->will($this->returnValue($solution));
+        
         $this->exercise
             ->expects($this->once())
             ->method('getArgs')
