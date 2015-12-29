@@ -57,7 +57,7 @@ class DatabaseCheck implements CheckInterface
 
     /**
      * @param ExerciseInterface $exercise
-     * @param string q$fileName
+     * @param string $fileName
      * @return ResultInterface
      */
     public function check(ExerciseInterface $exercise, $fileName)

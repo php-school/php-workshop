@@ -22,11 +22,6 @@ class DirectorySolution implements SolutionInterface
     private $files = [];
 
     /**
-     * @var string
-     */
-    private $directory;
-
-    /**
      * @param string $directory
      * @param string $entryPoint
      * @throws InvalidArgumentException
@@ -49,7 +44,6 @@ class DirectorySolution implements SolutionInterface
         }, $files);
         
         $this->entryPoint = sprintf('%s/%s', $directory, $entryPoint);
-        $this->directory  = $directory;
     }
 
     /**

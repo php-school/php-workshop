@@ -3,7 +3,7 @@
 namespace PhpSchool\PhpWorkshop\Solution;
 
 /**
- * Class SolutionInterface
+ * Interface SolutionInterface
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
 interface SolutionInterface
