@@ -107,7 +107,7 @@ class ResultsRenderer
 
         foreach ($failures as $result) {
             list ($failure, $message) = $result;
-            $output->write(str_pad($this->style($message, ['red', 'bg_black', 'bold'])), $longest);
+            $output->write(str_pad($this->style($message, ['red', 'bg_black', 'bold']), $longest));
             $output->explodeAndWrite($this->getRenderer($failure)->render($failure, $this));
         }
 
