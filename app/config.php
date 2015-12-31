@@ -17,6 +17,7 @@ use PhpSchool\PhpWorkshop\Check\ComposerCheck;
 use PhpSchool\PhpWorkshop\Check\DatabaseCheck;
 use PhpSchool\PhpWorkshop\CodeInsertion as Insertion;
 use PhpSchool\PhpWorkshop\CodePatcher;
+use PhpSchool\PhpWorkshop\Command\RunCommand;
 use PhpSchool\PhpWorkshop\ExerciseCheck\CgiOutputExerciseCheck;
 use PhpSchool\PhpWorkshop\ExerciseCheck\ComposerExerciseCheck;
 use PhpSchool\PhpWorkshop\ExerciseCheck\DatabaseExerciseCheck;
@@ -84,13 +85,14 @@ return [
     CommandRouter::class => factory(function (ContainerInterface $c) {
         return new CommandRouter(
             [
-                new CommandDefinition('run', [], MenuCommand::class),
+                new CommandDefinition('menu', [], MenuCommand::class),
                 new CommandDefinition('help', [], HelpCommand::class),
                 new CommandDefinition('print', [], PrintCommand::class),
                 new CommandDefinition('verify', ['program'], VerifyCommand::class),
+                new CommandDefinition('run', ['program'], RunCommand::class),
                 new CommandDefinition('credits', [], CreditsCommand::class)
             ],
-            'run',
+            'menu',
             $c
         );
     }),
@@ -136,6 +138,16 @@ return [
             $c->get(ResultsRenderer::class)
         );
     }),
+
+    RunCommand::class => factory(function (ContainerInterface $c) {
+        return new RunCommand(
+            $c->get(ExerciseRepository::class),
+            $c->get(UserState::class),
+            $c->get(UserStateSerializer::class),
+            $c->get(Output::class),
+            $c->get(CodePatcher::class)
+        );
+    }),
     
     CreditsCommand::class => factory(function (ContainerInterface $c) {
         return new CreditsCommand(
@@ -179,7 +191,7 @@ return [
             ->withInsertion(new Insertion(Insertion::TYPE_BEFORE, 'error_reporting(E_ALL);'))
             ->withInsertion(new Insertion(Insertion ::TYPE_BEFORE, 'date_default_timezone_set("Europe/London");'));
         
-        return new CodePatcher($c->get(Parser::class), new Standard, $patch);    
+        return new CodePatcher($c->get(Parser::class), new Standard, $patch);
     }),
     
     TerminalInterface::class => factory([TerminalFactory::class, 'fromSystem']),

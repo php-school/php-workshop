@@ -34,6 +34,11 @@ interface ExerciseInterface
     public function getProblem();
 
     /**
+     * @return bool
+     */
+    public function hasOutput();
+
+    /**
      * @return void
      */
     public function tearDown();
