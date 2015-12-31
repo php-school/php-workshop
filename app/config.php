@@ -13,10 +13,12 @@ use PhpParser\Parser;
 use PhpParser\ParserFactory;
 use PhpSchool\PhpWorkshop\Check\CgiOutputCheck;
 use PhpSchool\PhpWorkshop\Check\CodeParseCheck;
+use PhpSchool\PhpWorkshop\Check\ComposerCheck;
 use PhpSchool\PhpWorkshop\Check\DatabaseCheck;
 use PhpSchool\PhpWorkshop\CodeInsertion as Insertion;
 use PhpSchool\PhpWorkshop\CodePatcher;
 use PhpSchool\PhpWorkshop\ExerciseCheck\CgiOutputExerciseCheck;
+use PhpSchool\PhpWorkshop\ExerciseCheck\ComposerExerciseCheck;
 use PhpSchool\PhpWorkshop\ExerciseCheck\DatabaseExerciseCheck;
 use PhpSchool\PhpWorkshop\Factory\MenuFactory;
 use PhpSchool\PhpWorkshop\MenuItem\ResetProgress;
@@ -65,6 +67,7 @@ return [
         $exerciseRunner->registerPreCheck(new FileExistsCheck, ExerciseInterface::class);
         $exerciseRunner->registerPreCheck(new PhpLintCheck, ExerciseInterface::class);
         $exerciseRunner->registerPreCheck(new CodeParseCheck($c->get(Parser::class)), ExerciseInterface::class);
+        $exerciseRunner->registerPreCheck(new ComposerCheck, ComposerExerciseCheck::class);
         foreach ($c->get('checks') as $check) {
             $exerciseRunner->registerCheck(...$check);
         }
