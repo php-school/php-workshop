@@ -42,6 +42,17 @@ class ExerciseRunner
     private $preCheckMap = [];
 
     /**
+     * Locations for composer executable
+     * 
+     * @var array
+     */
+    private $composerLocations = [
+        'composer',
+        'composer.phar',
+        '/usr/local/bin/composer',
+    ];
+    
+    /**
      * @param CodePatcher $codePatcher
      */
     public function __construct(CodePatcher $codePatcher)
@@ -164,16 +175,12 @@ class ExerciseRunner
      */
     private function locateComposer()
     {
-        $composerLocations = [
-            'composer',
-            'composer.phar',
-            '/usr/local/bin/composer',
-        ];
-        
-        foreach ($composerLocations as $location) {
+        foreach ($this->composerLocations as $location) {
             if (file_exists($location) && is_executable($location)) {
                 return $location;
             }
         }
+        
+        throw new \RuntimeException('Composer could not be located on the system');
     }
 }
