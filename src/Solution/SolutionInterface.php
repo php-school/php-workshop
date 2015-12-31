@@ -17,4 +17,14 @@ interface SolutionInterface
      * @return SolutionFile[]
      */
     public function getFiles();
+
+    /**
+     * @return string
+     */
+    public function getBaseDirectory();
+
+    /**
+     * @return bool
+     */
+    public function hasComposerFile();
 }

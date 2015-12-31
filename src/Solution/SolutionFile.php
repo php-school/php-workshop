@@ -64,6 +64,14 @@ class SolutionFile
     /**
      * @return string
      */
+    public function getBaseDirectory()
+    {
+        return $this->baseDirectory;
+    }
+
+    /**
+     * @return string
+     */
     public function getContents()
     {
         return file_get_contents($this->getAbsolutePath());

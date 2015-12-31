@@ -22,13 +22,18 @@ class DirectorySolution implements SolutionInterface
     private $files = [];
 
     /**
+     * @var string
+     */
+    private $baseDirectory;
+
+    /**
      * @param string $directory
      * @param string $entryPoint
      * @throws InvalidArgumentException
      */
     public function __construct($directory, $entryPoint)
     {
-        $directory  = rtrim($directory, '/');
+        $directory  = realpath(rtrim($directory, '/'));
         $entryPoint = ltrim($entryPoint, '/');
         
         $files = array_values(array_diff(scandir($directory), ['..', '.']));
@@ -44,6 +49,7 @@ class DirectorySolution implements SolutionInterface
         }, $files);
         
         $this->entryPoint = sprintf('%s/%s', $directory, $entryPoint);
+        $this->baseDirectory = $directory;
     }
 
     /**
@@ -70,5 +76,21 @@ class DirectorySolution implements SolutionInterface
     public function getFiles()
     {
         return $this->files;
+    }
+
+    /**
+     * @return string
+     */
+    public function getBaseDirectory()
+    {
+        return $this->baseDirectory;
+    }
+
+    /**
+     * @return bool
+     */
+    public function hasComposerFile()
+    {
+        return file_exists(sprintf('%s/composer.lock', $this->baseDirectory));
     }
 }

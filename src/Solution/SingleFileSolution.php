@@ -22,7 +22,7 @@ class SingleFileSolution implements SolutionInterface
      */
     public function __construct($file)
     {
-        $this->file = SolutionFile::fromFile($file);
+        $this->file = SolutionFile::fromFile(realpath($file));
     }
 
     /**
@@ -48,5 +48,21 @@ class SingleFileSolution implements SolutionInterface
     public function getFiles()
     {
         return [$this->file];
+    }
+
+    /**
+     * @return string
+     */
+    public function getBaseDirectory()
+    {
+        return $this->file->getBaseDirectory();
+    }
+
+    /**
+     * @return bool
+     */
+    public function hasComposerFile()
+    {
+        return false;
     }
 }
