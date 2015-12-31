@@ -43,7 +43,7 @@ class ExerciseRunner
 
     /**
      * Locations for composer executable
-     * 
+     *
      * @var array
      */
     private $composerLocations = [
@@ -162,7 +162,7 @@ class ExerciseRunner
 
             if (!file_exists(sprintf('%s/vendor', $solution->getBaseDirectory()))) {
                 $process = new Process(
-                    sprintf('%s install --no-interaction', $this->locateComposer()), 
+                    sprintf('%s install --no-interaction', $this->locateComposer()),
                     $solution->getBaseDirectory()
                 );
                 $process->run();

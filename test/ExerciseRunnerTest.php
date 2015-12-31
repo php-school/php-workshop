@@ -245,7 +245,7 @@ class ExerciseRunnerTest extends PHPUnit_Framework_TestCase
 
     public function testIfSolutionRequiresComposerButVendorDirExistsNothingIsDone()
     {
-        mkdir(sprintf('%s/vendor',  dirname($this->file)));
+        mkdir(sprintf('%s/vendor', dirname($this->file)));
         $this->assertFileExists(sprintf('%s/vendor', dirname($this->file)));
 
         $solution = $this->getMock(SolutionInterface::class);
@@ -278,7 +278,7 @@ class ExerciseRunnerTest extends PHPUnit_Framework_TestCase
         
         file_put_contents(sprintf('%s/composer.json', dirname($this->file)), json_encode([
             'requires' => [
-                'phpunit/phpunit' => '~5.0'  
+                'phpunit/phpunit' => '~5.0'
             ],
         ]));
         
