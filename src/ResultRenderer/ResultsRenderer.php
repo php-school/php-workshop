@@ -83,6 +83,7 @@ class ResultsRenderer
      * @param ResultAggregator $results
      * @param ExerciseInterface $exercise
      * @param UserState $userState
+     * @param Output $output
      */
     public function render(ResultAggregator $results, ExerciseInterface $exercise, UserState $userState, Output $output)
     {
@@ -101,13 +102,13 @@ class ResultsRenderer
         }
         
         $longest  = max(array_map('strlen', array_merge($successes, array_column($failures, 1)))) + 2;
-        $output->explodeAndWrite(
+        $output->writeLines(
             $this->padArray($this->styleArray($successes, ['green', 'bg_black', 'bold']), $longest)
         );
 
         foreach ($failures as $result) {
             list ($failure, $message) = $result;
-            $output->write(str_pad($this->style($message, ['red', 'bg_black', 'bold']), $longest));
+            $output->writeLine(str_pad($this->style($message, ['red', 'bg_black', 'bold']), $longest));
             $output->explodeAndWrite($this->getRenderer($failure)->render($failure, $this));
         }
 
