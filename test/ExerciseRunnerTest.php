@@ -5,6 +5,7 @@ namespace PhpSchool\PhpWorkshopTest;
 
 use InvalidArgumentException;
 use PhpSchool\PhpWorkshop\CodePatcher;
+use PhpSchool\PhpWorkshop\Solution\SolutionInterface;
 use PhpSchool\PhpWorkshopTest\Asset\SelfCheckExercise;
 use PHPUnit_Framework_TestCase;
 use PhpSchool\PhpWorkshop\Check\CheckInterface;
@@ -102,7 +103,13 @@ class ExerciseRunnerTest extends PHPUnit_Framework_TestCase
         $this->exerciseRunner->registerCheck($doNotRunMe, StdOutExerciseCheck::class);
         $this->exerciseRunner->registerPreCheck($doNotRunMe, StdOutExerciseCheck::class);
         
-        $result = $this->exerciseRunner->runExercise($this->getMock(ExerciseInterface::class), $this->file);
+        $solution = $this->getMock(SolutionInterface::class);
+        $exercise = $this->getMock(ExerciseInterface::class);
+        $exercise->expects($this->any())
+            ->method('getSolution')
+            ->will($this->returnValue($solution));
+        
+        $result = $this->exerciseRunner->runExercise($exercise, $this->file);
         $this->assertInstanceOf(ResultAggregator::class, $result);
         $this->assertTrue($result->isSuccessful());
     }
@@ -117,7 +124,13 @@ class ExerciseRunnerTest extends PHPUnit_Framework_TestCase
             ->method('check')
             ->will($this->returnValue(new Success($this->check)));
 
-        $result = $this->exerciseRunner->runExercise(new StdOutExercise, $this->file);
+        $solution = $this->getMock(SolutionInterface::class);
+        $exercise = $this->getMock(StdOutExercise::class);
+        $exercise->expects($this->any())
+            ->method('getSolution')
+            ->will($this->returnValue($solution));
+
+        $result = $this->exerciseRunner->runExercise($exercise, $this->file);
         $this->assertInstanceOf(ResultAggregator::class, $result);
         $this->assertTrue($result->isSuccessful());
     }
@@ -136,10 +149,16 @@ class ExerciseRunnerTest extends PHPUnit_Framework_TestCase
             ->expects($this->never())
             ->method('check');
 
+        $solution = $this->getMock(SolutionInterface::class);
+        $exercise = $this->getMock(StdOutExercise::class);
+        $exercise->expects($this->any())
+            ->method('getSolution')
+            ->will($this->returnValue($solution));
+
         $this->exerciseRunner->registerPreCheck($runMe, StdOutExerciseCheck::class);
         $this->exerciseRunner->registerCheck($doNotRunMe, StdOutExerciseCheck::class);
 
-        $result = $this->exerciseRunner->runExercise(new StdOutExercise, $this->file);
+        $result = $this->exerciseRunner->runExercise($exercise, $this->file);
         $this->assertInstanceOf(ResultAggregator::class, $result);
         $this->assertFalse($result->isSuccessful());
     }
@@ -153,8 +172,14 @@ class ExerciseRunnerTest extends PHPUnit_Framework_TestCase
             ->expects($this->once())
             ->method('check')
             ->will($this->returnValue(new Success($this->check->getName())));
+
+        $solution = $this->getMock(SolutionInterface::class);
+        $exercise = $this->getMock(SelfCheckExercise::class, ['getSolution']);
+        $exercise->expects($this->any())
+            ->method('getSolution')
+            ->will($this->returnValue($solution));
         
-        $result = $this->exerciseRunner->runExercise(new SelfCheckExercise, $this->file);
+        $result = $this->exerciseRunner->runExercise($exercise, $this->file);
         $this->assertInstanceOf(ResultAggregator::class, $result);
         $this->assertCount(2, $result);
     }
@@ -163,7 +188,12 @@ class ExerciseRunnerTest extends PHPUnit_Framework_TestCase
     {
         file_put_contents($this->file, 'ORIGINAL CONTENT');
 
+        $solution = $this->getMock(SolutionInterface::class);
         $exercise = $this->getMock(ExerciseInterface::class);
+        $exercise->expects($this->any())
+            ->method('getSolution')
+            ->will($this->returnValue($solution));
+        
         $runMe = $this->getMock(CheckInterface::class);
         $runMe
             ->expects($this->once())
