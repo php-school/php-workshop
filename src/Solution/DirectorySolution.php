@@ -37,6 +37,7 @@ class DirectorySolution implements SolutionInterface
         $entryPoint = ltrim($entryPoint, '/');
         
         $files = array_values(array_diff(scandir($directory), ['..', '.']));
+        sort($files);
         
         if (!in_array($entryPoint, $files)) {
             throw new InvalidArgumentException(
