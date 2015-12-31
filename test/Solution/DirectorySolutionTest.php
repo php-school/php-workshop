@@ -15,9 +15,8 @@ class DirectorySolutionTest extends PHPUnit_Framework_TestCase
 {
     public function testExceptionIsThrownIfEntryPointDoesNotExist()
     {
-        $tempPath = sprintf('%s/%s', sys_get_temp_dir(), $this->getName());
+        $tempPath = sprintf('%s/%s', realpath(sys_get_temp_dir()), $this->getName());
         @mkdir($tempPath, 0775, true);
-        //touch(sprintf('%s/solution.php', $tempPath));
         touch(sprintf('%s/some-class.php', $tempPath));
         
         $this->setExpectedException(
@@ -27,14 +26,13 @@ class DirectorySolutionTest extends PHPUnit_Framework_TestCase
         
         DirectorySolution::fromDirectory($tempPath);
 
-        //unlink(sprintf('%s/solution.php', $tempPath));
         unlink(sprintf('%s/some-class.php', $tempPath));
         rmdir($tempPath);
     }
 
     public function testWithDefaultEntryPoint()
     {
-        $tempPath = sprintf('%s/%s', sys_get_temp_dir(), $this->getName());
+        $tempPath = sprintf('%s/%s', realpath(sys_get_temp_dir()), $this->getName());
         @mkdir($tempPath, 0775, true);
         touch(sprintf('%s/solution.php', $tempPath));
         touch(sprintf('%s/some-class.php', $tempPath));
@@ -56,7 +54,7 @@ class DirectorySolutionTest extends PHPUnit_Framework_TestCase
 
     public function testWithManualEntryPoint()
     {
-        $tempPath = sprintf('%s/%s', sys_get_temp_dir(), $this->getName());
+        $tempPath = sprintf('%s/%s', realpath(sys_get_temp_dir()), $this->getName());
         @mkdir($tempPath, 0775, true);
         touch(sprintf('%s/index.php', $tempPath));
         touch(sprintf('%s/some-class.php', $tempPath));
