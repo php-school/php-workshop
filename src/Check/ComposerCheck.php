@@ -2,12 +2,7 @@
 
 namespace PhpSchool\PhpWorkshop\Check;
 
-use Composer\Config;
-use Composer\Installer\InstallationManager;
-use Composer\IO\NullIO;
-use Composer\Json\JsonFile;
-use Composer\Package\Locker;
-use Composer\Repository\RepositoryManager;
+use PhpSchool\PhpWorkshop\ComposerUtil\LockFileParser;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpSchool\PhpWorkshop\ExerciseCheck\ComposerExerciseCheck;
 use PhpSchool\PhpWorkshop\Result\Failure;
@@ -39,30 +34,18 @@ class ComposerCheck implements CheckInterface
         if (!$exercise instanceof ComposerExerciseCheck) {
             throw new \InvalidArgumentException;
         }
-
-        $composerFile = new JsonFile(sprintf('%s/composer.json', dirname($fileName)));
-        $lockFile     = new JsonFile(sprintf('%s/composer.lock', dirname($fileName)));
-
-        if (!$composerFile->exists()) {
+        
+        if (!file_exists(sprintf('%s/composer.json', dirname($fileName)))) {
             return new Failure($this->getName(), 'No composer.json file found');
         }
 
-        if (!$lockFile->exists()) {
+        if (!file_exists(sprintf('%s/composer.lock', dirname($fileName)))) {
             return new Failure($this->getName(), 'No composer.lock file found');
         }
-
-        $locker = new Locker(
-            new NullIO,
-            $lockFile,
-            new RepositoryManager(new NullIO, new Config),
-            new InstallationManager,
-            file_get_contents($composerFile->getPath())
-        );
         
-        $repository = $locker->getLockedRepository();
-        
-        $missingPackages = array_filter($exercise->getRequiredPackages(), function ($package) use ($repository) {
-           return !$repository->findPackages($package);
+        $lockFile = new LockFileParser(sprintf('%s/composer.lock', dirname($fileName)));
+        $missingPackages = array_filter($exercise->getRequiredPackages(), function ($package) use ($lockFile) {
+           return !$lockFile->hasInstalledPackage($package);
         });
         
         if (count($missingPackages) > 0) {
