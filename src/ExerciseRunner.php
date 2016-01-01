@@ -7,6 +7,8 @@ use PhpSchool\PhpWorkshop\Exception\InvalidArgumentException;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpSchool\PhpWorkshop\ExerciseCheck\SelfCheck;
 use PhpSchool\PhpWorkshop\Result\FailureInterface;
+use PhpSchool\PhpWorkshop\Solution\SolutionInterface;
+use Symfony\Component\Process\Process;
 
 /**
  * Class ExerciseRunner
@@ -39,6 +41,18 @@ class ExerciseRunner
      */
     private $preCheckMap = [];
 
+    /**
+     * Locations for composer executable
+     *
+     * @var array
+     */
+    private $composerLocations = [
+        'composer',
+        'composer.phar',
+        '/usr/local/bin/composer',
+        __DIR__ . '/../vendor/bin/composer',
+    ];
+    
     /**
      * @param CodePatcher $codePatcher
      */
@@ -84,6 +98,8 @@ class ExerciseRunner
      */
     public function runExercise(ExerciseInterface $exercise, $fileName)
     {
+        $this->prepareSolution($exercise->getSolution());
+        
         $resultAggregator = new ResultAggregator;
         
         //run pre-checks (before patching)
@@ -134,5 +150,38 @@ class ExerciseRunner
     {
         $exerciseInterface = $checkMap[spl_object_hash($check)];
         return is_subclass_of($exercise, $exerciseInterface);
+    }
+
+    /**
+     * @param SolutionInterface $solution
+     */
+    private function prepareSolution(SolutionInterface $solution)
+    {
+        if ($solution->hasComposerFile()) {
+            //prepare composer deps
+            //only install if composer.lock file not available
+
+            if (!file_exists(sprintf('%s/vendor', $solution->getBaseDirectory()))) {
+                $process = new Process(
+                    sprintf('%s install --no-interaction', $this->locateComposer()),
+                    $solution->getBaseDirectory()
+                );
+                $process->run();
+            }
+        }
+    }
+
+    /**
+     * @return string
+     */
+    private function locateComposer()
+    {
+        foreach ($this->composerLocations as $location) {
+            if (file_exists($location) && is_executable($location)) {
+                return $location;
+            }
+        }
+        
+        throw new \RuntimeException('Composer could not be located on the system');
     }
 }

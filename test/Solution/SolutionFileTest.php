@@ -35,6 +35,8 @@ class SolutionFileTest extends PHPUnit_Framework_TestCase
         
         $this->assertSame($filePath, $file->__toString());
         $this->assertSame('test.file', $file->getRelativePath());
+        $this->assertSame($tempPath, $file->getBaseDirectory());
+        
         unlink($filePath);
         rmdir($tempPath);
     }
@@ -51,6 +53,7 @@ class SolutionFileTest extends PHPUnit_Framework_TestCase
 
         $this->assertSame($filePath, $file->__toString());
         $this->assertSame('test.file', $file->getRelativePath());
+        $this->assertSame($tempPath, $file->getBaseDirectory());
         $this->assertSame('', $file->getContents());
         unlink($filePath);
         rmdir($tempPath);
@@ -68,6 +71,7 @@ class SolutionFileTest extends PHPUnit_Framework_TestCase
 
         $this->assertSame($filePath, $file->__toString());
         $this->assertSame('test.file', $file->getRelativePath());
+        $this->assertSame($tempPath, $file->getBaseDirectory());
         $this->assertSame('epiccontentz', $file->getContents());
         unlink($filePath);
         rmdir($tempPath);
@@ -85,6 +89,7 @@ class SolutionFileTest extends PHPUnit_Framework_TestCase
 
         $this->assertSame($filePath, $file->__toString());
         $this->assertSame('test.file', $file->getRelativePath());
+        $this->assertSame($tempPath, $file->getBaseDirectory());
         $this->assertSame('', $file->getContents());
         unlink($filePath);
         rmdir($tempPath);
