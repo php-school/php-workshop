@@ -2,6 +2,8 @@
 
 namespace PhpSchool\PhpWorkshop\ComposerUtil;
 
+use PhpSchool\PhpWorkshop\Exception\InvalidArgumentException;
+
 /**
  * Class LockFileParser
  * @author Aydin Hassan <aydin@hotmail.co.uk>
@@ -20,7 +22,7 @@ class LockFileParser
     public function __construct($lockFilePath)
     {
         if (!file_exists($lockFilePath)) {
-            throw new InvalidArgumentException(sprintf('Lock File: "%s" does not exist'), $lockFilePath);
+            throw new InvalidArgumentException(sprintf('Lock File: "%s" does not exist', $lockFilePath));
         }
         
         $this->contents = json_decode(file_get_contents($lockFilePath), true);
