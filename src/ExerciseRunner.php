@@ -176,6 +176,7 @@ class ExerciseRunner
     private function locateComposer()
     {
         foreach ($this->composerLocations as $location) {
+            var_dump($location, file_exists($location), is_executable($location));
             if (file_exists($location) && is_executable($location)) {
                 return $location;
             }
