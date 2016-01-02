@@ -152,8 +152,15 @@ class ResultsRenderer
         $output->writeLine($this->style($lineBreak, 'yellow'));
         
         foreach ($exercise->getSolution()->getFiles() as $file) {
-            $code       = $this->syntaxHighlighter->highlight($file->getContents());
-            $code       = preg_replace('/<\?php/', sprintf('<?php //%s', $file->getRelativePath()), $code);
+            
+            $output->writeLine($this->style($file->getRelativePath(), ['bold', 'cyan', 'underline']));
+            $output->emptyLine();
+
+            $code = $file->getContents();
+            if (pathinfo($file->getRelativePath(), PATHINFO_EXTENSION) === 'php') {
+                $code = $this->syntaxHighlighter->highlight($code);
+            }
+            
             $output->explodeAndWrite($code);
             $output->writeLine($this->style($lineBreak, 'yellow'));
         }
