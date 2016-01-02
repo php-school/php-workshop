@@ -21,7 +21,7 @@ class ComposerCheck implements CheckInterface
      */
     public function getName()
     {
-        return 'Composer Dependency Checker';
+        return 'Composer Dependency Check';
     }
 
     /**
