@@ -9,7 +9,7 @@ namespace PhpSchool\PhpWorkshop\ExerciseCheck;
 interface ComposerExerciseCheck
 {
     /**
-     * @return array[]
+     * @return array
      */
     public function getRequiredPackages();
 }
