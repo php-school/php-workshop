@@ -45,12 +45,12 @@ class ComposerCheck implements CheckInterface
         
         $lockFile = new LockFileParser(sprintf('%s/composer.lock', dirname($fileName)));
         $missingPackages = array_filter($exercise->getRequiredPackages(), function ($package) use ($lockFile) {
-           return !$lockFile->hasInstalledPackage($package);
+            return !$lockFile->hasInstalledPackage($package);
         });
         
         if (count($missingPackages) > 0) {
             return new Failure(
-                $this->getName(), 
+                $this->getName(),
                 sprintf(
                     'Lockfile doesn\'t include the following packages at any version: "%s"',
                     implode('", "', $missingPackages)
@@ -58,6 +58,6 @@ class ComposerCheck implements CheckInterface
             );
         }
 
-        return new Success($this->getName()); 
+        return new Success($this->getName());
     }
 }
