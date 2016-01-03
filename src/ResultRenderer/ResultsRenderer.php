@@ -119,7 +119,7 @@ class ResultsRenderer
         foreach ($failures as $result) {
             list ($failure, $message) = $result;
             $output->writeLine(str_pad($this->style($message, ['red', 'bg_black', 'bold']), $padLength));
-            $output->explodeAndWrite($this->getRenderer($failure)->render($failure, $this));
+            $output->write($this->getRenderer($failure)->render($failure, $this));
         }
 
         $output->writeLine($this->style(" FAIL!", ['red', 'bg_default', 'bold']));
@@ -155,7 +155,7 @@ class ResultsRenderer
                 $code = $this->syntaxHighlighter->highlight($code);
             }
 
-            $output->explodeAndWrite($code);
+            $output->write($code);
             $output->writeLine($this->style($lineBreak, 'yellow'));
         }
 

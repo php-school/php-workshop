@@ -58,4 +58,17 @@ class OutputTest extends PHPUnit_Framework_TestCase
         $this->expectOutputString($message . "\n");
         $this->output->writeLine($message);
     }
+
+    public function testWriteLines()
+    {
+        $lines = ['Line 1', 'Line 2', 'Line 3'];
+        $this->expectOutputString("Line 1\nLine 2\nLine 3\n");
+        $this->output->writeLines($lines);
+    }
+
+    public function testEmptyLine()
+    {
+        $this->expectOutputString("\n");
+        $this->output->emptyLine();
+    }
 }

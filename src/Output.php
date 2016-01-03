@@ -46,14 +46,6 @@ class Output
     }
 
     /**
-     * @param string $lines
-     */
-    public function explodeAndWrite($lines)
-    {
-        $this->writeLines(explode("\n", $lines));
-    }
-
-    /**
      * @param array $lines
      */
     public function writeLines(array $lines)
