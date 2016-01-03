@@ -222,6 +222,37 @@ class ExerciseRunnerTest extends PHPUnit_Framework_TestCase
         $this->assertStringEqualsFile($this->file, 'ORIGINAL CONTENT');
     }
 
+    public function testPatchedCodeIsRevertedIfExceptionIsThrownAnywhere()
+    {
+        file_put_contents($this->file, 'ORIGINAL CONTENT');
+
+        $solution = $this->getMock(SolutionInterface::class);
+        $exercise = $this->getMock(ExerciseInterface::class);
+        $exercise->expects($this->any())
+            ->method('getSolution')
+            ->will($this->returnValue($solution));
+
+        $runMe = $this->getMock(CheckInterface::class);
+        $runMe
+            ->expects($this->once())
+            ->method('check')
+            ->with($exercise, $this->file)
+            ->will($this->throwException(new RuntimeException));
+
+        $this->codePatcher
+            ->expects($this->once())
+            ->method('patch')
+            ->with($exercise, 'ORIGINAL CONTENT')
+            ->will($this->returnValue('MODIFIED CONTENT'));
+
+        $this->exerciseRunner->registerCheck($runMe, ExerciseInterface::class);
+        try {
+            $this->exerciseRunner->runExercise($exercise, $this->file);
+        } catch (RuntimeException $e) {
+        }
+        $this->assertStringEqualsFile($this->file, 'ORIGINAL CONTENT');
+    }
+
     public function testIfSolutionRequiresComposerButComposerCannotBeLocatedExceptionIsThrown()
     {
         $refProp = new \ReflectionProperty(ExerciseRunner::class, 'composerLocations');

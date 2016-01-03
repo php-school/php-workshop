@@ -120,23 +120,24 @@ class ExerciseRunner
         $originalCode = file_get_contents($fileName);
         file_put_contents($fileName, $this->codePatcher->patch($exercise, $originalCode));
         
-        //run after checks (verifying output and content)
-        foreach ($this->checks as $check) {
-            if ($this->shouldRunCheck($check, $exercise, $this->checkMap)) {
-                $resultAggregator->add($check->check($exercise, $fileName));
+        try {
+            //run after checks (verifying output and content)
+            foreach ($this->checks as $check) {
+                if ($this->shouldRunCheck($check, $exercise, $this->checkMap)) {
+                    $resultAggregator->add($check->check($exercise, $fileName));
+                }
             }
+
+            //self check, for custom checking
+            if ($exercise instanceof SelfCheck) {
+                $resultAggregator->add($exercise->check($fileName));
+            }
+            $exercise->tearDown();
+        } finally {
+            //put back actual code, to remove patched additions
+            file_put_contents($fileName, $originalCode);
         }
 
-        //self check, for custom checking
-        if ($exercise instanceof SelfCheck) {
-            $resultAggregator->add($exercise->check($fileName));
-        }
-
-        $exercise->tearDown();
-        
-        //put back actual code, to remove patched additions
-        file_put_contents($fileName, $originalCode);
-        
         return $resultAggregator;
     }
 
