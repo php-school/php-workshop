@@ -87,10 +87,6 @@ class ResultsRenderer
      */
     public function render(ResultAggregator $results, ExerciseInterface $exercise, UserState $userState, Output $output)
     {
-        if ($results->isSuccessful()) {
-            return $this->renderSuccess($results, $exercise, $userState, $output);
-        }
-
         $successes  = [];
         $failures   = [];
         foreach ($results as $result) {
@@ -101,14 +97,28 @@ class ResultsRenderer
             }
         }
         
-        $longest  = max(array_map('strlen', array_merge($successes, array_column($failures, 1)))) + 2;
+        $longest = max(array_map('strlen', array_merge($successes, array_column($failures, 1)))) + 2;
         $output->writeLines(
             $this->padArray($this->styleArray($successes, ['green', 'bg_black', 'bold']), $longest)
         );
 
+        if ($results->isSuccessful()) {
+            return $this->renderSuccessInformation($exercise, $userState, $output);
+        }
+        $this->renderErrorInformation($failures, $longest, $exercise, $output);
+    }
+
+    /**
+     * @param array $failures
+     * @param int $padLength
+     * @param ExerciseInterface $exercise
+     * @param Output $output
+     */
+    private function renderErrorInformation(array $failures, $padLength, ExerciseInterface $exercise, Output $output)
+    {
         foreach ($failures as $result) {
             list ($failure, $message) = $result;
-            $output->writeLine(str_pad($this->style($message, ['red', 'bg_black', 'bold']), $longest));
+            $output->writeLine(str_pad($this->style($message, ['red', 'bg_black', 'bold']), $padLength));
             $output->explodeAndWrite($this->getRenderer($failure)->render($failure, $this));
         }
 
@@ -121,38 +131,22 @@ class ResultsRenderer
     }
 
     /**
-     * @param ResultAggregator $results
      * @param ExerciseInterface $exercise
      * @param UserState $userState
      * @param Output $output
      */
-    private function renderSuccess(
-        ResultAggregator $results,
-        ExerciseInterface $exercise,
-        UserState $userState,
-        Output $output
-    ) {
-        $lines = [];
-        foreach ($results as $result) {
-            /** @var Success $result */
-            $lines[] = sprintf(' ✔ Check: %s', $result->getCheckName());
-        }
-        
+    private function renderSuccessInformation(ExerciseInterface $exercise, UserState $userState, Output $output)
+    {
         $lineBreak = str_repeat("─", $this->terminal->getWidth());
-
-        $lines = $this->padArray($lines, max(array_map('strlen', $lines)) + 2);
-        $lines = $this->styleArray($lines, ['green', 'bg_black']);
-        
-        $output->writeLines($lines);
         $output->emptyLine();
         $output->writeLine($this->style(" PASS!", ['green', 'bg_default', 'bold']));
         $output->emptyLine();
-        
+
         $output->writeLine("Here's the official solution in case you want to compare notes:");
         $output->writeLine($this->style($lineBreak, 'yellow'));
-        
+
         foreach ($exercise->getSolution()->getFiles() as $file) {
-            
+
             $output->writeLine($this->style($file->getRelativePath(), ['bold', 'cyan', 'underline']));
             $output->emptyLine();
 
@@ -160,13 +154,13 @@ class ResultsRenderer
             if (pathinfo($file->getRelativePath(), PATHINFO_EXTENSION) === 'php') {
                 $code = $this->syntaxHighlighter->highlight($code);
             }
-            
+
             $output->explodeAndWrite($code);
             $output->writeLine($this->style($lineBreak, 'yellow'));
         }
-        
+
         $completedCount = count($userState->getCompletedExercises());
-        $numExercises = $this->exerciseRepository->count();
+        $numExercises   = $this->exerciseRepository->count();
 
         $output->writeLine(sprintf('You have %d challenges left.', $numExercises - $completedCount));
         $output->writeLine(sprintf('Type "%s" to show the menu.', $this->appName));
