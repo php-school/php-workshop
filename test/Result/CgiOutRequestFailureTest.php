@@ -52,6 +52,7 @@ class CgiOutRequestFailureTest extends PHPUnit_Framework_TestCase
         $this->assertEquals('Actual Output', $failure->getActualOutput());
         $this->assertTrue($failure->bodyDifferent());
         $this->assertFalse($failure->headersDifferent());
+        $this->assertFalse($failure->headersAndBodyDifferent());
         $this->assertSame($failure->getExpectedHeaders(), $failure->getActualHeaders());
     }
 
@@ -70,6 +71,7 @@ class CgiOutRequestFailureTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(['header2' => 'some-value'], $failure->getActualHeaders());
         $this->assertTrue($failure->headersDifferent());
         $this->assertFalse($failure->bodyDifferent());
+        $this->assertFalse($failure->headersAndBodyDifferent());
         $this->assertSame($failure->getExpectedOutput(), $failure->getActualOutput());
     }
 
@@ -86,7 +88,8 @@ class CgiOutRequestFailureTest extends PHPUnit_Framework_TestCase
         
         $this->assertTrue($failure->headersDifferent());
         $this->assertTrue($failure->bodyDifferent());
-        
+        $this->assertTrue($failure->headersAndBodyDifferent());
+
         $this->assertEquals(['header1' => 'some-value'], $failure->getExpectedHeaders());
         $this->assertEquals(['header2' => 'some-value'], $failure->getActualHeaders());
         $this->assertNotEquals($failure->getExpectedHeaders(), $failure->getActualHeaders());

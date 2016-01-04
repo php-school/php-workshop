@@ -88,6 +88,14 @@ class CgiOutRequestFailure implements FailureInterface
     }
 
     /**
+     * @return bool
+     */
+    public function headersAndBodyDifferent()
+    {
+        return $this->bodyDifferent() && $this->headersDifferent();
+    }
+
+    /**
      * @return string
      */
     public function getExpectedOutput()
