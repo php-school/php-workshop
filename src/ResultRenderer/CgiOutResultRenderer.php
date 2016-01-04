@@ -54,7 +54,7 @@ class CgiOutResultRenderer implements ResultRendererInterface
 
             if ($request->bodyDifferent()) {
                 if ($request->headersAndBodyDifferent()) {
-                    $output .= $renderer->style(sprintf("  %s\n\n", str_repeat('* ', 9)), ['green', 'bold']);
+                    $output .= $renderer->style("  * * * * * * * * *\n\n", ['green', 'bold']);
                 }
 
                 $output .= sprintf(

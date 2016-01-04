@@ -44,13 +44,15 @@ class CgiOutResultRendererTest extends AbstractResultRendererTest
         );
         $result = new CgiOutResult($check, [$failure]);
         $renderer = new CgiOutResultRenderer;
-        
-        $expected  = "\n";
-        $expected .= "  \e[33m\e[1m1. ACTUAL HEADERS:\e[0m\e[0m    \e[31mheader1: val\e[0m\n";
-        $expected .= "  \e[33m\e[1m1. EXPECTED HEADERS:\e[0m\e[0m  \e[31mheader1: val\e[0m\n";
-        $expected .= "                        \e[31mheader2: val\e[0m\n\n";
 
-        $this->assertEquals($expected, $renderer->render($result, $this->getRenderer()));
+        $expected  = "\n";
+        $expected .= "\e[32m\e[4m\e[1mRequest 01\n\n";
+        $expected .= "\e[0m\e[0m\e[0m  \e[33m\e[1mACTUAL HEADERS:\e[0m\e[0m    \e[31mheader1: val\e[0m\n\n";
+        $expected .= "  \e[33m\e[1mEXPECTED HEADERS:\e[0m\e[0m  \e[39mheader1: val\e[0m\n";
+        $expected .= "                     \e[39mheader2: val\e[0m\n\n";
+        $expected .= "\e[33m────────────────────\e[0m\n";
+
+        $this->assertSame($expected, $renderer->render($result, $this->getRenderer()));
     }
 
     public function testRenderWhenOnlyOutputDifferent()
@@ -66,12 +68,14 @@ class CgiOutResultRendererTest extends AbstractResultRendererTest
         );
         $result = new CgiOutResult($check, [$failure]);
         $renderer = new CgiOutResultRenderer;
-        
-        $expected  = "\n";
-        $expected .= "  \e[33m\e[1m1. ACTUAL CONTENT:\e[0m\e[0m    \e[31m\"ACTUAL OUTPUT\"\e[0m\n";
-        $expected .= "  \e[33m\e[1m1. EXPECTED CONTENT:\e[0m\e[0m  \e[31m\"EXPECTED OUTPUT\"\e[0m\n";
 
-        $this->assertEquals($expected, $renderer->render($result, $this->getRenderer()));
+        $expected  = "\n";
+        $expected .= "\e[32m\e[4m\e[1mRequest 01\n\n";
+        $expected .= "\e[0m\e[0m\e[0m  \e[33m\e[1mACTUAL CONTENT:\e[0m\e[0m    \e[31m\"ACTUAL OUTPUT\"\e[0m\n\n";
+        $expected .= "  \e[33m\e[1mEXPECTED CONTENT:\e[0m\e[0m  \e[39m\"EXPECTED OUTPUT\"\e[0m\n";
+        $expected .= "\e[33m────────────────────\e[0m\n";
+
+        $this->assertSame($expected, $renderer->render($result, $this->getRenderer()));
     }
 
     public function testRenderWhenOutputAndHeadersDifferent()
@@ -87,15 +91,18 @@ class CgiOutResultRendererTest extends AbstractResultRendererTest
         );
         $result = new CgiOutResult($check, [$failure]);
         $renderer = new CgiOutResultRenderer;
-        
-        $expected  = "\n";
-        $expected .= "  \e[33m\e[1m1. ACTUAL HEADERS:\e[0m\e[0m    \e[31mheader1: val\e[0m\n";
-        $expected .= "  \e[33m\e[1m1. EXPECTED HEADERS:\e[0m\e[0m  \e[31mheader1: val\e[0m\n";
-        $expected .= "                        \e[31mheader2: val\e[0m\n\n";
-        $expected .= "  \e[33m\e[1m1. ACTUAL CONTENT:\e[0m\e[0m    \e[31m\"ACTUAL OUTPUT\"\e[0m\n";
-        $expected .= "  \e[33m\e[1m1. EXPECTED CONTENT:\e[0m\e[0m  \e[31m\"EXPECTED OUTPUT\"\e[0m\n";
 
-        $this->assertEquals($expected, $renderer->render($result, $this->getRenderer()));
+        $expected  = "\n";
+        $expected .= "\e[32m\e[4m\e[1mRequest 01\n\n";
+        $expected .= "\e[0m\e[0m\e[0m  \e[33m\e[1mACTUAL HEADERS:\e[0m\e[0m    \e[31mheader1: val\e[0m\n\n";
+        $expected .= "  \e[33m\e[1mEXPECTED HEADERS:\e[0m\e[0m  \e[39mheader1: val\e[0m\n";
+        $expected .= "                     \e[39mheader2: val\e[0m\n\n";
+        $expected .= "\e[1m\e[32m  * * * * * * * * *\n\n";
+        $expected .= "\e[0m\e[0m  \e[33m\e[1mACTUAL CONTENT:\e[0m\e[0m    \e[31m\"ACTUAL OUTPUT\"\e[0m\n\n";
+        $expected .= "  \e[33m\e[1mEXPECTED CONTENT:\e[0m\e[0m  \e[39m\"EXPECTED OUTPUT\"\e[0m\n";
+        $expected .= "\e[33m────────────────────\e[0m\n";
+
+        $this->assertSame($expected, $renderer->render($result, $this->getRenderer()));
     }
 
     public function testNothingIsRenderedForSuccess()
@@ -113,12 +120,15 @@ class CgiOutResultRendererTest extends AbstractResultRendererTest
         $renderer = new CgiOutResultRenderer;
 
         $expected  = "\n";
-        $expected .= "  \e[33m\e[1m1. ACTUAL HEADERS:\e[0m\e[0m    \e[31mheader1: val\e[0m\n";
-        $expected .= "  \e[33m\e[1m1. EXPECTED HEADERS:\e[0m\e[0m  \e[31mheader1: val\e[0m\n";
-        $expected .= "                        \e[31mheader2: val\e[0m\n\n";
-        $expected .= "  \e[33m\e[1m1. ACTUAL CONTENT:\e[0m\e[0m    \e[31m\"ACTUAL OUTPUT\"\e[0m\n";
-        $expected .= "  \e[33m\e[1m1. EXPECTED CONTENT:\e[0m\e[0m  \e[31m\"EXPECTED OUTPUT\"\e[0m\n";
+        $expected .= "\e[32m\e[4m\e[1mRequest 01\n\n";
+        $expected .= "\e[0m\e[0m\e[0m  \e[33m\e[1mACTUAL HEADERS:\e[0m\e[0m    \e[31mheader1: val\e[0m\n\n";
+        $expected .= "  \e[33m\e[1mEXPECTED HEADERS:\e[0m\e[0m  \e[39mheader1: val\e[0m\n";
+        $expected .= "                     \e[39mheader2: val\e[0m\n\n";
+        $expected .= "\e[1m\e[32m  * * * * * * * * *\n\n";
+        $expected .= "\e[0m\e[0m  \e[33m\e[1mACTUAL CONTENT:\e[0m\e[0m    \e[31m\"ACTUAL OUTPUT\"\e[0m\n\n";
+        $expected .= "  \e[33m\e[1mEXPECTED CONTENT:\e[0m\e[0m  \e[39m\"EXPECTED OUTPUT\"\e[0m\n";
+        $expected .= "\e[33m────────────────────\e[0m\n";
 
-        $this->assertEquals($expected, $renderer->render($result, $this->getRenderer()));
+        $this->assertSame($expected, $renderer->render($result, $this->getRenderer()));
     }
 }

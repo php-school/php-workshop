@@ -17,6 +17,11 @@ use PhpSchool\PhpWorkshop\ResultRenderer\ResultsRenderer;
 abstract class AbstractResultRendererTest extends PHPUnit_Framework_TestCase
 {
     /**
+     * @var TerminalInterface
+     */
+    protected $terminal;
+
+    /**
      * @return ResultsRenderer
      */
     protected function getRenderer()
@@ -24,12 +29,17 @@ abstract class AbstractResultRendererTest extends PHPUnit_Framework_TestCase
         $color = new Color;
         $color->setForceStyle(true);
 
-        $terminal = $this->getMock(TerminalInterface::class);
+        $this->terminal = $this->getMock(TerminalInterface::class);
         $exerciseRepo = $this->getMockBuilder(ExerciseRepository::class)
             ->disableOriginalConstructor()
             ->getMock();
 
+        $this->terminal
+            ->expects($this->any())
+            ->method('getWidth')
+            ->will($this->returnValue(20));
+
         $syntaxHighlighter = (new Factory)->__invoke();
-        return new ResultsRenderer('appName', $color, $terminal, $exerciseRepo, $syntaxHighlighter);
+        return new ResultsRenderer('appName', $color, $this->terminal, $exerciseRepo, $syntaxHighlighter);
     }
 }
