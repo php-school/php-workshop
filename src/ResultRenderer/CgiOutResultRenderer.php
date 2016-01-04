@@ -2,7 +2,9 @@
 
 namespace PhpSchool\PhpWorkshop\ResultRenderer;
 
+use PhpSchool\PhpWorkshop\Result\CgiOutRequestFailure;
 use PhpSchool\PhpWorkshop\Result\CgiOutResult;
+use PhpSchool\PhpWorkshop\Result\FailureInterface;
 use PhpSchool\PhpWorkshop\Result\ResultInterface;
 use PhpSchool\PhpWorkshop\Result\SuccessInterface;
 
@@ -24,53 +26,68 @@ class CgiOutResultRenderer implements ResultRendererInterface
             throw new \InvalidArgumentException(sprintf('Incompatible result type: %s', get_class($result)));
         }
 
+        $results = array_filter($result->getIterator()->getArrayCopy(), function (ResultInterface $result) {
+            return $result instanceof FailureInterface;
+        });
+
         $output = '';
-        foreach ($result as $key => $request) {
-            if ($request instanceof SuccessInterface) {
-                continue;
-            }
+        foreach ($results as $key => $request) {
             
             $output .= "\n";
+            $output .= $renderer->style(sprintf("Request %02d\n\n", $key + 1), ['bold', 'underline', 'green']);
+
+            if (!$request instanceof CgiOutRequestFailure) {
+                $output .= $renderer->renderResult($request) . "\n";
+                $output .= $renderer->lineBreak();
+                continue;
+            }
 
             if ($request->headersDifferent()) {
                 $output .= sprintf(
-                    "  %s    %s  %s  %s\n",
-                    $renderer->style(sprintf("%d. ACTUAL HEADERS:", $key + 1), ['bold', 'yellow']),
+                    "  %s    %s\n  %s  %s\n",
+                    $renderer->style("ACTUAL HEADERS:", ['bold', 'yellow']),
                     $this->headers($request->getActualHeaders(), $renderer),
-                    $renderer->style(sprintf("%d. EXPECTED HEADERS:", $key + 1), ['bold', 'yellow']),
-                    $this->headers($request->getExpectedHeaders(), $renderer)
+                    $renderer->style("EXPECTED HEADERS:", ['bold', 'yellow']),
+                    $this->headers($request->getExpectedHeaders(), $renderer, false)
                 );
             }
 
             if ($request->bodyDifferent()) {
+                if ($request->headersAndBodyDifferent()) {
+                    $output .= $renderer->style("  * * * * * * * * *\n\n", ['green', 'bold']);
+                }
+
                 $output .= sprintf(
-                    "  %s    %s\n  %s  %s\n",
-                    $renderer->style(sprintf("%d. ACTUAL CONTENT:", $key + 1), ['bold', 'yellow']),
+                    "  %s    %s\n\n  %s  %s\n",
+                    $renderer->style("ACTUAL CONTENT:", ['bold', 'yellow']),
                     $renderer->style(sprintf('"%s"', $request->getActualOutput()), 'red'),
-                    $renderer->style(sprintf("%d. EXPECTED CONTENT:", $key + 1), ['bold', 'yellow']),
-                    $renderer->style(sprintf('"%s"', $request->getExpectedOutput()), 'red')
+                    $renderer->style("EXPECTED CONTENT:", ['bold', 'yellow']),
+                    $renderer->style(sprintf('"%s"', $request->getExpectedOutput()), 'default')
                 );
             }
+
+            $output .= $renderer->lineBreak();
         }
 
-        return $output;
+        return $output . "\n";
     }
 
     /**
      * @param array $headers
      * @param ResultsRenderer $renderer
+     * @param bool $actual
      * @return string
      */
-    private function headers(array $headers, ResultsRenderer $renderer)
+    private function headers(array $headers, ResultsRenderer $renderer, $actual = true)
     {
         $indent = false;
         $output = '';
         foreach ($headers as $name => $value) {
             if ($indent) {
-                $output .= str_repeat(' ', 24);
+                $output .= str_repeat(' ', 21);
             }
             
-            $output .=  $renderer->style(sprintf("%s: %s", $name, $value), 'red') . "\n";
+            $output .=  $renderer->style(sprintf("%s: %s", $name, $value), $actual ? 'red' : 'default') . "\n";
             $indent  = true;
         }
         

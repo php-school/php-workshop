@@ -119,7 +119,7 @@ class ResultsRenderer
         foreach ($failures as $result) {
             list ($failure, $message) = $result;
             $output->writeLine(str_pad($this->style($message, ['red', 'bg_black', 'bold']), $padLength));
-            $output->write($this->getRenderer($failure)->render($failure, $this));
+            $output->write($this->renderResult($failure));
         }
 
         $output->writeLine($this->style(" FAIL!", ['red', 'bg_default', 'bold']));
@@ -137,13 +137,12 @@ class ResultsRenderer
      */
     private function renderSuccessInformation(ExerciseInterface $exercise, UserState $userState, Output $output)
     {
-        $lineBreak = str_repeat("─", $this->terminal->getWidth());
         $output->emptyLine();
         $output->writeLine($this->style(" PASS!", ['green', 'bg_default', 'bold']));
         $output->emptyLine();
 
         $output->writeLine("Here's the official solution in case you want to compare notes:");
-        $output->writeLine($this->style($lineBreak, 'yellow'));
+        $output->writeLine($this->lineBreak());
 
         foreach ($exercise->getSolution()->getFiles() as $file) {
 
@@ -156,7 +155,7 @@ class ResultsRenderer
             }
 
             $output->write($code);
-            $output->writeLine($this->style($lineBreak, 'yellow'));
+            $output->writeLine($this->lineBreak());
         }
 
         $completedCount = count($userState->getCompletedExercises());
@@ -210,6 +209,23 @@ class ResultsRenderer
         }
 
         return $this->color->__invoke($string)->apply($colourOrStyle, $string);
+    }
+
+    /**
+     * @param ResultInterface $result
+     * @return string
+     */
+    public function renderResult(ResultInterface $result)
+    {
+        return $this->getRenderer($result)->render($result, $this);
+    }
+
+    /**
+     * @return string
+     */
+    public function lineBreak()
+    {
+        return $this->style(str_repeat("─", $this->terminal->getWidth()), 'yellow');
     }
 
     /**
