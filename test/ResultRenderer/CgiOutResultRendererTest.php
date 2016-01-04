@@ -7,10 +7,12 @@ use PhpSchool\PhpWorkshop\Check\CheckInterface;
 use PhpSchool\PhpWorkshop\Result\CgiOutFailure;
 use PhpSchool\PhpWorkshop\Result\CgiOutRequestFailure;
 use PhpSchool\PhpWorkshop\Result\CgiOutResult;
+use PhpSchool\PhpWorkshop\Result\Failure;
 use PhpSchool\PhpWorkshop\Result\ResultInterface;
 use PhpSchool\PhpWorkshop\Result\Success;
 use PhpSchool\PhpWorkshop\ResultRenderer\CgiOutFailureRenderer;
 use PhpSchool\PhpWorkshop\ResultRenderer\CgiOutResultRenderer;
+use PhpSchool\PhpWorkshop\ResultRenderer\FailureRenderer;
 use Psr\Http\Message\RequestInterface;
 
 /**
@@ -130,5 +132,84 @@ class CgiOutResultRendererTest extends AbstractResultRendererTest
         $expected .= "\e[33m────────────────────\e[0m\n";
 
         $this->assertSame($expected, $renderer->render($result, $this->getRenderer()));
+    }
+
+    public function testMultipleFailedRequests()
+    {
+        $check = $this->getMock(CheckInterface::class);
+        $failure1 = new CgiOutRequestFailure(
+            $check,
+            $this->getMock(RequestInterface::class),
+            'EXPECTED OUTPUT 1',
+            'ACTUAL OUTPUT 1',
+            ['header1' => 'val', 'header2' => 'val'],
+            ['header1' => 'val']
+        );
+
+        $failure2 = new CgiOutRequestFailure(
+            $check,
+            $this->getMock(RequestInterface::class),
+            'EXPECTED OUTPUT 2',
+            'ACTUAL OUTPUT 2',
+            ['header1' => 'val', 'header2' => 'val'],
+            ['header1' => 'val']
+        );
+        $result = new CgiOutResult($check, [$failure1, $failure2]);
+        $renderer = new CgiOutResultRenderer;
+
+        $expected  = "\n";
+        $expected .= "\e[32m\e[4m\e[1mRequest 01\n\n";
+        $expected .= "\e[0m\e[0m\e[0m  \e[33m\e[1mACTUAL HEADERS:\e[0m\e[0m    \e[31mheader1: val\e[0m\n\n";
+        $expected .= "  \e[33m\e[1mEXPECTED HEADERS:\e[0m\e[0m  \e[39mheader1: val\e[0m\n";
+        $expected .= "                     \e[39mheader2: val\e[0m\n\n";
+        $expected .= "\e[1m\e[32m  * * * * * * * * *\n\n";
+        $expected .= "\e[0m\e[0m  \e[33m\e[1mACTUAL CONTENT:\e[0m\e[0m    \e[31m\"ACTUAL OUTPUT 1\"\e[0m\n\n";
+        $expected .= "  \e[33m\e[1mEXPECTED CONTENT:\e[0m\e[0m  \e[39m\"EXPECTED OUTPUT 1\"\e[0m\n";
+        $expected .= "\e[33m────────────────────\e[0m\n";
+        $expected .= "\e[32m\e[4m\e[1mRequest 02\n\n";
+        $expected .= "\e[0m\e[0m\e[0m  \e[33m\e[1mACTUAL HEADERS:\e[0m\e[0m    \e[31mheader1: val\e[0m\n\n";
+        $expected .= "  \e[33m\e[1mEXPECTED HEADERS:\e[0m\e[0m  \e[39mheader1: val\e[0m\n";
+        $expected .= "                     \e[39mheader2: val\e[0m\n\n";
+        $expected .= "\e[1m\e[32m  * * * * * * * * *\n\n";
+        $expected .= "\e[0m\e[0m  \e[33m\e[1mACTUAL CONTENT:\e[0m\e[0m    \e[31m\"ACTUAL OUTPUT 2\"\e[0m\n\n";
+        $expected .= "  \e[33m\e[1mEXPECTED CONTENT:\e[0m\e[0m  \e[39m\"EXPECTED OUTPUT 2\"\e[0m\n";
+        $expected .= "\e[33m────────────────────\e[0m\n";
+
+        $this->assertSame($expected, $renderer->render($result, $this->getRenderer()));
+    }
+
+    public function testCodeExecutionFailureIsDelegatedToMainRenderer()
+    {
+        $check = $this->getMock(CheckInterface::class);
+        $failure = new CgiOutRequestFailure(
+            $check,
+            $this->getMock(RequestInterface::class),
+            'EXPECTED OUTPUT',
+            'ACTUAL OUTPUT',
+            ['header1' => 'val', 'header2' => 'val'],
+            ['header1' => 'val']
+        );
+
+        $codeExecutionFailure = new Failure('Test Check', 'Code Execution Failure');
+        $result = new CgiOutResult($check, [$failure, $codeExecutionFailure]);
+        $renderer = new CgiOutResultRenderer;
+
+        $expected  = "\n";
+        $expected .= "\e[32m\e[4m\e[1mRequest 01\n\n";
+        $expected .= "\e[0m\e[0m\e[0m  \e[33m\e[1mACTUAL HEADERS:\e[0m\e[0m    \e[31mheader1: val\e[0m\n\n";
+        $expected .= "  \e[33m\e[1mEXPECTED HEADERS:\e[0m\e[0m  \e[39mheader1: val\e[0m\n";
+        $expected .= "                     \e[39mheader2: val\e[0m\n\n";
+        $expected .= "\e[1m\e[32m  * * * * * * * * *\n\n";
+        $expected .= "\e[0m\e[0m  \e[33m\e[1mACTUAL CONTENT:\e[0m\e[0m    \e[31m\"ACTUAL OUTPUT\"\e[0m\n\n";
+        $expected .= "  \e[33m\e[1mEXPECTED CONTENT:\e[0m\e[0m  \e[39m\"EXPECTED OUTPUT\"\e[0m\n";
+        $expected .= "\e[33m────────────────────\e[0m\n";
+        $expected .= "\e[32m\e[4m\e[1mRequest 02\n\n";
+        $expected .= "\e[0m\e[0m\e[0mCode Execution Failure\n";
+        $expected .= "\e[33m────────────────────\e[0m\n";
+
+        $mainRenderer = $this->getRenderer();
+        $mainRenderer->registerRenderer(Failure::class, new FailureRenderer);
+
+        $this->assertSame($expected, $renderer->render($result, $mainRenderer));
     }
 }
