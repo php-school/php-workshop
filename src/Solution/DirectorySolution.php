@@ -3,10 +3,14 @@
 namespace PhpSchool\PhpWorkshop\Solution;
 
 use InvalidArgumentException;
+use RecursiveCallbackFilterIterator;
+use RecursiveDirectoryIterator;
+use RecursiveIteratorIterator;
 
 /**
  * Class DirectorySolution
  * @author Aydin Hassan <aydin@hotmail.co.uk>
+ * @author Michael Woodward <mikeymike.mw@gmail.com>
  */
 class DirectorySolution implements SolutionInterface
 {
@@ -29,16 +33,30 @@ class DirectorySolution implements SolutionInterface
     /**
      * @param string $directory
      * @param string $entryPoint
+     * @param array  $exclusions
      * @throws InvalidArgumentException
      */
-    public function __construct($directory, $entryPoint)
+    public function __construct($directory, $entryPoint, array $exclusions = [])
     {
         $directory  = realpath(rtrim($directory, '/'));
         $entryPoint = ltrim($entryPoint, '/');
-        
-        $files = array_values(array_diff(scandir($directory), ['..', '.']));
+
+        $dir  = new RecursiveDirectoryIterator($directory, RecursiveDirectoryIterator::SKIP_DOTS);
+        $iter = new RecursiveIteratorIterator(
+            new RecursiveCallbackFilterIterator($dir, function (\SplFileInfo $current) use ($exclusions) {
+                return !in_array($current->getBasename(), $exclusions);
+            }),
+            RecursiveIteratorIterator::SELF_FIRST
+        );
+
+        $files = [];
+        foreach ($iter as $file) {
+            if ($file->isFile()) {
+                $files[] = trim(substr($file->getPathname(), strlen($directory)), '/');
+            }
+        }
         sort($files);
-        
+
         if (!in_array($entryPoint, $files)) {
             throw new InvalidArgumentException(
                 sprintf('Entry point: "%s" does not exist in: "%s"', $entryPoint, $directory)
@@ -49,18 +67,19 @@ class DirectorySolution implements SolutionInterface
             return new SolutionFile($file, $directory);
         }, $files);
         
-        $this->entryPoint = sprintf('%s/%s', $directory, $entryPoint);
+        $this->entryPoint    = sprintf('%s/%s', $directory, $entryPoint);
         $this->baseDirectory = $directory;
     }
 
     /**
      * @param string $directory
+     * @param array  $exclusions
      * @param string $entryPoint
      * @return static
      */
-    public static function fromDirectory($directory, $entryPoint = 'solution.php')
+    public static function fromDirectory($directory, array $exclusions = [], $entryPoint = 'solution.php')
     {
-        return new static($directory, $entryPoint);
+        return new static($directory, $entryPoint, array_merge($exclusions, ['composer.lock', 'vendor']));
     }
     
     /**
