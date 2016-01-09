@@ -5,6 +5,7 @@ namespace PhpSchool\PhpWorkshop\ExerciseRunner;
 use PhpSchool\PhpWorkshop\Exception\CodeExecutionException;
 use PhpSchool\PhpWorkshop\Exception\SolutionExecutionException;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
+use PhpSchool\PhpWorkshop\Exercise\ExerciseType;
 use PhpSchool\PhpWorkshop\ExerciseCheck\StdOutExerciseCheck;
 use PhpSchool\PhpWorkshop\Output\OutputInterface;
 use PhpSchool\PhpWorkshop\Result\Failure;
@@ -54,7 +55,7 @@ class CliRunner implements ExerciseRunnerInterface
      */
     public function verify(ExerciseInterface $exercise, $fileName)
     {
-        if (!$exercise instanceof StdOutExerciseCheck) {
+        if (!$exercise->getType()->getValue() === ExerciseType::CLI) {
             throw new \InvalidArgumentException;
         }
         $args = $exercise->getArgs();
@@ -68,13 +69,13 @@ class CliRunner implements ExerciseRunnerInterface
         try {
             $userOutput = $this->executePhpFile($fileName, $args);
         } catch (CodeExecutionException $e) {
-            return Failure::fromCheckAndCodeExecutionFailure($this, $e);
+            return Failure::fromNameAndCodeExecutionFailure($this->getName(), $e);
         }
         if ($solutionOutput === $userOutput) {
-            return Success::fromCheck($this);
+            return new Success($this->getName());
         }
 
-        return StdOutFailure::fromCheckAndOutput($this, $solutionOutput, $userOutput);
+        return StdOutFailure::fromNameAndOutput($this->getName(), $solutionOutput, $userOutput);
     }
 
     /**
@@ -85,7 +86,7 @@ class CliRunner implements ExerciseRunnerInterface
      */
     public function run(ExerciseInterface $exercise, $fileName, OutputInterface $output)
     {
-        if (!$exercise instanceof StdOutExerciseCheck) {
+        if (!$exercise->getType()->getValue() === ExerciseType::CLI) {
             throw new \InvalidArgumentException;
         }
         $args = $exercise->getArgs();

@@ -5,7 +5,7 @@ namespace PhpSchool\PhpWorkshop\ExerciseRunner;
 use PhpSchool\PhpWorkshop\Exception\CodeExecutionException;
 use PhpSchool\PhpWorkshop\Exception\SolutionExecutionException;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
-use PhpSchool\PhpWorkshop\ExerciseCheck\CgiOutputExerciseCheck;
+use PhpSchool\PhpWorkshop\Exercise\ExerciseType;
 use PhpSchool\PhpWorkshop\Output\OutputInterface;
 use PhpSchool\PhpWorkshop\Result\CgiOutFailure;
 use PhpSchool\PhpWorkshop\Result\CgiOutRequestFailure;
@@ -50,7 +50,7 @@ class CgiRunner implements ExerciseRunnerInterface
         try {
             $userResponse = $this->executePhpFile($fileName, $request);
         } catch (CodeExecutionException $e) {
-            return Failure::fromCheckAndCodeExecutionFailure($this, $e);
+            return Failure::fromNameAndCodeExecutionFailure($this->getName(), $e);
         }
         
         $solutionBody       = (string) $solutionResponse->getBody();
@@ -59,10 +59,10 @@ class CgiRunner implements ExerciseRunnerInterface
         $userHeaders        = $this->getHeaders($userResponse);
         
         if ($solutionBody !== $userBody || $solutionHeaders !== $userHeaders) {
-            return new CgiOutRequestFailure($this, $request, $solutionBody, $userBody, $solutionHeaders, $userHeaders);
+            return new CgiOutRequestFailure($request, $solutionBody, $userBody, $solutionHeaders, $userHeaders);
         }
 
-        return Success::fromCheck($this);
+        return new Success($this->getName());
     }
 
     /**
@@ -131,11 +131,11 @@ class CgiRunner implements ExerciseRunnerInterface
      */
     public function verify(ExerciseInterface $exercise, $fileName)
     {
-        if (!$exercise instanceof CgiOutputExerciseCheck) {
+        if (!$exercise->getType()->getValue() === ExerciseType::CGI) {
             throw new \InvalidArgumentException;
         }
 
-        return new CgiOutResult($this, array_map(function (RequestInterface $request) use ($exercise, $fileName) {
+        return new CgiOutResult($this->getName(), array_map(function (RequestInterface $request) use ($exercise, $fileName) {
             return $this->checkRequest($exercise, $request, $fileName);
         }, $exercise->getRequests()));
     }
@@ -148,7 +148,7 @@ class CgiRunner implements ExerciseRunnerInterface
      */
     public function run(ExerciseInterface $exercise, $fileName, OutputInterface $output)
     {
-        if (!$exercise instanceof CgiOutputExerciseCheck) {
+        if (!$exercise->getType()->getValue() === ExerciseType::CGI) {
             throw new \InvalidArgumentException;
         }
 
