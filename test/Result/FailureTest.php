@@ -60,7 +60,7 @@ class FailureTest extends PHPUnit_Framework_TestCase
     public function testFailureFromCodeExecutionException()
     {
         $e = new CodeExecutionException('Something went wrong yo');
-        $failure = Failure::fromCheckAndCodeExecutionFailure($this->check, $e);
+        $failure = Failure::fromNameAndCodeExecutionFailure('Some Check', $e);
         $this->assertInstanceOf(ResultInterface::class, $failure);
         $this->assertEquals('Something went wrong yo', $failure->getReason());
         $this->assertEquals('Some Check', $failure->getCheckName());

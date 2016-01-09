@@ -12,18 +12,29 @@ use PhpSchool\PhpWorkshop\ResultAggregator;
  */
 class CgiOutResult extends ResultAggregator implements ResultInterface
 {
-    use ResultTrait;
+    /**
+     * @var string
+     */
+    private $name;
 
     /**
-     * CgiOutResult constructor.
-     * @param CheckInterface $check
+     * @param string $name
      * @param array $requestResults
      */
-    public function __construct(CheckInterface $check, array $requestResults)
+    public function __construct($name, array $requestResults)
     {
-        $this->check = $check;
+        $this->name = $name;
         foreach ($requestResults as $request) {
             $this->add($request);
         }
+    }
+
+
+    /**
+     * @return string
+     */
+    public function getCheckName()
+    {
+        return $this->name;
     }
 }

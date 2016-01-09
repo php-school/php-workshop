@@ -18,29 +18,17 @@ use Psr\Http\Message\RequestInterface;
  */
 class CgiOutRequestFailureTest extends PHPUnit_Framework_TestCase
 {
-    /**
-     * @var CheckInterface
-     */
-    private $check;
-
     public function setUp()
     {
-        $this->check = $this->getMock(CheckInterface::class);
-        $this->check
-            ->expects($this->any())
-            ->method('getName')
-            ->will($this->returnValue('Some Check'));
-        
         $request = $this->getMock(RequestInterface::class);
-        $cgiOutResult = new CgiOutRequestFailure($this->check, $request, '', '', [], []);
-        $this->assertSame('Some Check', $cgiOutResult->getCheckName());
+        $cgiOutResult = new CgiOutRequestFailure($request, '', '', [], []);
+        $this->assertSame('Request Failure', $cgiOutResult->getCheckName());
         $this->assertSame($request, $cgiOutResult->getRequest());
     }
     
     public function testWhenOnlyOutputDifferent()
     {
         $failure = new CgiOutRequestFailure(
-            $this->check,
             $this->getMock(RequestInterface::class),
             'Expected Output',
             'Actual Output',
@@ -59,7 +47,6 @@ class CgiOutRequestFailureTest extends PHPUnit_Framework_TestCase
     public function testWhenOnlyHeadersDifferent()
     {
         $failure = new CgiOutRequestFailure(
-            $this->check,
             $this->getMock(RequestInterface::class),
             'Output',
             'Output',
@@ -78,7 +65,6 @@ class CgiOutRequestFailureTest extends PHPUnit_Framework_TestCase
     public function testWhenOutputAndHeadersDifferent()
     {
         $failure = new CgiOutRequestFailure(
-            $this->check,
             $this->getMock(RequestInterface::class),
             'Expected Output',
             'Actual Output',

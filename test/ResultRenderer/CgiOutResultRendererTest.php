@@ -37,14 +37,13 @@ class CgiOutResultRendererTest extends AbstractResultRendererTest
     {
         $check = $this->getMock(CheckInterface::class);
         $failure = new CgiOutRequestFailure(
-            $check,
             $this->getMock(RequestInterface::class),
             'OUTPUT',
             'OUTPUT',
             ['header1' => 'val', 'header2' => 'val'],
             ['header1' => 'val']
         );
-        $result = new CgiOutResult($check, [$failure]);
+        $result = new CgiOutResult('Some Check', [$failure]);
         $renderer = new CgiOutResultRenderer;
 
         $expected  = "\n";
@@ -59,16 +58,14 @@ class CgiOutResultRendererTest extends AbstractResultRendererTest
 
     public function testRenderWhenOnlyOutputDifferent()
     {
-        $check = $this->getMock(CheckInterface::class);
         $failure = new CgiOutRequestFailure(
-            $check,
             $this->getMock(RequestInterface::class),
             'EXPECTED OUTPUT',
             'ACTUAL OUTPUT',
             ['header1' => 'val'],
             ['header1' => 'val']
         );
-        $result = new CgiOutResult($check, [$failure]);
+        $result = new CgiOutResult('Some Check', [$failure]);
         $renderer = new CgiOutResultRenderer;
 
         $expected  = "\n";
@@ -82,16 +79,14 @@ class CgiOutResultRendererTest extends AbstractResultRendererTest
 
     public function testRenderWhenOutputAndHeadersDifferent()
     {
-        $check = $this->getMock(CheckInterface::class);
         $failure = new CgiOutRequestFailure(
-            $check,
             $this->getMock(RequestInterface::class),
             'EXPECTED OUTPUT',
             'ACTUAL OUTPUT',
             ['header1' => 'val', 'header2' => 'val'],
             ['header1' => 'val']
         );
-        $result = new CgiOutResult($check, [$failure]);
+        $result = new CgiOutResult('Some Check', [$failure]);
         $renderer = new CgiOutResultRenderer;
 
         $expected  = "\n";
@@ -109,16 +104,14 @@ class CgiOutResultRendererTest extends AbstractResultRendererTest
 
     public function testNothingIsRenderedForSuccess()
     {
-        $check = $this->getMock(CheckInterface::class);
         $failure = new CgiOutRequestFailure(
-            $check,
             $this->getMock(RequestInterface::class),
             'EXPECTED OUTPUT',
             'ACTUAL OUTPUT',
             ['header1' => 'val', 'header2' => 'val'],
             ['header1' => 'val']
         );
-        $result = new CgiOutResult($check, [$failure, new Success($check)]);
+        $result = new CgiOutResult('Some Check', [$failure, new Success('Successful')]);
         $renderer = new CgiOutResultRenderer;
 
         $expected  = "\n";

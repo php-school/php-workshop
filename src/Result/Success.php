@@ -11,6 +11,8 @@ use PhpSchool\PhpWorkshop\Check\CheckInterface;
  */
 class Success implements SuccessInterface
 {
+    private $name;
+
     /**
      * @param string $name
      */

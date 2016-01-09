@@ -17,31 +17,14 @@ use Psr\Http\Message\RequestInterface;
  */
 class CgiOutResultTest extends PHPUnit_Framework_TestCase
 {
-    /**
-     * @var CheckInterface
-     */
-    private $check;
-
-    public function setUp()
-    {
-        $this->check = $this->getMock(CheckInterface::class);
-        $this->check
-            ->expects($this->any())
-            ->method('getName')
-            ->will($this->returnValue('Some Check'));
-        
-        $cgiOutResult = new CgiOutResult($this->check, []);
-        $this->assertSame('Some Check', $cgiOutResult->getCheckName());
-    }
-
     public function testIsSuccessful()
     {
-        $request = new CgiOutRequestFailure($this->check, $this->getMock(RequestInterface::class), '', '', [], []);
-        $cgiOutResult = new CgiOutResult($this->check, [$request]);
+        $request = new CgiOutRequestFailure($this->getMock(RequestInterface::class), '', '', [], []);
+        $cgiOutResult = new CgiOutResult('Some Check', [$request]);
         
         $this->assertFalse($cgiOutResult->isSuccessful());
 
-        $cgiOutResult = new CgiOutResult($this->check, [new Success($this->check)]);
+        $cgiOutResult = new CgiOutResult('Some Check', [new Success('Successful Check')]);
         $this->assertTrue($cgiOutResult->isSuccessful());
         
         $cgiOutResult->add($request);
