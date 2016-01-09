@@ -2,19 +2,18 @@
 
 namespace PhpSchool\PhpWorkshopTest\Asset;
 
-use PDO;
-use PhpSchool\PhpWorkshop\Check\DatabaseCheck;
+use PhpSchool\PhpWorkshop\Check\ComposerCheck;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseType;
-use PhpSchool\PhpWorkshop\ExerciseCheck\DatabaseExerciseCheck;
+use PhpSchool\PhpWorkshop\ExerciseCheck\FunctionRequirementsExerciseCheck;
 use PhpSchool\PhpWorkshop\ExerciseDispatcher;
 
 /**
- * Class DatabaseExercise
- * @package PhpSchool\PhpWorkshopTest
+ * Class FunctionRequirementsExercise
+ * @package PhpSchool\PhpWorkshopTest\Asset
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
-class DatabaseExercise implements ExerciseInterface, DatabaseExerciseCheck
+class FunctionRequirementsExercise implements ExerciseInterface, FunctionRequirementsExerciseCheck
 {
 
     /**
@@ -48,7 +47,7 @@ class DatabaseExercise implements ExerciseInterface, DatabaseExerciseCheck
     {
         // TODO: Implement getProblem() method.
     }
-    
+
     /**
      * @return void
      */
@@ -66,21 +65,14 @@ class DatabaseExercise implements ExerciseInterface, DatabaseExerciseCheck
     }
 
     /**
-     * @param PDO $db
-     * @return bool
+     * @return array[]
      */
-    public function verify(PDO $db)
+    public function getRequiredPackages()
     {
-        // TODO: Implement verify() method.
-    }
-
-    /**
-     * @param PDO $db
-     * @return void
-     */
-    public function seed(PDO $db)
-    {
-        // TODO: Implement seed() method.
+        return [
+            'klein/klein',
+            'danielstjules/stringy'
+        ];
     }
 
     /**
@@ -96,6 +88,22 @@ class DatabaseExercise implements ExerciseInterface, DatabaseExerciseCheck
      */
     public function configure(ExerciseDispatcher $dispatcher)
     {
-        $dispatcher->requireCheck(DatabaseCheck::class);
+        $dispatcher->requireCheck(ComposerCheck::class);
+    }
+
+    /**
+     * @return string[]
+     */
+    public function getRequiredFunctions()
+    {
+        return [];
+    }
+
+    /**
+     * @return string[]
+     */
+    public function getBannedFunctions()
+    {
+        return ['file'];
     }
 }

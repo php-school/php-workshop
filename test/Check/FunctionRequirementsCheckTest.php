@@ -5,6 +5,7 @@ namespace PhpSchool\PhpWorkshopTest\Check;
 use InvalidArgumentException;
 use PhpParser\Parser;
 use PhpParser\ParserFactory;
+use PhpSchool\PhpWorkshopTest\Asset\FunctionRequirementsExercise;
 use PHPUnit_Framework_TestCase;
 use PhpSchool\PhpWorkshop\Check\FunctionRequirementsCheck;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
@@ -40,7 +41,7 @@ class FunctionRequirementsCheckTest extends PHPUnit_Framework_TestCase
         $parserFactory = new ParserFactory;
         $this->parser = $parserFactory->create(ParserFactory::PREFER_PHP7);
         $this->check = new FunctionRequirementsCheck($this->parser);
-        $this->exercise = $this->getMock([FunctionRequirementsExerciseCheck::class, ExerciseInterface::class]);
+        $this->exercise = new FunctionRequirementsExercise;
         $this->assertEquals('Function Requirements Check', $this->check->getName());
     }
 
@@ -54,15 +55,6 @@ class FunctionRequirementsCheckTest extends PHPUnit_Framework_TestCase
 
     public function testFailureIsReturnedIfCodeCouldNotBeParsed()
     {
-        $this->exercise
-            ->expects($this->once())
-            ->method('getBannedFunctions')
-            ->will($this->returnValue(['file']));
-
-        $this->exercise
-            ->expects($this->once())
-            ->method('getRequiredFunctions')
-            ->will($this->returnValue([]));
 
         $file = __DIR__ . '/../res/function-requirements/fail-invalid-code.php';
         $failure = $this->check->check($this->exercise, $file);
@@ -74,16 +66,6 @@ class FunctionRequirementsCheckTest extends PHPUnit_Framework_TestCase
 
     public function testFailureIsReturnedIfBannedFunctionsAreUsed()
     {
-        $this->exercise
-            ->expects($this->once())
-            ->method('getBannedFunctions')
-            ->will($this->returnValue(['file']));
-
-        $this->exercise
-            ->expects($this->once())
-            ->method('getRequiredFunctions')
-            ->will($this->returnValue([]));
-
         $failure = $this->check->check(
             $this->exercise,
             __DIR__ . '/../res/function-requirements/fail-banned-function.php'
@@ -95,18 +77,19 @@ class FunctionRequirementsCheckTest extends PHPUnit_Framework_TestCase
 
     public function testFailureIsReturnedIfNotAllRequiredFunctionsHaveBeenUsed()
     {
-        $this->exercise
+        $exercise = $this->getMock(FunctionRequirementsExercise::class);
+        $exercise
             ->expects($this->once())
             ->method('getBannedFunctions')
             ->will($this->returnValue([]));
 
-        $this->exercise
+        $exercise
             ->expects($this->once())
             ->method('getRequiredFunctions')
             ->will($this->returnValue(['file_get_contents', 'implode']));
 
         $failure = $this->check->check(
-            $this->exercise,
+            $exercise,
             __DIR__ . '/../res/function-requirements/fail-banned-function.php'
         );
         $this->assertInstanceOf(FunctionRequirementsFailure::class, $failure);
@@ -117,17 +100,18 @@ class FunctionRequirementsCheckTest extends PHPUnit_Framework_TestCase
 
     public function testSuccess()
     {
-        $this->exercise
+        $exercise = $this->getMock(FunctionRequirementsExercise::class);
+        $exercise
             ->expects($this->once())
             ->method('getBannedFunctions')
             ->will($this->returnValue([]));
 
-        $this->exercise
+        $exercise
             ->expects($this->once())
             ->method('getRequiredFunctions')
             ->will($this->returnValue(['file_get_contents']));
 
-        $success = $this->check->check($this->exercise, __DIR__ . '/../res/function-requirements/success.php');
+        $success = $this->check->check($exercise, __DIR__ . '/../res/function-requirements/success.php');
         $this->assertInstanceOf(Success::class, $success);
     }
 }

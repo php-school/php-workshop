@@ -5,17 +5,17 @@ namespace PhpSchool\PhpWorkshopTest;
 
 use InvalidArgumentException;
 use PhpSchool\PhpWorkshop\CodePatcher;
+use PhpSchool\PhpWorkshop\ExerciseCheck\ComposerExerciseCheck;
 use PhpSchool\PhpWorkshop\Solution\SolutionInterface;
+use PhpSchool\PhpWorkshopTest\Asset\ComposerExercise;
 use PhpSchool\PhpWorkshopTest\Asset\SelfCheckExercise;
 use PHPUnit_Framework_TestCase;
 use PhpSchool\PhpWorkshop\Check\CheckInterface;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
-use PhpSchool\PhpWorkshop\ExerciseCheck\StdOutExerciseCheck;
 use PhpSchool\PhpWorkshop\ExerciseRunner;
 use PhpSchool\PhpWorkshop\Result\Failure;
 use PhpSchool\PhpWorkshop\Result\Success;
 use PhpSchool\PhpWorkshop\ResultAggregator;
-use PhpSchool\PhpWorkshopTest\Asset\StdOutExercise;
 use RuntimeException;
 use stdClass;
 use Symfony\Component\Filesystem\Filesystem;
@@ -108,8 +108,8 @@ class ExerciseRunnerTest extends PHPUnit_Framework_TestCase
             ->expects($this->never())
             ->method('check');
 
-        $this->exerciseRunner->registerCheck($doNotRunMe, StdOutExerciseCheck::class);
-        $this->exerciseRunner->registerPreCheck($doNotRunMe, StdOutExerciseCheck::class);
+        $this->exerciseRunner->registerCheck($doNotRunMe, ComposerExerciseCheck::class);
+        $this->exerciseRunner->registerPreCheck($doNotRunMe, ComposerExerciseCheck::class);
         
         $solution = $this->getMock(SolutionInterface::class);
         $exercise = $this->getMock(ExerciseInterface::class);
@@ -125,7 +125,7 @@ class ExerciseRunnerTest extends PHPUnit_Framework_TestCase
     public function testRunExerciseWithRequiredChecks()
     {
         $runMe = $this->getMock(CheckInterface::class);
-        $this->exerciseRunner->registerCheck($runMe, StdOutExerciseCheck::class);
+        $this->exerciseRunner->registerCheck($runMe, ComposerExerciseCheck::class);
         
         $runMe
             ->expects($this->once())
@@ -133,7 +133,7 @@ class ExerciseRunnerTest extends PHPUnit_Framework_TestCase
             ->will($this->returnValue(new Success($this->check)));
 
         $solution = $this->getMock(SolutionInterface::class);
-        $exercise = $this->getMock(StdOutExercise::class);
+        $exercise = $this->getMock(ComposerExercise::class);
         $exercise->expects($this->any())
             ->method('getSolution')
             ->will($this->returnValue($solution));
@@ -157,13 +157,13 @@ class ExerciseRunnerTest extends PHPUnit_Framework_TestCase
             ->method('check');
 
         $solution = $this->getMock(SolutionInterface::class);
-        $exercise = $this->getMock(StdOutExercise::class);
+        $exercise = $this->getMock(ExerciseInterface::class);
         $exercise->expects($this->any())
             ->method('getSolution')
             ->will($this->returnValue($solution));
 
-        $this->exerciseRunner->registerPreCheck($runMe, StdOutExerciseCheck::class);
-        $this->exerciseRunner->registerCheck($doNotRunMe, StdOutExerciseCheck::class);
+        $this->exerciseRunner->registerPreCheck($runMe, ExerciseInterface::class);
+        $this->exerciseRunner->registerCheck($doNotRunMe, ComposerExerciseCheck::class);
 
         $result = $this->exerciseRunner->runExercise($exercise, $this->file);
         $this->assertInstanceOf(ResultAggregator::class, $result);
@@ -260,7 +260,7 @@ class ExerciseRunnerTest extends PHPUnit_Framework_TestCase
         $refProp->setValue($this->exerciseRunner, []);
         
         $solution = $this->getMock(SolutionInterface::class);
-        $exercise = $this->getMock(StdOutExercise::class);
+        $exercise = $this->getMock(ExerciseInterface::class);
         $exercise->expects($this->any())
             ->method('getSolution')
             ->will($this->returnValue($solution));
@@ -280,7 +280,7 @@ class ExerciseRunnerTest extends PHPUnit_Framework_TestCase
         $this->assertFileExists(sprintf('%s/vendor', dirname($this->file)));
 
         $solution = $this->getMock(SolutionInterface::class);
-        $exercise = $this->getMock(StdOutExercise::class);
+        $exercise = $this->getMock(ExerciseInterface::class);
         $exercise->expects($this->any())
             ->method('getSolution')
             ->will($this->returnValue($solution));
@@ -314,7 +314,7 @@ class ExerciseRunnerTest extends PHPUnit_Framework_TestCase
         ]));
         
         $solution = $this->getMock(SolutionInterface::class);
-        $exercise = $this->getMock(StdOutExercise::class);
+        $exercise = $this->getMock(ExerciseInterface::class);
         $exercise->expects($this->any())
             ->method('getSolution')
             ->will($this->returnValue($solution));

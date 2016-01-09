@@ -3,7 +3,9 @@
 namespace PhpSchool\PhpWorkshopTest\Asset;
 
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
+use PhpSchool\PhpWorkshop\Exercise\ExerciseType;
 use PhpSchool\PhpWorkshop\ExerciseCheck\SelfCheck;
+use PhpSchool\PhpWorkshop\ExerciseDispatcher;
 use PhpSchool\PhpWorkshop\Result\ResultInterface;
 use PhpSchool\PhpWorkshop\Result\Success;
 
@@ -62,5 +64,21 @@ class SelfCheckExercise implements ExerciseInterface, SelfCheck
     public function check($file)
     {
         return new Success(self::class);
+    }
+
+    /**
+     * @return ExerciseType
+     */
+    public function getType()
+    {
+        // TODO: Implement getType() method.
+    }
+
+    /**
+     * @param ExerciseDispatcher $dispatcher
+     */
+    public function configure(ExerciseDispatcher $dispatcher)
+    {
+        // TODO: Implement configure() method.
     }
 }
