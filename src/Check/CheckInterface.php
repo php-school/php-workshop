@@ -3,6 +3,7 @@
 namespace PhpSchool\PhpWorkshop\Check;
 
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
+use PhpSchool\PhpWorkshop\Exercise\ExerciseType;
 use PhpSchool\PhpWorkshop\Result\ResultInterface;
 
 /**
@@ -27,13 +28,12 @@ interface CheckInterface
     public function getName();
 
     /**
-     * Which Exercise Type this
-     * checks applies to
-     * @see \PhpSchool\PhpWorkshop\Exercise\ExerciseType
+     * Can this check run this exercise?
      *
-     * @return ExerciseType
+     * @param ExerciseType $exerciseType
+     * @return bool
      */
-    public function appliesTo();
+    public function canRun(ExerciseType $exerciseType);
 
     /**
      * This returns the interface the exercise should implement

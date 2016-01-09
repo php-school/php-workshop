@@ -6,6 +6,7 @@ use PDO;
 use PhpSchool\PhpWorkshop\Exception\CodeExecutionException;
 use PhpSchool\PhpWorkshop\Exception\SolutionExecutionException;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
+use PhpSchool\PhpWorkshop\Exercise\ExerciseType;
 use PhpSchool\PhpWorkshop\Exercise\TemporaryDirectoryTrait;
 use PhpSchool\PhpWorkshop\ExerciseCheck\DatabaseExerciseCheck;
 use PhpSchool\PhpWorkshop\Result\Failure;
@@ -145,5 +146,23 @@ class DatabaseCheck implements CheckInterface
         unlink($this->userDatabasePath);
         unlink($this->solutionDatabasePath);
         rmdir($this->databaseDirectory);
+    }
+
+    /**
+     * @param ExerciseType $exerciseType
+     * @return bool
+     */
+    public function canRun(ExerciseType $exerciseType)
+    {
+        return $exerciseType->getValue() === ExerciseType::CLI;
+    }
+
+    /**
+     *
+     * @return string
+     */
+    public function getExerciseInterface()
+    {
+        return DatabaseExerciseCheck::class;
     }
 }

@@ -166,7 +166,7 @@ class ExerciseDispatcher
     }
 
     /**
-     * @param array $checks
+     * @param CheckInterface[] $checks
      * @param ExerciseInterface $exercise
      * @throws CheckNotApplicableException
      * @throws ExerciseNotConfiguredException
@@ -174,7 +174,7 @@ class ExerciseDispatcher
     private function validateChecks(array $checks, ExerciseInterface $exercise)
     {
         foreach ($checks as $check) {
-            if ($check->appliesTo() != $exercise->getType()) {
+            if (!$check->canRun($exercise->getType())) {
                 throw new CheckNotApplicableException;
             }
 

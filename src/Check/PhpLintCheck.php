@@ -3,6 +3,7 @@
 namespace PhpSchool\PhpWorkshop\Check;
 
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
+use PhpSchool\PhpWorkshop\Exercise\ExerciseType;
 use PhpSchool\PhpWorkshop\Result\Success;
 use PhpSchool\PhpWorkshop\Result\Failure;
 use Symfony\Component\Process\Process;
@@ -39,5 +40,23 @@ class PhpLintCheck implements CheckInterface
         }
 
         return Failure::fromCheckAndReason($this, $process->getErrorOutput());
+    }
+
+    /**
+     * @param ExerciseType $exerciseType
+     * @return bool
+     */
+    public function canRun(ExerciseType $exerciseType)
+    {
+        return true;
+    }
+
+    /**
+     *
+     * @return string
+     */
+    public function getExerciseInterface()
+    {
+        return ExerciseInterface::class;
     }
 }
