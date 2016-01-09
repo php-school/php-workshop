@@ -5,6 +5,7 @@ namespace PhpSchool\PhpWorkshopTest\Check;
 use InvalidArgumentException;
 use PhpParser\Parser;
 use PhpParser\ParserFactory;
+use PhpSchool\PhpWorkshop\Exercise\ExerciseType;
 use PhpSchool\PhpWorkshopTest\Asset\FunctionRequirementsExercise;
 use PHPUnit_Framework_TestCase;
 use PhpSchool\PhpWorkshop\Check\FunctionRequirementsCheck;
@@ -43,6 +44,10 @@ class FunctionRequirementsCheckTest extends PHPUnit_Framework_TestCase
         $this->check = new FunctionRequirementsCheck($this->parser);
         $this->exercise = new FunctionRequirementsExercise;
         $this->assertEquals('Function Requirements Check', $this->check->getName());
+        $this->assertEquals(FunctionRequirementsExerciseCheck::class, $this->check->getExerciseInterface());
+
+        $this->assertTrue($this->check->canRun(ExerciseType::CGI()));
+        $this->assertTrue($this->check->canRun(ExerciseType::CLI()));
     }
 
     public function testExceptionIsThrownIfNotValidExercise()

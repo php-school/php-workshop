@@ -5,6 +5,8 @@ namespace PhpSchool\PhpWorkshopTest\Check;
 use InvalidArgumentException;
 use PhpSchool\PhpWorkshop\Check\ComposerCheck;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
+use PhpSchool\PhpWorkshop\Exercise\ExerciseType;
+use PhpSchool\PhpWorkshop\ExerciseCheck\ComposerExerciseCheck;
 use PhpSchool\PhpWorkshop\Result\Failure;
 use PhpSchool\PhpWorkshop\Result\Success;
 use PhpSchool\PhpWorkshopTest\Asset\ComposerExercise;
@@ -32,6 +34,11 @@ class ComposerCheckTest extends PHPUnit_Framework_TestCase
         $this->check = new ComposerCheck;
         $this->exercise = new ComposerExercise;
         $this->assertEquals('Composer Dependency Check', $this->check->getName());
+        $this->assertEquals(ComposerExerciseCheck::class, $this->check->getExerciseInterface());
+
+        $this->assertTrue($this->check->canRun(ExerciseType::CGI()));
+        $this->assertTrue($this->check->canRun(ExerciseType::CLI()));
+
     }
     
     public function testExceptionIsThrownIfNotValidExercise()

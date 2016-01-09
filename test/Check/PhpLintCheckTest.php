@@ -2,6 +2,7 @@
 
 namespace PhpSchool\PhpWorkshopTest\Check;
 
+use PhpSchool\PhpWorkshop\Exercise\ExerciseType;
 use PHPUnit_Framework_TestCase;
 use PhpSchool\PhpWorkshop\Check\PhpLintCheck;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
@@ -31,6 +32,10 @@ class PhpLintCheckTest extends PHPUnit_Framework_TestCase
         $this->check = new PhpLintCheck;
         $this->exercise = $this->getMock(ExerciseInterface::class);
         $this->assertEquals('PHP Code Check', $this->check->getName());
+        $this->assertEquals(ExerciseInterface::class, $this->check->getExerciseInterface());
+
+        $this->assertTrue($this->check->canRun(ExerciseType::CGI()));
+        $this->assertTrue($this->check->canRun(ExerciseType::CLI()));
     }
 
     public function testSuccess()
