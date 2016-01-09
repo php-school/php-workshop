@@ -117,7 +117,7 @@ class ExerciseDispatcher
      * @param string $fileName
      * @return ResultAggregator
      * @throws CheckNotApplicableException
-     * @throws ExcerciseNotConfiguredException
+     * @throws ExerciseNotConfiguredException
      */
     public function verify(ExerciseInterface $exercise, $fileName)
     {
