@@ -19,6 +19,11 @@ interface ExerciseInterface
     public function getName();
 
     /**
+     * @return ExerciseType
+     */
+    public function getType();
+
+    /**
      * @return string
      */
     public function getDescription();
