@@ -135,9 +135,15 @@ class CgiRunner implements ExerciseRunnerInterface
             throw new \InvalidArgumentException;
         }
 
-        return new CgiOutResult($this->getName(), array_map(function (RequestInterface $request) use ($exercise, $fileName) {
-            return $this->checkRequest($exercise, $request, $fileName);
-        }, $exercise->getRequests()));
+        return new CgiOutResult(
+            $this->getName(),
+            array_map(
+                function (RequestInterface $request) use ($exercise, $fileName) {
+                    return $this->checkRequest($exercise, $request, $fileName);
+                },
+                $exercise->getRequests()
+            )
+        );
     }
 
     /**

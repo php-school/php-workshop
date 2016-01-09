@@ -95,8 +95,8 @@ class ResultsRenderer
         $failures   = [];
         foreach ($results as $result) {
             if ($result instanceof SuccessInterface
-                || ($result instanceof ResultAggregator && $result->isSuccessful()))
-            {
+                || ($result instanceof ResultAggregator && $result->isSuccessful())
+            ) {
                 $successes[] = sprintf(' ✔ Check: %s', $result->getCheckName());
             } else {
                 $failures[] = [$result, sprintf(' ✗ Check: %s', $result->getCheckName())];
