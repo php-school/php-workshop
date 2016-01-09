@@ -5,6 +5,7 @@ namespace PhpSchool\PhpWorkshop;
 use Assert\Assertion;
 use PhpSchool\PhpWorkshop\Check\CheckCollection;
 use PhpSchool\PhpWorkshop\Check\CheckInterface;
+use PhpSchool\PhpWorkshop\Check\CheckRepository;
 use PhpSchool\PhpWorkshop\Exception\InvalidArgumentException;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpSchool\PhpWorkshop\ExerciseRunner\ExerciseRunnerInterface;
@@ -26,9 +27,9 @@ class ExerciseDispatcher
     private $runners;
 
     /**
-     * @var CheckCollection
+     * @var CheckRepository
      */
-    private $checkCollection;
+    private $checkRepository;
 
     /**
      * @var CheckInterface[]
@@ -59,17 +60,17 @@ class ExerciseDispatcher
 
     /**
      * @param ExerciseRunnerInterface[] $runners
-     * @param CheckCollection $checkCollection
+     * @param CheckRepository $checkRepository
      * @param CodePatcher $codePatcher
      */
-    public function __construct(array $runners, CheckCollection $checkCollection, CodePatcher $codePatcher)
+    public function __construct(array $runners, CheckRepository $checkRepository, CodePatcher $codePatcher)
     {
         foreach ($runners as $runner) {
             $this->registerRunner($runner);
         }
-        $this->checkCollection = $checkCollection;
-        $this->codePatcher = $codePatcher;
-        $this->runners = $runners;
+        $this->checkRepository  = $checkRepository;
+        $this->codePatcher      = $codePatcher;
+        $this->runners          = $runners;
     }
 
     /**
@@ -87,16 +88,16 @@ class ExerciseDispatcher
      */
     public function requireCheck($requiredCheck, $position)
     {
-        if (!$this->checkCollection->has($requiredCheck)) {
+        if (!$this->checkRepository->has($requiredCheck)) {
             throw new CheckNotExistsException;
         }
 
         switch ($position) {
             case static::CHECK_BEFORE:
-                $this->checksToRunBefore[] = $this->checkCollection->getByClass($requiredCheck);
+                $this->checksToRunBefore[] = $this->checkRepository->getByClass($requiredCheck);
                 break;
             case static::CHECK_AFTER:
-                $this->checksToRunAfter[] = $this->checkCollection->getByClass($requiredCheck);
+                $this->checksToRunAfter[] = $this->checkRepository->getByClass($requiredCheck);
                 break;
             default:
                 throw InvalidArgumentException::notValidParameter(

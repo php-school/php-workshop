@@ -4,14 +4,13 @@ namespace PhpSchool\PhpWorkshop\Check;
 
 use PhpSchool\CliMenu\Exception\InvalidTerminalException;
 use PhpSchool\PhpWorkshop\Exception\InvalidArgumentException;
-use PhpSchool\PhpWorkshop\Exercise\ExerciseType;
 
 /**
- * Class CheckCollection
+ * Class CheckRepository
  * @package PhpSchool\PhpWorkshop\Check
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
-class CheckCollection
+class CheckRepository
 {
     /**
      * @var CheckInterface[]
@@ -21,7 +20,7 @@ class CheckCollection
     /**
      * @param CheckInterface[] $checks
      */
-    public function __construct(array $checks)
+    public function __construct(array $checks = [])
     {
         foreach ($checks as $check) {
             $this->registerCheck($check);
@@ -31,7 +30,7 @@ class CheckCollection
     /**
      * @param CheckInterface $check
      */
-    private function registerCheck(CheckInterface $check)
+    public function registerCheck(CheckInterface $check)
     {
         $this->checks[get_class($check)] = $check;
     }
@@ -41,18 +40,7 @@ class CheckCollection
      */
     public function getAll()
     {
-        return $this->checks;
-    }
-
-    /**
-     * @param ExerciseType $type
-     * @return array
-     */
-    public function getAllByExerciseType(ExerciseType $type)
-    {
-        return array_filter($this->checks, function (CheckInterface $check) use ($type) {
-            return $check->appliesTo() == $type;
-        });
+        return array_values($this->checks);
     }
 
     /**

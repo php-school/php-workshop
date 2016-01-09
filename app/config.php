@@ -12,14 +12,15 @@ use PhpSchool\CliMenu\Terminal\TerminalInterface;
 use PhpParser\Parser;
 use PhpParser\ParserFactory;
 use PhpSchool\PhpWorkshop\Check\CgiOutputCheck;
+use PhpSchool\PhpWorkshop\Check\CheckRepository;
 use PhpSchool\PhpWorkshop\Check\CodeParseCheck;
 use PhpSchool\PhpWorkshop\Check\ComposerCheck;
 use PhpSchool\PhpWorkshop\Check\DatabaseCheck;
 use PhpSchool\PhpWorkshop\CodeInsertion as Insertion;
 use PhpSchool\PhpWorkshop\CodePatcher;
-use PhpSchool\PhpWorkshop\ExerciseCheck\CgiOutputExerciseCheck;
-use PhpSchool\PhpWorkshop\ExerciseCheck\ComposerExerciseCheck;
-use PhpSchool\PhpWorkshop\ExerciseCheck\DatabaseExerciseCheck;
+use PhpSchool\PhpWorkshop\ExerciseDispatcher;
+use PhpSchool\PhpWorkshop\ExerciseRunner\CgiRunner;
+use PhpSchool\PhpWorkshop\ExerciseRunner\CliRunner;
 use PhpSchool\PhpWorkshop\Factory\MenuFactory;
 use PhpSchool\PhpWorkshop\MenuItem\ResetProgress;
 use PhpSchool\PhpWorkshop\Output\OutputInterface;
@@ -41,8 +42,6 @@ use PhpSchool\PhpWorkshop\Command\PrintCommand;
 use PhpSchool\PhpWorkshop\Command\VerifyCommand;
 use PhpSchool\PhpWorkshop\CommandDefinition;
 use PhpSchool\PhpWorkshop\CommandRouter;
-use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
-use PhpSchool\PhpWorkshop\ExerciseCheck\FunctionRequirementsExerciseCheck;
 use PhpSchool\PhpWorkshop\ExerciseCheck\StdOutExerciseCheck;
 use PhpSchool\PhpWorkshop\ExerciseRenderer;
 use PhpSchool\PhpWorkshop\ExerciseRepository;
@@ -62,25 +61,32 @@ use Symfony\Component\Filesystem\Filesystem;
 
 return [
     'appName' => $_SERVER['argv'][0],
-    ExerciseRunner::class => factory(function (ContainerInterface $c) {
-        $exerciseRunner = new ExerciseRunner($c->get(CodePatcher::class));
-        
-        $exerciseRunner->registerPreCheck(new FileExistsCheck, ExerciseInterface::class);
-        $exerciseRunner->registerPreCheck(new PhpLintCheck, ExerciseInterface::class);
-        $exerciseRunner->registerPreCheck(new CodeParseCheck($c->get(Parser::class)), ExerciseInterface::class);
-        $exerciseRunner->registerPreCheck(new ComposerCheck, ComposerExerciseCheck::class);
-        foreach ($c->get('checks') as $check) {
-            $exerciseRunner->registerCheck(...$check);
-        }
-        return $exerciseRunner;
+    ExerciseDispatcher::class => factory(function (ContainerInterface $c) {
+        $dispatcher = new ExerciseDispatcher(
+            [
+                new CgiRunner,
+                new CliRunner,
+            ],
+            $c->get(CheckRepository::class),
+            $c->get(CodePatcher::class)
+        );
+
+        $dispatcher->requireCheck(FileExistsCheck::class, ExerciseDispatcher::CHECK_BEFORE);
+        $dispatcher->requireCheck(PhpLintCheck::class, ExerciseDispatcher::CHECK_BEFORE);
+        $dispatcher->requireCheck(CodeParseCheck::class, ExerciseDispatcher::CHECK_BEFORE);
+        $dispatcher->requireCheck(ComposerCheck::class, ExerciseDispatcher::CHECK_BEFORE);
+        $dispatcher->requireCheck(FunctionRequirementsCheck::class, ExerciseDispatcher::CHECK_BEFORE);
+
+        return $dispatcher;
     }),
-    'checks' => factory(function (ContainerInterface $c) {
-        return [
-            [$c->get(StdOutCheck::class), StdOutExerciseCheck::class],
-            [$c->get(FunctionRequirementsCheck::class), FunctionRequirementsExerciseCheck::class],
-            [$c->get(CgiOutputCheck::class), CgiOutputExerciseCheck::class],
-            [$c->get(DatabaseCheck::class), DatabaseExerciseCheck::class],
-        ];
+    CheckRepository::class => factory(function (ContainerInterface $c) {
+        return new CheckRepository([
+            $c->get(FileExistsCheck::class),
+            $c->get(PhpLintCheck::class),
+            $c->get(CodeParseCheck::class),
+            $c->get(ComposerCheck::class),
+            $c->get(FunctionRequirementsCheck::class),
+        ]);
     }),
     CommandRouter::class => factory(function (ContainerInterface $c) {
         return new CommandRouter(
