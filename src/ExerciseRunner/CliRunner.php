@@ -1,11 +1,12 @@
 <?php
 
-namespace PhpSchool\PhpWorkshop\Check;
+namespace PhpSchool\PhpWorkshop\ExerciseRunner;
 
 use PhpSchool\PhpWorkshop\Exception\CodeExecutionException;
 use PhpSchool\PhpWorkshop\Exception\SolutionExecutionException;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpSchool\PhpWorkshop\ExerciseCheck\StdOutExerciseCheck;
+use PhpSchool\PhpWorkshop\Output;
 use PhpSchool\PhpWorkshop\Result\Failure;
 use PhpSchool\PhpWorkshop\Result\ResultInterface;
 use PhpSchool\PhpWorkshop\Result\StdOutFailure;
@@ -13,11 +14,11 @@ use PhpSchool\PhpWorkshop\Result\Success;
 use Symfony\Component\Process\Process;
 
 /**
- * Class StdOutCheck
+ * Class CliRunner
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
 
-class StdOutCheck implements CheckInterface
+class CliRunner implements ExerciseRunnerInterface
 {
 
     /**
@@ -25,7 +26,25 @@ class StdOutCheck implements CheckInterface
      */
     public function getName()
     {
-        return 'Command Line Program Output Check';
+        return 'CLI Program Runner';
+    }
+
+    /**
+     * @param string $fileName
+     * @param array $args
+     * @return string
+     */
+    private function executePhpFile($fileName, array $args)
+    {
+        $cmd        = sprintf('%s %s %s', PHP_BINARY, $fileName, implode(' ', array_map('escapeshellarg', $args)));
+        $process    = new Process($cmd, dirname($fileName));
+        $process->run();
+
+        if (!$process->isSuccessful()) {
+            throw CodeExecutionException::fromProcess($process);
+        }
+        
+        return $process->getOutput();
     }
 
     /**
@@ -33,7 +52,7 @@ class StdOutCheck implements CheckInterface
      * @param string $fileName
      * @return ResultInterface
      */
-    public function check(ExerciseInterface $exercise, $fileName)
+    public function verify(ExerciseInterface $exercise, $fileName)
     {
         if (!$exercise instanceof StdOutExerciseCheck) {
             throw new \InvalidArgumentException;
@@ -59,20 +78,25 @@ class StdOutCheck implements CheckInterface
     }
 
     /**
+     * @param ExerciseInterface $exercise
      * @param string $fileName
-     * @param array $args
-     * @return string
+     * @param Output $output
+     * @return bool
      */
-    private function executePhpFile($fileName, array $args)
+    public function run(ExerciseInterface $exercise, $fileName, Output $output)
     {
+        if (!$exercise instanceof StdOutExerciseCheck) {
+            throw new \InvalidArgumentException;
+        }
+        $args = $exercise->getArgs();
+
         $cmd        = sprintf('%s %s %s', PHP_BINARY, $fileName, implode(' ', array_map('escapeshellarg', $args)));
         $process    = new Process($cmd, dirname($fileName));
-        $process->run();
 
-        if (!$process->isSuccessful()) {
-            throw CodeExecutionException::fromProcess($process);
-        }
-        
-        return $process->getOutput();
+        $process->run(function ($outputType, $outputBuffer) use ($output) {
+            $output->write($outputBuffer);
+        });
+
+        return $process->isSuccessful();
     }
 }

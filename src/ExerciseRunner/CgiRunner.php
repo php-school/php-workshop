@@ -1,11 +1,12 @@
 <?php
 
-namespace PhpSchool\PhpWorkshop\Check;
+namespace PhpSchool\PhpWorkshop\ExerciseRunner;
 
 use PhpSchool\PhpWorkshop\Exception\CodeExecutionException;
 use PhpSchool\PhpWorkshop\Exception\SolutionExecutionException;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpSchool\PhpWorkshop\ExerciseCheck\CgiOutputExerciseCheck;
+use PhpSchool\PhpWorkshop\Output;
 use PhpSchool\PhpWorkshop\Result\CgiOutFailure;
 use PhpSchool\PhpWorkshop\Result\CgiOutRequestFailure;
 use PhpSchool\PhpWorkshop\Result\CgiOutResult;
@@ -18,10 +19,10 @@ use Symfony\Component\Process\Process;
 use Zend\Diactoros\Response\Serializer as ResponseSerializer;
 
 /**
- * Class CgiOutputCheck
+ * Class CgiRunner
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
-class CgiOutputCheck implements CheckInterface
+class CgiRunner implements ExerciseRunnerInterface
 {
 
     /**
@@ -29,23 +30,7 @@ class CgiOutputCheck implements CheckInterface
      */
     public function getName()
     {
-        return 'CGI Program Output Check';
-    }
-
-    /**
-     * @param ExerciseInterface $exercise
-     * @param string $fileName
-     * @return ResultInterface
-     */
-    public function check(ExerciseInterface $exercise, $fileName)
-    {
-        if (!$exercise instanceof CgiOutputExerciseCheck) {
-            throw new \InvalidArgumentException;
-        }
-        
-        return new CgiOutResult($this, array_map(function (RequestInterface $request) use ($exercise, $fileName) {
-            return $this->checkRequest($exercise, $request, $fileName);
-        }, $exercise->getRequests()));
+        return 'CGI Program Runner';
     }
 
     /**
@@ -137,5 +122,70 @@ class CgiOutputCheck implements CheckInterface
         }
 
         return ResponseSerializer::fromString($output);
+    }
+
+    /**
+     * @param ExerciseInterface $exercise
+     * @param string $fileName
+     * @return ResultInterface
+     */
+    public function verify(ExerciseInterface $exercise, $fileName)
+    {
+        if (!$exercise instanceof CgiOutputExerciseCheck) {
+            throw new \InvalidArgumentException;
+        }
+
+        return new CgiOutResult($this, array_map(function (RequestInterface $request) use ($exercise, $fileName) {
+            return $this->checkRequest($exercise, $request, $fileName);
+        }, $exercise->getRequests()));
+    }
+
+    /**
+     * @param ExerciseInterface $exercise
+     * @param string $fileName
+     * @param Output $output
+     * @return bool
+     */
+    public function run(ExerciseInterface $exercise, $fileName, Output $output)
+    {
+        if (!$exercise instanceof CgiOutputExerciseCheck) {
+            throw new \InvalidArgumentException;
+        }
+
+        $success = true;
+        foreach ($exercise->getRequests() as $i => $request) {
+            $env = [
+                'REQUEST_METHOD'  => $request->getMethod(),
+                'SCRIPT_FILENAME' => $fileName,
+                'REDIRECT_STATUS' => 302,
+                'QUERY_STRING'    => $request->getUri()->getQuery(),
+                'REQUEST_URI'     => $request->getUri()->getPath()
+            ];
+
+            $cgi = sprintf('php-cgi%s', DIRECTORY_SEPARATOR === '\\' ? '.exe' : '');
+            $cgiBinary  = sprintf(
+                '%s -dalways_populate_raw_post_data=-1 -dhtml_errors=0 -dexpose_php=0',
+                realpath(sprintf('%s/%s', str_replace('\\', '/', dirname(PHP_BINARY)), $cgi))
+            );
+
+            $content                = $request->getBody()->__toString();
+            $cmd                    = sprintf('echo %s | %s', $content, $cgiBinary);
+            $env['CONTENT_LENGTH']  = $request->getBody()->getSize();
+            $env['CONTENT_TYPE']    = $request->getHeaderLine('Content-Type');
+
+            foreach ($request->getHeaders() as $name => $values) {
+                $env[sprintf('HTTP_%s', strtoupper($name))] = implode(", ", $values);
+            }
+
+            $process = new Process($cmd, null, $env);
+            $process->run(function ($outputType, $outputBuffer) use ($output) {
+                $output->write($outputBuffer);
+            });
+
+            if (!$process->isSuccessful()) {
+                $success = false;
+            }
+        }
+        return $success;
     }
 }
