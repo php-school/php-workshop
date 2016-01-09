@@ -131,7 +131,7 @@ class CgiRunner implements ExerciseRunnerInterface
      */
     public function verify(ExerciseInterface $exercise, $fileName)
     {
-        if (!$exercise->getType()->getValue() === ExerciseType::CGI) {
+        if ($exercise->getType()->getValue() !== ExerciseType::CGI) {
             throw new \InvalidArgumentException;
         }
 
@@ -154,7 +154,7 @@ class CgiRunner implements ExerciseRunnerInterface
      */
     public function run(ExerciseInterface $exercise, $fileName, OutputInterface $output)
     {
-        if (!$exercise->getType()->getValue() === ExerciseType::CGI) {
+        if ($exercise->getType()->getValue() !== ExerciseType::CGI) {
             throw new \InvalidArgumentException;
         }
 

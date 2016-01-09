@@ -1,56 +1,70 @@
 <?php
 
-namespace PhpSchool\PhpWorkshopTest\Check;
+namespace PhpSchool\PhpWorkshop\ExerciseRunner;
 
 use InvalidArgumentException;
-use PhpSchool\PhpWorkshop\Check\CgiOutputCheck;
-use PhpSchool\PhpWorkshop\Result\CgiOutRequestFailure;
-use PhpSchool\PhpWorkshop\Result\CgiOutResult;
-use PhpSchool\PhpWorkshop\Solution\SingleFileSolution;
-use PhpSchool\PhpWorkshopTest\Asset\CgiOutExercise;
-use PHPUnit_Framework_TestCase;
 use PhpSchool\PhpWorkshop\Exception\SolutionExecutionException;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
+use PhpSchool\PhpWorkshop\Exercise\ExerciseType;
+use PhpSchool\PhpWorkshop\Result\CgiOutRequestFailure;
+use PhpSchool\PhpWorkshop\Result\CgiOutResult;
 use PhpSchool\PhpWorkshop\Result\Failure;
+use PhpSchool\PhpWorkshop\Result\StdOutFailure;
+use PhpSchool\PhpWorkshop\Result\Success;
+use PhpSchool\PhpWorkshop\Solution\SingleFileSolution;
+use PhpSchool\PhpWorkshopTest\Asset\CgiExerciseInterface;
+use PHPUnit_Framework_TestCase;
 use Zend\Diactoros\Request;
 use Zend\Diactoros\Uri;
 
 /**
- * Class CgiOutputCheckTest
- * @package PhpSchool\PhpWorkshopTest
+ * Class CgiRunnerTest
+ * @package PhpSchool\PhpWorkshop\ExerciseRunner
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
-class CgiOutputCheckTest extends PHPUnit_Framework_TestCase
+class CgiRunnerTest extends PHPUnit_Framework_TestCase
 {
+    /** @var  CgiRunner */
+    private $runner;
 
     /**
-     * @var StdOutCheck
-     */
-    private $check;
-
-    /**
-     * @var ExerciseInterface
+     * @var CgiExerciseInterface
      */
     private $exercise;
 
     public function setUp()
     {
-        $this->check = new CgiOutputCheck;
-        $this->exercise = $this->getMock(CgiOutExercise::class);
-        $this->assertEquals('CGI Program Output Check', $this->check->getName());
+        $this->runner = new CgiRunner();
+        $this->exercise = $this->getMock(CgiExerciseInterface::class);
+
+        $this->exercise
+            ->expects($this->any())
+            ->method('getType')
+            ->will($this->returnValue(ExerciseType::CGI()));
+
+        $this->assertEquals('CGI Program Runner', $this->runner->getName());
     }
 
-    public function testExceptionIsThrownIfNotValidExercise()
+    public function testVerifyThrowsExceptionIfNotValidExercise()
     {
-        $exercise = $this->getMock(ExerciseInterface::class);
+        $this->exercise = $this->getMock(CgiExerciseInterface::class);
+        $this->exercise
+            ->expects($this->once())
+            ->method('getType')
+            ->will($this->returnValue(ExerciseType::CLI()));
+
+        $this->exercise
+            ->expects($this->any())
+            ->method('getRequests')
+            ->will($this->returnValue([]));
+
         $this->setExpectedException(InvalidArgumentException::class);
-
-        $this->check->check($exercise, '');
+        $this->runner->verify($this->exercise, '');
     }
-    
-    public function testCheckThrowsExceptionIfSolutionFailsExecution()
+
+    public function testVerifyThrowsExceptionIfSolutionFailsExecution()
     {
-        $solution = SingleFileSolution::fromFile(realpath(__DIR__ . '/../res/cgi-out/solution-error.php'));
+        $solution = SingleFileSolution::fromFile(__DIR__ . '/../res/cgi/solution-error.php');
         $this->exercise
             ->expects($this->once())
             ->method('getSolution')
@@ -67,12 +81,12 @@ class CgiOutputCheckTest extends PHPUnit_Framework_TestCase
 
         $regex  = "/^PHP Code failed to execute\\. Error: \"PHP Parse error:  syntax error, unexpected end of file in/";
         $this->setExpectedExceptionRegExp(SolutionExecutionException::class, $regex);
-        $this->check->check($this->exercise, '');
+        $this->runner->verify($this->exercise, '');
     }
 
-    public function testSuccessIsReturnedIfGetSolutionOutputMatchesUserOutput()
+    public function testVerifyReturnsSuccessIfGetSolutionOutputMatchesUserOutput()
     {
-        $solution = SingleFileSolution::fromFile(realpath(__DIR__ . '/../res/cgi-out/get-solution.php'));
+        $solution = SingleFileSolution::fromFile(__DIR__ . '/../res/cgi/get-solution.php');
         $this->exercise
             ->expects($this->once())
             ->method('getSolution')
@@ -81,7 +95,7 @@ class CgiOutputCheckTest extends PHPUnit_Framework_TestCase
         $request = (new Request)
             ->withMethod('GET')
             ->withUri(new Uri('http://some.site?number=5'));
-        
+
         $this->exercise
             ->expects($this->once())
             ->method('getRequests')
@@ -89,38 +103,39 @@ class CgiOutputCheckTest extends PHPUnit_Framework_TestCase
 
         $this->assertInstanceOf(
             CgiOutResult::class,
-            $this->check->check($this->exercise, realpath(__DIR__ . '/../res/cgi-out/get-solution.php'))
+            $this->runner->verify($this->exercise, realpath(__DIR__ . '/../res/cgi/get-solution.php'))
         );
     }
 
-    public function testSuccessIsReturnedIfPostSolutionOutputMatchesUserOutput()
+    public function testVerifyReturnsSuccessIfPostSolutionOutputMatchesUserOutput()
     {
-        $solution = SingleFileSolution::fromFile(realpath(__DIR__ . '/../res/cgi-out/post-solution.php'));
+        $solution = SingleFileSolution::fromFile(__DIR__ . '/../res/cgi/post-solution.php');
         $this->exercise
             ->expects($this->once())
             ->method('getSolution')
             ->will($this->returnValue($solution));
-        
+
         $request = (new Request)
             ->withMethod('POST')
             ->withUri(new Uri('http://some.site'))
             ->withHeader('Content-Type', 'application/x-www-form-urlencoded');
 
         $request->getBody()->write('number=5');
-        
+
         $this->exercise
             ->expects($this->once())
             ->method('getRequests')
             ->will($this->returnValue([$request]));
-        
+
         $this->assertInstanceOf(
             CgiOutResult::class,
-            $this->check->check($this->exercise, realpath(__DIR__ . '/../res/cgi-out/post-solution.php'))
+            $this->runner->verify($this->exercise, realpath(__DIR__ . '/../res/cgi/post-solution.php'))
         );
     }
-    public function testFailureIsReturnedIfUserSolutionFailsToExecute()
+
+    public function testVerifyReturnsFailureIfUserSolutionFailsToExecute()
     {
-        $solution = SingleFileSolution::fromFile(realpath(__DIR__ . '/../res/cgi-out/get-solution.php'));
+        $solution = SingleFileSolution::fromFile(__DIR__ . '/../res/cgi/get-solution.php');
         $this->exercise
             ->expects($this->once())
             ->method('getSolution')
@@ -135,10 +150,10 @@ class CgiOutputCheckTest extends PHPUnit_Framework_TestCase
             ->method('getRequests')
             ->will($this->returnValue([$request]));
 
-        $failure = $this->check->check($this->exercise, realpath(__DIR__ . '/../res/cgi-out/user-error.php'));
+        $failure = $this->runner->verify($this->exercise, realpath(__DIR__ . '/../res/cgi/user-error.php'));
         $this->assertInstanceOf(CgiOutResult::class, $failure);
         $this->assertCount(1, $failure);
-        
+
         $result = iterator_to_array($failure)[0];
         $this->assertInstanceOf(Failure::class, $result);
 
@@ -147,14 +162,14 @@ class CgiOutputCheckTest extends PHPUnit_Framework_TestCase
         $this->assertRegExp($failureMsg, $result->getReason());
     }
 
-    public function testFailureIsReturnedIfSolutionOutputDoesNotMatchUserOutput()
+    public function testVerifyReturnsFailureIfSolutionOutputDoesNotMatchUserOutput()
     {
-        $solution = SingleFileSolution::fromFile(realpath(__DIR__ . '/../res/cgi-out/get-solution.php'));
+        $solution = SingleFileSolution::fromFile(__DIR__ . '/../res/cgi/get-solution.php');
         $this->exercise
             ->expects($this->once())
             ->method('getSolution')
             ->will($this->returnValue($solution));
-        
+
         $request = (new Request)
             ->withMethod('GET')
             ->withUri(new Uri('http://some.site?number=5'));
@@ -163,8 +178,8 @@ class CgiOutputCheckTest extends PHPUnit_Framework_TestCase
             ->expects($this->once())
             ->method('getRequests')
             ->will($this->returnValue([$request]));
-        
-        $failure = $this->check->check($this->exercise, realpath(__DIR__ . '/../res/cgi-out/get-user-wrong.php'));
+
+        $failure = $this->runner->verify($this->exercise, realpath(__DIR__ . '/../res/cgi/get-user-wrong.php'));
         $this->assertInstanceOf(CgiOutResult::class, $failure);
         $this->assertCount(1, $failure);
 
@@ -176,14 +191,14 @@ class CgiOutputCheckTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(['Content-type' => 'text/html; charset=UTF-8'], $result->getActualHeaders());
     }
 
-    public function testFailureIsReturnedIfSolutionOutputHeadersDoesNotMatchUserOutputHeaders()
+    public function testVerifyReturnsFailureIfSolutionOutputHeadersDoesNotMatchUserOutputHeaders()
     {
-        $solution = SingleFileSolution::fromFile(realpath(__DIR__ . '/../res/cgi-out/get-solution-header.php'));
+        $solution = SingleFileSolution::fromFile(__DIR__ . '/../res/cgi/get-solution-header.php');
         $this->exercise
             ->expects($this->once())
             ->method('getSolution')
             ->will($this->returnValue($solution));
-        
+
         $request = (new Request)
             ->withMethod('GET')
             ->withUri(new Uri('http://some.site?number=5'));
@@ -193,9 +208,9 @@ class CgiOutputCheckTest extends PHPUnit_Framework_TestCase
             ->method('getRequests')
             ->will($this->returnValue([$request]));
 
-        $failure = $this->check->check(
+        $failure = $this->runner->verify(
             $this->exercise,
-            realpath(__DIR__ . '/../res/cgi-out/get-user-header-wrong.php')
+            realpath(__DIR__ . '/../res/cgi/get-user-header-wrong.php')
         );
 
         $this->assertInstanceOf(CgiOutResult::class, $failure);
@@ -203,7 +218,7 @@ class CgiOutputCheckTest extends PHPUnit_Framework_TestCase
 
         $result = iterator_to_array($failure)[0];
         $this->assertInstanceOf(CgiOutRequestFailure::class, $result);
-        
+
         $this->assertSame($result->getExpectedOutput(), $result->getActualOutput());
         $this->assertEquals(
             [

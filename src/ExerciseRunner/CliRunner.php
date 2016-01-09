@@ -18,7 +18,6 @@ use Symfony\Component\Process\Process;
  * Class CliRunner
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
-
 class CliRunner implements ExerciseRunnerInterface
 {
 
@@ -55,7 +54,7 @@ class CliRunner implements ExerciseRunnerInterface
      */
     public function verify(ExerciseInterface $exercise, $fileName)
     {
-        if (!$exercise->getType()->getValue() === ExerciseType::CLI) {
+        if ($exercise->getType()->getValue() !== ExerciseType::CLI) {
             throw new \InvalidArgumentException;
         }
         $args = $exercise->getArgs();
@@ -86,7 +85,7 @@ class CliRunner implements ExerciseRunnerInterface
      */
     public function run(ExerciseInterface $exercise, $fileName, OutputInterface $output)
     {
-        if (!$exercise->getType()->getValue() === ExerciseType::CLI) {
+        if ($exercise->getType()->getValue() !== ExerciseType::CLI) {
             throw new \InvalidArgumentException;
         }
         $args = $exercise->getArgs();

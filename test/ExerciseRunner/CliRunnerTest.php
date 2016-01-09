@@ -1,54 +1,60 @@
 <?php
 
-namespace PhpSchool\PhpWorkshopTest\Check;
+namespace PhpSchool\PhpWorkshop\ExerciseRunner;
 
 use InvalidArgumentException;
-use PhpSchool\PhpWorkshop\Result\StdOutFailure;
-use PhpSchool\PhpWorkshop\Solution\SingleFileSolution;
-use PhpSchool\PhpWorkshopTest\Asset\StdOutExercise;
-use PHPUnit_Framework_TestCase;
-use PhpSchool\PhpWorkshop\Check\StdOutCheck;
 use PhpSchool\PhpWorkshop\Exception\SolutionExecutionException;
-use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
+use PhpSchool\PhpWorkshop\Exercise\ExerciseType;
 use PhpSchool\PhpWorkshop\Result\Failure;
+use PhpSchool\PhpWorkshop\Result\StdOutFailure;
 use PhpSchool\PhpWorkshop\Result\Success;
+use PhpSchool\PhpWorkshop\Solution\SingleFileSolution;
+use PhpSchool\PhpWorkshopTest\Asset\CliExerciseInterface;
+use PHPUnit_Framework_TestCase;
 
 /**
- * Class StdOutCheckTest
- * @package PhpSchool\PhpWorkshopTest
+ * Class CliRunnerTest
+ * @package PhpSchool\PhpWorkshop\ExerciseRunner
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
-class StdOutCheckTest extends PHPUnit_Framework_TestCase
+class CliRunnerTest extends PHPUnit_Framework_TestCase
 {
+    /** @var  CliRunner */
+    private $runner;
 
     /**
-     * @var StdOutCheck
-     */
-    private $check;
-
-    /**
-     * @var ExerciseInterface
+     * @var CliExerciseInterface
      */
     private $exercise;
 
     public function setUp()
     {
-        $this->check = new StdOutCheck;
-        $this->exercise = $this->getMock(StdOutExercise::class);
-        $this->assertEquals('Command Line Program Output Check', $this->check->getName());
+        $this->runner = new CliRunner;
+        $this->exercise = $this->getMock(CliExerciseInterface::class);
+
+        $this->exercise
+            ->expects($this->any())
+            ->method('getType')
+            ->will($this->returnValue(ExerciseType::CLI()));
+
+        $this->assertEquals('CLI Program Runner', $this->runner->getName());
     }
 
-    public function testExceptionIsThrownIfNotValidExercise()
+    public function testVerifyThrowsExceptionIfNotValidExercise()
     {
-        $exercise = $this->getMock(ExerciseInterface::class);
+        $this->exercise = $this->getMock(CliExerciseInterface::class);
+        $this->exercise
+            ->expects($this->once())
+            ->method('getType')
+            ->will($this->returnValue(ExerciseType::CGI()));
+
         $this->setExpectedException(InvalidArgumentException::class);
-
-        $this->check->check($exercise, '');
+        $this->runner->verify($this->exercise, '');
     }
 
-    public function testCheckThrowsExceptionIfSolutionFailsExecution()
+    public function testVerifyThrowsExceptionIfSolutionFailsExecution()
     {
-        $solution = SingleFileSolution::fromFile(realpath(__DIR__ . '/../res/std-out/solution-error.php'));
+        $solution = SingleFileSolution::fromFile(realpath(__DIR__ . '/../res/cli/solution-error.php'));
         $this->exercise
             ->expects($this->once())
             ->method('getSolution')
@@ -58,16 +64,16 @@ class StdOutCheckTest extends PHPUnit_Framework_TestCase
             ->expects($this->once())
             ->method('getArgs')
             ->will($this->returnValue([]));
-        
+
         $regex  = "/^PHP Code failed to execute\\. Error: \"PHP Parse error:  syntax error, unexpected end of file";
         $regex .= ", expecting ',' or ';'/";
         $this->setExpectedExceptionRegExp(SolutionExecutionException::class, $regex);
-        $this->check->check($this->exercise, '');
+        $this->runner->verify($this->exercise, '');
     }
 
-    public function testSuccessIsReturnedIfSolutionOutputMatchesUserOutput()
+    public function testVerifyReturnsSuccessIfSolutionOutputMatchesUserOutput()
     {
-        $solution = SingleFileSolution::fromFile(realpath(__DIR__ . '/../res/std-out/solution.php'));
+        $solution = SingleFileSolution::fromFile(realpath(__DIR__ . '/../res/cli/solution.php'));
         $this->exercise
             ->expects($this->once())
             ->method('getSolution')
@@ -80,13 +86,13 @@ class StdOutCheckTest extends PHPUnit_Framework_TestCase
 
         $this->assertInstanceOf(
             Success::class,
-            $this->check->check($this->exercise, __DIR__ . '/../res/std-out/user.php')
+            $this->runner->verify($this->exercise, __DIR__ . '/../res/cli/user.php')
         );
     }
 
-    public function testFailureIsReturnedIfUserSolutionFailsToExecute()
+    public function testVerifyReturnsFailureIfUserSolutionFailsToExecute()
     {
-        $solution = SingleFileSolution::fromFile(realpath(__DIR__ . '/../res/std-out/solution.php'));
+        $solution = SingleFileSolution::fromFile(realpath(__DIR__ . '/../res/cli/solution.php'));
         $this->exercise
             ->expects($this->once())
             ->method('getSolution')
@@ -97,7 +103,7 @@ class StdOutCheckTest extends PHPUnit_Framework_TestCase
             ->method('getArgs')
             ->will($this->returnValue([1, 2, 3]));
 
-        $failure = $this->check->check($this->exercise, __DIR__ . '/../res/std-out/user-error.php');
+        $failure = $this->runner->verify($this->exercise, __DIR__ . '/../res/cli/user-error.php');
 
         $failureMsg  = "/^PHP Code failed to execute. Error: \"PHP Parse error:  syntax error, ";
         $failureMsg .= "unexpected end of file, expecting ',' or ';'/";
@@ -106,20 +112,20 @@ class StdOutCheckTest extends PHPUnit_Framework_TestCase
         $this->assertRegExp($failureMsg, $failure->getReason());
     }
 
-    public function testFailureIsReturnedIfSolutionOutputDoesNotMatchUserOutput()
+    public function testVerifyReturnsFailureIfSolutionOutputDoesNotMatchUserOutput()
     {
-        $solution = SingleFileSolution::fromFile(realpath(__DIR__ . '/../res/std-out/solution.php'));
+        $solution = SingleFileSolution::fromFile(realpath(__DIR__ . '/../res/cli/solution.php'));
         $this->exercise
             ->expects($this->once())
             ->method('getSolution')
             ->will($this->returnValue($solution));
-        
+
         $this->exercise
             ->expects($this->once())
             ->method('getArgs')
             ->will($this->returnValue([1, 2, 3]));
 
-        $failure = $this->check->check($this->exercise, __DIR__ . '/../res/std-out/user-wrong.php');
+        $failure = $this->runner->verify($this->exercise, __DIR__ . '/../res/cli/user-wrong.php');
 
         $this->assertInstanceOf(StdOutFailure::class, $failure);
         $this->assertEquals('6', $failure->getExpectedOutput());
