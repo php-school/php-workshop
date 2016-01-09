@@ -4,10 +4,9 @@ namespace PhpSchool\PhpWorkshopTest\MenuItem;
 
 use PhpSchool\CliMenu\CliMenu;
 use PhpSchool\PhpWorkshop\MenuItem\ResetProgress;
-use PhpSchool\PhpWorkshop\Output;
+use PhpSchool\PhpWorkshop\Output\OutputInterface;
 use PhpSchool\PhpWorkshop\UserState;
 use PhpSchool\PhpWorkshop\UserStateSerializer;
-use PhpSchool\PhpWorkshopTest\UserStateSerializerTest;
 use PHPUnit_Framework_TestCase;
 
 /**
@@ -32,7 +31,7 @@ class ResetProgressTest extends PHPUnit_Framework_TestCase
             ->method('serialize')
             ->with($this->isInstanceOf(UserState::class));
         
-        $output = $this->getMockBuilder(Output::class)
+        $output = $this->getMockBuilder(OutputInterface::class)
             ->disableOriginalConstructor()
             ->getMock();
         

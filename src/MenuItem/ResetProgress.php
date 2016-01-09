@@ -3,7 +3,7 @@
 namespace PhpSchool\PhpWorkshop\MenuItem;
 
 use PhpSchool\CliMenu\CliMenu;
-use PhpSchool\PhpWorkshop\Output;
+use PhpSchool\PhpWorkshop\Output\OutputInterface;
 use PhpSchool\PhpWorkshop\UserState;
 use PhpSchool\PhpWorkshop\UserStateSerializer;
 
@@ -20,15 +20,15 @@ class ResetProgress
     private $userStateSerializer;
     
     /**
-     * @var Output
+     * @var OutputInterface
      */
     private $output;
 
     /**
      * @param UserStateSerializer $userStateSerializer
-     * @param Output $output
+     * @param OutputInterface $output
      */
-    public function __construct(UserStateSerializer $userStateSerializer, Output $output)
+    public function __construct(UserStateSerializer $userStateSerializer, OutputInterface $output)
     {
         $this->userStateSerializer = $userStateSerializer;
         $this->output = $output;

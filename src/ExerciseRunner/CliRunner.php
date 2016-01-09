@@ -6,7 +6,7 @@ use PhpSchool\PhpWorkshop\Exception\CodeExecutionException;
 use PhpSchool\PhpWorkshop\Exception\SolutionExecutionException;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpSchool\PhpWorkshop\ExerciseCheck\StdOutExerciseCheck;
-use PhpSchool\PhpWorkshop\Output;
+use PhpSchool\PhpWorkshop\Output\OutputInterface;
 use PhpSchool\PhpWorkshop\Result\Failure;
 use PhpSchool\PhpWorkshop\Result\ResultInterface;
 use PhpSchool\PhpWorkshop\Result\StdOutFailure;
@@ -80,10 +80,10 @@ class CliRunner implements ExerciseRunnerInterface
     /**
      * @param ExerciseInterface $exercise
      * @param string $fileName
-     * @param Output $output
+     * @param OutputInterface $output
      * @return bool
      */
-    public function run(ExerciseInterface $exercise, $fileName, Output $output)
+    public function run(ExerciseInterface $exercise, $fileName, OutputInterface $output)
     {
         if (!$exercise instanceof StdOutExerciseCheck) {
             throw new \InvalidArgumentException;

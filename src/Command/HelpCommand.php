@@ -3,7 +3,7 @@
 namespace PhpSchool\PhpWorkshop\Command;
 
 use Colors\Color;
-use PhpSchool\PhpWorkshop\Output;
+use PhpSchool\PhpWorkshop\Output\OutputInterface;
 
 /**
  * Class HelpCommand
@@ -18,7 +18,7 @@ class HelpCommand
     private $appName;
     
     /**
-     * @var Output
+     * @var OutputInterface
      */
     private $output;
 
@@ -29,10 +29,10 @@ class HelpCommand
 
     /**
      * @param string $appName
-     * @param Output $output
+     * @param OutputInterface $output
      * @param Color $color
      */
-    public function __construct($appName, Output $output, Color $color)
+    public function __construct($appName, OutputInterface $output, Color $color)
     {
         $this->output   = $output;
         $this->color    = $color;

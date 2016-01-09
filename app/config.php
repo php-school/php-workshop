@@ -22,6 +22,8 @@ use PhpSchool\PhpWorkshop\ExerciseCheck\ComposerExerciseCheck;
 use PhpSchool\PhpWorkshop\ExerciseCheck\DatabaseExerciseCheck;
 use PhpSchool\PhpWorkshop\Factory\MenuFactory;
 use PhpSchool\PhpWorkshop\MenuItem\ResetProgress;
+use PhpSchool\PhpWorkshop\Output\OutputInterface;
+use PhpSchool\PhpWorkshop\Output\StdOutput;
 use PhpSchool\PhpWorkshop\Patch;
 use PhpSchool\PhpWorkshop\Result\CgiOutResult;
 use PhpSchool\PhpWorkshop\Result\StdOutFailure;
@@ -47,7 +49,6 @@ use PhpSchool\PhpWorkshop\ExerciseRepository;
 use PhpSchool\PhpWorkshop\ExerciseRunner;
 use PhpSchool\PhpWorkshop\Factory\MarkdownCliRendererFactory;
 use PhpSchool\PhpWorkshop\MarkdownRenderer;
-use PhpSchool\PhpWorkshop\Output;
 use PhpSchool\PhpWorkshop\Result\FunctionRequirementsFailure;
 use PhpSchool\PhpWorkshop\Result\Success;
 use PhpSchool\PhpWorkshop\Result\Failure;
@@ -100,8 +101,8 @@ return [
         $colors->setForceStyle(true);
         return $colors;
     }),
-    Output::class => factory(function (ContainerInterface $c) {
-        return new Output($c->get(Color::class));
+    OutputInterface::class => factory(function (ContainerInterface $c) {
+        return new StdOutput($c->get(Color::class));
     }),
 
     ExerciseRepository::class => factory(function (ContainerInterface $c) {
@@ -122,7 +123,7 @@ return [
             $c->get(ExerciseRepository::class),
             $c->get(UserState::class),
             $c->get(MarkdownRenderer::class),
-            $c->get(Output::class)
+            $c->get(OutputInterface::class)
         );
     }),
 
@@ -132,7 +133,7 @@ return [
             $c->get(ExerciseRunner::class),
             $c->get(UserState::class),
             $c->get(UserStateSerializer::class),
-            $c->get(Output::class),
+            $c->get(OutputInterface::class),
             $c->get(ResultsRenderer::class)
         );
     }),
@@ -141,7 +142,7 @@ return [
         return new CreditsCommand(
             $c->get('coreContributors'),
             $c->get('appContributors'),
-            $c->get(Output::class),
+            $c->get(OutputInterface::class),
             $c->get(Color::class)
         );
     }),
@@ -149,7 +150,7 @@ return [
     HelpCommand::class => factory(function (ContainerInterface $c) {
         return new HelpCommand(
             $c->get('appName'),
-            $c->get(Output::class),
+            $c->get(OutputInterface::class),
             $c->get(Color::class)
         );
     }),
@@ -192,7 +193,7 @@ return [
             $c->get(UserStateSerializer::class),
             $c->get(MarkdownRenderer::class),
             $c->get(Color::class),
-            $c->get(Output::class)
+            $c->get(OutputInterface::class)
         );
     }),
     MarkdownRenderer::class => factory(function (ContainerInterface $c) {
@@ -212,7 +213,7 @@ return [
     ResetProgress::class => factory(function (ContainerInterface $c) {
         return new ResetProgress(
             $c->get(UserStateSerializer::class),
-            $c->get(Output::class)
+            $c->get(OutputInterface::class)
         );
     }),
     ResultsRenderer::class => factory(function (ContainerInterface $c) {

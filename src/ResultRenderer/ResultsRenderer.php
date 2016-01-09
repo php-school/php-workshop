@@ -4,7 +4,6 @@ namespace PhpSchool\PhpWorkshop\ResultRenderer;
 
 use Colors\Color;
 use PhpSchool\CliMenu\Terminal\TerminalInterface;
-use PhpSchool\PhpWorkshop\Output;
 use PhpSchool\PhpWorkshop\Result\SuccessInterface;
 use PhpSchool\PSX\SyntaxHighlighter;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
@@ -83,10 +82,14 @@ class ResultsRenderer
      * @param ResultAggregator $results
      * @param ExerciseInterface $exercise
      * @param UserState $userState
-     * @param Output $output
+     * @param OutputInterface $output
      */
-    public function render(ResultAggregator $results, ExerciseInterface $exercise, UserState $userState, Output $output)
-    {
+    public function render(
+        ResultAggregator $results,
+        ExerciseInterface $exercise,
+        UserState $userState,
+        OutputInterface $output
+    ) {
         $successes  = [];
         $failures   = [];
         foreach ($results as $result) {
@@ -112,10 +115,14 @@ class ResultsRenderer
      * @param array $failures
      * @param int $padLength
      * @param ExerciseInterface $exercise
-     * @param Output $output
+     * @param OutputInterface $output
      */
-    private function renderErrorInformation(array $failures, $padLength, ExerciseInterface $exercise, Output $output)
-    {
+    private function renderErrorInformation(
+        array $failures,
+        $padLength,
+        ExerciseInterface $exercise,
+        OutputInterface $output
+    ) {
         foreach ($failures as $result) {
             list ($failure, $message) = $result;
             $output->writeLine(str_pad($this->style($message, ['red', 'bg_black', 'bold']), $padLength));
@@ -133,10 +140,13 @@ class ResultsRenderer
     /**
      * @param ExerciseInterface $exercise
      * @param UserState $userState
-     * @param Output $output
+     * @param OutputInterface $output
      */
-    private function renderSuccessInformation(ExerciseInterface $exercise, UserState $userState, Output $output)
-    {
+    private function renderSuccessInformation(
+        ExerciseInterface $exercise,
+        UserState $userState,
+        OutputInterface $output
+    ) {
         $output->emptyLine();
         $output->writeLine($this->style(" PASS!", ['green', 'bg_default', 'bold']));
         $output->emptyLine();

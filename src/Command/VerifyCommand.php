@@ -4,7 +4,7 @@ namespace PhpSchool\PhpWorkshop\Command;
 
 use PhpSchool\PhpWorkshop\ExerciseRepository;
 use PhpSchool\PhpWorkshop\ExerciseRunner;
-use PhpSchool\PhpWorkshop\Output;
+use PhpSchool\PhpWorkshop\Output\OutputInterface;
 use PhpSchool\PhpWorkshop\ResultRenderer\ResultsRenderer;
 use PhpSchool\PhpWorkshop\UserState;
 use PhpSchool\PhpWorkshop\UserStateSerializer;
@@ -22,7 +22,7 @@ class VerifyCommand
     private $runner;
 
     /**
-     * @var Output
+     * @var OutputInterface
      */
     private $output;
 
@@ -51,7 +51,7 @@ class VerifyCommand
      * @param ExerciseRunner $runner
      * @param UserState $userState
      * @param UserStateSerializer $userStateSerializer
-     * @param Output $output
+     * @param OutputInterface $output
      * @param ResultsRenderer $resultsRenderer
      */
     public function __construct(
@@ -59,7 +59,7 @@ class VerifyCommand
         ExerciseRunner $runner,
         UserState $userState,
         UserStateSerializer $userStateSerializer,
-        Output $output,
+        OutputInterface $output,
         ResultsRenderer $resultsRenderer
     ) {
         $this->runner               = $runner;

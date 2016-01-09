@@ -3,7 +3,7 @@
 namespace PhpSchool\PhpWorkshop\ExerciseRunner;
 
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
-use PhpSchool\PhpWorkshop\Output;
+use PhpSchool\PhpWorkshop\Output\OutputInterface;
 use PhpSchool\PhpWorkshop\Result\ResultInterface;
 
 /**
@@ -28,8 +28,8 @@ interface ExerciseRunnerInterface
     /**
      * @param ExerciseInterface $exercise
      * @param string $fileName
-     * @param Output $output
+     * @param OutputInterface $output
      * @return bool
      */
-    public function run(ExerciseInterface $exercise, $fileName, Output $output);
+    public function run(ExerciseInterface $exercise, $fileName, OutputInterface $output);
 }

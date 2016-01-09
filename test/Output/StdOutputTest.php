@@ -4,14 +4,14 @@ namespace PhpSchool\PhpWorkshopTest;
 
 use Colors\Color;
 use PHPUnit_Framework_TestCase;
-use PhpSchool\PhpWorkshop\Output;
+use PhpSchool\PhpWorkshop\Output\StdOutput;
 
 /**
- * Class OutputTest
+ * Class StdOutputTest
  * @package PhpSchool\PhpWorkshopTest
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
-class OutputTest extends PHPUnit_Framework_TestCase
+class StdOutputTest extends PHPUnit_Framework_TestCase
 {
     /**
      * @var Color
@@ -19,7 +19,7 @@ class OutputTest extends PHPUnit_Framework_TestCase
     private $color;
 
     /**
-     * @var Output
+     * @var StdOutput
      */
     private $output;
 
@@ -27,7 +27,7 @@ class OutputTest extends PHPUnit_Framework_TestCase
     {
         $this->color = new Color();
         $this->color->setForceStyle(true);
-        $this->output = new Output($this->color);
+        $this->output = new StdOutput($this->color);
     }
 
     public function testPrintError()

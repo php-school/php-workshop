@@ -6,7 +6,7 @@ use PhpSchool\PhpWorkshop\Exception\CodeExecutionException;
 use PhpSchool\PhpWorkshop\Exception\SolutionExecutionException;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpSchool\PhpWorkshop\ExerciseCheck\CgiOutputExerciseCheck;
-use PhpSchool\PhpWorkshop\Output;
+use PhpSchool\PhpWorkshop\Output\OutputInterface;
 use PhpSchool\PhpWorkshop\Result\CgiOutFailure;
 use PhpSchool\PhpWorkshop\Result\CgiOutRequestFailure;
 use PhpSchool\PhpWorkshop\Result\CgiOutResult;
@@ -143,10 +143,10 @@ class CgiRunner implements ExerciseRunnerInterface
     /**
      * @param ExerciseInterface $exercise
      * @param string $fileName
-     * @param Output $output
+     * @param OutputInterface $output
      * @return bool
      */
-    public function run(ExerciseInterface $exercise, $fileName, Output $output)
+    public function run(ExerciseInterface $exercise, $fileName, OutputInterface $output)
     {
         if (!$exercise instanceof CgiOutputExerciseCheck) {
             throw new \InvalidArgumentException;

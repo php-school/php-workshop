@@ -7,7 +7,7 @@ use PHPUnit_Framework_TestCase;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpSchool\PhpWorkshop\ExerciseRepository;
 use PhpSchool\PhpWorkshop\MarkdownRenderer;
-use PhpSchool\PhpWorkshop\Output;
+use PhpSchool\PhpWorkshop\Output\OutputInterface;
 use PhpSchool\PhpWorkshop\UserState;
 
 /**
@@ -21,7 +21,7 @@ class PrintCommandTest extends PHPUnit_Framework_TestCase
     {
         $repo = new ExerciseRepository([]);
         $state = new UserState;
-        $output = $this->getMockBuilder(Output::class)
+        $output = $this->getMockBuilder(OutputInterface::class)
             ->disableOriginalConstructor()
             ->getMock();
         $renderer = $this->getMockBuilder(MarkdownRenderer::class)
@@ -58,7 +58,7 @@ class PrintCommandTest extends PHPUnit_Framework_TestCase
         $state = new UserState;
         $state->setCurrentExercise('current-exercise');
 
-        $output = $this->getMockBuilder(Output::class)
+        $output = $this->getMockBuilder(OutputInterface::class)
             ->disableOriginalConstructor()
             ->getMock();
         $renderer = $this->getMockBuilder(MarkdownRenderer::class)

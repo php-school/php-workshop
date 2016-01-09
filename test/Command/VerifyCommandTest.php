@@ -4,12 +4,13 @@ namespace PhpSchool\PhpWorkshopTest\Command;
 
 use Colors\Color;
 use PhpSchool\PhpWorkshop\Check\CheckInterface;
+use PhpSchool\PhpWorkshop\Output\OutputInterface;
+use PhpSchool\PhpWorkshop\Output\StdOutput;
 use PHPUnit_Framework_TestCase;
 use PhpSchool\PhpWorkshop\Command\VerifyCommand;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpSchool\PhpWorkshop\ExerciseRepository;
 use PhpSchool\PhpWorkshop\ExerciseRunner;
-use PhpSchool\PhpWorkshop\Output;
 use PhpSchool\PhpWorkshop\Result\Failure;
 use PhpSchool\PhpWorkshop\Result\Success;
 use PhpSchool\PhpWorkshop\ResultAggregator;
@@ -43,7 +44,7 @@ class VerifyCommandTest extends PHPUnit_Framework_TestCase
     {
         $repo = new ExerciseRepository([]);
         $state = new UserState;
-        $output = $this->getMockBuilder(Output::class)
+        $output = $this->getMockBuilder(OutputInterface::class)
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -76,7 +77,7 @@ class VerifyCommandTest extends PHPUnit_Framework_TestCase
 
         $repo = new ExerciseRepository([]);
         $state = new UserState;
-        $output = $this->getMockBuilder(Output::class)
+        $output = $this->getMockBuilder(OutputInterface::class)
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -117,7 +118,7 @@ class VerifyCommandTest extends PHPUnit_Framework_TestCase
         $state->setCurrentExercise('exercise1');
         $color = new Color;
         $color->setForceStyle(true);
-        $output = new Output($color);
+        $output = new StdOutput($color);
         
         $serializer = $this->getMockBuilder(UserStateSerializer::class)
             ->disableOriginalConstructor()
@@ -171,7 +172,7 @@ class VerifyCommandTest extends PHPUnit_Framework_TestCase
         $state->setCurrentExercise('exercise1');
         $color = new Color;
         $color->setForceStyle(true);
-        $output = new Output($color);
+        $output = new StdOutput($color);
 
         $serializer = $this->getMockBuilder(UserStateSerializer::class)
             ->disableOriginalConstructor()

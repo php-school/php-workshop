@@ -8,6 +8,7 @@ use PhpSchool\PhpWorkshop\Check\CheckInterface;
 use PhpSchool\PhpWorkshop\Exception\InvalidArgumentException;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpSchool\PhpWorkshop\ExerciseRunner\ExerciseRunnerInterface;
+use PhpSchool\PhpWorkshop\Output\OutputInterface;
 
 /**
  * Class ExerciseDispatcher
@@ -155,10 +156,10 @@ class ExerciseDispatcher
     /**
      * @param ExerciseInterface $exercise
      * @param string $fileName
-     * @param Output $output
+     * @param OutputInterface $output
      * @return bool
      */
-    public function run(ExerciseInterface $exercise, $fileName, Output $output)
+    public function run(ExerciseInterface $exercise, $fileName, OutputInterface $output)
     {
         $this->prepareSolution($exercise->getSolution());
         return $this->getRunner($exercise)->run($exercise, $fileName, $output);
@@ -168,7 +169,7 @@ class ExerciseDispatcher
      * @param array $checks
      * @param ExerciseInterface $exercise
      * @throws CheckNotApplicableException
-     * @throws ExcerciseNotConfiguredException
+     * @throws ExerciseNotConfiguredException
      */
     private function validateChecks(array $checks, ExerciseInterface $exercise)
     {
