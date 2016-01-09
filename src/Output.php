@@ -29,11 +29,41 @@ class Output
      */
     public function printError($error)
     {
-        $length = strlen($error) + 2;
+        $this->printAlert($error, 'red', 'white');
+    }
+
+    /**
+     * @param $success
+     */
+    public function printSuccess($success)
+    {
+        $this->printAlert($success, 'green', 'white');
+    }
+
+    /**
+     * @param $info
+     */
+    public function printInfo($info)
+    {
+        $this->printAlert($info, 'blue', 'white');
+    }
+
+    /**
+     * Print text with coloured background and padding
+     *
+     * @param $alert
+     * @param $bgColor
+     */
+    private function printAlert($alert, $bgColor, $fgColor)
+    {
+        $length = mb_strlen($alert) + 2;
         echo "\n";
-        echo sprintf(" %s\n", $this->color->__invoke(str_repeat(' ', $length))->bg_red());
-        echo sprintf(" %s\n", $this->color->__invoke(sprintf(" %s ", $error))->bg_red()->white()->bold());
-        echo sprintf(" %s\n", $this->color->__invoke(str_repeat(' ', $length))->bg_red());
+        echo sprintf(" %s\n", $this->color->__invoke(str_repeat(' ', $length))->bg($bgColor));
+        echo sprintf(
+            " %s\n",
+            $this->color->__invoke(sprintf(" %s ", $alert))->bg($bgColor)->fg($fgColor)->bold()
+        );
+        echo sprintf(" %s\n", $this->color->__invoke(str_repeat(' ', $length))->bg($bgColor));
         echo "\n";
     }
 

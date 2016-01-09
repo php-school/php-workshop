@@ -6,11 +6,12 @@ use PhpSchool\PhpWorkshop\Exception\CodeExecutionException;
 use PhpSchool\PhpWorkshop\Exception\SolutionExecutionException;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpSchool\PhpWorkshop\ExerciseCheck\StdOutExerciseCheck;
+use PhpSchool\PhpWorkshop\ProcessExecutor\CliProcessExecutor;
+use PhpSchool\PhpWorkshop\ProcessExecutor\CommandLineProcessExecutor;
 use PhpSchool\PhpWorkshop\Result\Failure;
 use PhpSchool\PhpWorkshop\Result\ResultInterface;
 use PhpSchool\PhpWorkshop\Result\StdOutFailure;
 use PhpSchool\PhpWorkshop\Result\Success;
-use Symfony\Component\Process\Process;
 
 /**
  * Class StdOutCheck
@@ -65,14 +66,8 @@ class StdOutCheck implements CheckInterface
      */
     private function executePhpFile($fileName, array $args)
     {
-        $cmd        = sprintf('%s %s %s', PHP_BINARY, $fileName, implode(' ', array_map('escapeshellarg', $args)));
-        $process    = new Process($cmd, dirname($fileName));
-        $process->run();
+        $executor = new CliProcessExecutor($args);
 
-        if (!$process->isSuccessful()) {
-            throw CodeExecutionException::fromProcess($process);
-        }
-        
-        return $process->getOutput();
+        return $executor->executePhpFile($fileName);
     }
 }
