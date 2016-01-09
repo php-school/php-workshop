@@ -6,10 +6,15 @@ use Assert\Assertion;
 use PhpSchool\PhpWorkshop\Check\CheckCollection;
 use PhpSchool\PhpWorkshop\Check\CheckInterface;
 use PhpSchool\PhpWorkshop\Check\CheckRepository;
+use PhpSchool\PhpWorkshop\Exception\CheckNotApplicableException;
+use PhpSchool\PhpWorkshop\Exception\ExerciseNotConfiguredException;
 use PhpSchool\PhpWorkshop\Exception\InvalidArgumentException;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpSchool\PhpWorkshop\ExerciseRunner\ExerciseRunnerInterface;
 use PhpSchool\PhpWorkshop\Output\OutputInterface;
+use PhpSchool\PhpWorkshop\Solution\SolutionInterface;
+use RuntimeException;
+use Symfony\Component\Process\Process;
 
 /**
  * Class ExerciseDispatcher
@@ -70,7 +75,6 @@ class ExerciseDispatcher
         }
         $this->checkRepository  = $checkRepository;
         $this->codePatcher      = $codePatcher;
-        $this->runners          = $runners;
     }
 
     /**
@@ -78,7 +82,7 @@ class ExerciseDispatcher
      */
     private function registerRunner(ExerciseRunnerInterface $runner)
     {
-        $this->runners[get_class($runner)];
+        $this->runners[get_class($runner)] = $runner;
     }
 
     /**
@@ -139,7 +143,7 @@ class ExerciseDispatcher
         file_put_contents($fileName, $this->codePatcher->patch($exercise, $originalCode));
 
         try {
-            $this->getRunner($exercise)->run($exercise, $fileName, $resultAggregator);
+            $resultAggregator->add($this->getRunner($exercise)->verify($exercise, $fileName));
 
             foreach ($this->checksToRunAfter as $check) {
                 $resultAggregator->add($check->check($exercise, $fileName));
@@ -176,12 +180,12 @@ class ExerciseDispatcher
     {
         foreach ($checks as $check) {
             if (!$check->canRun($exercise->getType())) {
-                throw new CheckNotApplicableException;
+                throw CheckNotApplicableException::fromCheckAndExercise($check, $exercise);
             }
 
             $checkInterface = $check->getExerciseInterface();
             if (!$exercise instanceof $checkInterface) {
-                throw new ExcerciseNotConfiguredException;
+                throw ExerciseNotConfiguredException::missingImplements($exercise, $checkInterface);
             }
         }
     }
@@ -216,7 +220,7 @@ class ExerciseDispatcher
             }
         }
 
-        throw new \RuntimeException('Composer could not be located on the system');
+        throw new RuntimeException('Composer could not be located on the system');
     }
 
     /**

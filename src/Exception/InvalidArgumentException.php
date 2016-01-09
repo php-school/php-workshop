@@ -57,13 +57,14 @@ class InvalidArgumentException extends \InvalidArgumentException
             return implode('", "', array_map([static::class, 'stringify'], $value));
         }
 
+        if (is_bool($value)) {
+            return ($value) ? 'true' : 'false';
+        }
+
         if (is_scalar($value)) {
             return (string) $value;
         }
 
-        if (is_bool($value)) {
-            return ($value) ? 'true' : 'false';
-        }
 
         return 'unknown';
     }
