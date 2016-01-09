@@ -71,12 +71,10 @@ return [
             $c->get(CodePatcher::class)
         );
 
+        //checks which should always run (probably)
         $dispatcher->requireCheck(FileExistsCheck::class, ExerciseDispatcher::CHECK_BEFORE);
         $dispatcher->requireCheck(PhpLintCheck::class, ExerciseDispatcher::CHECK_BEFORE);
         $dispatcher->requireCheck(CodeParseCheck::class, ExerciseDispatcher::CHECK_BEFORE);
-        $dispatcher->requireCheck(ComposerCheck::class, ExerciseDispatcher::CHECK_BEFORE);
-        $dispatcher->requireCheck(FunctionRequirementsCheck::class, ExerciseDispatcher::CHECK_BEFORE);
-
         return $dispatcher;
     }),
     CheckRepository::class => factory(function (ContainerInterface $c) {
@@ -136,7 +134,7 @@ return [
     VerifyCommand::class => factory(function (ContainerInterface $c) {
         return new VerifyCommand(
             $c->get(ExerciseRepository::class),
-            $c->get(ExerciseRunner::class),
+            $c->get(ExerciseDispatcher::class),
             $c->get(UserState::class),
             $c->get(UserStateSerializer::class),
             $c->get(OutputInterface::class),
@@ -173,6 +171,7 @@ return [
     }),
     CgiOutputCheck::class               => object(CgiOutputCheck::class),
     DatabaseCheck::class                => object(DatabaseCheck::class),
+    ComposerCheck::class                => object(ComposerCheck::class),
 
     //Utils
     Filesystem::class   => object(Filesystem::class),
