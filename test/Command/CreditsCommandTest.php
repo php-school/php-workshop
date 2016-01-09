@@ -11,21 +11,10 @@ use PHPUnit_Framework_TestCase;
  * Class CreditsCommandTest
  * @package PhpSchool\PhpWorkshop\Command
  * @author Aydin Hassan <aydin@hotmail.co.uk>
+ * @author Michael Woodward <mikeymike.mw@gmail.com>
  */
 class CreditsCommandTest extends PHPUnit_Framework_TestCase
 {
-    /**
-     * @var Output
-     */
-    private $output;
-
-    public function setup()
-    {
-        $this->output = $this->getMockBuilder(Output::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-    }
-
     public function testInvoke()
     {
         $this->expectOutputString(file_get_contents(__DIR__ . '/../res/app-credits-expected.txt'));
