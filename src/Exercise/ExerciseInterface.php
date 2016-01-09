@@ -2,6 +2,7 @@
 
 namespace PhpSchool\PhpWorkshop\Exercise;
 
+use PhpSchool\PhpWorkshop\ExerciseDispatcher;
 use PhpSchool\PhpWorkshop\Solution\SolutionInterface;
 
 /**
@@ -22,6 +23,11 @@ interface ExerciseInterface
      * @return ExerciseType
      */
     public function getType();
+
+    /**
+     * @param ExerciseDispatcher $dispatcher
+     */
+    public function configure(ExerciseDispatcher $dispatcher);
 
     /**
      * @return string
