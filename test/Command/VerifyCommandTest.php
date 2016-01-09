@@ -4,13 +4,13 @@ namespace PhpSchool\PhpWorkshopTest\Command;
 
 use Colors\Color;
 use PhpSchool\PhpWorkshop\Check\CheckInterface;
+use PhpSchool\PhpWorkshop\ExerciseDispatcher;
 use PhpSchool\PhpWorkshop\Output\OutputInterface;
 use PhpSchool\PhpWorkshop\Output\StdOutput;
 use PHPUnit_Framework_TestCase;
 use PhpSchool\PhpWorkshop\Command\VerifyCommand;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpSchool\PhpWorkshop\ExerciseRepository;
-use PhpSchool\PhpWorkshop\ExerciseRunner;
 use PhpSchool\PhpWorkshop\Result\Failure;
 use PhpSchool\PhpWorkshop\Result\Success;
 use PhpSchool\PhpWorkshop\ResultAggregator;
@@ -48,7 +48,7 @@ class VerifyCommandTest extends PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $runner = $this->getMockBuilder(ExerciseRunner::class)
+        $dispatcher = $this->getMockBuilder(ExerciseDispatcher::class)
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -66,7 +66,7 @@ class VerifyCommandTest extends PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
         
-        $command = new VerifyCommand($repo, $runner, $state, $serializer, $output, $renderer);
+        $command = new VerifyCommand($repo, $dispatcher, $state, $serializer, $output, $renderer);
         $this->assertSame(1, $command->__invoke('appname', $programFile));
     }
 
@@ -81,7 +81,7 @@ class VerifyCommandTest extends PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $runner = $this->getMockBuilder(ExerciseRunner::class)
+        $dispatcher = $this->getMockBuilder(ExerciseDispatcher::class)
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -98,7 +98,7 @@ class VerifyCommandTest extends PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
         
-        $command = new VerifyCommand($repo, $runner, $state, $serializer, $output, $renderer);
+        $command = new VerifyCommand($repo, $dispatcher, $state, $serializer, $output, $renderer);
         $this->assertSame(1, $command->__invoke('appname', $file));
 
         unlink($file);
@@ -136,13 +136,13 @@ class VerifyCommandTest extends PHPUnit_Framework_TestCase
         $results = new ResultAggregator;
         $results->add(new Success($this->check));
 
-        $runner = $this->getMockBuilder(ExerciseRunner::class)
+        $dispatcher = $this->getMockBuilder(ExerciseDispatcher::class)
             ->disableOriginalConstructor()
             ->getMock();
         
-        $runner
+        $dispatcher
             ->expects($this->once())
-            ->method('runExercise')
+            ->method('verify')
             ->with($e, $file)
             ->will($this->returnValue($results));
         
@@ -152,7 +152,7 @@ class VerifyCommandTest extends PHPUnit_Framework_TestCase
             ->with($results, $e, $state, $output);
         
     
-        $command = new VerifyCommand($repo, $runner, $state, $serializer, $output, $renderer);
+        $command = new VerifyCommand($repo, $dispatcher, $state, $serializer, $output, $renderer);
         $this->assertEquals(0, $command->__invoke('appname', $file));
         $this->assertEquals(['exercise1'], $state->getCompletedExercises());
         unlink($file);
@@ -190,13 +190,13 @@ class VerifyCommandTest extends PHPUnit_Framework_TestCase
         $results = new ResultAggregator;
         $results->add(new Failure($this->check, 'cba'));
 
-        $runner = $this->getMockBuilder(ExerciseRunner::class)
+        $dispatcher = $this->getMockBuilder(ExerciseDispatcher::class)
             ->disableOriginalConstructor()
             ->getMock();
         
-        $runner
+        $dispatcher
             ->expects($this->once())
-            ->method('runExercise')
+            ->method('verify')
             ->with($e, $file)
             ->will($this->returnValue($results));
 
@@ -205,7 +205,7 @@ class VerifyCommandTest extends PHPUnit_Framework_TestCase
             ->method('render')
             ->with($results, $e, $state, $output);
 
-        $command = new VerifyCommand($repo, $runner, $state, $serializer, $output, $renderer);
+        $command = new VerifyCommand($repo, $dispatcher, $state, $serializer, $output, $renderer);
         $this->assertEquals(1, $command->__invoke('appname', $file));
         $this->assertEquals([], $state->getCompletedExercises());
         unlink($file);

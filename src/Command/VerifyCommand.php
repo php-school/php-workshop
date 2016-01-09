@@ -2,6 +2,7 @@
 
 namespace PhpSchool\PhpWorkshop\Command;
 
+use PhpSchool\PhpWorkshop\ExerciseDispatcher;
 use PhpSchool\PhpWorkshop\ExerciseRepository;
 use PhpSchool\PhpWorkshop\ExerciseRunner;
 use PhpSchool\PhpWorkshop\Output\OutputInterface;
@@ -47,8 +48,13 @@ class VerifyCommand
     private $resultsRenderer;
 
     /**
+     * @var ExerciseDispatcher
+     */
+    private $exerciseDispatcher;
+
+    /**
      * @param ExerciseRepository $exerciseRepository
-     * @param ExerciseRunner $runner
+     * @param ExerciseDispatcher $exerciseDispatcher
      * @param UserState $userState
      * @param UserStateSerializer $userStateSerializer
      * @param OutputInterface $output
@@ -56,18 +62,18 @@ class VerifyCommand
      */
     public function __construct(
         ExerciseRepository $exerciseRepository,
-        ExerciseRunner $runner,
+        ExerciseDispatcher $exerciseDispatcher,
         UserState $userState,
         UserStateSerializer $userStateSerializer,
         OutputInterface $output,
         ResultsRenderer $resultsRenderer
     ) {
-        $this->runner               = $runner;
         $this->output               = $output;
         $this->exerciseRepository   = $exerciseRepository;
         $this->userState            = $userState;
         $this->userStateSerializer  = $userStateSerializer;
-        $this->resultsRenderer          = $resultsRenderer;
+        $this->resultsRenderer      = $resultsRenderer;
+        $this->exerciseDispatcher   = $exerciseDispatcher;
     }
 
     /**
@@ -92,7 +98,7 @@ class VerifyCommand
         }
 
         $exercise   = $this->exerciseRepository->findByName($this->userState->getCurrentExercise());
-        $results    = $this->runner->runExercise($exercise, $program);
+        $results    = $this->exerciseDispatcher->verify($exercise, $program);
 
         if ($results->isSuccessful()) {
             $this->userState->addCompletedExercise($exercise->getName());
