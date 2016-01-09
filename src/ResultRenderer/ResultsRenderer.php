@@ -94,7 +94,9 @@ class ResultsRenderer
         $successes  = [];
         $failures   = [];
         foreach ($results as $result) {
-            if ($result instanceof SuccessInterface) {
+            if ($result instanceof SuccessInterface
+                || ($result instanceof ResultAggregator && $result->isSuccessful()))
+            {
                 $successes[] = sprintf(' ✔ Check: %s', $result->getCheckName());
             } else {
                 $failures[] = [$result, sprintf(' ✗ Check: %s', $result->getCheckName())];
@@ -164,6 +166,9 @@ class ResultsRenderer
             if (pathinfo($file->getRelativePath(), PATHINFO_EXTENSION) === 'php') {
                 $code = $this->syntaxHighlighter->highlight($code);
             }
+
+            //make sure there is a new line at the end
+            $code = preg_replace('/\n$/', '', $code) . "\n";
 
             $output->write($code);
             $output->writeLine($this->lineBreak());
