@@ -25,4 +25,21 @@ interface CheckInterface
      * @return string
      */
     public function getName();
+
+    /**
+     * Which Exercise Type this
+     * checks applies to
+     * @see \PhpSchool\PhpWorkshop\Exercise\ExerciseType
+     *
+     * @return ExerciseType
+     */
+    public function appliesTo();
+
+    /**
+     * This returns the interface the exercise should implement
+     * when requiring this check
+     *
+     * @return string
+     */
+    public function getExerciseInterface();
 }
