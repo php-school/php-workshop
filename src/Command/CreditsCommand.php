@@ -77,15 +77,15 @@ class CreditsCommand
         $this->output->writeLine(
             $this->color->__invoke("PHP School is bought to you by...")->yellow()->__toString()
         );
-        $this->output->writeLine("");
+        $this->output->emptyLine();
         $this->writeContributors($this->coreContributors);
-
-        $this->output->writeLine("");
-        $this->output->writeLine("");
 
         if (empty($this->appContributors)) {
             return;
         }
+
+        $this->output->emptyLine();
+        $this->output->emptyLine();
         
         $this->output->writeLine(
             $this->color->__invoke("This workshop is brought to you by...")->yellow()->__toString()

@@ -42,6 +42,28 @@ class CreditsCommandTest extends PHPUnit_Framework_TestCase
         $command->__invoke();
     }
 
+    public function testWithOnlyCoreContributors()
+    {
+        $this->expectOutputString(file_get_contents(__DIR__ . '/../res/app-credits-core-expected.txt'));
+
+        $color = new Color;
+        $color->setForceStyle(true);
+
+        $command = new CreditsCommand(
+            [
+                '@AydinHassan' => 'Aydin Hassan',
+                '@mikeymike'   => 'Michael Woodward',
+                '@shakeyShane' => 'Shane Osbourne',
+                '@chris3ailey' => 'Chris Bailey'
+            ],
+            [],
+            new StdOutput($color),
+            $color
+        );
+
+        $command->__invoke();
+    }
+
     public function testWithNoContributors()
     {
         $this->expectOutputString('');
