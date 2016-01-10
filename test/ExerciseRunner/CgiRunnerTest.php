@@ -2,15 +2,15 @@
 
 namespace PhpSchool\PhpWorkshop\ExerciseRunner;
 
+use Colors\Color;
 use InvalidArgumentException;
 use PhpSchool\PhpWorkshop\Exception\SolutionExecutionException;
-use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseType;
+use PhpSchool\PhpWorkshop\Output\OutputInterface;
+use PhpSchool\PhpWorkshop\Output\StdOutput;
 use PhpSchool\PhpWorkshop\Result\CgiOutRequestFailure;
 use PhpSchool\PhpWorkshop\Result\CgiOutResult;
 use PhpSchool\PhpWorkshop\Result\Failure;
-use PhpSchool\PhpWorkshop\Result\StdOutFailure;
-use PhpSchool\PhpWorkshop\Result\Success;
 use PhpSchool\PhpWorkshop\Solution\SingleFileSolution;
 use PhpSchool\PhpWorkshopTest\Asset\CgiExerciseInterface;
 use PHPUnit_Framework_TestCase;
@@ -234,5 +234,65 @@ class CgiRunnerTest extends PHPUnit_Framework_TestCase
             ],
             $result->getActualHeaders()
         );
+    }
+
+    public function testRunThrowsExceptionIfNotValidExercise()
+    {
+        $output = $this->getMock(OutputInterface::class);
+        $this->exercise = $this->getMock(CgiExerciseInterface::class);
+        $this->exercise
+            ->expects($this->once())
+            ->method('getType')
+            ->will($this->returnValue(ExerciseType::CLI()));
+
+        $this->exercise
+            ->expects($this->any())
+            ->method('getRequests')
+            ->will($this->returnValue([]));
+
+        $this->setExpectedException(InvalidArgumentException::class);
+        $this->runner->run($this->exercise, '', $output);
+    }
+
+    public function testRunPassesOutputAndReturnsSuccessIfAllRequestsAreSuccessful()
+    {
+        $output = new StdOutput(new Color);
+        $request1 = (new Request)
+            ->withMethod('GET')
+            ->withUri(new Uri('http://some.site?number=5'));
+
+        $request2 = (new Request)
+            ->withMethod('GET')
+            ->withUri(new Uri('http://some.site?number=6'));
+
+        $this->exercise
+            ->expects($this->once())
+            ->method('getRequests')
+            ->will($this->returnValue([$request1, $request2]));
+
+        $exp = "Content-type: text/html; charset=UTF-8\r\n\r\n10Content-type: text/html; charset=UTF-8\r\n\r\n12";
+        $this->expectOutputString($exp);
+
+        $success = $this->runner->run($this->exercise, realpath(__DIR__ . '/../res/cgi/get-solution.php'), $output);
+        $this->assertTrue($success);
+    }
+
+    public function testRunPassesOutputAndReturnsFailureIfARequestFails()
+    {
+        $output = new StdOutput(new Color);
+        $request1 = (new Request)
+            ->withMethod('GET')
+            ->withUri(new Uri('http://some.site?number=5'));
+
+        $this->exercise
+            ->expects($this->once())
+            ->method('getRequests')
+            ->will($this->returnValue([$request1]));
+
+        $exp = "Status: 404 Not Found\r\nContent-type: text/html; charset=UTF-8\r\n\r\nNo input file specified.\n";
+        $this->expectOutputString($exp);
+
+        $success = $this->runner->run($this->exercise, '', $output);
+        $this->assertFalse($success);
     }
 }

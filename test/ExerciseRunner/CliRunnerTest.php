@@ -2,9 +2,11 @@
 
 namespace PhpSchool\PhpWorkshop\ExerciseRunner;
 
+use Colors\Color;
 use InvalidArgumentException;
 use PhpSchool\PhpWorkshop\Exception\SolutionExecutionException;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseType;
+use PhpSchool\PhpWorkshop\Output\StdOutput;
 use PhpSchool\PhpWorkshop\Result\Failure;
 use PhpSchool\PhpWorkshop\Result\StdOutFailure;
 use PhpSchool\PhpWorkshop\Result\Success;
@@ -130,5 +132,49 @@ class CliRunnerTest extends PHPUnit_Framework_TestCase
         $this->assertInstanceOf(StdOutFailure::class, $failure);
         $this->assertEquals('6', $failure->getExpectedOutput());
         $this->assertEquals('10', $failure->getActualOutput());
+    }
+
+    public function testRunThrowsExceptionIfNotValidExercise()
+    {
+        $output = new StdOutput(new Color);
+
+        $this->exercise = $this->getMock(CliExerciseInterface::class);
+        $this->exercise
+            ->expects($this->once())
+            ->method('getType')
+            ->will($this->returnValue(ExerciseType::CGI()));
+
+        $this->setExpectedException(InvalidArgumentException::class);
+        $this->runner->run($this->exercise, '', $output);
+    }
+
+    public function testRunPassesOutputAndReturnsSuccessIfScriptIsSuccessful()
+    {
+        $output = new StdOutput(new Color);
+
+        $this->exercise
+            ->expects($this->once())
+            ->method('getArgs')
+            ->will($this->returnValue([1, 2, 3]));
+
+        $this->expectOutputString('6');
+
+        $success = $this->runner->run($this->exercise, __DIR__ . '/../res/cli/user.php', $output);
+        $this->assertTrue($success);
+    }
+
+    public function testRunPassesOutputAndReturnsFailureIfScriptFails()
+    {
+        $output = new StdOutput(new Color);
+
+        $this->exercise
+            ->expects($this->once())
+            ->method('getArgs')
+            ->will($this->returnValue([1, 2, 3]));
+
+        $this->expectOutputRegex('/PHP Parse error:  syntax error, unexpected end of file, expecting \',\' or \';\' /');
+
+        $success = $this->runner->run($this->exercise, __DIR__ . '/../res/cli/user-error.php', $output);
+        $this->assertFalse($success);
     }
 }
