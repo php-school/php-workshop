@@ -10,6 +10,7 @@ use PhpSchool\PhpWorkshop\Exception\CheckNotApplicableException;
 use PhpSchool\PhpWorkshop\Exception\ExerciseNotConfiguredException;
 use PhpSchool\PhpWorkshop\Exception\InvalidArgumentException;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
+use PhpSchool\PhpWorkshop\ExerciseCheck\SelfCheck;
 use PhpSchool\PhpWorkshop\ExerciseRunner\ExerciseRunnerInterface;
 use PhpSchool\PhpWorkshop\Output\OutputInterface;
 use PhpSchool\PhpWorkshop\Solution\SolutionInterface;
@@ -93,7 +94,7 @@ class ExerciseDispatcher
     public function requireCheck($requiredCheck, $position)
     {
         if (!$this->checkRepository->has($requiredCheck)) {
-            throw new CheckNotExistsException;
+            throw new InvalidArgumentException(sprintf('Check: "%s" does not exist', $requiredCheck));
         }
 
         switch ($position) {
@@ -149,6 +150,11 @@ class ExerciseDispatcher
                 $resultAggregator->add($check->check($exercise, $fileName));
             }
 
+            //self check, for easy custom checking
+            if ($exercise instanceof SelfCheck) {
+                $resultAggregator->add($exercise->check($fileName));
+            }
+
             $exercise->tearDown();
         } finally {
             //put back actual code, to remove patched additions
@@ -166,7 +172,6 @@ class ExerciseDispatcher
      */
     public function run(ExerciseInterface $exercise, $fileName, OutputInterface $output)
     {
-        $this->prepareSolution($exercise->getSolution());
         return $this->getRunner($exercise)->run($exercise, $fileName, $output);
     }
 
