@@ -200,6 +200,11 @@ class ExerciseDispatcherTest extends PHPUnit_Framework_TestCase
         $this->createExercise();
         $this->fixRunnerMockClass();
 
+        $this->exercise
+            ->expects($this->once())
+            ->method('configure')
+            ->with($this->exerciseDispatcher);
+
         $this->check
             ->expects($this->once())
             ->method('check')

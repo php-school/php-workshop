@@ -124,6 +124,8 @@ class ExerciseDispatcher
     {
         $this->prepareSolution($exercise->getSolution());
 
+        $exercise->configure($this);
+
         $resultAggregator = new ResultAggregator;
 
         $this->validateChecks($this->checksToRunBefore, $exercise);
