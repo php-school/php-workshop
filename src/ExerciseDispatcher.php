@@ -122,8 +122,6 @@ class ExerciseDispatcher
      */
     public function verify(ExerciseInterface $exercise, $fileName)
     {
-        $this->prepareSolution($exercise->getSolution());
-
         $exercise->configure($this);
 
         $resultAggregator = new ResultAggregator;
@@ -195,39 +193,6 @@ class ExerciseDispatcher
                 throw ExerciseNotConfiguredException::missingImplements($exercise, $checkInterface);
             }
         }
-    }
-
-    /**
-     * @param SolutionInterface $solution
-     */
-    private function prepareSolution(SolutionInterface $solution)
-    {
-        if ($solution->hasComposerFile()) {
-            //prepare composer deps
-            //only install if composer.lock file not available
-
-            if (!file_exists(sprintf('%s/vendor', $solution->getBaseDirectory()))) {
-                $process = new Process(
-                    sprintf('%s install --no-interaction', $this->locateComposer()),
-                    $solution->getBaseDirectory()
-                );
-                $process->run();
-            }
-        }
-    }
-
-    /**
-     * @return string
-     */
-    private function locateComposer()
-    {
-        foreach ($this->composerLocations as $location) {
-            if (file_exists($location) && is_executable($location)) {
-                return $location;
-            }
-        }
-
-        throw new RuntimeException('Composer could not be located on the system');
     }
 
     /**

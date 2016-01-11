@@ -112,9 +112,6 @@ class ExerciseDispatcherTest extends PHPUnit_Framework_TestCase
     {
         $this->exercise = $this->getMock(ExerciseInterface::class);
         $this->solution = $this->getMock(SolutionInterface::class);
-        $this->exercise->expects($this->atLeastOnce())
-            ->method('getSolution')
-            ->will($this->returnValue($this->solution));
 
         $this->exerciseType = ExerciseType::CLI();
         $this->exercise
@@ -345,10 +342,6 @@ class ExerciseDispatcherTest extends PHPUnit_Framework_TestCase
             ->will($this->returnValue(ExerciseInterface::class));
 
         $exercise = $this->getMock(SelfCheckExerciseInterface::class);
-        $exercise->expects($this->atLeastOnce())
-            ->method('getSolution')
-            ->will($this->returnValue($this->getMock(SolutionInterface::class)));
-
         $exercise
             ->expects($this->atLeastOnce())
             ->method('getType')
@@ -459,96 +452,6 @@ class ExerciseDispatcherTest extends PHPUnit_Framework_TestCase
         } catch (RuntimeException $e) {
         }
         $this->assertStringEqualsFile($this->file, 'ORIGINAL CONTENT');
-    }
-
-
-    public function testIfSolutionRequiresComposerButComposerCannotBeLocatedExceptionIsThrown()
-    {
-        $refProp = new ReflectionProperty(ExerciseDispatcher::class, 'composerLocations');
-        $refProp->setAccessible(true);
-        $refProp->setValue($this->exerciseDispatcher, []);
-
-        $solution = $this->getMock(SolutionInterface::class);
-        $exercise = $this->getMock(ExerciseInterface::class);
-        $exercise->expects($this->any())
-            ->method('getSolution')
-            ->will($this->returnValue($solution));
-
-        $solution
-            ->expects($this->once())
-            ->method('hasComposerFile')
-            ->will($this->returnValue(true));
-
-        $this->setExpectedException(RuntimeException::class, 'Composer could not be located on the system');
-        $this->exerciseDispatcher->verify($exercise, $this->file);
-    }
-
-    public function testIfSolutionRequiresComposerButVendorDirExistsNothingIsDone()
-    {
-        $this->createExercise();
-        $this->fixRunnerMockClass();
-
-        mkdir(sprintf('%s/vendor', dirname($this->file)));
-        $this->assertFileExists(sprintf('%s/vendor', dirname($this->file)));
-
-        $this->solution
-            ->expects($this->once())
-            ->method('hasComposerFile')
-            ->will($this->returnValue(true));
-
-        $this->solution
-            ->expects($this->any())
-            ->method('getBaseDirectory')
-            ->will($this->returnValue(dirname($this->file)));
-
-        $this->runner
-            ->expects($this->once())
-            ->method('verify')
-            ->with($this->exercise, $this->file)
-            ->will($this->returnValue($this->getMock(SuccessInterface::class)));
-
-        $result = $this->exerciseDispatcher->verify($this->exercise, $this->file);
-
-        $this->assertInstanceOf(ResultAggregator::class, $result);
-        $this->assertTrue($result->isSuccessful());
-        $this->assertFileExists(sprintf('%s/vendor', dirname($this->file)));
-        //check for non existence of lock file, composer generates this when updating if it doesn't exist
-        $this->assertFileNotExists(sprintf('%s/composer.lock', dirname($this->file)));
-    }
-
-    public function testIfSolutionRequiresComposerComposerInstallIsExecuted()
-    {
-        $this->createExercise();
-        $this->fixRunnerMockClass();
-
-        $this->assertFileNotExists(sprintf('%s/vendor', dirname($this->file)));
-
-        file_put_contents(sprintf('%s/composer.json', dirname($this->file)), json_encode([
-            'requires' => [
-                'phpunit/phpunit' => '~5.0'
-            ],
-        ]));
-
-        $this->solution
-            ->expects($this->once())
-            ->method('hasComposerFile')
-            ->will($this->returnValue(true));
-
-        $this->solution
-            ->expects($this->any())
-            ->method('getBaseDirectory')
-            ->will($this->returnValue(dirname($this->file)));
-
-        $this->runner
-            ->expects($this->once())
-            ->method('verify')
-            ->with($this->exercise, $this->file)
-            ->will($this->returnValue($this->getMock(SuccessInterface::class)));
-
-        $result = $this->exerciseDispatcher->verify($this->exercise, $this->file);
-        $this->assertInstanceOf(ResultAggregator::class, $result);
-        $this->assertTrue($result->isSuccessful());
-        $this->assertFileExists(sprintf('%s/vendor', dirname($this->file)));
     }
 
     public function testRun()
