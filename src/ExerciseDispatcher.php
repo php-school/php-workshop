@@ -13,8 +13,6 @@ use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpSchool\PhpWorkshop\ExerciseCheck\SelfCheck;
 use PhpSchool\PhpWorkshop\ExerciseRunner\ExerciseRunnerInterface;
 use PhpSchool\PhpWorkshop\Output\OutputInterface;
-use PhpSchool\PhpWorkshop\Solution\SolutionInterface;
-use RuntimeException;
 use Symfony\Component\Process\Process;
 
 /**
@@ -51,18 +49,6 @@ class ExerciseDispatcher
      * @var CodePatcher
      */
     private $codePatcher;
-
-    /**
-     * Locations for composer executable
-     *
-     * @var array
-     */
-    private $composerLocations = [
-        'composer',
-        'composer.phar',
-        '/usr/local/bin/composer',
-        __DIR__ . '/../vendor/bin/composer',
-    ];
 
     /**
      * @param ExerciseRunnerInterface[] $runners
