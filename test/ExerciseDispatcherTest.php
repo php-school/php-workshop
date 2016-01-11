@@ -2,6 +2,7 @@
 
 namespace PhpSchool\PhpWorkshopTest;
 
+use Interop\Container\ContainerInterface;
 use PhpSchool\PhpWorkshop\Check\CheckInterface;
 use PhpSchool\PhpWorkshop\Check\CheckRepository;
 use PhpSchool\PhpWorkshop\CodePatcher;
@@ -13,6 +14,7 @@ use PhpSchool\PhpWorkshop\Exercise\ExerciseType;
 use PhpSchool\PhpWorkshop\ExerciseDispatcher;
 use PhpSchool\PhpWorkshop\ExerciseRunner\CliRunner;
 use PhpSchool\PhpWorkshop\ExerciseRunner\ExerciseRunnerInterface;
+use PhpSchool\PhpWorkshop\Factory\RunnerFactory;
 use PhpSchool\PhpWorkshop\Output\OutputInterface;
 use PhpSchool\PhpWorkshop\Result\Failure;
 use PhpSchool\PhpWorkshop\Result\Success;
@@ -32,6 +34,11 @@ use Symfony\Component\Filesystem\Filesystem;
  */
 class ExerciseDispatcherTest extends PHPUnit_Framework_TestCase
 {
+    /**
+     * @var ContainerInterface
+     */
+    private $container;
+
     /**
      * @var CheckInterface
      */
@@ -61,6 +68,11 @@ class ExerciseDispatcherTest extends PHPUnit_Framework_TestCase
      * @var ExerciseRunnerInterface
      */
     private $runner;
+
+    /**
+     * @var RunnerFactory
+     */
+    private $runnerFactory;
 
     /**
      * @var string
@@ -96,8 +108,10 @@ class ExerciseDispatcherTest extends PHPUnit_Framework_TestCase
             ->getMock();
         $this->checkRepository = new CheckRepository([$this->check]);
         $this->runner = $this->getMock(ExerciseRunnerInterface::class);
+        $this->container = $this->getMock(ContainerInterface::class);
+        $this->runnerFactory = new RunnerFactory($this->container);
         $this->exerciseDispatcher = new ExerciseDispatcher(
-            [$this->runner],
+            $this->runnerFactory,
             $this->checkRepository,
             $this->codePatcher
         );
@@ -194,9 +208,8 @@ class ExerciseDispatcherTest extends PHPUnit_Framework_TestCase
 
     public function testVerify()
     {
-        $this->createExercise();
-        $this->fixRunnerMockClass();
 
+        $this->createExercise();
         $this->exercise
             ->expects($this->once())
             ->method('configure')
@@ -224,6 +237,12 @@ class ExerciseDispatcherTest extends PHPUnit_Framework_TestCase
             ->with($this->exercise, $this->file)
             ->will($this->returnValue($this->getMock(SuccessInterface::class)));
 
+        $this->container
+            ->expects($this->once())
+            ->method('get')
+            ->with(CliRunner::class)
+            ->will($this->returnValue($this->runner));
+
         $this->exerciseDispatcher->requireCheck(get_class($this->check), ExerciseDispatcher::CHECK_BEFORE);
 
         $result = $this->exerciseDispatcher->verify($this->exercise, $this->file);
@@ -234,8 +253,6 @@ class ExerciseDispatcherTest extends PHPUnit_Framework_TestCase
     public function testVerifyOnlyRunsRequiredChecks()
     {
         $this->createExercise();
-        $this->fixRunnerMockClass();
-
         $this->check
             ->expects($this->exactly(2))
             ->method('check')
@@ -263,6 +280,12 @@ class ExerciseDispatcherTest extends PHPUnit_Framework_TestCase
             ->with($this->exercise, $this->file)
             ->will($this->returnValue($this->getMock(SuccessInterface::class)));
 
+        $this->container
+            ->expects($this->once())
+            ->method('get')
+            ->with(CliRunner::class)
+            ->will($this->returnValue($this->runner));
+
         $this->checkRepository->registerCheck($doNotRunMe);
 
         $this->exerciseDispatcher->requireCheck(get_class($this->check), ExerciseDispatcher::CHECK_BEFORE);
@@ -276,8 +299,6 @@ class ExerciseDispatcherTest extends PHPUnit_Framework_TestCase
     public function testWhenBeforeChecksFailTheyReturnImmediatelyEarly()
     {
         $this->createExercise();
-        $this->fixRunnerMockClass();
-
         $this->check
             ->expects($this->once())
             ->method('check')
@@ -322,8 +343,6 @@ class ExerciseDispatcherTest extends PHPUnit_Framework_TestCase
 
     public function testSelfCheck()
     {
-        $this->fixRunnerMockClass();
-
         $this->check
             ->expects($this->once())
             ->method('check')
@@ -359,6 +378,12 @@ class ExerciseDispatcherTest extends PHPUnit_Framework_TestCase
             ->with($exercise, $this->file)
             ->will($this->returnValue($this->getMock(SuccessInterface::class)));
 
+        $this->container
+            ->expects($this->once())
+            ->method('get')
+            ->with(CliRunner::class)
+            ->will($this->returnValue($this->runner));
+
         $this->exerciseDispatcher->requireCheck(get_class($this->check), ExerciseDispatcher::CHECK_BEFORE);
 
         $result = $this->exerciseDispatcher->verify($exercise, $this->file);
@@ -369,7 +394,6 @@ class ExerciseDispatcherTest extends PHPUnit_Framework_TestCase
     public function testCodeWhichRequiresPatchingIsModifiedOnDiskAfterPreChecksAndThenReverted()
     {
         $this->createExercise();
-        $this->fixRunnerMockClass();
 
         file_put_contents($this->file, 'ORIGINAL CONTENT');
 
@@ -406,6 +430,12 @@ class ExerciseDispatcherTest extends PHPUnit_Framework_TestCase
             ->with($this->exercise, $this->file)
             ->will($this->returnValue($this->getMock(SuccessInterface::class)));
 
+        $this->container
+            ->expects($this->once())
+            ->method('get')
+            ->with(CliRunner::class)
+            ->will($this->returnValue($this->runner));
+
         $this->exerciseDispatcher->verify($this->exercise, $this->file);
         $this->assertStringEqualsFile($this->file, 'ORIGINAL CONTENT');
     }
@@ -413,7 +443,6 @@ class ExerciseDispatcherTest extends PHPUnit_Framework_TestCase
     public function testPatchedCodeIsRevertedIfExceptionIsThrownAnywhere()
     {
         $this->createExercise();
-        $this->fixRunnerMockClass();
 
         file_put_contents($this->file, 'ORIGINAL CONTENT');
 
@@ -447,6 +476,12 @@ class ExerciseDispatcherTest extends PHPUnit_Framework_TestCase
             ->with($this->exercise, $this->file)
             ->will($this->returnValue($this->getMock(SuccessInterface::class)));
 
+        $this->container
+            ->expects($this->once())
+            ->method('get')
+            ->with(CliRunner::class)
+            ->will($this->returnValue($this->runner));
+
         try {
             $this->exerciseDispatcher->verify($this->exercise, $this->file);
         } catch (RuntimeException $e) {
@@ -456,8 +491,6 @@ class ExerciseDispatcherTest extends PHPUnit_Framework_TestCase
 
     public function testRun()
     {
-        $this->fixRunnerMockClass();
-
         $exercise   = $this->getMock(ExerciseInterface::class);
         $output     = $this->getMock(OutputInterface::class);
 
@@ -473,16 +506,13 @@ class ExerciseDispatcherTest extends PHPUnit_Framework_TestCase
             ->with($exercise, $this->file, $output)
             ->will($this->returnValue(true));
 
-        $this->assertTrue($this->exerciseDispatcher->run($exercise, $this->file, $output));
-    }
+        $this->container
+            ->expects($this->once())
+            ->method('get')
+            ->with(CliRunner::class)
+            ->will($this->returnValue($this->runner));
 
-    private function fixRunnerMockClass()
-    {
-        $refProp = new ReflectionProperty(ExerciseDispatcher::class, 'runners');
-        $refProp->setAccessible(true);
-        $refProp->setValue($this->exerciseDispatcher, [
-            CliRunner::class => $this->runner
-        ]);
+        $this->assertTrue($this->exerciseDispatcher->run($exercise, $this->file, $output));
     }
 
     public function tearDown()

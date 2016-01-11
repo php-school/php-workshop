@@ -12,6 +12,7 @@ use PhpSchool\PhpWorkshop\Exception\InvalidArgumentException;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpSchool\PhpWorkshop\ExerciseCheck\SelfCheck;
 use PhpSchool\PhpWorkshop\ExerciseRunner\ExerciseRunnerInterface;
+use PhpSchool\PhpWorkshop\Factory\RunnerFactory;
 use PhpSchool\PhpWorkshop\Output\OutputInterface;
 use Symfony\Component\Process\Process;
 
@@ -24,11 +25,6 @@ class ExerciseDispatcher
 {
     const CHECK_BEFORE = 'before';
     const CHECK_AFTER = 'after';
-
-    /**
-     * @var ExerciseRunnerInterface[]
-     */
-    private $runners;
 
     /**
      * @var CheckRepository
@@ -49,27 +45,21 @@ class ExerciseDispatcher
      * @var CodePatcher
      */
     private $codePatcher;
+    /**
+     * @var RunnerFactory
+     */
+    private $runnerFactory;
 
     /**
-     * @param ExerciseRunnerInterface[] $runners
+     * @param RunnerFactory $runnerFactory
      * @param CheckRepository $checkRepository
      * @param CodePatcher $codePatcher
      */
-    public function __construct(array $runners, CheckRepository $checkRepository, CodePatcher $codePatcher)
+    public function __construct(RunnerFactory $runnerFactory, CheckRepository $checkRepository, CodePatcher $codePatcher)
     {
-        foreach ($runners as $runner) {
-            $this->registerRunner($runner);
-        }
         $this->checkRepository  = $checkRepository;
         $this->codePatcher      = $codePatcher;
-    }
-
-    /**
-     * @param ExerciseRunnerInterface $runner
-     */
-    private function registerRunner(ExerciseRunnerInterface $runner)
-    {
-        $this->runners[get_class($runner)] = $runner;
+        $this->runnerFactory    = $runnerFactory;
     }
 
     /**
@@ -108,6 +98,8 @@ class ExerciseDispatcher
      */
     public function verify(ExerciseInterface $exercise, $fileName)
     {
+        $runner = $this->runnerFactory->create($exercise->getType());
+
         $exercise->configure($this);
 
         $resultAggregator = new ResultAggregator;
@@ -130,7 +122,7 @@ class ExerciseDispatcher
         file_put_contents($fileName, $this->codePatcher->patch($exercise, $originalCode));
 
         try {
-            $resultAggregator->add($this->getRunner($exercise)->verify($exercise, $fileName));
+            $resultAggregator->add($runner->verify($exercise, $fileName));
 
             foreach ($this->checksToRunAfter as $check) {
                 $resultAggregator->add($check->check($exercise, $fileName));
@@ -158,7 +150,9 @@ class ExerciseDispatcher
      */
     public function run(ExerciseInterface $exercise, $fileName, OutputInterface $output)
     {
-        return $this->getRunner($exercise)->run($exercise, $fileName, $output);
+        return $this->runnerFactory
+            ->create($exercise->getType())
+            ->run($exercise, $fileName, $output);
     }
 
     /**
@@ -179,15 +173,5 @@ class ExerciseDispatcher
                 throw ExerciseNotConfiguredException::missingImplements($exercise, $checkInterface);
             }
         }
-    }
-
-    /**
-     * @param ExerciseInterface $exercise
-     * @return ExerciseRunnerInterface
-     */
-    private function getRunner(ExerciseInterface $exercise)
-    {
-        $type = $exercise->getType();
-        return $this->runners[$type->getValue()];
     }
 }
