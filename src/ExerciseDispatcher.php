@@ -6,12 +6,12 @@ use Assert\Assertion;
 use PhpSchool\PhpWorkshop\Check\CheckCollection;
 use PhpSchool\PhpWorkshop\Check\CheckInterface;
 use PhpSchool\PhpWorkshop\Check\CheckRepository;
+use PhpSchool\PhpWorkshop\Event\EventDispatcher;
 use PhpSchool\PhpWorkshop\Exception\CheckNotApplicableException;
 use PhpSchool\PhpWorkshop\Exception\ExerciseNotConfiguredException;
 use PhpSchool\PhpWorkshop\Exception\InvalidArgumentException;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpSchool\PhpWorkshop\ExerciseCheck\SelfCheck;
-use PhpSchool\PhpWorkshop\ExerciseRunner\ExerciseRunnerInterface;
 use PhpSchool\PhpWorkshop\Factory\RunnerFactory;
 use PhpSchool\PhpWorkshop\Output\OutputInterface;
 use Symfony\Component\Process\Process;
@@ -27,11 +27,6 @@ class ExerciseDispatcher
     const CHECK_AFTER = 'after';
 
     /**
-     * @var CheckRepository
-     */
-    private $checkRepository;
-
-    /**
      * @var CheckInterface[]
      */
     private $checksToRunBefore = [];
@@ -42,22 +37,39 @@ class ExerciseDispatcher
     private $checksToRunAfter = [];
 
     /**
-     * @var CodePatcher
-     */
-    private $codePatcher;
-    /**
      * @var RunnerFactory
      */
     private $runnerFactory;
 
     /**
+     * @var EventDispatcher
+     */
+    private $eventDispatcher;
+
+    /**
+     * @var CheckRepository
+     */
+    private $checkRepository;
+
+    /**
+     * @var CodePatcher
+     */
+    private $codePatcher;
+
+    /**
      * @param RunnerFactory $runnerFactory
+     * @param EventDispatcher $eventDispatcher
      * @param CheckRepository $checkRepository
      * @param CodePatcher $codePatcher
      */
-    public function __construct(RunnerFactory $runnerFactory, CheckRepository $checkRepository, CodePatcher $codePatcher)
-    {
+    public function __construct(
+        RunnerFactory $runnerFactory,
+        EventDispatcher $eventDispatcher,
+        CheckRepository $checkRepository,
+        CodePatcher $codePatcher
+    ) {
         $this->checkRepository  = $checkRepository;
+        $this->eventDispatcher  = $eventDispatcher;
         $this->codePatcher      = $codePatcher;
         $this->runnerFactory    = $runnerFactory;
     }
@@ -99,6 +111,7 @@ class ExerciseDispatcher
     public function verify(ExerciseInterface $exercise, $fileName)
     {
         $runner = $this->runnerFactory->create($exercise->getType());
+        $this->eventDispatcher->dispatch('verify.start', [$exercise, $fileName]);
 
         $exercise->configure($this);
 
@@ -138,7 +151,7 @@ class ExerciseDispatcher
             //put back actual code, to remove patched additions
             file_put_contents($fileName, $originalCode);
         }
-
+        $this->eventDispatcher->dispatch('verify.finish', [$exercise, $fileName]);
         return $resultAggregator;
     }
 

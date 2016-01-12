@@ -6,6 +6,7 @@ use Interop\Container\ContainerInterface;
 use PhpSchool\PhpWorkshop\Check\CheckInterface;
 use PhpSchool\PhpWorkshop\Check\CheckRepository;
 use PhpSchool\PhpWorkshop\CodePatcher;
+use PhpSchool\PhpWorkshop\Event\EventDispatcher;
 use PhpSchool\PhpWorkshop\Exception\CheckNotApplicableException;
 use PhpSchool\PhpWorkshop\Exception\ExerciseNotConfiguredException;
 use PhpSchool\PhpWorkshop\Exception\InvalidArgumentException;
@@ -23,7 +24,6 @@ use PhpSchool\PhpWorkshop\ResultAggregator;
 use PhpSchool\PhpWorkshop\Solution\SolutionInterface;
 use PhpSchool\PhpWorkshopTest\Asset\SelfCheckExerciseInterface;
 use PHPUnit_Framework_TestCase;
-use ReflectionProperty;
 use RuntimeException;
 use Symfony\Component\Filesystem\Filesystem;
 
@@ -112,6 +112,7 @@ class ExerciseDispatcherTest extends PHPUnit_Framework_TestCase
         $this->runnerFactory = new RunnerFactory($this->container);
         $this->exerciseDispatcher = new ExerciseDispatcher(
             $this->runnerFactory,
+            new EventDispatcher,
             $this->checkRepository,
             $this->codePatcher
         );

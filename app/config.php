@@ -18,10 +18,14 @@ use PhpSchool\PhpWorkshop\Check\ComposerCheck;
 use PhpSchool\PhpWorkshop\Check\DatabaseCheck;
 use PhpSchool\PhpWorkshop\CodeInsertion as Insertion;
 use PhpSchool\PhpWorkshop\CodePatcher;
+use PhpSchool\PhpWorkshop\Event\EventDispatcher;
 use PhpSchool\PhpWorkshop\ExerciseDispatcher;
 use PhpSchool\PhpWorkshop\ExerciseRunner\CgiRunner;
 use PhpSchool\PhpWorkshop\ExerciseRunner\CliRunner;
+use PhpSchool\PhpWorkshop\Factory\EventDispatcherFactory;
 use PhpSchool\PhpWorkshop\Factory\MenuFactory;
+use PhpSchool\PhpWorkshop\Factory\RunnerFactory;
+use PhpSchool\PhpWorkshop\Listener\PrepareSolutionListener;
 use PhpSchool\PhpWorkshop\MenuItem\ResetProgress;
 use PhpSchool\PhpWorkshop\Output\OutputInterface;
 use PhpSchool\PhpWorkshop\Output\StdOutput;
@@ -63,11 +67,9 @@ return [
     'appName' => $_SERVER['argv'][0],
     ExerciseDispatcher::class => factory(function (ContainerInterface $c) {
         $dispatcher = new ExerciseDispatcher(
-            [
-                new CgiRunner,
-                new CliRunner,
-            ],
+            $c->get(RunnerFactory::class),
             $c->get(CheckRepository::class),
+            $c->get(EventDispatcher::class),
             $c->get(CodePatcher::class)
         );
 
@@ -117,6 +119,15 @@ return [
         );
     }),
 
+    EventDispatcher::class => factory([new EventDispatcherFactory, '__invoke']),
+
+    //Exercise Runners
+    RunnerFactory::class => factory(function (ContainerInterface $c) {
+        return new RunnerFactory($c);
+    }),
+    CgiRunner::class => object(),
+    CliRunner::class => object(),
+
     //commands
     MenuCommand::class => factory(function (ContainerInterface $c) {
         return new MenuCommand($c->get('menu'));
@@ -158,6 +169,9 @@ return [
             $c->get(Color::class)
         );
     }),
+
+    //Listeners
+    PrepareSolutionListener::class => object(),
     
     //checks
     FileExistsCheck::class              => object(FileExistsCheck::class),
@@ -245,6 +259,9 @@ return [
             [Failure::class, new FailureRenderer],
         ];
     }),
+    'coreListeners' => [
+        'verify.start' => PrepareSolutionListener::class,
+    ],
     'coreContributors' => [
         '@AydinHassan' => 'Aydin Hassan',
         '@mikeymike'   => 'Michael Woodward',
