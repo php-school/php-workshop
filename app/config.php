@@ -68,8 +68,8 @@ return [
     ExerciseDispatcher::class => factory(function (ContainerInterface $c) {
         $dispatcher = new ExerciseDispatcher(
             $c->get(RunnerFactory::class),
-            $c->get(CheckRepository::class),
             $c->get(EventDispatcher::class),
+            $c->get(CheckRepository::class),
             $c->get(CodePatcher::class)
         );
 
