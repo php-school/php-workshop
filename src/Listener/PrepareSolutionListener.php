@@ -21,7 +21,7 @@ class PrepareSolutionListener
         'composer',
         'composer.phar',
         '/usr/local/bin/composer',
-        __DIR__ . '/../vendor/bin/composer',
+        __DIR__ . '/../../vendor/bin/composer',
     ];
 
     /**
