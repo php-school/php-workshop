@@ -2,6 +2,7 @@
 
 namespace PhpSchool\PhpWorkshop\Listener;
 
+use PhpSchool\PhpWorkshop\Event\Event;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use RuntimeException;
 use Symfony\Component\Process\Process;
@@ -25,12 +26,11 @@ class PrepareSolutionListener
     ];
 
     /**
-     * @param ExerciseInterface $exercise
-     * @param $fileName
+     * @param Event $event
      */
-    public function __invoke(ExerciseInterface $exercise, $fileName)
+    public function __invoke(Event $event)
     {
-        $solution = $exercise->getSolution();
+        $solution = $event->getParameter('exercise')->getSolution();
 
         if ($solution->hasComposerFile()) {
             //prepare composer deps

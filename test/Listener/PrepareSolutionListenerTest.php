@@ -2,6 +2,7 @@
 
 namespace PhpSchool\PhpWorkshopTest\Listener;
 
+use PhpSchool\PhpWorkshop\Event\Event;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpSchool\PhpWorkshop\Listener\PrepareSolutionListener;
 use PhpSchool\PhpWorkshop\Solution\SolutionInterface;
@@ -60,7 +61,8 @@ class PrepareSolutionListenerTest extends PHPUnit_Framework_TestCase
             ->will($this->returnValue(true));
 
         $this->setExpectedException(RuntimeException::class, 'Composer could not be located on the system');
-        $this->listener->__invoke($exercise, 'file.php');
+        $e = new Event('epic-event', ['exercise' => $exercise, 'file' => 'file.php']);
+        $this->listener->__invoke($e);
     }
 
     public function testIfSolutionRequiresComposerButVendorDirExistsNothingIsDone()
@@ -84,7 +86,8 @@ class PrepareSolutionListenerTest extends PHPUnit_Framework_TestCase
             ->method('getBaseDirectory')
             ->will($this->returnValue(dirname($this->file)));
 
-        $this->listener->__invoke($exercise, 'file.php');
+        $e = new Event('epic-event', ['exercise' => $exercise, 'file' => 'file.php']);
+        $this->listener->__invoke($e);
 
         $this->assertFileExists(sprintf('%s/vendor', dirname($this->file)));
         //check for non existence of lock file, composer generates this when updating if it doesn't exist
@@ -116,7 +119,8 @@ class PrepareSolutionListenerTest extends PHPUnit_Framework_TestCase
             ->method('getBaseDirectory')
             ->will($this->returnValue(dirname($this->file)));
 
-        $this->listener->__invoke($exercise, 'file.php');
+        $e = new Event('epic-event', ['exercise' => $exercise, 'file' => 'file.php']);
+        $this->listener->__invoke($e);
 
         $this->assertFileExists(sprintf('%s/vendor', dirname($this->file)));
     }
