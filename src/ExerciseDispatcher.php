@@ -6,6 +6,7 @@ use Assert\Assertion;
 use PhpSchool\PhpWorkshop\Check\CheckCollection;
 use PhpSchool\PhpWorkshop\Check\CheckInterface;
 use PhpSchool\PhpWorkshop\Check\CheckRepository;
+use PhpSchool\PhpWorkshop\Event\Event;
 use PhpSchool\PhpWorkshop\Event\EventDispatcher;
 use PhpSchool\PhpWorkshop\Exception\CheckNotApplicableException;
 use PhpSchool\PhpWorkshop\Exception\ExerciseNotConfiguredException;
@@ -110,8 +111,8 @@ class ExerciseDispatcher
      */
     public function verify(ExerciseInterface $exercise, $fileName)
     {
-        $runner = $this->runnerFactory->create($exercise->getType());
-        $this->eventDispatcher->dispatch('verify.start', [$exercise, $fileName]);
+        $runner = $this->runnerFactory->create($exercise->getType(), $this->eventDispatcher);
+        $this->eventDispatcher->dispatch(new Event('verify.start', compact('exercise', 'fileName')));
 
         $exercise->configure($this);
 
@@ -151,7 +152,7 @@ class ExerciseDispatcher
             //put back actual code, to remove patched additions
             file_put_contents($fileName, $originalCode);
         }
-        $this->eventDispatcher->dispatch('verify.finish', [$exercise, $fileName]);
+        $this->eventDispatcher->dispatch(new Event('verify.finish', compact('exercise', 'fileName')));
         return $resultAggregator;
     }
 
@@ -163,9 +164,14 @@ class ExerciseDispatcher
      */
     public function run(ExerciseInterface $exercise, $fileName, OutputInterface $output)
     {
-        return $this->runnerFactory
-            ->create($exercise->getType())
+        $this->eventDispatcher->dispatch(new Event('run.start', compact('exercise', 'fileName')));
+
+        $exitStatus = $this->runnerFactory
+            ->create($exercise->getType(), $this->eventDispatcher)
             ->run($exercise, $fileName, $output);
+
+        $this->eventDispatcher->dispatch(new Event('run.finish', compact('exercise', 'fileName')));
+        return $exitStatus;
     }
 
     /**
