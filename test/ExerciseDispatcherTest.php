@@ -34,10 +34,6 @@ use Symfony\Component\Filesystem\Filesystem;
  */
 class ExerciseDispatcherTest extends PHPUnit_Framework_TestCase
 {
-    /**
-     * @var ContainerInterface
-     */
-    private $container;
 
     /**
      * @var CheckInterface
@@ -94,6 +90,11 @@ class ExerciseDispatcherTest extends PHPUnit_Framework_TestCase
      */
     private $solution;
 
+    /**
+     * @var EventDispatcher
+     */
+    private $eventDispatcher;
+
     public function setUp()
     {
         $this->filesystem = new Filesystem;
@@ -108,11 +109,11 @@ class ExerciseDispatcherTest extends PHPUnit_Framework_TestCase
             ->getMock();
         $this->checkRepository = new CheckRepository([$this->check]);
         $this->runner = $this->getMock(ExerciseRunnerInterface::class);
-        $this->container = $this->getMock(ContainerInterface::class);
-        $this->runnerFactory = new RunnerFactory($this->container);
+        $this->runnerFactory = $this->getMock(RunnerFactory::class);
+        $this->eventDispatcher = new EventDispatcher;
         $this->exerciseDispatcher = new ExerciseDispatcher(
             $this->runnerFactory,
-            new EventDispatcher,
+            $this->eventDispatcher,
             $this->checkRepository,
             $this->codePatcher
         );
@@ -138,6 +139,15 @@ class ExerciseDispatcherTest extends PHPUnit_Framework_TestCase
             ->expects($this->any())
             ->method('getName')
             ->will($this->returnValue('Some Exercise'));
+    }
+
+    private function mockRunner(ExerciseType $exerciseType = null)
+    {
+        $this->runnerFactory
+            ->expects($this->once())
+            ->method('create')
+            ->with($exerciseType ? $exerciseType : $this->exerciseType, $this->eventDispatcher)
+            ->will($this->returnValue($this->runner));
     }
 
     public function testRequireCheckThrowsExceptionIfCheckDoesNotExist()
@@ -209,7 +219,6 @@ class ExerciseDispatcherTest extends PHPUnit_Framework_TestCase
 
     public function testVerify()
     {
-
         $this->createExercise();
         $this->exercise
             ->expects($this->once())
@@ -232,17 +241,12 @@ class ExerciseDispatcherTest extends PHPUnit_Framework_TestCase
             ->method('getExerciseInterface')
             ->will($this->returnValue(ExerciseInterface::class));
 
+        $this->mockRunner();
         $this->runner
             ->expects($this->once())
             ->method('verify')
             ->with($this->exercise, $this->file)
             ->will($this->returnValue($this->getMock(SuccessInterface::class)));
-
-        $this->container
-            ->expects($this->once())
-            ->method('get')
-            ->with(CliRunner::class)
-            ->will($this->returnValue($this->runner));
 
         $this->exerciseDispatcher->requireCheck(get_class($this->check), ExerciseDispatcher::CHECK_BEFORE);
 
@@ -275,17 +279,12 @@ class ExerciseDispatcherTest extends PHPUnit_Framework_TestCase
             ->method('getExerciseInterface')
             ->will($this->returnValue(ExerciseInterface::class));
 
+        $this->mockRunner();
         $this->runner
             ->expects($this->once())
             ->method('verify')
             ->with($this->exercise, $this->file)
             ->will($this->returnValue($this->getMock(SuccessInterface::class)));
-
-        $this->container
-            ->expects($this->once())
-            ->method('get')
-            ->with(CliRunner::class)
-            ->will($this->returnValue($this->runner));
 
         $this->checkRepository->registerCheck($doNotRunMe);
 
@@ -373,17 +372,12 @@ class ExerciseDispatcherTest extends PHPUnit_Framework_TestCase
             ->with($this->file)
             ->will($this->returnValue(new Success($this->check->getName())));
 
+        $this->mockRunner($exerciseType);
         $this->runner
             ->expects($this->once())
             ->method('verify')
             ->with($exercise, $this->file)
             ->will($this->returnValue($this->getMock(SuccessInterface::class)));
-
-        $this->container
-            ->expects($this->once())
-            ->method('get')
-            ->with(CliRunner::class)
-            ->will($this->returnValue($this->runner));
 
         $this->exerciseDispatcher->requireCheck(get_class($this->check), ExerciseDispatcher::CHECK_BEFORE);
 
@@ -425,17 +419,12 @@ class ExerciseDispatcherTest extends PHPUnit_Framework_TestCase
             ->with($this->exercise, 'ORIGINAL CONTENT')
             ->will($this->returnValue('MODIFIED CONTENT'));
 
+        $this->mockRunner();
         $this->runner
             ->expects($this->once())
             ->method('verify')
             ->with($this->exercise, $this->file)
             ->will($this->returnValue($this->getMock(SuccessInterface::class)));
-
-        $this->container
-            ->expects($this->once())
-            ->method('get')
-            ->with(CliRunner::class)
-            ->will($this->returnValue($this->runner));
 
         $this->exerciseDispatcher->verify($this->exercise, $this->file);
         $this->assertStringEqualsFile($this->file, 'ORIGINAL CONTENT');
@@ -471,17 +460,12 @@ class ExerciseDispatcherTest extends PHPUnit_Framework_TestCase
             ->with($this->exercise, 'ORIGINAL CONTENT')
             ->will($this->returnValue('MODIFIED CONTENT'));
 
+        $this->mockRunner();
         $this->runner
             ->expects($this->once())
             ->method('verify')
             ->with($this->exercise, $this->file)
             ->will($this->returnValue($this->getMock(SuccessInterface::class)));
-
-        $this->container
-            ->expects($this->once())
-            ->method('get')
-            ->with(CliRunner::class)
-            ->will($this->returnValue($this->runner));
 
         try {
             $this->exerciseDispatcher->verify($this->exercise, $this->file);
@@ -501,17 +485,12 @@ class ExerciseDispatcherTest extends PHPUnit_Framework_TestCase
             ->method('getType')
             ->will($this->returnValue($exerciseType));
 
+        $this->mockRunner($exerciseType);
         $this->runner
             ->expects($this->once())
             ->method('run')
             ->with($exercise, $this->file, $output)
             ->will($this->returnValue(true));
-
-        $this->container
-            ->expects($this->once())
-            ->method('get')
-            ->with(CliRunner::class)
-            ->will($this->returnValue($this->runner));
 
         $this->assertTrue($this->exerciseDispatcher->run($exercise, $this->file, $output));
     }

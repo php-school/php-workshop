@@ -3,6 +3,7 @@
 namespace PhpSchool\PhpWorkshop\Factory;
 
 use Interop\Container\ContainerInterface;
+use PhpSchool\PhpWorkshop\Event\EventDispatcher;
 use PhpSchool\PhpWorkshop\Exception\InvalidArgumentException;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseType;
 use PhpSchool\PhpWorkshop\ExerciseRunner\CgiRunner;
@@ -17,30 +18,17 @@ use PhpSchool\PhpWorkshop\ExerciseRunner\ExerciseRunnerInterface;
 class RunnerFactory
 {
     /**
-     * @var ContainerInterface
-     */
-    private $c;
-
-    /**
-     * RunnerFactory constructor.
-     * @param ContainerInterface $c
-     */
-    public function __construct(ContainerInterface $c)
-    {
-        $this->c = $c;
-    }
-
-    /**
      * @param ExerciseType $exerciseType
+     * @param EventDispatcher $eventDispatcher
      * @return ExerciseRunnerInterface
      */
-    public function create(ExerciseType $exerciseType)
+    public function create(ExerciseType $exerciseType, EventDispatcher $eventDispatcher)
     {
         switch ($exerciseType->getValue()) {
             case ExerciseType::CLI:
-                return $this->c->get(CliRunner::class);
+                return new CliRunner($eventDispatcher);
             case ExerciseType::CGI:
-                return $this->c->get(CgiRunner::class);
+                return new CgiRunner($eventDispatcher);
         }
 
         throw new InvalidArgumentException(sprintf('Exercise Type: "%s" not supported', $exerciseType->getValue()));

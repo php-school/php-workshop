@@ -3,9 +3,11 @@
 namespace PhpSchool\PhpWorkshopTest\Factory;
 
 use Interop\Container\ContainerInterface;
+use PhpSchool\PhpWorkshop\Event\EventDispatcher;
 use PhpSchool\PhpWorkshop\Exception\InvalidArgumentException;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseType;
-use PhpSchool\PhpWorkshop\ExerciseRunner\ExerciseRunnerInterface;
+use PhpSchool\PhpWorkshop\ExerciseRunner\CgiRunner;
+use PhpSchool\PhpWorkshop\ExerciseRunner\CliRunner;
 use PhpSchool\PhpWorkshop\Factory\RunnerFactory;
 use PHPUnit_Framework_TestCase;
 
@@ -16,15 +18,6 @@ use PHPUnit_Framework_TestCase;
  */
 class RunnerFactoryTest extends PHPUnit_Framework_TestCase
 {
-    /**
-     * @var ContainerInterface
-     */
-    private $container;
-
-    public function setUp()
-    {
-        $this->container = $this->getMock(ContainerInterface::class);
-    }
 
     public function testExceptionIsThrownIfTypeNotSupported()
     {
@@ -38,7 +31,7 @@ class RunnerFactoryTest extends PHPUnit_Framework_TestCase
 
         $this->setExpectedException(InvalidArgumentException::class, 'Exercise Type: "invalid" not supported');
 
-        (new RunnerFactory($this->container))->create($type);
+        (new RunnerFactory)->create($type, new EventDispatcher);
     }
 
     public function testCliAndCgiRunnerCanBeCreated()
@@ -46,18 +39,10 @@ class RunnerFactoryTest extends PHPUnit_Framework_TestCase
         $cliType = new ExerciseType(ExerciseType::CLI);
         $cgiType = new ExerciseType(ExerciseType::CGI);
 
-        $cliRunner = $this->getMock(ExerciseRunnerInterface::class);
-        $cgiRunner = $this->getMock(ExerciseRunnerInterface::class);
-        $this->container
-            ->method('get')
-            ->will($this->returnValueMap([
-                [$cliType->getValue(), $cliRunner],
-                [$cgiType->getValue(), $cgiRunner],
-            ]));
-
         $runnerFactory = new RunnerFactory($this->container);
 
-        $this->assertSame($cliRunner, $runnerFactory->create($cliType));
-        $this->assertSame($cgiRunner, $runnerFactory->create($cgiType));
+        $eventDispatcher = new EventDispatcher;
+        $this->assertInstanceOf(CliRunner::class, $runnerFactory->create($cliType, $eventDispatcher));
+        $this->assertInstanceOf(CgiRunner::class, $runnerFactory->create($cgiType, $eventDispatcher));
     }
 }
