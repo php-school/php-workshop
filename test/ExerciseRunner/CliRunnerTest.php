@@ -4,6 +4,7 @@ namespace PhpSchool\PhpWorkshop\ExerciseRunner;
 
 use Colors\Color;
 use InvalidArgumentException;
+use PhpSchool\PhpWorkshop\Event\EventDispatcher;
 use PhpSchool\PhpWorkshop\Exception\SolutionExecutionException;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseType;
 use PhpSchool\PhpWorkshop\Output\StdOutput;
@@ -31,7 +32,7 @@ class CliRunnerTest extends PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->runner = new CliRunner;
+        $this->runner = new CliRunner(new EventDispatcher);
         $this->exercise = $this->getMock(CliExerciseInterface::class);
 
         $this->exercise

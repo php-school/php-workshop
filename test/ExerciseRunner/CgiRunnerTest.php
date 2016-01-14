@@ -4,6 +4,7 @@ namespace PhpSchool\PhpWorkshop\ExerciseRunner;
 
 use Colors\Color;
 use InvalidArgumentException;
+use PhpSchool\PhpWorkshop\Event\EventDispatcher;
 use PhpSchool\PhpWorkshop\Exception\SolutionExecutionException;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseType;
 use PhpSchool\PhpWorkshop\Output\OutputInterface;
@@ -34,7 +35,7 @@ class CgiRunnerTest extends PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->runner = new CgiRunner();
+        $this->runner = new CgiRunner(new EventDispatcher);
         $this->exercise = $this->getMock(CgiExerciseInterface::class);
 
         $this->exercise

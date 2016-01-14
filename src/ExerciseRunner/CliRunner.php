@@ -2,6 +2,10 @@
 
 namespace PhpSchool\PhpWorkshop\ExerciseRunner;
 
+use PhpSchool\PhpWorkshop\Event\CliEvent;
+use PhpSchool\PhpWorkshop\Event\CliExecuteEvent;
+use PhpSchool\PhpWorkshop\Event\Event;
+use PhpSchool\PhpWorkshop\Event\EventDispatcher;
 use PhpSchool\PhpWorkshop\Exception\CodeExecutionException;
 use PhpSchool\PhpWorkshop\Exception\SolutionExecutionException;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
@@ -12,6 +16,7 @@ use PhpSchool\PhpWorkshop\Result\Failure;
 use PhpSchool\PhpWorkshop\Result\ResultInterface;
 use PhpSchool\PhpWorkshop\Result\StdOutFailure;
 use PhpSchool\PhpWorkshop\Result\Success;
+use PhpSchool\PhpWorkshop\Utils\ArrayObject;
 use Symfony\Component\Process\Process;
 
 /**
@@ -20,6 +25,19 @@ use Symfony\Component\Process\Process;
  */
 class CliRunner implements ExerciseRunnerInterface
 {
+
+    /**
+     * @var EventDispatcher
+     */
+    private $eventDispatcher;
+
+    /**
+     * @param EventDispatcher $eventDispatcher
+     */
+    public function __construct(EventDispatcher $eventDispatcher)
+    {
+        $this->eventDispatcher = $eventDispatcher;
+    }
 
     /**
      * @return string
@@ -31,13 +49,12 @@ class CliRunner implements ExerciseRunnerInterface
 
     /**
      * @param string $fileName
-     * @param array $args
+     * @param ArrayObject $args
      * @return string
      */
-    private function executePhpFile($fileName, array $args)
+    private function executePhpFile($fileName, ArrayObject $args)
     {
-        $cmd        = sprintf('%s %s %s', PHP_BINARY, $fileName, implode(' ', array_map('escapeshellarg', $args)));
-        $process    = new Process($cmd, dirname($fileName));
+        $process = $this->getPhpProcess($fileName, $args);
         $process->run();
 
         if (!$process->isSuccessful()) {
@@ -45,6 +62,18 @@ class CliRunner implements ExerciseRunnerInterface
         }
         
         return $process->getOutput();
+    }
+
+    /**
+     * @param string      $fileName
+     * @param ArrayObject $args
+     *
+     * @return Process
+     */
+    private function getPhpProcess($fileName, ArrayObject $args)
+    {
+        $cmd = sprintf('%s %s %s', PHP_BINARY, $fileName, $args->map('escapeshellarg')->implode(' '));
+        return new Process($cmd, dirname($fileName));
     }
 
     /**
@@ -57,17 +86,23 @@ class CliRunner implements ExerciseRunnerInterface
         if ($exercise->getType()->getValue() !== ExerciseType::CLI) {
             throw new \InvalidArgumentException;
         }
-        $args = $exercise->getArgs();
+
+        //arrays are not pass-by-ref
+        $args = new ArrayObject($exercise->getArgs());
 
         try {
-            $solutionOutput = $this->executePhpFile($exercise->getSolution()->getEntryPoint(), $args);
+            $event = $this->eventDispatcher->dispatch(new CliExecuteEvent('cli.verify.solution-execute.pre', $args));
+            $solutionOutput = $this->executePhpFile($exercise->getSolution()->getEntryPoint(), $event->getArgs());
         } catch (CodeExecutionException $e) {
+            $this->eventDispatcher->dispatch(new Event('cli.verify.solution-execute.fail', ['exception' => $e]));
             throw new SolutionExecutionException($e->getMessage());
         }
 
         try {
-            $userOutput = $this->executePhpFile($fileName, $args);
+            $event = $this->eventDispatcher->dispatch(new CliExecuteEvent('cli.verify.user-execute.pre', $args));
+            $userOutput = $this->executePhpFile($fileName, $event->getArgs());
         } catch (CodeExecutionException $e) {
+            $this->eventDispatcher->dispatch(new Event('cli.verify.user-execute.fail', ['exception' => $e]));
             return Failure::fromNameAndCodeExecutionFailure($this->getName(), $e);
         }
         if ($solutionOutput === $userOutput) {
@@ -88,11 +123,12 @@ class CliRunner implements ExerciseRunnerInterface
         if ($exercise->getType()->getValue() !== ExerciseType::CLI) {
             throw new \InvalidArgumentException;
         }
-        $args = $exercise->getArgs();
 
-        $cmd        = sprintf('%s %s %s', PHP_BINARY, $fileName, implode(' ', array_map('escapeshellarg', $args)));
-        $process    = new Process($cmd, dirname($fileName));
+        $event = $this->eventDispatcher->dispatch(
+            new CliExecuteEvent('cli.run.user-execute.pre', new ArrayObject($exercise->getArgs()))
+        );
 
+        $process = $this->getPhpProcess($fileName, $event->getArgs());
         $process->run(function ($outputType, $outputBuffer) use ($output) {
             $output->write($outputBuffer);
         });
