@@ -123,10 +123,8 @@ return [
 
     //Exercise Runners
     RunnerFactory::class => factory(function (ContainerInterface $c) {
-        return new RunnerFactory($c);
+        return new RunnerFactory;
     }),
-    CgiRunner::class => object(),
-    CliRunner::class => object(),
 
     //commands
     MenuCommand::class => factory(function (ContainerInterface $c) {
