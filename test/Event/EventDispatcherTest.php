@@ -2,10 +2,10 @@
 
 namespace PhpSchool\PhpWorkshopTest\Event;
 
+use PhpSchool\PhpWorkshop\Event\Event;
 use PhpSchool\PhpWorkshop\Event\EventDispatcher;
 use PhpSchool\PhpWorkshop\Result\ResultInterface;
 use PHPUnit_Framework_TestCase;
-use stdClass;
 
 /**
  * Class EventDispatcherTest
@@ -26,10 +26,11 @@ class EventDispatcherTest extends PHPUnit_Framework_TestCase
 
     public function testOnlyAppropriateListenersAreCalledForEvent()
     {
+        $e = new Event('some-event', ['arg1' => 1, 'arg2' => 2]);
         $mockCallback1 = $this->getMock('stdClass', ['callback']);
         $mockCallback1->expects($this->exactly(2))
             ->method('callback')
-            ->with('arg1', 'arg2')
+            ->with($e)
             ->will($this->returnValue(true));
 
         $mockCallback2 = $this->getMock('stdClass', ['doNotInvokeMe']);
@@ -39,36 +40,38 @@ class EventDispatcherTest extends PHPUnit_Framework_TestCase
         $this->eventDispatcher->listen('some-event', [$mockCallback1, 'callback']);
         $this->eventDispatcher->listen('some-event', [$mockCallback1, 'callback']);
         $this->eventDispatcher->listen('different-event', [$mockCallback2, 'doNotInvokeMe']);
-        $this->eventDispatcher->dispatch('some-event', ['arg1', 'arg2']);
+        $this->eventDispatcher->dispatch($e);
     }
 
     public function testOnlyAppropriateVerifiersAreCalledForEvent()
     {
+        $e = new Event('some-event', ['arg1' => 1, 'arg2' => 2]);
         $result = $this->getMock(ResultInterface::class);
 
         $mockCallback1 = $this->getMock('stdClass', ['callback']);
         $mockCallback1->expects($this->exactly(2))
             ->method('callback')
-            ->with('arg1', 'arg2')
+            ->with($e)
             ->will($this->returnValue($result));
 
         $this->eventDispatcher->insertVerifier('some-event', [$mockCallback1, 'callback']);
         $this->eventDispatcher->insertVerifier('some-event', [$mockCallback1, 'callback']);
-        $this->eventDispatcher->dispatch('some-event', ['arg1', 'arg2']);
+        $this->eventDispatcher->dispatch($e);
 
         $this->assertEquals([$result, $result], $this->eventDispatcher->getResults());
     }
 
     public function testVerifyReturnIsSkippedIfNotInstanceOfResult()
     {
+        $e = new Event('some-event', ['arg1' => 1, 'arg2' => 2]);
         $mockCallback1 = $this->getMock('stdClass', ['callback']);
         $mockCallback1->expects($this->once())
             ->method('callback')
-            ->with('arg1', 'arg2')
+            ->with($e)
             ->will($this->returnValue(null));
 
         $this->eventDispatcher->insertVerifier('some-event', [$mockCallback1, 'callback']);
-        $this->eventDispatcher->dispatch('some-event', ['arg1', 'arg2']);
+        $this->eventDispatcher->dispatch($e);
 
         $this->assertEquals([], $this->eventDispatcher->getResults());
     }

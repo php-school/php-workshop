@@ -28,20 +28,20 @@ class EventDispatcher
     private $results = [];
 
     /**
-     * @param string $eventName
-     * @param array $eventArgs
+     * @param EventInterface $event
+     * @return EventInterface
      */
-    public function dispatch($eventName, array $eventArgs = [])
+    public function dispatch(EventInterface $event)
     {
-        if (array_key_exists($eventName, $this->listeners)) {
-            foreach ($this->listeners[$eventName] as $listener) {
-                $listener(...$eventArgs);
+        if (array_key_exists($event->getName(), $this->listeners)) {
+            foreach ($this->listeners[$event->getName()] as $listener) {
+                $listener($event);
             }
         }
 
-        if (array_key_exists($eventName, $this->verifiers)) {
-            foreach ($this->verifiers[$eventName] as $verifier) {
-                $result = $verifier(...$eventArgs);
+        if (array_key_exists($event->getName(), $this->verifiers)) {
+            foreach ($this->verifiers[$event->getName()] as $verifier) {
+                $result = $verifier($event);
 
                 //return type hints pls
                 if ($result instanceof ResultInterface) {
@@ -51,6 +51,8 @@ class EventDispatcher
                 }
             }
         }
+
+        return $event;
     }
 
     /**
