@@ -59,29 +59,21 @@ class ExerciseDispatcher
     private $checkRepository;
 
     /**
-     * @var CodePatcher
-     */
-    private $codePatcher;
-
-    /**
      * @param RunnerFactory $runnerFactory
      * @param ResultAggregator $resultAggregator
      * @param EventDispatcher $eventDispatcher
      * @param CheckRepository $checkRepository
-     * @param CodePatcher $codePatcher
      */
     public function __construct(
         RunnerFactory $runnerFactory,
         ResultAggregator $resultAggregator,
         EventDispatcher $eventDispatcher,
-        CheckRepository $checkRepository,
-        CodePatcher $codePatcher
+        CheckRepository $checkRepository
     ) {
         $this->runnerFactory    = $runnerFactory;
         $this->results          = $resultAggregator;
         $this->eventDispatcher  = $eventDispatcher;
         $this->checkRepository  = $checkRepository;
-        $this->codePatcher      = $codePatcher;
     }
 
     /**
@@ -155,11 +147,7 @@ class ExerciseDispatcher
             }
         }
 
-        //patch code
-        //pre-check takes care of checking that code can be parsed correctly
-        //if not it would have returned already with a failure
-        $originalCode = file_get_contents($fileName);
-        file_put_contents($fileName, $this->codePatcher->patch($exercise, $originalCode));
+        $this->eventDispatcher->dispatch(new Event('verify.pre.execute', compact('exercise', 'fileName')));
 
         try {
             $this->results->add($runner->verify($exercise, $fileName));
@@ -175,8 +163,7 @@ class ExerciseDispatcher
 
             $exercise->tearDown();
         } finally {
-            //put back actual code, to remove patched additions
-            file_put_contents($fileName, $originalCode);
+            $this->eventDispatcher->dispatch(new Event('verify.post.execute', compact('exercise', 'fileName')));
         }
         $this->eventDispatcher->dispatch(new Event('verify.finish', compact('exercise', 'fileName')));
         return $this->results;

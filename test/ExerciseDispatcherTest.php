@@ -16,6 +16,7 @@ use PhpSchool\PhpWorkshop\Exercise\ExerciseType;
 use PhpSchool\PhpWorkshop\ExerciseDispatcher;
 use PhpSchool\PhpWorkshop\ExerciseRunner\ExerciseRunnerInterface;
 use PhpSchool\PhpWorkshop\Factory\RunnerFactory;
+use PhpSchool\PhpWorkshop\Listener\CodePatchListener;
 use PhpSchool\PhpWorkshop\Output\OutputInterface;
 use PhpSchool\PhpWorkshop\Result\Failure;
 use PhpSchool\PhpWorkshop\Result\Success;
@@ -39,11 +40,6 @@ class ExerciseDispatcherTest extends PHPUnit_Framework_TestCase
      * @var SimpleCheckInterface
      */
     private $check;
-
-    /**
-     * @var CodePatcher
-     */
-    private $codePatcher;
 
     /**
      * @var Filesystem
@@ -109,9 +105,6 @@ class ExerciseDispatcherTest extends PHPUnit_Framework_TestCase
             ->method('getName')
             ->will($this->returnValue('Some Check'));
 
-        $this->codePatcher = $this->getMockBuilder(CodePatcher::class)
-            ->disableOriginalConstructor()
-            ->getMock();
         $this->checkRepository = new CheckRepository([$this->check]);
         $this->runner = $this->getMock(ExerciseRunnerInterface::class);
         $this->runnerFactory = $this->getMock(RunnerFactory::class);
@@ -121,8 +114,7 @@ class ExerciseDispatcherTest extends PHPUnit_Framework_TestCase
             $this->runnerFactory,
             $this->results,
             $this->eventDispatcher,
-            $this->checkRepository,
-            $this->codePatcher
+            $this->checkRepository
         );
 
         $this->file = sprintf('%s/%s/submission.php', str_replace('\\', '/', sys_get_temp_dir()), $this->getName());
@@ -423,6 +415,14 @@ class ExerciseDispatcherTest extends PHPUnit_Framework_TestCase
 
     public function testCodeWhichRequiresPatchingIsModifiedOnDiskAfterPreChecksAndThenReverted()
     {
+        $codePatcher = $this->getMockBuilder(CodePatcher::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $listener = new CodePatchListener($codePatcher);
+        $this->eventDispatcher->listen('verify.pre.execute', [$listener, 'patch']);
+        $this->eventDispatcher->listen('verify.post.execute', [$listener, 'revert']);
+
         $this->createExercise();
 
         file_put_contents($this->file, 'ORIGINAL CONTENT');
@@ -448,7 +448,7 @@ class ExerciseDispatcherTest extends PHPUnit_Framework_TestCase
             ->method('getExerciseInterface')
             ->will($this->returnValue(ExerciseInterface::class));
 
-        $this->codePatcher
+        $codePatcher
             ->expects($this->once())
             ->method('patch')
             ->with($this->exercise, 'ORIGINAL CONTENT')
@@ -467,6 +467,14 @@ class ExerciseDispatcherTest extends PHPUnit_Framework_TestCase
 
     public function testPatchedCodeIsRevertedIfExceptionIsThrownAnywhere()
     {
+        $codePatcher = $this->getMockBuilder(CodePatcher::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $listener = new CodePatchListener($codePatcher);
+        $this->eventDispatcher->listen('verify.pre.execute', [$listener, 'patch']);
+        $this->eventDispatcher->listen('verify.post.execute', [$listener, 'revert']);
+
         $this->createExercise();
 
         file_put_contents($this->file, 'ORIGINAL CONTENT');
@@ -489,7 +497,7 @@ class ExerciseDispatcherTest extends PHPUnit_Framework_TestCase
             ->method('getExerciseInterface')
             ->will($this->returnValue(ExerciseInterface::class));
 
-        $this->codePatcher
+        $codePatcher
             ->expects($this->once())
             ->method('patch')
             ->with($this->exercise, 'ORIGINAL CONTENT')

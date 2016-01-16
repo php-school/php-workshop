@@ -23,6 +23,7 @@ use PhpSchool\PhpWorkshop\ExerciseDispatcher;
 use PhpSchool\PhpWorkshop\Factory\EventDispatcherFactory;
 use PhpSchool\PhpWorkshop\Factory\MenuFactory;
 use PhpSchool\PhpWorkshop\Factory\RunnerFactory;
+use PhpSchool\PhpWorkshop\Listener\CodePatchListener;
 use PhpSchool\PhpWorkshop\Listener\PrepareSolutionListener;
 use PhpSchool\PhpWorkshop\MenuItem\ResetProgress;
 use PhpSchool\PhpWorkshop\Output\OutputInterface;
@@ -69,8 +70,7 @@ return [
             $c->get(RunnerFactory::class),
             $c->get(ResultAggregator::class),
             $c->get(EventDispatcher::class),
-            $c->get(CheckRepository::class),
-            $c->get(CodePatcher::class)
+            $c->get(CheckRepository::class)
         );
 
         //checks which should always run (probably)
@@ -171,7 +171,10 @@ return [
     }),
 
     //Listeners
-    PrepareSolutionListener::class => object(),
+    PrepareSolutionListener::class      => object(),
+    CodePatchListener::class            => factory(function (ContainerInterface $c) {
+        return new CodePatchListener($c->get(CodePatcher::class));
+    }),
     
     //checks
     FileExistsCheck::class              => object(FileExistsCheck::class),
@@ -250,7 +253,6 @@ return [
         return $renderer;
     }),
     'renderers' => factory(function (ContainerInterface $c) {
-        
         return [
             [StdOutFailure::class, new OutputFailureRenderer],
             [CgiOutResult::class, new CgiOutResultRenderer],
@@ -259,8 +261,17 @@ return [
             [Failure::class, new FailureRenderer],
         ];
     }),
+    'codePatcherPreExecuteCallback' => factory(function (ContainerInterface $c) {
+        return [$c->get(CodePatchListener::class), 'patch'];
+    }),
+    'codePatcherPostExecuteCallback' => factory(function (ContainerInterface $c) {
+        return [$c->get(CodePatchListener::class), 'revert'];
+    }),
+
     'coreListeners' => [
         'verify.start' => PrepareSolutionListener::class,
+        'verify.pre.execute' => 'codePatcherPreExecuteCallback',
+        'verify.post.execute' => 'codePatcherPostExecuteCallback'
     ],
     'coreContributors' => [
         '@AydinHassan' => 'Aydin Hassan',

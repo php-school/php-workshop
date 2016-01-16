@@ -23,8 +23,15 @@ class EventDispatcherFactory
         $dispatcher = new EventDispatcher($container->get(ResultAggregator::class));
 
         if ($container->has('coreListeners')) {
-            foreach ($container->get('coreListeners') as $eventName => $listener) {
-                $dispatcher->listen($eventName, $container->get($listener));
+            foreach ($container->get('coreListeners') as $eventName => $listeners) {
+
+                if (is_array($listeners)) {
+                    foreach ($listeners as $listener) {
+                        $dispatcher->listen($eventName, $container->get($listener));
+                    }
+                } else {
+                    $dispatcher->listen($eventName, $container->get($listeners));
+                }
             }
         }
 
