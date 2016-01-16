@@ -371,58 +371,14 @@ class ExerciseDispatcherTest extends PHPUnit_Framework_TestCase
         $this->assertInstanceOf(ResultAggregator::class, $result);
         $this->assertFalse($result->isSuccessful());
     }
-
-    public function testSelfCheck()
-    {
-        $this->check
-            ->expects($this->once())
-            ->method('check')
-            ->will($this->returnValue(new Success($this->check->getName())));
-
-        $exerciseType = ExerciseType::CLI();
-        $this->check
-            ->expects($this->once())
-            ->method('canRun')
-            ->with($exerciseType)
-            ->will($this->returnValue(true));
-
-        $this->check
-            ->expects($this->once())
-            ->method('getExerciseInterface')
-            ->will($this->returnValue(ExerciseInterface::class));
-
-        $exercise = $this->getMock(SelfCheckExerciseInterface::class);
-        $exercise
-            ->expects($this->atLeastOnce())
-            ->method('getType')
-            ->will($this->returnValue($exerciseType));
-
-        $exercise
-            ->expects($this->atLeastOnce())
-            ->method('check')
-            ->with($this->file)
-            ->will($this->returnValue(new Success($this->check->getName())));
-
-        $this->mockRunner($exerciseType);
-        $this->runner
-            ->expects($this->once())
-            ->method('verify')
-            ->with($exercise, $this->file)
-            ->will($this->returnValue($this->getMock(SuccessInterface::class)));
-
-        $this->exerciseDispatcher->requireCheck(get_class($this->check), ExerciseDispatcher::CHECK_BEFORE);
-
-        $result = $this->exerciseDispatcher->verify($exercise, $this->file);
-        $this->assertInstanceOf(ResultAggregator::class, $result);
-        $this->assertCount(3, $result);
-    }
-
+    
     public function testAllEventsAreDispatched()
     {
         $this->eventDispatcher
-            ->expects($this->exactly(4))
+            ->expects($this->exactly(5))
             ->method('dispatch')
             ->withConsecutive(
+                [$this->isInstanceOf(Event::class)],
                 [$this->isInstanceOf(Event::class)],
                 [$this->isInstanceOf(Event::class)],
                 [$this->isInstanceOf(Event::class)],

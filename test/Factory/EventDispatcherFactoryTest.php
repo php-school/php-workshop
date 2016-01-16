@@ -7,6 +7,7 @@ use PhpSchool\PhpWorkshop\Event\EventDispatcher;
 use PhpSchool\PhpWorkshop\Factory\EventDispatcherFactory;
 use PhpSchool\PhpWorkshop\Listener\CodePatchListener;
 use PhpSchool\PhpWorkshop\Listener\PrepareSolutionListener;
+use PhpSchool\PhpWorkshop\Listener\SelfCheckListener;
 use PhpSchool\PhpWorkshop\ResultAggregator;
 use PHPUnit_Framework_TestCase;
 
@@ -43,6 +44,13 @@ class EventDispatcherFactoryTest extends PHPUnit_Framework_TestCase
             ->with(CodePatchListener::class)
             ->will($this->returnValue($codePatchListener));
 
+        $selfCheckListener = new SelfCheckListener(new ResultAggregator);
+
+        $c->expects($this->at(3))
+            ->method('get')
+            ->with(SelfCheckListener::class)
+            ->will($this->returnValue($selfCheckListener));
+
         $dispatcher = (new EventDispatcherFactory)->__invoke($c);
         $this->assertInstanceOf(EventDispatcher::class, $dispatcher);
         $this->assertSame(
@@ -55,6 +63,9 @@ class EventDispatcherFactoryTest extends PHPUnit_Framework_TestCase
                 ],
                 'verify.post.execute' => [
                     [$codePatchListener, 'revert'],
+                ],
+                'verify.post.check' => [
+                    $selfCheckListener
                 ]
             ],
             $this->readAttribute($dispatcher, 'listeners')

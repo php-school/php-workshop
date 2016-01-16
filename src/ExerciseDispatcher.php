@@ -159,11 +159,7 @@ class ExerciseDispatcher
             $this->results->add($check->check($exercise, $fileName));
         }
 
-        //self check, for easy custom checking
-        if ($exercise instanceof SelfCheck) {
-            $this->results->add($exercise->check($fileName));
-        }
-
+        $this->eventDispatcher->dispatch(new Event('verify.post.check', compact('exercise', 'fileName')));
         $exercise->tearDown();
 
         $this->eventDispatcher->dispatch(new Event('verify.finish', compact('exercise', 'fileName')));

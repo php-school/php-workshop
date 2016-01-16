@@ -25,6 +25,7 @@ use PhpSchool\PhpWorkshop\Factory\MenuFactory;
 use PhpSchool\PhpWorkshop\Factory\RunnerFactory;
 use PhpSchool\PhpWorkshop\Listener\CodePatchListener;
 use PhpSchool\PhpWorkshop\Listener\PrepareSolutionListener;
+use PhpSchool\PhpWorkshop\Listener\SelfCheckListener;
 use PhpSchool\PhpWorkshop\MenuItem\ResetProgress;
 use PhpSchool\PhpWorkshop\Output\OutputInterface;
 use PhpSchool\PhpWorkshop\Output\StdOutput;
@@ -174,6 +175,9 @@ return [
     PrepareSolutionListener::class      => object(),
     CodePatchListener::class            => factory(function (ContainerInterface $c) {
         return new CodePatchListener($c->get(CodePatcher::class));
+    }),
+    SelfCheckListener::class            => factory(function (ContainerInterface $c) {
+        return new SelfCheckListener($c->get(ResultAggregator::class));
     }),
     
     //checks

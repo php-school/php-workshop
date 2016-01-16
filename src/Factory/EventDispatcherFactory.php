@@ -6,6 +6,7 @@ use Interop\Container\ContainerInterface;
 use PhpSchool\PhpWorkshop\Event\EventDispatcher;
 use PhpSchool\PhpWorkshop\Listener\CodePatchListener;
 use PhpSchool\PhpWorkshop\Listener\PrepareSolutionListener;
+use PhpSchool\PhpWorkshop\Listener\SelfCheckListener;
 use PhpSchool\PhpWorkshop\ResultAggregator;
 
 /**
@@ -29,6 +30,8 @@ class EventDispatcherFactory
         $codePatcherListener = $container->get(CodePatchListener::class);
         $dispatcher->listen('verify.pre.execute', [$codePatcherListener, 'patch']);
         $dispatcher->listen('verify.post.execute', [$codePatcherListener, 'revert']);
+
+        $dispatcher->listen('verify.post.check', $container->get(SelfCheckListener::class));
 
         return $dispatcher;
     }
