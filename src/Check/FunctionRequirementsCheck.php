@@ -20,7 +20,7 @@ use PhpSchool\PhpWorkshop\Result\Success;
  * @package PhpSchool\PhpWorkshop\Check
  * @author  Aydin Hassan <aydin@hotmail.co.uk>
  */
-class FunctionRequirementsCheck implements CheckInterface
+class FunctionRequirementsCheck implements SimpleCheckInterface
 {
     
     /**

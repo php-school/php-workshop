@@ -13,7 +13,7 @@ use PhpSchool\PhpWorkshop\Result\Success;
  * @package PhpSchool\PhpWorkshop\Check
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
-class FileExistsCheck implements CheckInterface
+class FileExistsCheck implements SimpleCheckInterface
 {
     /**
      * @return string

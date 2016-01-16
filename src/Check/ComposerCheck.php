@@ -14,7 +14,7 @@ use PhpSchool\PhpWorkshop\Result\Success;
  * Class ComposerCheck
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
-class ComposerCheck implements CheckInterface
+class ComposerCheck implements SimpleCheckInterface
 {
 
     /**

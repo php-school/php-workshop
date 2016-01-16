@@ -4,7 +4,7 @@ namespace PhpSchool\PhpWorkshopTest;
 
 use Interop\Container\ContainerInterface;
 use PhpSchool\PhpWorkshop\Check\CheckRepository;
-use PhpSchool\PhpWorkshop\Check\CheckInterface;
+use PhpSchool\PhpWorkshop\Check\SimpleCheckInterface;
 use PhpSchool\PhpWorkshop\CodePatcher;
 use PhpSchool\PhpWorkshop\Event\EventDispatcher;
 use PhpSchool\PhpWorkshop\Exception\CheckNotApplicableException;
@@ -35,7 +35,7 @@ class ExerciseDispatcherTest extends PHPUnit_Framework_TestCase
 {
 
     /**
-     * @var CheckInterface
+     * @var SimpleCheckInterface
      */
     private $check;
 
@@ -102,7 +102,7 @@ class ExerciseDispatcherTest extends PHPUnit_Framework_TestCase
     public function setUp()
     {
         $this->filesystem = new Filesystem;
-        $this->check = $this->getMock(CheckInterface::class);
+        $this->check = $this->getMock(SimpleCheckInterface::class);
         $this->check
             ->expects($this->any())
             ->method('getName')
@@ -269,7 +269,7 @@ class ExerciseDispatcherTest extends PHPUnit_Framework_TestCase
             ->method('check')
             ->will($this->returnValue(new Success('Success', 'nope')));
 
-        $doNotRunMe = $this->getMock(CheckInterface::class, [], [], 'DoNotRunMeCheck');
+        $doNotRunMe = $this->getMock(SimpleCheckInterface::class, [], [], 'DoNotRunMeCheck');
         $doNotRunMe
             ->expects($this->never())
             ->method('check');
@@ -310,7 +310,7 @@ class ExerciseDispatcherTest extends PHPUnit_Framework_TestCase
             ->method('check')
             ->will($this->returnValue(new Failure('Failure', 'nope')));
 
-        $doNotRunMe = $this->getMock(CheckInterface::class, [], [], 'DoNotRunMeCheck');
+        $doNotRunMe = $this->getMock(SimpleCheckInterface::class, [], [], 'DoNotRunMeCheck');
         $doNotRunMe
             ->expects($this->never())
             ->method('check');

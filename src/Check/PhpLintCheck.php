@@ -13,8 +13,7 @@ use Symfony\Component\Process\Process;
  * @package PhpSchool\PhpWorkshop\Check
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
-
-class PhpLintCheck implements CheckInterface
+class PhpLintCheck implements SimpleCheckInterface
 {
 
     /**

@@ -8,10 +8,7 @@ use PhpParser\NodeTraverser;
 use PhpParser\Parser;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseType;
-use PhpSchool\PhpWorkshop\ExerciseCheck\FunctionRequirementsExerciseCheck;
-use PhpSchool\PhpWorkshop\NodeVisitor\FunctionVisitor;
 use PhpSchool\PhpWorkshop\Result\Failure;
-use PhpSchool\PhpWorkshop\Result\FunctionRequirementsFailure;
 use PhpSchool\PhpWorkshop\Result\ResultInterface;
 use PhpSchool\PhpWorkshop\Result\Success;
 
@@ -20,7 +17,7 @@ use PhpSchool\PhpWorkshop\Result\Success;
  * @package PhpSchool\PhpWorkshop\Check
  * @author  Aydin Hassan <aydin@hotmail.co.uk>
  */
-class CodeParseCheck implements CheckInterface
+class CodeParseCheck implements SimpleCheckInterface
 {
     
     /**
