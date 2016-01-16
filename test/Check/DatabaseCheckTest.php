@@ -2,25 +2,17 @@
 
 namespace PhpSchool\PhpWorkshopTest\Check;
 
-use InvalidArgumentException;
 use PDO;
 use PhpSchool\PhpWorkshop\Check\CheckRepository;
 use PhpSchool\PhpWorkshop\Check\DatabaseCheck;
-use PhpSchool\PhpWorkshop\Event\CliExecuteEvent;
-use PhpSchool\PhpWorkshop\Event\Event;
 use PhpSchool\PhpWorkshop\Event\EventDispatcher;
-use PhpSchool\PhpWorkshop\Exception\SolutionExecutionException;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseType;
 use PhpSchool\PhpWorkshop\ExerciseCheck\DatabaseExerciseCheck;
 use PhpSchool\PhpWorkshop\ExerciseDispatcher;
 use PhpSchool\PhpWorkshop\Factory\RunnerFactory;
-use PhpSchool\PhpWorkshop\Result\Failure;
-use PhpSchool\PhpWorkshop\Result\StdOutFailure;
-use PhpSchool\PhpWorkshop\Result\Success;
 use PhpSchool\PhpWorkshop\ResultAggregator;
 use PhpSchool\PhpWorkshop\Solution\SingleFileSolution;
-use PhpSchool\PhpWorkshop\Utils\ArrayObject;
 use PhpSchool\PhpWorkshopTest\Asset\DatabaseExercise;
 use PhpSchool\PhpWorkshopTest\Asset\DatabaseExerciseInterface;
 use PHPUnit_Framework_TestCase;
