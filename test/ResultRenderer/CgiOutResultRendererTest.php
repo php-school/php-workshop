@@ -193,7 +193,7 @@ class CgiOutResultRendererTest extends AbstractResultRendererTest
         $expected .= "  \e[33m\e[1mEXPECTED CONTENT:\e[0m\e[0m  \e[39m\"EXPECTED OUTPUT\"\e[0m\n";
         $expected .= "\e[33m────────────────────\e[0m\n";
         $expected .= "\e[32m\e[4m\e[1mRequest 02\n\n";
-        $expected .= "\e[0m\e[0m\e[0mCode Execution Failure\n";
+        $expected .= "\e[0m\e[0m\e[0m  Code Execution Failure\n";
         $expected .= "\e[33m────────────────────\e[0m\n";
 
         $mainRenderer = $this->getRenderer();

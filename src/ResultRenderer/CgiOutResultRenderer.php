@@ -37,7 +37,7 @@ class CgiOutResultRenderer implements ResultRendererInterface
             $output .= $renderer->style(sprintf("Request %02d\n\n", $key + 1), ['bold', 'underline', 'green']);
 
             if (!$request instanceof CgiOutRequestFailure) {
-                $output .= $renderer->renderResult($request) . "\n";
+                $output .= $renderer->renderResult($request);
                 $output .= $renderer->lineBreak();
                 continue;
             }

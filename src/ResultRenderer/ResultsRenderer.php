@@ -130,6 +130,7 @@ class ResultsRenderer
             list ($failure, $message) = $result;
             $output->writeLine(str_pad($this->style($message, ['red', 'bg_black', 'bold']), $padLength));
             $output->write($this->renderResult($failure));
+            $output->emptyLine();
         }
 
         $output->writeLine($this->style(" FAIL!", ['red', 'bg_default', 'bold']));

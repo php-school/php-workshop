@@ -31,6 +31,6 @@ class FailureRendererTest extends AbstractResultRendererTest
     {
         $failure = new Failure($this->getMock(CheckInterface::class), 'Something went wrong');
         $renderer = new FailureRenderer(new Color);
-        $this->assertEquals('Something went wrong', $renderer->render($failure, $this->getRenderer()));
+        $this->assertEquals("  Something went wrong\n", $renderer->render($failure, $this->getRenderer()));
     }
 }
