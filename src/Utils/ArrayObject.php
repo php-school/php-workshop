@@ -19,11 +19,15 @@ class ArrayObject implements IteratorAggregate
     private $array;
 
     /**
-     * @param array $array
+     * @param array|mixed... $array
      */
-    public function __construct(array $array)
+    public function __construct($array)
     {
-        $this->array = $array;
+        if (func_num_args() > 1) {
+            $this->array = func_get_args();
+        } else {
+            $this->array = $array;
+        }
     }
 
     /**
