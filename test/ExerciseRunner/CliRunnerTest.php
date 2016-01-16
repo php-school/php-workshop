@@ -11,6 +11,7 @@ use PhpSchool\PhpWorkshop\Output\StdOutput;
 use PhpSchool\PhpWorkshop\Result\Failure;
 use PhpSchool\PhpWorkshop\Result\StdOutFailure;
 use PhpSchool\PhpWorkshop\Result\Success;
+use PhpSchool\PhpWorkshop\ResultAggregator;
 use PhpSchool\PhpWorkshop\Solution\SingleFileSolution;
 use PhpSchool\PhpWorkshopTest\Asset\CliExerciseInterface;
 use PHPUnit_Framework_TestCase;
@@ -32,7 +33,7 @@ class CliRunnerTest extends PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->runner = new CliRunner(new EventDispatcher);
+        $this->runner = new CliRunner(new EventDispatcher(new ResultAggregator));
         $this->exercise = $this->getMock(CliExerciseInterface::class);
 
         $this->exercise

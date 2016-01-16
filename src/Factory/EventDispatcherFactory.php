@@ -4,6 +4,7 @@ namespace PhpSchool\PhpWorkshop\Factory;
 
 use Interop\Container\ContainerInterface;
 use PhpSchool\PhpWorkshop\Event\EventDispatcher;
+use PhpSchool\PhpWorkshop\ResultAggregator;
 
 /**
  * Class EventDispatcherFactory
@@ -19,7 +20,7 @@ class EventDispatcherFactory
      */
     public function __invoke(ContainerInterface $container)
     {
-        $dispatcher = new EventDispatcher;
+        $dispatcher = new EventDispatcher($container->get(ResultAggregator::class));
 
         if ($container->has('coreListeners')) {
             foreach ($container->get('coreListeners') as $eventName => $listener) {

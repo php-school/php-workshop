@@ -6,6 +6,7 @@ use Assert\Assertion;
 use PhpSchool\PhpWorkshop\Check\CheckCollection;
 use PhpSchool\PhpWorkshop\Check\CheckInterface;
 use PhpSchool\PhpWorkshop\Check\CheckRepository;
+use PhpSchool\PhpWorkshop\Check\ListenableCheckInterface;
 use PhpSchool\PhpWorkshop\Event\Event;
 use PhpSchool\PhpWorkshop\Event\EventDispatcher;
 use PhpSchool\PhpWorkshop\Exception\CheckNotApplicableException;
@@ -43,6 +44,11 @@ class ExerciseDispatcher
     private $runnerFactory;
 
     /**
+     * @var ResultAggregator
+     */
+    private $results;
+
+    /**
      * @var EventDispatcher
      */
     private $eventDispatcher;
@@ -59,26 +65,29 @@ class ExerciseDispatcher
 
     /**
      * @param RunnerFactory $runnerFactory
+     * @param ResultAggregator $resultAggregator
      * @param EventDispatcher $eventDispatcher
      * @param CheckRepository $checkRepository
      * @param CodePatcher $codePatcher
      */
     public function __construct(
         RunnerFactory $runnerFactory,
+        ResultAggregator $resultAggregator,
         EventDispatcher $eventDispatcher,
         CheckRepository $checkRepository,
         CodePatcher $codePatcher
     ) {
-        $this->checkRepository  = $checkRepository;
-        $this->eventDispatcher  = $eventDispatcher;
-        $this->codePatcher      = $codePatcher;
         $this->runnerFactory    = $runnerFactory;
+        $this->results          = $resultAggregator;
+        $this->eventDispatcher  = $eventDispatcher;
+        $this->checkRepository  = $checkRepository;
+        $this->codePatcher      = $codePatcher;
     }
 
     /**
      * @param string $requiredCheck
-     * @param $position
-     * @throws CheckNotExistsException
+     * @param string $position
+     * @throws InvalidArgumentException
      */
     public function requireCheck($requiredCheck, $position)
     {
@@ -111,21 +120,19 @@ class ExerciseDispatcher
      */
     public function verify(ExerciseInterface $exercise, $fileName)
     {
-        $runner = $this->runnerFactory->create($exercise->getType(), $this->eventDispatcher);
-        $this->eventDispatcher->dispatch(new Event('verify.start', compact('exercise', 'fileName')));
-
         $exercise->configure($this);
 
-        $resultAggregator = new ResultAggregator;
+        $runner = $this->runnerFactory->create($exercise->getType(), $this->eventDispatcher);
+        $this->eventDispatcher->dispatch(new Event('verify.start', compact('exercise', 'fileName')));
 
         $this->validateChecks($this->checksToRunBefore, $exercise);
         $this->validateChecks($this->checksToRunAfter, $exercise);
 
         foreach ($this->checksToRunBefore as $check) {
-            $resultAggregator->add($check->check($exercise, $fileName));
+            $this->results->add($check->check($exercise, $fileName));
 
-            if (!$resultAggregator->isSuccessful()) {
-                return $resultAggregator;
+            if (!$this->results->isSuccessful()) {
+                return $this->results;
             }
         }
 
@@ -136,15 +143,15 @@ class ExerciseDispatcher
         file_put_contents($fileName, $this->codePatcher->patch($exercise, $originalCode));
 
         try {
-            $resultAggregator->add($runner->verify($exercise, $fileName));
+            $this->results->add($runner->verify($exercise, $fileName));
 
             foreach ($this->checksToRunAfter as $check) {
-                $resultAggregator->add($check->check($exercise, $fileName));
+                $this->results->add($check->check($exercise, $fileName));
             }
 
             //self check, for easy custom checking
             if ($exercise instanceof SelfCheck) {
-                $resultAggregator->add($exercise->check($fileName));
+                $this->results->add($exercise->check($fileName));
             }
 
             $exercise->tearDown();
@@ -153,7 +160,7 @@ class ExerciseDispatcher
             file_put_contents($fileName, $originalCode);
         }
         $this->eventDispatcher->dispatch(new Event('verify.finish', compact('exercise', 'fileName')));
-        return $resultAggregator;
+        return $this->results;
     }
 
     /**

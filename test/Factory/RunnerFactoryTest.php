@@ -9,6 +9,7 @@ use PhpSchool\PhpWorkshop\Exercise\ExerciseType;
 use PhpSchool\PhpWorkshop\ExerciseRunner\CgiRunner;
 use PhpSchool\PhpWorkshop\ExerciseRunner\CliRunner;
 use PhpSchool\PhpWorkshop\Factory\RunnerFactory;
+use PhpSchool\PhpWorkshop\ResultAggregator;
 use PHPUnit_Framework_TestCase;
 
 /**
@@ -31,7 +32,7 @@ class RunnerFactoryTest extends PHPUnit_Framework_TestCase
 
         $this->setExpectedException(InvalidArgumentException::class, 'Exercise Type: "invalid" not supported');
 
-        (new RunnerFactory)->create($type, new EventDispatcher);
+        (new RunnerFactory)->create($type, new EventDispatcher(new ResultAggregator));
     }
 
     public function testCliAndCgiRunnerCanBeCreated()
@@ -41,7 +42,7 @@ class RunnerFactoryTest extends PHPUnit_Framework_TestCase
 
         $runnerFactory = new RunnerFactory($this->container);
 
-        $eventDispatcher = new EventDispatcher;
+        $eventDispatcher = new EventDispatcher(new ResultAggregator);
         $this->assertInstanceOf(CliRunner::class, $runnerFactory->create($cliType, $eventDispatcher));
         $this->assertInstanceOf(CgiRunner::class, $runnerFactory->create($cgiType, $eventDispatcher));
     }

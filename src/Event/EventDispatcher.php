@@ -4,6 +4,7 @@ namespace PhpSchool\PhpWorkshop\Event;
 
 use Assert\Assertion;
 use PhpSchool\PhpWorkshop\Result\ResultInterface;
+use PhpSchool\PhpWorkshop\ResultAggregator;
 
 /**
  * Class EventDispatcher
@@ -23,9 +24,17 @@ class EventDispatcher
     private $verifiers = [];
 
     /**
-     * @var array
+     * @var ResultAggregator
      */
-    private $results = [];
+    private $resultAggregator;
+
+    /**
+     * @param ResultAggregator $resultAggregator
+     */
+    public function __construct(ResultAggregator $resultAggregator)
+    {
+        $this->resultAggregator = $resultAggregator;
+    }
 
     /**
      * @param EventInterface $event
@@ -45,7 +54,7 @@ class EventDispatcher
 
                 //return type hints pls
                 if ($result instanceof ResultInterface) {
-                    $this->results[] = $result;
+                    $this->resultAggregator->add($result);
                 } else {
                     //??!!
                 }
@@ -79,13 +88,5 @@ class EventDispatcher
         } else {
             $this->verifiers[$eventName][] = $callback;
         }
-    }
-
-    /**
-     * @return array
-     */
-    public function getResults()
-    {
-        return $this->results;
     }
 }

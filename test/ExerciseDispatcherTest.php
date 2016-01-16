@@ -3,8 +3,8 @@
 namespace PhpSchool\PhpWorkshopTest;
 
 use Interop\Container\ContainerInterface;
-use PhpSchool\PhpWorkshop\Check\CheckInterface;
 use PhpSchool\PhpWorkshop\Check\CheckRepository;
+use PhpSchool\PhpWorkshop\Check\CheckInterface;
 use PhpSchool\PhpWorkshop\CodePatcher;
 use PhpSchool\PhpWorkshop\Event\EventDispatcher;
 use PhpSchool\PhpWorkshop\Exception\CheckNotApplicableException;
@@ -13,7 +13,6 @@ use PhpSchool\PhpWorkshop\Exception\InvalidArgumentException;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseType;
 use PhpSchool\PhpWorkshop\ExerciseDispatcher;
-use PhpSchool\PhpWorkshop\ExerciseRunner\CliRunner;
 use PhpSchool\PhpWorkshop\ExerciseRunner\ExerciseRunnerInterface;
 use PhpSchool\PhpWorkshop\Factory\RunnerFactory;
 use PhpSchool\PhpWorkshop\Output\OutputInterface;
@@ -95,6 +94,11 @@ class ExerciseDispatcherTest extends PHPUnit_Framework_TestCase
      */
     private $eventDispatcher;
 
+    /**
+     * @var ResultAggregator
+     */
+    private $results;
+
     public function setUp()
     {
         $this->filesystem = new Filesystem;
@@ -110,9 +114,11 @@ class ExerciseDispatcherTest extends PHPUnit_Framework_TestCase
         $this->checkRepository = new CheckRepository([$this->check]);
         $this->runner = $this->getMock(ExerciseRunnerInterface::class);
         $this->runnerFactory = $this->getMock(RunnerFactory::class);
-        $this->eventDispatcher = new EventDispatcher;
+        $this->results = new ResultAggregator;
+        $this->eventDispatcher = new EventDispatcher($this->results);
         $this->exerciseDispatcher = new ExerciseDispatcher(
             $this->runnerFactory,
+            $this->results,
             $this->eventDispatcher,
             $this->checkRepository,
             $this->codePatcher

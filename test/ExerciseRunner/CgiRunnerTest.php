@@ -12,6 +12,7 @@ use PhpSchool\PhpWorkshop\Output\StdOutput;
 use PhpSchool\PhpWorkshop\Result\CgiOutRequestFailure;
 use PhpSchool\PhpWorkshop\Result\CgiOutResult;
 use PhpSchool\PhpWorkshop\Result\Failure;
+use PhpSchool\PhpWorkshop\ResultAggregator;
 use PhpSchool\PhpWorkshop\Solution\SingleFileSolution;
 use PhpSchool\PhpWorkshopTest\Asset\CgiExerciseInterface;
 use PHPUnit_Framework_TestCase;
@@ -35,7 +36,7 @@ class CgiRunnerTest extends PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->runner = new CgiRunner(new EventDispatcher);
+        $this->runner = new CgiRunner(new EventDispatcher(new ResultAggregator));
         $this->exercise = $this->getMock(CgiExerciseInterface::class);
 
         $this->exercise

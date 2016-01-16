@@ -5,6 +5,7 @@ namespace PhpSchool\PhpWorkshopTest\Event;
 use PhpSchool\PhpWorkshop\Event\Event;
 use PhpSchool\PhpWorkshop\Event\EventDispatcher;
 use PhpSchool\PhpWorkshop\Result\ResultInterface;
+use PhpSchool\PhpWorkshop\ResultAggregator;
 use PHPUnit_Framework_TestCase;
 
 /**
@@ -15,13 +16,19 @@ use PHPUnit_Framework_TestCase;
 class EventDispatcherTest extends PHPUnit_Framework_TestCase
 {
     /**
+     * @var ResultAggregator
+     */
+    private $results;
+
+    /**
      * @var EventDispatcher
      */
     private $eventDispatcher;
 
     public function setUp()
     {
-        $this->eventDispatcher = new EventDispatcher;
+        $this->results = new ResultAggregator;
+        $this->eventDispatcher = new EventDispatcher($this->results);
     }
 
     public function testOnlyAppropriateListenersAreCalledForEvent()
@@ -58,7 +65,7 @@ class EventDispatcherTest extends PHPUnit_Framework_TestCase
         $this->eventDispatcher->insertVerifier('some-event', [$mockCallback1, 'callback']);
         $this->eventDispatcher->dispatch($e);
 
-        $this->assertEquals([$result, $result], $this->eventDispatcher->getResults());
+        $this->assertEquals([$result, $result], iterator_to_array($this->results));
     }
 
     public function testVerifyReturnIsSkippedIfNotInstanceOfResult()
@@ -73,6 +80,6 @@ class EventDispatcherTest extends PHPUnit_Framework_TestCase
         $this->eventDispatcher->insertVerifier('some-event', [$mockCallback1, 'callback']);
         $this->eventDispatcher->dispatch($e);
 
-        $this->assertEquals([], $this->eventDispatcher->getResults());
+        $this->assertEquals([], iterator_to_array($this->results));
     }
 }

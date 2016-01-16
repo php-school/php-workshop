@@ -20,8 +20,6 @@ use PhpSchool\PhpWorkshop\CodeInsertion as Insertion;
 use PhpSchool\PhpWorkshop\CodePatcher;
 use PhpSchool\PhpWorkshop\Event\EventDispatcher;
 use PhpSchool\PhpWorkshop\ExerciseDispatcher;
-use PhpSchool\PhpWorkshop\ExerciseRunner\CgiRunner;
-use PhpSchool\PhpWorkshop\ExerciseRunner\CliRunner;
 use PhpSchool\PhpWorkshop\Factory\EventDispatcherFactory;
 use PhpSchool\PhpWorkshop\Factory\MenuFactory;
 use PhpSchool\PhpWorkshop\Factory\RunnerFactory;
@@ -32,6 +30,7 @@ use PhpSchool\PhpWorkshop\Output\StdOutput;
 use PhpSchool\PhpWorkshop\Patch;
 use PhpSchool\PhpWorkshop\Result\CgiOutResult;
 use PhpSchool\PhpWorkshop\Result\StdOutFailure;
+use PhpSchool\PhpWorkshop\ResultAggregator;
 use PhpSchool\PhpWorkshop\ResultRenderer\CgiOutResultRenderer;
 use PhpSchool\PhpWorkshop\ResultRenderer\OutputFailureRenderer;
 use PhpSchool\PSX\SyntaxHighlighter;
@@ -68,6 +67,7 @@ return [
     ExerciseDispatcher::class => factory(function (ContainerInterface $c) {
         $dispatcher = new ExerciseDispatcher(
             $c->get(RunnerFactory::class),
+            $c->get(ResultAggregator::class),
             $c->get(EventDispatcher::class),
             $c->get(CheckRepository::class),
             $c->get(CodePatcher::class)
@@ -79,6 +79,7 @@ return [
         $dispatcher->requireCheck(CodeParseCheck::class, ExerciseDispatcher::CHECK_BEFORE);
         return $dispatcher;
     }),
+    ResultAggregator::class => object(ResultAggregator::class),
     CheckRepository::class => factory(function (ContainerInterface $c) {
         return new CheckRepository([
             $c->get(FileExistsCheck::class),
@@ -86,6 +87,7 @@ return [
             $c->get(CodeParseCheck::class),
             $c->get(ComposerCheck::class),
             $c->get(FunctionRequirementsCheck::class),
+            $c->get(DatabaseCheck::class),
         ]);
     }),
     CommandRouter::class => factory(function (ContainerInterface $c) {
@@ -197,7 +199,7 @@ return [
             ->withInsertion(new Insertion(Insertion::TYPE_BEFORE, 'error_reporting(E_ALL);'))
             ->withInsertion(new Insertion(Insertion ::TYPE_BEFORE, 'date_default_timezone_set("Europe/London");'));
         
-        return new CodePatcher($c->get(Parser::class), new Standard, $patch);    
+        return new CodePatcher($c->get(Parser::class), new Standard, $patch);
     }),
     
     TerminalInterface::class => factory([TerminalFactory::class, 'fromSystem']),
