@@ -7,6 +7,7 @@ use PhpSchool\PhpWorkshop\Check\CheckRepository;
 use PhpSchool\PhpWorkshop\Check\ListenableCheckInterface;
 use PhpSchool\PhpWorkshop\Check\SimpleCheckInterface;
 use PhpSchool\PhpWorkshop\CodePatcher;
+use PhpSchool\PhpWorkshop\Event\Event;
 use PhpSchool\PhpWorkshop\Event\EventDispatcher;
 use PhpSchool\PhpWorkshop\Exception\CheckNotApplicableException;
 use PhpSchool\PhpWorkshop\Exception\ExerciseNotConfiguredException;
@@ -109,7 +110,10 @@ class ExerciseDispatcherTest extends PHPUnit_Framework_TestCase
         $this->runner = $this->getMock(ExerciseRunnerInterface::class);
         $this->runnerFactory = $this->getMock(RunnerFactory::class);
         $this->results = new ResultAggregator;
-        $this->eventDispatcher = new EventDispatcher($this->results);
+        $this->eventDispatcher = $this->getMockBuilder(EventDispatcher::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
         $this->exerciseDispatcher = new ExerciseDispatcher(
             $this->runnerFactory,
             $this->results,
@@ -413,60 +417,41 @@ class ExerciseDispatcherTest extends PHPUnit_Framework_TestCase
         $this->assertCount(3, $result);
     }
 
-    public function testCodeWhichRequiresPatchingIsModifiedOnDiskAfterPreChecksAndThenReverted()
+    public function testAllEventsAreDispatched()
     {
-        $codePatcher = $this->getMockBuilder(CodePatcher::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $listener = new CodePatchListener($codePatcher);
-        $this->eventDispatcher->listen('verify.pre.execute', [$listener, 'patch']);
-        $this->eventDispatcher->listen('verify.post.execute', [$listener, 'revert']);
+        $this->eventDispatcher
+            ->expects($this->exactly(4))
+            ->method('dispatch')
+            ->withConsecutive(
+                [$this->isInstanceOf(Event::class)],
+                [$this->isInstanceOf(Event::class)],
+                [$this->isInstanceOf(Event::class)],
+                [$this->isInstanceOf(Event::class)]
+            );
 
         $this->createExercise();
-
-        file_put_contents($this->file, 'ORIGINAL CONTENT');
-
-        $codePatcher
-            ->expects($this->once())
-            ->method('patch')
-            ->with($this->exercise, 'ORIGINAL CONTENT')
-            ->will($this->returnValue('MODIFIED CONTENT'));
-
         $this->mockRunner();
         $this->runner
             ->expects($this->once())
             ->method('verify')
             ->with($this->exercise, $this->file)
-            ->will($this->returnCallback(function (ExerciseInterface $exercise, $file) {
-                $this->assertStringEqualsFile($file, 'MODIFIED CONTENT');
-                return new Success('test');
-            }));
+            ->will($this->returnValue(new Success('test')));
 
         $this->exerciseDispatcher->verify($this->exercise, $this->file);
-        $this->assertStringEqualsFile($this->file, 'ORIGINAL CONTENT');
     }
 
-    public function testPatchedCodeIsRevertedIfExceptionIsThrownInRunner()
+    public function testVerifyPostExecuteIsStillDispatchedEvenIfRunnerThrowsException()
     {
-        $codePatcher = $this->getMockBuilder(CodePatcher::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $listener = new CodePatchListener($codePatcher);
-        $this->eventDispatcher->listen('verify.pre.execute', [$listener, 'patch']);
-        $this->eventDispatcher->listen('verify.post.execute', [$listener, 'revert']);
+        $this->eventDispatcher
+            ->expects($this->exactly(3))
+            ->method('dispatch')
+            ->withConsecutive(
+                [$this->isInstanceOf(Event::class)],
+                [$this->isInstanceOf(Event::class)],
+                [$this->isInstanceOf(Event::class)]
+            );
 
         $this->createExercise();
-
-        file_put_contents($this->file, 'ORIGINAL CONTENT');
-
-        $codePatcher
-            ->expects($this->once())
-            ->method('patch')
-            ->with($this->exercise, 'ORIGINAL CONTENT')
-            ->will($this->returnValue('MODIFIED CONTENT'));
-
         $this->mockRunner();
         $this->runner
             ->expects($this->once())
@@ -474,11 +459,8 @@ class ExerciseDispatcherTest extends PHPUnit_Framework_TestCase
             ->with($this->exercise, $this->file)
             ->will($this->throwException(new RuntimeException));
 
-        try {
-            $this->exerciseDispatcher->verify($this->exercise, $this->file);
-        } catch (RuntimeException $e) {
-        }
-        $this->assertStringEqualsFile($this->file, 'ORIGINAL CONTENT');
+        $this->setExpectedException(RuntimeException::class);
+        $this->exerciseDispatcher->verify($this->exercise, $this->file);
     }
 
     public function testRun()
