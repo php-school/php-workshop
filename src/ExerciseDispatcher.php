@@ -203,4 +203,12 @@ class ExerciseDispatcher
             }
         }
     }
+
+    /**
+     * @return EventDispatcher
+     */
+    public function getEventDispatcher()
+    {
+        return $this->eventDispatcher;
+    }
 }

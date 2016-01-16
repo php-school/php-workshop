@@ -6,7 +6,6 @@ use Interop\Container\ContainerInterface;
 use PhpSchool\PhpWorkshop\Check\CheckRepository;
 use PhpSchool\PhpWorkshop\Check\ListenableCheckInterface;
 use PhpSchool\PhpWorkshop\Check\SimpleCheckInterface;
-use PhpSchool\PhpWorkshop\CodePatcher;
 use PhpSchool\PhpWorkshop\Event\Event;
 use PhpSchool\PhpWorkshop\Event\EventDispatcher;
 use PhpSchool\PhpWorkshop\Exception\CheckNotApplicableException;
@@ -17,14 +16,12 @@ use PhpSchool\PhpWorkshop\Exercise\ExerciseType;
 use PhpSchool\PhpWorkshop\ExerciseDispatcher;
 use PhpSchool\PhpWorkshop\ExerciseRunner\ExerciseRunnerInterface;
 use PhpSchool\PhpWorkshop\Factory\RunnerFactory;
-use PhpSchool\PhpWorkshop\Listener\CodePatchListener;
 use PhpSchool\PhpWorkshop\Output\OutputInterface;
 use PhpSchool\PhpWorkshop\Result\Failure;
 use PhpSchool\PhpWorkshop\Result\Success;
 use PhpSchool\PhpWorkshop\Result\SuccessInterface;
 use PhpSchool\PhpWorkshop\ResultAggregator;
 use PhpSchool\PhpWorkshop\Solution\SolutionInterface;
-use PhpSchool\PhpWorkshopTest\Asset\SelfCheckExerciseInterface;
 use PHPUnit_Framework_TestCase;
 use RuntimeException;
 use Symfony\Component\Filesystem\Filesystem;
@@ -120,6 +117,8 @@ class ExerciseDispatcherTest extends PHPUnit_Framework_TestCase
             $this->eventDispatcher,
             $this->checkRepository
         );
+
+        $this->assertSame($this->eventDispatcher, $this->exerciseDispatcher->getEventDispatcher());
 
         $this->file = sprintf('%s/%s/submission.php', str_replace('\\', '/', sys_get_temp_dir()), $this->getName());
 
@@ -371,7 +370,7 @@ class ExerciseDispatcherTest extends PHPUnit_Framework_TestCase
         $this->assertInstanceOf(ResultAggregator::class, $result);
         $this->assertFalse($result->isSuccessful());
     }
-    
+
     public function testAllEventsAreDispatched()
     {
         $this->eventDispatcher
