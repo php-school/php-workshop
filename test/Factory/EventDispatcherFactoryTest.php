@@ -5,6 +5,8 @@ namespace PhpSchool\PhpWorkshopTest\Factory;
 use Interop\Container\ContainerInterface;
 use PhpSchool\PhpWorkshop\Event\EventDispatcher;
 use PhpSchool\PhpWorkshop\Factory\EventDispatcherFactory;
+use PhpSchool\PhpWorkshop\Listener\CodePatchListener;
+use PhpSchool\PhpWorkshop\Listener\PrepareSolutionListener;
 use PhpSchool\PhpWorkshop\ResultAggregator;
 use PHPUnit_Framework_TestCase;
 
@@ -15,49 +17,45 @@ use PHPUnit_Framework_TestCase;
  */
 class EventDispatcherFactoryTest extends PHPUnit_Framework_TestCase
 {
-    public function testCreationWithNoCoreListeners()
+
+    public function testCreate()
     {
         $c = $this->getMock(ContainerInterface::class);
-        $c->expects($this->once())
-            ->method('get')
-            ->with(ResultAggregator::class)
-            ->will($this->returnValue(new ResultAggregator));
-
-        $this->assertInstanceOf(EventDispatcher::class, (new EventDispatcherFactory)->__invoke($c));
-    }
-
-    public function testCreationWithCoreListeners()
-    {
-        $c          = $this->getMock(ContainerInterface::class);
-        $listener   = [$this->getMock('stdClass', ['callback']), 'callback'];
 
         $c->expects($this->at(0))
             ->method('get')
             ->with(ResultAggregator::class)
             ->will($this->returnValue(new ResultAggregator));
 
+        $prepareSolutionListener = new PrepareSolutionListener;
+
         $c->expects($this->at(1))
-            ->method('has')
-            ->with('coreListeners')
-            ->will($this->returnValue(true));
+            ->method('get')
+            ->with(PrepareSolutionListener::class)
+            ->will($this->returnValue($prepareSolutionListener));
+
+        $codePatchListener = $this->getMockBuilder(CodePatchListener::class)
+            ->disableOriginalConstructor()
+            ->getMock();
 
         $c->expects($this->at(2))
             ->method('get')
-            ->with('coreListeners')
-            ->will($this->returnValue(['some.event' => 'listener']));
-
-        $c->expects($this->at(3))
-            ->method('get')
-            ->with('listener')
-            ->will($this->returnValue($listener));
+            ->with(CodePatchListener::class)
+            ->will($this->returnValue($codePatchListener));
 
         $dispatcher = (new EventDispatcherFactory)->__invoke($c);
-
+        $this->assertInstanceOf(EventDispatcher::class, $dispatcher);
         $this->assertSame(
             [
-                'some.event' => [
-                    $listener
+                'verify.start' => [
+                    $prepareSolutionListener
                 ],
+                'verify.pre.execute' => [
+                    [$codePatchListener, 'patch'],
+                ],
+                'verify.post.execute' => [
+                    [$codePatchListener, 'revert'],
+                ]
             ],
             $this->readAttribute($dispatcher, 'listeners')
         );

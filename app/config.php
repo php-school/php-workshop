@@ -261,18 +261,6 @@ return [
             [Failure::class, new FailureRenderer],
         ];
     }),
-    'codePatcherPreExecuteCallback' => factory(function (ContainerInterface $c) {
-        return [$c->get(CodePatchListener::class), 'patch'];
-    }),
-    'codePatcherPostExecuteCallback' => factory(function (ContainerInterface $c) {
-        return [$c->get(CodePatchListener::class), 'revert'];
-    }),
-
-    'coreListeners' => [
-        'verify.start' => PrepareSolutionListener::class,
-        'verify.pre.execute' => 'codePatcherPreExecuteCallback',
-        'verify.post.execute' => 'codePatcherPostExecuteCallback'
-    ],
     'coreContributors' => [
         '@AydinHassan' => 'Aydin Hassan',
         '@mikeymike'   => 'Michael Woodward',
