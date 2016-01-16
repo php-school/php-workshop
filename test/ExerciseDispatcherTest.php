@@ -4,6 +4,7 @@ namespace PhpSchool\PhpWorkshopTest;
 
 use Interop\Container\ContainerInterface;
 use PhpSchool\PhpWorkshop\Check\CheckRepository;
+use PhpSchool\PhpWorkshop\Check\ListenableCheckInterface;
 use PhpSchool\PhpWorkshop\Check\SimpleCheckInterface;
 use PhpSchool\PhpWorkshop\CodePatcher;
 use PhpSchool\PhpWorkshop\Event\EventDispatcher;
@@ -181,6 +182,34 @@ class ExerciseDispatcherTest extends PHPUnit_Framework_TestCase
 
         $this->assertEquals([$this->check], $checksToRunBefore);
         $this->assertEquals([$this->check], $checksToRunAfter);
+    }
+
+    public function testRequireListenableCheckThrowsExceptionIfCheckDoesNotExist()
+    {
+        $this->setExpectedException(InvalidArgumentException::class, 'Check: "NotACheck" does not exist');
+        $this->exerciseDispatcher->requireListenableCheck('NotACheck', ExerciseDispatcher::CHECK_BEFORE);
+    }
+
+    public function testRequireListenableCheckThrowsExceptionIfCheckIsNotCorrectType()
+    {
+        $this->setExpectedException(
+            InvalidArgumentException::class,
+            sprintf('Check: "%s" is not a listenable check', get_class($this->check))
+        );
+        $this->exerciseDispatcher->requireListenableCheck(get_class($this->check));
+    }
+
+    public function testRequireListenableCheckAttachesToDispatcher()
+    {
+        $check = $this->getMock(ListenableCheckInterface::class);
+        $this->checkRepository->registerCheck($check);
+
+        $check
+            ->expects($this->once())
+            ->method('attach')
+            ->with($this->eventDispatcher);
+
+        $this->exerciseDispatcher->requireListenableCheck(get_class($check));
     }
 
     public function testVerifyThrowsExceptionIfCheckDoesNotSupportExerciseType()

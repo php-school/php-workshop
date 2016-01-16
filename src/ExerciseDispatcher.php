@@ -112,6 +112,25 @@ class ExerciseDispatcher
     }
 
     /**
+     * @param string $requiredCheck
+     * @throws InvalidArgumentException
+     */
+    public function requireListenableCheck($requiredCheck)
+    {
+        if (!$this->checkRepository->has($requiredCheck)) {
+            throw new InvalidArgumentException(sprintf('Check: "%s" does not exist', $requiredCheck));
+        }
+
+        $check = $this->checkRepository->getByClass($requiredCheck);
+
+        if (!$check instanceof ListenableCheckInterface) {
+            throw new InvalidArgumentException(sprintf('Check: "%s" is not a listenable check', $requiredCheck));
+        }
+
+        $check->attach($this->eventDispatcher);
+    }
+
+    /**
      * @param ExerciseInterface $exercise
      * @param string $fileName
      * @return ResultAggregator
