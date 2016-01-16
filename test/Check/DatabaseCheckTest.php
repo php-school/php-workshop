@@ -4,6 +4,7 @@ namespace PhpSchool\PhpWorkshopTest\Check;
 
 use InvalidArgumentException;
 use PDO;
+use PhpSchool\PhpWorkshop\Check\CheckRepository;
 use PhpSchool\PhpWorkshop\Check\DatabaseCheck;
 use PhpSchool\PhpWorkshop\Event\CliExecuteEvent;
 use PhpSchool\PhpWorkshop\Event\Event;
@@ -12,6 +13,8 @@ use PhpSchool\PhpWorkshop\Exception\SolutionExecutionException;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseType;
 use PhpSchool\PhpWorkshop\ExerciseCheck\DatabaseExerciseCheck;
+use PhpSchool\PhpWorkshop\ExerciseDispatcher;
+use PhpSchool\PhpWorkshop\Factory\RunnerFactory;
 use PhpSchool\PhpWorkshop\Result\Failure;
 use PhpSchool\PhpWorkshop\Result\StdOutFailure;
 use PhpSchool\PhpWorkshop\Result\Success;
@@ -74,47 +77,30 @@ class DatabaseCheckTest extends PHPUnit_Framework_TestCase
         }
     }
 
-    public function testFailureIsReturnedIfDatabaseVerificationFails()
+    public function testSuccessIsReturnedIfDatabaseVerificationPassed()
     {
-        $results = new ResultAggregator;
-        $eventDispatcher = new EventDispatcher($results);
-        $this->check->attach($eventDispatcher, $this->exercise);
+        $solution = SingleFileSolution::fromFile(realpath(__DIR__ . '/../res/database/solution.php'));
+        $this->exercise
+            ->expects($this->once())
+            ->method('getSolution')
+            ->will($this->returnValue($solution));
 
         $this->exercise
             ->expects($this->once())
-            ->method('verify')
-            ->with($this->isInstanceOf(PDO::class))
-            ->will($this->returnValue(false));
+            ->method('getArgs')
+            ->will($this->returnValue([1, 2, 3]));
 
-        $args = new ArrayObject(1, 2, 3);
-        $eventDispatcher->dispatch(new Event('verify.start', ['exercise' => $this->exercise]));
-        $solutionEvent = $eventDispatcher->dispatch(new CliExecuteEvent('cli.verify.solution-execute.pre', $args));
-        $userEvent = $eventDispatcher->dispatch(new CliExecuteEvent('cli.verify.user-execute.pre', $args));
-        $eventDispatcher->dispatch(new Event('verify.finish', ['exercise' => $this->exercise]));
+        $this->exercise
+            ->expects($this->atLeastOnce())
+            ->method('getType')
+            ->will($this->returnValue(ExerciseType::CLI()));
 
-        $this->assertNotSame($solutionEvent->getArgs(), $args);
-        $this->assertNotSame($userEvent->getArgs(), $args);
-        $this->assertEquals(
-            [sprintf('sqlite:%s/solution-db.sqlite', $this->dbDir), 1, 2, 3],
-            $solutionEvent->getArgs()->getArrayCopy()
-        );
-        $this->assertEquals(
-            [sprintf('sqlite:%s/user-db.sqlite', $this->dbDir), 1, 2, 3],
-            $userEvent->getArgs()->getArrayCopy()
-        );
-
-        $this->assertCount(1, iterator_to_array($results));
-        $this->assertInstanceOf(Failure::class, iterator_to_array($results)[0]);
-
-        $this->assertFileNotExists(sprintf('%s/user-db.sqlite', $this->dbDir));
-        $this->assertFileNotExists(sprintf('%s/solution-db.sqlite', $this->dbDir));
-    }
-
-    public function testSuccessIsReturnedIfDatabaseVerificationPassed()
-    {
-        $results = new ResultAggregator;
-        $eventDispatcher = new EventDispatcher($results);
-        $this->check->attach($eventDispatcher, $this->exercise);
+        $this->exercise
+            ->expects($this->once())
+            ->method('configure')
+            ->will($this->returnCallback(function (ExerciseDispatcher $dispatcher) {
+                $dispatcher->requireListenableCheck(DatabaseCheck::class);
+            }));
 
         $this->exercise
             ->expects($this->once())
@@ -122,27 +108,119 @@ class DatabaseCheckTest extends PHPUnit_Framework_TestCase
             ->with($this->isInstanceOf(PDO::class))
             ->will($this->returnValue(true));
 
-        $args = new ArrayObject(1, 2, 3);
-        $eventDispatcher->dispatch(new Event('verify.start', ['exercise' => $this->exercise]));
-        $solutionEvent = $eventDispatcher->dispatch(new CliExecuteEvent('cli.verify.solution-execute.pre', $args));
-        $userEvent = $eventDispatcher->dispatch(new CliExecuteEvent('cli.verify.user-execute.pre', $args));
-        $eventDispatcher->dispatch(new Event('verify.finish', ['exercise' => $this->exercise]));
+        $results            = new ResultAggregator;
+        $eventDispatcher    = new EventDispatcher($results);
+        $checkRepository    = new CheckRepository([$this->check]);
+        $dispatcher         = new ExerciseDispatcher(new RunnerFactory, $results, $eventDispatcher, $checkRepository);
 
-        $this->assertNotSame($solutionEvent->getArgs(), $args);
-        $this->assertNotSame($userEvent->getArgs(), $args);
-        $this->assertEquals(
-            [sprintf('sqlite:%s/solution-db.sqlite', $this->dbDir), 1, 2, 3],
-            $solutionEvent->getArgs()->getArrayCopy()
-        );
-        $this->assertEquals(
-            [sprintf('sqlite:%s/user-db.sqlite', $this->dbDir), 1, 2, 3],
-            $userEvent->getArgs()->getArrayCopy()
-        );
+        $dispatcher->verify($this->exercise, __DIR__ . '/../res/database/user.php');
 
-        $this->assertCount(1, iterator_to_array($results));
-        $this->assertInstanceOf(Success::class, iterator_to_array($results)[0]);
+        $this->assertTrue($results->isSuccessful());
+    }
 
-        $this->assertFileNotExists(sprintf('%s/user-db.sqlite', $this->dbDir));
-        $this->assertFileNotExists(sprintf('%s/solution-db.sqlite', $this->dbDir));
+    public function testFailureIsReturnedIfDatabaseVerificationFails()
+    {
+        $solution = SingleFileSolution::fromFile(realpath(__DIR__ . '/../res/database/solution.php'));
+        $this->exercise
+            ->expects($this->once())
+            ->method('getSolution')
+            ->will($this->returnValue($solution));
+
+        $this->exercise
+            ->expects($this->once())
+            ->method('getArgs')
+            ->will($this->returnValue([1, 2, 3]));
+
+        $this->exercise
+            ->expects($this->atLeastOnce())
+            ->method('getType')
+            ->will($this->returnValue(ExerciseType::CLI()));
+
+        $this->exercise
+            ->expects($this->once())
+            ->method('configure')
+            ->will($this->returnCallback(function (ExerciseDispatcher $dispatcher) {
+                $dispatcher->requireListenableCheck(DatabaseCheck::class);
+            }));
+
+        $this->exercise
+            ->expects($this->once())
+            ->method('verify')
+            ->with($this->isInstanceOf(PDO::class))
+            ->will($this->returnValue(false));
+
+        $results            = new ResultAggregator;
+        $eventDispatcher    = new EventDispatcher($results);
+        $checkRepository    = new CheckRepository([$this->check]);
+        $dispatcher         = new ExerciseDispatcher(new RunnerFactory, $results, $eventDispatcher, $checkRepository);
+
+        $dispatcher->verify($this->exercise, __DIR__ . '/../res/database/user.php');
+
+        $this->assertFalse($results->isSuccessful());
+        $results = iterator_to_array($results);
+        $this->assertSame('Database verification failed', $results[1]->getReason());
+    }
+
+    public function testAlteringDatabaseInSolutionDoesNotEffectDatabaseInUserSolution()
+    {
+        $solution = SingleFileSolution::fromFile(realpath(__DIR__ . '/../res/database/solution-alter-db.php'));
+
+        $this->exercise
+            ->expects($this->once())
+            ->method('getSolution')
+            ->will($this->returnValue($solution));
+
+        $this->exercise
+            ->expects($this->any())
+            ->method('getArgs')
+            ->will($this->returnValue([]));
+
+        $this->exercise
+            ->expects($this->atLeastOnce())
+            ->method('getType')
+            ->will($this->returnValue(ExerciseType::CLI()));
+
+        $this->exercise
+            ->expects($this->once())
+            ->method('configure')
+            ->will($this->returnCallback(function (ExerciseDispatcher $dispatcher) {
+                $dispatcher->requireListenableCheck(DatabaseCheck::class);
+            }));
+
+        $this->exercise
+            ->expects($this->once())
+            ->method('seed')
+            ->with($this->isInstanceOf(PDO::class))
+            ->will($this->returnCallback(function (PDO $db) {
+                $db->exec(
+                    'CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY, name TEXT, age INTEGER, gender TEXT)'
+                );
+                $stmt = $db->prepare('INSERT into users (name, age, gender) VALUES (:name, :age, :gender)');
+                $stmt->execute([':name' => 'Jimi Hendrix', ':age' => 27, ':gender' => 'Male']);
+            }));
+
+        $this->exercise
+            ->expects($this->once())
+            ->method('verify')
+            ->with($this->isInstanceOf(PDO::class))
+            ->will($this->returnCallback(function (PDO $db) {
+                $users = $db->query('SELECT * FROM users');
+                $users = $users->fetchAll(PDO::FETCH_ASSOC);
+
+                $this->assertEquals(
+                    [
+                        ['id' => 1, 'name' => 'Jimi Hendrix', 'age' => '27', 'gender' => 'Male'],
+                        ['id' => 2, 'name' => 'Kurt Cobain', 'age' => '27', 'gender' => 'Male'],
+                    ],
+                    $users
+                );
+            }));
+
+        $results            = new ResultAggregator;
+        $eventDispatcher    = new EventDispatcher($results);
+        $checkRepository    = new CheckRepository([$this->check]);
+        $dispatcher         = new ExerciseDispatcher(new RunnerFactory, $results, $eventDispatcher, $checkRepository);
+
+        $dispatcher->verify($this->exercise, __DIR__ . '/../res/database/user-solution-alter-db.php');
     }
 }
