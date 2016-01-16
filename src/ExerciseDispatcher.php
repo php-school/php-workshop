@@ -151,20 +151,21 @@ class ExerciseDispatcher
 
         try {
             $this->results->add($runner->verify($exercise, $fileName));
-
-            foreach ($this->checksToRunAfter as $check) {
-                $this->results->add($check->check($exercise, $fileName));
-            }
-
-            //self check, for easy custom checking
-            if ($exercise instanceof SelfCheck) {
-                $this->results->add($exercise->check($fileName));
-            }
-
-            $exercise->tearDown();
         } finally {
             $this->eventDispatcher->dispatch(new Event('verify.post.execute', compact('exercise', 'fileName')));
         }
+
+        foreach ($this->checksToRunAfter as $check) {
+            $this->results->add($check->check($exercise, $fileName));
+        }
+
+        //self check, for easy custom checking
+        if ($exercise instanceof SelfCheck) {
+            $this->results->add($exercise->check($fileName));
+        }
+
+        $exercise->tearDown();
+
         $this->eventDispatcher->dispatch(new Event('verify.finish', compact('exercise', 'fileName')));
         return $this->results;
     }

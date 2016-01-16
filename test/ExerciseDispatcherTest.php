@@ -427,27 +427,6 @@ class ExerciseDispatcherTest extends PHPUnit_Framework_TestCase
 
         file_put_contents($this->file, 'ORIGINAL CONTENT');
 
-        $this->exerciseDispatcher->requireCheck(get_class($this->check), ExerciseDispatcher::CHECK_AFTER);
-        $this->check
-            ->expects($this->once())
-            ->method('check')
-            ->with($this->exercise, $this->file)
-            ->will($this->returnCallback(function (ExerciseInterface $exercise, $file) {
-                $this->assertStringEqualsFile($file, 'MODIFIED CONTENT');
-                return new Success('test');
-            }));
-
-        $this->check
-            ->expects($this->once())
-            ->method('canRun')
-            ->with($this->exerciseType)
-            ->will($this->returnValue(true));
-
-        $this->check
-            ->expects($this->once())
-            ->method('getExerciseInterface')
-            ->will($this->returnValue(ExerciseInterface::class));
-
         $codePatcher
             ->expects($this->once())
             ->method('patch')
@@ -459,13 +438,16 @@ class ExerciseDispatcherTest extends PHPUnit_Framework_TestCase
             ->expects($this->once())
             ->method('verify')
             ->with($this->exercise, $this->file)
-            ->will($this->returnValue($this->getMock(SuccessInterface::class)));
+            ->will($this->returnCallback(function (ExerciseInterface $exercise, $file) {
+                $this->assertStringEqualsFile($file, 'MODIFIED CONTENT');
+                return new Success('test');
+            }));
 
         $this->exerciseDispatcher->verify($this->exercise, $this->file);
         $this->assertStringEqualsFile($this->file, 'ORIGINAL CONTENT');
     }
 
-    public function testPatchedCodeIsRevertedIfExceptionIsThrownAnywhere()
+    public function testPatchedCodeIsRevertedIfExceptionIsThrownInRunner()
     {
         $codePatcher = $this->getMockBuilder(CodePatcher::class)
             ->disableOriginalConstructor()
@@ -479,24 +461,6 @@ class ExerciseDispatcherTest extends PHPUnit_Framework_TestCase
 
         file_put_contents($this->file, 'ORIGINAL CONTENT');
 
-        $this->exerciseDispatcher->requireCheck(get_class($this->check), ExerciseDispatcher::CHECK_AFTER);
-        $this->check
-            ->expects($this->once())
-            ->method('check')
-            ->with($this->exercise, $this->file)
-            ->will($this->throwException(new RuntimeException));
-
-        $this->check
-            ->expects($this->once())
-            ->method('canRun')
-            ->with($this->exerciseType)
-            ->will($this->returnValue(true));
-
-        $this->check
-            ->expects($this->once())
-            ->method('getExerciseInterface')
-            ->will($this->returnValue(ExerciseInterface::class));
-
         $codePatcher
             ->expects($this->once())
             ->method('patch')
@@ -508,7 +472,7 @@ class ExerciseDispatcherTest extends PHPUnit_Framework_TestCase
             ->expects($this->once())
             ->method('verify')
             ->with($this->exercise, $this->file)
-            ->will($this->returnValue($this->getMock(SuccessInterface::class)));
+            ->will($this->throwException(new RuntimeException));
 
         try {
             $this->exerciseDispatcher->verify($this->exercise, $this->file);
