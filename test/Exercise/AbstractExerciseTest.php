@@ -2,6 +2,7 @@
 
 namespace PhpSchool\PhpWorkshopTest\Exercise;
 
+use PhpSchool\PhpWorkshop\ExerciseDispatcher;
 use PhpSchool\PhpWorkshop\Solution\SolutionFile;
 use PhpSchool\PhpWorkshop\Solution\SolutionInterface;
 use PhpSchool\PhpWorkshopTest\Asset\AbstractExerciseImpl;
@@ -78,5 +79,15 @@ class AbstractExerciseTest extends PHPUnit_Framework_TestCase
             ['Array We Go', sprintf('%s/../../exercises/array-we-go/problem/problem.md', $dir)],
             ['Array^7-We Go', sprintf('%s/../../exercises/array-we-go/problem/problem.md', $dir)],
         ];
+    }
+
+    public function testConfigureDoesNothing()
+    {
+        $dispatcher = $this->getMockBuilder(ExerciseDispatcher::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $exercise = new AbstractExerciseImpl('Array We Go');
+        $this->assertNull($exercise->configure($dispatcher));
     }
 }

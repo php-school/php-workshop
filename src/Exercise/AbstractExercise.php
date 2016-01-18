@@ -2,6 +2,7 @@
 
 namespace PhpSchool\PhpWorkshop\Exercise;
 
+use PhpSchool\PhpWorkshop\ExerciseDispatcher;
 use PhpSchool\PhpWorkshop\Solution\SingleFileSolution;
 use PhpSchool\PhpWorkshop\Solution\SolutionInterface;
 use ReflectionClass;
@@ -59,5 +60,12 @@ abstract class AbstractExercise
     private function normaliseName($name)
     {
         return preg_replace('/[^A-Za-z\-]+/', '', str_replace(' ', '-', strtolower($name)));
+    }
+
+    /**
+     * @param ExerciseDispatcher $dispatcher
+     */
+    public function configure(ExerciseDispatcher $dispatcher)
+    {
     }
 }
