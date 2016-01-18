@@ -2,7 +2,6 @@
 
 namespace PhpSchool\PhpWorkshop\Result;
 
-use PhpSchool\PhpWorkshop\Check\CheckInterface;
 use Psr\Http\Message\RequestInterface;
 
 /**
@@ -12,8 +11,6 @@ use Psr\Http\Message\RequestInterface;
  */
 class CgiOutRequestFailure implements FailureInterface
 {
-    use ResultTrait;
-
     /**
      * @var RequestInterface
      */
@@ -40,7 +37,6 @@ class CgiOutRequestFailure implements FailureInterface
     private $actualHeaders;
 
     /**
-     * @param CheckInterface $check
      * @param RequestInterface $request
      * @param string $expectedOutput
      * @param string $actualOutput
@@ -48,14 +44,12 @@ class CgiOutRequestFailure implements FailureInterface
      * @param array $actualHeaders
      */
     public function __construct(
-        CheckInterface $check,
         RequestInterface $request,
         $expectedOutput,
         $actualOutput,
         array $expectedHeaders,
         array $actualHeaders
     ) {
-        $this->check            = $check;
         $this->request          = $request;
         $this->expectedOutput   = $expectedOutput;
         $this->actualOutput     = $actualOutput;
@@ -125,5 +119,13 @@ class CgiOutRequestFailure implements FailureInterface
     public function getActualHeaders()
     {
         return $this->actualHeaders;
+    }
+
+    /**
+     * @return string
+     */
+    public function getCheckName()
+    {
+        return 'Request Failure';
     }
 }

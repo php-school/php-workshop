@@ -23,6 +23,6 @@ class FailureRenderer implements ResultRendererInterface
             throw new \InvalidArgumentException(sprintf('Incompatible result type: %s', get_class($result)));
         }
 
-        return $result->getReason();
+        return '  ' . $result->getReason() . "\n";
     }
 }

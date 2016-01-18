@@ -3,6 +3,7 @@
 namespace PhpSchool\PhpWorkshop\Check;
 
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
+use PhpSchool\PhpWorkshop\Exercise\ExerciseType;
 use PhpSchool\PhpWorkshop\Result\Failure;
 use PhpSchool\PhpWorkshop\Result\ResultInterface;
 use PhpSchool\PhpWorkshop\Result\Success;
@@ -12,7 +13,7 @@ use PhpSchool\PhpWorkshop\Result\Success;
  * @package PhpSchool\PhpWorkshop\Check
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
-class FileExistsCheck implements CheckInterface
+class FileExistsCheck implements SimpleCheckInterface
 {
     /**
      * @return string
@@ -34,5 +35,23 @@ class FileExistsCheck implements CheckInterface
         }
 
         return Failure::fromCheckAndReason($this, sprintf('File: "%s" does not exist', $fileName));
+    }
+
+    /**
+     * @param ExerciseType $exerciseType
+     * @return bool
+     */
+    public function canRun(ExerciseType $exerciseType)
+    {
+        return true;
+    }
+
+    /**
+     *
+     * @return string
+     */
+    public function getExerciseInterface()
+    {
+        return ExerciseInterface::class;
     }
 }

@@ -3,8 +3,10 @@
 namespace PhpSchool\PhpWorkshopTest\Asset;
 
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
+use PhpSchool\PhpWorkshop\Exercise\ExerciseType;
 use PhpSchool\PhpWorkshop\Exercise\PreProcessable;
 use PhpSchool\PhpWorkshop\Exercise\SubmissionPatchable;
+use PhpSchool\PhpWorkshop\ExerciseDispatcher;
 use PhpSchool\PhpWorkshop\SubmissionPatch;
 
 /**
@@ -61,5 +63,21 @@ class PatchableExercise implements ExerciseInterface, SubmissionPatchable
     public function getPatch()
     {
         // TODO: Implement getPatch() method.
+    }
+
+    /**
+     * @return ExerciseType
+     */
+    public function getType()
+    {
+        // TODO: Implement getType() method.
+    }
+
+    /**
+     * @param ExerciseDispatcher $dispatcher
+     */
+    public function configure(ExerciseDispatcher $dispatcher)
+    {
+        // TODO: Implement configure() method.
     }
 }

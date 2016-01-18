@@ -1,15 +1,15 @@
 <?php
 
-namespace PhpSchool\PhpWorkshop;
+namespace PhpSchool\PhpWorkshop\Output;
 
 use Colors\Color;
 
 /**
- * Class Output
+ * Class StdOutput
  * @package PhpSchool\PhpWorkshop
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
-class Output
+class StdOutput implements OutputInterface
 {
     /**
      * @var \Colors\Color

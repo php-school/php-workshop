@@ -4,7 +4,8 @@ namespace PhpSchool\PhpWorkshopTest\Command;
 
 use Colors\Color;
 use PhpSchool\PhpWorkshop\Command\CreditsCommand;
-use PhpSchool\PhpWorkshop\Output;
+use PhpSchool\PhpWorkshop\Output\OutputInterface;
+use PhpSchool\PhpWorkshop\Output\StdOutput;
 use PHPUnit_Framework_TestCase;
 
 /**
@@ -15,6 +16,7 @@ use PHPUnit_Framework_TestCase;
  */
 class CreditsCommandTest extends PHPUnit_Framework_TestCase
 {
+
     public function testInvoke()
     {
         $this->expectOutputString(file_get_contents(__DIR__ . '/../res/app-credits-expected.txt'));
@@ -33,7 +35,29 @@ class CreditsCommandTest extends PHPUnit_Framework_TestCase
                 '@AydinHassan' => 'Aydin Hassan',
                 '@mikeymike'   => 'Michael Woodward',
             ],
-            new Output($color),
+            new StdOutput($color),
+            $color
+        );
+
+        $command->__invoke();
+    }
+
+    public function testWithOnlyCoreContributors()
+    {
+        $this->expectOutputString(file_get_contents(__DIR__ . '/../res/app-credits-core-expected.txt'));
+
+        $color = new Color;
+        $color->setForceStyle(true);
+
+        $command = new CreditsCommand(
+            [
+                '@AydinHassan' => 'Aydin Hassan',
+                '@mikeymike'   => 'Michael Woodward',
+                '@shakeyShane' => 'Shane Osbourne',
+                '@chris3ailey' => 'Chris Bailey'
+            ],
+            [],
+            new StdOutput($color),
             $color
         );
 
@@ -50,7 +74,7 @@ class CreditsCommandTest extends PHPUnit_Framework_TestCase
         $command = new CreditsCommand(
             [],
             [],
-            new Output($color),
+            new StdOutput($color),
             $color
         );
         

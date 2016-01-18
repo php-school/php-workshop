@@ -12,19 +12,27 @@ use PhpSchool\CliMenu\Terminal\TerminalInterface;
 use PhpParser\Parser;
 use PhpParser\ParserFactory;
 use PhpSchool\PhpWorkshop\Check\CgiOutputCheck;
+use PhpSchool\PhpWorkshop\Check\CheckRepository;
 use PhpSchool\PhpWorkshop\Check\CodeParseCheck;
 use PhpSchool\PhpWorkshop\Check\ComposerCheck;
 use PhpSchool\PhpWorkshop\Check\DatabaseCheck;
 use PhpSchool\PhpWorkshop\CodeInsertion as Insertion;
 use PhpSchool\PhpWorkshop\CodePatcher;
-use PhpSchool\PhpWorkshop\ExerciseCheck\CgiOutputExerciseCheck;
-use PhpSchool\PhpWorkshop\ExerciseCheck\ComposerExerciseCheck;
-use PhpSchool\PhpWorkshop\ExerciseCheck\DatabaseExerciseCheck;
+use PhpSchool\PhpWorkshop\Event\EventDispatcher;
+use PhpSchool\PhpWorkshop\ExerciseDispatcher;
+use PhpSchool\PhpWorkshop\Factory\EventDispatcherFactory;
 use PhpSchool\PhpWorkshop\Factory\MenuFactory;
+use PhpSchool\PhpWorkshop\Factory\RunnerFactory;
+use PhpSchool\PhpWorkshop\Listener\CodePatchListener;
+use PhpSchool\PhpWorkshop\Listener\PrepareSolutionListener;
+use PhpSchool\PhpWorkshop\Listener\SelfCheckListener;
 use PhpSchool\PhpWorkshop\MenuItem\ResetProgress;
+use PhpSchool\PhpWorkshop\Output\OutputInterface;
+use PhpSchool\PhpWorkshop\Output\StdOutput;
 use PhpSchool\PhpWorkshop\Patch;
 use PhpSchool\PhpWorkshop\Result\CgiOutResult;
 use PhpSchool\PhpWorkshop\Result\StdOutFailure;
+use PhpSchool\PhpWorkshop\ResultAggregator;
 use PhpSchool\PhpWorkshop\ResultRenderer\CgiOutResultRenderer;
 use PhpSchool\PhpWorkshop\ResultRenderer\OutputFailureRenderer;
 use PhpSchool\PSX\SyntaxHighlighter;
@@ -39,15 +47,12 @@ use PhpSchool\PhpWorkshop\Command\PrintCommand;
 use PhpSchool\PhpWorkshop\Command\VerifyCommand;
 use PhpSchool\PhpWorkshop\CommandDefinition;
 use PhpSchool\PhpWorkshop\CommandRouter;
-use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
-use PhpSchool\PhpWorkshop\ExerciseCheck\FunctionRequirementsExerciseCheck;
 use PhpSchool\PhpWorkshop\ExerciseCheck\StdOutExerciseCheck;
 use PhpSchool\PhpWorkshop\ExerciseRenderer;
 use PhpSchool\PhpWorkshop\ExerciseRepository;
 use PhpSchool\PhpWorkshop\ExerciseRunner;
 use PhpSchool\PhpWorkshop\Factory\MarkdownCliRendererFactory;
 use PhpSchool\PhpWorkshop\MarkdownRenderer;
-use PhpSchool\PhpWorkshop\Output;
 use PhpSchool\PhpWorkshop\Result\FunctionRequirementsFailure;
 use PhpSchool\PhpWorkshop\Result\Success;
 use PhpSchool\PhpWorkshop\Result\Failure;
@@ -61,25 +66,30 @@ use Symfony\Component\Filesystem\Filesystem;
 
 return [
     'appName' => $_SERVER['argv'][0],
-    ExerciseRunner::class => factory(function (ContainerInterface $c) {
-        $exerciseRunner = new ExerciseRunner($c->get(CodePatcher::class));
-        
-        $exerciseRunner->registerPreCheck(new FileExistsCheck, ExerciseInterface::class);
-        $exerciseRunner->registerPreCheck(new PhpLintCheck, ExerciseInterface::class);
-        $exerciseRunner->registerPreCheck(new CodeParseCheck($c->get(Parser::class)), ExerciseInterface::class);
-        $exerciseRunner->registerPreCheck(new ComposerCheck, ComposerExerciseCheck::class);
-        foreach ($c->get('checks') as $check) {
-            $exerciseRunner->registerCheck(...$check);
-        }
-        return $exerciseRunner;
+    ExerciseDispatcher::class => factory(function (ContainerInterface $c) {
+        $dispatcher = new ExerciseDispatcher(
+            $c->get(RunnerFactory::class),
+            $c->get(ResultAggregator::class),
+            $c->get(EventDispatcher::class),
+            $c->get(CheckRepository::class)
+        );
+
+        //checks which should always run (probably)
+        $dispatcher->requireCheck(FileExistsCheck::class, ExerciseDispatcher::CHECK_BEFORE);
+        $dispatcher->requireCheck(PhpLintCheck::class, ExerciseDispatcher::CHECK_BEFORE);
+        $dispatcher->requireCheck(CodeParseCheck::class, ExerciseDispatcher::CHECK_BEFORE);
+        return $dispatcher;
     }),
-    'checks' => factory(function (ContainerInterface $c) {
-        return [
-            [$c->get(StdOutCheck::class), StdOutExerciseCheck::class],
-            [$c->get(FunctionRequirementsCheck::class), FunctionRequirementsExerciseCheck::class],
-            [$c->get(CgiOutputCheck::class), CgiOutputExerciseCheck::class],
-            [$c->get(DatabaseCheck::class), DatabaseExerciseCheck::class],
-        ];
+    ResultAggregator::class => object(ResultAggregator::class),
+    CheckRepository::class => factory(function (ContainerInterface $c) {
+        return new CheckRepository([
+            $c->get(FileExistsCheck::class),
+            $c->get(PhpLintCheck::class),
+            $c->get(CodeParseCheck::class),
+            $c->get(ComposerCheck::class),
+            $c->get(FunctionRequirementsCheck::class),
+            $c->get(DatabaseCheck::class),
+        ]);
     }),
     CommandRouter::class => factory(function (ContainerInterface $c) {
         return new CommandRouter(
@@ -100,8 +110,8 @@ return [
         $colors->setForceStyle(true);
         return $colors;
     }),
-    Output::class => factory(function (ContainerInterface $c) {
-        return new Output($c->get(Color::class));
+    OutputInterface::class => factory(function (ContainerInterface $c) {
+        return new StdOutput($c->get(Color::class));
     }),
 
     ExerciseRepository::class => factory(function (ContainerInterface $c) {
@@ -110,6 +120,13 @@ return [
                 return $c->get($exerciseClass);
             }, $c->get('exercises'))
         );
+    }),
+
+    EventDispatcher::class => factory([new EventDispatcherFactory, '__invoke']),
+
+    //Exercise Runners
+    RunnerFactory::class => factory(function (ContainerInterface $c) {
+        return new RunnerFactory;
     }),
 
     //commands
@@ -122,17 +139,17 @@ return [
             $c->get(ExerciseRepository::class),
             $c->get(UserState::class),
             $c->get(MarkdownRenderer::class),
-            $c->get(Output::class)
+            $c->get(OutputInterface::class)
         );
     }),
 
     VerifyCommand::class => factory(function (ContainerInterface $c) {
         return new VerifyCommand(
             $c->get(ExerciseRepository::class),
-            $c->get(ExerciseRunner::class),
+            $c->get(ExerciseDispatcher::class),
             $c->get(UserState::class),
             $c->get(UserStateSerializer::class),
-            $c->get(Output::class),
+            $c->get(OutputInterface::class),
             $c->get(ResultsRenderer::class)
         );
     }),
@@ -141,7 +158,7 @@ return [
         return new CreditsCommand(
             $c->get('coreContributors'),
             $c->get('appContributors'),
-            $c->get(Output::class),
+            $c->get(OutputInterface::class),
             $c->get(Color::class)
         );
     }),
@@ -149,9 +166,18 @@ return [
     HelpCommand::class => factory(function (ContainerInterface $c) {
         return new HelpCommand(
             $c->get('appName'),
-            $c->get(Output::class),
+            $c->get(OutputInterface::class),
             $c->get(Color::class)
         );
+    }),
+
+    //Listeners
+    PrepareSolutionListener::class      => object(),
+    CodePatchListener::class            => factory(function (ContainerInterface $c) {
+        return new CodePatchListener($c->get(CodePatcher::class));
+    }),
+    SelfCheckListener::class            => factory(function (ContainerInterface $c) {
+        return new SelfCheckListener($c->get(ResultAggregator::class));
     }),
     
     //checks
@@ -166,6 +192,7 @@ return [
     }),
     CgiOutputCheck::class               => object(CgiOutputCheck::class),
     DatabaseCheck::class                => object(DatabaseCheck::class),
+    ComposerCheck::class                => object(ComposerCheck::class),
 
     //Utils
     Filesystem::class   => object(Filesystem::class),
@@ -179,7 +206,7 @@ return [
             ->withInsertion(new Insertion(Insertion::TYPE_BEFORE, 'error_reporting(E_ALL);'))
             ->withInsertion(new Insertion(Insertion ::TYPE_BEFORE, 'date_default_timezone_set("Europe/London");'));
         
-        return new CodePatcher($c->get(Parser::class), new Standard, $patch);    
+        return new CodePatcher($c->get(Parser::class), new Standard, $patch);
     }),
     
     TerminalInterface::class => factory([TerminalFactory::class, 'fromSystem']),
@@ -192,7 +219,7 @@ return [
             $c->get(UserStateSerializer::class),
             $c->get(MarkdownRenderer::class),
             $c->get(Color::class),
-            $c->get(Output::class)
+            $c->get(OutputInterface::class)
         );
     }),
     MarkdownRenderer::class => factory(function (ContainerInterface $c) {
@@ -212,7 +239,7 @@ return [
     ResetProgress::class => factory(function (ContainerInterface $c) {
         return new ResetProgress(
             $c->get(UserStateSerializer::class),
-            $c->get(Output::class)
+            $c->get(OutputInterface::class)
         );
     }),
     ResultsRenderer::class => factory(function (ContainerInterface $c) {
@@ -230,7 +257,6 @@ return [
         return $renderer;
     }),
     'renderers' => factory(function (ContainerInterface $c) {
-        
         return [
             [StdOutFailure::class, new OutputFailureRenderer],
             [CgiOutResult::class, new CgiOutResultRenderer],

@@ -24,4 +24,48 @@ class InvalidArgumentException extends \InvalidArgumentException
             )
         );
     }
+
+    /**
+     * @param string $parameterName
+     * @param mixed[] $allowedValues
+     * @param mixed $actualValue
+     * @return static
+     */
+    public static function notValidParameter($parameterName, array $allowedValues, $actualValue)
+    {
+        return new static(
+            sprintf(
+                'Parameter: "%s" can only be one of: "%s" Received: "%s"',
+                $parameterName,
+                static::stringify($allowedValues),
+                static::stringify($actualValue)
+            )
+        );
+    }
+
+    /**
+     * @param $value
+     * @return string
+     */
+    public static function stringify($value)
+    {
+        if (is_object($value)) {
+            return get_class($value);
+        }
+
+        if (is_array($value)) {
+            return implode('", "', array_map([static::class, 'stringify'], $value));
+        }
+
+        if (is_bool($value)) {
+            return ($value) ? 'true' : 'false';
+        }
+
+        if (is_scalar($value)) {
+            return (string) $value;
+        }
+
+
+        return 'unknown';
+    }
 }

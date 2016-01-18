@@ -2,8 +2,11 @@
 
 namespace PhpSchool\PhpWorkshopTest\Asset;
 
+use PhpSchool\PhpWorkshop\Check\ComposerCheck;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
+use PhpSchool\PhpWorkshop\Exercise\ExerciseType;
 use PhpSchool\PhpWorkshop\ExerciseCheck\ComposerExerciseCheck;
+use PhpSchool\PhpWorkshop\ExerciseDispatcher;
 
 /**
  * Class ComposerExercise
@@ -70,5 +73,21 @@ class ComposerExercise implements ExerciseInterface, ComposerExerciseCheck
             'klein/klein',
             'danielstjules/stringy'
         ];
+    }
+
+    /**
+     * @return ExerciseType
+     */
+    public function getType()
+    {
+        return ExerciseType::CLI();
+    }
+
+    /**
+     * @param ExerciseDispatcher $dispatcher
+     */
+    public function configure(ExerciseDispatcher $dispatcher)
+    {
+        $dispatcher->requireCheck(ComposerCheck::class);
     }
 }

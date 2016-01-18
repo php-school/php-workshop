@@ -3,7 +3,7 @@
 namespace PhpSchool\PhpWorkshop\Command;
 
 use Colors\Color;
-use PhpSchool\PhpWorkshop\Output;
+use PhpSchool\PhpWorkshop\Output\OutputInterface;
 
 /**
  * Class CreditsCommand
@@ -14,7 +14,7 @@ use PhpSchool\PhpWorkshop\Output;
 class CreditsCommand
 {
     /**
-     * @var Output
+     * @var OutputInterface
      */
     private $output;
     
@@ -36,10 +36,10 @@ class CreditsCommand
     /**
      * @param array $coreContributors
      * @param array $appContributors
-     * @param Output $output
+     * @param OutputInterface $output
      * @param Color $color
      */
-    public function __construct(array $coreContributors, array $appContributors, Output $output, Color $color)
+    public function __construct(array $coreContributors, array $appContributors, OutputInterface $output, Color $color)
     {
         $this->coreContributors = $coreContributors;
         $this->appContributors  = $appContributors;
@@ -77,15 +77,15 @@ class CreditsCommand
         $this->output->writeLine(
             $this->color->__invoke("PHP School is bought to you by...")->yellow()->__toString()
         );
-        $this->output->writeLine("");
+        $this->output->emptyLine();
         $this->writeContributors($this->coreContributors);
-
-        $this->output->writeLine("");
-        $this->output->writeLine("");
 
         if (empty($this->appContributors)) {
             return;
         }
+
+        $this->output->emptyLine();
+        $this->output->emptyLine();
         
         $this->output->writeLine(
             $this->color->__invoke("This workshop is brought to you by...")->yellow()->__toString()

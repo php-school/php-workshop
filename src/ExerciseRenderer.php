@@ -4,6 +4,7 @@ namespace PhpSchool\PhpWorkshop;
 
 use Colors\Color;
 use PhpSchool\CliMenu\CliMenu;
+use PhpSchool\PhpWorkshop\Output\OutputInterface;
 
 /**
  * Class ExerciseRenderer
@@ -33,7 +34,7 @@ class ExerciseRenderer
     private $color;
 
     /**
-     * @var Output
+     * @var OutputInterface
      */
     private $output;
 
@@ -54,7 +55,7 @@ class ExerciseRenderer
      * @param UserStateSerializer $userStateSerializer
      * @param MarkdownRenderer $markdownRenderer
      * @param Color $color
-     * @param Output $output
+     * @param OutputInterface $output
      */
     public function __construct(
         $appName,
@@ -63,7 +64,7 @@ class ExerciseRenderer
         UserStateSerializer $userStateSerializer,
         MarkdownRenderer $markdownRenderer,
         Color $color,
-        Output $output
+        OutputInterface $output
     ) {
         $this->appName              = $appName;
         $this->exerciseRepository   = $exerciseRepository;

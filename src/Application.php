@@ -5,6 +5,7 @@ namespace PhpSchool\PhpWorkshop;
 use Assert\Assertion;
 use DI\ContainerBuilder;
 use PhpSchool\PhpWorkshop\Check\CheckInterface;
+use PhpSchool\PhpWorkshop\Check\CheckRepository;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpSchool\PhpWorkshop\ResultRenderer\ResultRendererInterface;
 
@@ -69,12 +70,10 @@ final class Application
 
     /**
      * @param CheckInterface $check
-     * @param string $exerciseInterface
      */
-    public function addCheck(CheckInterface $check, $exerciseInterface)
+    public function addCheck(CheckInterface $check)
     {
-        //TODO Use reflection to check that $exerciseInterface exists and is an interface
-        $this->checks[] = [$check, $exerciseInterface];
+        $this->checks[] = $check;
     }
 
     /**
@@ -156,10 +155,12 @@ final class Application
         
         $renderers = $container->get('renderers');
         $container->set('renderers', array_merge($renderers, $this->renderers));
-        
-        $checks = $container->get('checks');
-        $container->set('checks', array_merge($checks, $this->checks));
-        
+
+        $checkRepository = $container->get(CheckRepository::class);
+        array_walk($this->checks, function (CheckInterface $check) use ($checkRepository) {
+            $checkRepository->registerCheck($check);
+        });
+
         $router = $container->get(CommandRouter::class);
         return $router->route();
     }

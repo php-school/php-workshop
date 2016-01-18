@@ -11,11 +11,6 @@ use PDO;
 interface DatabaseExerciseCheck
 {
     /**
-     * @return array
-     */
-    public function getArgs();
-    
-    /**
      * @param PDO $db
      * @return bool
      */

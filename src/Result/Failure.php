@@ -54,13 +54,13 @@ class Failure implements FailureInterface
     }
 
     /**
-     * @param CheckInterface $check
+     * @param string $name
      * @param CodeExecutionException $e
      * @return static
      */
-    public static function fromCheckAndCodeExecutionFailure(CheckInterface $check, CodeExecutionException $e)
+    public static function fromNameAndCodeExecutionFailure($name, CodeExecutionException $e)
     {
-        return new static($check->getName(), $e->getMessage());
+        return new static($name, $e->getMessage());
     }
 
     /**

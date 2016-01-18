@@ -39,6 +39,17 @@ class StdOutFailure implements FailureInterface
     }
 
     /**
+     * @param string $name
+     * @param $expectedOutput
+     * @param $actualOutput
+     * @return static
+     */
+    public static function fromNameAndOutput($name, $expectedOutput, $actualOutput)
+    {
+        return new static($name, $expectedOutput, $actualOutput);
+    }
+
+    /**
      * @param CheckInterface $check
      * @param $expectedOutput
      * @param $actualOutput

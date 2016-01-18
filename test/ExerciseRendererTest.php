@@ -13,7 +13,7 @@ use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpSchool\PhpWorkshop\ExerciseRenderer;
 use PhpSchool\PhpWorkshop\ExerciseRepository;
 use PhpSchool\PhpWorkshop\MarkdownRenderer;
-use PhpSchool\PhpWorkshop\Output;
+use PhpSchool\PhpWorkshop\Output\StdOutput;
 use PhpSchool\PhpWorkshop\UserState;
 use PhpSchool\PhpWorkshop\UserStateSerializer;
 
@@ -101,7 +101,7 @@ class ExerciseRendererTest extends PHPUnit_Framework_TestCase
             $userStateSerializer,
             $markdownRenderer,
             $color,
-            new Output($color)
+            new StdOutput($color)
         );
 
         $this->expectOutputString(file_get_contents(__DIR__ . '/res/exercise-help-expected.txt'));

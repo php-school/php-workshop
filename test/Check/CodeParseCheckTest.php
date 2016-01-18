@@ -6,6 +6,7 @@ use PhpParser\ParserFactory;
 use PhpSchool\PhpWorkshop\Check\CheckInterface;
 use PhpSchool\PhpWorkshop\Check\CodeParseCheck;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
+use PhpSchool\PhpWorkshop\Exercise\ExerciseType;
 use PhpSchool\PhpWorkshop\Result\Failure;
 use PhpSchool\PhpWorkshop\Result\Success;
 use PHPUnit_Framework_TestCase;
@@ -31,7 +32,11 @@ class CodeParseCheckTest extends PHPUnit_Framework_TestCase
     {
         $this->check = new CodeParseCheck((new ParserFactory)->create(ParserFactory::PREFER_PHP7));
         $this->assertEquals('Code Parse Check', $this->check->getName());
-        
+        $this->assertEquals(ExerciseInterface::class, $this->check->getExerciseInterface());
+
+        $this->assertTrue($this->check->canRun(ExerciseType::CGI()));
+        $this->assertTrue($this->check->canRun(ExerciseType::CLI()));
+
         $this->file = sprintf('%s/%s/submission.php', str_replace('\\', '/', sys_get_temp_dir()), $this->getName());
         mkdir(dirname($this->file), 0775, true);
         touch($this->file);

@@ -4,9 +4,8 @@ namespace PhpSchool\PhpWorkshop\Command;
 
 use PhpSchool\PhpWorkshop\ExerciseRepository;
 use PhpSchool\PhpWorkshop\MarkdownRenderer;
-use PhpSchool\PhpWorkshop\Output;
+use PhpSchool\PhpWorkshop\Output\OutputInterface;
 use PhpSchool\PhpWorkshop\UserState;
-use PhpSchool\PhpWorkshop\UserStateSerializer;
 
 /**
  * Class PrintCommand
@@ -20,7 +19,7 @@ class PrintCommand
     private $markdownRenderer;
 
     /**
-     * @var Output
+     * @var OutputInterface
      */
     private $output;
 
@@ -38,13 +37,13 @@ class PrintCommand
      * @param ExerciseRepository $exerciseRepository
      * @param UserState $userState
      * @param MarkdownRenderer $markdownRenderer
-     * @param Output $output
+     * @param OutputInterface $output
      */
     public function __construct(
         ExerciseRepository $exerciseRepository,
         UserState $userState,
         MarkdownRenderer $markdownRenderer,
-        Output $output
+        OutputInterface $output
     ) {
         $this->markdownRenderer     = $markdownRenderer;
         $this->output               = $output;

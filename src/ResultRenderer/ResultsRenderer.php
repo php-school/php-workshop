@@ -4,7 +4,7 @@ namespace PhpSchool\PhpWorkshop\ResultRenderer;
 
 use Colors\Color;
 use PhpSchool\CliMenu\Terminal\TerminalInterface;
-use PhpSchool\PhpWorkshop\Output;
+use PhpSchool\PhpWorkshop\Output\OutputInterface;
 use PhpSchool\PhpWorkshop\Result\SuccessInterface;
 use PhpSchool\PSX\SyntaxHighlighter;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
@@ -83,14 +83,20 @@ class ResultsRenderer
      * @param ResultAggregator $results
      * @param ExerciseInterface $exercise
      * @param UserState $userState
-     * @param Output $output
+     * @param OutputInterface $output
      */
-    public function render(ResultAggregator $results, ExerciseInterface $exercise, UserState $userState, Output $output)
-    {
+    public function render(
+        ResultAggregator $results,
+        ExerciseInterface $exercise,
+        UserState $userState,
+        OutputInterface $output
+    ) {
         $successes  = [];
         $failures   = [];
         foreach ($results as $result) {
-            if ($result instanceof SuccessInterface) {
+            if ($result instanceof SuccessInterface
+                || ($result instanceof ResultAggregator && $result->isSuccessful())
+            ) {
                 $successes[] = sprintf(' ✔ Check: %s', $result->getCheckName());
             } else {
                 $failures[] = [$result, sprintf(' ✗ Check: %s', $result->getCheckName())];
@@ -112,14 +118,19 @@ class ResultsRenderer
      * @param array $failures
      * @param int $padLength
      * @param ExerciseInterface $exercise
-     * @param Output $output
+     * @param OutputInterface $output
      */
-    private function renderErrorInformation(array $failures, $padLength, ExerciseInterface $exercise, Output $output)
-    {
+    private function renderErrorInformation(
+        array $failures,
+        $padLength,
+        ExerciseInterface $exercise,
+        OutputInterface $output
+    ) {
         foreach ($failures as $result) {
             list ($failure, $message) = $result;
             $output->writeLine(str_pad($this->style($message, ['red', 'bg_black', 'bold']), $padLength));
             $output->write($this->renderResult($failure));
+            $output->emptyLine();
         }
 
         $output->writeLine($this->style(" FAIL!", ['red', 'bg_default', 'bold']));
@@ -133,10 +144,13 @@ class ResultsRenderer
     /**
      * @param ExerciseInterface $exercise
      * @param UserState $userState
-     * @param Output $output
+     * @param OutputInterface $output
      */
-    private function renderSuccessInformation(ExerciseInterface $exercise, UserState $userState, Output $output)
-    {
+    private function renderSuccessInformation(
+        ExerciseInterface $exercise,
+        UserState $userState,
+        OutputInterface $output
+    ) {
         $output->emptyLine();
         $output->writeLine($this->style(" PASS!", ['green', 'bg_default', 'bold']));
         $output->emptyLine();
@@ -153,6 +167,9 @@ class ResultsRenderer
             if (pathinfo($file->getRelativePath(), PATHINFO_EXTENSION) === 'php') {
                 $code = $this->syntaxHighlighter->highlight($code);
             }
+
+            //make sure there is a new line at the end
+            $code = preg_replace('/\n$/', '', $code) . "\n";
 
             $output->write($code);
             $output->writeLine($this->lineBreak());

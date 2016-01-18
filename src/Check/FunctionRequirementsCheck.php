@@ -7,6 +7,7 @@ use PhpParser\Node\Expr\FuncCall;
 use PhpParser\NodeTraverser;
 use PhpParser\Parser;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
+use PhpSchool\PhpWorkshop\Exercise\ExerciseType;
 use PhpSchool\PhpWorkshop\ExerciseCheck\FunctionRequirementsExerciseCheck;
 use PhpSchool\PhpWorkshop\NodeVisitor\FunctionVisitor;
 use PhpSchool\PhpWorkshop\Result\Failure;
@@ -19,7 +20,7 @@ use PhpSchool\PhpWorkshop\Result\Success;
  * @package PhpSchool\PhpWorkshop\Check
  * @author  Aydin Hassan <aydin@hotmail.co.uk>
  */
-class FunctionRequirementsCheck implements CheckInterface
+class FunctionRequirementsCheck implements SimpleCheckInterface
 {
     
     /**
@@ -88,5 +89,23 @@ class FunctionRequirementsCheck implements CheckInterface
         }
 
         return Success::fromCheck($this);
+    }
+
+    /**
+     * @param ExerciseType $exerciseType
+     * @return bool
+     */
+    public function canRun(ExerciseType $exerciseType)
+    {
+        return true;
+    }
+
+    /**
+     *
+     * @return string
+     */
+    public function getExerciseInterface()
+    {
+        return FunctionRequirementsExerciseCheck::class;
     }
 }

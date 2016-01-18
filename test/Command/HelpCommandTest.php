@@ -4,7 +4,7 @@ namespace PhpSchool\PhpWorkshopTest\Command;
 
 use Colors\Color;
 use PhpSchool\PhpWorkshop\Command\HelpCommand;
-use PhpSchool\PhpWorkshop\Output;
+use PhpSchool\PhpWorkshop\Output\StdOutput;
 use PHPUnit_Framework_TestCase;
 
 /**
@@ -23,7 +23,7 @@ class HelpCommandTest extends PHPUnit_Framework_TestCase
 
         $command = new HelpCommand(
             'learnyouphp',
-            new Output($color),
+            new StdOutput($color),
             $color
         );
 

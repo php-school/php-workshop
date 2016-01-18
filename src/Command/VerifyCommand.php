@@ -2,9 +2,10 @@
 
 namespace PhpSchool\PhpWorkshop\Command;
 
+use PhpSchool\PhpWorkshop\ExerciseDispatcher;
 use PhpSchool\PhpWorkshop\ExerciseRepository;
 use PhpSchool\PhpWorkshop\ExerciseRunner;
-use PhpSchool\PhpWorkshop\Output;
+use PhpSchool\PhpWorkshop\Output\OutputInterface;
 use PhpSchool\PhpWorkshop\ResultRenderer\ResultsRenderer;
 use PhpSchool\PhpWorkshop\UserState;
 use PhpSchool\PhpWorkshop\UserStateSerializer;
@@ -22,7 +23,7 @@ class VerifyCommand
     private $runner;
 
     /**
-     * @var Output
+     * @var OutputInterface
      */
     private $output;
 
@@ -47,27 +48,32 @@ class VerifyCommand
     private $resultsRenderer;
 
     /**
+     * @var ExerciseDispatcher
+     */
+    private $exerciseDispatcher;
+
+    /**
      * @param ExerciseRepository $exerciseRepository
-     * @param ExerciseRunner $runner
+     * @param ExerciseDispatcher $exerciseDispatcher
      * @param UserState $userState
      * @param UserStateSerializer $userStateSerializer
-     * @param Output $output
+     * @param OutputInterface $output
      * @param ResultsRenderer $resultsRenderer
      */
     public function __construct(
         ExerciseRepository $exerciseRepository,
-        ExerciseRunner $runner,
+        ExerciseDispatcher $exerciseDispatcher,
         UserState $userState,
         UserStateSerializer $userStateSerializer,
-        Output $output,
+        OutputInterface $output,
         ResultsRenderer $resultsRenderer
     ) {
-        $this->runner               = $runner;
         $this->output               = $output;
         $this->exerciseRepository   = $exerciseRepository;
         $this->userState            = $userState;
         $this->userStateSerializer  = $userStateSerializer;
-        $this->resultsRenderer          = $resultsRenderer;
+        $this->resultsRenderer      = $resultsRenderer;
+        $this->exerciseDispatcher   = $exerciseDispatcher;
     }
 
     /**
@@ -92,7 +98,7 @@ class VerifyCommand
         }
 
         $exercise   = $this->exerciseRepository->findByName($this->userState->getCurrentExercise());
-        $results    = $this->runner->runExercise($exercise, $program);
+        $results    = $this->exerciseDispatcher->verify($exercise, $program);
 
         if ($results->isSuccessful()) {
             $this->userState->addCompletedExercise($exercise->getName());
