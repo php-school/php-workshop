@@ -50,12 +50,16 @@ class CliRunner implements ExerciseRunnerInterface
     /**
      * @param string $fileName
      * @param ArrayObject $args
+     * @param string $type
      * @return string
      */
-    private function executePhpFile($fileName, ArrayObject $args)
+    private function executePhpFile($fileName, ArrayObject $args, $type)
     {
         $process = $this->getPhpProcess($fileName, $args);
-        $process->run();
+
+        $process->start();
+        $this->eventDispatcher->dispatch(new CliExecuteEvent(sprintf('cli.verify.%s.executing', $type), $args));
+        $process->wait();
 
         if (!$process->isSuccessful()) {
             throw CodeExecutionException::fromProcess($process);
@@ -92,7 +96,11 @@ class CliRunner implements ExerciseRunnerInterface
 
         try {
             $event = $this->eventDispatcher->dispatch(new CliExecuteEvent('cli.verify.solution-execute.pre', $args));
-            $solutionOutput = $this->executePhpFile($exercise->getSolution()->getEntryPoint(), $event->getArgs());
+            $solutionOutput = $this->executePhpFile(
+                $exercise->getSolution()->getEntryPoint(),
+                $event->getArgs(),
+                'solution'
+            );
         } catch (CodeExecutionException $e) {
             $this->eventDispatcher->dispatch(new Event('cli.verify.solution-execute.fail', ['exception' => $e]));
             throw new SolutionExecutionException($e->getMessage());
@@ -100,7 +108,7 @@ class CliRunner implements ExerciseRunnerInterface
 
         try {
             $event = $this->eventDispatcher->dispatch(new CliExecuteEvent('cli.verify.user-execute.pre', $args));
-            $userOutput = $this->executePhpFile($fileName, $event->getArgs());
+            $userOutput = $this->executePhpFile($fileName, $event->getArgs(), 'user');
         } catch (CodeExecutionException $e) {
             $this->eventDispatcher->dispatch(new Event('cli.verify.user-execute.fail', ['exception' => $e]));
             return Failure::fromNameAndCodeExecutionFailure($this->getName(), $e);
