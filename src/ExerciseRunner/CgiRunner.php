@@ -60,7 +60,11 @@ class CgiRunner implements ExerciseRunnerInterface
     {
         try {
             $event = $this->eventDispatcher->dispatch(new CgiExecuteEvent('cgi.verify.solution-execute.pre', $request));
-            $solutionResponse = $this->executePhpFile($exercise->getSolution()->getEntryPoint(), $event->getRequest());
+            $solutionResponse = $this->executePhpFile(
+                $exercise->getSolution()->getEntryPoint(),
+                $event->getRequest(),
+                'solution'
+            );
         } catch (CodeExecutionException $e) {
             $this->eventDispatcher->dispatch(new Event('cgi.verify.solution-execute.fail', ['exception' => $e]));
             throw new SolutionExecutionException($e->getMessage());
@@ -68,7 +72,7 @@ class CgiRunner implements ExerciseRunnerInterface
 
         try {
             $event = $this->eventDispatcher->dispatch(new CgiExecuteEvent('cgi.verify.user-execute.pre', $request));
-            $userResponse = $this->executePhpFile($fileName, $event->getRequest());
+            $userResponse = $this->executePhpFile($fileName, $event->getRequest(), 'user');
         } catch (CodeExecutionException $e) {
             $this->eventDispatcher->dispatch(new Event('cgi.verify.user-execute.fail', ['exception' => $e]));
             return Failure::fromNameAndCodeExecutionFailure($this->getName(), $e);
@@ -78,7 +82,7 @@ class CgiRunner implements ExerciseRunnerInterface
         $userBody           = (string) $userResponse->getBody();
         $solutionHeaders    = $this->getHeaders($solutionResponse);
         $userHeaders        = $this->getHeaders($userResponse);
-        
+
         if ($solutionBody !== $userBody || $solutionHeaders !== $userHeaders) {
             return new CgiOutRequestFailure($request, $solutionBody, $userBody, $solutionHeaders, $userHeaders);
         }
@@ -102,12 +106,16 @@ class CgiRunner implements ExerciseRunnerInterface
     /**
      * @param string $fileName
      * @param RequestInterface $request
+     * @param string $type
      * @return ResponseInterface
      */
-    private function executePhpFile($fileName, RequestInterface $request)
+    private function executePhpFile($fileName, RequestInterface $request, $type)
     {
         $process = $this->getProcess($fileName, $request);
-        $process->run();
+
+        $process->start();
+        $this->eventDispatcher->dispatch(new CgiExecuteEvent(sprintf('cgi.verify.%s.executing', $type), $request));
+        $process->wait();
 
         if (!$process->isSuccessful()) {
             throw CodeExecutionException::fromProcess($process);
