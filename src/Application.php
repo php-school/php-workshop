@@ -6,7 +6,9 @@ use Assert\Assertion;
 use DI\ContainerBuilder;
 use PhpSchool\PhpWorkshop\Check\CheckInterface;
 use PhpSchool\PhpWorkshop\Check\CheckRepository;
+use PhpSchool\PhpWorkshop\Exception\MissingArgumentException;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
+use PhpSchool\PhpWorkshop\Output\OutputInterface;
 use PhpSchool\PhpWorkshop\ResultRenderer\ResultRendererInterface;
 
 /**
@@ -161,7 +163,21 @@ final class Application
             $checkRepository->registerCheck($check);
         });
 
-        $router = $container->get(CommandRouter::class);
-        return $router->route();
+        try {
+            $exitCode = $container->get(CommandRouter::class)->route();
+        } catch (MissingArgumentException $e) {
+            $container
+                ->get(OutputInterface::class)
+                ->printError(
+                    sprintf(
+                        'Argument%s: "%s" %s missing!',
+                        count($e->getMissingArguments()) > 1 ? 's' : '',
+                        implode('", "', $e->getMissingArguments()),
+                        count($e->getMissingArguments()) > 1 ? 'are' : 'is'
+                    )
+                );
+            return 1;
+        }
+        return $exitCode;
     }
 }
