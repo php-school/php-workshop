@@ -16,17 +16,25 @@ class CgiOutResultRenderer implements ResultRendererInterface
 {
 
     /**
-     * @param ResultInterface $result
+     * @var CgiOutResult
+     */
+    private $result;
+
+    /**
+     * @param CgiOutResult $result
+     */
+    public function __construct(CgiOutResult $result)
+    {
+        $this->result = $result;
+    }
+
+    /**
      * @param ResultsRenderer $renderer
      * @return string
      */
-    public function render(ResultInterface $result, ResultsRenderer $renderer)
+    public function render(ResultsRenderer $renderer)
     {
-        if (!$result instanceof CgiOutResult) {
-            throw new \InvalidArgumentException(sprintf('Incompatible result type: %s', get_class($result)));
-        }
-
-        $results = array_filter($result->getIterator()->getArrayCopy(), function (ResultInterface $result) {
+        $results = array_filter($this->result->getIterator()->getArrayCopy(), function (ResultInterface $result) {
             return $result instanceof FailureInterface;
         });
 

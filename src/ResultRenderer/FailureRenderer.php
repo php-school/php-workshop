@@ -11,18 +11,25 @@ use PhpSchool\PhpWorkshop\Result\ResultInterface;
  */
 class FailureRenderer implements ResultRendererInterface
 {
+    /**
+     * @var Failure
+     */
+    private $result;
 
     /**
-     * @param ResultInterface $result
+     * @param Failure $result
+     */
+    public function __construct(Failure $result)
+    {
+        $this->result = $result;
+    }
+
+    /**
      * @param ResultsRenderer $renderer
      * @return string
      */
-    public function render(ResultInterface $result, ResultsRenderer $renderer)
+    public function render(ResultsRenderer $renderer)
     {
-        if (!$result instanceof Failure) {
-            throw new \InvalidArgumentException(sprintf('Incompatible result type: %s', get_class($result)));
-        }
-
-        return '  ' . $result->getReason() . "\n";
+        return '  ' . $this->result->getReason() . "\n";
     }
 }

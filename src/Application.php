@@ -34,11 +34,6 @@ final class Application
     private $exercises = [];
 
     /**
-     * @var array
-     */
-    private $renderers = [];
-
-    /**
      * @var string
      */
     private $diConfigFile;
@@ -84,16 +79,6 @@ final class Application
     public function addExercise($exercise)
     {
         $this->exercises[] = $exercise;
-    }
-
-    /**
-     * @param ResultRendererInterface $renderer
-     * @param string $resultClass
-     */
-    public function addRenderer(ResultRendererInterface $renderer, $resultClass)
-    {
-        //TODO Use reflection to check that $resultClass exists and implements ResultInterface
-        $this->renderers[] = [$renderer, $resultClass];
     }
 
     /**
@@ -154,9 +139,6 @@ final class Application
                 );
             }
         }
-        
-        $renderers = $container->get('renderers');
-        $container->set('renderers', array_merge($renderers, $this->renderers));
 
         $checkRepository = $container->get(CheckRepository::class);
         array_walk($this->checks, function (CheckInterface $check) use ($checkRepository) {

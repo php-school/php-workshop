@@ -12,9 +12,8 @@ interface ResultRendererInterface
 {
 
     /**
-     * @param ResultInterface $result
      * @param ResultsRenderer $renderer
      * @return string
      */
-    public function render(ResultInterface $result, ResultsRenderer $renderer);
+    public function render(ResultsRenderer $renderer);
 }

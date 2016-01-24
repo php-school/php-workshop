@@ -22,20 +22,8 @@ use Psr\Http\Message\RequestInterface;
  */
 class CgiOutResultRendererTest extends AbstractResultRendererTest
 {
-    public function testRendererThrowsExceptionIfNotCorrectResult()
-    {
-        $mock = $this->getMock(ResultInterface::class);
-        $this->setExpectedException(
-            InvalidArgumentException::class,
-            sprintf('Incompatible result type: %s', get_class($mock))
-        );
-        $renderer = new CgiOutResultRenderer;
-        $renderer->render($mock, $this->getRenderer());
-    }
-
     public function testRenderWhenOnlyHeadersDifferent()
     {
-        $check = $this->getMock(CheckInterface::class);
         $failure = new CgiOutRequestFailure(
             $this->getMock(RequestInterface::class),
             'OUTPUT',
@@ -44,7 +32,7 @@ class CgiOutResultRendererTest extends AbstractResultRendererTest
             ['header1' => 'val']
         );
         $result = new CgiOutResult('Some Check', [$failure]);
-        $renderer = new CgiOutResultRenderer;
+        $renderer = new CgiOutResultRenderer($result);
 
         $expected  = "\n";
         $expected .= "\e[32m\e[4m\e[1mRequest 01\n\n";
@@ -53,7 +41,7 @@ class CgiOutResultRendererTest extends AbstractResultRendererTest
         $expected .= "                     \e[39mheader2: val\e[0m\n\n";
         $expected .= "\e[33m────────────────────\e[0m\n";
 
-        $this->assertSame($expected, $renderer->render($result, $this->getRenderer()));
+        $this->assertSame($expected, $renderer->render($this->getRenderer()));
     }
 
     public function testRenderWhenOnlyOutputDifferent()
@@ -66,7 +54,7 @@ class CgiOutResultRendererTest extends AbstractResultRendererTest
             ['header1' => 'val']
         );
         $result = new CgiOutResult('Some Check', [$failure]);
-        $renderer = new CgiOutResultRenderer;
+        $renderer = new CgiOutResultRenderer($result);
 
         $expected  = "\n";
         $expected .= "\e[32m\e[4m\e[1mRequest 01\n\n";
@@ -74,7 +62,7 @@ class CgiOutResultRendererTest extends AbstractResultRendererTest
         $expected .= "  \e[33m\e[1mEXPECTED CONTENT:\e[0m\e[0m  \e[39m\"EXPECTED OUTPUT\"\e[0m\n";
         $expected .= "\e[33m────────────────────\e[0m\n";
 
-        $this->assertSame($expected, $renderer->render($result, $this->getRenderer()));
+        $this->assertSame($expected, $renderer->render($this->getRenderer()));
     }
 
     public function testRenderWhenOutputAndHeadersDifferent()
@@ -87,7 +75,7 @@ class CgiOutResultRendererTest extends AbstractResultRendererTest
             ['header1' => 'val']
         );
         $result = new CgiOutResult('Some Check', [$failure]);
-        $renderer = new CgiOutResultRenderer;
+        $renderer = new CgiOutResultRenderer($result);
 
         $expected  = "\n";
         $expected .= "\e[32m\e[4m\e[1mRequest 01\n\n";
@@ -99,7 +87,7 @@ class CgiOutResultRendererTest extends AbstractResultRendererTest
         $expected .= "  \e[33m\e[1mEXPECTED CONTENT:\e[0m\e[0m  \e[39m\"EXPECTED OUTPUT\"\e[0m\n";
         $expected .= "\e[33m────────────────────\e[0m\n";
 
-        $this->assertSame($expected, $renderer->render($result, $this->getRenderer()));
+        $this->assertSame($expected, $renderer->render($this->getRenderer()));
     }
 
     public function testNothingIsRenderedForSuccess()
@@ -112,7 +100,7 @@ class CgiOutResultRendererTest extends AbstractResultRendererTest
             ['header1' => 'val']
         );
         $result = new CgiOutResult('Some Check', [$failure, new Success('Successful')]);
-        $renderer = new CgiOutResultRenderer;
+        $renderer = new CgiOutResultRenderer($result);
 
         $expected  = "\n";
         $expected .= "\e[32m\e[4m\e[1mRequest 01\n\n";
@@ -124,7 +112,7 @@ class CgiOutResultRendererTest extends AbstractResultRendererTest
         $expected .= "  \e[33m\e[1mEXPECTED CONTENT:\e[0m\e[0m  \e[39m\"EXPECTED OUTPUT\"\e[0m\n";
         $expected .= "\e[33m────────────────────\e[0m\n";
 
-        $this->assertSame($expected, $renderer->render($result, $this->getRenderer()));
+        $this->assertSame($expected, $renderer->render($this->getRenderer()));
     }
 
     public function testMultipleFailedRequests()
@@ -145,7 +133,7 @@ class CgiOutResultRendererTest extends AbstractResultRendererTest
             ['header1' => 'val']
         );
         $result = new CgiOutResult('Some Check', [$failure1, $failure2]);
-        $renderer = new CgiOutResultRenderer;
+        $renderer = new CgiOutResultRenderer($result);
 
         $expected  = "\n";
         $expected .= "\e[32m\e[4m\e[1mRequest 01\n\n";
@@ -165,12 +153,11 @@ class CgiOutResultRendererTest extends AbstractResultRendererTest
         $expected .= "  \e[33m\e[1mEXPECTED CONTENT:\e[0m\e[0m  \e[39m\"EXPECTED OUTPUT 2\"\e[0m\n";
         $expected .= "\e[33m────────────────────\e[0m\n";
 
-        $this->assertSame($expected, $renderer->render($result, $this->getRenderer()));
+        $this->assertSame($expected, $renderer->render($this->getRenderer()));
     }
 
     public function testCodeExecutionFailureIsDelegatedToMainRenderer()
     {
-        $check = $this->getMock(CheckInterface::class);
         $failure = new CgiOutRequestFailure(
             $this->getMock(RequestInterface::class),
             'EXPECTED OUTPUT',
@@ -181,7 +168,7 @@ class CgiOutResultRendererTest extends AbstractResultRendererTest
 
         $codeExecutionFailure = new Failure('Test Check', 'Code Execution Failure');
         $result = new CgiOutResult('Some Check', [$failure, $codeExecutionFailure]);
-        $renderer = new CgiOutResultRenderer;
+        $renderer = new CgiOutResultRenderer($result);
 
         $expected  = "\n";
         $expected .= "\e[32m\e[4m\e[1mRequest 01\n\n";
@@ -196,9 +183,6 @@ class CgiOutResultRendererTest extends AbstractResultRendererTest
         $expected .= "\e[0m\e[0m\e[0m  Code Execution Failure\n";
         $expected .= "\e[33m────────────────────\e[0m\n";
 
-        $mainRenderer = $this->getRenderer();
-        $mainRenderer->registerRenderer(Failure::class, new FailureRenderer);
-
-        $this->assertSame($expected, $renderer->render($result, $mainRenderer));
+        $this->assertSame($expected, $renderer->render($this->getRenderer()));
     }
 }

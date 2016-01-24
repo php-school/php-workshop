@@ -4,6 +4,7 @@ namespace PhpSchool\PhpWorkshop\ResultRenderer;
 
 use Colors\Color;
 use PhpSchool\CliMenu\Terminal\TerminalInterface;
+use PhpSchool\PhpWorkshop\Factory\ResultRendererFactory;
 use PhpSchool\PhpWorkshop\Output\OutputInterface;
 use PhpSchool\PhpWorkshop\Result\SuccessInterface;
 use PhpSchool\PSX\SyntaxHighlighter;
@@ -38,16 +39,16 @@ class ResultsRenderer
      * @var TerminalInterface
      */
     private $terminal;
-
-    /**
-     * @var ResultRendererInterface[]
-     */
-    private $renderers = [];
     
     /**
      * @var SyntaxHighlighter
      */
     private $syntaxHighlighter;
+
+    /**
+     * @var ResultRendererFactory
+     */
+    private $resultRendererFactory;
 
     /**
      * @param $appName
@@ -61,22 +62,15 @@ class ResultsRenderer
         Color $color,
         TerminalInterface $terminal,
         ExerciseRepository $exerciseRepository,
-        SyntaxHighlighter $syntaxHighlighter
+        SyntaxHighlighter $syntaxHighlighter,
+        ResultRendererFactory $resultRendererFactory
     ) {
-        $this->color                = $color;
-        $this->terminal             = $terminal;
-        $this->exerciseRepository   = $exerciseRepository;
-        $this->syntaxHighlighter    = $syntaxHighlighter;
-        $this->appName = $appName;
-    }
-
-    /**
-     * @param $resultClass
-     * @param ResultRendererInterface $renderer
-     */
-    public function registerRenderer($resultClass, ResultRendererInterface $renderer)
-    {
-        $this->renderers[$resultClass] = $renderer;
+        $this->color                 = $color;
+        $this->terminal              = $terminal;
+        $this->exerciseRepository    = $exerciseRepository;
+        $this->syntaxHighlighter     = $syntaxHighlighter;
+        $this->appName               = $appName;
+        $this->resultRendererFactory = $resultRendererFactory;
     }
 
     /**
@@ -234,7 +228,7 @@ class ResultsRenderer
      */
     public function renderResult(ResultInterface $result)
     {
-        return $this->getRenderer($result)->render($result, $this);
+        return $this->resultRendererFactory->create($result)->render($this);
     }
 
     /**
@@ -243,20 +237,5 @@ class ResultsRenderer
     public function lineBreak()
     {
         return $this->style(str_repeat("─", $this->terminal->getWidth()), 'yellow');
-    }
-
-    /**
-     * @param ResultInterface $result
-     * @return ResultRendererInterface
-     */
-    private function getRenderer(ResultInterface $result)
-    {
-        $class = get_class($result);
-
-        if (!isset($this->renderers[$class])) {
-            throw new \RuntimeException(sprintf('No renderer found for "%s"', $class));
-        }
-
-        return $this->renderers[$class];
     }
 }
