@@ -5,6 +5,8 @@ namespace PhpSchool\PhpWorkshopTest\ResultRenderer;
 use Colors\Color;
 use PhpSchool\CliMenu\Terminal\TerminalInterface;
 use PhpSchool\PhpWorkshop\ExerciseRepository;
+use PhpSchool\PhpWorkshop\Factory\ResultRendererFactory;
+use PhpSchool\PhpWorkshop\Result\Failure;
 use PhpSchool\PhpWorkshop\Result\ResultInterface;
 use PhpSchool\PhpWorkshop\ResultRenderer\ResultRendererInterface;
 use PhpSchool\PhpWorkshop\ResultRenderer\ResultsRenderer;
@@ -29,19 +31,12 @@ class ResultsRendererTest extends PHPUnit_Framework_TestCase
             $color,
             $this->getMock(TerminalInterface::class),
             new ExerciseRepository([]),
-            (new Factory)->__invoke()
+            (new Factory)->__invoke(),
+            new ResultRendererFactory
         );
 
-        $result = $this->getMock(ResultInterface::class);
-        $resultRenderer = $this->getMock(ResultRendererInterface::class);
-
-        $resultRenderer->expects($this->once())
-            ->method('render')
-            ->with($result, $renderer)
-            ->will($this->returnValue('Rendered Result'));
-
-        $renderer->registerRenderer(get_class($result), $resultRenderer);
-        $this->assertSame('Rendered Result', $renderer->renderResult($result));
+        $result = new Failure('Failure', 'Some Failure');
+        $this->assertSame("  Some Failure\n", $renderer->renderResult($result));
     }
 
     public function testLineBreak()
@@ -60,7 +55,8 @@ class ResultsRendererTest extends PHPUnit_Framework_TestCase
             $color,
             $terminal,
             new ExerciseRepository([]),
-            (new Factory)->__invoke()
+            (new Factory)->__invoke(),
+            new ResultRendererFactory
         );
 
         $this->assertSame("\e[33m──────────\e[0m", $renderer->lineBreak());

@@ -4,6 +4,7 @@ namespace PhpSchool\PhpWorkshopTest\ResultRenderer;
 
 use Colors\Color;
 use PhpSchool\CliMenu\Terminal\TerminalInterface;
+use PhpSchool\PhpWorkshop\Factory\ResultRendererFactory;
 use PhpSchool\PSX\Factory;
 use PHPUnit_Framework_TestCase;
 use PhpSchool\PhpWorkshop\ExerciseRepository;
@@ -40,6 +41,13 @@ abstract class AbstractResultRendererTest extends PHPUnit_Framework_TestCase
             ->will($this->returnValue(20));
 
         $syntaxHighlighter = (new Factory)->__invoke();
-        return new ResultsRenderer('appName', $color, $this->terminal, $exerciseRepo, $syntaxHighlighter);
+        return new ResultsRenderer(
+            'appName',
+            $color,
+            $this->terminal,
+            $exerciseRepo,
+            $syntaxHighlighter,
+            new ResultRendererFactory
+        );
     }
 }

@@ -3,7 +3,6 @@
 namespace PhpSchool\PhpWorkshop\ResultRenderer;
 
 use PhpSchool\PhpWorkshop\Result\FunctionRequirementsFailure;
-use PhpSchool\PhpWorkshop\Result\ResultInterface;
 
 /**
  * Class FunctionRequirementsFailureRenderer
@@ -12,20 +11,27 @@ use PhpSchool\PhpWorkshop\Result\ResultInterface;
  */
 class FunctionRequirementsFailureRenderer implements ResultRendererInterface
 {
+    /**
+     * @var FunctionRequirementsFailure
+     */
+    private $result;
 
     /**
-     * @param ResultInterface $result
+     * @param FunctionRequirementsFailure $result
+     */
+    public function __construct(FunctionRequirementsFailure $result)
+    {
+        $this->result = $result;
+    }
+
+    /**
      * @param ResultsRenderer $renderer
      * @return string
      */
-    public function render(ResultInterface $result, ResultsRenderer $renderer)
+    public function render(ResultsRenderer $renderer)
     {
-        if (!$result instanceof FunctionRequirementsFailure) {
-            throw new \InvalidArgumentException(sprintf('Incompatible result type: %s', get_class($result)));
-        }
-
         $output = '';
-        if (count($bannedFunctions = $result->getBannedFunctions())) {
+        if (count($bannedFunctions = $this->result->getBannedFunctions())) {
             $output .= sprintf(
                 "  %s\n%s\n",
                 $renderer->style(
@@ -38,7 +44,7 @@ class FunctionRequirementsFailureRenderer implements ResultRendererInterface
             );
         }
 
-        if (count($missingFunctions = $result->getMissingFunctions())) {
+        if (count($missingFunctions = $this->result->getMissingFunctions())) {
             $output .= sprintf(
                 "  %s\n%s\n",
                 $renderer->style(

@@ -22,6 +22,7 @@ use PhpSchool\PhpWorkshop\Event\EventDispatcher;
 use PhpSchool\PhpWorkshop\ExerciseDispatcher;
 use PhpSchool\PhpWorkshop\Factory\EventDispatcherFactory;
 use PhpSchool\PhpWorkshop\Factory\MenuFactory;
+use PhpSchool\PhpWorkshop\Factory\ResultRendererFactory;
 use PhpSchool\PhpWorkshop\Factory\RunnerFactory;
 use PhpSchool\PhpWorkshop\Listener\CodePatchListener;
 use PhpSchool\PhpWorkshop\Listener\PrepareSolutionListener;
@@ -242,28 +243,16 @@ return [
             $c->get(OutputInterface::class)
         );
     }),
+    ResultRendererFactory::class => object(),
     ResultsRenderer::class => factory(function (ContainerInterface $c) {
-        $renderer = new ResultsRenderer(
+        return new ResultsRenderer(
             $c->get('appName'),
             $c->get(Color::class),
             $c->get(TerminalInterface::class),
             $c->get(ExerciseRepository::class),
-            $c->get(SyntaxHighlighter::class)
+            $c->get(SyntaxHighlighter::class),
+            $c->get(ResultRendererFactory::class)
         );
-        
-        foreach ($c->get('renderers') as $resultRenderer) {
-            $renderer->registerRenderer(...$resultRenderer);
-        }
-        return $renderer;
-    }),
-    'renderers' => factory(function (ContainerInterface $c) {
-        return [
-            [StdOutFailure::class, new OutputFailureRenderer],
-            [CgiOutResult::class, new CgiOutResultRenderer],
-            [FunctionRequirementsFailure::class, new FunctionRequirementsFailureRenderer],
-            [Success::class, new SuccessRenderer],
-            [Failure::class, new FailureRenderer],
-        ];
     }),
     'coreContributors' => [
         '@AydinHassan' => 'Aydin Hassan',

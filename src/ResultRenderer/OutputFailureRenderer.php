@@ -3,7 +3,6 @@
 namespace PhpSchool\PhpWorkshop\ResultRenderer;
 
 use PhpSchool\PhpWorkshop\Result\CgiOutBodyFailure;
-use PhpSchool\PhpWorkshop\Result\ResultInterface;
 use PhpSchool\PhpWorkshop\Result\StdOutFailure;
 
 /**
@@ -14,22 +13,30 @@ class OutputFailureRenderer implements ResultRendererInterface
 {
 
     /**
-     * @param ResultInterface $result
+     * @var StdOutFailure
+     */
+    private $result;
+
+    /**
+     * @param StdOutFailure $result
+     */
+    public function __construct(StdOutFailure $result)
+    {
+        $this->result = $result;
+    }
+
+    /**
      * @param ResultsRenderer $renderer
      * @return string
      */
-    public function render(ResultInterface $result, ResultsRenderer $renderer)
+    public function render(ResultsRenderer $renderer)
     {
-        if (!$result instanceof StdOutFailure) {
-            throw new \InvalidArgumentException(sprintf('Incompatible result type: %s', get_class($result)));
-        }
-
         return sprintf(
             "  %s\n%s\n\n  %s\n%s\n",
             $renderer->style("ACTUAL", ['bold', 'underline', 'yellow']),
-            $this->indent($renderer->style(sprintf('"%s"', $result->getActualOutput()), 'red')),
+            $this->indent($renderer->style(sprintf('"%s"', $this->result->getActualOutput()), 'red')),
             $renderer->style("EXPECTED", ['yellow', 'bold', 'underline']),
-            $this->indent($renderer->style(sprintf('"%s"', $result->getExpectedOutput()), 'red'))
+            $this->indent($renderer->style(sprintf('"%s"', $this->result->getExpectedOutput()), 'red'))
         );
     }
 

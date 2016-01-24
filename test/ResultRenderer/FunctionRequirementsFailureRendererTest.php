@@ -14,17 +14,6 @@ use PhpSchool\PhpWorkshop\ResultRenderer\FunctionRequirementsFailureRenderer;
  */
 class FunctionRequirementsFailureRendererTest extends AbstractResultRendererTest
 {
-    public function testRendererThrowsExceptionIfNotCorrectResult()
-    {
-        $mock = $this->getMock(ResultInterface::class);
-        $this->setExpectedException(
-            InvalidArgumentException::class,
-            sprintf('Incompatible result type: %s', get_class($mock))
-        );
-        $renderer = new FunctionRequirementsFailureRenderer;
-        $renderer->render($mock, $this->getRenderer());
-    }
-
     public function testRenderer()
     {
         $failure = new FunctionRequirementsFailure(
@@ -32,7 +21,7 @@ class FunctionRequirementsFailureRendererTest extends AbstractResultRendererTest
             [['function' => 'file', 'line' => 3], ['function' => 'explode', 'line' => 5]],
             ['implode']
         );
-        $renderer = new FunctionRequirementsFailureRenderer;
+        $renderer = new FunctionRequirementsFailureRenderer($failure);
 
         $expected  = "  [33m[4m[1mSome functions were used which should not be used in this exercise[0m[0m[0m\n";
         $expected .= "    file on line 3\n";
@@ -42,6 +31,6 @@ class FunctionRequirementsFailureRendererTest extends AbstractResultRendererTest
         $expected .= "\n";
         $expected .= "    implode\n";
 
-        $this->assertEquals($expected, $renderer->render($failure, $this->getRenderer()));
+        $this->assertEquals($expected, $renderer->render($this->getRenderer()));
     }
 }
