@@ -19,17 +19,15 @@ interface ExerciseRunnerInterface
     public function getName();
 
     /**
-     * @param ExerciseInterface $exercise
      * @param string $fileName
      * @return ResultInterface
      */
-    public function verify(ExerciseInterface $exercise, $fileName);
+    public function verify($fileName);
 
     /**
-     * @param ExerciseInterface $exercise
      * @param string $fileName
      * @param OutputInterface $output
      * @return bool
      */
-    public function run(ExerciseInterface $exercise, $fileName, OutputInterface $output);
+    public function run($fileName, OutputInterface $output);
 }

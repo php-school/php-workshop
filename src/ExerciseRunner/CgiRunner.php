@@ -8,8 +8,6 @@ use PhpSchool\PhpWorkshop\Event\EventDispatcher;
 use PhpSchool\PhpWorkshop\Exception\CodeExecutionException;
 use PhpSchool\PhpWorkshop\Exception\SolutionExecutionException;
 use PhpSchool\PhpWorkshop\Exercise\CgiExercise;
-use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
-use PhpSchool\PhpWorkshop\Exercise\ExerciseType;
 use PhpSchool\PhpWorkshop\Output\OutputInterface;
 use PhpSchool\PhpWorkshop\Result\CgiOutFailure;
 use PhpSchool\PhpWorkshop\Result\CgiOutRequestFailure;
@@ -30,16 +28,23 @@ class CgiRunner implements ExerciseRunnerInterface
 {
 
     /**
+     * @var CgiExercise
+     */
+    private $exercise;
+
+    /**
      * @var EventDispatcher
      */
     private $eventDispatcher;
 
     /**
+     * @param CgiExercise $exercise
      * @param EventDispatcher $eventDispatcher
      */
-    public function __construct(EventDispatcher $eventDispatcher)
+    public function __construct(CgiExercise $exercise, EventDispatcher $eventDispatcher)
     {
         $this->eventDispatcher = $eventDispatcher;
+        $this->exercise = $exercise;
     }
 
     /**
@@ -51,17 +56,16 @@ class CgiRunner implements ExerciseRunnerInterface
     }
 
     /**
-     * @param ExerciseInterface $exercise
      * @param RequestInterface $request
      * @param string $fileName
      * @return ResultInterface
      */
-    private function checkRequest(ExerciseInterface $exercise, RequestInterface $request, $fileName)
+    private function checkRequest(RequestInterface $request, $fileName)
     {
         try {
             $event = $this->eventDispatcher->dispatch(new CgiExecuteEvent('cgi.verify.solution-execute.pre', $request));
             $solutionResponse = $this->executePhpFile(
-                $exercise->getSolution()->getEntryPoint(),
+                $this->exercise->getSolution()->getEntryPoint(),
                 $event->getRequest(),
                 'solution'
             );
@@ -164,37 +168,31 @@ class CgiRunner implements ExerciseRunnerInterface
     }
 
     /**
-     * @param ExerciseInterface $exercise
      * @param string $fileName
      * @return ResultInterface
      */
-    public function verify(ExerciseInterface $exercise, $fileName)
+    public function verify($fileName)
     {
-        $this->validateExercise($exercise);
-
         return new CgiOutResult(
             $this->getName(),
             array_map(
-                function (RequestInterface $request) use ($exercise, $fileName) {
-                    return $this->checkRequest($exercise, $request, $fileName);
+                function (RequestInterface $request) use ($fileName) {
+                    return $this->checkRequest($request, $fileName);
                 },
-                $exercise->getRequests()
+                $this->exercise->getRequests()
             )
         );
     }
 
     /**
-     * @param ExerciseInterface $exercise
      * @param string $fileName
      * @param OutputInterface $output
      * @return bool
      */
-    public function run(ExerciseInterface $exercise, $fileName, OutputInterface $output)
+    public function run($fileName, OutputInterface $output)
     {
-        $this->validateExercise($exercise);
-
         $success = true;
-        foreach ($exercise->getRequests() as $i => $request) {
+        foreach ($this->exercise->getRequests() as $i => $request) {
             $event      = $this->eventDispatcher->dispatch(new CgiExecuteEvent('cgi.run.usr-execute.pre', $request));
             $process    = $this->getProcess($fileName, $event->getRequest());
 
@@ -207,19 +205,5 @@ class CgiRunner implements ExerciseRunnerInterface
             }
         }
         return $success;
-    }
-
-    /**
-     * @param ExerciseInterface $exercise
-     */
-    private function validateExercise(ExerciseInterface $exercise)
-    {
-        if ($exercise->getType()->getValue() !== ExerciseType::CGI) {
-            throw new \InvalidArgumentException;
-        }
-
-        if (!$exercise instanceof CgiExercise) {
-            throw new \InvalidArgumentException;
-        }
     }
 }

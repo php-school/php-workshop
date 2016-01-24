@@ -131,24 +131,25 @@ class ExerciseDispatcherTest extends PHPUnit_Framework_TestCase
         $this->exercise = $this->getMock(ExerciseInterface::class);
         $this->solution = $this->getMock(SolutionInterface::class);
 
-        $this->exerciseType = ExerciseType::CLI();
-        $this->exercise
-            ->expects($this->atLeastOnce())
-            ->method('getType')
-            ->will($this->returnValue($this->exerciseType));
-
         $this->exercise
             ->expects($this->any())
             ->method('getName')
             ->will($this->returnValue('Some Exercise'));
+
+        $this->exerciseType = new ExerciseType(ExerciseType::CLI);
+
+        $this->exercise
+            ->expects($this->any())
+            ->method('getType')
+            ->will($this->returnValue($this->exerciseType));
     }
 
-    private function mockRunner(ExerciseType $exerciseType = null)
+    private function mockRunner(ExerciseInterface $exercise = null)
     {
         $this->runnerFactory
             ->expects($this->once())
             ->method('create')
-            ->with($exerciseType ? $exerciseType : $this->exerciseType, $this->eventDispatcher)
+            ->with($exercise ? $exercise : $this->exercise, $this->eventDispatcher)
             ->will($this->returnValue($this->runner));
     }
 
@@ -275,7 +276,7 @@ class ExerciseDispatcherTest extends PHPUnit_Framework_TestCase
         $this->runner
             ->expects($this->once())
             ->method('verify')
-            ->with($this->exercise, $this->file)
+            ->with($this->file)
             ->will($this->returnValue($this->getMock(SuccessInterface::class)));
 
         $this->exerciseDispatcher->requireCheck(get_class($this->check), ExerciseDispatcher::CHECK_BEFORE);
@@ -313,7 +314,7 @@ class ExerciseDispatcherTest extends PHPUnit_Framework_TestCase
         $this->runner
             ->expects($this->once())
             ->method('verify')
-            ->with($this->exercise, $this->file)
+            ->with($this->file)
             ->will($this->returnValue($this->getMock(SuccessInterface::class)));
 
         $this->checkRepository->registerCheck($doNotRunMe);
@@ -326,7 +327,7 @@ class ExerciseDispatcherTest extends PHPUnit_Framework_TestCase
         $this->assertTrue($result->isSuccessful());
     }
 
-    public function testWhenBeforeChecksFailTheyReturnImmediatelyEarly()
+    public function testWhenBeforeChecksFailTheyReturnImmediately()
     {
         $this->createExercise();
         $this->check
@@ -389,7 +390,7 @@ class ExerciseDispatcherTest extends PHPUnit_Framework_TestCase
         $this->runner
             ->expects($this->once())
             ->method('verify')
-            ->with($this->exercise, $this->file)
+            ->with($this->file)
             ->will($this->returnValue(new Success('test')));
 
         $this->exerciseDispatcher->verify($this->exercise, $this->file);
@@ -411,7 +412,7 @@ class ExerciseDispatcherTest extends PHPUnit_Framework_TestCase
         $this->runner
             ->expects($this->once())
             ->method('verify')
-            ->with($this->exercise, $this->file)
+            ->with($this->file)
             ->will($this->throwException(new RuntimeException));
 
         $this->setExpectedException(RuntimeException::class);
@@ -423,17 +424,11 @@ class ExerciseDispatcherTest extends PHPUnit_Framework_TestCase
         $exercise   = $this->getMock(ExerciseInterface::class);
         $output     = $this->getMock(OutputInterface::class);
 
-        $exerciseType = ExerciseType::CLI();
-        $exercise
-            ->expects($this->atLeastOnce())
-            ->method('getType')
-            ->will($this->returnValue($exerciseType));
-
-        $this->mockRunner($exerciseType);
+        $this->mockRunner($exercise);
         $this->runner
             ->expects($this->once())
             ->method('run')
-            ->with($exercise, $this->file, $output)
+            ->with($this->file, $output)
             ->will($this->returnValue(true));
 
         $this->assertTrue($this->exerciseDispatcher->run($exercise, $this->file, $output));

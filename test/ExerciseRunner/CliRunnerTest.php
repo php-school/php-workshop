@@ -33,8 +33,8 @@ class CliRunnerTest extends PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->runner = new CliRunner(new EventDispatcher(new ResultAggregator));
         $this->exercise = $this->getMock(CliExerciseInterface::class);
+        $this->runner = new CliRunner($this->exercise, new EventDispatcher(new ResultAggregator));
 
         $this->exercise
             ->expects($this->any())
@@ -42,18 +42,6 @@ class CliRunnerTest extends PHPUnit_Framework_TestCase
             ->will($this->returnValue(ExerciseType::CLI()));
 
         $this->assertEquals('CLI Program Runner', $this->runner->getName());
-    }
-
-    public function testVerifyThrowsExceptionIfNotValidExercise()
-    {
-        $this->exercise = $this->getMock(CliExerciseInterface::class);
-        $this->exercise
-            ->expects($this->once())
-            ->method('getType')
-            ->will($this->returnValue(ExerciseType::CGI()));
-
-        $this->setExpectedException(InvalidArgumentException::class);
-        $this->runner->verify($this->exercise, '');
     }
 
     public function testVerifyThrowsExceptionIfSolutionFailsExecution()
@@ -72,7 +60,7 @@ class CliRunnerTest extends PHPUnit_Framework_TestCase
         $regex  = "/^PHP Code failed to execute\\. Error: \"PHP Parse error:  syntax error, unexpected end of file";
         $regex .= ", expecting ',' or ';'/";
         $this->setExpectedExceptionRegExp(SolutionExecutionException::class, $regex);
-        $this->runner->verify($this->exercise, '');
+        $this->runner->verify('');
     }
 
     public function testVerifyReturnsSuccessIfSolutionOutputMatchesUserOutput()
@@ -90,7 +78,7 @@ class CliRunnerTest extends PHPUnit_Framework_TestCase
 
         $this->assertInstanceOf(
             Success::class,
-            $this->runner->verify($this->exercise, __DIR__ . '/../res/cli/user.php')
+            $this->runner->verify(__DIR__ . '/../res/cli/user.php')
         );
     }
 
@@ -107,7 +95,7 @@ class CliRunnerTest extends PHPUnit_Framework_TestCase
             ->method('getArgs')
             ->will($this->returnValue([1, 2, 3]));
 
-        $failure = $this->runner->verify($this->exercise, __DIR__ . '/../res/cli/user-error.php');
+        $failure = $this->runner->verify(__DIR__ . '/../res/cli/user-error.php');
 
         $failureMsg  = "/^PHP Code failed to execute. Error: \"PHP Parse error:  syntax error, ";
         $failureMsg .= "unexpected end of file, expecting ',' or ';'/";
@@ -129,25 +117,11 @@ class CliRunnerTest extends PHPUnit_Framework_TestCase
             ->method('getArgs')
             ->will($this->returnValue([1, 2, 3]));
 
-        $failure = $this->runner->verify($this->exercise, __DIR__ . '/../res/cli/user-wrong.php');
+        $failure = $this->runner->verify(__DIR__ . '/../res/cli/user-wrong.php');
 
         $this->assertInstanceOf(StdOutFailure::class, $failure);
         $this->assertEquals('6', $failure->getExpectedOutput());
         $this->assertEquals('10', $failure->getActualOutput());
-    }
-
-    public function testRunThrowsExceptionIfNotValidExercise()
-    {
-        $output = new StdOutput(new Color);
-
-        $this->exercise = $this->getMock(CliExerciseInterface::class);
-        $this->exercise
-            ->expects($this->once())
-            ->method('getType')
-            ->will($this->returnValue(ExerciseType::CGI()));
-
-        $this->setExpectedException(InvalidArgumentException::class);
-        $this->runner->run($this->exercise, '', $output);
     }
 
     public function testRunPassesOutputAndReturnsSuccessIfScriptIsSuccessful()
@@ -161,7 +135,7 @@ class CliRunnerTest extends PHPUnit_Framework_TestCase
 
         $this->expectOutputString('6');
 
-        $success = $this->runner->run($this->exercise, __DIR__ . '/../res/cli/user.php', $output);
+        $success = $this->runner->run(__DIR__ . '/../res/cli/user.php', $output);
         $this->assertTrue($success);
     }
 
@@ -176,7 +150,7 @@ class CliRunnerTest extends PHPUnit_Framework_TestCase
 
         $this->expectOutputRegex('/PHP Parse error:  syntax error, unexpected end of file, expecting \',\' or \';\' /');
 
-        $success = $this->runner->run($this->exercise, __DIR__ . '/../res/cli/user-error.php', $output);
+        $success = $this->runner->run(__DIR__ . '/../res/cli/user-error.php', $output);
         $this->assertFalse($success);
     }
 }
