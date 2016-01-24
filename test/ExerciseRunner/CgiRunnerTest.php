@@ -36,8 +36,8 @@ class CgiRunnerTest extends PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->runner = new CgiRunner(new EventDispatcher(new ResultAggregator));
         $this->exercise = $this->getMock(CgiExerciseInterface::class);
+        $this->runner = new CgiRunner($this->exercise, new EventDispatcher(new ResultAggregator));
 
         $this->exercise
             ->expects($this->any())
@@ -45,23 +45,6 @@ class CgiRunnerTest extends PHPUnit_Framework_TestCase
             ->will($this->returnValue(ExerciseType::CGI()));
 
         $this->assertEquals('CGI Program Runner', $this->runner->getName());
-    }
-
-    public function testVerifyThrowsExceptionIfNotValidExercise()
-    {
-        $this->exercise = $this->getMock(CgiExerciseInterface::class);
-        $this->exercise
-            ->expects($this->once())
-            ->method('getType')
-            ->will($this->returnValue(ExerciseType::CLI()));
-
-        $this->exercise
-            ->expects($this->any())
-            ->method('getRequests')
-            ->will($this->returnValue([]));
-
-        $this->setExpectedException(InvalidArgumentException::class);
-        $this->runner->verify($this->exercise, '');
     }
 
     public function testVerifyThrowsExceptionIfSolutionFailsExecution()
@@ -83,7 +66,7 @@ class CgiRunnerTest extends PHPUnit_Framework_TestCase
 
         $regex  = "/^PHP Code failed to execute\\. Error: \"PHP Parse error:  syntax error, unexpected end of file in/";
         $this->setExpectedExceptionRegExp(SolutionExecutionException::class, $regex);
-        $this->runner->verify($this->exercise, '');
+        $this->runner->verify('');
     }
 
     public function testVerifyReturnsSuccessIfGetSolutionOutputMatchesUserOutput()
@@ -105,7 +88,7 @@ class CgiRunnerTest extends PHPUnit_Framework_TestCase
 
         $this->assertInstanceOf(
             CgiOutResult::class,
-            $this->runner->verify($this->exercise, realpath(__DIR__ . '/../res/cgi/get-solution.php'))
+            $this->runner->verify(realpath(__DIR__ . '/../res/cgi/get-solution.php'))
         );
     }
 
@@ -131,7 +114,7 @@ class CgiRunnerTest extends PHPUnit_Framework_TestCase
 
         $this->assertInstanceOf(
             CgiOutResult::class,
-            $this->runner->verify($this->exercise, realpath(__DIR__ . '/../res/cgi/post-solution.php'))
+            $this->runner->verify(realpath(__DIR__ . '/../res/cgi/post-solution.php'))
         );
     }
 
@@ -152,7 +135,7 @@ class CgiRunnerTest extends PHPUnit_Framework_TestCase
             ->method('getRequests')
             ->will($this->returnValue([$request]));
 
-        $failure = $this->runner->verify($this->exercise, realpath(__DIR__ . '/../res/cgi/user-error.php'));
+        $failure = $this->runner->verify(realpath(__DIR__ . '/../res/cgi/user-error.php'));
         $this->assertInstanceOf(CgiOutResult::class, $failure);
         $this->assertCount(1, $failure);
 
@@ -181,7 +164,7 @@ class CgiRunnerTest extends PHPUnit_Framework_TestCase
             ->method('getRequests')
             ->will($this->returnValue([$request]));
 
-        $failure = $this->runner->verify($this->exercise, realpath(__DIR__ . '/../res/cgi/get-user-wrong.php'));
+        $failure = $this->runner->verify(realpath(__DIR__ . '/../res/cgi/get-user-wrong.php'));
         $this->assertInstanceOf(CgiOutResult::class, $failure);
         $this->assertCount(1, $failure);
 
@@ -210,10 +193,7 @@ class CgiRunnerTest extends PHPUnit_Framework_TestCase
             ->method('getRequests')
             ->will($this->returnValue([$request]));
 
-        $failure = $this->runner->verify(
-            $this->exercise,
-            realpath(__DIR__ . '/../res/cgi/get-user-header-wrong.php')
-        );
+        $failure = $this->runner->verify(realpath(__DIR__ . '/../res/cgi/get-user-header-wrong.php'));
 
         $this->assertInstanceOf(CgiOutResult::class, $failure);
         $this->assertCount(1, $failure);
@@ -238,24 +218,6 @@ class CgiRunnerTest extends PHPUnit_Framework_TestCase
         );
     }
 
-    public function testRunThrowsExceptionIfNotValidExercise()
-    {
-        $output = $this->getMock(OutputInterface::class);
-        $this->exercise = $this->getMock(CgiExerciseInterface::class);
-        $this->exercise
-            ->expects($this->once())
-            ->method('getType')
-            ->will($this->returnValue(ExerciseType::CLI()));
-
-        $this->exercise
-            ->expects($this->any())
-            ->method('getRequests')
-            ->will($this->returnValue([]));
-
-        $this->setExpectedException(InvalidArgumentException::class);
-        $this->runner->run($this->exercise, '', $output);
-    }
-
     public function testRunPassesOutputAndReturnsSuccessIfAllRequestsAreSuccessful()
     {
         $output = new StdOutput(new Color);
@@ -275,7 +237,7 @@ class CgiRunnerTest extends PHPUnit_Framework_TestCase
         $exp = "Content-type: text/html; charset=UTF-8\r\n\r\n10Content-type: text/html; charset=UTF-8\r\n\r\n12";
         $this->expectOutputString($exp);
 
-        $success = $this->runner->run($this->exercise, realpath(__DIR__ . '/../res/cgi/get-solution.php'), $output);
+        $success = $this->runner->run(realpath(__DIR__ . '/../res/cgi/get-solution.php'), $output);
         $this->assertTrue($success);
     }
 
@@ -294,7 +256,7 @@ class CgiRunnerTest extends PHPUnit_Framework_TestCase
         $exp = "Status: 404 Not Found\r\nContent-type: text/html; charset=UTF-8\r\n\r\nNo input file specified.\n";
         $this->expectOutputString($exp);
 
-        $success = $this->runner->run($this->exercise, '', $output);
+        $success = $this->runner->run('', $output);
         $this->assertFalse($success);
     }
 }

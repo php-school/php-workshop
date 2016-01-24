@@ -8,6 +8,7 @@ use PhpSchool\PhpWorkshop\Event\Event;
 use PhpSchool\PhpWorkshop\Event\EventDispatcher;
 use PhpSchool\PhpWorkshop\Exception\CodeExecutionException;
 use PhpSchool\PhpWorkshop\Exception\SolutionExecutionException;
+use PhpSchool\PhpWorkshop\Exercise\CliExercise;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseType;
 use PhpSchool\PhpWorkshop\ExerciseCheck\StdOutExerciseCheck;
@@ -25,6 +26,10 @@ use Symfony\Component\Process\Process;
  */
 class CliRunner implements ExerciseRunnerInterface
 {
+    /**
+     * @var CliExercise
+     */
+    private $exercise;
 
     /**
      * @var EventDispatcher
@@ -32,11 +37,13 @@ class CliRunner implements ExerciseRunnerInterface
     private $eventDispatcher;
 
     /**
+     * @param CliExercise $exercise
      * @param EventDispatcher $eventDispatcher
      */
-    public function __construct(EventDispatcher $eventDispatcher)
+    public function __construct(CliExercise $exercise, EventDispatcher $eventDispatcher)
     {
         $this->eventDispatcher = $eventDispatcher;
+        $this->exercise = $exercise;
     }
 
     /**
@@ -81,23 +88,18 @@ class CliRunner implements ExerciseRunnerInterface
     }
 
     /**
-     * @param ExerciseInterface $exercise
      * @param string $fileName
      * @return ResultInterface
      */
-    public function verify(ExerciseInterface $exercise, $fileName)
+    public function verify($fileName)
     {
-        if ($exercise->getType()->getValue() !== ExerciseType::CLI) {
-            throw new \InvalidArgumentException;
-        }
-
         //arrays are not pass-by-ref
-        $args = new ArrayObject($exercise->getArgs());
+        $args = new ArrayObject($this->exercise->getArgs());
 
         try {
             $event = $this->eventDispatcher->dispatch(new CliExecuteEvent('cli.verify.solution-execute.pre', $args));
             $solutionOutput = $this->executePhpFile(
-                $exercise->getSolution()->getEntryPoint(),
+                $this->exercise->getSolution()->getEntryPoint(),
                 $event->getArgs(),
                 'solution'
             );
@@ -121,19 +123,14 @@ class CliRunner implements ExerciseRunnerInterface
     }
 
     /**
-     * @param ExerciseInterface $exercise
      * @param string $fileName
      * @param OutputInterface $output
      * @return bool
      */
-    public function run(ExerciseInterface $exercise, $fileName, OutputInterface $output)
+    public function run($fileName, OutputInterface $output)
     {
-        if ($exercise->getType()->getValue() !== ExerciseType::CLI) {
-            throw new \InvalidArgumentException;
-        }
-
         $event = $this->eventDispatcher->dispatch(
-            new CliExecuteEvent('cli.run.user-execute.pre', new ArrayObject($exercise->getArgs()))
+            new CliExecuteEvent('cli.run.user-execute.pre', new ArrayObject($this->exercise->getArgs()))
         );
 
         $process = $this->getPhpProcess($fileName, $event->getArgs());

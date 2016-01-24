@@ -132,7 +132,7 @@ class ExerciseDispatcher
     {
         $exercise->configure($this);
 
-        $runner = $this->runnerFactory->create($exercise->getType(), $this->eventDispatcher);
+        $runner = $this->runnerFactory->create($exercise, $this->eventDispatcher);
         $this->eventDispatcher->dispatch(new Event('verify.start', compact('exercise', 'fileName')));
 
         $this->validateChecks($this->checksToRunBefore, $exercise);
@@ -149,7 +149,7 @@ class ExerciseDispatcher
         $this->eventDispatcher->dispatch(new Event('verify.pre.execute', compact('exercise', 'fileName')));
 
         try {
-            $this->results->add($runner->verify($exercise, $fileName));
+            $this->results->add($runner->verify($fileName));
         } finally {
             $this->eventDispatcher->dispatch(new Event('verify.post.execute', compact('exercise', 'fileName')));
         }
@@ -176,8 +176,8 @@ class ExerciseDispatcher
         $this->eventDispatcher->dispatch(new Event('run.start', compact('exercise', 'fileName')));
 
         $exitStatus = $this->runnerFactory
-            ->create($exercise->getType(), $this->eventDispatcher)
-            ->run($exercise, $fileName, $output);
+            ->create($exercise, $this->eventDispatcher)
+            ->run($fileName, $output);
 
         $this->eventDispatcher->dispatch(new Event('run.finish', compact('exercise', 'fileName')));
         return $exitStatus;
