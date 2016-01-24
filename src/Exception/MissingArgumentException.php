@@ -12,11 +12,17 @@ use RuntimeException;
 class MissingArgumentException extends RuntimeException
 {
     /**
+     * @var array
+     */
+    private $missingArguments = [];
+
+    /**
      * @param $commandName
      * @param array $missingArguments
      */
     public function __construct($commandName, array $missingArguments)
     {
+        $this->missingArguments = $missingArguments;
         parent::__construct(
             sprintf(
                 'Command: "%s" is missing the following arguments: "%s"',
@@ -24,5 +30,13 @@ class MissingArgumentException extends RuntimeException
                 implode('", "', $missingArguments)
             )
         );
+    }
+
+    /**
+     * @return array
+     */
+    public function getMissingArguments()
+    {
+        return $this->missingArguments;
     }
 }
