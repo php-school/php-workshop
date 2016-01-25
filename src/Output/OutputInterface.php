@@ -2,6 +2,9 @@
 
 namespace PhpSchool\PhpWorkshop\Output;
 
+use Psr\Http\Message\RequestInterface;
+use Zend\Diactoros\Request;
+
 /**
  * Interface StdOutput
  * @package PhpSchool\PhpWorkshop
@@ -33,4 +36,19 @@ interface OutputInterface
      * Write empty line
      */
     public function emptyLine();
+
+    /**
+     * @return string
+     */
+    public function lineBreak();
+
+    /**
+     * @param string $title
+     */
+    public function writeTitle($title);
+
+    /**
+     * @param RequestInterface $request
+     */
+    public function writeRequest(RequestInterface $request);
 }

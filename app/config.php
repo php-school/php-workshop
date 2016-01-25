@@ -46,6 +46,7 @@ use PhpSchool\PhpWorkshop\Command\HelpCommand;
 use PhpSchool\PhpWorkshop\Command\MenuCommand;
 use PhpSchool\PhpWorkshop\Command\PrintCommand;
 use PhpSchool\PhpWorkshop\Command\VerifyCommand;
+use PhpSchool\PhpWorkshop\Command\RunCommand;
 use PhpSchool\PhpWorkshop\CommandDefinition;
 use PhpSchool\PhpWorkshop\CommandRouter;
 use PhpSchool\PhpWorkshop\ExerciseCheck\StdOutExerciseCheck;
@@ -95,13 +96,14 @@ return [
     CommandRouter::class => factory(function (ContainerInterface $c) {
         return new CommandRouter(
             [
-                new CommandDefinition('run', [], MenuCommand::class),
+                new CommandDefinition('menu', [], MenuCommand::class),
                 new CommandDefinition('help', [], HelpCommand::class),
                 new CommandDefinition('print', [], PrintCommand::class),
                 new CommandDefinition('verify', ['program'], VerifyCommand::class),
+                new CommandDefinition('run', ['program'], RunCommand::class),
                 new CommandDefinition('credits', [], CreditsCommand::class)
             ],
-            'run',
+            'menu',
             $c
         );
     }),
@@ -112,7 +114,7 @@ return [
         return $colors;
     }),
     OutputInterface::class => factory(function (ContainerInterface $c) {
-        return new StdOutput($c->get(Color::class));
+        return new StdOutput($c->get(Color::class), $c->get(TerminalInterface::class));
     }),
 
     ExerciseRepository::class => factory(function (ContainerInterface $c) {
@@ -154,7 +156,17 @@ return [
             $c->get(ResultsRenderer::class)
         );
     }),
-    
+
+    RunCommand::class => factory(function (ContainerInterface $c) {
+        return new RunCommand(
+            $c->get(ExerciseRepository::class),
+            $c->get(ExerciseDispatcher::class),
+            $c->get(UserState::class),
+            $c->get(UserStateSerializer::class),
+            $c->get(OutputInterface::class)
+        );
+    }),
+
     CreditsCommand::class => factory(function (ContainerInterface $c) {
         return new CreditsCommand(
             $c->get('coreContributors'),

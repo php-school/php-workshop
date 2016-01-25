@@ -129,13 +129,24 @@ class CliRunner implements ExerciseRunnerInterface
      */
     public function run($fileName, OutputInterface $output)
     {
+        /** @var CliExecuteEvent $event */
         $event = $this->eventDispatcher->dispatch(
             new CliExecuteEvent('cli.run.user-execute.pre', new ArrayObject($this->exercise->getArgs()))
         );
 
-        $process = $this->getPhpProcess($fileName, $event->getArgs());
+        $args = $event->getArgs();
+
+        if (count($args)) {
+            $glue = max(array_map('strlen', $args->getArrayCopy())) > 30 ? "\n" : ', ';
+
+            $output->writeTitle('Arguments');
+            $output->write(implode($glue, $args->getArrayCopy()));
+        }
+
+        $output->writeTitle("\nOutput");
+        $process = $this->getPhpProcess($fileName, $args);
         $process->run(function ($outputType, $outputBuffer) use ($output) {
-            $output->write($outputBuffer);
+            $output->writeLine($outputBuffer);
         });
 
         return $process->isSuccessful();

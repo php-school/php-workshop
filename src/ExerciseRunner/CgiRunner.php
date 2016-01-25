@@ -196,13 +196,22 @@ class CgiRunner implements ExerciseRunnerInterface
             $event      = $this->eventDispatcher->dispatch(new CgiExecuteEvent('cgi.run.usr-execute.pre', $request));
             $process    = $this->getProcess($fileName, $event->getRequest());
 
+            $output->writeTitle("Request");
+            $output->emptyLine();
+            $output->writeRequest($request);
+
+            $output->writeTitle("Output");
+            $output->emptyLine();
             $process->run(function ($outputType, $outputBuffer) use ($output) {
                 $output->write($outputBuffer);
             });
+            $output->emptyLine();
 
             if (!$process->isSuccessful()) {
                 $success = false;
             }
+
+            $output->lineBreak();
         }
         return $success;
     }

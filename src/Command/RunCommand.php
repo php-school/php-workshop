@@ -11,11 +11,11 @@ use PhpSchool\PhpWorkshop\UserState;
 use PhpSchool\PhpWorkshop\UserStateSerializer;
 
 /**
- * Class VerifyCommand
+ * Class RunCommand
  * @package PhpSchool\PhpWorkshop\Command
- * @author Aydin Hassan <aydin@hotmail.co.uk>
+ * @author Michael Woodward <mikeymike.mw@gmail.com>
  */
-class VerifyCommand
+class RunCommand
 {
     /**
      * @var OutputInterface
@@ -36,11 +36,6 @@ class VerifyCommand
      * @var UserStateSerializer
      */
     private $userStateSerializer;
-    
-    /**
-     * @var ResultsRenderer
-     */
-    private $resultsRenderer;
 
     /**
      * @var ExerciseDispatcher
@@ -53,21 +48,18 @@ class VerifyCommand
      * @param UserState $userState
      * @param UserStateSerializer $userStateSerializer
      * @param OutputInterface $output
-     * @param ResultsRenderer $resultsRenderer
      */
     public function __construct(
         ExerciseRepository $exerciseRepository,
         ExerciseDispatcher $exerciseDispatcher,
         UserState $userState,
         UserStateSerializer $userStateSerializer,
-        OutputInterface $output,
-        ResultsRenderer $resultsRenderer
+        OutputInterface $output
     ) {
         $this->output               = $output;
         $this->exerciseRepository   = $exerciseRepository;
         $this->userState            = $userState;
         $this->userStateSerializer  = $userStateSerializer;
-        $this->resultsRenderer      = $resultsRenderer;
         $this->exerciseDispatcher   = $exerciseDispatcher;
     }
 
@@ -81,7 +73,7 @@ class VerifyCommand
     {
         if (!file_exists($program)) {
             $this->output->printError(
-                sprintf('Could not verify. File: "%s" does not exist', $program)
+                sprintf('Could not run. File: "%s" does not exist', $program)
             );
             return 1;
         }
@@ -92,15 +84,8 @@ class VerifyCommand
             return 1;
         }
 
-        $exercise   = $this->exerciseRepository->findByName($this->userState->getCurrentExercise());
-        $results    = $this->exerciseDispatcher->verify($exercise, $program);
+        $exercise = $this->exerciseRepository->findByName($this->userState->getCurrentExercise());
 
-        if ($results->isSuccessful()) {
-            $this->userState->addCompletedExercise($exercise->getName());
-            $this->userStateSerializer->serialize($this->userState);
-        }
-        
-        $this->resultsRenderer->render($results, $exercise, $this->userState, $this->output);
-        return $results->isSuccessful() ? 0 : 1;
+        $this->exerciseDispatcher->run($exercise, $program, $this->output);
     }
 }
