@@ -4,6 +4,7 @@ namespace PhpSchool\PhpWorkshop\ExerciseRunner;
 
 use Colors\Color;
 use InvalidArgumentException;
+use PhpSchool\CliMenu\Terminal\TerminalInterface;
 use PhpSchool\PhpWorkshop\Event\EventDispatcher;
 use PhpSchool\PhpWorkshop\Exception\SolutionExecutionException;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseType;
@@ -220,7 +221,9 @@ class CgiRunnerTest extends PHPUnit_Framework_TestCase
 
     public function testRunPassesOutputAndReturnsSuccessIfAllRequestsAreSuccessful()
     {
-        $output = new StdOutput(new Color);
+        $color = new Color;
+        $color->setForceStyle(true);
+        $output = new StdOutput($color, $this->getMock(TerminalInterface::class));
         $request1 = (new Request)
             ->withMethod('GET')
             ->withUri(new Uri('http://some.site?number=5'));
@@ -234,7 +237,27 @@ class CgiRunnerTest extends PHPUnit_Framework_TestCase
             ->method('getRequests')
             ->will($this->returnValue([$request1, $request2]));
 
-        $exp = "Content-type: text/html; charset=UTF-8\r\n\r\n10Content-type: text/html; charset=UTF-8\r\n\r\n12";
+        $exp  = "\n\e[1m\e[4mRequest";
+        $exp .= "\e[0m\e[0m\n\n";
+        $exp .= "URL:     http://some.site?number=5\n";
+        $exp .= "METHOD:  GET\n";
+        $exp .= "HEADERS: Host: some.site\n\n";
+        $exp .= "\e[1m\e[4mOutput";
+        $exp .= "\e[0m\e[0m\n\n";
+        $exp .= "Content-type: text/html; charset=UTF-8\r\n\r\n";
+        $exp .= "10\n";
+        $exp .= "\e[33m\e[0m\n";
+        $exp .= "\e[1m\e[4mRequest";
+        $exp .= "\e[0m\e[0m\n\n";
+        $exp .= "URL:     http://some.site?number=6\n";
+        $exp .= "METHOD:  GET\n";
+        $exp .= "HEADERS: Host: some.site\n\n";
+        $exp .= "\e[1m\e[4mOutput";
+        $exp .= "\e[0m\e[0m\n\n";
+        $exp .= "Content-type: text/html; charset=UTF-8\r\n\r\n";
+        $exp .= "12\n";
+        $exp .= "\e[33m\e[0m";
+
         $this->expectOutputString($exp);
 
         $success = $this->runner->run(realpath(__DIR__ . '/../res/cgi/get-solution.php'), $output);
@@ -243,7 +266,9 @@ class CgiRunnerTest extends PHPUnit_Framework_TestCase
 
     public function testRunPassesOutputAndReturnsFailureIfARequestFails()
     {
-        $output = new StdOutput(new Color);
+        $color = new Color;
+        $color->setForceStyle(true);
+        $output = new StdOutput($color, $this->getMock(TerminalInterface::class));
         $request1 = (new Request)
             ->withMethod('GET')
             ->withUri(new Uri('http://some.site?number=5'));
@@ -253,7 +278,18 @@ class CgiRunnerTest extends PHPUnit_Framework_TestCase
             ->method('getRequests')
             ->will($this->returnValue([$request1]));
 
-        $exp = "Status: 404 Not Found\r\nContent-type: text/html; charset=UTF-8\r\n\r\nNo input file specified.\n";
+        $exp = "\n\e[1m\e[4mRequest";
+        $exp .= "\e[0m\e[0m\n\n";
+        $exp .= "URL:     http://some.site?number=5\n";
+        $exp .= "METHOD:  GET\n";
+        $exp .= "HEADERS: Host: some.site\n\n";
+        $exp .= "\e[1m\e[4mOutput";
+        $exp .= "\e[0m\e[0m\n\n";
+        $exp .= "Status: 404 Not Found\r\n";
+        $exp .= "Content-type: text/html; charset=UTF-8\r\n\r\n";
+        $exp .= "No input file specified.\n\n";
+        $exp .= "\e[33m\e[0m";
+
         $this->expectOutputString($exp);
 
         $success = $this->runner->run('', $output);

@@ -3,6 +3,7 @@
 namespace PhpSchool\PhpWorkshopTest\Command;
 
 use Colors\Color;
+use PhpSchool\CliMenu\Terminal\TerminalInterface;
 use PhpSchool\PhpWorkshop\Command\CreditsCommand;
 use PhpSchool\PhpWorkshop\Output\OutputInterface;
 use PhpSchool\PhpWorkshop\Output\StdOutput;
@@ -35,7 +36,7 @@ class CreditsCommandTest extends PHPUnit_Framework_TestCase
                 '@AydinHassan' => 'Aydin Hassan',
                 '@mikeymike'   => 'Michael Woodward',
             ],
-            new StdOutput($color),
+            new StdOutput($color, $this->getMock(TerminalInterface::class)),
             $color
         );
 
@@ -57,7 +58,7 @@ class CreditsCommandTest extends PHPUnit_Framework_TestCase
                 '@chris3ailey' => 'Chris Bailey'
             ],
             [],
-            new StdOutput($color),
+            new StdOutput($color, $this->getMock(TerminalInterface::class)),
             $color
         );
 
@@ -74,7 +75,7 @@ class CreditsCommandTest extends PHPUnit_Framework_TestCase
         $command = new CreditsCommand(
             [],
             [],
-            new StdOutput($color),
+            new StdOutput($color, $this->getMock(TerminalInterface::class)),
             $color
         );
         

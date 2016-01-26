@@ -3,8 +3,11 @@
 namespace PhpSchool\PhpWorkshopTest;
 
 use Colors\Color;
+use PhpSchool\CliMenu\Terminal\TerminalInterface;
 use PHPUnit_Framework_TestCase;
 use PhpSchool\PhpWorkshop\Output\StdOutput;
+use Symfony\Component\Console\Output\OutputInterface;
+use Zend\Diactoros\Request;
 
 /**
  * Class StdOutputTest
@@ -27,7 +30,7 @@ class StdOutputTest extends PHPUnit_Framework_TestCase
     {
         $this->color = new Color();
         $this->color->setForceStyle(true);
-        $this->output = new StdOutput($this->color);
+        $this->output = new StdOutput($this->color, $this->getMock(TerminalInterface::class));
     }
 
     public function testPrintError()
@@ -70,5 +73,53 @@ class StdOutputTest extends PHPUnit_Framework_TestCase
     {
         $this->expectOutputString("\n");
         $this->output->emptyLine();
+    }
+
+    public function testWriteRequestWithHeaders()
+    {
+        $request = (new Request('http://www.time.com/api/pt?iso=2016-01-21T18:14:33+0000'))
+            ->withMethod('GET');
+
+        $expected  = "URL:     http://www.time.com/api/pt?iso=2016-01-21T18:14:33+0000\n";
+        $expected .= "METHOD:  GET\n";
+        $expected .= "HEADERS: Host: www.time.com\n";
+
+        $this->expectOutputString($expected);
+        $this->output->writeRequest($request);
+    }
+
+    public function testWriteRequestWithNoHeaders()
+    {
+        $request = (new Request('/endpoint'))
+            ->withMethod('GET');
+
+        $expected  = "URL:     /endpoint\n";
+        $expected .= "METHOD:  GET\n";
+
+        $this->expectOutputString($expected);
+        $this->output->writeRequest($request);
+    }
+
+    public function testWriteRequestWithPostBody()
+    {
+        $request = (new Request('/endpoint'))
+            ->withMethod('POST')
+            ->withHeader('Content-Type', 'application/json');
+
+        $request->getBody()->write(
+            json_encode(['data' => 'test', 'other_data' => 'test2'])
+        );
+
+        $expected  = "URL:     /endpoint\n";
+        $expected .= "METHOD:  POST\n";
+        $expected .= "HEADERS: Content-Type: application/json\n\n";
+        $expected .= "BODY:{\n";
+        $expected .= "    \"data\": \"test\",\n";
+        $expected .= "    \"other_data\": \"test2\"\n";
+        $expected .= "}\n";
+
+
+        $this->expectOutputString($expected);
+        $this->output->writeRequest($request);
     }
 }

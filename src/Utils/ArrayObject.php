@@ -3,6 +3,7 @@
 namespace PhpSchool\PhpWorkshop\Utils;
 
 use ArrayIterator;
+use Countable;
 use IteratorAggregate;
 
 /**
@@ -10,7 +11,7 @@ use IteratorAggregate;
  * @package PhpSchool\PhpWorkshop\Utils
  * @author  Aydin Hassan <aydin@hotmail.co.uk>
  */
-class ArrayObject implements IteratorAggregate
+class ArrayObject implements IteratorAggregate, Countable
 {
 
     /**
@@ -80,5 +81,13 @@ class ArrayObject implements IteratorAggregate
     public function getArrayCopy()
     {
         return $this->array;
+    }
+
+    /**
+     * @return int
+     */
+    public function count()
+    {
+        return count($this->array);
     }
 }

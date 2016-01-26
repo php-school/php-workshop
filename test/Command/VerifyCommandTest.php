@@ -3,6 +3,7 @@
 namespace PhpSchool\PhpWorkshopTest\Command;
 
 use Colors\Color;
+use PhpSchool\CliMenu\Terminal\TerminalInterface;
 use PhpSchool\PhpWorkshop\Check\CheckInterface;
 use PhpSchool\PhpWorkshop\ExerciseDispatcher;
 use PhpSchool\PhpWorkshop\Output\OutputInterface;
@@ -118,7 +119,7 @@ class VerifyCommandTest extends PHPUnit_Framework_TestCase
         $state->setCurrentExercise('exercise1');
         $color = new Color;
         $color->setForceStyle(true);
-        $output = new StdOutput($color);
+        $output = new StdOutput($color, $this->getMock(TerminalInterface::class));
         
         $serializer = $this->getMockBuilder(UserStateSerializer::class)
             ->disableOriginalConstructor()
@@ -172,7 +173,7 @@ class VerifyCommandTest extends PHPUnit_Framework_TestCase
         $state->setCurrentExercise('exercise1');
         $color = new Color;
         $color->setForceStyle(true);
-        $output = new StdOutput($color);
+        $output = new StdOutput($color, $this->getMock(TerminalInterface::class));
 
         $serializer = $this->getMockBuilder(UserStateSerializer::class)
             ->disableOriginalConstructor()

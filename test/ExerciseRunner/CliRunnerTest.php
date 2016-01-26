@@ -4,6 +4,7 @@ namespace PhpSchool\PhpWorkshop\ExerciseRunner;
 
 use Colors\Color;
 use InvalidArgumentException;
+use PhpSchool\CliMenu\Terminal\TerminalInterface;
 use PhpSchool\PhpWorkshop\Event\EventDispatcher;
 use PhpSchool\PhpWorkshop\Exception\SolutionExecutionException;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseType;
@@ -126,14 +127,20 @@ class CliRunnerTest extends PHPUnit_Framework_TestCase
 
     public function testRunPassesOutputAndReturnsSuccessIfScriptIsSuccessful()
     {
-        $output = new StdOutput(new Color);
+        $output = new StdOutput(new Color, $this->getMock(TerminalInterface::class));
 
         $this->exercise
             ->expects($this->once())
             ->method('getArgs')
             ->will($this->returnValue([1, 2, 3]));
 
-        $this->expectOutputString('6');
+        $exp  = "\n\e[1m\e[4mArguments\e[0m\e[0m\n";
+        $exp .= "1, 2, 3\n";
+        $exp .= "\e[1m\e[4m\n";
+        $exp .= "Output\e[0m\e[0m\n";
+        $exp .= "6\n";
+
+        $this->expectOutputString($exp);
 
         $success = $this->runner->run(__DIR__ . '/../res/cli/user.php', $output);
         $this->assertTrue($success);
@@ -141,7 +148,7 @@ class CliRunnerTest extends PHPUnit_Framework_TestCase
 
     public function testRunPassesOutputAndReturnsFailureIfScriptFails()
     {
-        $output = new StdOutput(new Color);
+        $output = new StdOutput(new Color, $this->getMock(TerminalInterface::class));
 
         $this->exercise
             ->expects($this->once())

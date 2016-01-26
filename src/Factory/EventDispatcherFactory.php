@@ -30,6 +30,8 @@ class EventDispatcherFactory
         $codePatcherListener = $container->get(CodePatchListener::class);
         $dispatcher->listen('verify.pre.execute', [$codePatcherListener, 'patch']);
         $dispatcher->listen('verify.post.execute', [$codePatcherListener, 'revert']);
+        $dispatcher->listen('run.start', [$codePatcherListener, 'patch']);
+        $dispatcher->listen('run.finish', [$codePatcherListener, 'revert']);
 
         $dispatcher->listen('verify.post.check', $container->get(SelfCheckListener::class));
 
