@@ -93,8 +93,9 @@ class ExerciseRenderer
         $exerciseIndex  = array_search($exercise, $exercises) + 1;
 
         $output  = "\n";
-        $output .= $this->color->__invoke(' LEARN YOU THE PHP FOR MUCH WIN! ')->green()->bold() . "\n";
-        $output .= $this->color->__invoke('*********************************')->green()->bold() . "\n";
+        $output .= $this->color->__invoke(' LEARN YOU THE PHP FOR MUCH WIN! ')->magenta()->bold() . "\n";
+        $output .= $this->color->__invoke('*********************************')->magenta()->bold() . "\n";
+        $output .= "\n";
         $output .= $this->color->__invoke(" " . $exercise->getName())->yellow()->bold() . "\n";
         $output .= $this->color->__invoke(sprintf(" Exercise %d of %d\n\n", $exerciseIndex, $numExercises))->yellow();
 
