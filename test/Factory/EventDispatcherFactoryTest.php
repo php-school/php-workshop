@@ -58,14 +58,15 @@ class EventDispatcherFactoryTest extends PHPUnit_Framework_TestCase
                 'verify.start' => [
                     $prepareSolutionListener
                 ],
+                'run.start' => [
+                    $prepareSolutionListener,
+                    [$codePatchListener, 'patch'],
+                ],
                 'verify.pre.execute' => [
                     [$codePatchListener, 'patch'],
                 ],
                 'verify.post.execute' => [
                     [$codePatchListener, 'revert'],
-                ],
-                'run.start' => [
-                    [$codePatchListener, 'patch'],
                 ],
                 'run.finish' => [
                     [$codePatchListener, 'revert'],
