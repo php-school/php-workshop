@@ -143,7 +143,7 @@ class CliRunner implements ExerciseRunnerInterface
             $output->write(implode($glue, $args->getArrayCopy()));
         }
 
-        $output->writeTitle("\nOutput");
+        $output->writeTitle("Output");
         $process = $this->getPhpProcess($fileName, $args);
         $process->start();
         $this->eventDispatcher->dispatch(new CliExecuteEvent('cli.run.executing', $args, ['output' => $output]));
