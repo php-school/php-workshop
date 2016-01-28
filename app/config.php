@@ -67,7 +67,7 @@ use PhpSchool\PhpWorkshop\UserStateSerializer;
 use Symfony\Component\Filesystem\Filesystem;
 
 return [
-    'appName' => $_SERVER['argv'][0],
+    'appName' => basename($_SERVER['argv'][0]),
     ExerciseDispatcher::class => factory(function (ContainerInterface $c) {
         $dispatcher = new ExerciseDispatcher(
             $c->get(RunnerFactory::class),
