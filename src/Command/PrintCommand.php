@@ -14,6 +14,11 @@ use PhpSchool\PhpWorkshop\UserState;
 class PrintCommand
 {
     /**
+     * @var string
+     */
+    private $appName;
+
+    /**
      * @var MarkdownRenderer
      */
     private $markdownRenderer;
@@ -34,17 +39,20 @@ class PrintCommand
     private $exerciseRepository;
 
     /**
+     * @param string $appName
      * @param ExerciseRepository $exerciseRepository
      * @param UserState $userState
      * @param MarkdownRenderer $markdownRenderer
      * @param OutputInterface $output
      */
     public function __construct(
+        $appName,
         ExerciseRepository $exerciseRepository,
         UserState $userState,
         MarkdownRenderer $markdownRenderer,
         OutputInterface $output
     ) {
+        $this->appName              = $appName;
         $this->markdownRenderer     = $markdownRenderer;
         $this->output               = $output;
         $this->userState            = $userState;
@@ -65,6 +73,8 @@ class PrintCommand
         $exercise = $this->exerciseRepository->findByName($currentExercise);
 
         $markDown = file_get_contents($exercise->getProblem());
-        $this->output->write($this->markdownRenderer->render($markDown));
+        $doc = $this->markdownRenderer->render($markDown);
+        $doc = str_replace('{appname}', $this->appName, $doc);
+        $this->output->write($doc);
     }
 }

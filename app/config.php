@@ -67,7 +67,7 @@ use PhpSchool\PhpWorkshop\UserStateSerializer;
 use Symfony\Component\Filesystem\Filesystem;
 
 return [
-    'appName' => $_SERVER['argv'][0],
+    'appName' => basename($_SERVER['argv'][0]),
     ExerciseDispatcher::class => factory(function (ContainerInterface $c) {
         $dispatcher = new ExerciseDispatcher(
             $c->get(RunnerFactory::class),
@@ -139,6 +139,7 @@ return [
 
     PrintCommand::class => factory(function (ContainerInterface $c) {
         return new PrintCommand(
+            $c->get('appName'),
             $c->get(ExerciseRepository::class),
             $c->get(UserState::class),
             $c->get(MarkdownRenderer::class),

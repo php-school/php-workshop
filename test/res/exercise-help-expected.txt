@@ -8,9 +8,9 @@
 [90m###[0m [36m[1mExercise Content[0m[0m
 
 
- [1m»[0m To print these instructions again, run: [33mphp phpschool print[0m
- [1m»[0m To execute your program in a test environment, run: [33mphp phpschool run program.php[0m
- [1m»[0m To verify your program, run: [33mphp phpschool verify program.php[0m
- [1m»[0m For help run: [33mphp phpschool help[0m
+ [1m»[0m To print these instructions again, run: [33mphpschool print[0m
+ [1m»[0m To execute your program in a test environment, run: [33mphpschool run program.php[0m
+ [1m»[0m To verify your program, run: [33mphpschool verify program.php[0m
+ [1m»[0m For help run: [33mphpschool help[0m
 
 

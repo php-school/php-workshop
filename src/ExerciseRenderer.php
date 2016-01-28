@@ -120,7 +120,7 @@ class ExerciseRenderer
      */
     private function helpLine($text, $cmd)
     {
-        $cmd = $this->color->__invoke(sprintf('php %s %s', $this->appName, $cmd))->yellow()->__toString();
+        $cmd = $this->color->__invoke(sprintf('%s %s', $this->appName, $cmd))->yellow()->__toString();
         return sprintf(
             " %s %s: %s\n",
             $this->color->__invoke("»")->bold()->__toString(),
