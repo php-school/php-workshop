@@ -25,7 +25,9 @@ class EventDispatcherFactory
     {
         $dispatcher = new EventDispatcher($container->get(ResultAggregator::class));
 
-        $dispatcher->listen('verify.start', $container->get(PrepareSolutionListener::class));
+        $prepareSolutionListener = $container->get(PrepareSolutionListener::class);
+        $dispatcher->listen('verify.start', $prepareSolutionListener);
+        $dispatcher->listen('run.start', $prepareSolutionListener);
 
         $codePatcherListener = $container->get(CodePatchListener::class);
         $dispatcher->listen('verify.pre.execute', [$codePatcherListener, 'patch']);
