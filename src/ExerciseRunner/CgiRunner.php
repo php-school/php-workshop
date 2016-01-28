@@ -193,7 +193,7 @@ class CgiRunner implements ExerciseRunnerInterface
     {
         $success = true;
         foreach ($this->exercise->getRequests() as $i => $request) {
-            $event      = $this->eventDispatcher->dispatch(new CgiExecuteEvent('cgi.run.usr-execute.pre', $request));
+            $event      = $this->eventDispatcher->dispatch(new CgiExecuteEvent('cgi.run.user-execute.pre', $request));
             $process    = $this->getProcess($fileName, $event->getRequest());
 
             $output->writeTitle("Request");
@@ -202,7 +202,9 @@ class CgiRunner implements ExerciseRunnerInterface
 
             $output->writeTitle("Output");
             $output->emptyLine();
-            $process->run(function ($outputType, $outputBuffer) use ($output) {
+            $process->start();
+            $this->eventDispatcher->dispatch(new CgiExecuteEvent('cgi.run.executing', $request, ['output' => $output]));
+            $process->wait(function ($outputType, $outputBuffer) use ($output) {
                 $output->write($outputBuffer);
             });
             $output->emptyLine();

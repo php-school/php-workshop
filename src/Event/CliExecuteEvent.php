@@ -20,10 +20,12 @@ class CliExecuteEvent extends Event
     /**
      * @param string $name
      * @param ArrayObject $args
+     * @param array $parameters
      */
-    public function __construct($name, ArrayObject $args)
+    public function __construct($name, ArrayObject $args, array $parameters = [])
     {
-        parent::__construct($name, ['args' => $args]);
+        $parameters['args'] = $args;
+        parent::__construct($name, $parameters);
         $this->args = $args;
     }
 
