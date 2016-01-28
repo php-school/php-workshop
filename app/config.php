@@ -139,6 +139,7 @@ return [
 
     PrintCommand::class => factory(function (ContainerInterface $c) {
         return new PrintCommand(
+            $c->get('appName'),
             $c->get(ExerciseRepository::class),
             $c->get(UserState::class),
             $c->get(MarkdownRenderer::class),

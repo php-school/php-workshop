@@ -33,7 +33,7 @@ class PrintCommandTest extends PHPUnit_Framework_TestCase
             ->method('printError')
             ->with('No active exercises. Select one from the menu');
 
-        $command = new PrintCommand($repo, $state, $renderer, $output);
+        $command = new PrintCommand('phpschool', $repo, $state, $renderer, $output);
         $this->assertSame(1, $command->__invoke());
     }
 
@@ -76,7 +76,7 @@ class PrintCommandTest extends PHPUnit_Framework_TestCase
             ->method('write')
             ->with('### Exercise 1');
 
-        $command = new PrintCommand($repo, $state, $renderer, $output);
+        $command = new PrintCommand('phpschool', $repo, $state, $renderer, $output);
         $command->__invoke();
 
         unlink($file);
