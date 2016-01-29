@@ -21,10 +21,12 @@ class CgiExecuteEvent extends Event
     /**
      * @param string $name
      * @param RequestInterface $request
+     * @param array $parameters
      */
-    public function __construct($name, RequestInterface $request)
+    public function __construct($name, RequestInterface $request, array $parameters = [])
     {
-        parent::__construct($name, ['request' => $request]);
+        $parameters['request'] = $request;
+        parent::__construct($name, $parameters);
         $this->request = $request;
     }
 

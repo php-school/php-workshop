@@ -173,6 +173,7 @@ class ExerciseDispatcher
      */
     public function run(ExerciseInterface $exercise, $fileName, OutputInterface $output)
     {
+        $exercise->configure($this);
         $this->eventDispatcher->dispatch(new Event('run.start', compact('exercise', 'fileName')));
 
         $exitStatus = $this->runnerFactory
