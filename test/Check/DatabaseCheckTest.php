@@ -11,6 +11,8 @@ use PhpSchool\PhpWorkshop\Exercise\ExerciseType;
 use PhpSchool\PhpWorkshop\ExerciseCheck\DatabaseExerciseCheck;
 use PhpSchool\PhpWorkshop\ExerciseDispatcher;
 use PhpSchool\PhpWorkshop\Factory\RunnerFactory;
+use PhpSchool\PhpWorkshop\Output\OutputInterface;
+use PhpSchool\PhpWorkshop\Output\StdOutput;
 use PhpSchool\PhpWorkshop\ResultAggregator;
 use PhpSchool\PhpWorkshop\Solution\SingleFileSolution;
 use PhpSchool\PhpWorkshopTest\Asset\DatabaseExercise;
@@ -108,6 +110,37 @@ class DatabaseCheckTest extends PHPUnit_Framework_TestCase
         $dispatcher->verify($this->exercise, __DIR__ . '/../res/database/user.php');
 
         $this->assertTrue($results->isSuccessful());
+    }
+
+    public function testRunExercise()
+    {
+        $this->exercise
+            ->expects($this->once())
+            ->method('getArgs')
+            ->will($this->returnValue([]));
+
+        $this->exercise
+            ->expects($this->atLeastOnce())
+            ->method('getType')
+            ->will($this->returnValue(ExerciseType::CLI()));
+
+        $this->exercise
+            ->expects($this->once())
+            ->method('configure')
+            ->will($this->returnCallback(function (ExerciseDispatcher $dispatcher) {
+                $dispatcher->requireListenableCheck(DatabaseCheck::class);
+            }));
+
+        $results            = new ResultAggregator;
+        $eventDispatcher    = new EventDispatcher($results);
+        $checkRepository    = new CheckRepository([$this->check]);
+        $dispatcher         = new ExerciseDispatcher(new RunnerFactory, $results, $eventDispatcher, $checkRepository);
+
+        $dispatcher->run(
+            $this->exercise,
+            __DIR__ . '/../res/database/user-solution-alter-db.php',
+            $this->getMock(OutputInterface::class)
+        );
     }
 
     public function testFailureIsReturnedIfDatabaseVerificationFails()
