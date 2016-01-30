@@ -65,10 +65,25 @@ class EventDispatcher
     }
 
     /**
-     * @param string $eventName
+     * @param string $eventNames
      * @param callable $callback
      */
-    public function listen($eventName, callable $callback)
+    public function listen($eventNames, callable $callback)
+    {
+        if (!is_array($eventNames)) {
+            $eventNames = [$eventNames];
+        }
+
+        foreach ($eventNames as $eventName) {
+            $this->attachListener($eventName, $callback);
+        }
+    }
+
+    /**
+     * @param string|array $eventName
+     * @param callable $callback
+     */
+    private function attachListener($eventName, callable $callback)
     {
         if (!array_key_exists($eventName, $this->listeners)) {
             $this->listeners[$eventName] = [$callback];
