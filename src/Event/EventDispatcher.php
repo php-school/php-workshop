@@ -80,7 +80,7 @@ class EventDispatcher
     }
 
     /**
-     * @param string $eventName
+     * @param string|array $eventName
      * @param callable $callback
      */
     private function attachListener($eventName, callable $callback)
