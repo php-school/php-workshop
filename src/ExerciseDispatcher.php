@@ -175,11 +175,14 @@ class ExerciseDispatcher
     {
         $this->eventDispatcher->dispatch(new Event('run.start', compact('exercise', 'fileName')));
 
-        $exitStatus = $this->runnerFactory
-            ->create($exercise, $this->eventDispatcher)
-            ->run($fileName, $output);
+        try {
+            $exitStatus = $this->runnerFactory
+                ->create($exercise, $this->eventDispatcher)
+                ->run($fileName, $output);
+        } finally {
+            $this->eventDispatcher->dispatch(new Event('run.finish', compact('exercise', 'fileName')));
+        }
 
-        $this->eventDispatcher->dispatch(new Event('run.finish', compact('exercise', 'fileName')));
         return $exitStatus;
     }
 
