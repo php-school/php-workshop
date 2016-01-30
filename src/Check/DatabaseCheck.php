@@ -91,13 +91,20 @@ class DatabaseCheck implements ListenableCheckInterface
             copy($this->userDatabasePath, $this->solutionDatabasePath);
         });
 
+        $eventDispatcher->listen('run.start', function (Event $e) use ($db) {
+            $e->getParameter('exercise')->seed($db);
+        });
+
         $eventDispatcher->listen('cli.verify.solution-execute.pre', function (CliExecuteEvent $e) use ($solutionDsn) {
             $e->prependArg($solutionDsn);
         });
 
-        $eventDispatcher->listen('cli.verify.user-execute.pre', function (CliExecuteEvent $e) use ($userDsn) {
-            $e->prependArg($userDsn);
-        });
+        $eventDispatcher->listen(
+            ['cli.verify.user-execute.pre', 'cli.run.user-execute.pre'],
+            function (CliExecuteEvent $e) use ($userDsn) {
+                $e->prependArg($userDsn);
+            }
+        );
 
         $eventDispatcher->insertVerifier('verify.finish', function (Event $e) use ($db) {
             $verifyResult = $e->getParameter('exercise')->verify($db);
@@ -109,14 +116,18 @@ class DatabaseCheck implements ListenableCheckInterface
             return new Success('Database Verification Check');
         });
 
-        $cleanup = function () use ($db) {
-            unset($db);
-            unlink($this->userDatabasePath);
-            unlink($this->solutionDatabasePath);
-            rmdir($this->databaseDirectory);
-        };
-
-        $eventDispatcher->listen('cli.verify.solution-execute.fail', $cleanup);
-        $eventDispatcher->listen('verify.finish', $cleanup);
+        $eventDispatcher->listen(
+            [
+                'cli.verify.solution-execute.fail',
+                'verify.finish',
+                'run.finish'
+            ],
+            function (Event $e) use ($db) {
+                unset($db);
+                @unlink($this->userDatabasePath);
+                @unlink($this->solutionDatabasePath);
+                rmdir($this->databaseDirectory);
+            }
+        );
     }
 }
