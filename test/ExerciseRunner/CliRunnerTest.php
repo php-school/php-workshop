@@ -135,7 +135,7 @@ class CliRunnerTest extends PHPUnit_Framework_TestCase
             ->will($this->returnValue([1, 2, 3]));
 
         $exp  = "\n\e[1m\e[4mArguments\e[0m\e[0m\n";
-        $exp .= "1, 2, 3\n";
+        $exp .= "1, 2, 3\n\n";
         $exp .= "\e[1m\e[4m";
         $exp .= "Output\e[0m\e[0m\n";
         $exp .= "6\n";

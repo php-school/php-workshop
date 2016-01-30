@@ -141,6 +141,7 @@ class CliRunner implements ExerciseRunnerInterface
 
             $output->writeTitle('Arguments');
             $output->write(implode($glue, $args->getArrayCopy()));
+            $output->emptyLine();
         }
 
         $output->writeTitle("Output");
