@@ -82,4 +82,19 @@ class EventDispatcherTest extends PHPUnit_Framework_TestCase
 
         $this->assertEquals([], iterator_to_array($this->results));
     }
+
+    public function testListenWithMultipleEvents()
+    {
+        $e1 = new Event('some-event', ['arg1' => 1, 'arg2' => 2]);
+        $e2 = new Event('some-event', ['arg1' => 1, 'arg2' => 2]);
+        $mockCallback1 = $this->getMock('stdClass', ['callback']);
+        $mockCallback1->expects($this->exactly(2))
+            ->method('callback')
+            ->withConsecutive([$e1], [$e2])
+            ->will($this->returnValue(true));
+
+        $this->eventDispatcher->listen(['some-event', 'second-event'], [$mockCallback1, 'callback']);
+        $this->eventDispatcher->dispatch($e1);
+        $this->eventDispatcher->dispatch($e2);
+    }
 }
