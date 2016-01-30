@@ -164,7 +164,7 @@ class CgiRunner implements ExerciseRunnerInterface
             $env[sprintf('HTTP_%s', strtoupper($name))] = implode(", ", $values);
         }
 
-        return new Process($cmd, null, $env);
+        return new Process($cmd, null, $env, null, 10);
     }
 
     /**
