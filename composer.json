@@ -30,7 +30,7 @@
     },
     "require-dev": {
         "phpunit/phpunit": "~5.0",
-        "squizlabs/php_codesniffer": "~2.0",
+        "squizlabs/php_codesniffer": "^2.4",
         "composer/composer": "~1.0-alpha"
     },
     "autoload" : {
