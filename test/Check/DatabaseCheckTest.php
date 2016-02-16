@@ -12,12 +12,11 @@ use PhpSchool\PhpWorkshop\ExerciseCheck\DatabaseExerciseCheck;
 use PhpSchool\PhpWorkshop\ExerciseDispatcher;
 use PhpSchool\PhpWorkshop\Factory\RunnerFactory;
 use PhpSchool\PhpWorkshop\Output\OutputInterface;
-use PhpSchool\PhpWorkshop\Output\StdOutput;
 use PhpSchool\PhpWorkshop\ResultAggregator;
 use PhpSchool\PhpWorkshop\Solution\SingleFileSolution;
-use PhpSchool\PhpWorkshopTest\Asset\DatabaseExercise;
 use PhpSchool\PhpWorkshopTest\Asset\DatabaseExerciseInterface;
 use PHPUnit_Framework_TestCase;
+use ReflectionProperty;
 use RuntimeException;
 
 /**
@@ -59,16 +58,72 @@ class DatabaseCheckTest extends PHPUnit_Framework_TestCase
     public function testIfDatabaseFolderExistsExceptionIsThrown()
     {
         $eventDispatcher = new EventDispatcher(new ResultAggregator);
-
         @mkdir($this->dbDir);
-
         try {
-            $this->check->attach($eventDispatcher, $this->exercise);
+            $this->check->attach($eventDispatcher);
             $this->fail('Exception was not thrown');
         } catch (RuntimeException $e) {
             $this->assertEquals(sprintf('Database directory: "%s" already exists', $this->dbDir), $e->getMessage());
             rmdir($this->dbDir);
         }
+    }
+
+    /**
+     * If an exception is thrown from PDO, check that the check can be run straight away
+     * Previously files were not cleaned up that caused exceptions.
+     */
+    public function testIfPDOThrowsExceptionItCleansUp()
+    {
+        $eventDispatcher = new EventDispatcher(new ResultAggregator);
+
+        $refProp = new ReflectionProperty(DatabaseCheck::class, 'userDsn');
+        $refProp->setAccessible(true);
+        $refProp->setValue($this->check, null);
+
+        try {
+            $this->check->attach($eventDispatcher);
+            $this->fail('Exception was not thrown');
+        } catch (\PDOException $e) {
+        }
+
+        //try to run the check as usual
+        $this->check = new DatabaseCheck;
+        $solution = SingleFileSolution::fromFile(realpath(__DIR__ . '/../res/database/solution.php'));
+        $this->exercise
+            ->expects($this->once())
+            ->method('getSolution')
+            ->will($this->returnValue($solution));
+
+        $this->exercise
+            ->expects($this->once())
+            ->method('getArgs')
+            ->will($this->returnValue([1, 2, 3]));
+
+        $this->exercise
+            ->expects($this->atLeastOnce())
+            ->method('getType')
+            ->will($this->returnValue(ExerciseType::CLI()));
+
+        $this->exercise
+            ->expects($this->once())
+            ->method('configure')
+            ->will($this->returnCallback(function (ExerciseDispatcher $dispatcher) {
+                $dispatcher->requireListenableCheck(DatabaseCheck::class);
+            }));
+
+        $this->exercise
+            ->expects($this->once())
+            ->method('verify')
+            ->with($this->isInstanceOf(PDO::class))
+            ->will($this->returnValue(true));
+
+        $results            = new ResultAggregator;
+        $eventDispatcher    = new EventDispatcher($results);
+        $checkRepository    = new CheckRepository([$this->check]);
+        $dispatcher         = new ExerciseDispatcher(new RunnerFactory, $results, $eventDispatcher, $checkRepository);
+
+        $dispatcher->verify($this->exercise, __DIR__ . '/../res/database/user.php');
+        $this->assertTrue($results->isSuccessful());
     }
 
     public function testSuccessIsReturnedIfDatabaseVerificationPassed()
