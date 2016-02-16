@@ -39,6 +39,16 @@ class DatabaseCheck implements ListenableCheckInterface
     private $solutionDatabasePath;
 
     /**
+     * @var
+     */
+    private $userDsn;
+
+    /**
+     * @var string
+     */
+    private $solutionDsn;
+
+    /**
      *
      */
     public function __construct()
@@ -46,6 +56,8 @@ class DatabaseCheck implements ListenableCheckInterface
         $this->databaseDirectory    = $this->getTemporaryPath();
         $this->userDatabasePath     = sprintf('%s/user-db.sqlite', $this->databaseDirectory);
         $this->solutionDatabasePath = sprintf('%s/solution-db.sqlite', $this->databaseDirectory);
+        $this->solutionDsn          = sprintf('sqlite:%s', $this->solutionDatabasePath);
+        $this->userDsn              = sprintf('sqlite:%s', $this->userDatabasePath);
     }
 
     /**
@@ -79,11 +91,14 @@ class DatabaseCheck implements ListenableCheckInterface
         }
 
         mkdir($this->databaseDirectory, 0777, true);
-        $solutionDsn    = sprintf('sqlite:%s', $this->solutionDatabasePath);
-        $userDsn        = sprintf('sqlite:%s', $this->userDatabasePath);
 
-        $db = new PDO($userDsn);
-        $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        try {
+            $db = new PDO($this->userDsn);
+            $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        } catch (\PDOException $e) {
+            $res = rmdir($this->databaseDirectory);
+            throw $e;
+        }
 
         $eventDispatcher->listen('verify.start', function (Event $e) use ($db) {
             $e->getParameter('exercise')->seed($db);
@@ -95,14 +110,14 @@ class DatabaseCheck implements ListenableCheckInterface
             $e->getParameter('exercise')->seed($db);
         });
 
-        $eventDispatcher->listen('cli.verify.solution-execute.pre', function (CliExecuteEvent $e) use ($solutionDsn) {
-            $e->prependArg($solutionDsn);
+        $eventDispatcher->listen('cli.verify.solution-execute.pre', function (CliExecuteEvent $e) {
+            $e->prependArg($this->solutionDsn);
         });
 
         $eventDispatcher->listen(
             ['cli.verify.user-execute.pre', 'cli.run.user-execute.pre'],
-            function (CliExecuteEvent $e) use ($userDsn) {
-                $e->prependArg($userDsn);
+            function (CliExecuteEvent $e) {
+                $e->prependArg($this->userDsn);
             }
         );
 
