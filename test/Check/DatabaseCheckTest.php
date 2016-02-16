@@ -60,7 +60,7 @@ class DatabaseCheckTest extends PHPUnit_Framework_TestCase
         $eventDispatcher = new EventDispatcher(new ResultAggregator);
         @mkdir($this->dbDir);
         try {
-            $this->check->attach($eventDispatcher, $this->exercise);
+            $this->check->attach($eventDispatcher);
             $this->fail('Exception was not thrown');
         } catch (RuntimeException $e) {
             $this->assertEquals(sprintf('Database directory: "%s" already exists', $this->dbDir), $e->getMessage());
