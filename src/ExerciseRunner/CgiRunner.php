@@ -156,7 +156,7 @@ class CgiRunner implements ExerciseRunnerInterface
         );
 
         $content                = $request->getBody()->__toString();
-        $cmd                    = sprintf('echo %s | %s', $content, $cgiBinary);
+        $cmd                    = sprintf('echo %s | %s', escapeshellarg($content), $cgiBinary);
         $env['CONTENT_LENGTH']  = $request->getBody()->getSize();
         $env['CONTENT_TYPE']    = $request->getHeaderLine('Content-Type');
 

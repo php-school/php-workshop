@@ -119,6 +119,30 @@ class CgiRunnerTest extends PHPUnit_Framework_TestCase
         );
     }
 
+    public function testVerifyReturnsSuccessIfPostSolutionOutputMatchesUserOutputWithMultipleParams()
+    {
+        $solution = SingleFileSolution::fromFile(__DIR__ . '/../res/cgi/post-multiple-solution.php');
+        $this->exercise
+            ->expects($this->once())
+            ->method('getSolution')
+            ->will($this->returnValue($solution));
+
+        $request = (new Request)
+            ->withMethod('POST')
+            ->withUri(new Uri('http://some.site'))
+            ->withHeader('Content-Type', 'application/x-www-form-urlencoded');
+
+        $request->getBody()->write('number=5&start=4');
+
+        $this->exercise
+            ->expects($this->once())
+            ->method('getRequests')
+            ->will($this->returnValue([$request]));
+
+        $result = $this->runner->verify(realpath(__DIR__ . '/../res/cgi/post-multiple-solution.php'));
+        $this->assertInstanceOf(CgiOutResult::class, $result);
+    }
+
     public function testVerifyReturnsFailureIfUserSolutionFailsToExecute()
     {
         $solution = SingleFileSolution::fromFile(__DIR__ . '/../res/cgi/get-solution.php');
