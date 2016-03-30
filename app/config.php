@@ -11,7 +11,6 @@ use PhpSchool\CliMenu\Terminal\TerminalFactory;
 use PhpSchool\CliMenu\Terminal\TerminalInterface;
 use PhpParser\Parser;
 use PhpParser\ParserFactory;
-use PhpSchool\PhpWorkshop\Check\CgiOutputCheck;
 use PhpSchool\PhpWorkshop\Check\CheckRepository;
 use PhpSchool\PhpWorkshop\Check\CodeParseCheck;
 use PhpSchool\PhpWorkshop\Check\ComposerCheck;
@@ -31,16 +30,11 @@ use PhpSchool\PhpWorkshop\MenuItem\ResetProgress;
 use PhpSchool\PhpWorkshop\Output\OutputInterface;
 use PhpSchool\PhpWorkshop\Output\StdOutput;
 use PhpSchool\PhpWorkshop\Patch;
-use PhpSchool\PhpWorkshop\Result\CgiOutResult;
-use PhpSchool\PhpWorkshop\Result\StdOutFailure;
 use PhpSchool\PhpWorkshop\ResultAggregator;
-use PhpSchool\PhpWorkshop\ResultRenderer\CgiOutResultRenderer;
-use PhpSchool\PhpWorkshop\ResultRenderer\OutputFailureRenderer;
 use PhpSchool\PSX\SyntaxHighlighter;
 use PhpSchool\PhpWorkshop\Check\FileExistsCheck;
 use PhpSchool\PhpWorkshop\Check\FunctionRequirementsCheck;
 use PhpSchool\PhpWorkshop\Check\PhpLintCheck;
-use PhpSchool\PhpWorkshop\Check\StdOutCheck;
 use PhpSchool\PhpWorkshop\Command\CreditsCommand;
 use PhpSchool\PhpWorkshop\Command\HelpCommand;
 use PhpSchool\PhpWorkshop\Command\MenuCommand;
@@ -49,22 +43,17 @@ use PhpSchool\PhpWorkshop\Command\VerifyCommand;
 use PhpSchool\PhpWorkshop\Command\RunCommand;
 use PhpSchool\PhpWorkshop\CommandDefinition;
 use PhpSchool\PhpWorkshop\CommandRouter;
-use PhpSchool\PhpWorkshop\ExerciseCheck\StdOutExerciseCheck;
 use PhpSchool\PhpWorkshop\ExerciseRenderer;
 use PhpSchool\PhpWorkshop\ExerciseRepository;
 use PhpSchool\PhpWorkshop\ExerciseRunner;
 use PhpSchool\PhpWorkshop\Factory\MarkdownCliRendererFactory;
 use PhpSchool\PhpWorkshop\MarkdownRenderer;
-use PhpSchool\PhpWorkshop\Result\FunctionRequirementsFailure;
-use PhpSchool\PhpWorkshop\Result\Success;
-use PhpSchool\PhpWorkshop\Result\Failure;
-use PhpSchool\PhpWorkshop\ResultRenderer\FailureRenderer;
-use PhpSchool\PhpWorkshop\ResultRenderer\FunctionRequirementsFailureRenderer;
 use PhpSchool\PhpWorkshop\ResultRenderer\ResultsRenderer;
-use PhpSchool\PhpWorkshop\ResultRenderer\SuccessRenderer;
 use PhpSchool\PhpWorkshop\UserState;
 use PhpSchool\PhpWorkshop\UserStateSerializer;
 use Symfony\Component\Filesystem\Filesystem;
+use Faker\Factory as FakerFactory;
+use Faker\Generator as FakerGenerator;
 
 return [
     'appName' => basename($_SERVER['argv'][0]),
@@ -200,11 +189,9 @@ return [
     CodeParseCheck::class               => factory(function (ContainerInterface $c) {
         return new CodeParseCheck($c->get(Parser::class));
     }),
-    StdOutCheck::class                  => object(StdOutCheck::class),
     FunctionRequirementsCheck::class    => factory(function (ContainerInterface $c) {
         return new FunctionRequirementsCheck($c->get(Parser::class));
     }),
-    CgiOutputCheck::class               => object(CgiOutputCheck::class),
     DatabaseCheck::class                => object(DatabaseCheck::class),
     ComposerCheck::class                => object(ComposerCheck::class),
 
@@ -221,6 +208,9 @@ return [
             ->withInsertion(new Insertion(Insertion ::TYPE_BEFORE, 'date_default_timezone_set("Europe/London");'));
         
         return new CodePatcher($c->get(Parser::class), new Standard, $patch);
+    }),
+    FakerGenerator::class => factory(function (ContainerInterface $c) {
+        return FakerFactory::create();
     }),
     
     TerminalInterface::class => factory([TerminalFactory::class, 'fromSystem']),
