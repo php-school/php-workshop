@@ -10,6 +10,7 @@ use PhpParser\PrettyPrinter\Standard;
 use PhpSchool\PhpWorkshop\CodePatcher;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpSchool\PhpWorkshop\Exercise\PreProcessable;
+use PhpSchool\PhpWorkshop\Exercise\SubmissionPatchable;
 use PhpSchool\PhpWorkshop\Patch;
 use PhpSchool\PhpWorkshopTest\Asset\PatchableExercise;
 use PHPUnit_Framework_TestCase;
@@ -40,11 +41,6 @@ class CodePatcherTest extends PHPUnit_Framework_TestCase
         $patcher = new CodePatcher((new ParserFactory)->create(ParserFactory::PREFER_PHP7), new Standard);
         $exercise = $this->getMock(ExerciseInterface::class);
 
-        $exercise
-            ->expects($this->never())
-            ->method('getPatch')
-            ->will($this->returnValue(new Patch));
-        
         $code = '<?php $original = true;';
         $this->assertEquals($code, $patcher->patch($exercise, $code));
     }
