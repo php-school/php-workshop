@@ -22,3 +22,7 @@ The core of PHP School, the workshop application. This is the library which runs
 </a>
 </p>
 ----
+
+<p align="center">
+Check the <a target="_blank" href="https://www.phpschool.io/docs">documentation</a> to learn how to create your own workshop.
+</p>
