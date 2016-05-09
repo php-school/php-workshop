@@ -79,4 +79,13 @@ class ComposerCheck implements SimpleCheckInterface
     {
         return ComposerExerciseCheck::class;
     }
+
+    /**
+     *
+     * @return string
+     */
+    public function getPosition()
+    {
+        return SimpleCheckInterface::CHECK_BEFORE;
+    }
 }

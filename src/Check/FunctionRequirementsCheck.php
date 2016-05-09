@@ -108,4 +108,13 @@ class FunctionRequirementsCheck implements SimpleCheckInterface
     {
         return FunctionRequirementsExerciseCheck::class;
     }
+
+    /**
+     *
+     * @return string
+     */
+    public function getPosition()
+    {
+        return SimpleCheckInterface::CHECK_AFTER;
+    }
 }

@@ -54,4 +54,13 @@ class FileExistsCheck implements SimpleCheckInterface
     {
         return ExerciseInterface::class;
     }
+
+    /**
+     *
+     * @return string
+     */
+    public function getPosition()
+    {
+        return SimpleCheckInterface::CHECK_BEFORE;
+    }
 }

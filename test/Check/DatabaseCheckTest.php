@@ -108,7 +108,7 @@ class DatabaseCheckTest extends PHPUnit_Framework_TestCase
             ->expects($this->once())
             ->method('configure')
             ->will($this->returnCallback(function (ExerciseDispatcher $dispatcher) {
-                $dispatcher->requireListenableCheck(DatabaseCheck::class);
+                $dispatcher->requireCheck(DatabaseCheck::class);
             }));
 
         $this->exercise
@@ -148,7 +148,7 @@ class DatabaseCheckTest extends PHPUnit_Framework_TestCase
             ->expects($this->once())
             ->method('configure')
             ->will($this->returnCallback(function (ExerciseDispatcher $dispatcher) {
-                $dispatcher->requireListenableCheck(DatabaseCheck::class);
+                $dispatcher->requireCheck(DatabaseCheck::class);
             }));
 
         $this->exercise
@@ -183,7 +183,7 @@ class DatabaseCheckTest extends PHPUnit_Framework_TestCase
             ->expects($this->once())
             ->method('configure')
             ->will($this->returnCallback(function (ExerciseDispatcher $dispatcher) {
-                $dispatcher->requireListenableCheck(DatabaseCheck::class);
+                $dispatcher->requireCheck(DatabaseCheck::class);
             }));
 
         $results            = new ResultAggregator;
@@ -220,7 +220,7 @@ class DatabaseCheckTest extends PHPUnit_Framework_TestCase
             ->expects($this->once())
             ->method('configure')
             ->will($this->returnCallback(function (ExerciseDispatcher $dispatcher) {
-                $dispatcher->requireListenableCheck(DatabaseCheck::class);
+                $dispatcher->requireCheck(DatabaseCheck::class);
             }));
 
         $this->exercise
@@ -264,7 +264,7 @@ class DatabaseCheckTest extends PHPUnit_Framework_TestCase
             ->expects($this->once())
             ->method('configure')
             ->will($this->returnCallback(function (ExerciseDispatcher $dispatcher) {
-                $dispatcher->requireListenableCheck(DatabaseCheck::class);
+                $dispatcher->requireCheck(DatabaseCheck::class);
             }));
 
         $this->exercise

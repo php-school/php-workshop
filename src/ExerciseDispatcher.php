@@ -7,6 +7,7 @@ use PhpSchool\PhpWorkshop\Check\CheckCollection;
 use PhpSchool\PhpWorkshop\Check\CheckInterface;
 use PhpSchool\PhpWorkshop\Check\CheckRepository;
 use PhpSchool\PhpWorkshop\Check\ListenableCheckInterface;
+use PhpSchool\PhpWorkshop\Check\SimpleCheckInterface;
 use PhpSchool\PhpWorkshop\Event\Event;
 use PhpSchool\PhpWorkshop\Event\EventDispatcher;
 use PhpSchool\PhpWorkshop\Exception\CheckNotApplicableException;
@@ -24,9 +25,6 @@ use Symfony\Component\Process\Process;
  */
 class ExerciseDispatcher
 {
-    const CHECK_BEFORE = 'before';
-    const CHECK_AFTER = 'after';
-
     /**
      * @var CheckInterface[]
      */
@@ -77,42 +75,34 @@ class ExerciseDispatcher
 
     /**
      * @param string $requiredCheck
-     * @param string $position
      * @throws InvalidArgumentException
      */
-    public function requireCheck($requiredCheck, $position)
-    {
-        if (!$this->checkRepository->has($requiredCheck)) {
-            throw new InvalidArgumentException(sprintf('Check: "%s" does not exist', $requiredCheck));
-        }
-
-        switch ($position) {
-            case static::CHECK_BEFORE:
-                $this->checksToRunBefore[] = $this->checkRepository->getByClass($requiredCheck);
-                break;
-            case static::CHECK_AFTER:
-                $this->checksToRunAfter[] = $this->checkRepository->getByClass($requiredCheck);
-                break;
-            default:
-                throw InvalidArgumentException::notValidParameter(
-                    'position',
-                    [static::CHECK_BEFORE, static::CHECK_AFTER],
-                    $position
-                );
-        }
-    }
-
-    /**
-     * @param string $requiredCheck
-     * @throws InvalidArgumentException
-     */
-    public function requireListenableCheck($requiredCheck)
+    public function requireCheck($requiredCheck)
     {
         if (!$this->checkRepository->has($requiredCheck)) {
             throw new InvalidArgumentException(sprintf('Check: "%s" does not exist', $requiredCheck));
         }
 
         $check = $this->checkRepository->getByClass($requiredCheck);
+
+        if ($check instanceof SimpleCheckInterface) {
+            switch ($check->getPosition()) {
+                case SimpleCheckInterface::CHECK_BEFORE:
+                    $this->checksToRunBefore[] = $check;
+                    break;
+                case SimpleCheckInterface::CHECK_AFTER:
+                    $this->checksToRunAfter[] = $check;
+                    break;
+                default:
+                    throw InvalidArgumentException::notValidParameter(
+                        'position',
+                        [SimpleCheckInterface::CHECK_BEFORE, SimpleCheckInterface::CHECK_AFTER],
+                        $check->getPosition()
+                    );
+            }
+
+            return;
+        }
 
         if (!$check instanceof ListenableCheckInterface) {
             throw new InvalidArgumentException(sprintf('Check: "%s" is not a listenable check', $requiredCheck));
