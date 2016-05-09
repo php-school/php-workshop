@@ -2,6 +2,7 @@
 
 namespace PhpSchool\PhpWorkshopTest\Check;
 
+use PhpSchool\PhpWorkshop\Check\SimpleCheckInterface;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseType;
 use PHPUnit_Framework_TestCase;
 use PhpSchool\PhpWorkshop\Check\FileExistsCheck;
@@ -39,6 +40,7 @@ class FileExistsCheckTest extends PHPUnit_Framework_TestCase
         $this->exercise = $this->getMock(ExerciseInterface::class);
         $this->assertEquals('File Exists Check', $this->check->getName());
         $this->assertEquals(ExerciseInterface::class, $this->check->getExerciseInterface());
+        $this->assertEquals(SimpleCheckInterface::CHECK_BEFORE, $this->check->getPosition());
 
         $this->assertTrue($this->check->canRun(ExerciseType::CGI()));
         $this->assertTrue($this->check->canRun(ExerciseType::CLI()));

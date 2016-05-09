@@ -14,6 +14,20 @@ use PhpSchool\PhpWorkshop\Result\ResultInterface;
 interface SimpleCheckInterface extends CheckInterface
 {
     /**
+     * Run this check before exercise verifying
+     *
+     * @return string
+     */
+    const CHECK_BEFORE = 'before';
+
+    /**
+     * Run this check after exercise verifying
+     *
+     * @return string
+     */
+    const CHECK_AFTER = 'after';
+
+    /**
      * Can this check run this exercise?
      *
      * @param ExerciseType $exerciseType
@@ -27,4 +41,11 @@ interface SimpleCheckInterface extends CheckInterface
      * @return ResultInterface
      */
     public function check(ExerciseInterface $exercise, $fileName);
+
+    /**
+     * either static::CHECK_BEFORE | static::CHECK_AFTER
+     *
+     * @return string
+     */
+    public function getPosition();
 }
