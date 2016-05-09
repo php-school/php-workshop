@@ -64,7 +64,6 @@ class UserStateSerializer
         if (null === $json && JSON_ERROR_NONE !== json_last_error()) {
             $this->wipeFile();
             return new UserState();
-
         }
 
         if (!array_key_exists('completed_exercises', $json)) {

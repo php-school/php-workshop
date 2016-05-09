@@ -153,7 +153,6 @@ class ResultsRenderer
         $output->writeLine($this->lineBreak());
 
         foreach ($exercise->getSolution()->getFiles() as $file) {
-
             $output->writeLine($this->style($file->getRelativePath(), ['bold', 'cyan', 'underline']));
             $output->emptyLine();
 
