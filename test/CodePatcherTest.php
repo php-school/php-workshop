@@ -31,7 +31,7 @@ class CodePatcherTest extends PHPUnit_Framework_TestCase
         $patcher = new CodePatcher((new ParserFactory)->create(ParserFactory::PREFER_PHP7), new Standard, $patch);
         $exercise = $this->getMock(ExerciseInterface::class);
 
-        $expected = "<?php\n\nini_set('display_errors', 1);\n\$original = true;";
+        $expected = "<?php\n\nini_set(\"display_errors\", 1);\n\$original = true;";
         $this->assertEquals($expected, $patcher->patch($exercise, '<?php $original = true;'));
     }
     
@@ -73,19 +73,19 @@ class CodePatcherTest extends PHPUnit_Framework_TestCase
             'only-before-insertion' => [
                 '<?php $original = true;',
                 (new Patch)->withInsertion(new Insertion(Insertion::TYPE_BEFORE, '$before = "here";')),
-                "<?php\n\n\$before = 'here';\n\$original = true;"
+                "<?php\n\n\$before = \"here\";\n\$original = true;"
             ],
             'only-after-insertion' => [
                 '<?php $original = true;',
                 (new Patch)->withInsertion(new Insertion(Insertion::TYPE_AFTER, '$after = "here";')),
-                "<?php\n\n\$original = true;\n\$after = 'here';"
+                "<?php\n\n\$original = true;\n\$after = \"here\";"
             ],
             'before-and-after-insertion' => [
                 '<?php $original = true;',
                 (new Patch)
                     ->withInsertion(new Insertion(Insertion::TYPE_BEFORE, '$before = "here";'))
                     ->withInsertion(new Insertion(Insertion::TYPE_AFTER, '$after = "here";')),
-                "<?php\n\n\$before = 'here';\n\$original = true;\n\$after = 'here';"
+                "<?php\n\n\$before = \"here\";\n\$original = true;\n\$after = \"here\";"
             ],
             'not-parseable-before-insertion' => [
                 '<?php $original = true;',
@@ -96,12 +96,12 @@ class CodePatcherTest extends PHPUnit_Framework_TestCase
             'include-open-php-tag-before-insertion' => [
                 '<?php $original = true;',
                 (new Patch)->withInsertion(new Insertion(Insertion::TYPE_BEFORE, '<?php $before = "here";')),
-                "<?php\n\n\$before = 'here';\n\$original = true;"
+                "<?php\n\n\$before = \"here\";\n\$original = true;"
             ],
             'include-open-php-tag-before-insertion2' => [
                 '<?php $original = true;',
                 (new Patch)->withInsertion(new Insertion(Insertion::TYPE_BEFORE, '    <?php $before = "here";')),
-                "<?php\n\n\$before = 'here';\n\$original = true;"
+                "<?php\n\n\$before = \"here\";\n\$original = true;"
             ],
             'transformer' => [
                 '<?php $original = true;',
@@ -122,7 +122,7 @@ class CodePatcherTest extends PHPUnit_Framework_TestCase
                             new TryCatch($statements, [new Catch_(new Name(\Exception::class), 'e', [])])
                         ];
                     }),
-                "<?php\n\ntry {\n    \$before = 'here';\n    \$original = true;\n} catch (Exception \$e) {\n}"
+                "<?php\n\ntry {\n    \$before = \"here\";\n    \$original = true;\n} catch (Exception \$e) {\n}"
             ],
         ];
     }

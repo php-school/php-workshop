@@ -41,6 +41,7 @@ class SelfCheckListenerTest extends PHPUnit_Framework_TestCase
     {
         $exercise = $this->getMock(ExerciseInterface::class);
         $event = new Event('event', ['exercise' => $exercise, 'fileName' => 'some-file.php']);
+
         $results = new ResultAggregator;
         $listener = new SelfCheckListener($results);
         $listener->__invoke($event);
