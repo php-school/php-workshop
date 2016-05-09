@@ -40,7 +40,6 @@ class CgiOutResultRenderer implements ResultRendererInterface
 
         $output = '';
         foreach ($results as $key => $request) {
-            
             $output .= "\n";
             $output .= $renderer->style(sprintf("Request %02d\n\n", $key + 1), ['bold', 'underline', 'green']);
 
