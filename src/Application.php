@@ -66,15 +66,15 @@ final class Application
     }
 
     /**
-     * @param CheckInterface $check
+     * @param string $check
      */
-    public function addCheck(CheckInterface $check)
+    public function addCheck($check)
     {
         $this->checks[] = $check;
     }
 
     /**
-     * @param ExerciseInterface $exercise
+     * @param string $exercise
      */
     public function addExercise($exercise)
     {
@@ -141,9 +141,15 @@ final class Application
         }
 
         $checkRepository = $container->get(CheckRepository::class);
-        array_walk($this->checks, function (CheckInterface $check) use ($checkRepository) {
-            $checkRepository->registerCheck($check);
-        });
+        foreach ($this->checks as $check) {
+            if (false === $container->has($check)) {
+                throw new \RuntimeException(
+                    sprintf('No DI config found for check: "%s". Register a factory.', $check)
+                );
+            }
+
+            $checkRepository->registerCheck($container->get($check));
+        }
 
         try {
             $exitCode = $container->get(CommandRouter::class)->route();
