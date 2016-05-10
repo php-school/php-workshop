@@ -66,9 +66,9 @@ return [
         );
 
         //checks which should always run (probably)
-        $dispatcher->requireCheck(FileExistsCheck::class, ExerciseDispatcher::CHECK_BEFORE);
-        $dispatcher->requireCheck(PhpLintCheck::class, ExerciseDispatcher::CHECK_BEFORE);
-        $dispatcher->requireCheck(CodeParseCheck::class, ExerciseDispatcher::CHECK_BEFORE);
+        $dispatcher->requireCheck(FileExistsCheck::class);
+        $dispatcher->requireCheck(PhpLintCheck::class);
+        $dispatcher->requireCheck(CodeParseCheck::class);
         return $dispatcher;
     }),
     ResultAggregator::class => object(ResultAggregator::class),
