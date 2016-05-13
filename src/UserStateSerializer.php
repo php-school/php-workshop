@@ -59,19 +59,14 @@ class UserStateSerializer
     {
         $saveFile = sprintf('%s/%s', $this->path, static::SAVE_FILE);
 
-        if (!file_exists($saveFile)) {
-            $data = [];
-            $data[$this->workshopName] = [
-                'completed_exercises'   => $state->getCompletedExercises(),
-                'current_exercise'      => $state->getCurrentExercise(),
-            ];
-        } else {
-            $data = $this->readJson($saveFile);
-            $data[$this->workshopName] = [
-                'completed_exercises'   => $state->getCompletedExercises(),
-                'current_exercise'      => $state->getCurrentExercise(),
-            ];
-        }
+        $data = file_exists($saveFile)
+            ? $this->readJson($saveFile)
+            : [];
+
+        $data[$this->workshopName] = [
+            'completed_exercises'   => $state->getCompletedExercises(),
+            'current_exercise'      => $state->getCurrentExercise(),
+        ];
 
         return file_put_contents($saveFile, json_encode($data));
     }
