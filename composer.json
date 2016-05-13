@@ -1,6 +1,8 @@
 {
     "name": "php-school/php-workshop",
     "description": "PHP Workshop Framework",
+    "keywords": ["cli", "console", "terminal", "phpschool", "php-school", "workshop", "learning", "education"],
+    "homepage": "https://www.phpschool.io",
     "license": "MIT",
     "authors": [
         {
