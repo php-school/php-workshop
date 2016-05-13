@@ -59,6 +59,7 @@ final class Application
      */
     public function __construct($workshopTitle, $diConfigFile)
     {
+        Assertion::string($workshopTitle);
         Assertion::file($diConfigFile);
         
         $this->workshopTitle = $workshopTitle;

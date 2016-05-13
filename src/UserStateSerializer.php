@@ -15,18 +15,38 @@ class UserStateSerializer
     private $path;
 
     /**
-     * @param string $path
+     * @var string
      */
-    public function __construct($path)
+    private $workshopName;
+
+    /**
+     * @var string
+     */
+    const LEGACY_SAVE_FILE = '.phpschool.json';
+
+    /**
+     * @var string
+     */
+    const SAVE_FILE = '.phpschool-save.json';
+
+    /**
+     * @var ExerciseRepository
+     */
+    private $exerciseRepository;
+
+    /**
+     * @param string $saveFileDirectory
+     * @param string $workshopName
+     * @param ExerciseRepository $exerciseRepository
+     */
+    public function __construct($saveFileDirectory, $workshopName, ExerciseRepository $exerciseRepository)
     {
-        $this->path = $path;
+        $this->workshopName         = $workshopName;
+        $this->path                 = $saveFileDirectory;
+        $this->exerciseRepository   = $exerciseRepository;
 
-        if (file_exists($path)) {
-            return;
-        }
-
-        if (!file_exists(dirname($path))) {
-            mkdir(dirname($path), 0777, true);
+        if (!file_exists($this->path)) {
+            mkdir($this->path, 0777, true);
         }
     }
 
@@ -37,10 +57,18 @@ class UserStateSerializer
      */
     public function serialize(UserState $state)
     {
-        return file_put_contents($this->path, json_encode([
+        $saveFile = sprintf('%s/%s', $this->path, static::SAVE_FILE);
+
+        $data = file_exists($saveFile)
+            ? $this->readJson($saveFile)
+            : [];
+
+        $data[$this->workshopName] = [
             'completed_exercises'   => $state->getCompletedExercises(),
             'current_exercise'      => $state->getCurrentExercise(),
-        ]));
+        ];
+
+        return file_put_contents($saveFile, json_encode($data));
     }
 
     /**
@@ -48,49 +76,46 @@ class UserStateSerializer
      */
     public function deSerialize()
     {
-        if (!file_exists($this->path)) {
-            return new UserState();
+        $legacySaveFile = sprintf('%s/%s', $this->path, static::LEGACY_SAVE_FILE);
+        if (file_exists($legacySaveFile)) {
+            $userState = $this->migrateData($legacySaveFile);
+
+            if ($userState instanceof UserState) {
+                return $userState;
+            }
         }
 
-        $data = file_get_contents($this->path);
-
-        if (trim($data) === "") {
+        $json = $this->readJson(sprintf('%s/%s', $this->path, static::SAVE_FILE));
+        if (null === $json) {
             $this->wipeFile();
             return new UserState();
         }
 
-        $json = @json_decode($data, true);
-
-        if (null === $json && JSON_ERROR_NONE !== json_last_error()) {
-            $this->wipeFile();
+        if (!isset($json[$this->workshopName])) {
             return new UserState();
         }
 
+        $json = $json[$this->workshopName];
         if (!array_key_exists('completed_exercises', $json)) {
-            $this->wipeFile();
+            return new UserState();
+        }
+
+        if (!array_key_exists('current_exercise', $json)) {
             return new UserState();
         }
 
         if (!is_array($json['completed_exercises'])) {
-            $this->wipeFile();
-            return new UserState();
+            $json['completed_exercises'] = [];
         }
 
-        foreach ($json['completed_exercises'] as $exercise) {
+        foreach ($json['completed_exercises'] as $i => $exercise) {
             if (!is_string($exercise)) {
-                $this->wipeFile();
-                return new UserState();
+                unset($json['completed_exercises'][$i]);
             }
         }
 
-        if (!array_key_exists('current_exercise', $json)) {
-            $this->wipeFile();
-            return new UserState();
-        }
-
         if (null !== $json['current_exercise'] && !is_string($json['current_exercise'])) {
-            $this->wipeFile();
-            return new UserState();
+            $json['current_exercise'] = null;
         }
 
         return new UserState(
@@ -100,10 +125,79 @@ class UserStateSerializer
     }
 
     /**
+     * On early versions of the workshop the save data was not namespaced
+     * and therefore it was impossible to have data for more than one workshop
+     * at the same time. Therefore we must try to migrate that data in to the new namespaced
+     * format in order to preserve users save data.
+     *
+     * We can only migrate data when using the workshop the data was originally saved from
+     *
+     * @param string $legacySaveFile
+     * @return null|UserState
+     */
+    private function migrateData($legacySaveFile)
+    {
+        $data = $this->readJson($legacySaveFile);
+
+        if (null === $data) {
+            unlink($legacySaveFile);
+            return null;
+        }
+
+        //lets check if the data is in the old format
+        if (!isset($data['completed_exercises']) || !isset($data['current_exercise'])) {
+            unlink($legacySaveFile);
+            return null;
+        }
+
+        $completedExercises = $data['completed_exercises'];
+        $availableExercises = $this->exerciseRepository->getAllNames();
+
+        //check to see if this old data represents THIS workshop
+        //if not we bail
+        foreach ($completedExercises as $completedExercise) {
+            if (!in_array($completedExercise, $availableExercises)) {
+                return null;
+            }
+        }
+
+        $userState = new UserState($data['completed_exercises'], $data['current_exercise']);
+        $this->serialize($userState);
+
+        unlink($legacySaveFile);
+        return $userState;
+    }
+
+    /**
+     * @param string $filePath
+     * @return array|null
+     */
+    private function readJson($filePath)
+    {
+        if (!file_exists($filePath)) {
+            return null;
+        }
+
+        $data = file_get_contents($filePath);
+
+        if (trim($data) === "") {
+            return null;
+        }
+
+        $data = @json_decode($data, true);
+
+        if (null === $data && JSON_ERROR_NONE !== json_last_error()) {
+            return null;
+        }
+
+        return $data;
+    }
+
+    /**
      * Remove the file
      */
     private function wipeFile()
     {
-        unlink($this->path);
+        @unlink($this->path);
     }
 }
