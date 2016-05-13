@@ -231,8 +231,12 @@ return [
         $cliRenderer = (new MarkdownCliRendererFactory)->__invoke($c);
         return new MarkdownRenderer($docParser, $cliRenderer);
     }),
-    UserStateSerializer::class => factory(function () {
-        return new UserStateSerializer(sprintf('%s/.phpschool.json', getenv('HOME')));
+    UserStateSerializer::class => factory(function (ContainerInterface $c) {
+        return new UserStateSerializer(
+            getenv('HOME'),
+            $c->get('workshopTitle'),
+            $c->get(ExerciseRepository::class)
+        );
     }),
     UserState::class => factory(function (ContainerInterface $c) {
         return $c->get(UserStateSerializer::class)->deSerialize();
