@@ -43,6 +43,11 @@ class CgiRunner implements ExerciseRunnerInterface
      */
     public function __construct(CgiExercise $exercise, EventDispatcher $eventDispatcher)
     {
+        // Suppress shell output. Anything non-zero is a failure.
+        @system('php-cgi --version > /dev/null 2>&1', $failedToRun);
+        if ($failedToRun) {
+            die('Could not load php-cgi binary. Please install php-cgi using your package manager.' . PHP_EOL);
+        }
         $this->eventDispatcher = $eventDispatcher;
         $this->exercise = $exercise;
     }
