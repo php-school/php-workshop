@@ -43,10 +43,23 @@ class CgiRunner implements ExerciseRunnerInterface
      */
     public function __construct(CgiExercise $exercise, EventDispatcher $eventDispatcher)
     {
-        // Suppress shell output. Anything non-zero is a failure.
-        @system('php-cgi --version > /dev/null 2>&1', $failedToRun);
-        if ($failedToRun) {
-            die('Could not load php-cgi binary. Please install php-cgi using your package manager.' . PHP_EOL);
+        if (strpos(PHP_OS, 'WIN') !== false) {
+            // Check if in path. 2> nul > nul equivalent to 2>&1 /dev/null
+            $silence  = (PHP_OS == 'CYGWIN' ? '> /dev/null 2>&1' : '2> nul > nul');
+            system(sprintf('php-cgi --version %s', $silence), $failedToRun);
+            if ($failedToRun) {
+                $newPath = realpath(sprintf('%s/%s', dirname(PHP_BINARY), 'php-cgi.exe'));
+                // Try one more time, relying on being in the php binary's directory (where it should be on Windows)
+                system(sprintf('%s --version %s', $newPath, $silence), $stillFailedToRun);
+                if ($stillFailedToRun) {
+                    throw new \RuntimeException('Could not load php-cgi binary. Please install php-cgi using your package manager.');
+                }
+            }
+        } else {
+            @system('php-cgi --version > /dev/null 2>&1', $failedToRun);
+            if ($failedToRun) {
+                throw new \RuntimeException('Could not load php-cgi binary. Please install php-cgi using your package manager.');
+            }
         }
         $this->eventDispatcher = $eventDispatcher;
         $this->exercise = $exercise;
