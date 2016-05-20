@@ -52,13 +52,17 @@ class CgiRunner implements ExerciseRunnerInterface
                 // Try one more time, relying on being in the php binary's directory (where it should be on Windows)
                 system(sprintf('%s --version %s', $newPath, $silence), $stillFailedToRun);
                 if ($stillFailedToRun) {
-                    throw new \RuntimeException('Could not load php-cgi binary. Please install php-cgi using your package manager.');
+                    throw new \RuntimeException(
+                        'Could not load php-cgi binary. Please install php-cgi using your package manager.'
+                    );
                 }
             }
         } else {
             @system('php-cgi --version > /dev/null 2>&1', $failedToRun);
             if ($failedToRun) {
-                throw new \RuntimeException('Could not load php-cgi binary. Please install php-cgi using your package manager.');
+                throw new \RuntimeException(
+                    'Could not load php-cgi binary. Please install php-cgi using your package manager.'
+                );
             }
         }
         $this->eventDispatcher = $eventDispatcher;

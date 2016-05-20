@@ -166,7 +166,7 @@ final class Application
                     )
                 );
             return 1;
-        } catch(\RuntimeException $e) {
+        } catch (\RuntimeException $e) {
             $container
                 ->get(OutputInterface::class)
                 ->printError(
