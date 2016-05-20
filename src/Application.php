@@ -166,6 +166,16 @@ final class Application
                     )
                 );
             return 1;
+        } catch (\RuntimeException $e) {
+            $container
+                ->get(OutputInterface::class)
+                ->printError(
+                    sprintf(
+                        '%s',
+                        $e->getMessage()
+                    )
+                );
+            return 1;
         }
         return $exitCode;
     }
