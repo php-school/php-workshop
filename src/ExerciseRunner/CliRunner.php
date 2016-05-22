@@ -2,7 +2,6 @@
 
 namespace PhpSchool\PhpWorkshop\ExerciseRunner;
 
-use PhpSchool\PhpWorkshop\Event\CliEvent;
 use PhpSchool\PhpWorkshop\Event\CliExecuteEvent;
 use PhpSchool\PhpWorkshop\Event\Event;
 use PhpSchool\PhpWorkshop\Event\EventDispatcher;
@@ -11,7 +10,6 @@ use PhpSchool\PhpWorkshop\Exception\SolutionExecutionException;
 use PhpSchool\PhpWorkshop\Exercise\CliExercise;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseType;
-use PhpSchool\PhpWorkshop\ExerciseCheck\StdOutExerciseCheck;
 use PhpSchool\PhpWorkshop\Output\OutputInterface;
 use PhpSchool\PhpWorkshop\Result\Failure;
 use PhpSchool\PhpWorkshop\Result\ResultInterface;
@@ -71,8 +69,7 @@ class CliRunner implements ExerciseRunnerInterface
         if (!$process->isSuccessful()) {
             throw CodeExecutionException::fromProcess($process);
         }
-        
-        return $process->getOutput();
+        return ($type == 'user' ? ['output' => $process->getOutput(), 'warnings' => $process->getErrorOutput()] : $process->getOutput());
     }
 
     /**
@@ -110,13 +107,17 @@ class CliRunner implements ExerciseRunnerInterface
 
         try {
             $event = $this->eventDispatcher->dispatch(new CliExecuteEvent('cli.verify.user-execute.pre', $args));
-            $userOutput = $this->executePhpFile($fileName, $event->getArgs(), 'user');
+            list($userOutput, $userWarnings) = $this->executePhpFile($fileName, $event->getArgs(), 'user');
         } catch (CodeExecutionException $e) {
             $this->eventDispatcher->dispatch(new Event('cli.verify.user-execute.fail', ['exception' => $e]));
             return Failure::fromNameAndCodeExecutionFailure($this->getName(), $e);
         }
         if ($solutionOutput === $userOutput) {
-            return new Success($this->getName());
+            if (!empty($userWarnings)) {
+                return StdOutFailure::fromNameAndWarnings($this->getName(), $solutionOutput, $userOutput, $userWarnings);
+            } else {
+                return new Success($this->getName());
+            }
         }
 
         return StdOutFailure::fromNameAndOutput($this->getName(), $solutionOutput, $userOutput);

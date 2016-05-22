@@ -27,15 +27,21 @@ class StdOutFailure implements FailureInterface
     private $actualOutput;
 
     /**
+     * @var string
+     */
+    private $warnings;
+
+    /**
      * @param string $name
      * @param string $expectedOutput
      * @param string $actualOutput
      */
-    public function __construct($name, $expectedOutput, $actualOutput)
+    public function __construct($name, $expectedOutput, $actualOutput, $warnings)
     {
         $this->name             = $name;
         $this->expectedOutput   = $expectedOutput;
         $this->actualOutput     = $actualOutput;
+        $this->warnings         = $warnings;
     }
 
     /**
@@ -47,6 +53,18 @@ class StdOutFailure implements FailureInterface
     public static function fromNameAndOutput($name, $expectedOutput, $actualOutput)
     {
         return new static($name, $expectedOutput, $actualOutput);
+    }
+
+    /**
+     * @param string $name
+     * @param $expectedOutput
+     * @param $actualOutput
+     * @param $warnings
+     * @return static
+     */
+    public static function fromNameAndWarnings($name, $expectedOutput, $actualOutput, $warnings)
+    {
+        return new static($name, $expectedOutput, $actualOutput, $warnings);
     }
 
     /**
@@ -82,5 +100,13 @@ class StdOutFailure implements FailureInterface
     public function getActualOutput()
     {
         return $this->actualOutput;
+    }
+
+    /**
+     * @return string
+     */
+    public function getWarnings()
+    {
+        return $this->warnings;
     }
 }

@@ -203,9 +203,9 @@ return [
     }),
     CodePatcher::class  => factory(function (ContainerInterface $c) {
         $patch = (new Patch)
-            ->withInsertion(new Insertion(Insertion::TYPE_BEFORE, 'ini_set("display_errors", 1);'))
+            ->withInsertion(new Insertion(Insertion::TYPE_BEFORE, 'ini_set("display_errors", 0);'))
             ->withInsertion(new Insertion(Insertion::TYPE_BEFORE, 'error_reporting(E_ALL);'))
-            ->withInsertion(new Insertion(Insertion ::TYPE_BEFORE, 'date_default_timezone_set("Europe/London");'));
+            ->withInsertion(new Insertion(Insertion::TYPE_BEFORE, 'date_default_timezone_set("Europe/London");'));
         
         return new CodePatcher($c->get(Parser::class), new Standard, $patch);
     }),

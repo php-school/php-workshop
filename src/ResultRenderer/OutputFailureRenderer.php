@@ -32,11 +32,13 @@ class OutputFailureRenderer implements ResultRendererInterface
     public function render(ResultsRenderer $renderer)
     {
         return sprintf(
-            "  %s\n%s\n\n  %s\n%s\n",
+            "  %s\n%s\n\n  %s\n%s\n" . ($this->result->getWarnings() ? "\n  %s\n%s\n" : ""),
             $renderer->style("ACTUAL", ['bold', 'underline', 'yellow']),
             $this->indent($renderer->style(sprintf('"%s"', $this->result->getActualOutput()), 'red')),
             $renderer->style("EXPECTED", ['yellow', 'bold', 'underline']),
-            $this->indent($renderer->style(sprintf('"%s"', $this->result->getExpectedOutput()), 'red'))
+            $this->indent($renderer->style(sprintf('"%s"', $this->result->getExpectedOutput()), 'red')),
+            $renderer->style("WARNINGS", ['yellow', 'bold', 'underline']),
+            $this->indent($renderer->style(sprintf('"%s"', $this->result->getWarnings()), 'red'))
         );
     }
 
