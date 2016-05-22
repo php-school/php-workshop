@@ -26,12 +26,12 @@ class CodePatcherTest extends PHPUnit_Framework_TestCase
     public function testDefaultPatchIsAppliedIfAvailable()
     {
         $patch = (new Patch)
-            ->withInsertion(new Insertion(Insertion::TYPE_BEFORE, 'ini_set("display_errors", 1);'));
+            ->withInsertion(new Insertion(Insertion::TYPE_BEFORE, 'ini_set("display_errors", 0);'));
 
         $patcher = new CodePatcher((new ParserFactory)->create(ParserFactory::PREFER_PHP7), new Standard, $patch);
         $exercise = $this->getMock(ExerciseInterface::class);
 
-        $expected = "<?php\n\nini_set(\"display_errors\", 1);\n\$original = true;";
+        $expected = "<?php\n\nini_set(\"display_errors\", 0);\n\$original = true;";
         $this->assertEquals($expected, $patcher->patch($exercise, '<?php $original = true;'));
     }
     
