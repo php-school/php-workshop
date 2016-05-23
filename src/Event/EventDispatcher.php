@@ -2,7 +2,6 @@
 
 namespace PhpSchool\PhpWorkshop\Event;
 
-use Assert\Assertion;
 use PhpSchool\PhpWorkshop\Result\ResultInterface;
 use PhpSchool\PhpWorkshop\ResultAggregator;
 
@@ -17,11 +16,6 @@ class EventDispatcher
      * @var array
      */
     private $listeners = [];
-
-    /**
-     * @var array
-     */
-    private $verifiers = [];
 
     /**
      * @var ResultAggregator
@@ -45,19 +39,6 @@ class EventDispatcher
         if (array_key_exists($event->getName(), $this->listeners)) {
             foreach ($this->listeners[$event->getName()] as $listener) {
                 $listener($event);
-            }
-        }
-
-        if (array_key_exists($event->getName(), $this->verifiers)) {
-            foreach ($this->verifiers[$event->getName()] as $verifier) {
-                $result = $verifier($event);
-
-                //return type hints pls
-                if ($result instanceof ResultInterface) {
-                    $this->resultAggregator->add($result);
-                } else {
-                    //??!!
-                }
             }
         }
 
@@ -94,14 +75,19 @@ class EventDispatcher
 
     /**
      * @param string $eventName
-     * @param callable $callback
+     * @param callable $verifier
      */
-    public function insertVerifier($eventName, callable $callback)
+    public function insertVerifier($eventName, callable $verifier)
     {
-        if (!array_key_exists($eventName, $this->verifiers)) {
-            $this->verifiers[$eventName] = [$callback];
-        } else {
-            $this->verifiers[$eventName][] = $callback;
-        }
+        $this->attachListener($eventName, function (EventInterface $event) use ($verifier) {
+            $result = $verifier($event);
+
+            //return type hints pls
+            if ($result instanceof ResultInterface) {
+                $this->resultAggregator->add($result);
+            } else {
+                //??!!
+            }
+        });
     }
 }
