@@ -110,9 +110,9 @@ class CliRunner implements ExerciseRunnerInterface
             list($userOutput, $userWarnings) = $this->executePhpFile($fileName, $event->getArgs(), 'user');
         } catch (CodeExecutionException $e) {
             $this->eventDispatcher->dispatch(new Event('cli.verify.user-execute.fail', ['exception' => $e]));
-            return Failure::fromNameAndCodeExecutionFailure($this->getName(), $e);
+            return Failure::fromNameAndCodeExecutionFailure($this->getName(), $e, $solutionOutput, $e->getActual(), $e->getErrors());
         }
-        if ($solutionOutput === $userOutput) {
+        if ($solutionOutput === $userOutput || !empty($userWarnings)) {
             if (!empty($userWarnings)) {
                 return StdOutFailure::fromNameAndWarnings($this->getName(), $solutionOutput, $userOutput, $userWarnings);
             } else {

@@ -37,24 +37,32 @@ class CgiOutRequestFailure implements FailureInterface
     private $actualHeaders;
 
     /**
+     * @var string|null
+     */
+    private $warnings;
+
+    /**
      * @param RequestInterface $request
      * @param string $expectedOutput
      * @param string $actualOutput
      * @param array $expectedHeaders
      * @param array $actualHeaders
+     * @param string|null $warnings
      */
     public function __construct(
         RequestInterface $request,
         $expectedOutput,
         $actualOutput,
         array $expectedHeaders,
-        array $actualHeaders
+        array $actualHeaders,
+        $warnings = null
     ) {
         $this->request          = $request;
         $this->expectedOutput   = $expectedOutput;
         $this->actualOutput     = $actualOutput;
         $this->expectedHeaders  = $expectedHeaders;
         $this->actualHeaders    = $actualHeaders;
+        $this->warnings         = $warnings;
     }
 
     /**
@@ -127,5 +135,13 @@ class CgiOutRequestFailure implements FailureInterface
     public function getCheckName()
     {
         return 'Request Failure';
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getWarnings()
+    {
+        return $this->warnings;
     }
 }

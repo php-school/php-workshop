@@ -19,6 +19,21 @@ class Failure implements FailureInterface
     private $reason;
 
     /**
+     * @var string|null
+     */
+    private $expectedOutput;
+
+    /**
+     * @var string|null
+     */
+    private $actualOutput;
+
+    /**
+     * @var string|null
+     */
+    private $errors;
+
+    /**
      * @var string
      */
     private $name;
@@ -26,11 +41,16 @@ class Failure implements FailureInterface
     /**
      * @param string $name
      * @param string|null $reason
+     * @param string|null $expectedOutput
+     * @param string|null $actualOutput
      */
-    public function __construct($name, $reason = null)
+    public function __construct($name, $reason = null, $expectedOutput = null, $actualOutput = null, $errors = null)
     {
-        $this->name     = $name;
-        $this->reason   = $reason;
+        $this->name           = $name;
+        $this->reason         = $reason;
+        $this->expectedOutput = $expectedOutput;
+        $this->actualOutput   = $actualOutput;
+        $this->errors         = $errors;
     }
 
     /**
@@ -56,11 +76,14 @@ class Failure implements FailureInterface
     /**
      * @param string $name
      * @param CodeExecutionException $e
+     * @param string|null $expectedOutput
+     * @param string|null $actualOutput
+     * @param string|null $errors
      * @return static
      */
-    public static function fromNameAndCodeExecutionFailure($name, CodeExecutionException $e)
+    public static function fromNameAndCodeExecutionFailure($name, CodeExecutionException $e, $expectedOutput = null, $actualOutput = null, $errors = null)
     {
-        return new static($name, $e->getMessage());
+        return new static($name, $e->getMessage(), $expectedOutput, $actualOutput, $errors);
     }
 
     /**
@@ -91,5 +114,28 @@ class Failure implements FailureInterface
     public function getReason()
     {
         return $this->reason;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getExpectedOutput()
+    {
+        return $this->expectedOutput;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getActualOutput()
+    {
+        return $this->actualOutput;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getErrors() {
+        return $this->errors;
     }
 }

@@ -30,6 +30,35 @@ class FailureRenderer implements ResultRendererInterface
      */
     public function render(ResultsRenderer $renderer)
     {
-        return '  ' . $this->result->getReason() . "\n";
+        if ($this->result->getExpectedOutput()) {
+            return sprintf(
+                "  %s\n%s\n\n  %s\n%s\n" . ($this->result->getErrors() ? "\n  %s\n%s\n" : ""),
+                $renderer->style("ACTUAL", ['bold', 'underline', 'yellow']),
+                $this->indent($renderer->style(sprintf('"%s"', $this->result->getActualOutput()), 'red')),
+                $renderer->style("EXPECTED", ['yellow', 'bold', 'underline']),
+                $this->indent($renderer->style(sprintf('"%s"', $this->result->getExpectedOutput()), 'red')),
+                $renderer->style("ERRORS/WARNINGS", ['yellow', 'bold', 'underline']),
+                $this->indent($renderer->style(sprintf('%s', $this->result->getErrors()), 'red'))
+            );
+        } else {
+            return '  ' . $this->result->getReason() . "\n";
+        }
+    }
+
+    /**
+     * @param string $string
+     * @return string
+     */
+    private function indent($string)
+    {
+        return implode(
+            "\n",
+            array_map(
+                function ($line) {
+                    return sprintf("  %s", $line);
+                },
+                explode("\n", $string)
+            )
+        );
     }
 }

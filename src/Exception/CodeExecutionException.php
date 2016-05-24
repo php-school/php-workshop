@@ -12,14 +12,48 @@ use Symfony\Component\Process\Process;
  */
 class CodeExecutionException extends RuntimeException
 {
+
+    /**
+     * @var string
+     */
+    private $actual;
+    /**
+     * @var string
+     */
+    private $errors;
+
+    /**
+     * CodeExecutionException constructor.
+     * @param string $reason
+     * @param string $actual
+     * @param string $errors
+     */
+    public function __construct($reason, $actual, $errors) {
+        $this->message  = $reason;
+        $this->actual   = $actual;
+        $this->errors   = $errors;
+    }
+
     /**
      * @param Process $process
      * @return static
      */
     public static function fromProcess(Process $process)
     {
-        $message        = 'PHP Code failed to execute. Error: "%s"';
-        $processOutput  = $process->getErrorOutput() ? $process->getErrorOutput() : $process->getOutput();
-        return new static(sprintf($message, $processOutput));
+        $message        = "PHP Code failed to execute. Error: \n%s";
+        $processOutput  = $process->getOutput();
+        $processErrorOutput  = $process->getErrorOutput();
+        return new static(sprintf($message, $processErrorOutput ?: $processOutput), $processOutput, $processErrorOutput);
     }
+
+    public function getActual()
+    {
+        return $this->actual;
+    }
+
+    public function getErrors()
+    {
+        return $this->errors;
+    }
+
 }

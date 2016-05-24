@@ -98,7 +98,7 @@ class CgiRunner implements ExerciseRunnerInterface
 
         try {
             $event = $this->eventDispatcher->dispatch(new CgiExecuteEvent('cgi.verify.user-execute.pre', $request));
-            $userResponse = $this->executePhpFile($fileName, $event->getRequest(), 'user');
+            list($userResponse, $userWarnings) = $this->executePhpFile($fileName, $event->getRequest(), 'user');
         } catch (CodeExecutionException $e) {
             $this->eventDispatcher->dispatch(new Event('cgi.verify.user-execute.fail', ['exception' => $e]));
             return Failure::fromNameAndCodeExecutionFailure($this->getName(), $e);
@@ -109,8 +109,8 @@ class CgiRunner implements ExerciseRunnerInterface
         $solutionHeaders    = $this->getHeaders($solutionResponse);
         $userHeaders        = $this->getHeaders($userResponse);
 
-        if ($solutionBody !== $userBody || $solutionHeaders !== $userHeaders) {
-            return new CgiOutRequestFailure($request, $solutionBody, $userBody, $solutionHeaders, $userHeaders);
+        if ($solutionBody !== $userBody || $solutionHeaders !== $userHeaders || $userWarnings) {
+            return new CgiOutRequestFailure($request, $solutionBody, $userBody, $solutionHeaders, $userHeaders, $userWarnings);
         }
 
         return new Success($this->getName());
@@ -153,7 +153,7 @@ class CgiRunner implements ExerciseRunnerInterface
             $output = "HTTP/1.0 200 OK\r\n" . $output;
         }
 
-        return ResponseSerializer::fromString($output);
+        return ($type == 'user' ? [ResponseSerializer::fromString($output), $process->getErrorOutput()] : ResponseSerializer::fromString($output));
     }
 
     /**
