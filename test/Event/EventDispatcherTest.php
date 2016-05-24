@@ -4,6 +4,7 @@ namespace PhpSchool\PhpWorkshopTest\Event;
 
 use PhpSchool\PhpWorkshop\Event\Event;
 use PhpSchool\PhpWorkshop\Event\EventDispatcher;
+use PhpSchool\PhpWorkshop\Event\EventInterface;
 use PhpSchool\PhpWorkshop\Result\ResultInterface;
 use PhpSchool\PhpWorkshop\ResultAggregator;
 use PHPUnit_Framework_TestCase;
@@ -44,9 +45,15 @@ class EventDispatcherTest extends PHPUnit_Framework_TestCase
         $mockCallback2->expects($this->never())
             ->method('doNotInvokeMe');
 
-        $this->eventDispatcher->listen('some-event', [$mockCallback1, 'callback']);
-        $this->eventDispatcher->listen('some-event', [$mockCallback1, 'callback']);
-        $this->eventDispatcher->listen('different-event', [$mockCallback2, 'doNotInvokeMe']);
+        $cb = function (Event $e) use ($mockCallback1) {
+            $mockCallback1->callback($e);
+        };
+
+        $this->eventDispatcher->listen('some-event', $cb);
+        $this->eventDispatcher->listen('some-event', $cb);
+        $this->eventDispatcher->listen('different-event', function (Event $e) use ($mockCallback2) {
+            $mockCallback2->doNotInvokeMe($e);
+        });
         $this->eventDispatcher->dispatch($e);
     }
 
@@ -61,8 +68,12 @@ class EventDispatcherTest extends PHPUnit_Framework_TestCase
             ->with($e)
             ->will($this->returnValue($result));
 
-        $this->eventDispatcher->insertVerifier('some-event', [$mockCallback1, 'callback']);
-        $this->eventDispatcher->insertVerifier('some-event', [$mockCallback1, 'callback']);
+        $cb = function (Event $e) use ($mockCallback1) {
+            return $mockCallback1->callback($e);
+        };
+
+        $this->eventDispatcher->insertVerifier('some-event', $cb);
+        $this->eventDispatcher->insertVerifier('some-event', $cb);
         $this->eventDispatcher->dispatch($e);
 
         $this->assertEquals([$result, $result], iterator_to_array($this->results));
@@ -77,7 +88,9 @@ class EventDispatcherTest extends PHPUnit_Framework_TestCase
             ->with($e)
             ->will($this->returnValue(null));
 
-        $this->eventDispatcher->insertVerifier('some-event', [$mockCallback1, 'callback']);
+        $this->eventDispatcher->insertVerifier('some-event', function (Event $e) use ($mockCallback1) {
+            $mockCallback1->callback($e);
+        });
         $this->eventDispatcher->dispatch($e);
 
         $this->assertEquals([], iterator_to_array($this->results));
@@ -96,5 +109,24 @@ class EventDispatcherTest extends PHPUnit_Framework_TestCase
         $this->eventDispatcher->listen(['some-event', 'second-event'], [$mockCallback1, 'callback']);
         $this->eventDispatcher->dispatch($e1);
         $this->eventDispatcher->dispatch($e2);
+    }
+
+    public function testListenersAndVerifiersAreCalledInOrderOfAttachment()
+    {
+        $e1 = new Event('first-event', ['arg1' => 1, 'arg2' => 2]);
+
+
+        $counter = 0;
+        $this->eventDispatcher->insertVerifier('first-event', function (Event $e) use (&$counter) {
+            $this->assertEquals(0, $counter);
+            $counter++;
+        });
+
+        $this->eventDispatcher->listen('first-event', function (Event $e) use (&$counter) {
+            $this->assertEquals(1, $counter);
+            $counter++;
+        });
+
+        $this->eventDispatcher->dispatch($e1);
     }
 }
