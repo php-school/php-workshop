@@ -28,7 +28,8 @@ class CodeExecutionException extends RuntimeException
      * @param string $actual
      * @param string $errors
      */
-    public function __construct($reason, $actual, $errors) {
+    public function __construct($reason, $actual, $errors)
+    {
         $this->message  = $reason;
         $this->actual   = $actual;
         $this->errors   = $errors;
@@ -43,7 +44,9 @@ class CodeExecutionException extends RuntimeException
         $message        = "PHP Code failed to execute. Error: \n%s";
         $processOutput  = $process->getOutput();
         $processErrorOutput  = $process->getErrorOutput();
-        return new static(sprintf($message, $processErrorOutput ?: $processOutput), $processOutput, $processErrorOutput);
+        return new static(
+            sprintf($message, $processErrorOutput ?: $processOutput), $processOutput, $processErrorOutput
+        );
     }
 
     public function getActual()
@@ -55,5 +58,4 @@ class CodeExecutionException extends RuntimeException
     {
         return $this->errors;
     }
-
 }

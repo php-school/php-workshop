@@ -69,7 +69,11 @@ class CliRunner implements ExerciseRunnerInterface
         if (!$process->isSuccessful()) {
             throw CodeExecutionException::fromProcess($process);
         }
-        return ($type == 'user' ? ['output' => $process->getOutput(), 'warnings' => $process->getErrorOutput()] : $process->getOutput());
+        return (
+        $type == 'user' ?
+            ['output' => $process->getOutput(), 'warnings' => $process->getErrorOutput()]
+            : $process->getOutput()
+        );
     }
 
     /**
@@ -110,11 +114,22 @@ class CliRunner implements ExerciseRunnerInterface
             list($userOutput, $userWarnings) = $this->executePhpFile($fileName, $event->getArgs(), 'user');
         } catch (CodeExecutionException $e) {
             $this->eventDispatcher->dispatch(new Event('cli.verify.user-execute.fail', ['exception' => $e]));
-            return Failure::fromNameAndCodeExecutionFailure($this->getName(), $e, $solutionOutput, $e->getActual(), $e->getErrors());
+            return Failure::fromNameAndCodeExecutionFailure(
+                $this->getName(),
+                $e,
+                $solutionOutput,
+                $e->getActual(),
+                $e->getErrors()
+            );
         }
         if ($solutionOutput === $userOutput || !empty($userWarnings)) {
             if (!empty($userWarnings)) {
-                return StdOutFailure::fromNameAndWarnings($this->getName(), $solutionOutput, $userOutput, $userWarnings);
+                return StdOutFailure::fromNameAndWarnings(
+                    $this->getName(),
+                    $solutionOutput,
+                    $userOutput,
+                    $userWarnings
+                );
             } else {
                 return new Success($this->getName());
             }

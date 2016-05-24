@@ -81,8 +81,13 @@ class Failure implements FailureInterface
      * @param string|null $errors
      * @return static
      */
-    public static function fromNameAndCodeExecutionFailure($name, CodeExecutionException $e, $expectedOutput = null, $actualOutput = null, $errors = null)
-    {
+    public static function fromNameAndCodeExecutionFailure(
+        $name,
+        CodeExecutionException $e,
+        $expectedOutput = null,
+        $actualOutput = null,
+        $errors = null
+    ) {
         return new static($name, $e->getMessage(), $expectedOutput, $actualOutput, $errors);
     }
 
@@ -135,7 +140,8 @@ class Failure implements FailureInterface
     /**
      * @return string|null
      */
-    public function getErrors() {
+    public function getErrors()
+    {
         return $this->errors;
     }
 }

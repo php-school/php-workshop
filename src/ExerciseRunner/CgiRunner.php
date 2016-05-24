@@ -110,7 +110,14 @@ class CgiRunner implements ExerciseRunnerInterface
         $userHeaders        = $this->getHeaders($userResponse);
 
         if ($solutionBody !== $userBody || $solutionHeaders !== $userHeaders || $userWarnings) {
-            return new CgiOutRequestFailure($request, $solutionBody, $userBody, $solutionHeaders, $userHeaders, $userWarnings);
+            return new CgiOutRequestFailure(
+                $request,
+                $solutionBody,
+                $userBody,
+                $solutionHeaders,
+                $userHeaders,
+                $userWarnings
+            );
         }
 
         return new Success($this->getName());
@@ -153,7 +160,11 @@ class CgiRunner implements ExerciseRunnerInterface
             $output = "HTTP/1.0 200 OK\r\n" . $output;
         }
 
-        return ($type == 'user' ? [ResponseSerializer::fromString($output), $process->getErrorOutput()] : ResponseSerializer::fromString($output));
+        return (
+        $type == 'user' ?
+            [ResponseSerializer::fromString($output), $process->getErrorOutput()]
+            : ResponseSerializer::fromString($output)
+        );
     }
 
     /**
