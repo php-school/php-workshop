@@ -28,7 +28,7 @@ class CodeExecutionException extends RuntimeException
      * @param string $actual
      * @param string $errors
      */
-    public function __construct($reason, $actual, $errors)
+    public function __construct($reason, $actual = null, $errors = null)
     {
         $this->message  = $reason;
         $this->actual   = $actual;

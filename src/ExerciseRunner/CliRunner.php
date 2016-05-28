@@ -71,7 +71,7 @@ class CliRunner implements ExerciseRunnerInterface
         }
         return (
         $type == 'user' ?
-            ['output' => $process->getOutput(), 'warnings' => $process->getErrorOutput()]
+            [$process->getOutput(), $process->getErrorOutput()]
             : $process->getOutput()
         );
     }

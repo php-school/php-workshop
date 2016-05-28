@@ -36,7 +36,7 @@ class StdOutFailure implements FailureInterface
      * @param string $expectedOutput
      * @param string $actualOutput
      */
-    public function __construct($name, $expectedOutput, $actualOutput, $warnings)
+    public function __construct($name, $expectedOutput, $actualOutput, $warnings = null)
     {
         $this->name             = $name;
         $this->expectedOutput   = $expectedOutput;

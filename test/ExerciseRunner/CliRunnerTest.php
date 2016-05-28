@@ -58,7 +58,7 @@ class CliRunnerTest extends PHPUnit_Framework_TestCase
             ->method('getArgs')
             ->will($this->returnValue([]));
 
-        $regex  = "/^PHP Code failed to execute\\. Error: \"PHP Parse error:  syntax error, unexpected end of file";
+        $regex  = "/^PHP Code failed to execute\\. Error: \\nPHP Parse error:  syntax error, unexpected end of file";
         $regex .= ", expecting ',' or ';'/";
         $this->setExpectedExceptionRegExp(SolutionExecutionException::class, $regex);
         $this->runner->verify('');
@@ -98,7 +98,7 @@ class CliRunnerTest extends PHPUnit_Framework_TestCase
 
         $failure = $this->runner->verify(__DIR__ . '/../res/cli/user-error.php');
 
-        $failureMsg  = "/^PHP Code failed to execute. Error: \"PHP Parse error:  syntax error, ";
+        $failureMsg  = "/^PHP Code failed to execute. Error: \\nPHP Parse error:  syntax error, ";
         $failureMsg .= "unexpected end of file, expecting ',' or ';'/";
 
         $this->assertInstanceOf(Failure::class, $failure);
@@ -155,7 +155,7 @@ class CliRunnerTest extends PHPUnit_Framework_TestCase
             ->method('getArgs')
             ->will($this->returnValue([1, 2, 3]));
 
-        $this->expectOutputRegex('/PHP Parse error:  syntax error, unexpected end of file, expecting \',\' or \';\' /');
+        $this->expectOutputRegex("/PHP Parse error: \\nsyntax error, unexpected end of file, expecting ',' or ';' /");
 
         $success = $this->runner->run(__DIR__ . '/../res/cli/user-error.php', $output);
         $this->assertFalse($success);

@@ -31,7 +31,7 @@ class CodeExecutionExceptionTest extends PHPUnit_Framework_TestCase
             ->will($this->returnValue('Error Output'));
         
         $e = CodeExecutionException::fromProcess($process);
-        $this->assertEquals('PHP Code failed to execute. Error: "Error Output"', $e->getMessage());
+        $this->assertEquals("PHP Code failed to execute. Error: \nError Output", $e->getMessage());
     }
 
     public function testFromProcessUsesStdOutputIfErrorOutputEmpty()
@@ -51,6 +51,6 @@ class CodeExecutionExceptionTest extends PHPUnit_Framework_TestCase
             ->will($this->returnValue('Std Output'));
 
         $e = CodeExecutionException::fromProcess($process);
-        $this->assertEquals('PHP Code failed to execute. Error: "Std Output"', $e->getMessage());
+        $this->assertEquals("PHP Code failed to execute. Error: \nStd Output", $e->getMessage());
     }
 }
