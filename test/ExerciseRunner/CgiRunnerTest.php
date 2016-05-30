@@ -65,7 +65,8 @@ class CgiRunnerTest extends PHPUnit_Framework_TestCase
             ->method('getRequests')
             ->will($this->returnValue([$request]));
 
-        $regex  = "/^PHP Code failed to execute\\. Error: \\nPHP Parse error:  syntax error, unexpected end of file in/";
+        $regex  =
+            "/^PHP Code failed to execute\\. Error: \\nPHP Parse error:  syntax error, unexpected end of file in/";
         $this->setExpectedExceptionRegExp(SolutionExecutionException::class, $regex);
         $this->runner->verify('');
     }
