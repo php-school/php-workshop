@@ -26,7 +26,7 @@ class CodeExecutionExceptionTest extends PHPUnit_Framework_TestCase
             ->getMock();
         
         $process
-            ->expects($this->exactly(2))
+            ->expects($this->exactly(1))
             ->method('getErrorOutput')
             ->will($this->returnValue('Error Output'));
         
