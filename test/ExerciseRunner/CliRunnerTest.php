@@ -155,7 +155,7 @@ class CliRunnerTest extends PHPUnit_Framework_TestCase
             ->method('getArgs')
             ->will($this->returnValue([1, 2, 3]));
 
-        $this->expectOutputRegex("/PHP Parse error: \\nsyntax error, unexpected end of file, expecting ',' or ';' /");
+        $this->expectOutputRegex("/PHP Parse error:  syntax error, unexpected end of file, expecting ',' or ';' /");
 
         $success = $this->runner->run(__DIR__ . '/../res/cli/user-error.php', $output);
         $this->assertFalse($success);
