@@ -12,14 +12,9 @@ use Closure;
 class Patch
 {
     /**
-     * @var CodeInsertion[]
-     */
-    private $insertions = [];
-
-    /**
      * @var array
      */
-    private $transformers = [];
+    private $modifications = [];
 
     /**
      * @param CodeInsertion $insertion
@@ -28,7 +23,7 @@ class Patch
     public function withInsertion(CodeInsertion $insertion)
     {
         $new = clone $this;
-        $new->insertions[] = $insertion;
+        $new->modifications[] = $insertion;
         return $new;
     }
 
@@ -39,23 +34,15 @@ class Patch
     public function withTransformer(Closure $closure)
     {
         $new = clone $this;
-        $new->transformers[] = $closure;
+        $new->modifications[] = $closure;
         return $new;
     }
 
     /**
      * @return array
      */
-    public function getInsertions()
+    public function getModifiers()
     {
-        return $this->insertions;
-    }
-
-    /**
-     * @return array
-     */
-    public function getTransformers()
-    {
-        return $this->transformers;
+        return $this->modifications;
     }
 }
