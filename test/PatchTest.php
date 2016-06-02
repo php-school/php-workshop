@@ -20,8 +20,8 @@ class PatchTest extends PHPUnit_Framework_TestCase
         $new = $patch->withInsertion($insertion);
         
         $this->assertNotSame($patch, $new);
-        $this->assertEmpty($patch->getInsertions());
-        $this->assertEquals([$insertion], $new->getInsertions());
+        $this->assertEmpty($patch->getModifiers());
+        $this->assertEquals([$insertion], $new->getModifiers());
     }
 
     public function testWithTransformer()
@@ -32,7 +32,7 @@ class PatchTest extends PHPUnit_Framework_TestCase
         };
         $new = $patch->withTransformer($transformer);
         $this->assertNotSame($patch, $new);
-        $this->assertEmpty($patch->getTransformers());
-        $this->assertEquals([$transformer], $new->getTransformers());
+        $this->assertEmpty($patch->getModifiers());
+        $this->assertEquals([$transformer], $new->getModifiers());
     }
 }

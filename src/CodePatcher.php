@@ -71,30 +71,46 @@ class CodePatcher
     private function applyPatch(Patch $patch, $code)
     {
         $statements = $this->parser->parse($code);
-        foreach ($patch->getInsertions() as $insertion) {
-            try {
-                $codeToInsert = $insertion->getCode();
-                $codeToInsert = sprintf('<?php %s', preg_replace('/^\s*<\?php/', '', $codeToInsert));
-                $additionalStatements = $this->parser->parse($codeToInsert);
-            } catch (Error $e) {
-                //we should probably log this and have a dev mode or something
+        foreach ($patch->getModifiers() as $modifier) {
+            if ($modifier instanceof CodeInsertion) {
+                $statements = $this->applyCodeInsertion($modifier, $statements);
                 continue;
             }
 
-            switch ($insertion->getType()) {
-                case CodeInsertion::TYPE_BEFORE:
-                    array_unshift($statements, ...$additionalStatements);
-                    break;
-                case CodeInsertion::TYPE_AFTER:
-                    array_push($statements, ...$additionalStatements);
-                    break;
+            if (is_callable($modifier)) {
+                $statements = $modifier($statements);
+                continue;
             }
         }
 
-        foreach ($patch->getTransformers() as $transformer) {
-            $statements = $transformer($statements);
+        return $this->printer->prettyPrintFile($statements);
+    }
+
+    /**
+     * @param CodeInsertion $codeInsertion
+     * @param array $statements
+     * @return array
+     */
+    private function applyCodeInsertion(CodeInsertion $codeInsertion, array $statements)
+    {
+        try {
+            $codeToInsert = $codeInsertion->getCode();
+            $codeToInsert = sprintf('<?php %s', preg_replace('/^\s*<\?php/', '', $codeToInsert));
+            $additionalStatements = $this->parser->parse($codeToInsert);
+        } catch (Error $e) {
+            //we should probably log this and have a dev mode or something
+            return $statements;
         }
 
-        return $this->printer->prettyPrintFile($statements);
+        switch ($codeInsertion->getType()) {
+            case CodeInsertion::TYPE_BEFORE:
+                array_unshift($statements, ...$additionalStatements);
+                break;
+            case CodeInsertion::TYPE_AFTER:
+                array_push($statements, ...$additionalStatements);
+                break;
+        }
+
+        return $statements;
     }
 }
