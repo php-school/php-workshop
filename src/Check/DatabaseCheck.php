@@ -110,12 +110,12 @@ class DatabaseCheck implements ListenableCheckInterface
             $e->getParameter('exercise')->seed($db);
         });
 
-        $eventDispatcher->listen('cli.verify.solution-execute.pre', function (CliExecuteEvent $e) {
+        $eventDispatcher->listen('cli.verify.reference-execute.pre', function (CliExecuteEvent $e) {
             $e->prependArg($this->solutionDsn);
         });
 
         $eventDispatcher->listen(
-            ['cli.verify.user-execute.pre', 'cli.run.user-execute.pre'],
+            ['cli.verify.student-execute.pre', 'cli.run.student-execute.pre'],
             function (CliExecuteEvent $e) {
                 $e->prependArg($this->userDsn);
             }
@@ -133,7 +133,7 @@ class DatabaseCheck implements ListenableCheckInterface
 
         $eventDispatcher->listen(
             [
-                'cli.verify.solution-execute.fail',
+                'cli.verify.reference-execute.fail',
                 'verify.finish',
                 'run.finish'
             ],
