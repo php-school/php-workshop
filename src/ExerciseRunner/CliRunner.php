@@ -147,7 +147,9 @@ class CliRunner implements ExerciseRunnerInterface
         $output->writeTitle("Output");
         $process = $this->getPhpProcess($fileName, $args);
         $process->start();
-        $this->eventDispatcher->dispatch(new CliExecuteEvent('cli.run.student.executing', $args, ['output' => $output]));
+        $this->eventDispatcher->dispatch(
+            new CliExecuteEvent('cli.run.student.executing', $args, ['output' => $output])
+        );
         $process->wait(function ($outputType, $outputBuffer) use ($output) {
             $output->writeLine($outputBuffer);
         });

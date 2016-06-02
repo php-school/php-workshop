@@ -85,7 +85,9 @@ class CgiRunner implements ExerciseRunnerInterface
     private function checkRequest(RequestInterface $request, $fileName)
     {
         try {
-            $event = $this->eventDispatcher->dispatch(new CgiExecuteEvent('cgi.verify.reference-execute.pre', $request));
+            $event = $this->eventDispatcher->dispatch(
+                new CgiExecuteEvent('cgi.verify.reference-execute.pre', $request)
+            );
             $solutionResponse = $this->executePhpFile(
                 $this->exercise->getSolution()->getEntryPoint(),
                 $event->getRequest(),
