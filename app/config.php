@@ -31,6 +31,7 @@ use PhpSchool\PhpWorkshop\Output\OutputInterface;
 use PhpSchool\PhpWorkshop\Output\StdOutput;
 use PhpSchool\PhpWorkshop\Patch;
 use PhpSchool\PhpWorkshop\ResultAggregator;
+use PhpSchool\PSX\Factory as PsxFactory;
 use PhpSchool\PSX\SyntaxHighlighter;
 use PhpSchool\PhpWorkshop\Check\FileExistsCheck;
 use PhpSchool\PhpWorkshop\Check\FunctionRequirementsCheck;
@@ -57,7 +58,7 @@ use Faker\Generator as FakerGenerator;
 
 return [
     'appName' => basename($_SERVER['argv'][0]),
-    ExerciseDispatcher::class => factory(function (ContainerInterface $c) {
+    ExerciseDispatcher::class => function (ContainerInterface $c) {
         $dispatcher = new ExerciseDispatcher(
             $c->get(RunnerFactory::class),
             $c->get(ResultAggregator::class),
@@ -70,9 +71,9 @@ return [
         $dispatcher->requireCheck(PhpLintCheck::class);
         $dispatcher->requireCheck(CodeParseCheck::class);
         return $dispatcher;
-    }),
+    },
     ResultAggregator::class => object(ResultAggregator::class),
-    CheckRepository::class => factory(function (ContainerInterface $c) {
+    CheckRepository::class => function (ContainerInterface $c) {
         return new CheckRepository([
             $c->get(FileExistsCheck::class),
             $c->get(PhpLintCheck::class),
@@ -81,8 +82,8 @@ return [
             $c->get(FunctionRequirementsCheck::class),
             $c->get(DatabaseCheck::class),
         ]);
-    }),
-    CommandRouter::class => factory(function (ContainerInterface $c) {
+    },
+    CommandRouter::class => function (ContainerInterface $c) {
         return new CommandRouter(
             [
                 new CommandDefinition('menu', [], MenuCommand::class),
@@ -95,38 +96,37 @@ return [
             'menu',
             $c
         );
-    }),
+    },
 
-    Color::class => factory(function (ContainerInterface $c) {
+    Color::class => function () {
         $colors = new Color;
         $colors->setForceStyle(true);
         return $colors;
-    }),
-    OutputInterface::class => factory(function (ContainerInterface $c) {
+    },
+    OutputInterface::class => function (ContainerInterface $c) {
         return new StdOutput($c->get(Color::class), $c->get(TerminalInterface::class));
-    }),
+    },
 
-    ExerciseRepository::class => factory(function (ContainerInterface $c) {
+    ExerciseRepository::class => function (ContainerInterface $c) {
         return new ExerciseRepository(
             array_map(function ($exerciseClass) use ($c) {
                 return $c->get($exerciseClass);
             }, $c->get('exercises'))
         );
-    }),
+    },
 
-    EventDispatcher::class => factory([new EventDispatcherFactory, '__invoke']),
+    EventDispatcher::class => factory(EventDispatcherFactory::class),
+    EventDispatcherFactory::class => object(),
 
     //Exercise Runners
-    RunnerFactory::class => factory(function (ContainerInterface $c) {
-        return new RunnerFactory;
-    }),
+    RunnerFactory::class => object(),
 
     //commands
-    MenuCommand::class => factory(function (ContainerInterface $c) {
+    MenuCommand::class => function (ContainerInterface $c) {
         return new MenuCommand($c->get('menu'));
-    }),
+    },
 
-    PrintCommand::class => factory(function (ContainerInterface $c) {
+    PrintCommand::class => function (ContainerInterface $c) {
         return new PrintCommand(
             $c->get('appName'),
             $c->get(ExerciseRepository::class),
@@ -134,9 +134,9 @@ return [
             $c->get(MarkdownRenderer::class),
             $c->get(OutputInterface::class)
         );
-    }),
+    },
 
-    VerifyCommand::class => factory(function (ContainerInterface $c) {
+    VerifyCommand::class => function (ContainerInterface $c) {
         return new VerifyCommand(
             $c->get(ExerciseRepository::class),
             $c->get(ExerciseDispatcher::class),
@@ -145,9 +145,9 @@ return [
             $c->get(OutputInterface::class),
             $c->get(ResultsRenderer::class)
         );
-    }),
+    },
 
-    RunCommand::class => factory(function (ContainerInterface $c) {
+    RunCommand::class => function (ContainerInterface $c) {
         return new RunCommand(
             $c->get(ExerciseRepository::class),
             $c->get(ExerciseDispatcher::class),
@@ -155,67 +155,68 @@ return [
             $c->get(UserStateSerializer::class),
             $c->get(OutputInterface::class)
         );
-    }),
+    },
 
-    CreditsCommand::class => factory(function (ContainerInterface $c) {
+    CreditsCommand::class => function (ContainerInterface $c) {
         return new CreditsCommand(
             $c->get('coreContributors'),
             $c->get('appContributors'),
             $c->get(OutputInterface::class),
             $c->get(Color::class)
         );
-    }),
+    },
 
-    HelpCommand::class => factory(function (ContainerInterface $c) {
+    HelpCommand::class => function (ContainerInterface $c) {
         return new HelpCommand(
             $c->get('appName'),
             $c->get(OutputInterface::class),
             $c->get(Color::class)
         );
-    }),
+    },
 
     //Listeners
     PrepareSolutionListener::class      => object(),
-    CodePatchListener::class            => factory(function (ContainerInterface $c) {
+    CodePatchListener::class            => function (ContainerInterface $c) {
         return new CodePatchListener($c->get(CodePatcher::class));
-    }),
-    SelfCheckListener::class            => factory(function (ContainerInterface $c) {
+    },
+    SelfCheckListener::class            => function (ContainerInterface $c) {
         return new SelfCheckListener($c->get(ResultAggregator::class));
-    }),
+    },
     
     //checks
-    FileExistsCheck::class              => object(FileExistsCheck::class),
-    PhpLintCheck::class                 => object(PhpLintCheck::class),
-    CodeParseCheck::class               => factory(function (ContainerInterface $c) {
+    FileExistsCheck::class              => object(),
+    PhpLintCheck::class                 => object(),
+    CodeParseCheck::class               => function (ContainerInterface $c) {
         return new CodeParseCheck($c->get(Parser::class));
-    }),
-    FunctionRequirementsCheck::class    => factory(function (ContainerInterface $c) {
+    },
+    FunctionRequirementsCheck::class    => function (ContainerInterface $c) {
         return new FunctionRequirementsCheck($c->get(Parser::class));
-    }),
-    DatabaseCheck::class                => object(DatabaseCheck::class),
-    ComposerCheck::class                => object(ComposerCheck::class),
+    },
+    DatabaseCheck::class                => object(),
+    ComposerCheck::class                => object(),
 
     //Utils
-    Filesystem::class   => object(Filesystem::class),
-    Parser::class       => factory(function (ContainerInterface $c) {
+    Filesystem::class   => object(),
+    Parser::class       => function () {
         $parserFactory = new ParserFactory;
         return $parserFactory->create(ParserFactory::PREFER_PHP7);
-    }),
-    CodePatcher::class  => factory(function (ContainerInterface $c) {
+    },
+    CodePatcher::class  => function (ContainerInterface $c) {
         $patch = (new Patch)
             ->withInsertion(new Insertion(Insertion::TYPE_BEFORE, 'ini_set("display_errors", 1);'))
             ->withInsertion(new Insertion(Insertion::TYPE_BEFORE, 'error_reporting(E_ALL);'))
             ->withInsertion(new Insertion(Insertion ::TYPE_BEFORE, 'date_default_timezone_set("Europe/London");'));
         
         return new CodePatcher($c->get(Parser::class), new Standard, $patch);
-    }),
-    FakerGenerator::class => factory(function (ContainerInterface $c) {
+    },
+    FakerGenerator::class => function () {
         return FakerFactory::create();
-    }),
+    },
     
     TerminalInterface::class => factory([TerminalFactory::class, 'fromSystem']),
-    'menu' => factory([new MenuFactory, '__invoke']),
-    ExerciseRenderer::class => factory(function (ContainerInterface $c) {
+    'menu' => factory(MenuFactory::class),
+    MenuFactory::class => object(),
+    ExerciseRenderer::class => function (ContainerInterface $c) {
         return new ExerciseRenderer(
             $c->get('appName'),
             $c->get(ExerciseRepository::class),
@@ -225,33 +226,32 @@ return [
             $c->get(Color::class),
             $c->get(OutputInterface::class)
         );
-    }),
-    MarkdownRenderer::class => factory(function (ContainerInterface $c) {
+    },
+    MarkdownRenderer::class => function (ContainerInterface $c) {
         $docParser =   new DocParser(Environment::createCommonMarkEnvironment());
         $cliRenderer = (new MarkdownCliRendererFactory)->__invoke($c);
         return new MarkdownRenderer($docParser, $cliRenderer);
-    }),
-    UserStateSerializer::class => factory(function (ContainerInterface $c) {
+    },
+    UserStateSerializer::class => function (ContainerInterface $c) {
         return new UserStateSerializer(
             getenv('HOME'),
             $c->get('workshopTitle'),
             $c->get(ExerciseRepository::class)
         );
-    }),
-    UserState::class => factory(function (ContainerInterface $c) {
+    },
+    UserState::class => function (ContainerInterface $c) {
         return $c->get(UserStateSerializer::class)->deSerialize();
-    }),
-    SyntaxHighlighter::class => factory(function (ContainerInterface $c) {
-        return (new \PhpSchool\PSX\Factory)->__invoke();
-    }),
-    ResetProgress::class => factory(function (ContainerInterface $c) {
+    },
+    SyntaxHighlighter::class => factory(PsxFactory::class),
+    PsxFactory::class => object(),
+    ResetProgress::class => function (ContainerInterface $c) {
         return new ResetProgress(
             $c->get(UserStateSerializer::class),
             $c->get(OutputInterface::class)
         );
-    }),
+    },
     ResultRendererFactory::class => object(),
-    ResultsRenderer::class => factory(function (ContainerInterface $c) {
+    ResultsRenderer::class => function (ContainerInterface $c) {
         return new ResultsRenderer(
             $c->get('appName'),
             $c->get(Color::class),
@@ -260,7 +260,7 @@ return [
             $c->get(SyntaxHighlighter::class),
             $c->get(ResultRendererFactory::class)
         );
-    }),
+    },
     'coreContributors' => [
         '@AydinHassan' => 'Aydin Hassan',
         '@mikeymike'   => 'Michael Woodward',
