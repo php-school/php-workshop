@@ -15,13 +15,13 @@ class CodeInsertionTest extends PHPUnit_Framework_TestCase
 {
     public function testInvalidType()
     {
-        $this->setExpectedException(InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         new CodeInsertion('notatype', '');
     }
 
     public function testInvalidCode()
     {
-        $this->setExpectedException(InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         new CodeInsertion(CodeInsertion::TYPE_BEFORE, new \stdClass);
     }
 

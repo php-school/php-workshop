@@ -24,22 +24,15 @@ class MenuFactoryTest extends PHPUnit_Framework_TestCase
 {
     public function testFactoryReturnsInstance()
     {
-        $container = $this->getMock(ContainerInterface::class);
-        
-        $userStateSerializer = $this->getMockBuilder(UserStateSerializer::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        
+        $container = $this->createMock(ContainerInterface::class);
+        $userStateSerializer = $this->createMock(UserStateSerializer::class);
         $userStateSerializer
             ->expects($this->once())
             ->method('deSerialize')
             ->will($this->returnValue(new UserState));
 
-        $exerciseRepository = $this->getMockBuilder(ExerciseRepository::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $exercise = $this->getMock(ExerciseInterface::class);
+        $exerciseRepository = $this->createMock(ExerciseRepository::class);
+        $exercise = $this->createMock(ExerciseInterface::class);
         $exercise->expects($this->exactly(2))
             ->method('getName')
             ->will($this->returnValue('Exercise'));
@@ -51,18 +44,10 @@ class MenuFactoryTest extends PHPUnit_Framework_TestCase
         $services = [
             UserStateSerializer::class => $userStateSerializer,
             ExerciseRepository::class => $exerciseRepository,
-            ExerciseRenderer::class => $this->getMockBuilder(ExerciseRenderer::class)
-                ->disableOriginalConstructor()
-                ->getMock(),
-            HelpCommand::class => $this->getMockBuilder(HelpCommand::class)
-                ->disableOriginalConstructor()
-                ->getMock(),
-            CreditsCommand::class => $this->getMockBuilder(CreditsCommand::class)
-                ->disableOriginalConstructor()
-                ->getMock(),
-            ResetProgress::class => $this->getMockBuilder(ResetProgress::class)
-                ->disableOriginalConstructor()
-                ->getMock(),
+            ExerciseRenderer::class => $this->createMock(ExerciseRenderer::class),
+            HelpCommand::class => $this->createMock(HelpCommand::class),
+            CreditsCommand::class => $this->createMock(CreditsCommand::class),
+            ResetProgress::class => $this->createMock(ResetProgress::class),
             'workshopLogo'  => 'LOGO',
             'bgColour'      => 'black',
             'fgColour'      => 'green',

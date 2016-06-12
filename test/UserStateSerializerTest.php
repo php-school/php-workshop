@@ -191,8 +191,8 @@ class UserStateSerializerTest extends \PHPUnit_Framework_TestCase
         $oldSave = sprintf('%s/.phpschool.json', $this->tmpDir);
         $newSave = sprintf('%s/.phpschool-save.json', $this->tmpDir);
 
-        $e1 = $this->getMock(ExerciseInterface::class);
-        $e2 = $this->getMock(ExerciseInterface::class);
+        $e1 = $this->createMock(ExerciseInterface::class);
+        $e2 = $this->createMock(ExerciseInterface::class);
 
         $e1->expects($this->once())->method('getName')->willReturn('Exercise 1');
         $e2->expects($this->once())->method('getName')->willReturn('Exercise 2');
@@ -230,8 +230,8 @@ class UserStateSerializerTest extends \PHPUnit_Framework_TestCase
         $oldSave = sprintf('%s/.phpschool.json', $this->tmpDir);
         $newSave = sprintf('%s/.phpschool-save.json', $this->tmpDir);
 
-        $e1 = $this->getMock(ExerciseInterface::class);
-        $e2 = $this->getMock(ExerciseInterface::class);
+        $e1 = $this->createMock(ExerciseInterface::class);
+        $e2 = $this->createMock(ExerciseInterface::class);
 
         $e1->expects($this->once())->method('getName')->willReturn('Exercise 1');
         $e2->expects($this->once())->method('getName')->willReturn('Exercise 2');
@@ -264,8 +264,8 @@ class UserStateSerializerTest extends \PHPUnit_Framework_TestCase
         $oldSave = sprintf('%s/.phpschool.json', $this->tmpDir);
         $newSave = sprintf('%s/.phpschool-save.json', $this->tmpDir);
 
-        $e1 = $this->getMock(ExerciseInterface::class);
-        $e2 = $this->getMock(ExerciseInterface::class);
+        $e1 = $this->createMock(ExerciseInterface::class);
+        $e2 = $this->createMock(ExerciseInterface::class);
 
         $e1->expects($this->once())->method('getName')->willReturn('Exercise 1');
         $e2->expects($this->once())->method('getName')->willReturn('Exercise 2');

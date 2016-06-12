@@ -28,7 +28,8 @@ class EventTest extends PHPUnit_Framework_TestCase
 
     public function testExeceptionIsThrownIfParameterDoesNotExist()
     {
-        $this->setExpectedException(InvalidArgumentException::class, 'Parameter: "cool" does not exist');
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Parameter: "cool" does not exist');
         $e = new Event('super-sweet-event-with-cool-params');
         $e->getParameter('cool');
     }

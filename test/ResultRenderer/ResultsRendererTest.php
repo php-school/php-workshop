@@ -29,7 +29,7 @@ class ResultsRendererTest extends PHPUnit_Framework_TestCase
         $renderer = new ResultsRenderer(
             'app',
             $color,
-            $this->getMock(TerminalInterface::class),
+            $this->createMock(TerminalInterface::class),
             new ExerciseRepository([]),
             (new Factory)->__invoke(),
             new ResultRendererFactory
@@ -44,7 +44,7 @@ class ResultsRendererTest extends PHPUnit_Framework_TestCase
         $color = new Color;
         $color->setForceStyle(true);
 
-        $terminal = $this->getMock(TerminalInterface::class);
+        $terminal = $this->createMock(TerminalInterface::class);
         $terminal
             ->expects($this->once())
             ->method('getWidth')

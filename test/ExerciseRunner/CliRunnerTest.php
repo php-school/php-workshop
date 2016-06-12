@@ -34,7 +34,7 @@ class CliRunnerTest extends PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->exercise = $this->getMock(CliExerciseInterface::class);
+        $this->exercise = $this->createMock(CliExerciseInterface::class);
         $this->runner = new CliRunner($this->exercise, new EventDispatcher(new ResultAggregator));
 
         $this->exercise
@@ -60,7 +60,8 @@ class CliRunnerTest extends PHPUnit_Framework_TestCase
 
         $regex  = "/^PHP Code failed to execute\\. Error: \"PHP Parse error:  syntax error, unexpected end of file";
         $regex .= ", expecting ',' or ';'/";
-        $this->setExpectedExceptionRegExp(SolutionExecutionException::class, $regex);
+        $this->expectException(SolutionExecutionException::class);
+        $this->expectExceptionMessageRegExp($regex);
         $this->runner->verify('');
     }
 
@@ -127,7 +128,7 @@ class CliRunnerTest extends PHPUnit_Framework_TestCase
 
     public function testRunPassesOutputAndReturnsSuccessIfScriptIsSuccessful()
     {
-        $output = new StdOutput(new Color, $this->getMock(TerminalInterface::class));
+        $output = new StdOutput(new Color, $this->createMock(TerminalInterface::class));
 
         $this->exercise
             ->expects($this->once())
@@ -148,7 +149,7 @@ class CliRunnerTest extends PHPUnit_Framework_TestCase
 
     public function testRunPassesOutputAndReturnsFailureIfScriptFails()
     {
-        $output = new StdOutput(new Color, $this->getMock(TerminalInterface::class));
+        $output = new StdOutput(new Color, $this->createMock(TerminalInterface::class));
 
         $this->exercise
             ->expects($this->once())

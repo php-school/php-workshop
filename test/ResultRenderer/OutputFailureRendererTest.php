@@ -17,7 +17,7 @@ class OutputFailureRendererTest extends AbstractResultRendererTest
 {
     public function testRender()
     {
-        $failure = new StdOutFailure($this->getMock(CheckInterface::class), 'EXPECTED OUTPUT', 'ACTUAL OUTPUT');
+        $failure = new StdOutFailure($this->createMock(CheckInterface::class), 'EXPECTED OUTPUT', 'ACTUAL OUTPUT');
         $renderer = new OutputFailureRenderer($failure);
 
         $expected  = "  [33m[4m[1mACTUAL[0m[0m[0m\n";

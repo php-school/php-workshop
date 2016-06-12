@@ -31,7 +31,7 @@ class PhpLintCheckTest extends PHPUnit_Framework_TestCase
     public function setUp()
     {
         $this->check = new PhpLintCheck;
-        $this->exercise = $this->getMock(ExerciseInterface::class);
+        $this->exercise = $this->createMock(ExerciseInterface::class);
         $this->assertEquals('PHP Code Check', $this->check->getName());
         $this->assertEquals(ExerciseInterface::class, $this->check->getExerciseInterface());
         $this->assertEquals(SimpleCheckInterface::CHECK_BEFORE, $this->check->getPosition());

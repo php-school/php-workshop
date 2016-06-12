@@ -21,10 +21,8 @@ class CodeExecutionExceptionTest extends PHPUnit_Framework_TestCase
 
     public function testFromProcessUsesErrorOutputIfNotEmpty()
     {
-        $process = $this->getMockBuilder(Process::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        
+        $process = $this->createMock(Process::class);
+
         $process
             ->expects($this->exactly(2))
             ->method('getErrorOutput')
@@ -36,10 +34,7 @@ class CodeExecutionExceptionTest extends PHPUnit_Framework_TestCase
 
     public function testFromProcessUsesStdOutputIfErrorOutputEmpty()
     {
-        $process = $this->getMockBuilder(Process::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
+        $process = $this->createMock(Process::class);
         $process
             ->expects($this->exactly(1))
             ->method('getErrorOutput')

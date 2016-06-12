@@ -24,7 +24,7 @@ class HelpCommandTest extends PHPUnit_Framework_TestCase
 
         $command = new HelpCommand(
             'learnyouphp',
-            new StdOutput($color, $this->getMock(TerminalInterface::class)),
+            new StdOutput($color, $this->createMock(TerminalInterface::class)),
             $color
         );
 

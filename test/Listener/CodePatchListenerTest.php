@@ -35,9 +35,7 @@ class CodePatchListenerTest extends PHPUnit_Framework_TestCase
     public function setUp()
     {
         $this->filesystem = new Filesystem;
-        $this->codePatcher = $this->getMockBuilder(CodePatcher::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->codePatcher = $this->createMock(CodePatcher::class);
 
         $this->file = sprintf('%s/%s/submission.php', str_replace('\\', '/', sys_get_temp_dir()), $this->getName());
         mkdir(dirname($this->file), 0775, true);
@@ -47,12 +45,13 @@ class CodePatchListenerTest extends PHPUnit_Framework_TestCase
     public function testRevertThrowsExceptionIfPatchNotPreviouslyCalled()
     {
         $fileName = $this->file;
-        $exercise = $this->getMock(ExerciseInterface::class);
+        $exercise = $this->createMock(ExerciseInterface::class);
 
         $listener   = new CodePatchListener($this->codePatcher);
         $event      = new Event('event', compact('exercise', 'fileName'));
 
-        $this->setExpectedException(RuntimeException::class, 'Can only revert previously patched code');
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('Can only revert previously patched code');
         $listener->revert($event);
     }
 
@@ -61,7 +60,7 @@ class CodePatchListenerTest extends PHPUnit_Framework_TestCase
         file_put_contents($this->file, 'ORIGINAL CONTENT');
 
         $fileName = $this->file;
-        $exercise = $this->getMock(ExerciseInterface::class);
+        $exercise = $this->createMock(ExerciseInterface::class);
 
         $this->codePatcher
             ->expects($this->once())
@@ -81,7 +80,7 @@ class CodePatchListenerTest extends PHPUnit_Framework_TestCase
         file_put_contents($this->file, 'ORIGINAL CONTENT');
 
         $fileName = $this->file;
-        $exercise = $this->getMock(ExerciseInterface::class);
+        $exercise = $this->createMock(ExerciseInterface::class);
 
         $this->codePatcher
             ->expects($this->once())

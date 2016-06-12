@@ -25,7 +25,7 @@ class CgiOutResultRendererTest extends AbstractResultRendererTest
     public function testRenderWhenOnlyHeadersDifferent()
     {
         $failure = new CgiOutRequestFailure(
-            $this->getMock(RequestInterface::class),
+            $this->createMock(RequestInterface::class),
             'OUTPUT',
             'OUTPUT',
             ['header1' => 'val', 'header2' => 'val'],
@@ -47,7 +47,7 @@ class CgiOutResultRendererTest extends AbstractResultRendererTest
     public function testRenderWhenOnlyOutputDifferent()
     {
         $failure = new CgiOutRequestFailure(
-            $this->getMock(RequestInterface::class),
+            $this->createMock(RequestInterface::class),
             'EXPECTED OUTPUT',
             'ACTUAL OUTPUT',
             ['header1' => 'val'],
@@ -68,7 +68,7 @@ class CgiOutResultRendererTest extends AbstractResultRendererTest
     public function testRenderWhenOutputAndHeadersDifferent()
     {
         $failure = new CgiOutRequestFailure(
-            $this->getMock(RequestInterface::class),
+            $this->createMock(RequestInterface::class),
             'EXPECTED OUTPUT',
             'ACTUAL OUTPUT',
             ['header1' => 'val', 'header2' => 'val'],
@@ -93,7 +93,7 @@ class CgiOutResultRendererTest extends AbstractResultRendererTest
     public function testNothingIsRenderedForSuccess()
     {
         $failure = new CgiOutRequestFailure(
-            $this->getMock(RequestInterface::class),
+            $this->createMock(RequestInterface::class),
             'EXPECTED OUTPUT',
             'ACTUAL OUTPUT',
             ['header1' => 'val', 'header2' => 'val'],
@@ -118,7 +118,7 @@ class CgiOutResultRendererTest extends AbstractResultRendererTest
     public function testMultipleFailedRequests()
     {
         $failure1 = new CgiOutRequestFailure(
-            $this->getMock(RequestInterface::class),
+            $this->createMock(RequestInterface::class),
             'EXPECTED OUTPUT 1',
             'ACTUAL OUTPUT 1',
             ['header1' => 'val', 'header2' => 'val'],
@@ -126,7 +126,7 @@ class CgiOutResultRendererTest extends AbstractResultRendererTest
         );
 
         $failure2 = new CgiOutRequestFailure(
-            $this->getMock(RequestInterface::class),
+            $this->createMock(RequestInterface::class),
             'EXPECTED OUTPUT 2',
             'ACTUAL OUTPUT 2',
             ['header1' => 'val', 'header2' => 'val'],
@@ -159,7 +159,7 @@ class CgiOutResultRendererTest extends AbstractResultRendererTest
     public function testCodeExecutionFailureIsDelegatedToMainRenderer()
     {
         $failure = new CgiOutRequestFailure(
-            $this->getMock(RequestInterface::class),
+            $this->createMock(RequestInterface::class),
             'EXPECTED OUTPUT',
             'ACTUAL OUTPUT',
             ['header1' => 'val', 'header2' => 'val'],

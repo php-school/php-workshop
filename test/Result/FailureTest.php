@@ -23,7 +23,7 @@ class FailureTest extends PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->check = $this->getMock(CheckInterface::class);
+        $this->check = $this->createMock(CheckInterface::class);
         $this->check
             ->expects($this->any())
             ->method('getName')

@@ -15,10 +15,8 @@ class SolutionFileTest extends PHPUnit_Framework_TestCase
 {
     public function testExceptionIsThrowIfFileNotExists()
     {
-        $this->setExpectedException(
-            InvalidArgumentException::class,
-            'File: "file/that/does/not/exist.php" does not exist'
-        );
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('File: "file/that/does/not/exist.php" does not exist');
         
         SolutionFile::fromFile('file/that/does/not/exist.php');
     }

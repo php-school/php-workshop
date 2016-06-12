@@ -54,8 +54,8 @@ class FunctionRequirementsCheckTest extends PHPUnit_Framework_TestCase
 
     public function testExceptionIsThrownIfNotValidExercise()
     {
-        $exercise = $this->getMock(ExerciseInterface::class);
-        $this->setExpectedException(InvalidArgumentException::class);
+        $exercise = $this->createMock(ExerciseInterface::class);
+        $this->expectException(InvalidArgumentException::class);
 
         $this->check->check($exercise, '');
     }
@@ -84,7 +84,7 @@ class FunctionRequirementsCheckTest extends PHPUnit_Framework_TestCase
 
     public function testFailureIsReturnedIfNotAllRequiredFunctionsHaveBeenUsed()
     {
-        $exercise = $this->getMock(FunctionRequirementsExercise::class);
+        $exercise = $this->createMock(FunctionRequirementsExercise::class);
         $exercise
             ->expects($this->once())
             ->method('getBannedFunctions')
@@ -107,7 +107,7 @@ class FunctionRequirementsCheckTest extends PHPUnit_Framework_TestCase
 
     public function testSuccess()
     {
-        $exercise = $this->getMock(FunctionRequirementsExercise::class);
+        $exercise = $this->createMock(FunctionRequirementsExercise::class);
         $exercise
             ->expects($this->once())
             ->method('getBannedFunctions')

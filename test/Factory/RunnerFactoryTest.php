@@ -24,21 +24,20 @@ class RunnerFactoryTest extends PHPUnit_Framework_TestCase
 {
     public function testExceptionIsThrownIfTypeNotSupported()
     {
-        $type = $this->getMockBuilder(ExerciseType::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $type = $this->createMock(ExerciseType::class);
         $type
             ->expects($this->exactly(2))
             ->method('getValue')
             ->will($this->returnValue('invalid'));
 
-        $exercise = $this->getMock(ExerciseInterface::class);
+        $exercise = $this->createMock(ExerciseInterface::class);
         $exercise
             ->expects($this->exactly(2))
             ->method('getType')
             ->will($this->returnValue($type));
 
-        $this->setExpectedException(InvalidArgumentException::class, 'Exercise Type: "invalid" not supported');
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Exercise Type: "invalid" not supported');
 
         (new RunnerFactory)->create($exercise, new EventDispatcher(new ResultAggregator));
     }
@@ -48,13 +47,13 @@ class RunnerFactoryTest extends PHPUnit_Framework_TestCase
         $cliType = new ExerciseType(ExerciseType::CLI);
         $cgiType = new ExerciseType(ExerciseType::CGI);
 
-        $cliExercise = $this->getMock(CliExerciseInterface::class);
+        $cliExercise = $this->createMock(CliExerciseInterface::class);
         $cliExercise
             ->expects($this->once())
             ->method('getType')
             ->will($this->returnValue($cliType));
 
-        $cgiExercise = $this->getMock(CgiExerciseInterface::class);
+        $cgiExercise = $this->createMock(CgiExerciseInterface::class);
         $cgiExercise
             ->expects($this->once())
             ->method('getType')

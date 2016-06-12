@@ -98,7 +98,7 @@ class ExerciseDispatcherTest extends PHPUnit_Framework_TestCase
     public function setUp()
     {
         $this->filesystem = new Filesystem;
-        $this->check = $this->getMock(SimpleCheckInterface::class);
+        $this->check = $this->createMock(SimpleCheckInterface::class);
         $this->check
             ->expects($this->any())
             ->method('getName')
@@ -110,12 +110,10 @@ class ExerciseDispatcherTest extends PHPUnit_Framework_TestCase
             ->willReturn(SimpleCheckInterface::CHECK_BEFORE);
 
         $this->checkRepository = new CheckRepository([$this->check]);
-        $this->runner = $this->getMock(ExerciseRunnerInterface::class);
-        $this->runnerFactory = $this->getMock(RunnerFactory::class);
+        $this->runner = $this->createMock(ExerciseRunnerInterface::class);
+        $this->runnerFactory = $this->createMock(RunnerFactory::class);
         $this->results = new ResultAggregator;
-        $this->eventDispatcher = $this->getMockBuilder(EventDispatcher::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->eventDispatcher = $this->createMock(EventDispatcher::class);
 
         $this->exerciseDispatcher = new ExerciseDispatcher(
             $this->runnerFactory,
@@ -134,8 +132,8 @@ class ExerciseDispatcherTest extends PHPUnit_Framework_TestCase
 
     private function createExercise()
     {
-        $this->exercise = $this->getMock(ExerciseInterface::class);
-        $this->solution = $this->getMock(SolutionInterface::class);
+        $this->exercise = $this->createMock(ExerciseInterface::class);
+        $this->solution = $this->createMock(SolutionInterface::class);
 
         $this->exercise
             ->expects($this->any())
@@ -161,13 +159,14 @@ class ExerciseDispatcherTest extends PHPUnit_Framework_TestCase
 
     public function testRequireCheckThrowsExceptionIfCheckDoesNotExist()
     {
-        $this->setExpectedException(InvalidArgumentException::class, 'Check: "NotACheck" does not exist');
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Check: "NotACheck" does not exist');
         $this->exerciseDispatcher->requireCheck('NotACheck');
     }
 
     public function testRequireCheckThrowsExceptionIfPositionNotValid()
     {
-        $check = $this->getMock(SimpleCheckInterface::class);
+        $check = $this->createMock(SimpleCheckInterface::class);
         $check
             ->expects($this->any())
             ->method('getName')
@@ -178,10 +177,8 @@ class ExerciseDispatcherTest extends PHPUnit_Framework_TestCase
             ->method('getPosition')
             ->willReturn('middle');
 
-        $this->setExpectedException(
-            InvalidArgumentException::class,
-            'Parameter: "position" can only be one of: "before", "after" Received: "middle"'
-        );
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Parameter: "position" can only be one of: "before", "after" Received: "middle"');
         $this->checkRepository->registerCheck($check);
         $this->exerciseDispatcher->requireCheck(get_class($check));
     }
@@ -195,7 +192,7 @@ class ExerciseDispatcherTest extends PHPUnit_Framework_TestCase
 
     public function testRequireAfterCheck()
     {
-        $check = $this->getMock(SimpleCheckInterface::class);
+        $check = $this->createMock(SimpleCheckInterface::class);
         $check
             ->expects($this->any())
             ->method('getName')
@@ -215,7 +212,7 @@ class ExerciseDispatcherTest extends PHPUnit_Framework_TestCase
 
     public function testRequireCheckThrowsExceptionIfCheckIsNotSimpleOrListenable()
     {
-        $check = $this->getMock(CheckInterface::class);
+        $check = $this->createMock(CheckInterface::class);
         $check
             ->expects($this->any())
             ->method('getName')
@@ -223,16 +220,14 @@ class ExerciseDispatcherTest extends PHPUnit_Framework_TestCase
 
         $this->checkRepository->registerCheck($check);
 
-        $this->setExpectedException(
-            InvalidArgumentException::class,
-            sprintf('Check: "%s" is not a listenable check', get_class($check))
-        );
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage(sprintf('Check: "%s" is not a listenable check', get_class($check)));
         $this->exerciseDispatcher->requireCheck(get_class($check));
     }
 
     public function testRequireListenableCheckAttachesToDispatcher()
     {
-        $check = $this->getMock(ListenableCheckInterface::class);
+        $check = $this->createMock(ListenableCheckInterface::class);
         $this->checkRepository->registerCheck($check);
 
         $check
@@ -255,7 +250,8 @@ class ExerciseDispatcherTest extends PHPUnit_Framework_TestCase
 
         $msg  = 'Check: "Some Check" cannot process exercise: "Some Exercise" with ';
         $msg .= 'type: "PhpSchool\PhpWorkshop\ExerciseRunner\CliRunner"';
-        $this->setExpectedException(CheckNotApplicableException::class, $msg);
+        $this->expectException(CheckNotApplicableException::class);
+        $this->expectExceptionMessage($msg);
 
         $this->exerciseDispatcher->verify($this->exercise, '');
     }
@@ -275,10 +271,8 @@ class ExerciseDispatcherTest extends PHPUnit_Framework_TestCase
             ->method('getExerciseInterface')
             ->will($this->returnValue('LolIDoNotExist'));
 
-        $this->setExpectedException(
-            ExerciseNotConfiguredException::class,
-            'Exercise: "Some Exercise" should implement interface: "LolIDoNotExist"'
-        );
+        $this->expectException(ExerciseNotConfiguredException::class);
+        $this->expectExceptionMessage('Exercise: "Some Exercise" should implement interface: "LolIDoNotExist"');
 
         $this->exerciseDispatcher->verify($this->exercise, '');
     }
@@ -312,7 +306,7 @@ class ExerciseDispatcherTest extends PHPUnit_Framework_TestCase
             ->expects($this->once())
             ->method('verify')
             ->with($this->file)
-            ->will($this->returnValue($this->getMock(SuccessInterface::class)));
+            ->will($this->returnValue($this->createMock(SuccessInterface::class)));
 
         $this->exerciseDispatcher->requireCheck(get_class($this->check));
 
@@ -329,7 +323,10 @@ class ExerciseDispatcherTest extends PHPUnit_Framework_TestCase
             ->method('check')
             ->will($this->returnValue(new Success('Success', 'nope')));
 
-        $doNotRunMe = $this->getMock(SimpleCheckInterface::class, [], [], 'DoNotRunMeCheck');
+        $doNotRunMe = $this->getMockBuilder(SimpleCheckInterface::class)
+            ->setMockClassName('DoNotRunMeCheck')
+            ->getMock();
+
         $doNotRunMe
             ->expects($this->never())
             ->method('check');
@@ -350,7 +347,7 @@ class ExerciseDispatcherTest extends PHPUnit_Framework_TestCase
             ->expects($this->once())
             ->method('verify')
             ->with($this->file)
-            ->will($this->returnValue($this->getMock(SuccessInterface::class)));
+            ->will($this->returnValue($this->createMock(SuccessInterface::class)));
 
         $this->checkRepository->registerCheck($doNotRunMe);
 
@@ -370,7 +367,10 @@ class ExerciseDispatcherTest extends PHPUnit_Framework_TestCase
             ->method('check')
             ->will($this->returnValue(new Failure('Failure', 'nope')));
 
-        $doNotRunMe = $this->getMock(SimpleCheckInterface::class, [], [], 'DoNotRunMeCheck');
+        $doNotRunMe = $this->getMockBuilder(SimpleCheckInterface::class)
+            ->setMockClassName('DoNotRunMeCheck')
+            ->getMock();
+
         $doNotRunMe
             ->expects($this->once())
             ->method('getPosition')
@@ -454,14 +454,14 @@ class ExerciseDispatcherTest extends PHPUnit_Framework_TestCase
             ->with($this->file)
             ->will($this->throwException(new RuntimeException));
 
-        $this->setExpectedException(RuntimeException::class);
+        $this->expectException(RuntimeException::class);
         $this->exerciseDispatcher->verify($this->exercise, $this->file);
     }
 
     public function testRun()
     {
-        $exercise   = $this->getMock(ExerciseInterface::class);
-        $output     = $this->getMock(OutputInterface::class);
+        $exercise   = $this->createMock(ExerciseInterface::class);
+        $output     = $this->createMock(OutputInterface::class);
 
         $this->mockRunner($exercise);
         $this->runner

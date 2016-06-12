@@ -17,7 +17,7 @@ class CliRendererFactoryTest extends PHPUnit_Framework_TestCase
 {
     public function testFactoryReturnsInstance()
     {
-        $terminal = $this->getMock(TerminalInterface::class);
+        $terminal = $this->createMock(TerminalInterface::class);
         $terminal
             ->expects($this->once())
             ->method('getWidth')
@@ -28,7 +28,7 @@ class CliRendererFactoryTest extends PHPUnit_Framework_TestCase
             Color::class => new Color,
         ];
 
-        $c = $this->getMock(ContainerInterface::class);
+        $c = $this->createMock(ContainerInterface::class);
         $c->expects($this->any())
             ->method('get')
             ->will($this->returnCallback(function ($service) use ($services) {

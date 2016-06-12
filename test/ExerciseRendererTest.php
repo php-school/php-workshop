@@ -27,11 +27,9 @@ class ExerciseRendererTest extends PHPUnit_Framework_TestCase
 {
     public function testExerciseRendererSetsCurrentExerciseAndRendersExercise()
     {
-        $menu = $this->getMockBuilder(CliMenu::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $menu = $this->createMock(CliMenu::class);
 
-        $item = $this->getMock(MenuItemInterface::class);
+        $item = $this->createMock(MenuItemInterface::class);
         $item
             ->expects($this->any())
             ->method('getText')
@@ -45,16 +43,12 @@ class ExerciseRendererTest extends PHPUnit_Framework_TestCase
             ->expects($this->once())
             ->method('close');
 
-        $exercise1 = $this->getMock(ExerciseInterface::class);
-        $exercise2 = $this->getMock(ExerciseInterface::class);
+        $exercise1 = $this->createMock(ExerciseInterface::class);
+        $exercise2 = $this->createMock(ExerciseInterface::class);
         $exercises = [$exercise1, $exercise2];
-        $exerciseRepository = $this->getMockBuilder(ExerciseRepository::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $userState = $this->getMock(UserState::class);
-        $userStateSerializer = $this->getMockBuilder(UserStateSerializer::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $exerciseRepository = $this->createMock(ExerciseRepository::class);
+        $userState = $this->createMock(UserState::class);
+        $userStateSerializer = $this->createMock(UserStateSerializer::class);
 
         $exerciseRepository
             ->expects($this->once())
@@ -102,7 +96,7 @@ class ExerciseRendererTest extends PHPUnit_Framework_TestCase
             $userStateSerializer,
             $markdownRenderer,
             $color,
-            new StdOutput($color, $this->getMock(TerminalInterface::class))
+            new StdOutput($color, $this->createMock(TerminalInterface::class))
         );
 
         $this->expectOutputString(file_get_contents(__DIR__ . '/res/exercise-help-expected.txt'));

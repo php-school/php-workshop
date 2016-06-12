@@ -15,20 +15,20 @@ class MenuCommandInvokerTest extends PHPUnit_Framework_TestCase
 {
     public function testInvoker()
     {
-        $menu = $this->getMockBuilder(CliMenu::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-    
+        $menu = $this->createMock(CliMenu::class);
         $menu
             ->expects($this->once())
             ->method('close');
         
-        $command = $this->getMock('stdClass', ['myCallBack']);
+        $command = $this->getMockBuilder('stdClass')
+            ->setMethods(['__invoke'])
+            ->getMock();
+
         $command
             ->expects($this->once())
-            ->method('myCallBack');
-        
-        $invoker = new MenuCommandInvoker([$command, 'myCallBack']);
+            ->method('__invoke');
+
+        $invoker = new MenuCommandInvoker($command);
         $invoker->__invoke($menu);
     }
 }

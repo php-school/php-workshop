@@ -83,9 +83,7 @@ class AbstractExerciseTest extends PHPUnit_Framework_TestCase
 
     public function testConfigureDoesNothing()
     {
-        $dispatcher = $this->getMockBuilder(ExerciseDispatcher::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $dispatcher = $this->createMock(ExerciseDispatcher::class);
 
         $exercise = new AbstractExerciseImpl('Array We Go');
         $this->assertNull($exercise->configure($dispatcher));
