@@ -8,6 +8,7 @@ use PhpSchool\PhpWorkshop\Check\CheckInterface;
 use PhpSchool\PhpWorkshop\Check\CheckRepository;
 use PhpSchool\PhpWorkshop\Exception\MissingArgumentException;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
+use PhpSchool\PhpWorkshop\Factory\ResultRendererFactory;
 use PhpSchool\PhpWorkshop\Output\OutputInterface;
 use PhpSchool\PhpWorkshop\ResultRenderer\ResultRendererInterface;
 
@@ -32,6 +33,11 @@ final class Application
      * @var ExerciseInterface[]
      */
     private $exercises = [];
+
+    /**
+     * @var array
+     */
+    private $results = [];
 
     /**
      * @var string
@@ -80,6 +86,21 @@ final class Application
     public function addExercise($exercise)
     {
         $this->exercises[] = $exercise;
+    }
+
+    /**
+     * @param string $resultClass
+     * @param string $resultRendererClass
+     */
+    public function addResult($resultClass, $resultRendererClass)
+    {
+        Assertion::classExists($resultClass);
+        Assertion::classExists($resultRendererClass);
+
+        $this->results[] = [
+            'resultClass' => $resultClass,
+            'resultRendererClass' => $resultRendererClass
+        ];
     }
 
     /**
@@ -150,6 +171,14 @@ final class Application
             }
 
             $checkRepository->registerCheck($container->get($check));
+        }
+
+        if (!empty($this->results)) {
+            $resultFactory = $container->get(ResultRendererFactory::class);
+
+            foreach ($this->results as $result) {
+                $resultFactory->registerRenderer($result['resultClass'], $result['resultRendererClass']);
+            }
         }
 
         try {
