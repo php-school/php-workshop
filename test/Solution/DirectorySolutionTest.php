@@ -20,10 +20,8 @@ class DirectorySolutionTest extends PHPUnit_Framework_TestCase
         @mkdir($tempPath, 0775, true);
         touch(sprintf('%s/some-class.php', $tempPath));
         
-        $this->setExpectedException(
-            InvalidArgumentException::class,
-            sprintf('Entry point: "solution.php" does not exist in: "%s"', $tempPath)
-        );
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage(sprintf('Entry point: "solution.php" does not exist in: "%s"', $tempPath));
         
         DirectorySolution::fromDirectory($tempPath);
 

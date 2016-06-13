@@ -30,11 +30,8 @@ abstract class AbstractResultRendererTest extends PHPUnit_Framework_TestCase
         $color = new Color;
         $color->setForceStyle(true);
 
-        $this->terminal = $this->getMock(TerminalInterface::class);
-        $exerciseRepo = $this->getMockBuilder(ExerciseRepository::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
+        $this->terminal = $this->createMock(TerminalInterface::class);
+        $exerciseRepo = $this->createMock(ExerciseRepository::class);
         $this->terminal
             ->expects($this->any())
             ->method('getWidth')

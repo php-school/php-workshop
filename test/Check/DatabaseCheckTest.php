@@ -45,7 +45,7 @@ class DatabaseCheckTest extends PHPUnit_Framework_TestCase
     public function setUp()
     {
         $this->check = new DatabaseCheck;
-        $this->exercise = $this->getMock(DatabaseExerciseInterface::class);
+        $this->exercise = $this->createMock(DatabaseExerciseInterface::class);
         $this->dbDir = sprintf(
             '%s/PhpSchool_PhpWorkshop_Check_DatabaseCheck',
             str_replace('\\', '/', realpath(sys_get_temp_dir()))
@@ -194,7 +194,7 @@ class DatabaseCheckTest extends PHPUnit_Framework_TestCase
         $dispatcher->run(
             $this->exercise,
             __DIR__ . '/../res/database/user-solution-alter-db.php',
-            $this->getMock(OutputInterface::class)
+            $this->createMock(OutputInterface::class)
         );
     }
 

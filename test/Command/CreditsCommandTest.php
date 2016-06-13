@@ -36,7 +36,7 @@ class CreditsCommandTest extends PHPUnit_Framework_TestCase
                 '@AydinHassan' => 'Aydin Hassan',
                 '@mikeymike'   => 'Michael Woodward',
             ],
-            new StdOutput($color, $this->getMock(TerminalInterface::class)),
+            new StdOutput($color, $this->createMock(TerminalInterface::class)),
             $color
         );
 
@@ -58,7 +58,7 @@ class CreditsCommandTest extends PHPUnit_Framework_TestCase
                 '@chris3ailey' => 'Chris Bailey'
             ],
             [],
-            new StdOutput($color, $this->getMock(TerminalInterface::class)),
+            new StdOutput($color, $this->createMock(TerminalInterface::class)),
             $color
         );
 
@@ -75,7 +75,7 @@ class CreditsCommandTest extends PHPUnit_Framework_TestCase
         $command = new CreditsCommand(
             [],
             [],
-            new StdOutput($color, $this->getMock(TerminalInterface::class)),
+            new StdOutput($color, $this->createMock(TerminalInterface::class)),
             $color
         );
         

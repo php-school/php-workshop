@@ -17,8 +17,8 @@ class ExerciseRepositoryTest extends PHPUnit_Framework_TestCase
     public function testFindAll()
     {
         $exercises = [
-            $this->getMock(ExerciseInterface::class),
-            $this->getMock(ExerciseInterface::class),
+            $this->createMock(ExerciseInterface::class),
+            $this->createMock(ExerciseInterface::class),
         ];
 
         $repo = new ExerciseRepository($exercises);
@@ -28,8 +28,8 @@ class ExerciseRepositoryTest extends PHPUnit_Framework_TestCase
 
     public function testFindByName()
     {
-        $exercise1 = $this->getMock(ExerciseInterface::class);
-        $exercise2 = $this->getMock(ExerciseInterface::class);
+        $exercise1 = $this->createMock(ExerciseInterface::class);
+        $exercise2 = $this->createMock(ExerciseInterface::class);
 
         $exercise1
             ->expects($this->any())
@@ -47,10 +47,8 @@ class ExerciseRepositoryTest extends PHPUnit_Framework_TestCase
 
     public function testFindByNameThrowsExceptionIfNotFound()
     {
-        $this->setExpectedException(
-            InvalidArgumentException::class,
-            'Exercise with name: "exercise1" does not exist'
-        );
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Exercise with name: "exercise1" does not exist');
 
         $repo = new ExerciseRepository([]);
         $repo->findByName('exercise1');
@@ -58,8 +56,8 @@ class ExerciseRepositoryTest extends PHPUnit_Framework_TestCase
 
     public function testGetAllNames()
     {
-        $exercise1 = $this->getMock(ExerciseInterface::class);
-        $exercise2 = $this->getMock(ExerciseInterface::class);
+        $exercise1 = $this->createMock(ExerciseInterface::class);
+        $exercise2 = $this->createMock(ExerciseInterface::class);
 
         $exercise1
             ->expects($this->any())
@@ -78,8 +76,8 @@ class ExerciseRepositoryTest extends PHPUnit_Framework_TestCase
     public function testCount()
     {
         $exercises = [
-            $this->getMock(ExerciseInterface::class),
-            $this->getMock(ExerciseInterface::class),
+            $this->createMock(ExerciseInterface::class),
+            $this->createMock(ExerciseInterface::class),
         ];
 
         $repo = new ExerciseRepository($exercises);
@@ -89,8 +87,8 @@ class ExerciseRepositoryTest extends PHPUnit_Framework_TestCase
     public function testIterator()
     {
         $exercises = [
-            $this->getMock(ExerciseInterface::class),
-            $this->getMock(ExerciseInterface::class),
+            $this->createMock(ExerciseInterface::class),
+            $this->createMock(ExerciseInterface::class),
         ];
 
         $repo = new ExerciseRepository($exercises);

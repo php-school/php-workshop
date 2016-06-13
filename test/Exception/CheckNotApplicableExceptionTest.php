@@ -23,7 +23,7 @@ class CheckNotApplicableExceptionTest extends PHPUnit_Framework_TestCase
 
     public function testFromCheckAndExerciseConstructor()
     {
-        $exercise = $this->getMock(ExerciseInterface::class);
+        $exercise = $this->createMock(ExerciseInterface::class);
         $exercise
             ->expects($this->once())
             ->method('getName')
@@ -34,7 +34,7 @@ class CheckNotApplicableExceptionTest extends PHPUnit_Framework_TestCase
             ->method('getType')
             ->will($this->returnValue(ExerciseType::CLI()));
 
-        $check = $this->getMock(CheckInterface::class);
+        $check = $this->createMock(CheckInterface::class);
         $check
             ->expects($this->once())
             ->method('getName')

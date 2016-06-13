@@ -34,7 +34,7 @@ class VerifyCommandTest extends PHPUnit_Framework_TestCase
     
     public function setUp()
     {
-        $this->check = $this->getMock(CheckInterface::class);
+        $this->check = $this->createMock(CheckInterface::class);
         $this->check
             ->expects($this->any())
             ->method('getName')
@@ -45,13 +45,8 @@ class VerifyCommandTest extends PHPUnit_Framework_TestCase
     {
         $repo = new ExerciseRepository([]);
         $state = new UserState;
-        $output = $this->getMockBuilder(OutputInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $dispatcher = $this->getMockBuilder(ExerciseDispatcher::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $output = $this->createMock(OutputInterface::class);
+        $dispatcher = $this->createMock(ExerciseDispatcher::class);
 
         $programFile = sprintf('%s/%s/program.php', sys_get_temp_dir(), $this->getName());
         $output
@@ -59,14 +54,9 @@ class VerifyCommandTest extends PHPUnit_Framework_TestCase
             ->method('printError')
             ->with(sprintf('Could not verify. File: "%s" does not exist', $programFile));
 
-        $serializer = $this->getMockBuilder(UserStateSerializer::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $serializer = $this->createMock(UserStateSerializer::class);
+        $renderer = $this->createMock(ResultsRenderer::class);
 
-        $renderer = $this->getMockBuilder(ResultsRenderer::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        
         $command = new VerifyCommand($repo, $dispatcher, $state, $serializer, $output, $renderer);
         $this->assertSame(1, $command->__invoke('appname', $programFile));
     }
@@ -78,27 +68,17 @@ class VerifyCommandTest extends PHPUnit_Framework_TestCase
 
         $repo = new ExerciseRepository([]);
         $state = new UserState;
-        $output = $this->getMockBuilder(OutputInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $dispatcher = $this->getMockBuilder(ExerciseDispatcher::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $output = $this->createMock(OutputInterface::class);
+        $dispatcher = $this->createMock(ExerciseDispatcher::class);
 
         $output
             ->expects($this->once())
             ->method('printError')
             ->with('No active exercises. Select one from the menu');
 
-        $serializer = $this->getMockBuilder(UserStateSerializer::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $serializer = $this->createMock(UserStateSerializer::class);
+        $renderer = $this->createMock(ResultsRenderer::class);
 
-        $renderer = $this->getMockBuilder(ResultsRenderer::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        
         $command = new VerifyCommand($repo, $dispatcher, $state, $serializer, $output, $renderer);
         $this->assertSame(1, $command->__invoke('appname', $file));
 
@@ -110,7 +90,7 @@ class VerifyCommandTest extends PHPUnit_Framework_TestCase
         $file = tempnam(sys_get_temp_dir(), 'pws');
         touch($file);
 
-        $e = $this->getMock(ExerciseInterface::class);
+        $e = $this->createMock(ExerciseInterface::class);
         $e->expects($this->any())
             ->method('getName')
             ->will($this->returnValue('exercise1'));
@@ -119,28 +99,21 @@ class VerifyCommandTest extends PHPUnit_Framework_TestCase
         $state->setCurrentExercise('exercise1');
         $color = new Color;
         $color->setForceStyle(true);
-        $output = new StdOutput($color, $this->getMock(TerminalInterface::class));
+        $output = new StdOutput($color, $this->createMock(TerminalInterface::class));
         
-        $serializer = $this->getMockBuilder(UserStateSerializer::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        
+        $serializer = $this->createMock(UserStateSerializer::class);
         $serializer
             ->expects($this->once())
             ->method('serialize')
             ->with($state);
 
-        $renderer = $this->getMockBuilder(ResultsRenderer::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        
+        $renderer = $this->createMock(ResultsRenderer::class);
+
         $results = new ResultAggregator;
         $results->add(new Success($this->check));
 
-        $dispatcher = $this->getMockBuilder(ExerciseDispatcher::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        
+        $dispatcher = $this->createMock(ExerciseDispatcher::class);
+
         $dispatcher
             ->expects($this->once())
             ->method('verify')
@@ -164,7 +137,7 @@ class VerifyCommandTest extends PHPUnit_Framework_TestCase
         $file = tempnam(sys_get_temp_dir(), 'pws');
         touch($file);
 
-        $e = $this->getMock(ExerciseInterface::class);
+        $e = $this->createMock(ExerciseInterface::class);
         $e->expects($this->any())
             ->method('getName')
             ->will($this->returnValue('exercise1'));
@@ -173,28 +146,22 @@ class VerifyCommandTest extends PHPUnit_Framework_TestCase
         $state->setCurrentExercise('exercise1');
         $color = new Color;
         $color->setForceStyle(true);
-        $output = new StdOutput($color, $this->getMock(TerminalInterface::class));
+        $output = new StdOutput($color, $this->createMock(TerminalInterface::class));
 
-        $serializer = $this->getMockBuilder(UserStateSerializer::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $serializer = $this->createMock(UserStateSerializer::class);
 
         $serializer
             ->expects($this->never())
             ->method('serialize')
             ->with($state);
 
-        $renderer = $this->getMockBuilder(ResultsRenderer::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $renderer = $this->createMock(ResultsRenderer::class);
 
         $results = new ResultAggregator;
         $results->add(new Failure($this->check, 'cba'));
 
-        $dispatcher = $this->getMockBuilder(ExerciseDispatcher::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        
+        $dispatcher = $this->createMock(ExerciseDispatcher::class);
+
         $dispatcher
             ->expects($this->once())
             ->method('verify')

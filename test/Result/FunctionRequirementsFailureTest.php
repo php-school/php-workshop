@@ -15,7 +15,7 @@ class FunctionRequirementsFailureTest extends PHPUnit_Framework_TestCase
 {
     public function testGetters()
     {
-        $check = $this->getMock(CheckInterface::class);
+        $check = $this->createMock(CheckInterface::class);
         $check
             ->expects($this->any())
             ->method('getName')

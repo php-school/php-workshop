@@ -21,7 +21,7 @@ class ExerciseNotConfiguredExceptionTest extends PHPUnit_Framework_TestCase
 
     public function testMissingImplementsConstructor()
     {
-        $exercise = $this->getMock(ExerciseInterface::class);
+        $exercise = $this->createMock(ExerciseInterface::class);
         $exercise
             ->expects($this->once())
             ->method('getName')

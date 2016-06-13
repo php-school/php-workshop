@@ -19,7 +19,7 @@ class SelfCheckListenerTest extends PHPUnit_Framework_TestCase
 {
     public function testSelfCheck()
     {
-        $exercise = $this->getMock(SelfCheckExerciseInterface::class);
+        $exercise = $this->createMock(SelfCheckExerciseInterface::class);
         $event = new Event('event', ['exercise' => $exercise, 'fileName' => 'some-file.php']);
 
         $success = new Success('Success');
@@ -39,7 +39,7 @@ class SelfCheckListenerTest extends PHPUnit_Framework_TestCase
 
     public function testExerciseWithOutSelfCheck()
     {
-        $exercise = $this->getMock(ExerciseInterface::class);
+        $exercise = $this->createMock(ExerciseInterface::class);
         $event = new Event('event', ['exercise' => $exercise, 'fileName' => 'some-file.php']);
 
         $results = new ResultAggregator;

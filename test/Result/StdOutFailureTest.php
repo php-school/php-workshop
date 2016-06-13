@@ -23,7 +23,7 @@ class StdOutFailureTest extends PHPUnit_Framework_TestCase
 
     public function testFailureFromCheck()
     {
-        $check = $this->getMock(CheckInterface::class);
+        $check = $this->createMock(CheckInterface::class);
         $check
             ->expects($this->any())
             ->method('getName')

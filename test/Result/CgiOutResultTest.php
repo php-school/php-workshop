@@ -19,14 +19,14 @@ class CgiOutResultTest extends PHPUnit_Framework_TestCase
 {
     public function testName()
     {
-        $request = new CgiOutRequestFailure($this->getMock(RequestInterface::class), '', '', [], []);
+        $request = new CgiOutRequestFailure($this->createMock(RequestInterface::class), '', '', [], []);
         $cgiOutResult = new CgiOutResult('Some Check', [$request]);
         $this->assertSame('Some Check', $cgiOutResult->getCheckName());
     }
 
     public function testIsSuccessful()
     {
-        $request = new CgiOutRequestFailure($this->getMock(RequestInterface::class), '', '', [], []);
+        $request = new CgiOutRequestFailure($this->createMock(RequestInterface::class), '', '', [], []);
         $cgiOutResult = new CgiOutResult('Some Check', [$request]);
         
         $this->assertFalse($cgiOutResult->isSuccessful());

@@ -20,7 +20,7 @@ class CgiOutRequestFailureTest extends PHPUnit_Framework_TestCase
 {
     public function setUp()
     {
-        $request = $this->getMock(RequestInterface::class);
+        $request = $this->createMock(RequestInterface::class);
         $cgiOutResult = new CgiOutRequestFailure($request, '', '', [], []);
         $this->assertSame('Request Failure', $cgiOutResult->getCheckName());
         $this->assertSame($request, $cgiOutResult->getRequest());
@@ -29,7 +29,7 @@ class CgiOutRequestFailureTest extends PHPUnit_Framework_TestCase
     public function testWhenOnlyOutputDifferent()
     {
         $failure = new CgiOutRequestFailure(
-            $this->getMock(RequestInterface::class),
+            $this->createMock(RequestInterface::class),
             'Expected Output',
             'Actual Output',
             [],
@@ -47,7 +47,7 @@ class CgiOutRequestFailureTest extends PHPUnit_Framework_TestCase
     public function testWhenOnlyHeadersDifferent()
     {
         $failure = new CgiOutRequestFailure(
-            $this->getMock(RequestInterface::class),
+            $this->createMock(RequestInterface::class),
             'Output',
             'Output',
             ['header1' => 'some-value'],
@@ -65,7 +65,7 @@ class CgiOutRequestFailureTest extends PHPUnit_Framework_TestCase
     public function testWhenOutputAndHeadersDifferent()
     {
         $failure = new CgiOutRequestFailure(
-            $this->getMock(RequestInterface::class),
+            $this->createMock(RequestInterface::class),
             'Expected Output',
             'Actual Output',
             ['header1' => 'some-value'],

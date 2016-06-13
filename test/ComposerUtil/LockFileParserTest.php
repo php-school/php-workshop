@@ -31,7 +31,8 @@ class LockFileParserTest extends PHPUnit_Framework_TestCase
 
     public function testExceptionIsThrownIfFileNotExists()
     {
-        $this->setExpectedException(InvalidArgumentException::class, 'Lock File: "not-a-file" does not exist');
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Lock File: "not-a-file" does not exist');
         new LockFileParser('not-a-file');
     }
 }

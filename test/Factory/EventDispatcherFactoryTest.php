@@ -21,7 +21,7 @@ class EventDispatcherFactoryTest extends PHPUnit_Framework_TestCase
 
     public function testCreate()
     {
-        $c = $this->getMock(ContainerInterface::class);
+        $c = $this->createMock(ContainerInterface::class);
 
         $c->expects($this->at(0))
             ->method('get')
@@ -35,9 +35,7 @@ class EventDispatcherFactoryTest extends PHPUnit_Framework_TestCase
             ->with(PrepareSolutionListener::class)
             ->will($this->returnValue($prepareSolutionListener));
 
-        $codePatchListener = $this->getMockBuilder(CodePatchListener::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $codePatchListener = $this->createMock(CodePatchListener::class);
 
         $c->expects($this->at(2))
             ->method('get')

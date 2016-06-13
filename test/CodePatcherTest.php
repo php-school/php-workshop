@@ -29,7 +29,7 @@ class CodePatcherTest extends PHPUnit_Framework_TestCase
             ->withInsertion(new Insertion(Insertion::TYPE_BEFORE, 'ini_set("display_errors", 1);'));
 
         $patcher = new CodePatcher((new ParserFactory)->create(ParserFactory::PREFER_PHP7), new Standard, $patch);
-        $exercise = $this->getMock(ExerciseInterface::class);
+        $exercise = $this->createMock(ExerciseInterface::class);
 
         $expected = "<?php\n\nini_set(\"display_errors\", 1);\n\$original = true;";
         $this->assertEquals($expected, $patcher->patch($exercise, '<?php $original = true;'));
@@ -39,7 +39,7 @@ class CodePatcherTest extends PHPUnit_Framework_TestCase
     public function testPatcherDoesNotApplyPatchIfNotPatchableExercise()
     {
         $patcher = new CodePatcher((new ParserFactory)->create(ParserFactory::PREFER_PHP7), new Standard);
-        $exercise = $this->getMock(ExerciseInterface::class);
+        $exercise = $this->createMock(ExerciseInterface::class);
 
         $code = '<?php $original = true;';
         $this->assertEquals($code, $patcher->patch($exercise, $code));
@@ -56,7 +56,7 @@ class CodePatcherTest extends PHPUnit_Framework_TestCase
     {
         $patcher = new CodePatcher((new ParserFactory)->create(ParserFactory::PREFER_PHP7), new Standard);
         
-        $exercise = $this->getMock(PatchableExercise::class);
+        $exercise = $this->createMock(PatchableExercise::class);
         
         $exercise
             ->expects($this->once())

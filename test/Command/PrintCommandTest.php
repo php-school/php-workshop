@@ -21,12 +21,8 @@ class PrintCommandTest extends PHPUnit_Framework_TestCase
     {
         $repo = new ExerciseRepository([]);
         $state = new UserState;
-        $output = $this->getMockBuilder(OutputInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $renderer = $this->getMockBuilder(MarkdownRenderer::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $output = $this->createMock(OutputInterface::class);
+        $renderer = $this->createMock(MarkdownRenderer::class);
 
         $output
             ->expects($this->once())
@@ -42,7 +38,7 @@ class PrintCommandTest extends PHPUnit_Framework_TestCase
         $file = tempnam(sys_get_temp_dir(), 'pws');
         file_put_contents($file, '### Exercise 1');
 
-        $exercise = $this->getMock(ExerciseInterface::class);
+        $exercise = $this->createMock(ExerciseInterface::class);
         $exercise
             ->expects($this->once())
             ->method('getProblem')
@@ -58,12 +54,8 @@ class PrintCommandTest extends PHPUnit_Framework_TestCase
         $state = new UserState;
         $state->setCurrentExercise('current-exercise');
 
-        $output = $this->getMockBuilder(OutputInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $renderer = $this->getMockBuilder(MarkdownRenderer::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $output = $this->createMock(OutputInterface::class);
+        $renderer = $this->createMock(MarkdownRenderer::class);
 
         $renderer
             ->expects($this->once())

@@ -48,7 +48,7 @@ class CodeParseCheckTest extends PHPUnit_Framework_TestCase
     {
         file_put_contents($this->file, '<?php $lol');
         
-        $result = $this->check->check($this->getMock(ExerciseInterface::class), $this->file);
+        $result = $this->check->check($this->createMock(ExerciseInterface::class), $this->file);
         $this->assertInstanceOf(Failure::class, $result);
         
         $this->assertEquals('Code Parse Check', $result->getCheckName());
@@ -62,7 +62,7 @@ class CodeParseCheckTest extends PHPUnit_Framework_TestCase
     {
         file_put_contents($this->file, '<?php $lol = "lol";');
 
-        $result = $this->check->check($this->getMock(ExerciseInterface::class), $this->file);
+        $result = $this->check->check($this->createMock(ExerciseInterface::class), $this->file);
         $this->assertInstanceOf(Success::class, $result);
 
         $this->assertEquals('Code Parse Check', $result->getCheckName());

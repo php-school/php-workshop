@@ -16,10 +16,7 @@ class MenuCommandTest extends PHPUnit_Framework_TestCase
 {
     public function testInvoke()
     {
-        $menu = $this->getMockBuilder(CliMenu::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
+        $menu = $this->createMock(CliMenu::class);
         $menu
             ->expects($this->once())
             ->method('open');

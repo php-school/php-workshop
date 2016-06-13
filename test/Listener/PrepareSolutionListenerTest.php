@@ -49,8 +49,8 @@ class PrepareSolutionListenerTest extends PHPUnit_Framework_TestCase
         $refProp->setAccessible(true);
         $refProp->setValue($this->listener, []);
 
-        $solution = $this->getMock(SolutionInterface::class);
-        $exercise = $this->getMock(ExerciseInterface::class);
+        $solution = $this->createMock(SolutionInterface::class);
+        $exercise = $this->createMock(ExerciseInterface::class);
         $exercise->expects($this->any())
             ->method('getSolution')
             ->will($this->returnValue($solution));
@@ -60,7 +60,8 @@ class PrepareSolutionListenerTest extends PHPUnit_Framework_TestCase
             ->method('hasComposerFile')
             ->will($this->returnValue(true));
 
-        $this->setExpectedException(RuntimeException::class, 'Composer could not be located on the system');
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('Composer could not be located on the system');
         $e = new Event('epic-event', ['exercise' => $exercise, 'file' => 'file.php']);
         $this->listener->__invoke($e);
     }
@@ -70,8 +71,8 @@ class PrepareSolutionListenerTest extends PHPUnit_Framework_TestCase
         mkdir(sprintf('%s/vendor', dirname($this->file)));
         $this->assertFileExists(sprintf('%s/vendor', dirname($this->file)));
 
-        $solution = $this->getMock(SolutionInterface::class);
-        $exercise = $this->getMock(ExerciseInterface::class);
+        $solution = $this->createMock(SolutionInterface::class);
+        $exercise = $this->createMock(ExerciseInterface::class);
         $exercise->expects($this->any())
             ->method('getSolution')
             ->will($this->returnValue($solution));
@@ -103,8 +104,8 @@ class PrepareSolutionListenerTest extends PHPUnit_Framework_TestCase
             ],
         ]));
 
-        $solution = $this->getMock(SolutionInterface::class);
-        $exercise = $this->getMock(ExerciseInterface::class);
+        $solution = $this->createMock(SolutionInterface::class);
+        $exercise = $this->createMock(ExerciseInterface::class);
         $exercise->expects($this->any())
             ->method('getSolution')
             ->will($this->returnValue($solution));

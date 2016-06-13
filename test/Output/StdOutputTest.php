@@ -30,7 +30,7 @@ class StdOutputTest extends PHPUnit_Framework_TestCase
     {
         $this->color = new Color();
         $this->color->setForceStyle(true);
-        $this->output = new StdOutput($this->color, $this->getMock(TerminalInterface::class));
+        $this->output = new StdOutput($this->color, $this->createMock(TerminalInterface::class));
     }
 
     public function testPrintError()

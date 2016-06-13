@@ -23,7 +23,7 @@ class SuccessTest extends PHPUnit_Framework_TestCase
 
     public function testSuccessFromCheck()
     {
-        $check = $this->getMock(CheckInterface::class);
+        $check = $this->createMock(CheckInterface::class);
         $check
             ->expects($this->any())
             ->method('getName')

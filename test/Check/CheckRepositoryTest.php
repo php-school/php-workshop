@@ -16,7 +16,7 @@ class CheckRepositoryTest extends PHPUnit_Framework_TestCase
 {
     public function testRegisterViaConstructor()
     {
-        $check = $this->getMock(CheckInterface::class);
+        $check = $this->createMock(CheckInterface::class);
         $repository = new CheckRepository([$check]);
         $this->assertEquals([$check], $repository->getAll());
     }
@@ -26,7 +26,7 @@ class CheckRepositoryTest extends PHPUnit_Framework_TestCase
         $repository = new CheckRepository;
         $this->assertEquals([], $repository->getAll());
 
-        $check = $this->getMock(CheckInterface::class);
+        $check = $this->createMock(CheckInterface::class);
         $repository->registerCheck($check);
         $this->assertEquals([$check], $repository->getAll());
     }
@@ -34,9 +34,9 @@ class CheckRepositoryTest extends PHPUnit_Framework_TestCase
     public function testHas()
     {
         $repository = new CheckRepository;
-        $repository->registerCheck($this->getMock(CheckInterface::class));
+        $repository->registerCheck($this->createMock(CheckInterface::class));
 
-        $check = $this->getMock(CheckInterface::class);
+        $check = $this->createMock(CheckInterface::class);
         $repository->registerCheck($check);
 
         $this->assertTrue($repository->has(get_class($check)));
@@ -46,12 +46,10 @@ class CheckRepositoryTest extends PHPUnit_Framework_TestCase
     public function testGetByClassThrowsExceptionIfNotExist()
     {
         $repository = new CheckRepository;
-        $repository->registerCheck($this->getMock(CheckInterface::class));
+        $repository->registerCheck($this->createMock(CheckInterface::class));
 
-        $this->setExpectedException(
-            InvalidArgumentException::class,
-            'Check: "SomeClassWhichDoesNotExist" does not exist'
-        );
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Check: "SomeClassWhichDoesNotExist" does not exist');
 
         $repository->getByClass('SomeClassWhichDoesNotExist');
     }
@@ -59,9 +57,9 @@ class CheckRepositoryTest extends PHPUnit_Framework_TestCase
     public function testGetByClass()
     {
         $repository = new CheckRepository;
-        $repository->registerCheck($this->getMock(CheckInterface::class));
+        $repository->registerCheck($this->createMock(CheckInterface::class));
 
-        $check = $this->getMock(CheckInterface::class);
+        $check = $this->createMock(CheckInterface::class);
         $repository->registerCheck($check);
 
         $this->assertSame($check, $repository->getByClass(get_class($check)));
