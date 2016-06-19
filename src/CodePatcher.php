@@ -12,7 +12,10 @@ use PhpSchool\PhpWorkshop\Exercise\SubmissionPatchable;
 use PhpSchool\PhpWorkshop\Exercise\SubmissionPatcher;
 
 /**
- * Class CodePatcher
+ * Service to apply patches to a students solution. Accepts a default patch via the constructor.
+ * Patched are pulled from the exercise (if it implements SubmissionPatchable) and applied to the
+ * given code.
+ *
  * @package PhpSchool\PhpWorkshop
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
@@ -34,6 +37,13 @@ class CodePatcher
     private $defaultPatch;
 
     /**
+     * This service requires an instance of Parser and Standard. These services allow
+     * to parse code to an AST and to print code from an AST.
+     *
+     * The service also accepts a default patch. This allows a workshop to apply a patch
+     * to every single student solution. This is used (by default) to modify various ini
+     * settings, such as increasing the error reporting level.
+     *
      * @param Parser $parser
      * @param Standard $printer
      * @param Patch $defaultPatch
@@ -46,6 +56,13 @@ class CodePatcher
     }
     
     /**
+     * Accepts an exercise and a string containing the students solution to the exercise.
+     *
+     * If there is a default patch, the students solution is patched with that.
+     *
+     * If the exercise implements SubmissionPatchable then the patch is pulled from it and applied to
+     * the students solution.
+     *
      * @param ExerciseInterface $exercise
      * @param string $code
      * @return string
