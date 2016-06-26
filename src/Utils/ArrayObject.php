@@ -20,15 +20,11 @@ class ArrayObject implements IteratorAggregate, Countable
     private $array;
 
     /**
-     * @param array|mixed... $array
+     * @param array $array
      */
-    public function __construct($array)
+    public function __construct(array $array)
     {
-        if (func_num_args() > 1) {
-            $this->array = func_get_args();
-        } else {
-            $this->array = $array;
-        }
+        $this->array = $array;
     }
 
     /**

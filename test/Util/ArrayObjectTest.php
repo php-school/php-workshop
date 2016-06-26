@@ -58,10 +58,4 @@ class ArrayObjectTest extends PHPUnit_Framework_TestCase
         $arrayObject = new ArrayObject([1, 2, 3]);
         $this->assertSame([1, 2, 3], $arrayObject->getArrayCopy());
     }
-
-    public function testGetArrayCopyWithVariadicConstruction()
-    {
-        $arrayObject = new ArrayObject(1, 2, 3);
-        $this->assertSame([1, 2, 3], $arrayObject->getArrayCopy());
-    }
 }
