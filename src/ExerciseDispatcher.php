@@ -56,10 +56,10 @@ class ExerciseDispatcher
     private $checkRepository;
 
     /**
-     * @param RunnerFactory $runnerFactory
-     * @param ResultAggregator $resultAggregator
-     * @param EventDispatcher $eventDispatcher
-     * @param CheckRepository $checkRepository
+     * @param RunnerFactory $runnerFactory Factory capable of building an exercise runner based on the exercise type.
+     * @param ResultAggregator $resultAggregator Result Aggregator.
+     * @param EventDispatcher $eventDispatcher Event Dispatcher instance.
+     * @param CheckRepository $checkRepository The Check repository.
      */
     public function __construct(
         RunnerFactory $runnerFactory,
@@ -74,8 +74,12 @@ class ExerciseDispatcher
     }
 
     /**
-     * @param string $requiredCheck
-     * @throws InvalidArgumentException
+     * Queue a specific check to be run when the exercise is verified. When the exercise is verified
+     * the check specified as the first argument will also be executed. Throws an InvalidArgumentException
+     * if the check does not exist in the CheckRepository.
+     *
+     * @param string $requiredCheck The name of the required check.
+     * @throws InvalidArgumentException If the check does not exist.
      */
     public function requireCheck($requiredCheck)
     {
@@ -112,11 +116,14 @@ class ExerciseDispatcher
     }
 
     /**
-     * @param ExerciseInterface $exercise
-     * @param string $fileName
-     * @return ResultAggregator
-     * @throws CheckNotApplicableException
-     * @throws ExerciseNotConfiguredException
+     * Verify a students solution against a specific exercise. Runs queued checks based on their position. Invokes the
+     * correct runner for the exercise based on the exercise type. Various events are triggered throughout the process.
+     *
+     * @param ExerciseInterface $exercise The exercise instance.
+     * @param string $fileName The absolute file name of the students solution.
+     * @return ResultAggregator The result aggregator which contains all the results injected via the runner, checks and events.
+     * @throws CheckNotApplicableException If the check is not applicable to the exercise type.
+     * @throws ExerciseNotConfiguredException If the exercise does not implement the correct interface based on the checks required.
      */
     public function verify(ExerciseInterface $exercise, $fileName)
     {
@@ -156,10 +163,14 @@ class ExerciseDispatcher
     }
 
     /**
-     * @param ExerciseInterface $exercise
-     * @param string $fileName
-     * @param OutputInterface $output
-     * @return bool
+     * Run a students solution against a specific exercise. Does not invoke checks. Invokes the
+     * correct runner for the exercise based on the exercise type. Various events are triggered throughout the process.
+     * The output of the solution is written directly to the OutputInterface instance.
+     *
+     * @param ExerciseInterface $exercise The exercise instance.
+     * @param string $fileName The absolute file name of the students solution.
+     * @param OutputInterface $output An output instance capable of writing to stdout.
+     * @return bool Whether the solution ran successfully or not.
      */
     public function run(ExerciseInterface $exercise, $fileName, OutputInterface $output)
     {
@@ -198,6 +209,8 @@ class ExerciseDispatcher
     }
 
     /**
+     * Retrieve the `EventDispatcher` instance.
+     *
      * @return EventDispatcher
      */
     public function getEventDispatcher()
