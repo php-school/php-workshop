@@ -3,7 +3,9 @@
 namespace PhpSchool\PhpWorkshop;
 
 /**
- * Class UserState
+ * This class represents the current state of the user. Which exercises she/he has completed and
+ * which is the current exercise being attempted.
+ *
  * @package PhpSchool\PhpWorkshop
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
@@ -21,8 +23,11 @@ class UserState
     private $completedExercises;
 
     /**
-     * @param string $currentExercise
-     * @param array $completedExercises
+     * Take an array of completed exercises (the exercise names) and a string containing the current
+     * exercise.
+     *
+     * @param array $completedExercises An array of exercise names
+     * @param string $currentExercise Can be null in-case the student did not start an exercise yet.
      */
     public function __construct(array $completedExercises = [], $currentExercise = null)
     {
@@ -31,6 +36,8 @@ class UserState
     }
 
     /**
+     * An an exercise as completed. Should be the exercise name.
+     *
      * @param string $exercise
      */
     public function addCompletedExercise($exercise)
@@ -41,6 +48,8 @@ class UserState
     }
 
     /**
+     * Set the current exercise. Should be the exercise name.
+     *
      * @param string $exercise
      */
     public function setCurrentExercise($exercise)
@@ -49,6 +58,8 @@ class UserState
     }
 
     /**
+     * Get the current exercise name.
+     *
      * @return string
      */
     public function getCurrentExercise()
@@ -57,6 +68,8 @@ class UserState
     }
 
     /**
+     * Get an array of the completed exercises (the exercise names)
+     *
      * @return array
      */
     public function getCompletedExercises()
@@ -65,6 +78,8 @@ class UserState
     }
 
     /**
+     * Check whether the student is actually assigned an exercise.
+     *
      * @return bool
      */
     public function isAssignedExercise()
@@ -73,6 +88,8 @@ class UserState
     }
 
     /**
+     * Check whether the student has completed an exercise by the exercise name.
+     *
      * @param string $exercise
      * @return bool
      */

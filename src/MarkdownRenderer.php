@@ -13,16 +13,19 @@ use AydinHassan\CliMdRenderer\CliRenderer;
 class MarkdownRenderer
 {
     /**
-     * @var \League\CommonMark\DocParser
+     * @var DocParser
      */
     private $docParser;
 
     /**
-     * @var \AydinHassan\CliMdRenderer\CliRenderer
+     * @var CliRenderer
      */
     private $cliRenderer;
 
     /**
+     * Should be constructed with an instance of `DocParser` with parses the markdown to an AST.
+     * `CliRenderer` renders the AST to a string formatted for the console.
+     *
      * @param DocParser $docParser
      * @param CliRenderer $cliRenderer
      */
@@ -33,6 +36,9 @@ class MarkdownRenderer
     }
 
     /**
+     * Expects a string of markdown and returns a string which has been formatted for
+     * displaying on the console.
+     *
      * @param string $markdown
      * @return string
      */

@@ -57,9 +57,9 @@ class ExerciseDispatcher
 
     /**
      * @param RunnerFactory $runnerFactory Factory capable of building an exercise runner based on the exercise type.
-     * @param ResultAggregator $resultAggregator Result Aggregator.
-     * @param EventDispatcher $eventDispatcher Event Dispatcher instance.
-     * @param CheckRepository $checkRepository The Check repository.
+     * @param ResultAggregator $resultAggregator
+     * @param EventDispatcher $eventDispatcher
+     * @param CheckRepository $checkRepository
      */
     public function __construct(
         RunnerFactory $runnerFactory,

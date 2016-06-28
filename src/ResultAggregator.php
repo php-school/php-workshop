@@ -9,7 +9,9 @@ use PhpSchool\PhpWorkshop\Result\FailureInterface;
 use PhpSchool\PhpWorkshop\Result\ResultInterface;
 
 /**
- * Class ResultAggregator
+ * This class is a container to hold all the results produced
+ * throughout the verification of a students solution.
+ *
  * @package PhpSchool\PhpWorkshop
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
@@ -21,6 +23,8 @@ class ResultAggregator implements IteratorAggregate
     private $results = [];
 
     /**
+     * Add a new result.
+     *
      * @param ResultInterface $result
      */
     public function add(ResultInterface $result)
@@ -29,6 +33,9 @@ class ResultAggregator implements IteratorAggregate
     }
 
     /**
+     * Computed whether the results are considered a success. If there are any results which implement
+     * `FailureInterface` then the combined result is considered as a fail.
+     *
      * @return bool
      */
     public function isSuccessful()
@@ -44,6 +51,8 @@ class ResultAggregator implements IteratorAggregate
     }
 
     /**
+     * Get an iterator in order to `foreach` the results.
+     *
      * @return ArrayIterator
      */
     public function getIterator()
