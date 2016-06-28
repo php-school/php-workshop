@@ -5,7 +5,8 @@ namespace PhpSchool\PhpWorkshop\ComposerUtil;
 use PhpSchool\PhpWorkshop\Exception\InvalidArgumentException;
 
 /**
- * Class LockFileParser
+ * Utility for reading installed package versions from a `composer.lock` file.
+ *
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
 class LockFileParser
@@ -16,8 +17,8 @@ class LockFileParser
     private $contents;
 
     /**
-     * @param string $lockFilePath
-     * @throws InvalidArgumentException
+     * @param string $lockFilePath The absolute path to the `composer.lock` file.
+     * @throws InvalidArgumentException If the file does not exist.
      */
     public function __construct($lockFilePath)
     {
@@ -29,6 +30,14 @@ class LockFileParser
     }
 
     /**
+     * Get an array of installed packages from the `composer.lock` file including their versions.
+     * ```
+     * [
+     *     ['name' => 'my/package', 'version' => '1.0.0'],
+     *     ['name' => 'my/second-package', 'version' => '1.1.0'],
+     * ];
+     * ```
+     *
      * @return array
      */
     public function getInstalledPackages()
@@ -42,6 +51,8 @@ class LockFileParser
     }
 
     /**
+     * Check if a package name has been installed in any version.
+     *
      * @param string $packageName
      * @return bool
      */

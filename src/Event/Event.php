@@ -5,7 +5,8 @@ namespace PhpSchool\PhpWorkshop\Event;
 use PhpSchool\PhpWorkshop\Exception\InvalidArgumentException;
 
 /**
- * Class CliEvent
+ * A generic `EventInterface` implementation
+ *
  * @package PhpSchool\PhpWorkshop\Event
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
@@ -22,8 +23,8 @@ class Event implements EventInterface
     protected $parameters;
 
     /**
-     * @param string $name
-     * @param array $parameters
+     * @param string $name The event name.
+     * @param array $parameters The event parameters.
      */
     public function __construct($name, array $parameters = [])
     {
@@ -32,6 +33,8 @@ class Event implements EventInterface
     }
 
     /**
+     * Get the name of this event.
+     *
      * @return string
      */
     public function getName()
@@ -40,6 +43,8 @@ class Event implements EventInterface
     }
 
     /**
+     * Get an array of parameters that were triggered with this event.
+     *
      * @return mixed[]
      */
     public function getParameters()
@@ -48,8 +53,11 @@ class Event implements EventInterface
     }
 
     /**
-     * @param string $name
-     * @return mixed
+     * Get a parameter by it's name.
+     *
+     * @param string $name The name of the parameter
+     * @return mixed The value
+     * @throws InvalidArgumentException If the parameter by name does not exist.
      */
     public function getParameter($name)
     {

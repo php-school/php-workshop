@@ -6,7 +6,8 @@ use Colors\Color;
 use PhpSchool\PhpWorkshop\Output\OutputInterface;
 
 /**
- * Class CreditsCommand
+ * A command to display the framework and workshop credits.
+ *
  * @package PhpSchool\PhpWorkshop\Command
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  * @author Michael Woodward <mikeymike.mw@gmail.com>
@@ -66,6 +67,7 @@ class CreditsCommand
     }
     
     /**
+     *
      * @return int|void
      */
     public function __invoke()
