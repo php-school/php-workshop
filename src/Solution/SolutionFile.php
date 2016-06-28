@@ -5,7 +5,8 @@ namespace PhpSchool\PhpWorkshop\Solution;
 use InvalidArgumentException;
 
 /**
- * Class SolutionFile
+ * This class represents a file on the file system which is part of the reference solution.
+ *
  * @package PhpSchool\PhpWorkshop\Solution
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
@@ -22,9 +23,9 @@ class SolutionFile
     private $baseDirectory;
 
     /**
-     * @param string $relativePath
-     * @param string $baseDirectory
-     * @throws InvalidArgumentException
+     * @param string $relativePath The relative path from the base directory.
+     * @param string $baseDirectory The base directory of the solution.
+     * @throws InvalidArgumentException If the file does not exist.
      */
     public function __construct($relativePath, $baseDirectory)
     {
@@ -37,6 +38,9 @@ class SolutionFile
     }
 
     /**
+     * Static constructor to create instance from a file path.
+     * Will assume the base directory should be the immediate parent of the file.
+     *
      * @param string $file
      * @return static
      */
@@ -46,6 +50,8 @@ class SolutionFile
     }
 
     /**
+     * Get the absolute path of the file.
+     *
      * @return string
      */
     private function getAbsolutePath()
@@ -54,6 +60,8 @@ class SolutionFile
     }
 
     /**
+     * Get the relative path of the file from the base directory.
+     *
      * @return string
      */
     public function getRelativePath()
@@ -62,6 +70,8 @@ class SolutionFile
     }
 
     /**
+     * Get the base directory of the file.
+     *
      * @return string
      */
     public function getBaseDirectory()
@@ -70,6 +80,8 @@ class SolutionFile
     }
 
     /**
+     * Get the contents of the file.
+     *
      * @return string
      */
     public function getContents()
@@ -78,6 +90,8 @@ class SolutionFile
     }
 
     /**
+     * Proxy to the absolute path.
+     *
      * @return string
      */
     public function __toString()

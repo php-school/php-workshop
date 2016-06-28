@@ -31,10 +31,14 @@ class DirectorySolution implements SolutionInterface
     private $baseDirectory;
 
     /**
-     * @param string $directory
-     * @param string $entryPoint
-     * @param array  $exclusions
-     * @throws InvalidArgumentException
+     * Build an instance from a given directory. Requires a file name to be used as the entry point,
+     * and optionally can take an array of files to exclude from the solution. For example you may want to
+     * ignore some dot files or `composer.lock`.
+     *
+     * @param string $directory The directory to search for files.
+     * @param string $entryPoint The relative path from the directory of the entry point file.
+     * @param array  $exclusions An array of file names to exclude from the folder.
+     * @throws InvalidArgumentException If the entry point does not exist in the folder.
      */
     public function __construct($directory, $entryPoint, array $exclusions = [])
     {
@@ -72,17 +76,22 @@ class DirectorySolution implements SolutionInterface
     }
 
     /**
-     * @param string $directory
-     * @param array  $exclusions
-     * @param string $entryPoint
+     * Static constructor to build an instance from a directory.
+     *
+     * @param string $directory The directory to search for files.
+     * @param array  $exclusions An array of file names to exclude from the folder.
+     * @param string $entryPoint The relative path from the directory of the entry point file.
      * @return static
      */
     public static function fromDirectory($directory, array $exclusions = [], $entryPoint = 'solution.php')
     {
         return new static($directory, $entryPoint, array_merge($exclusions, ['composer.lock', 'vendor']));
     }
-    
+
     /**
+     * Get the entry point. This is the PHP file that php would execute in order to run the
+     * program. This should be the absolute path.
+     *
      * @return string
      */
     public function getEntryPoint()
@@ -91,7 +100,9 @@ class DirectorySolution implements SolutionInterface
     }
 
     /**
-     * @return string[]
+     * Get all the files which are contained with the solution.
+     *
+     * @return SolutionFile[]
      */
     public function getFiles()
     {
@@ -99,6 +110,8 @@ class DirectorySolution implements SolutionInterface
     }
 
     /**
+     * Get the absolute path to the directory containing the solution.
+     *
      * @return string
      */
     public function getBaseDirectory()
@@ -107,6 +120,8 @@ class DirectorySolution implements SolutionInterface
     }
 
     /**
+     * Check whether there is a `composer.lock` file in the base directory.
+     *
      * @return bool
      */
     public function hasComposerFile()
