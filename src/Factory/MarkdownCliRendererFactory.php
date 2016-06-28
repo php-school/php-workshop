@@ -4,11 +4,11 @@ namespace PhpSchool\PhpWorkshop\Factory;
 
 use Colors\Color;
 use Interop\Container\ContainerInterface;
+use League\CommonMark\Block\Element\Heading;
 use PhpSchool\CliMenu\Terminal\TerminalInterface;
 use League\CommonMark\Block\Element\Document;
 use League\CommonMark\Block\Element\FencedCode;
-use League\CommonMark\Block\Element\Header;
-use League\CommonMark\Block\Element\HorizontalRule;
+use League\CommonMark\Block\Element\ThematicBreak;
 use League\CommonMark\Block\Element\Paragraph;
 use League\CommonMark\Inline\Element\Code;
 use League\CommonMark\Inline\Element\Emphasis;
@@ -50,20 +50,20 @@ class MarkdownCliRendererFactory
         $codeRender->addSyntaxHighlighter('php', new PhpHighlighter($highlighterFactory->__invoke()));
 
         $blockRenderers = [
-            Document::class         => new DocumentRenderer,
-            Header::class           => new HeaderRenderer,
-            HorizontalRule::class   => new HorizontalRuleRenderer($terminal->getWidth()),
-            Paragraph::class        => new ParagraphRenderer,
-            FencedCode::class       => $codeRender,
+            Document::class => new DocumentRenderer,
+            Heading::class => new HeaderRenderer,
+            ThematicBreak::class => new HorizontalRuleRenderer($terminal->getWidth()),
+            Paragraph::class => new ParagraphRenderer,
+            FencedCode::class => $codeRender,
         ];
 
         $inlineBlockRenderers = [
-            Text::class             => new TextRenderer,
-            Code::class             => new CodeRenderer,
-            Emphasis::class         => new EmphasisRenderer,
-            Strong::class           => new StrongRenderer,
-            Newline::class          => new NewlineRenderer,
-            Link::class             => new LinkRenderer,
+            Text::class => new TextRenderer,
+            Code::class => new CodeRenderer,
+            Emphasis::class => new EmphasisRenderer,
+            Strong::class => new StrongRenderer,
+            Newline::class => new NewlineRenderer,
+            Link::class => new LinkRenderer,
         ];
 
         return new CliRenderer(
