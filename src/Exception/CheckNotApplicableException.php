@@ -7,15 +7,19 @@ use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use RuntimeException;
 
 /**
- * Class CheckNotApplicableException
+ * Represents the situation when a workshop developer tries to use a check in an exercise which has
+ * a type not supported by the check.
+ *
  * @package PhpSchool\PhpWorkshop\Exception
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
 class CheckNotApplicableException extends RuntimeException
 {
     /**
-     * @param CheckInterface $check
-     * @param ExerciseInterface $exercise
+     * Static constructor to create an instance from the check & exercise.
+     *
+     * @param CheckInterface $check The check Instance.
+     * @param ExerciseInterface $exercise The exercise Instance.
      * @return static
      */
     public static function fromCheckAndExercise(CheckInterface $check, ExerciseInterface $exercise)

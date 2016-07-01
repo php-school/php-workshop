@@ -3,13 +3,16 @@
 namespace PhpSchool\PhpWorkshop\Exception;
 
 /**
- * Class InvalidArgumentException
+ * Represents invalid argument exceptions.
+ *
  * @package PhpSchool\PhpWorkshop\Exception
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
 class InvalidArgumentException extends \InvalidArgumentException
 {
     /**
+     * Static constructor to create from the expected type & the actual value.
+     *
      * @param string $expected
      * @param mixed $actual
      * @return static
@@ -26,6 +29,8 @@ class InvalidArgumentException extends \InvalidArgumentException
     }
 
     /**
+     * Static constructor to create from when a parameter should be one of a set of allowed values, but was not.
+     *
      * @param string $parameterName
      * @param mixed[] $allowedValues
      * @param mixed $actualValue
@@ -47,7 +52,7 @@ class InvalidArgumentException extends \InvalidArgumentException
      * @param $value
      * @return string
      */
-    public static function stringify($value)
+    private static function stringify($value)
     {
         if (is_object($value)) {
             return get_class($value);
