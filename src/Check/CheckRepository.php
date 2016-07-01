@@ -2,11 +2,12 @@
 
 namespace PhpSchool\PhpWorkshop\Check;
 
-use PhpSchool\CliMenu\Exception\InvalidTerminalException;
 use PhpSchool\PhpWorkshop\Exception\InvalidArgumentException;
 
 /**
- * Class CheckRepository
+ * This class is the repository containing all the available checks
+ * for the workshop framework.
+ *
  * @package PhpSchool\PhpWorkshop\Check
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
@@ -18,7 +19,7 @@ class CheckRepository
     private $checks = [];
 
     /**
-     * @param CheckInterface[] $checks
+     * @param CheckInterface[] $checks An array of checks available to the workshop framework.
      */
     public function __construct(array $checks = [])
     {
@@ -28,7 +29,9 @@ class CheckRepository
     }
 
     /**
-     * @param CheckInterface $check
+     * Add a new check to the repository.
+     *
+     * @param CheckInterface $check The check instance to add.
      */
     public function registerCheck(CheckInterface $check)
     {
@@ -36,6 +39,8 @@ class CheckRepository
     }
 
     /**
+     * Get all of the checks in the repository.
+     *
      * @return array
      */
     public function getAll()
@@ -44,9 +49,11 @@ class CheckRepository
     }
 
     /**
-     * @param string $class
-     * @return CheckInterface
-     * @throws InvalidArgumentException
+     * Get a check instance via it's class name.
+     *
+     * @param string $class The class name of the check instance.
+     * @return CheckInterface The instance.
+     * @throws InvalidArgumentException If an instance of the check does not exist.
      */
     public function getByClass($class)
     {
@@ -58,6 +65,8 @@ class CheckRepository
     }
 
     /**
+     * Query whether a check instance exists in this repository via it's class name.
+     *
      * @param string $class
      * @return bool
      */

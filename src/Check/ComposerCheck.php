@@ -11,13 +11,17 @@ use PhpSchool\PhpWorkshop\Result\ResultInterface;
 use PhpSchool\PhpWorkshop\Result\Success;
 
 /**
- * Class ComposerCheck
+ * This check looks for a set of composer packages specified by the exercise
+ * in the students `composer.lock` file.
+ *
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
 class ComposerCheck implements SimpleCheckInterface
 {
 
     /**
+     * Return the check's name
+     *
      * @return string
      */
     public function getName()
@@ -26,9 +30,13 @@ class ComposerCheck implements SimpleCheckInterface
     }
 
     /**
-     * @param ExerciseInterface $exercise
-     * @param string $fileName
-     * @return ResultInterface
+     * This check parses the `composer.lock` file and checks that the student
+     * installed a set of required packages. If they did not a failure is returned, otherwise,
+     * a success is returned.
+     *
+     * @param ExerciseInterface $exercise The exercise to check against.
+     * @param string $fileName The absolute path to the student's submission.
+     * @return ResultInterface The result of the check.
      */
     public function check(ExerciseInterface $exercise, $fileName)
     {
@@ -63,6 +71,8 @@ class ComposerCheck implements SimpleCheckInterface
     }
 
     /**
+     * This check can run on any exercise type.
+     *
      * @param ExerciseType $exerciseType
      * @return bool
      */
@@ -81,6 +91,7 @@ class ComposerCheck implements SimpleCheckInterface
     }
 
     /**
+     * This check can run before because if it fails, there is no point executing the solution.
      *
      * @return string
      */

@@ -17,6 +17,8 @@ class PhpLintCheck implements SimpleCheckInterface
 {
 
     /**
+     * Return the check's name
+     *
      * @return string
      */
     public function getName()
@@ -25,9 +27,11 @@ class PhpLintCheck implements SimpleCheckInterface
     }
 
     /**
-     * @param ExerciseInterface $exercise
-     * @param string $fileName
-     * @return Failure|Success
+     * Simply check the students submission can be linted with `php -l`
+     *
+     * @param ExerciseInterface $exercise The exercise to check against.
+     * @param string $fileName The absolute path to the student's submission.
+     * @return ResultInterface The result of the check.
      */
     public function check(ExerciseInterface $exercise, $fileName)
     {
@@ -42,6 +46,8 @@ class PhpLintCheck implements SimpleCheckInterface
     }
 
     /**
+     * This check can run on any exercise type.
+     *
      * @param ExerciseType $exerciseType
      * @return bool
      */
@@ -51,7 +57,6 @@ class PhpLintCheck implements SimpleCheckInterface
     }
 
     /**
-     *
      * @return string
      */
     public function getExerciseInterface()
@@ -60,6 +65,8 @@ class PhpLintCheck implements SimpleCheckInterface
     }
 
     /**
+     * This check should be run before executing the submission, as, if it cannot be linted
+     * it probably cannot be executed.
      *
      * @return string
      */
