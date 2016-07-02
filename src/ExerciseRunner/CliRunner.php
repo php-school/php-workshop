@@ -21,7 +21,13 @@ use PhpSchool\PhpWorkshop\Utils\ArrayObject;
 use Symfony\Component\Process\Process;
 
 /**
- * Class CliRunner
+ * The `CLI` runner. This runner executes solutions as PHP CLI scripts, passing the arguments
+ * from the exercise as command line arguments to the solution. The solution will be invoked like:
+ *
+ * ```bash
+ * php my-solution.php arg1 arg2 arg3
+ * ```
+ *
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
 class CliRunner implements ExerciseRunnerInterface
@@ -37,8 +43,10 @@ class CliRunner implements ExerciseRunnerInterface
     private $eventDispatcher;
 
     /**
-     * @param CliExercise $exercise
-     * @param EventDispatcher $eventDispatcher
+     * Requires the exercise instance and an event dispatcher.
+     *
+     * @param CliExercise $exercise The exercise to be invoked.
+     * @param EventDispatcher $eventDispatcher The event dispatcher.
      */
     public function __construct(CliExercise $exercise, EventDispatcher $eventDispatcher)
     {
@@ -76,7 +84,7 @@ class CliRunner implements ExerciseRunnerInterface
     }
 
     /**
-     * @param string      $fileName
+     * @param string $fileName
      * @param ArrayObject $args
      *
      * @return Process
@@ -88,8 +96,20 @@ class CliRunner implements ExerciseRunnerInterface
     }
 
     /**
-     * @param string $fileName
-     * @return ResultInterface
+     * Verifies a solution by invoking PHP from the CLI passing the arguments gathered from the exercise
+     * as command line arguments to PHP.
+     *
+     * Events dispatched:
+     *
+     * * cli.verify.reference-execute.pre
+     * * cli.verify.reference.executing
+     * * cli.verify.reference-execute.fail (if the reference solution fails to execute)
+     * * cli.verify.student-execute.pre
+     * * cli.verify.student.executing
+     * * cli.verify.student-execute.fail (if the student's solution fails to execute)
+     *
+     * @param string $fileName The absolute path to the student's solution.
+     * @return ResultInterface The result of the check.
      */
     public function verify($fileName)
     {
@@ -123,9 +143,20 @@ class CliRunner implements ExerciseRunnerInterface
     }
 
     /**
-     * @param string $fileName
-     * @param OutputInterface $output
-     * @return bool
+     * Runs a student's solution by invoking PHP from the CLI passing the arguments gathered from the exercise
+     * as command line arguments to PHP.
+     *
+     * Running only runs the student's solution, the reference solution is not run and no verification is performed,
+     * the output of the student's solution is written directly to the output.
+     *
+     * Events dispatched:
+     *
+     *  * cli.run.student-execute.pre
+     *  * cli.run.student.executing
+     *
+     * @param string $fileName The absolute path to the student's solution.
+     * @param OutputInterface $output A wrapper around STDOUT.
+     * @return bool If the solution was successfully executed, eg. exit code was 0.
      */
     public function run($fileName, OutputInterface $output)
     {
