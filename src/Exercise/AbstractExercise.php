@@ -29,7 +29,8 @@ abstract class AbstractExercise
      * should exist in `workshop-root/exercises/<exercise-name>/solution/`.
      *
      * This method can be overwritten if the solution consists of multiple files,
-     * see [Directory Solution](https://www.phpschool.io/docs/reference/exercise-solutions#directory-solution) for more details.
+     * see [Directory Solution](https://www.phpschool.io/docs/reference/exercise-solutions#directory-solution) for
+     * more details.
      *
      * @return SolutionInterface
      */

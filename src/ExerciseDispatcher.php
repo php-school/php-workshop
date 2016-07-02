@@ -121,9 +121,10 @@ class ExerciseDispatcher
      *
      * @param ExerciseInterface $exercise The exercise instance.
      * @param string $fileName The absolute file name of the students solution.
-     * @return ResultAggregator The result aggregator which contains all the results injected via the runner, checks and events.
+     * @return ResultAggregator Contains all the results injected via the runner, checks and events.
      * @throws CheckNotApplicableException If the check is not applicable to the exercise type.
-     * @throws ExerciseNotConfiguredException If the exercise does not implement the correct interface based on the checks required.
+     * @throws ExerciseNotConfiguredException If the exercise does not implement the correct interface based on
+     * the checks required.
      */
     public function verify(ExerciseInterface $exercise, $fileName)
     {
