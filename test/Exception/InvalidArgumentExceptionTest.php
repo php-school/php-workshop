@@ -37,7 +37,10 @@ class InvalidArgumentExceptionTest extends PHPUnit_Framework_TestCase
      */
     public function testStringify($value, $expected)
     {
-        $this->assertEquals(InvalidArgumentException::stringify($value), $expected);
+        $rM = new \ReflectionMethod(InvalidArgumentException::class, 'stringify');
+        $rM->setAccessible(true);
+
+        $this->assertEquals($rM->invoke(null, $value), $expected);
     }
 
     /**
