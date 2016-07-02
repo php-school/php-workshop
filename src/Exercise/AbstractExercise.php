@@ -8,7 +8,9 @@ use PhpSchool\PhpWorkshop\Solution\SolutionInterface;
 use ReflectionClass;
 
 /**
- * Class AbstractExercise
+ * This abstract class implements many of the methods described in `\PhpSchool\PhpWorkshop\Exercise\ExerciseInterface`.
+ * It serves as a good base for an exercise, providing useful defaults for many of the methods.
+ *
  * @package PhpSchool\PhpWorkshop\Exercise
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
@@ -16,11 +18,19 @@ abstract class AbstractExercise
 {
 
     /**
+     * Get the name of the exercise, like `Hello World!`.
+     *
      * @return string
      */
     abstract public function getName();
 
     /**
+     * This returns a single file solution named `solution.php` which
+     * should exist in `workshop-root/exercises/<exercise-name>/solution/`.
+     *
+     * This method can be overwritten if the solution consists of multiple files,
+     * see [Directory Solution](https://www.phpschool.io/docs/reference/exercise-solutions#directory-solution) for more details.
+     *
      * @return SolutionInterface
      */
     public function getSolution()
@@ -37,6 +47,9 @@ abstract class AbstractExercise
     }
 
     /**
+     * This returns the problem file path, which is assumed to exist in
+     * `workshop-root/exercises/<exercise-name>/problem/` as a file named `problem.md`.
+     *
      * @return string
      */
     public function getProblem()
@@ -47,7 +60,10 @@ abstract class AbstractExercise
     }
 
     /**
-     * @return null
+     * Allows to perform some cleanup after the exercise solution's have been executed, for example
+     * remove files, close DB connections.
+     *
+     * @return void
      */
     public function tearDown()
     {
@@ -63,6 +79,9 @@ abstract class AbstractExercise
     }
 
     /**
+     * This method is implemented as empty by default, if you want to add additional checks or listen
+     * to events, you should override this method.
+     *
      * @param ExerciseDispatcher $dispatcher
      */
     public function configure(ExerciseDispatcher $dispatcher)
