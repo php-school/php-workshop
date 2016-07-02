@@ -33,7 +33,7 @@ class ResultAggregator implements IteratorAggregate
     }
 
     /**
-     * Computed whether the results are considered a success. If there are any results which implement
+     * Computes whether the results are considered a success. If there are any results which implement
      * `FailureInterface` then the combined result is considered as a fail.
      *
      * @return bool

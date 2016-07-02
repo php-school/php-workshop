@@ -29,7 +29,7 @@ class PhpLintCheck implements SimpleCheckInterface
     }
 
     /**
-     * Simply check the student's solution can be linted with `php -l`
+     * Simply check the student's solution can be linted with `php -l`.
      *
      * @param ExerciseInterface $exercise The exercise to check against.
      * @param string $fileName The absolute path to the student's solution.

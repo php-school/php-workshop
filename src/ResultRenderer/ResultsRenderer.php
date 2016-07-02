@@ -15,7 +15,7 @@ use PhpSchool\PhpWorkshop\ResultAggregator;
 use PhpSchool\PhpWorkshop\UserState;
 
 /**
- * Renderer which renders a `\PhpSchool\PhpWorkshop\ResultAggregator` and writes it the output.
+ * Renderer which renders a `PhpSchool\PhpWorkshop\ResultAggregator` and writes it the output.
  *
  * @package PhpSchool\PhpWorkshop\ResultRenderer
  */
@@ -206,7 +206,7 @@ class ResultsRenderer
 
     /**
      * Style/colour a string.
-     * Can be any of: black, red, green, yellow, blue, magenta, cyan, white, bold, italic, underline
+     * Can be any of: black, red, green, yellow, blue, magenta, cyan, white, bold, italic, underline.
      *
      * @param string $string
      * @param array|string $colourOrStyle A single style as a string or multiple styles as an array.

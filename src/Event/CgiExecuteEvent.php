@@ -7,7 +7,7 @@ use Psr\Http\Message\RequestInterface;
 
 /**
  * An event to represent events which occur throughout the verification and running process in
- * `\PhpSchool\PhpWorkshop\ExerciseRunner\CgiRunner`
+ * `\PhpSchool\PhpWorkshop\ExerciseRunner\CgiRunner`.
  *
  * @package PhpSchool\PhpWorkshop\Event
  * @author Aydin Hassan <aydin@hotmail.co.uk>
@@ -44,7 +44,7 @@ class CgiExecuteEvent extends Event
     }
 
     /**
-     * Modify the request via a callback. The callback should return the new modified request.
+     * Modify the request via a callback. The callback should return the newly modified request.
      *
      * @param callable $callback
      */

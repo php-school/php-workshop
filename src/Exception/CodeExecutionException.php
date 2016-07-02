@@ -14,9 +14,9 @@ use Symfony\Component\Process\Process;
 class CodeExecutionException extends RuntimeException
 {
     /**
-     * Static constructor to create an instance from a failed `Process` instance.
+     * Static constructor to create an instance from a failed `Symfony\Component\Process\Process` instance.
      *
-     * @param Process $process The `Process` instance which failed.
+     * @param Process $process The `Symfony\Component\Process\Process` instance which failed.
      * @return static
      */
     public static function fromProcess(Process $process)

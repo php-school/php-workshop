@@ -77,8 +77,8 @@ class ExerciseDispatcher
 
     /**
      * Queue a specific check to be run when the exercise is verified. When the exercise is verified
-     * the check specified as the first argument will also be executed. Throws an InvalidArgumentException
-     * if the check does not exist in the CheckRepository.
+     * the check specified as the first argument will also be executed. Throws an `InvalidArgumentException`
+     * if the check does not exist in the `CheckRepository`.
      *
      * @param string $requiredCheck The name of the required check.
      * @throws InvalidArgumentException If the check does not exist.
@@ -166,9 +166,9 @@ class ExerciseDispatcher
     }
 
     /**
-     * Run a students solution against a specific exercise. Does not invoke checks. Invokes the
+     * Run a student's solution against a specific exercise. Does not invoke checks. Invokes the
      * correct runner for the exercise based on the exercise type. Various events are triggered throughout the process.
-     * The output of the solution is written directly to the OutputInterface instance.
+     * The output of the solution is written directly to the `OutputInterface` instance.
      *
      * @param ExerciseInterface $exercise The exercise instance.
      * @param string $fileName The absolute file name of the students solution.

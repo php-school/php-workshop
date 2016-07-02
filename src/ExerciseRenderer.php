@@ -7,7 +7,7 @@ use PhpSchool\CliMenu\CliMenu;
 use PhpSchool\PhpWorkshop\Output\OutputInterface;
 
 /**
- * This class is used to render the exercise problem to the student, it also set's the current exercise
+ * This class is used to render the exercise problem to the student, it also sets the current exercise
  * on to the user state object.
  *
  * @package PhpSchool\PhpWorkshop

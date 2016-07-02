@@ -39,7 +39,7 @@ class FunctionRequirementsCheck implements SimpleCheckInterface
     }
 
     /**
-     * Return the check's name
+     * Return the check's name.
      *
      * @return string
      */

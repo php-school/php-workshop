@@ -31,7 +31,8 @@ class LockFileParser
 
     /**
      * Get an array of installed packages from the `composer.lock` file including their versions.
-     * ```
+     *
+     * ```php
      * [
      *     ['name' => 'my/package', 'version' => '1.0.0'],
      *     ['name' => 'my/second-package', 'version' => '1.1.0'],

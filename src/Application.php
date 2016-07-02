@@ -76,7 +76,7 @@ final class Application
     }
 
     /**
-     * Register a custom check with the application. Exercises will only be use the check
+     * Register a custom check with the application. Exercises will only be able to use the check
      * if it has been registered here.
      *
      * @param string $check The FQCN of the check
@@ -113,7 +113,7 @@ final class Application
     }
 
     /**
-     * Add an ASCII art logo to the application. This will be displayed a the top of them menu. It will be
+     * Add an ASCII art logo to the application. This will be displayed at the top of them menu. It will be
      * automatically padded to sit in the middle.
      *
      * @param string $logo The logo

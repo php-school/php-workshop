@@ -27,8 +27,8 @@ interface EventInterface
     /**
      * Get a parameter by it's name.
      *
-     * @param string $name The name of the parameter
-     * @return mixed The value
+     * @param string $name The name of the parameter.
+     * @return mixed The value.
      * @throws InvalidArgumentException If the parameter by name does not exist.
      */
     public function getParameter($name);

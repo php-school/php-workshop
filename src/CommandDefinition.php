@@ -4,7 +4,7 @@ namespace PhpSchool\PhpWorkshop;
 
 /**
  * Represents a command in the workshop framework. Simply consists of a
- * command name, required arguments and either a service name of callable to
+ * command name, required arguments and either a service name or callable to
  * execute when the command is run.
  *
  * @package PhpSchool\PhpWorkshop
@@ -40,7 +40,7 @@ class CommandDefinition
     }
 
     /**
-     * Get the name of the command
+     * Get the name of the command.
      *
      * @return string
      */
@@ -50,7 +50,7 @@ class CommandDefinition
     }
 
     /**
-     * Get the list of required arguments
+     * Get the list of required arguments.
      *
      * @return array
      */
@@ -60,7 +60,7 @@ class CommandDefinition
     }
 
     /**
-     * Get the callable associated with this command
+     * Get the callable associated with this command.
      *
      * @return string|callable
      */

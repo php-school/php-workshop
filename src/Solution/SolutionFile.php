@@ -38,7 +38,7 @@ class SolutionFile
     }
 
     /**
-     * Static constructor to create instance from a file path.
+     * Static constructor to create an instance from a file path.
      * Will assume the base directory should be the immediate parent of the file.
      *
      * @param string $file

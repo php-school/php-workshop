@@ -15,7 +15,7 @@ use Symfony\Component\Process\Process;
 
 /**
  * This check sets up a database and a `PDO` object. It prepends the database DSN as a CLI argument to the student's
- * solution so they can connect to the database. The PDO object is passed to the exercise before and after the
+ * solution so they can connect to the database. The `PDO` object is passed to the exercise before and after the
  * student's solution has been executed, allowing you to first seed the database and then verify the contents of the
  * database.
  *

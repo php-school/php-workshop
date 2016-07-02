@@ -65,7 +65,7 @@ class CheckRepository
     }
 
     /**
-     * Query whether a check instance exists in this repository via it's class name.
+     * Query whether a check instance exists in this repository via its class name.
      *
      * @param string $class
      * @return bool

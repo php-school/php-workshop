@@ -17,7 +17,7 @@ use PhpSchool\PhpWorkshop\Result\Success;
 class FileExistsCheck implements SimpleCheckInterface
 {
     /**
-     * Return the check's name
+     * Return the check's name.
      *
      * @return string
      */

@@ -8,7 +8,8 @@ use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 
 /**
- * Class DirectorySolution
+ * Solution which can contain multiple files, the file to execute is defined as the entry point.
+ *
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  * @author Michael Woodward <mikeymike.mw@gmail.com>
  */
@@ -89,7 +90,7 @@ class DirectorySolution implements SolutionInterface
     }
 
     /**
-     * Get the entry point. This is the PHP file that php would execute in order to run the
+     * Get the entry point. This is the PHP file that PHO would execute in order to run the
      * program. This should be the absolute path.
      *
      * @return string

@@ -8,7 +8,7 @@ use Closure;
  * This class is responsible for storing the modifications that should
  * be made to a PHP file. That includes insertions and transformers.
  * A transformer is a simple closure which should receives an AST
- * representation of the students solution and it should return the modified AST.
+ * representation of the student's solution and it should return the modified AST.
  * An insertion is a block of code that can be inserted at the top or bottom of
  * the students solution.
  *
@@ -36,7 +36,7 @@ class Patch
     }
 
     /**
-     * A a new transformer (`Closure`). `Patch` is immutable so a new instance is returned.
+     * Add a new transformer (`Closure`). `Patch` is immutable so a new instance is returned.
      *
      * @param Closure $closure
      * @return static

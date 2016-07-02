@@ -26,7 +26,7 @@ class UserState
      * Take an array of completed exercises (the exercise names) and a string containing the current
      * exercise.
      *
-     * @param array $completedExercises An array of exercise names
+     * @param array $completedExercises An array of exercise names.
      * @param string $currentExercise Can be null in-case the student did not start an exercise yet.
      */
     public function __construct(array $completedExercises = [], $currentExercise = null)
@@ -36,7 +36,7 @@ class UserState
     }
 
     /**
-     * An an exercise as completed. Should be the exercise name.
+     * Mark an exercise as completed. Should be the exercise name.
      *
      * @param string $exercise
      */
@@ -68,7 +68,7 @@ class UserState
     }
 
     /**
-     * Get an array of the completed exercises (the exercise names)
+     * Get an array of the completed exercises (the exercise names).
      *
      * @return array
      */

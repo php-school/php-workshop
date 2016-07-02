@@ -31,7 +31,7 @@ interface ExerciseInterface
 
     /**
      * This is where the exercise specifies the extra checks it may require. It is also
-     * possible to grab the even dispatcher from the exercise dispatcher and listen to any
+     * possible to grab the event dispatcher from the exercise dispatcher and listen to any
      * events. This method is automatically invoked just before verifying/running an student's solution
      * to an exercise.
      *

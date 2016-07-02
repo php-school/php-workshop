@@ -21,7 +21,7 @@ class MissingArgumentException extends RuntimeException
      * Create the exception, requires the command name and missing arguments.
      *
      * @param string $commandName The command name.
-     * @param array $missingArguments An array of missing arguments (strings)
+     * @param array $missingArguments An array of missing arguments (strings).
      */
     public function __construct($commandName, array $missingArguments)
     {

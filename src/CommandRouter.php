@@ -9,7 +9,7 @@ use SebastianBergmann\Environment\Runtime;
 
 /**
  * Parses $argv (or passed array) and attempts to find a command
- * which is suitable for what was typed on the cli. It then executed the callable
+ * which is suitable for what was typed on the cli. It then executes the callable
  * associated with that command definition.
  *
  * @package PhpSchool\PhpWorkshop
@@ -34,7 +34,7 @@ class CommandRouter
     private $container;
 
     /**
-     * Accepts an array of CommandDefinition's which represent the application. Also takes a default
+     * Accepts an array of `CommandDefinition`'s which represent the application. Also takes a default
      * (name of one of the commands) which will be used if the workshop was invoked with no arguments.
      *
      * Also accepts an instance of the container so it can look for services in there which may by defined
@@ -70,7 +70,7 @@ class CommandRouter
     }
 
     /**
-     * Attempts to route the command. Parses $argv (or a given array), extracting the command name and
+     * Attempts to route the command. Parses `$argv` (or a given array), extracting the command name and
      * arguments. Using the command name, the command definition is looked up.
      *
      * The number of arguments are validated against the required arguments for the command

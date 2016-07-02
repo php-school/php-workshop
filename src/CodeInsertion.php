@@ -44,7 +44,7 @@ class CodeInsertion
     private $code;
 
     /**
-     * Accepts the type on insertion, either static::TYPE_BEFORE or static::TYPE_AFTER
+     * Accepts the type of insertion, either `static::TYPE_BEFORE` or `static::TYPE_AFTER`
      * and a string containing the code to be inserted.
      *
      * @param string $type
@@ -60,7 +60,7 @@ class CodeInsertion
     }
 
     /**
-     * Get the type of insertion, either static::TYPE_BEFORE or static::TYPE_AFTER.
+     * Get the type of insertion, either `static::TYPE_BEFORE` or `static::TYPE_AFTER`.
      *
      * @return string
      */
@@ -70,7 +70,7 @@ class CodeInsertion
     }
 
     /**
-     * Get a string containing the code be inserted
+     * Get a string containing the code be inserted.
      *
      * @return string
      */

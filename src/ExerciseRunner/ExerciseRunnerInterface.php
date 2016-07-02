@@ -30,7 +30,7 @@ interface ExerciseRunnerInterface
      * `\PhpSchool\PhpWorkshop\Result\FailureInterface` should be returned.
      *
      * Other things that could go wrong include the student's solution returning a non-zero
-     * exit code, or an notice/warning being exhibited.
+     * exit code, or a notice/warning being exhibited.
      *
      * @param string $fileName The absolute path to the student's solution.
      * @return ResultInterface The result of the check.
