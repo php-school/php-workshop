@@ -53,10 +53,6 @@
         }
     },
     "scripts" : {
-        "test": [
-            "phpunit",
-            "@cs"
-        ],
         "cs" : [
             "phpcs src --standard=PSR2",
             "phpcs test --standard=PSR2"
