@@ -5,7 +5,8 @@ namespace PhpSchool\PhpWorkshop\Exception;
 use RuntimeException;
 
 /**
- * Class MissingArgumentException
+ * Represents the situation where a command was called without required parameters.
+ *
  * @package PhpSchool\PhpWorkshop\Exception
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
@@ -17,8 +18,10 @@ class MissingArgumentException extends RuntimeException
     private $missingArguments = [];
 
     /**
-     * @param $commandName
-     * @param array $missingArguments
+     * Create the exception, requires the command name and missing arguments.
+     *
+     * @param string $commandName The command name.
+     * @param array $missingArguments An array of missing arguments (strings).
      */
     public function __construct($commandName, array $missingArguments)
     {
@@ -33,6 +36,8 @@ class MissingArgumentException extends RuntimeException
     }
 
     /**
+     * Retrieve the list of missing arguments.
+     *
      * @return array
      */
     public function getMissingArguments()

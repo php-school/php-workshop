@@ -8,7 +8,10 @@ use Interop\Container\ContainerInterface;
 use SebastianBergmann\Environment\Runtime;
 
 /**
- * Class CommandRouter
+ * Parses $argv (or passed array) and attempts to find a command
+ * which is suitable for what was typed on the cli. It then executes the callable
+ * associated with that command definition.
+ *
  * @package PhpSchool\PhpWorkshop
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
@@ -26,14 +29,20 @@ class CommandRouter
     private $defaultCommand;
 
     /**
-     * @var \Interop\Container\ContainerInterface
+     * @var ContainerInterface
      */
     private $container;
 
     /**
-     * @param CommandDefinition[] $commands
-     * @param $default
-     * @param \Interop\Container\ContainerInterface $container
+     * Accepts an array of `CommandDefinition`'s which represent the application. Also takes a default
+     * (name of one of the commands) which will be used if the workshop was invoked with no arguments.
+     *
+     * Also accepts an instance of the container so it can look for services in there which may by defined
+     * as the callable for one of the command definitions.
+     *
+     * @param CommandDefinition[] $commands An array of command definitions
+     * @param string $default The default command to use (if the workshop was invoked with no arguments)
+     * @param ContainerInterface $container An instance of the container
      */
     public function __construct(array $commands, $default, ContainerInterface $container)
     {
@@ -61,6 +70,18 @@ class CommandRouter
     }
 
     /**
+     * Attempts to route the command. Parses `$argv` (or a given array), extracting the command name and
+     * arguments. Using the command name, the command definition is looked up.
+     *
+     * The number of arguments are validated against the required arguments for the command
+     * (specified by the definition)
+     *
+     * We get the callable from the command definition, or if it is the name of a service, we lookup the service
+     * in the container and validate that it is a callable.
+     *
+     * Finally, the callable is invoked with the arguments passed from the cli. The return value of
+     * callable is returned (if it is an integer, if not zero (success) is returned).
+     *
      * @param array $args
      * @return int
      * @throws CliRouteNotExists

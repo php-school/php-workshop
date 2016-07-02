@@ -5,7 +5,9 @@ namespace PhpSchool\PhpWorkshop\Result;
 use PhpSchool\PhpWorkshop\Check\CheckInterface;
 
 /**
- * Class StdOutFailure
+ * A failure result representing the situation where the output of a solution does not match
+ * that of the expected output.
+ *
  * @package PhpSchool\PhpWorkshop\Result
  * @author  Aydin Hassan <aydin@hotmail.co.uk>
  */
@@ -27,9 +29,9 @@ class StdOutFailure implements FailureInterface
     private $actualOutput;
 
     /**
-     * @param string $name
-     * @param string $expectedOutput
-     * @param string $actualOutput
+     * @param string $name The name of the check that produced this result.
+     * @param string $expectedOutput The expected output.
+     * @param string $actualOutput The actual output.
      */
     public function __construct($name, $expectedOutput, $actualOutput)
     {
@@ -39,10 +41,12 @@ class StdOutFailure implements FailureInterface
     }
 
     /**
-     * @param string $name
-     * @param $expectedOutput
-     * @param $actualOutput
-     * @return static
+     * Named constructor, for added code legibility.
+     *
+     * @param string $name The name of the check that produced this result.
+     * @param string $expectedOutput The expected output.
+     * @param string $actualOutput The actual output.
+     * @return static The result.
      */
     public static function fromNameAndOutput($name, $expectedOutput, $actualOutput)
     {
@@ -50,10 +54,12 @@ class StdOutFailure implements FailureInterface
     }
 
     /**
-     * @param CheckInterface $check
-     * @param $expectedOutput
-     * @param $actualOutput
-     * @return static
+     * Static constructor to create from an instance of `PhpSchool\PhpWorkshop\Check\CheckInterface`.
+     *
+     * @param CheckInterface $check The check instance.
+     * @param string $expectedOutput The expected output.
+     * @param string $actualOutput The actual output.
+     * @return static The result.
      */
     public static function fromCheckAndOutput(CheckInterface $check, $expectedOutput, $actualOutput)
     {
@@ -61,6 +67,8 @@ class StdOutFailure implements FailureInterface
     }
 
     /**
+     * Get the name of the check that this result was produced from.
+     *
      * @return string
      */
     public function getCheckName()
@@ -69,6 +77,8 @@ class StdOutFailure implements FailureInterface
     }
     
     /**
+     * Get the expected output.
+     *
      * @return string
      */
     public function getExpectedOutput()
@@ -77,6 +87,8 @@ class StdOutFailure implements FailureInterface
     }
 
     /**
+     * Get the actual output.
+     *
      * @return string
      */
     public function getActualOutput()

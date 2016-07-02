@@ -4,11 +4,13 @@ namespace PhpSchool\PhpWorkshop;
 
 use ArrayIterator;
 use Countable;
+use InvalidArgumentException;
 use IteratorAggregate;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 
 /**
- * Class ExerciseRepository
+ * Exercise repository, use to locate individual/all exercises by certain criteria.
+ *
  * @package PhpSchool\PhpWorkshop
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
@@ -20,6 +22,8 @@ class ExerciseRepository implements IteratorAggregate, Countable
     private $exercises;
 
     /**
+     * Requires an array of `ExerciseInterface` instances.
+     *
      * @param ExerciseInterface[] $exercises
      */
     public function __construct(array $exercises)
@@ -31,6 +35,8 @@ class ExerciseRepository implements IteratorAggregate, Countable
     }
 
     /**
+     * Retrieve all of the exercises as an array.
+     *
      * @return ExerciseInterface[]
      */
     public function findAll()
@@ -39,8 +45,12 @@ class ExerciseRepository implements IteratorAggregate, Countable
     }
 
     /**
+     * Find an exercise by it's name. If it does not exist
+     * an `InvalidArgumentException` exception is thrown.
+     *
      * @param string $name
      * @return ExerciseInterface
+     * @throws InvalidArgumentException
      */
     public function findByName($name)
     {
@@ -50,10 +60,12 @@ class ExerciseRepository implements IteratorAggregate, Countable
             }
         }
 
-        throw new \InvalidArgumentException(sprintf('Exercise with name: "%s" does not exist', $name));
+        throw new InvalidArgumentException(sprintf('Exercise with name: "%s" does not exist', $name));
     }
 
     /**
+     * Get the names of each exercise as an array.
+     *
      * @return array
      */
     public function getAllNames()
@@ -64,6 +76,8 @@ class ExerciseRepository implements IteratorAggregate, Countable
     }
 
     /**
+     * Get the number of exercises contained within the repository.
+     *
      * @return int
      */
     public function count()
@@ -72,6 +86,8 @@ class ExerciseRepository implements IteratorAggregate, Countable
     }
 
     /**
+     * Allow to iterate over the repository with `foreach`.
+     *
      * @return ArrayIterator
      */
     public function getIterator()

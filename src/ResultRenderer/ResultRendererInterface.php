@@ -2,18 +2,25 @@
 
 namespace PhpSchool\PhpWorkshop\ResultRenderer;
 
-use PhpSchool\PhpWorkshop\Result\ResultInterface;
-
 /**
- * Interface ResultRendererInterface
+ * The interface, result renderers should adhere to.
+ *
  * @package PhpSchool\PhpWorkshop\ResultRenderer
+ * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
 interface ResultRendererInterface
 {
 
     /**
-     * @param ResultsRenderer $renderer
-     * @return string
+     * This method should return a string representation of the result,
+     * formatted for output on the command line.
+     *
+     * The `PhpSchool\PhpWorkshop\ResultRenderer\ResultsRenderer` method has
+     * various helpers to render line breaks, colour output and can also render child
+     * results.
+     *
+     * @param ResultsRenderer $renderer The main renderer instance.
+     * @return string The string representation of the result.
      */
     public function render(ResultsRenderer $renderer);
 }

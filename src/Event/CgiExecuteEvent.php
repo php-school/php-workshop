@@ -6,7 +6,9 @@ use Assert\Assertion;
 use Psr\Http\Message\RequestInterface;
 
 /**
- * Class CgiExecuteEvent
+ * An event to represent events which occur throughout the verification and running process in
+ * `\PhpSchool\PhpWorkshop\ExerciseRunner\CgiRunner`.
+ *
  * @package PhpSchool\PhpWorkshop\Event
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
@@ -19,9 +21,9 @@ class CgiExecuteEvent extends Event
     private $request;
 
     /**
-     * @param string $name
-     * @param RequestInterface $request
-     * @param array $parameters
+     * @param string $name The event name.
+     * @param RequestInterface $request The request that will be performed.
+     * @param array $parameters The event parameters.
      */
     public function __construct($name, RequestInterface $request, array $parameters = [])
     {
@@ -31,6 +33,8 @@ class CgiExecuteEvent extends Event
     }
 
     /**
+     * Add a header to the request.
+     *
      * @param string $header
      * @param string|string[] $value
      */
@@ -40,6 +44,8 @@ class CgiExecuteEvent extends Event
     }
 
     /**
+     * Modify the request via a callback. The callback should return the newly modified request.
+     *
      * @param callable $callback
      */
     public function modifyRequest(callable $callback)
@@ -48,6 +54,8 @@ class CgiExecuteEvent extends Event
     }
 
     /**
+     * Get the request.
+     *
      * @return RequestInterface
      */
     public function getRequest()

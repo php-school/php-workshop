@@ -6,7 +6,9 @@ use Assert\Assertion;
 use PhpSchool\PhpWorkshop\Utils\ArrayObject;
 
 /**
- * Class CliEvent
+ * An event to represent events which occur throughout the verification and running process in
+ * `\PhpSchool\PhpWorkshop\ExerciseRunner\CliRunner`.
+ *
  * @package PhpSchool\PhpWorkshop\Event
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
@@ -18,9 +20,9 @@ class CliExecuteEvent extends Event
     private $args;
 
     /**
-     * @param string $name
-     * @param ArrayObject $args
-     * @param array $parameters
+     * @param string $name The event name.
+     * @param ArrayObject $args The arguments that should be/have been passed to the program.
+     * @param array $parameters The event parameters.
      */
     public function __construct($name, ArrayObject $args, array $parameters = [])
     {
@@ -30,6 +32,8 @@ class CliExecuteEvent extends Event
     }
 
     /**
+     * Prepend an argument to the list of arguments to be passed to the program.
+     *
      * @param string $arg
      */
     public function prependArg($arg)
@@ -39,6 +43,8 @@ class CliExecuteEvent extends Event
     }
 
     /**
+     * Append an argument to the list of arguments to be passed to the program.
+     *
      * @param string $arg
      */
     public function appendArg($arg)
@@ -48,6 +54,8 @@ class CliExecuteEvent extends Event
     }
 
     /**
+     * Get the arguments to be passed to the program.
+     *
      * @return ArrayObject
      */
     public function getArgs()

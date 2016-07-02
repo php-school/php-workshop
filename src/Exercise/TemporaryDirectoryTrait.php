@@ -3,16 +3,21 @@
 namespace PhpSchool\PhpWorkshop\Exercise;
 
 /**
- * Class TemporaryDirectoryTrait
+ * Helper trait to use in exercises to get a temporary path
+ * for IO stuff.
+ *
  * @package PhpSchool\PhpWorkshop\Exercise
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
 trait TemporaryDirectoryTrait
 {
     /**
-     * @return string
+     * Get a temporary directory to use in exercises, takes in to account
+     * the class-name.
+     *
+     * @return string The absolute path to the temporary directory.
      */
-    protected function getTemporaryPath()
+    public function getTemporaryPath()
     {
         return sprintf(
             '%s/%s',

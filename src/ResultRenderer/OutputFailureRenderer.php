@@ -6,7 +6,8 @@ use PhpSchool\PhpWorkshop\Result\CgiOutBodyFailure;
 use PhpSchool\PhpWorkshop\Result\StdOutFailure;
 
 /**
- * Class OutputFailureRenderer
+ * Renderer for `PhpSchool\PhpWorkshop\Result\StdOutFailure`.
+ *
  * @package PhpSchool\PhpWorkshop\ResultRenderer
  */
 class OutputFailureRenderer implements ResultRendererInterface
@@ -18,7 +19,7 @@ class OutputFailureRenderer implements ResultRendererInterface
     private $result;
 
     /**
-     * @param StdOutFailure $result
+     * @param StdOutFailure $result The failure.
      */
     public function __construct(StdOutFailure $result)
     {
@@ -26,6 +27,8 @@ class OutputFailureRenderer implements ResultRendererInterface
     }
 
     /**
+     * Print the actual and expected output.
+     *
      * @param ResultsRenderer $renderer
      * @return string
      */

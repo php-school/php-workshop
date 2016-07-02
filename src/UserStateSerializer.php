@@ -3,7 +3,8 @@
 namespace PhpSchool\PhpWorkshop;
 
 /**
- * Class UserStateSerializer
+ * Reads and persists the `UserState` instance to storage (file based).
+ *
  * @package PhpSchool\PhpWorkshop
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
@@ -35,9 +36,9 @@ class UserStateSerializer
     private $exerciseRepository;
 
     /**
-     * @param string $saveFileDirectory
-     * @param string $workshopName
-     * @param ExerciseRepository $exerciseRepository
+     * @param string $saveFileDirectory The path of the directory where the save file should be stored.
+     * @param string $workshopName The name of the current workshop.
+     * @param ExerciseRepository $exerciseRepository The repository of exercises.
      */
     public function __construct($saveFileDirectory, $workshopName, ExerciseRepository $exerciseRepository)
     {
@@ -51,8 +52,9 @@ class UserStateSerializer
     }
 
     /**
-     * @param UserState $state
+     * Save the students state for this workshop to disk.
      *
+     * @param UserState $state
      * @return int
      */
     public function serialize(UserState $state)
@@ -72,6 +74,8 @@ class UserStateSerializer
     }
 
     /**
+     * Read a students state for this workshop from the disk.
+     *
      * @return UserState
      */
     public function deSerialize()
@@ -130,7 +134,7 @@ class UserStateSerializer
      * at the same time. Therefore we must try to migrate that data in to the new namespaced
      * format in order to preserve users save data.
      *
-     * We can only migrate data when using the workshop the data was originally saved from
+     * We can only migrate data when using the workshop the data was originally saved from.
      *
      * @param string $legacySaveFile
      * @return null|UserState

@@ -5,7 +5,8 @@ namespace PhpSchool\PhpWorkshop\Solution;
 use InvalidArgumentException;
 
 /**
- * Class SingleFileSolution
+ * Solution to use when the solution only consists of one file.
+ *
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
 class SingleFileSolution implements SolutionInterface
@@ -17,8 +18,8 @@ class SingleFileSolution implements SolutionInterface
     private $file;
 
     /**
-     * @param string $file
-     * @throws InvalidArgumentException
+     * @param string $file The absolute path of the reference solution.
+     * @throws InvalidArgumentException If the file does not exist.
      */
     public function __construct($file)
     {
@@ -26,15 +27,21 @@ class SingleFileSolution implements SolutionInterface
     }
 
     /**
-     * @param string $file
+     * Static constructor to build an instance from an absolute file path.
+     *
+     * @param string $file The absolute path of the reference solution.
      * @return static
+     * @throws InvalidArgumentException If the file does not exist.
      */
     public static function fromFile($file)
     {
         return new static($file);
     }
-    
+
     /**
+     * Get the entry point. This is the PHP file that php would execute in order to run the
+     * program. This should be the absolute path.
+     *
      * @return string
      */
     public function getEntryPoint()
@@ -43,7 +50,9 @@ class SingleFileSolution implements SolutionInterface
     }
 
     /**
-     * @return string[]
+     * Get all the files which are contained with the solution.
+     *
+     * @return SolutionFile[]
      */
     public function getFiles()
     {
@@ -51,6 +60,8 @@ class SingleFileSolution implements SolutionInterface
     }
 
     /**
+     * Get the absolute path to the directory containing the solution.
+     *
      * @return string
      */
     public function getBaseDirectory()
@@ -59,6 +70,9 @@ class SingleFileSolution implements SolutionInterface
     }
 
     /**
+     * Single file solutions can never have composer files as there must be at least
+     * one `php` file.
+     *
      * @return bool
      */
     public function hasComposerFile()

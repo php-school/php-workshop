@@ -5,7 +5,8 @@ namespace PhpSchool\PhpWorkshop\ResultRenderer;
 use PhpSchool\PhpWorkshop\Result\FunctionRequirementsFailure;
 
 /**
- * Class FunctionRequirementsFailureRenderer
+ * Renderer for `PhpSchool\PhpWorkshop\Result\FunctionRequirementsFailure`.
+ *
  * @package PhpSchool\PhpWorkshop\ResultRenderer
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
@@ -17,7 +18,7 @@ class FunctionRequirementsFailureRenderer implements ResultRendererInterface
     private $result;
 
     /**
-     * @param FunctionRequirementsFailure $result
+     * @param FunctionRequirementsFailure $result The failure.
      */
     public function __construct(FunctionRequirementsFailure $result)
     {
@@ -25,6 +26,8 @@ class FunctionRequirementsFailureRenderer implements ResultRendererInterface
     }
 
     /**
+     * Print a list of the missing, required functions & print a list of used but banned functions.
+     *
      * @param ResultsRenderer $renderer
      * @return string
      */

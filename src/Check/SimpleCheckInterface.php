@@ -7,7 +7,9 @@ use PhpSchool\PhpWorkshop\Exercise\ExerciseType;
 use PhpSchool\PhpWorkshop\Result\ResultInterface;
 
 /**
- * Class CheckInterface
+ * The interface for simple checks, checks that execute at one defined point, before or after
+ * output verification.
+ *
  * @package PhpSchool\PhpWorkshop\Comparator
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
@@ -36,14 +38,22 @@ interface SimpleCheckInterface extends CheckInterface
     public function canRun(ExerciseType $exerciseType);
 
     /**
-     * @param ExerciseInterface $exercise
-     * @param string $fileName
-     * @return ResultInterface
+     * The check is ran against an exercise and a filename which
+     * will point to the student's solution.
+     *
+     * If the check is successful then an instance of
+     * `PhpSchool\PhpWorkshop\Result\SuccessInterface` should be returned. If the check is not
+     * successful then an instance of `PhpSchool\PhpWorkshop\Result\FailureInterface`
+     * should be returned.
+     *
+     * @param ExerciseInterface $exercise The exercise to check against.
+     * @param string $fileName The absolute path to the student's solution.
+     * @return ResultInterface The result of the check.
      */
     public function check(ExerciseInterface $exercise, $fileName);
 
     /**
-     * either static::CHECK_BEFORE | static::CHECK_AFTER
+     * Either `static::CHECK_BEFORE` | `static::CHECK_AFTER`.
      *
      * @return string
      */

@@ -2,11 +2,12 @@
 
 namespace PhpSchool\PhpWorkshop\Result;
 
-use PhpSchool\PhpWorkshop\Check\CheckInterface;
 use PhpSchool\PhpWorkshop\ResultAggregator;
 
 /**
- * Class CgiOutFailure
+ * A result which encompasses all the results for each individual request made during
+ * the CGI verification process.
+ *
  * @package PhpSchool\PhpWorkshop\Result
  * @author  Aydin Hassan <aydin@hotmail.co.uk>
  */
@@ -18,8 +19,8 @@ class CgiOutResult extends ResultAggregator implements ResultInterface
     private $name;
 
     /**
-     * @param string $name
-     * @param array $requestResults
+     * @param string $name The name of the check that produced this result.
+     * @param array $requestResults An array of results representing each request.
      */
     public function __construct($name, array $requestResults)
     {
@@ -31,6 +32,8 @@ class CgiOutResult extends ResultAggregator implements ResultInterface
 
 
     /**
+     * Get the name of the check that this result was produced from, most likely the CGI Runner.
+     *
      * @return string
      */
     public function getCheckName()

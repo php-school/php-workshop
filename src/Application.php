@@ -4,16 +4,16 @@ namespace PhpSchool\PhpWorkshop;
 
 use Assert\Assertion;
 use DI\ContainerBuilder;
-use PhpSchool\PhpWorkshop\Check\CheckInterface;
 use PhpSchool\PhpWorkshop\Check\CheckRepository;
 use PhpSchool\PhpWorkshop\Exception\MissingArgumentException;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpSchool\PhpWorkshop\Factory\ResultRendererFactory;
 use PhpSchool\PhpWorkshop\Output\OutputInterface;
-use PhpSchool\PhpWorkshop\ResultRenderer\ResultRendererInterface;
 
 /**
- * Class Application
+ * This is the main application class, this takes care of bootstrapping, routing and
+ * output.
+ *
  * @package PhpSchool\PhpWorkshop
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
@@ -45,7 +45,7 @@ final class Application
     private $diConfigFile;
 
     /**
-     * @var string
+     * @var string|null
      */
     private $logo = null;
 
@@ -60,8 +60,11 @@ final class Application
     private $bgColour = 'black';
 
     /**
-     * @param string $workshopTitle
-     * @param $diConfigFile
+     * It should be instantiated with the title of
+     * the workshop and the path to the DI configuration file.
+     *
+     * @param string $workshopTitle The workshop title - this is used throughout the application
+     * @param string $diConfigFile The absolute path to the DI configuration file
      */
     public function __construct($workshopTitle, $diConfigFile)
     {
@@ -73,7 +76,10 @@ final class Application
     }
 
     /**
-     * @param string $check
+     * Register a custom check with the application. Exercises will only be able to use the check
+     * if it has been registered here.
+     *
+     * @param string $check The FQCN of the check
      */
     public function addCheck($check)
     {
@@ -81,7 +87,10 @@ final class Application
     }
 
     /**
-     * @param string $exercise
+     * Register an exercise with the application. Only exercises registered here will
+     * be displayed in the exercise menu.
+     *
+     * @param string $exercise The FQCN of the check
      */
     public function addExercise($exercise)
     {
@@ -104,7 +113,10 @@ final class Application
     }
 
     /**
-     * @param string $logo
+     * Add an ASCII art logo to the application. This will be displayed at the top of them menu. It will be
+     * automatically padded to sit in the middle.
+     *
+     * @param string $logo The logo
      */
     public function setLogo($logo)
     {
@@ -113,7 +125,10 @@ final class Application
     }
 
     /**
-     * @param string $colour
+     * Modify the foreground color of the workshop menu
+     * Can be any of: black, red, green, yellow, blue, magenta, cyan, white
+     *
+     * @param string $colour The colour
      */
     public function setFgColour($colour)
     {
@@ -122,7 +137,10 @@ final class Application
     }
 
     /**
-     * @param string $colour
+     * Modify the background color of the workshop menu
+     * Can be any of: black, red, green, yellow, blue, magenta, cyan, white
+     *
+     * @param string $colour The colour
      */
     public function setBgColour($colour)
     {
@@ -131,7 +149,10 @@ final class Application
     }
 
     /**
-     * Run the app
+     * Executes the framework, invoking the specified command.
+     * The return value is the exit code. 0 for success, anything else is a failure.
+     *
+     * @return int The exit code
      */
     public function run()
     {

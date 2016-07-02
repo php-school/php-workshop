@@ -3,7 +3,8 @@
 namespace PhpSchool\PhpWorkshop\Check;
 
 /**
- * Class CheckInterface
+ * Base Interface for Checks.
+ *
  * @package PhpSchool\PhpWorkshop\Comparator
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
@@ -18,7 +19,7 @@ interface CheckInterface
 
     /**
      * This returns the interface the exercise should implement
-     * when requiring this check
+     * when requiring this check. It should be the FQCN of the interface.
      *
      * @return string
      */

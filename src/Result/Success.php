@@ -5,16 +5,20 @@ namespace PhpSchool\PhpWorkshop\Result;
 use PhpSchool\PhpWorkshop\Check\CheckInterface;
 
 /**
- * Class Fail
+ * Default implementation of `PhpSchool\PhpWorkshop\Result\SuccessInterface`.
+ *
  * @package PhpSchool\PhpWorkshop
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
 class Success implements SuccessInterface
 {
+    /**
+     * @var string
+     */
     private $name;
 
     /**
-     * @param string $name
+     * @param string $name The name of the check that produced this result.
      */
     public function __construct($name)
     {
@@ -22,8 +26,10 @@ class Success implements SuccessInterface
     }
 
     /**
-     * @param CheckInterface $check
-     * @return static
+     * Static constructor to create from an instance of `PhpSchool\PhpWorkshop\Check\CheckInterface`.
+     *
+     * @param CheckInterface $check The check instance.
+     * @return static The result.
      */
     public static function fromCheck(CheckInterface $check)
     {
@@ -31,6 +37,8 @@ class Success implements SuccessInterface
     }
 
     /**
+     * Get the name of the check that this result was produced from.
+     *
      * @return string
      */
     public function getCheckName()

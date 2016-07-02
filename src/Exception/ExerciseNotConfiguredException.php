@@ -6,15 +6,19 @@ use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use RuntimeException;
 
 /**
- * Class ExerciseNotConfiguredException
+ * Represents the situation where an exercise requires a check but does not implement
+ * the correct interface enforced by the check.
+ *
  * @package PhpSchool\PhpWorkshop\Exception
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
 class ExerciseNotConfiguredException extends RuntimeException
 {
     /**
-     * @param ExerciseInterface $exercise
-     * @param $interface
+     * Static constructor to create an instance from the exercise and interface name.
+     *
+     * @param ExerciseInterface $exercise The exercise instance.
+     * @param $interface The FQCN of the interface.
      * @return static
      */
     public static function missingImplements(ExerciseInterface $exercise, $interface)

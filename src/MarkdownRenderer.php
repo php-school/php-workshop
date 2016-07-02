@@ -6,23 +6,28 @@ use League\CommonMark\DocParser;
 use AydinHassan\CliMdRenderer\CliRenderer;
 
 /**
- * Class MarkdownRenderer
+ * Utility to render a markdown string to a string formatted with ANSI escape codes for output
+ * on the console.
+ *
  * @package PhpSchool\PhpWorkshop
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
 class MarkdownRenderer
 {
     /**
-     * @var \League\CommonMark\DocParser
+     * @var DocParser
      */
     private $docParser;
 
     /**
-     * @var \AydinHassan\CliMdRenderer\CliRenderer
+     * @var CliRenderer
      */
     private $cliRenderer;
 
     /**
+     * Should be constructed with an instance of `DocParser` with parses the markdown to an AST.
+     * `CliRenderer` renders the AST to a string formatted for the console.
+     *
      * @param DocParser $docParser
      * @param CliRenderer $cliRenderer
      */
@@ -33,6 +38,9 @@ class MarkdownRenderer
     }
 
     /**
+     * Expects a string of markdown and returns a string which has been formatted for
+     * displaying on the console.
+     *
      * @param string $markdown
      * @return string
      */

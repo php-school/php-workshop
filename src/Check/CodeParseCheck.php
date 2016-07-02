@@ -13,7 +13,9 @@ use PhpSchool\PhpWorkshop\Result\ResultInterface;
 use PhpSchool\PhpWorkshop\Result\Success;
 
 /**
- * Class CodeParseCheck
+ * This check attempts to parse a student's solution and returns
+ * a success or failure based on the result of the parsing.
+ *
  * @package PhpSchool\PhpWorkshop\Check
  * @author  Aydin Hassan <aydin@hotmail.co.uk>
  */
@@ -34,6 +36,8 @@ class CodeParseCheck implements SimpleCheckInterface
     }
 
     /**
+     * Return the check's name
+     *
      * @return string
      */
     public function getName()
@@ -42,9 +46,13 @@ class CodeParseCheck implements SimpleCheckInterface
     }
 
     /**
-     * @param ExerciseInterface $exercise
-     * @param string $fileName
-     * @return ResultInterface
+     * This check grabs the contents of the student's solution and
+     * attempts to parse it with `nikic/php-parser`. If any exceptions are thrown
+     * by the parser, it is treated as a failure.
+     *
+     * @param ExerciseInterface $exercise The exercise to check against.
+     * @param string $fileName The absolute path to the student's solution.
+     * @return ResultInterface The result of the check.
      */
     public function check(ExerciseInterface $exercise, $fileName)
     {
@@ -61,6 +69,8 @@ class CodeParseCheck implements SimpleCheckInterface
     }
 
     /**
+     * This check can run on any exercise type.
+     *
      * @param ExerciseType $exerciseType
      * @return bool
      */
@@ -70,7 +80,6 @@ class CodeParseCheck implements SimpleCheckInterface
     }
 
     /**
-     *
      * @return string
      */
     public function getExerciseInterface()
@@ -79,6 +88,8 @@ class CodeParseCheck implements SimpleCheckInterface
     }
 
     /**
+     * This check should be run before executing the student's solution, as, if it cannot be parsed
+     * it probably cannot be executed.
      *
      * @return string
      */

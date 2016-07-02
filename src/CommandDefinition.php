@@ -3,7 +3,10 @@
 namespace PhpSchool\PhpWorkshop;
 
 /**
- * Class CommandDefinition
+ * Represents a command in the workshop framework. Simply consists of a
+ * command name, required arguments and either a service name or callable to
+ * execute when the command is run.
+ *
  * @package PhpSchool\PhpWorkshop
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
@@ -15,7 +18,7 @@ class CommandDefinition
     private $name;
 
     /**
-     * @var array
+     * @var string[]
      */
     private $args;
 
@@ -25,11 +28,9 @@ class CommandDefinition
     private $commandCallable;
 
     /**
-     * CommandDefinition constructor.
-     *
-     * @param string $name
-     * @param array $args
-     * @param string|callable $commandCallable
+     * @param string $name The name of the command (this is how the student would invoke the command from the cli)
+     * @param string[] $args A list of required arguments. This must be an array of strings.
+     * @param string|callable $commandCallable The name of a callable container entry or an actual PHP callable.
      */
     public function __construct($name, array $args, $commandCallable)
     {
@@ -39,6 +40,8 @@ class CommandDefinition
     }
 
     /**
+     * Get the name of the command.
+     *
      * @return string
      */
     public function getName()
@@ -47,6 +50,8 @@ class CommandDefinition
     }
 
     /**
+     * Get the list of required arguments.
+     *
      * @return array
      */
     public function getRequiredArgs()
@@ -55,6 +60,8 @@ class CommandDefinition
     }
 
     /**
+     * Get the callable associated with this command.
+     *
      * @return string|callable
      */
     public function getCommandCallable()

@@ -7,7 +7,8 @@ use Countable;
 use IteratorAggregate;
 
 /**
- * Class ArrayObject
+ * Utility collection class.
+ *
  * @package PhpSchool\PhpWorkshop\Utils
  * @author  Aydin Hassan <aydin@hotmail.co.uk>
  */
@@ -20,18 +21,19 @@ class ArrayObject implements IteratorAggregate, Countable
     private $array;
 
     /**
-     * @param array|mixed... $array
+     * Accepts an array of items.
+     *
+     * @param array $array
      */
-    public function __construct($array)
+    public function __construct(array $array)
     {
-        if (func_num_args() > 1) {
-            $this->array = func_get_args();
-        } else {
-            $this->array = $array;
-        }
+        $this->array = $array;
     }
 
     /**
+     * Run a callable function over each item in the array using the result
+     * to construct a new instance of `ArrayObject`.
+     *
      * @param callable $callback
      * @return static
      */
@@ -41,6 +43,8 @@ class ArrayObject implements IteratorAggregate, Countable
     }
 
     /**
+     * Implode each item together using the provided glue.
+     *
      * @param string $glue
      * @return string
      */
@@ -50,6 +54,8 @@ class ArrayObject implements IteratorAggregate, Countable
     }
 
     /**
+     * Add a new item on to the beginning of the collection. A new instance is returned.
+     *
      * @param mixed $value
      * @return static
      */
@@ -59,6 +65,8 @@ class ArrayObject implements IteratorAggregate, Countable
     }
 
     /**
+     * Add a new item to the end of the collection. A new instance is returned.
+     *
      * @param mixed $value
      * @return static
      */
@@ -68,6 +76,8 @@ class ArrayObject implements IteratorAggregate, Countable
     }
 
     /**
+     * Return an iterator containing all the items. Allows to `foreach` over.
+     *
      * @return ArrayIterator
      */
     public function getIterator()
@@ -76,6 +86,8 @@ class ArrayObject implements IteratorAggregate, Countable
     }
 
     /**
+     * Get all the items in the array.
+     *
      * @return array
      */
     public function getArrayCopy()
@@ -84,6 +96,8 @@ class ArrayObject implements IteratorAggregate, Countable
     }
 
     /**
+     * Get the number of items in the collection.
+     *
      * @return int
      */
     public function count()

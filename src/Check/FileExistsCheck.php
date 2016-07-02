@@ -9,13 +9,16 @@ use PhpSchool\PhpWorkshop\Result\ResultInterface;
 use PhpSchool\PhpWorkshop\Result\Success;
 
 /**
- * Class FileExistsCheck
+ * This check verifies that the student's solution file actually exists.
+ *
  * @package PhpSchool\PhpWorkshop\Check
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
 class FileExistsCheck implements SimpleCheckInterface
 {
     /**
+     * Return the check's name.
+     *
      * @return string
      */
     public function getName()
@@ -24,9 +27,11 @@ class FileExistsCheck implements SimpleCheckInterface
     }
 
     /**
-     * @param ExerciseInterface $exercise
-     * @param string $fileName
-     * @return ResultInterface
+     * Simply check that the file exists.
+     *
+     * @param ExerciseInterface $exercise The exercise to check against.
+     * @param string $fileName The absolute path to the student's solution.
+     * @return ResultInterface The result of the check.
      */
     public function check(ExerciseInterface $exercise, $fileName)
     {
@@ -38,6 +43,8 @@ class FileExistsCheck implements SimpleCheckInterface
     }
 
     /**
+     * This check can run on any exercise type.
+     *
      * @param ExerciseType $exerciseType
      * @return bool
      */
@@ -56,6 +63,7 @@ class FileExistsCheck implements SimpleCheckInterface
     }
 
     /**
+     * This check must run before executing the solution becuase it may not exist.
      *
      * @return string
      */
