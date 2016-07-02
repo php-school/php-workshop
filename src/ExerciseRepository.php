@@ -9,7 +9,8 @@ use IteratorAggregate;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 
 /**
- * Class ExerciseRepository
+ * Exercise repository, use to locate individual/all exercises by certain criteria.
+ *
  * @package PhpSchool\PhpWorkshop
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  */

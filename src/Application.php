@@ -4,16 +4,16 @@ namespace PhpSchool\PhpWorkshop;
 
 use Assert\Assertion;
 use DI\ContainerBuilder;
-use PhpSchool\PhpWorkshop\Check\CheckInterface;
 use PhpSchool\PhpWorkshop\Check\CheckRepository;
 use PhpSchool\PhpWorkshop\Exception\MissingArgumentException;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpSchool\PhpWorkshop\Factory\ResultRendererFactory;
 use PhpSchool\PhpWorkshop\Output\OutputInterface;
-use PhpSchool\PhpWorkshop\ResultRenderer\ResultRendererInterface;
 
 /**
- * Class Application
+ * This is the main application class, this takes care of bootstrapping, routing and
+ * output.
+ *
  * @package PhpSchool\PhpWorkshop
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
@@ -60,7 +60,7 @@ final class Application
     private $bgColour = 'black';
 
     /**
-     * This is the main application class. It should be instantiated with the title of
+     * It should be instantiated with the title of
      * the workshop and the path to the DI configuration file.
      *
      * @param string $workshopTitle The workshop title - this is used throughout the application

@@ -19,7 +19,9 @@ use PhpSchool\PhpWorkshop\Output\OutputInterface;
 use Symfony\Component\Process\Process;
 
 /**
- * Class ExerciseDispatcher
+ * This class is used to verify/run a student's solution to an exercise. It routes to the correct
+ * runner based on the exercise type.
+ *
  * @package PhpSchool\PhpWorkshop
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  */

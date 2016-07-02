@@ -5,7 +5,8 @@ namespace PhpSchool\PhpWorkshop\Check;
 use PhpSchool\PhpWorkshop\Event\EventDispatcher;
 
 /**
- * Interface ListenableCheckInterface
+ * The interface for advanced listener checks which can execute logic at any dispatched event.
+ *
  * @package PhpSchool\PhpWorkshop\Check
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  */

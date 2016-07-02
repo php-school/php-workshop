@@ -9,7 +9,9 @@ use PhpSchool\PhpWorkshop\Result\Failure;
 use Symfony\Component\Process\Process;
 
 /**
- * Class PhpLintCheck
+ * This check attempts to lint a student's solution and returns
+ * a success or failure based on the result of the linting.
+ *
  * @package PhpSchool\PhpWorkshop\Check
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  */

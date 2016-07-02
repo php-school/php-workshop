@@ -7,7 +7,9 @@ use PhpSchool\PhpWorkshop\Exercise\ExerciseType;
 use PhpSchool\PhpWorkshop\Result\ResultInterface;
 
 /**
- * Class CheckInterface
+ * The interface for simple checks, checks that execute at one defined point, before or after
+ * output verification.
+ *
  * @package PhpSchool\PhpWorkshop\Comparator
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
