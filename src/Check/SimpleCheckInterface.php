@@ -45,7 +45,7 @@ interface SimpleCheckInterface extends CheckInterface
      * should be returned.
      *
      * @param ExerciseInterface $exercise The exercise to check against.
-     * @param string $fileName The absolute path to the student's submission.
+     * @param string $fileName The absolute path to the student's solution.
      * @return ResultInterface The result of the check.
      */
     public function check(ExerciseInterface $exercise, $fileName);

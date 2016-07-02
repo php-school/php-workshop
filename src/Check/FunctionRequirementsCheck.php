@@ -16,7 +16,7 @@ use PhpSchool\PhpWorkshop\Result\ResultInterface;
 use PhpSchool\PhpWorkshop\Result\Success;
 
 /**
- * This check verifies that the students submission contains usages of some required functions
+ * This check verifies that the student's solution contains usages of some required functions
  * and also does not use certain functions (specified by the exercise).
  *
  * @package PhpSchool\PhpWorkshop\Check
@@ -54,7 +54,7 @@ class FunctionRequirementsCheck implements SimpleCheckInterface
      * are pulled from the exercise.
      *
      * @param ExerciseInterface $exercise The exercise to check against.
-     * @param string $fileName The absolute path to the student's submission.
+     * @param string $fileName The absolute path to the student's solution.
      * @return ResultInterface The result of the check.
      */
     public function check(ExerciseInterface $exercise, $fileName)
@@ -119,7 +119,7 @@ class FunctionRequirementsCheck implements SimpleCheckInterface
     }
 
     /**
-     * This is performed after executing the student's submission because the submission may produce the correct
+     * This is performed after executing the student's solution because the solution may produce the correct
      * output, but do it in a way that was not correct for the task. This way the student can see the program works
      * but missed some requirements.
      *

@@ -46,12 +46,12 @@ class CodeParseCheck implements SimpleCheckInterface
     }
 
     /**
-     * This check grabs the contents of the student's submission and
+     * This check grabs the contents of the student's solution and
      * attempts to parse it with `nikic/php-parser`. If any exceptions are thrown
      * by the parser, it is treated as a failure.
      *
      * @param ExerciseInterface $exercise The exercise to check against.
-     * @param string $fileName The absolute path to the student's submission.
+     * @param string $fileName The absolute path to the student's solution.
      * @return ResultInterface The result of the check.
      */
     public function check(ExerciseInterface $exercise, $fileName)
@@ -88,7 +88,7 @@ class CodeParseCheck implements SimpleCheckInterface
     }
 
     /**
-     * This check should be run before executing the submission, as, if it cannot be parsed
+     * This check should be run before executing the student's solution, as, if it cannot be parsed
      * it probably cannot be executed.
      *
      * @return string

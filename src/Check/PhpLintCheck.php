@@ -27,10 +27,10 @@ class PhpLintCheck implements SimpleCheckInterface
     }
 
     /**
-     * Simply check the students submission can be linted with `php -l`
+     * Simply check the student's solution can be linted with `php -l`
      *
      * @param ExerciseInterface $exercise The exercise to check against.
-     * @param string $fileName The absolute path to the student's submission.
+     * @param string $fileName The absolute path to the student's solution.
      * @return ResultInterface The result of the check.
      */
     public function check(ExerciseInterface $exercise, $fileName)
@@ -65,7 +65,7 @@ class PhpLintCheck implements SimpleCheckInterface
     }
 
     /**
-     * This check should be run before executing the submission, as, if it cannot be linted
+     * This check should be run before executing the student's solution, as, if it cannot be linted
      * it probably cannot be executed.
      *
      * @return string
