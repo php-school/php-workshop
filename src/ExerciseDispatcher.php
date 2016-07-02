@@ -2,8 +2,6 @@
 
 namespace PhpSchool\PhpWorkshop;
 
-use Assert\Assertion;
-use PhpSchool\PhpWorkshop\Check\CheckCollection;
 use PhpSchool\PhpWorkshop\Check\CheckInterface;
 use PhpSchool\PhpWorkshop\Check\CheckRepository;
 use PhpSchool\PhpWorkshop\Check\ListenableCheckInterface;
@@ -16,7 +14,6 @@ use PhpSchool\PhpWorkshop\Exception\InvalidArgumentException;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpSchool\PhpWorkshop\Factory\RunnerFactory;
 use PhpSchool\PhpWorkshop\Output\OutputInterface;
-use Symfony\Component\Process\Process;
 
 /**
  * This class is used to verify/run a student's solution to an exercise. It routes to the correct

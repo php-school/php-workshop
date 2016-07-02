@@ -5,7 +5,6 @@ namespace PhpSchool\PhpWorkshop\Output;
 use Colors\Color;
 use PhpSchool\CliMenu\Terminal\TerminalInterface;
 use Psr\Http\Message\RequestInterface;
-use Zend\Diactoros\Request;
 
 /**
  * Class StdOutput
