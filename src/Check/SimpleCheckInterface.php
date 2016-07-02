@@ -53,7 +53,7 @@ interface SimpleCheckInterface extends CheckInterface
     public function check(ExerciseInterface $exercise, $fileName);
 
     /**
-     * either static::CHECK_BEFORE | static::CHECK_AFTER
+     * Either `static::CHECK_BEFORE` | `static::CHECK_AFTER`.
      *
      * @return string
      */
