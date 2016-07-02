@@ -6,7 +6,8 @@ use PhpSchool\PhpWorkshop\Result\Failure;
 use PhpSchool\PhpWorkshop\Result\ResultInterface;
 
 /**
- * Class FailureRenderer
+ * Renderer for `PhpSchool\PhpWorkshop\Result\Failure`.
+ *
  * @package PhpSchool\PhpWorkshop\ResultRenderer
  */
 class FailureRenderer implements ResultRendererInterface
@@ -17,7 +18,7 @@ class FailureRenderer implements ResultRendererInterface
     private $result;
 
     /**
-     * @param Failure $result
+     * @param Failure $result The failure.
      */
     public function __construct(Failure $result)
     {
@@ -25,6 +26,8 @@ class FailureRenderer implements ResultRendererInterface
     }
 
     /**
+     * Simply print the reason.
+     *
      * @param ResultsRenderer $renderer
      * @return string
      */

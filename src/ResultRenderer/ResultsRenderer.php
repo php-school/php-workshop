@@ -15,7 +15,8 @@ use PhpSchool\PhpWorkshop\ResultAggregator;
 use PhpSchool\PhpWorkshop\UserState;
 
 /**
- * Class ResultsRenderer
+ * Renderer which renders a `\PhpSchool\PhpWorkshop\ResultAggregator` and writes it the output.
+ *
  * @package PhpSchool\PhpWorkshop\ResultRenderer
  */
 class ResultsRenderer
@@ -51,11 +52,11 @@ class ResultsRenderer
     private $resultRendererFactory;
 
     /**
-     * @param $appName
-     * @param Color $color
-     * @param TerminalInterface $terminal
-     * @param ExerciseRepository $exerciseRepository
-     * @param SyntaxHighlighter $syntaxHighlighter
+     * @param string $appName The name of the binary to run this workshop.
+     * @param Color $color A instance of `Color` used to colour strings with ANSI escape codes.
+     * @param TerminalInterface $terminal A helper to get information regarding the current terminal.
+     * @param ExerciseRepository $exerciseRepository The exercise repository.
+     * @param SyntaxHighlighter $syntaxHighlighter A PHP syntax highlighter for the terminal, uses ANSI escape codes.
      */
     public function __construct(
         $appName,
@@ -74,10 +75,13 @@ class ResultsRenderer
     }
 
     /**
-     * @param ResultAggregator $results
-     * @param ExerciseInterface $exercise
-     * @param UserState $userState
-     * @param OutputInterface $output
+     * Render the result set to the output and statistics on the number of exercises completed and
+     * remaining.
+     *
+     * @param ResultAggregator $results The result set.
+     * @param ExerciseInterface $exercise The exercise instance that was just attempted.
+     * @param UserState $userState The current state of the student's progress.
+     * @param OutputInterface $output The output instance.
      */
     public function render(
         ResultAggregator $results,
@@ -201,8 +205,11 @@ class ResultsRenderer
     }
 
     /**
+     * Style/colour a string.
+     * Can be any of: black, red, green, yellow, blue, magenta, cyan, white, bold, italic, underline
+     *
      * @param string $string
-     * @param array|string $colourOrStyle
+     * @param array|string $colourOrStyle A single style as a string or multiple styles as an array.
      *
      * @return string
      *
@@ -222,8 +229,10 @@ class ResultsRenderer
     }
 
     /**
-     * @param ResultInterface $result
-     * @return string
+     * Render a result. Attempt to find the correct renderer via the result renderer factory.
+     *
+     * @param ResultInterface $result The result.
+     * @return string The string representation of the result.
      */
     public function renderResult(ResultInterface $result)
     {
@@ -231,6 +240,8 @@ class ResultsRenderer
     }
 
     /**
+     * Draw a line break across the terminal.
+     *
      * @return string
      */
     public function lineBreak()

@@ -6,10 +6,10 @@ use PhpSchool\PhpWorkshop\Result\CgiOutRequestFailure;
 use PhpSchool\PhpWorkshop\Result\CgiOutResult;
 use PhpSchool\PhpWorkshop\Result\FailureInterface;
 use PhpSchool\PhpWorkshop\Result\ResultInterface;
-use PhpSchool\PhpWorkshop\Result\SuccessInterface;
 
 /**
- * Class CgiOutResultRenderer
+ * Renderer for `PhpSchool\PhpWorkshop\Result\CgiOutResult`.
+ *
  * @package PhpSchool\PhpWorkshop\ResultRenderer
  */
 class CgiOutResultRenderer implements ResultRendererInterface
@@ -21,7 +21,7 @@ class CgiOutResultRenderer implements ResultRendererInterface
     private $result;
 
     /**
-     * @param CgiOutResult $result
+     * @param CgiOutResult $result The result.
      */
     public function __construct(CgiOutResult $result)
     {
@@ -29,6 +29,8 @@ class CgiOutResultRenderer implements ResultRendererInterface
     }
 
     /**
+     * Render the details of each failed request including the mismatching headers and body.
+     *
      * @param ResultsRenderer $renderer
      * @return string
      */
