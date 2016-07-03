@@ -3,12 +3,10 @@
 namespace PhpSchool\PhpWorkshop\ExerciseRunner;
 
 use Colors\Color;
-use InvalidArgumentException;
 use PhpSchool\CliMenu\Terminal\TerminalInterface;
 use PhpSchool\PhpWorkshop\Event\EventDispatcher;
 use PhpSchool\PhpWorkshop\Exception\SolutionExecutionException;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseType;
-use PhpSchool\PhpWorkshop\Output\OutputInterface;
 use PhpSchool\PhpWorkshop\Output\StdOutput;
 use PhpSchool\PhpWorkshop\Result\CgiOutRequestFailure;
 use PhpSchool\PhpWorkshop\Result\CgiOutResult;
