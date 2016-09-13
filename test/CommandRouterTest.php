@@ -4,6 +4,7 @@ namespace PhpSchool\PhpWorkshopTest;
 
 use Interop\Container\ContainerInterface;
 use InvalidArgumentException;
+use PhpSchool\PhpWorkshop\CommandArgument;
 use PHPUnit_Framework_TestCase;
 use PhpSchool\PhpWorkshop\CommandDefinition;
 use PhpSchool\PhpWorkshop\CommandRouter;
@@ -290,5 +291,42 @@ class CommandRouterTest extends PHPUnit_Framework_TestCase
             $c
         );
         $router->route(['app', 'verifu', 'some-exercise', 'program.php']);
+    }
+
+    public function testRouteCommandWithOptionalArgument()
+    {
+        $mock = $this->getMockBuilder('stdClass')
+            ->setMethods(['__invoke'])
+            ->getMock();
+
+        $mock->expects($this->at(0))
+            ->method('__invoke')
+            ->with('app', 'some-exercise')
+            ->will($this->returnValue(true));
+
+        $mock->expects($this->at(1))
+            ->method('__invoke')
+            ->with('app', 'some-exercise', 'program.php')
+            ->will($this->returnValue(true));
+
+        $c = $this->createMock(ContainerInterface::class);
+        $router = new CommandRouter(
+            [
+                new CommandDefinition(
+                    'verify',
+                    [
+                        'exercise',
+                        new CommandArgument('program', true),
+                        new CommandArgument('some-other-arg', true)
+                    ],
+                    $mock
+                )
+            ],
+            'verify',
+            $c
+        );
+        $router->route(['app', 'verify', 'some-exercise']);
+        $router->route(['app', 'verify', 'some-exercise', 'program.php']);
+        $router->route(['app', 'verify', 'some-exercise', 'program.php', 'some-other-arg-value']);
     }
 }

@@ -84,7 +84,7 @@ class CommandRouter
      *
      * @param array $args
      * @return int
-     * @throws CliRouteNotExists
+     * @throws CliRouteNotExistsException
      */
     public function route(array $args = null)
     {
@@ -109,13 +109,35 @@ class CommandRouter
             $commandName = $command;
         }
         $command = $this->commands[$commandName];
-        if (count($args) !== count($command->getRequiredArgs())) {
-            $receivedArgs   = count($args);
-            $missingArgs    = array_slice($command->getRequiredArgs(), $receivedArgs);
-            throw new MissingArgumentException($commandName, $missingArgs);
-        }
+
+        $definitionArgs = $command->getRequiredArgs();
+        $this->checkRequiredArgs($commandName, $command->getRequiredArgs(), $args);
+
+//        if (count($args) !== count($command->getRequiredArgs())) {
+//            $receivedArgs   = count($args);
+//            $missingArgs    = array_slice($command->getRequiredArgs(), $receivedArgs);
+//            throw new MissingArgumentException($commandName, $missingArgs);
+//        }
 
         return $this->resolveCallable($command, array_merge([$appName], $args));
+    }
+
+    /**
+     * @param string $commandName
+     * @param array $definitionArgs
+     * @param array $givenArgs
+     */
+    private function checkRequiredArgs($commandName, array $definitionArgs, array $givenArgs)
+    {
+        while (null !== ($definitionArg = array_shift($definitionArgs))) {
+            $arg = array_shift($givenArgs);
+
+            if (null == $arg && !$definitionArg->isOptional()) {
+                throw new MissingArgumentException($commandName, array_map(function (CommandArgument $argument) {
+                    return $argument->getName();
+                }, array_merge([$definitionArg], $definitionArgs)));
+            }
+        }
     }
 
     /**
@@ -187,6 +209,6 @@ class CommandRouter
      */
     private function callCommand(callable $command, array $arguments)
     {
-        return call_user_func_array($command, $arguments);
+        return $command(...$arguments);
     }
 }
