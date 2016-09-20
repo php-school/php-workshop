@@ -31,7 +31,7 @@ class CommandDefinition
 
     /**
      * @param string $name The name of the command (this is how the student would invoke the command from the cli)
-     * @param string[]|CommandArgument[] $args A list of required arguments. This must be an array of strings or `CommandArgument`'s.
+     * @param string[]|CommandArgument[] $args A list of arguments. Must be an array of strings or `CommandArgument`'s.
      * @param string|callable $commandCallable The name of a callable container entry or an actual PHP callable.
      */
     public function __construct($name, array $args, $commandCallable)

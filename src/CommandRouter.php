@@ -110,14 +110,7 @@ class CommandRouter
         }
         $command = $this->commands[$commandName];
 
-        $definitionArgs = $command->getRequiredArgs();
         $this->checkRequiredArgs($commandName, $command->getRequiredArgs(), $args);
-
-//        if (count($args) !== count($command->getRequiredArgs())) {
-//            $receivedArgs   = count($args);
-//            $missingArgs    = array_slice($command->getRequiredArgs(), $receivedArgs);
-//            throw new MissingArgumentException($commandName, $missingArgs);
-//        }
 
         return $this->resolveCallable($command, array_merge([$appName], $args));
     }
