@@ -40,7 +40,6 @@ class ComposerCheckTest extends PHPUnit_Framework_TestCase
 
         $this->assertTrue($this->check->canRun(ExerciseType::CGI()));
         $this->assertTrue($this->check->canRun(ExerciseType::CLI()));
-
     }
     
     public function testExceptionIsThrownIfNotValidExercise()
