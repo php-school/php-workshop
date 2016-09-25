@@ -54,7 +54,6 @@ class PatchableExercise implements ExerciseInterface, SubmissionPatchable
      */
     public function tearDown()
     {
-        
     }
 
     /**
