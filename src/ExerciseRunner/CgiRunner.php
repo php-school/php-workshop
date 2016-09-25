@@ -2,12 +2,16 @@
 
 namespace PhpSchool\PhpWorkshop\ExerciseRunner;
 
+use PhpSchool\PhpWorkshop\Check\CodeParseCheck;
+use PhpSchool\PhpWorkshop\Check\FileExistsCheck;
+use PhpSchool\PhpWorkshop\Check\PhpLintCheck;
 use PhpSchool\PhpWorkshop\Event\CgiExecuteEvent;
 use PhpSchool\PhpWorkshop\Event\Event;
 use PhpSchool\PhpWorkshop\Event\EventDispatcher;
 use PhpSchool\PhpWorkshop\Exception\CodeExecutionException;
 use PhpSchool\PhpWorkshop\Exception\SolutionExecutionException;
 use PhpSchool\PhpWorkshop\Exercise\CgiExercise;
+use PhpSchool\PhpWorkshop\ExerciseDispatcher;
 use PhpSchool\PhpWorkshop\Output\OutputInterface;
 use PhpSchool\PhpWorkshop\Result\CgiOutFailure;
 use PhpSchool\PhpWorkshop\Result\CgiOutRequestFailure;
@@ -86,6 +90,22 @@ class CgiRunner implements ExerciseRunnerInterface
     }
 
     /**
+     * Configure the exercise dispatcher. For example set the required checks
+     * for this exercise type.
+     *
+     * @param ExerciseDispatcher $exerciseDispatcher
+     * @return self
+     */
+    public function configure(ExerciseDispatcher $exerciseDispatcher)
+    {
+        $exerciseDispatcher->requireCheck(FileExistsCheck::class);
+        $exerciseDispatcher->requireCheck(PhpLintCheck::class);
+        $exerciseDispatcher->requireCheck(CodeParseCheck::class);
+
+        return $this;
+    }
+
+    /**
      * @param RequestInterface $request
      * @param string $fileName
      * @return ResultInterface
@@ -113,7 +133,7 @@ class CgiRunner implements ExerciseRunnerInterface
             $this->eventDispatcher->dispatch(new Event('cgi.verify.student-execute.fail', ['exception' => $e]));
             return Failure::fromNameAndCodeExecutionFailure($this->getName(), $e);
         }
-        
+
         $solutionBody       = (string) $solutionResponse->getBody();
         $userBody           = (string) $userResponse->getBody();
         $solutionHeaders    = $this->getHeaders($solutionResponse);

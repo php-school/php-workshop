@@ -25,12 +25,12 @@ use PhpSchool\PhpWorkshop\Output\OutputInterface;
 class ExerciseDispatcher
 {
     /**
-     * @var CheckInterface[]
+     * @var SimpleCheckInterface[]
      */
     private $checksToRunBefore = [];
 
     /**
-     * @var CheckInterface[]
+     * @var SimpleCheckInterface[]
      */
     private $checksToRunAfter = [];
 
@@ -129,7 +129,7 @@ class ExerciseDispatcher
     {
         $exercise->configure($this);
 
-        $runner = $this->runnerFactory->create($exercise, $this->eventDispatcher);
+        $runner = $this->runnerFactory->create($exercise, $this->eventDispatcher, $this);
         $this->eventDispatcher->dispatch(new Event('verify.start', compact('exercise', 'fileName')));
 
         $this->validateChecks($this->checksToRunBefore, $exercise);
@@ -179,7 +179,7 @@ class ExerciseDispatcher
 
         try {
             $exitStatus = $this->runnerFactory
-                ->create($exercise, $this->eventDispatcher)
+                ->create($exercise, $this->eventDispatcher, $this)
                 ->run($fileName, $output);
         } finally {
             $this->eventDispatcher->dispatch(new Event('run.finish', compact('exercise', 'fileName')));

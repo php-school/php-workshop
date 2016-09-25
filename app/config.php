@@ -59,18 +59,12 @@ use Faker\Generator as FakerGenerator;
 return [
     'appName' => basename($_SERVER['argv'][0]),
     ExerciseDispatcher::class => function (ContainerInterface $c) {
-        $dispatcher = new ExerciseDispatcher(
+        return new ExerciseDispatcher(
             $c->get(RunnerFactory::class),
             $c->get(ResultAggregator::class),
             $c->get(EventDispatcher::class),
             $c->get(CheckRepository::class)
         );
-
-        //checks which should always run (probably)
-        $dispatcher->requireCheck(FileExistsCheck::class);
-        $dispatcher->requireCheck(PhpLintCheck::class);
-        $dispatcher->requireCheck(CodeParseCheck::class);
-        return $dispatcher;
     },
     ResultAggregator::class => object(ResultAggregator::class),
     CheckRepository::class => function (ContainerInterface $c) {

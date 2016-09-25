@@ -2,12 +2,16 @@
 
 namespace PhpSchool\PhpWorkshop\ExerciseRunner;
 
+use PhpSchool\PhpWorkshop\Check\CodeParseCheck;
+use PhpSchool\PhpWorkshop\Check\FileExistsCheck;
+use PhpSchool\PhpWorkshop\Check\PhpLintCheck;
 use PhpSchool\PhpWorkshop\Event\CliExecuteEvent;
 use PhpSchool\PhpWorkshop\Event\Event;
 use PhpSchool\PhpWorkshop\Event\EventDispatcher;
 use PhpSchool\PhpWorkshop\Exception\CodeExecutionException;
 use PhpSchool\PhpWorkshop\Exception\SolutionExecutionException;
 use PhpSchool\PhpWorkshop\Exercise\CliExercise;
+use PhpSchool\PhpWorkshop\ExerciseDispatcher;
 use PhpSchool\PhpWorkshop\Output\OutputInterface;
 use PhpSchool\PhpWorkshop\Result\Failure;
 use PhpSchool\PhpWorkshop\Result\ResultInterface;
@@ -59,6 +63,22 @@ class CliRunner implements ExerciseRunnerInterface
     }
 
     /**
+     * Configure the exercise dispatcher. For example set the required checks
+     * for this exercise type.
+     *
+     * @param ExerciseDispatcher $exerciseDispatcher
+     * @return self
+     */
+    public function configure(ExerciseDispatcher $exerciseDispatcher)
+    {
+        $exerciseDispatcher->requireCheck(FileExistsCheck::class);
+        $exerciseDispatcher->requireCheck(PhpLintCheck::class);
+        $exerciseDispatcher->requireCheck(CodeParseCheck::class);
+
+        return $this;
+    }
+
+    /**
      * @param string $fileName
      * @param ArrayObject $args
      * @param string $type
@@ -75,7 +95,7 @@ class CliRunner implements ExerciseRunnerInterface
         if (!$process->isSuccessful()) {
             throw CodeExecutionException::fromProcess($process);
         }
-        
+
         return $process->getOutput();
     }
 
