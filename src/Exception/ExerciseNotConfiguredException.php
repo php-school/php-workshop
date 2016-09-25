@@ -18,7 +18,7 @@ class ExerciseNotConfiguredException extends RuntimeException
      * Static constructor to create an instance from the exercise and interface name.
      *
      * @param ExerciseInterface $exercise The exercise instance.
-     * @param $interface The FQCN of the interface.
+     * @param string $interface The FQCN of the interface.
      * @return static
      */
     public static function missingImplements(ExerciseInterface $exercise, $interface)

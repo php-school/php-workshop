@@ -3,6 +3,7 @@
 namespace PhpSchool\PhpWorkshop\ExerciseRunner;
 
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
+use PhpSchool\PhpWorkshop\ExerciseDispatcher;
 use PhpSchool\PhpWorkshop\Output\OutputInterface;
 use PhpSchool\PhpWorkshop\Result\ResultInterface;
 
@@ -21,6 +22,15 @@ interface ExerciseRunnerInterface
      * @return string
      */
     public function getName();
+
+    /**
+     * Configure the exercise dispatcher. For example set the required checks
+     * for this exercise type.
+     *
+     * @param ExerciseDispatcher $exerciseDispatcher
+     * @return self
+     */
+    public function configure(ExerciseDispatcher $exerciseDispatcher);
 
     /**
      * Verify a solution to an exercise. Verification involves executing the reference solution

@@ -7,6 +7,7 @@ use PhpSchool\PhpWorkshop\Event\EventDispatcher;
 use PhpSchool\PhpWorkshop\Exception\InvalidArgumentException;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseType;
+use PhpSchool\PhpWorkshop\ExerciseDispatcher;
 use PhpSchool\PhpWorkshop\ExerciseRunner\CgiRunner;
 use PhpSchool\PhpWorkshop\ExerciseRunner\CliRunner;
 use PhpSchool\PhpWorkshop\Factory\RunnerFactory;
@@ -39,7 +40,12 @@ class RunnerFactoryTest extends PHPUnit_Framework_TestCase
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Exercise Type: "invalid" not supported');
 
-        (new RunnerFactory)->create($exercise, new EventDispatcher(new ResultAggregator));
+        (new RunnerFactory)
+            ->create(
+                $exercise,
+                new EventDispatcher(new ResultAggregator),
+                $this->createMock(ExerciseDispatcher::class)
+            );
     }
 
     public function testCliAndCgiRunnerCanBeCreated()
@@ -60,9 +66,15 @@ class RunnerFactoryTest extends PHPUnit_Framework_TestCase
             ->will($this->returnValue($cgiType));
 
 
-        $runnerFactory = new RunnerFactory($this->container);
+        $runnerFactory = new RunnerFactory;
         $eventDispatcher = new EventDispatcher(new ResultAggregator);
-        $this->assertInstanceOf(CliRunner::class, $runnerFactory->create($cliExercise, $eventDispatcher));
-        $this->assertInstanceOf(CgiRunner::class, $runnerFactory->create($cgiExercise, $eventDispatcher));
+        $this->assertInstanceOf(
+            CliRunner::class,
+            $runnerFactory->create($cliExercise, $eventDispatcher, $this->createMock(ExerciseDispatcher::class))
+        );
+        $this->assertInstanceOf(
+            CgiRunner::class,
+            $runnerFactory->create($cgiExercise, $eventDispatcher, $this->createMock(ExerciseDispatcher::class))
+        );
     }
 }

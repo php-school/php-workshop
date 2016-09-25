@@ -2,7 +2,10 @@
 
 namespace PhpSchool\PhpWorkshopTest\Check;
 
+use DI\Container;
+use DI\ContainerBuilder;
 use PDO;
+use PhpSchool\PhpWorkshop\Check\CheckInterface;
 use PhpSchool\PhpWorkshop\Check\CheckRepository;
 use PhpSchool\PhpWorkshop\Check\DatabaseCheck;
 use PhpSchool\PhpWorkshop\Event\EventDispatcher;
@@ -10,6 +13,7 @@ use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseType;
 use PhpSchool\PhpWorkshop\ExerciseCheck\DatabaseExerciseCheck;
 use PhpSchool\PhpWorkshop\ExerciseDispatcher;
+use PhpSchool\PhpWorkshop\ExerciseRunner\CliRunner;
 use PhpSchool\PhpWorkshop\Factory\RunnerFactory;
 use PhpSchool\PhpWorkshop\Output\OutputInterface;
 use PhpSchool\PhpWorkshop\ResultAggregator;
@@ -33,6 +37,11 @@ class DatabaseCheckTest extends PHPUnit_Framework_TestCase
     private $check;
 
     /**
+     * @var CheckRepository
+     */
+    private $checkRepository;
+
+    /**
      * @var ExerciseInterface
      */
     private $exercise;
@@ -44,6 +53,12 @@ class DatabaseCheckTest extends PHPUnit_Framework_TestCase
 
     public function setUp()
     {
+        $containerBuilder = new ContainerBuilder;
+        $containerBuilder->addDefinitions(__DIR__ . '/../../app/config.php');
+        $container = $containerBuilder->build();
+
+        $this->checkRepository = $container->get(CheckRepository::class);
+
         $this->check = new DatabaseCheck;
         $this->exercise = $this->createMock(DatabaseExerciseInterface::class);
         $this->dbDir = sprintf(
@@ -53,6 +68,27 @@ class DatabaseCheckTest extends PHPUnit_Framework_TestCase
 
         $this->assertEquals('Database Verification Check', $this->check->getName());
         $this->assertEquals(DatabaseExerciseCheck::class, $this->check->getExerciseInterface());
+    }
+
+    /**
+     * @param ExerciseInterface $exercise
+     * @param EventDispatcher $eventDispatcher
+     * @return \PHPUnit_Framework_MockObject_MockObject
+     */
+    private function getRunnerFactory(ExerciseInterface $exercise, EventDispatcher $eventDispatcher)
+    {
+        $runner = $this->getMockBuilder(CliRunner::class)
+            ->setConstructorArgs([$exercise, $eventDispatcher])
+            ->setMethods(['configure'])
+            ->getMock();
+
+        $runnerFactory = $this->createMock(RunnerFactory::class);
+        $runnerFactory
+            ->expects($this->once())
+            ->method('create')
+            ->willReturn($runner);
+
+        return $runnerFactory;
     }
 
     public function testIfDatabaseFolderExistsExceptionIsThrown()
@@ -100,11 +136,6 @@ class DatabaseCheckTest extends PHPUnit_Framework_TestCase
             ->will($this->returnValue([1, 2, 3]));
 
         $this->exercise
-            ->expects($this->atLeastOnce())
-            ->method('getType')
-            ->will($this->returnValue(ExerciseType::CLI()));
-
-        $this->exercise
             ->expects($this->once())
             ->method('configure')
             ->will($this->returnCallback(function (ExerciseDispatcher $dispatcher) {
@@ -117,10 +148,16 @@ class DatabaseCheckTest extends PHPUnit_Framework_TestCase
             ->with($this->isInstanceOf(PDO::class))
             ->will($this->returnValue(true));
 
+        $this->checkRepository->registerCheck($this->check);
+
         $results            = new ResultAggregator;
         $eventDispatcher    = new EventDispatcher($results);
-        $checkRepository    = new CheckRepository([$this->check]);
-        $dispatcher         = new ExerciseDispatcher(new RunnerFactory, $results, $eventDispatcher, $checkRepository);
+        $dispatcher         = new ExerciseDispatcher(
+            $this->getRunnerFactory($this->exercise, $eventDispatcher),
+            $results,
+            $eventDispatcher,
+            $this->checkRepository
+        );
 
         $dispatcher->verify($this->exercise, __DIR__ . '/../res/database/user.php');
         $this->assertTrue($results->isSuccessful());
@@ -140,11 +177,6 @@ class DatabaseCheckTest extends PHPUnit_Framework_TestCase
             ->will($this->returnValue([1, 2, 3]));
 
         $this->exercise
-            ->expects($this->atLeastOnce())
-            ->method('getType')
-            ->will($this->returnValue(ExerciseType::CLI()));
-
-        $this->exercise
             ->expects($this->once())
             ->method('configure')
             ->will($this->returnCallback(function (ExerciseDispatcher $dispatcher) {
@@ -157,10 +189,16 @@ class DatabaseCheckTest extends PHPUnit_Framework_TestCase
             ->with($this->isInstanceOf(PDO::class))
             ->will($this->returnValue(true));
 
+        $this->checkRepository->registerCheck($this->check);
+
         $results            = new ResultAggregator;
         $eventDispatcher    = new EventDispatcher($results);
-        $checkRepository    = new CheckRepository([$this->check]);
-        $dispatcher         = new ExerciseDispatcher(new RunnerFactory, $results, $eventDispatcher, $checkRepository);
+        $dispatcher         = new ExerciseDispatcher(
+            $this->getRunnerFactory($this->exercise, $eventDispatcher),
+            $results,
+            $eventDispatcher,
+            $this->checkRepository
+        );
 
         $dispatcher->verify($this->exercise, __DIR__ . '/../res/database/user.php');
 
@@ -175,21 +213,22 @@ class DatabaseCheckTest extends PHPUnit_Framework_TestCase
             ->will($this->returnValue([]));
 
         $this->exercise
-            ->expects($this->atLeastOnce())
-            ->method('getType')
-            ->will($this->returnValue(ExerciseType::CLI()));
-
-        $this->exercise
             ->expects($this->once())
             ->method('configure')
             ->will($this->returnCallback(function (ExerciseDispatcher $dispatcher) {
                 $dispatcher->requireCheck(DatabaseCheck::class);
             }));
 
+        $this->checkRepository->registerCheck($this->check);
+
         $results            = new ResultAggregator;
         $eventDispatcher    = new EventDispatcher($results);
-        $checkRepository    = new CheckRepository([$this->check]);
-        $dispatcher         = new ExerciseDispatcher(new RunnerFactory, $results, $eventDispatcher, $checkRepository);
+        $dispatcher         = new ExerciseDispatcher(
+            $this->getRunnerFactory($this->exercise, $eventDispatcher),
+            $results,
+            $eventDispatcher,
+            $this->checkRepository
+        );
 
         $dispatcher->run(
             $this->exercise,
@@ -212,11 +251,6 @@ class DatabaseCheckTest extends PHPUnit_Framework_TestCase
             ->will($this->returnValue([1, 2, 3]));
 
         $this->exercise
-            ->expects($this->atLeastOnce())
-            ->method('getType')
-            ->will($this->returnValue(ExerciseType::CLI()));
-
-        $this->exercise
             ->expects($this->once())
             ->method('configure')
             ->will($this->returnCallback(function (ExerciseDispatcher $dispatcher) {
@@ -229,10 +263,16 @@ class DatabaseCheckTest extends PHPUnit_Framework_TestCase
             ->with($this->isInstanceOf(PDO::class))
             ->will($this->returnValue(false));
 
+        $this->checkRepository->registerCheck($this->check);
+
         $results            = new ResultAggregator;
         $eventDispatcher    = new EventDispatcher($results);
-        $checkRepository    = new CheckRepository([$this->check]);
-        $dispatcher         = new ExerciseDispatcher(new RunnerFactory, $results, $eventDispatcher, $checkRepository);
+        $dispatcher         = new ExerciseDispatcher(
+            $this->getRunnerFactory($this->exercise, $eventDispatcher),
+            $results,
+            $eventDispatcher,
+            $this->checkRepository
+        );
 
         $dispatcher->verify($this->exercise, __DIR__ . '/../res/database/user.php');
 
@@ -254,11 +294,6 @@ class DatabaseCheckTest extends PHPUnit_Framework_TestCase
             ->expects($this->any())
             ->method('getArgs')
             ->will($this->returnValue([]));
-
-        $this->exercise
-            ->expects($this->atLeastOnce())
-            ->method('getType')
-            ->will($this->returnValue(ExerciseType::CLI()));
 
         $this->exercise
             ->expects($this->once())
@@ -296,10 +331,16 @@ class DatabaseCheckTest extends PHPUnit_Framework_TestCase
                 );
             }));
 
+        $this->checkRepository->registerCheck($this->check);
+
         $results            = new ResultAggregator;
         $eventDispatcher    = new EventDispatcher($results);
-        $checkRepository    = new CheckRepository([$this->check]);
-        $dispatcher         = new ExerciseDispatcher(new RunnerFactory, $results, $eventDispatcher, $checkRepository);
+        $dispatcher         = new ExerciseDispatcher(
+            $this->getRunnerFactory($this->exercise, $eventDispatcher),
+            $results,
+            $eventDispatcher,
+            $this->checkRepository
+        );
 
         $dispatcher->verify($this->exercise, __DIR__ . '/../res/database/user-solution-alter-db.php');
     }
