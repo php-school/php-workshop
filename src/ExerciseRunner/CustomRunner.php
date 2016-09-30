@@ -2,7 +2,7 @@
 
 namespace PhpSchool\PhpWorkshop\ExerciseRunner;
 
-use PhpSchool\PhpWorkshop\Exercise\ExtExercise;
+use PhpSchool\PhpWorkshop\Exercise\CustomExercise;
 use PhpSchool\PhpWorkshop\ExerciseDispatcher;
 use PhpSchool\PhpWorkshop\Output\OutputInterface;
 use PhpSchool\PhpWorkshop\Result\ResultInterface;
@@ -13,14 +13,14 @@ use PhpSchool\PhpWorkshop\Result\ResultInterface;
 class CustomRunner implements ExerciseRunnerInterface
 {
     /**
-     * @var ExtExercise
+     * @var CustomExercise
      */
     private $exercise;
 
     /**
-     * @param ExtExercise $exercise
+     * @param CustomExercise $exercise
      */
-    public function __construct(ExtExercise $exercise)
+    public function __construct(CustomExercise $exercise)
     {
         $this->exercise = $exercise;
     }
