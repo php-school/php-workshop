@@ -37,7 +37,11 @@ class CodePatchListener
      */
     public function patch(Event $event)
     {
-        $fileName           = $event->getParameter('fileName');
+        $fileName = $event->getParameter('fileName');
+        if (null === $fileName) {
+            return;
+        }
+
         $this->originalCode = file_get_contents($fileName);
         file_put_contents(
             $fileName,
@@ -50,10 +54,15 @@ class CodePatchListener
      */
     public function revert(Event $event)
     {
+        $fileName = $event->getParameter('fileName');
+        if (null === $fileName) {
+            return;
+        }
+
         if (null === $this->originalCode) {
             throw new RuntimeException('Can only revert previously patched code');
         }
 
-        file_put_contents($event->getParameter('fileName'), $this->originalCode);
+        file_put_contents($fileName, $this->originalCode);
     }
 }
