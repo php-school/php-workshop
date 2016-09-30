@@ -248,8 +248,7 @@ class ExerciseDispatcherTest extends PHPUnit_Framework_TestCase
             ->with($this->exerciseType)
             ->will($this->returnValue(false));
 
-        $msg  = 'Check: "Some Check" cannot process exercise: "Some Exercise" with ';
-        $msg .= 'type: "PhpSchool\PhpWorkshop\ExerciseRunner\CliRunner"';
+        $msg  = 'Check: "Some Check" cannot process exercise: "Some Exercise" with type: "CLI"';
         $this->expectException(CheckNotApplicableException::class);
         $this->expectExceptionMessage($msg);
 

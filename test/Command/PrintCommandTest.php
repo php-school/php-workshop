@@ -3,6 +3,7 @@
 namespace PhpSchool\PhpWorkshop\Command;
 
 use Colors\Color;
+use PhpSchool\PhpWorkshop\Exercise\CliExercise;
 use PHPUnit_Framework_TestCase;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpSchool\PhpWorkshop\ExerciseRepository;
@@ -38,7 +39,7 @@ class PrintCommandTest extends PHPUnit_Framework_TestCase
         $file = tempnam(sys_get_temp_dir(), 'pws');
         file_put_contents($file, '### Exercise 1');
 
-        $exercise = $this->createMock(ExerciseInterface::class);
+        $exercise = $this->createMock([ExerciseInterface::class, CliExercise::class]);
         $exercise
             ->expects($this->once())
             ->method('getProblem')

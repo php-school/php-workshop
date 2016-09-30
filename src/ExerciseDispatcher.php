@@ -168,7 +168,7 @@ class ExerciseDispatcher
      * The output of the solution is written directly to the `OutputInterface` instance.
      *
      * @param ExerciseInterface $exercise The exercise instance.
-     * @param string $fileName The absolute file name of the students solution.
+     * @param string|null $fileName The absolute file name of the students solution.
      * @param OutputInterface $output An output instance capable of writing to stdout.
      * @return bool Whether the solution ran successfully or not.
      */

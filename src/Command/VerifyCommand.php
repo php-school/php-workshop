@@ -73,19 +73,20 @@ class VerifyCommand
 
     /**
      * @param string $appName
-     * @param string $program
-     *
+     * @param string|null $program
      * @return int|void
+     * @internal param string $program
+     *
      */
-    public function __invoke($appName, $program)
+    public function __invoke($appName, $program = null)
     {
-        if (!file_exists($program)) {
-            $this->output->printError(
-                sprintf('Could not verify. File: "%s" does not exist', $program)
-            );
-            return 1;
+        if (null != $program && file_exists($program)) {
+//            $this->output->printError(
+//                sprintf('Could not verify. File: "%s" does not exist', $program)
+//            );
+//            return 1;
+            $program = realpath($program);
         }
-        $program = realpath($program);
 
         if (!$this->userState->isAssignedExercise()) {
             $this->output->printError("No active exercises. Select one from the menu");

@@ -47,20 +47,6 @@ interface ExerciseInterface
     public function getDescription();
 
     /**
-     * Get the exercise solution.
-     *
-     * @return SolutionInterface
-     */
-    public function getSolution();
-
-    /**
-     * Get the absolute path to the markdown file which contains the exercise problem.
-     *
-     * @return string
-     */
-    public function getProblem();
-
-    /**
      * Allows to perform some cleanup after the exercise solution's have been executed, for example
      * remove files, close DB connections.
      *
