@@ -17,6 +17,7 @@ use PhpSchool\PhpWorkshop\Check\ComposerCheck;
 use PhpSchool\PhpWorkshop\Check\DatabaseCheck;
 use PhpSchool\PhpWorkshop\CodeInsertion as Insertion;
 use PhpSchool\PhpWorkshop\CodePatcher;
+use PhpSchool\PhpWorkshop\CommandArgument;
 use PhpSchool\PhpWorkshop\Event\EventDispatcher;
 use PhpSchool\PhpWorkshop\ExerciseDispatcher;
 use PhpSchool\PhpWorkshop\Factory\EventDispatcherFactory;
@@ -83,8 +84,8 @@ return [
                 new CommandDefinition('menu', [], MenuCommand::class),
                 new CommandDefinition('help', [], HelpCommand::class),
                 new CommandDefinition('print', [], PrintCommand::class),
-                new CommandDefinition('verify', ['program'], VerifyCommand::class),
-                new CommandDefinition('run', ['program'], RunCommand::class),
+                new CommandDefinition('verify', [CommandArgument::optional('program')], VerifyCommand::class),
+                new CommandDefinition('run', [CommandArgument::optional('program')], RunCommand::class),
                 new CommandDefinition('credits', [], CreditsCommand::class)
             ],
             'menu',
