@@ -2,7 +2,6 @@
 
 namespace PhpSchool\PhpWorkshop\Exercise;
 
-use PhpSchool\PhpWorkshop\Solution\SolutionInterface;
 use Psr\Http\Message\RequestInterface;
 
 /**
@@ -10,22 +9,8 @@ use Psr\Http\Message\RequestInterface;
  *
  * @package PhpSchool\PhpWorkshop\Exercise
  */
-interface CgiExercise
+interface CgiExercise extends ProvidesSolution
 {
-    /**
-     * Get the exercise solution.
-     *
-     * @return SolutionInterface
-     */
-    public function getSolution();
-
-    /**
-     * Get the absolute path to the markdown file which contains the exercise problem.
-     *
-     * @return string
-     */
-    public function getProblem();
-
     /**
      * This method should return an array of PSR-7 requests, which will be forwarded to the student's
      * solution.
