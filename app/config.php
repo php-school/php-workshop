@@ -32,6 +32,7 @@ use PhpSchool\PhpWorkshop\Output\StdOutput;
 use PhpSchool\PhpWorkshop\Patch;
 use PhpSchool\PhpWorkshop\ResultAggregator;
 use PhpSchool\PSX\Factory as PsxFactory;
+use PhpSchool\PhpWorkshop\WorkshopType;
 use PhpSchool\PSX\SyntaxHighlighter;
 use PhpSchool\PhpWorkshop\Check\FileExistsCheck;
 use PhpSchool\PhpWorkshop\Check\FunctionRequirementsCheck;
@@ -46,7 +47,6 @@ use PhpSchool\PhpWorkshop\CommandDefinition;
 use PhpSchool\PhpWorkshop\CommandRouter;
 use PhpSchool\PhpWorkshop\ExerciseRenderer;
 use PhpSchool\PhpWorkshop\ExerciseRepository;
-use PhpSchool\PhpWorkshop\ExerciseRunner;
 use PhpSchool\PhpWorkshop\Factory\MarkdownCliRendererFactory;
 use PhpSchool\PhpWorkshop\MarkdownRenderer;
 use PhpSchool\PhpWorkshop\ResultRenderer\ResultsRenderer;
@@ -58,7 +58,8 @@ use Faker\Generator as FakerGenerator;
 
 return [
     'appName' => basename($_SERVER['argv'][0]),
-    ExerciseDispatcher::class => function (ContainerInterface $c) {
+    WorkshopType::class => WorkshopType::STANDARD(),
+    ExerciseDispatcher::class => factory(function (ContainerInterface $c) {
         $dispatcher = new ExerciseDispatcher(
             $c->get(RunnerFactory::class),
             $c->get(ResultAggregator::class),
@@ -71,7 +72,7 @@ return [
         $dispatcher->requireCheck(PhpLintCheck::class);
         $dispatcher->requireCheck(CodeParseCheck::class);
         return $dispatcher;
-    },
+    }),
     ResultAggregator::class => object(ResultAggregator::class),
     CheckRepository::class => function (ContainerInterface $c) {
         return new CheckRepository([

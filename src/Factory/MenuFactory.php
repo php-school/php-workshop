@@ -14,6 +14,7 @@ use PhpSchool\PhpWorkshop\ExerciseRenderer;
 use PhpSchool\PhpWorkshop\ExerciseRepository;
 use PhpSchool\PhpWorkshop\MenuItem\ResetProgress;
 use PhpSchool\PhpWorkshop\UserStateSerializer;
+use PhpSchool\PhpWorkshop\WorkshopType;
 
 /**
  * Class MenuFactory
@@ -31,6 +32,7 @@ class MenuFactory
         $exerciseRepository     = $c->get(ExerciseRepository::class);
         $userState              = $userStateSerializer->deSerialize();
         $exerciseRenderer       = $c->get(ExerciseRenderer::class);
+        $workshopType           = $c->get(WorkshopType::class);
 
         $builder = (new CliMenuBuilder)
             ->addLineBreak();
@@ -44,11 +46,15 @@ class MenuFactory
             ->addLineBreak()
             ->addStaticItem('Exercises')
             ->addStaticItem('---------')
-            ->addItems(array_map(function (ExerciseInterface $exercise) use ($exerciseRenderer, $userState) {
+            ->addItems(array_map(function (ExerciseInterface $exercise) use ($exerciseRenderer, $userState, $workshopType) {
+                $isCurrent  = $exercise->getName() === $userState->getCurrentExercise();
+                $isComplete = in_array($exercise->getName(), $userState->getCompletedExercises());
+
                 return [
                     $exercise->getName(),
                     $exerciseRenderer,
-                    $userState->completedExercise($exercise->getName())
+                    $userState->completedExercise($exercise->getName()),
+                    $workshopType == WorkshopType::TUTORIAL() && !$isCurrent && !$isComplete
                 ];
             }, $exerciseRepository->findAll()))
             ->addLineBreak()
