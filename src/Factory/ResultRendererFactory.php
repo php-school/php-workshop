@@ -37,11 +37,11 @@ class ResultRendererFactory
      */
     public function registerRenderer($resultClass, $rendererClass)
     {
-        if (!class_implements($resultClass, ResultInterface::class)) {
+        if (!$this->isImplementationNameOfClass($resultClass, ResultInterface::class)) {
             throw new InvalidArgumentException;
         }
 
-        if (!class_implements($rendererClass, ResultRendererInterface::class)) {
+        if (!$this->isImplementationNameOfClass($rendererClass, ResultRendererInterface::class)) {
             throw new InvalidArgumentException;
         }
 
@@ -60,5 +60,10 @@ class ResultRendererFactory
         }
 
         return new $this->mappings[$class]($result);
+    }
+
+    protected function isImplementationNameOfClass($implementationName, $className)
+    {
+        return is_string($implementationName) && is_subclass_of($implementationName, $className);
     }
 }
