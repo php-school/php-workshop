@@ -46,17 +46,19 @@ class MenuFactory
             ->addLineBreak()
             ->addStaticItem('Exercises')
             ->addStaticItem('---------')
-            ->addItems(array_map(function (ExerciseInterface $exercise) use ($exerciseRenderer, $userState, $workshopType) {
-                $isCurrent  = $exercise->getName() === $userState->getCurrentExercise();
-                $isComplete = in_array($exercise->getName(), $userState->getCompletedExercises());
+            ->addItems(
+                array_map(function (ExerciseInterface $exercise) use ($exerciseRenderer, $userState, $workshopType) {
+                    $isCurrent  = $exercise->getName() === $userState->getCurrentExercise();
+                    $isComplete = in_array($exercise->getName(), $userState->getCompletedExercises());
 
-                return [
-                    $exercise->getName(),
-                    $exerciseRenderer,
-                    $userState->completedExercise($exercise->getName()),
-                    $workshopType == WorkshopType::TUTORIAL() && !$isCurrent && !$isComplete
-                ];
-            }, $exerciseRepository->findAll()))
+                    return [
+                        $exercise->getName(),
+                        $exerciseRenderer,
+                        $userState->completedExercise($exercise->getName()),
+                        $workshopType == WorkshopType::TUTORIAL() && !$isCurrent && !$isComplete
+                    ];
+                }, $exerciseRepository->findAll())
+            )
             ->addLineBreak()
             ->addLineBreak('-')
             ->addLineBreak()
