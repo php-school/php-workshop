@@ -13,4 +13,12 @@ class WorkshopType extends Enum
 {
     const STANDARD = 1;
     const TUTORIAL = 2;
+
+    /**
+     * @return bool
+     */
+    public function isTutorialMode()
+    {
+        return $this->getValue() === static::TUTORIAL;
+    }
 }

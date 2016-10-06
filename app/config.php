@@ -59,7 +59,7 @@ use Faker\Generator as FakerGenerator;
 return [
     'appName' => basename($_SERVER['argv'][0]),
     WorkshopType::class => WorkshopType::STANDARD(),
-    ExerciseDispatcher::class => factory(function (ContainerInterface $c) {
+    ExerciseDispatcher::class => function (ContainerInterface $c) {
         $dispatcher = new ExerciseDispatcher(
             $c->get(RunnerFactory::class),
             $c->get(ResultAggregator::class),
@@ -72,7 +72,7 @@ return [
         $dispatcher->requireCheck(PhpLintCheck::class);
         $dispatcher->requireCheck(CodeParseCheck::class);
         return $dispatcher;
-    }),
+    },
     ResultAggregator::class => object(ResultAggregator::class),
     CheckRepository::class => function (ContainerInterface $c) {
         return new CheckRepository([

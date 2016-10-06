@@ -13,6 +13,7 @@ use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpSchool\PhpWorkshop\ExerciseRenderer;
 use PhpSchool\PhpWorkshop\ExerciseRepository;
 use PhpSchool\PhpWorkshop\MenuItem\ResetProgress;
+use PhpSchool\PhpWorkshop\UserState;
 use PhpSchool\PhpWorkshop\UserStateSerializer;
 use PhpSchool\PhpWorkshop\WorkshopType;
 
@@ -48,14 +49,11 @@ class MenuFactory
             ->addStaticItem('---------')
             ->addItems(
                 array_map(function (ExerciseInterface $exercise) use ($exerciseRenderer, $userState, $workshopType) {
-                    $isCurrent  = $exercise->getName() === $userState->getCurrentExercise();
-                    $isComplete = in_array($exercise->getName(), $userState->getCompletedExercises());
-
                     return [
                         $exercise->getName(),
                         $exerciseRenderer,
                         $userState->completedExercise($exercise->getName()),
-                        $workshopType == WorkshopType::TUTORIAL() && !$isCurrent && !$isComplete
+                        $this->isExerciseDisabled($exercise, $userState, $workshopType)
                     ];
                 }, $exerciseRepository->findAll())
             )
@@ -98,5 +96,29 @@ class MenuFactory
         }
 
         return $builder->build();
+    }
+
+    /**
+     * @param ExerciseInterface $exercise
+     * @param UserState         $userState
+     * @param WorkshopType      $type
+     * @return bool
+     */
+    private function isExerciseDisabled(ExerciseInterface $exercise, UserState $userState, WorkshopType $type)
+    {
+        static $previous = null;
+
+        if (null === $previous || !$type->isTutorialMode()) {
+            $previous = $exercise;
+            return false;
+        }
+
+        if (in_array($previous->getName(), $userState->getCompletedExercises())) {
+            $previous = $exercise;
+            return false;
+        }
+
+        $previous = $exercise;
+        return true;
     }
 }
