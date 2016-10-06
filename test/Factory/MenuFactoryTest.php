@@ -34,7 +34,7 @@ class MenuFactoryTest extends PHPUnit_Framework_TestCase
 
         $exerciseRepository = $this->createMock(ExerciseRepository::class);
         $exercise = $this->createMock(ExerciseInterface::class);
-        $exercise->expects($this->exactly(4))
+        $exercise->expects($this->exactly(2))
             ->method('getName')
             ->will($this->returnValue('Exercise'));
         $exerciseRepository
