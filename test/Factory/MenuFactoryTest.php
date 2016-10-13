@@ -13,6 +13,7 @@ use PhpSchool\PhpWorkshop\Factory\MenuFactory;
 use PhpSchool\PhpWorkshop\MenuItem\ResetProgress;
 use PhpSchool\PhpWorkshop\UserState;
 use PhpSchool\PhpWorkshop\UserStateSerializer;
+use PhpSchool\PhpWorkshop\WorkshopType;
 use PHPUnit_Framework_TestCase;
 
 /**
@@ -52,6 +53,7 @@ class MenuFactoryTest extends PHPUnit_Framework_TestCase
             'bgColour'      => 'black',
             'fgColour'      => 'green',
             'workshopTitle' => 'TITLE',
+            WorkshopType::class => WorkshopType::STANDARD()
         ];
         
         $container

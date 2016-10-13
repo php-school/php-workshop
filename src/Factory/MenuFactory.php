@@ -13,7 +13,9 @@ use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpSchool\PhpWorkshop\ExerciseRenderer;
 use PhpSchool\PhpWorkshop\ExerciseRepository;
 use PhpSchool\PhpWorkshop\MenuItem\ResetProgress;
+use PhpSchool\PhpWorkshop\UserState;
 use PhpSchool\PhpWorkshop\UserStateSerializer;
+use PhpSchool\PhpWorkshop\WorkshopType;
 
 /**
  * Class MenuFactory
@@ -31,6 +33,7 @@ class MenuFactory
         $exerciseRepository     = $c->get(ExerciseRepository::class);
         $userState              = $userStateSerializer->deSerialize();
         $exerciseRenderer       = $c->get(ExerciseRenderer::class);
+        $workshopType           = $c->get(WorkshopType::class);
 
         $builder = (new CliMenuBuilder)
             ->addLineBreak();
@@ -44,13 +47,16 @@ class MenuFactory
             ->addLineBreak()
             ->addStaticItem('Exercises')
             ->addStaticItem('---------')
-            ->addItems(array_map(function (ExerciseInterface $exercise) use ($exerciseRenderer, $userState) {
-                return [
-                    $exercise->getName(),
-                    $exerciseRenderer,
-                    $userState->completedExercise($exercise->getName())
-                ];
-            }, $exerciseRepository->findAll()))
+            ->addItems(
+                array_map(function (ExerciseInterface $exercise) use ($exerciseRenderer, $userState, $workshopType) {
+                    return [
+                        $exercise->getName(),
+                        $exerciseRenderer,
+                        $userState->completedExercise($exercise->getName()),
+                        $this->isExerciseDisabled($exercise, $userState, $workshopType)
+                    ];
+                }, $exerciseRepository->findAll())
+            )
             ->addLineBreak()
             ->addLineBreak('-')
             ->addLineBreak()
@@ -90,5 +96,29 @@ class MenuFactory
         }
 
         return $builder->build();
+    }
+
+    /**
+     * @param ExerciseInterface $exercise
+     * @param UserState         $userState
+     * @param WorkshopType      $type
+     * @return bool
+     */
+    private function isExerciseDisabled(ExerciseInterface $exercise, UserState $userState, WorkshopType $type)
+    {
+        static $previous = null;
+
+        if (null === $previous || !$type->isTutorialMode()) {
+            $previous = $exercise;
+            return false;
+        }
+
+        if (in_array($previous->getName(), $userState->getCompletedExercises())) {
+            $previous = $exercise;
+            return false;
+        }
+
+        $previous = $exercise;
+        return true;
     }
 }
