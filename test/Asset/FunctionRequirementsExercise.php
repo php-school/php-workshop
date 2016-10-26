@@ -106,4 +106,14 @@ class FunctionRequirementsExercise implements ExerciseInterface, FunctionRequire
     {
         return ['file'];
     }
+
+    /**
+     * Allow to perform some action when an exercise is selected from the menu.
+     *
+     * @return void
+     */
+    public function onSelected()
+    {
+        // TODO: Implement onSelected() method.
+    }
 }
