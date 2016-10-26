@@ -25,6 +25,13 @@ abstract class AbstractExercise
     abstract public function getName();
 
     /**
+     * Allow to perform some action when an exercise is selected from the menu.
+     */
+    public function onSelected()
+    {
+    }
+
+    /**
      * This returns a single file solution named `solution.php` which
      * should exist in `workshop-root/exercises/<exercise-name>/solution/`.
      *

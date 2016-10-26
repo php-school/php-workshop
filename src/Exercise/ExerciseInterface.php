@@ -67,4 +67,11 @@ interface ExerciseInterface
      * @return void
      */
     public function tearDown();
+
+    /**
+     * Allow to perform some action when an exercise is selected from the menu.
+     *
+     * @return void
+     */
+    public function onSelected();
 }

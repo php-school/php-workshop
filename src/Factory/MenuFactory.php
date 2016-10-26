@@ -9,6 +9,8 @@ use PhpSchool\CliMenu\MenuItem\AsciiArtItem;
 use PhpSchool\PhpWorkshop\Command\CreditsCommand;
 use PhpSchool\PhpWorkshop\Command\HelpCommand;
 use PhpSchool\PhpWorkshop\Command\MenuCommandInvoker;
+use PhpSchool\PhpWorkshop\Event\Event;
+use PhpSchool\PhpWorkshop\Event\EventDispatcher;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpSchool\PhpWorkshop\ExerciseRenderer;
 use PhpSchool\PhpWorkshop\ExerciseRepository;
@@ -47,7 +49,10 @@ class MenuFactory
             ->addItems(array_map(function (ExerciseInterface $exercise) use ($exerciseRenderer, $userState) {
                 return [
                     $exercise->getName(),
-                    $exerciseRenderer,
+                    function (CliMenu $menu) use ($exerciseRenderer, $exercise) {
+                        $exercise->onSelected();
+                        $exerciseRenderer($menu);
+                    },
                     $userState->completedExercise($exercise->getName())
                 ];
             }, $exerciseRepository->findAll()))
