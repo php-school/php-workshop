@@ -18,20 +18,13 @@ class ResetProgress
      * @var UserStateSerializer
      */
     private $userStateSerializer;
-    
-    /**
-     * @var OutputInterface
-     */
-    private $output;
 
     /**
      * @param UserStateSerializer $userStateSerializer
-     * @param OutputInterface $output
      */
-    public function __construct(UserStateSerializer $userStateSerializer, OutputInterface $output)
+    public function __construct(UserStateSerializer $userStateSerializer)
     {
         $this->userStateSerializer = $userStateSerializer;
-        $this->output = $output;
     }
 
     /**
@@ -40,6 +33,17 @@ class ResetProgress
     public function __invoke(CliMenu $menu)
     {
         $this->userStateSerializer->serialize(new UserState);
-        $this->output->writeLine("Status Reset!");
+
+        $items = $menu
+            ->getParent()
+            ->getItems();
+
+        foreach ($items as $item) {
+            $item->hideItemExtra();
+        }
+
+        $confirm = $menu->confirm('Status Reset!');
+        $confirm->getStyle()->setBg('magenta')->setFg('black');
+        $confirm->display('OK');
     }
 }
