@@ -246,10 +246,7 @@ return [
     SyntaxHighlighter::class => factory(PsxFactory::class),
     PsxFactory::class => object(),
     ResetProgress::class => function (ContainerInterface $c) {
-        return new ResetProgress(
-            $c->get(UserStateSerializer::class),
-            $c->get(OutputInterface::class)
-        );
+        return new ResetProgress($c->get(UserStateSerializer::class));
     },
     ResultRendererFactory::class => object(),
     ResultsRenderer::class => function (ContainerInterface $c) {
