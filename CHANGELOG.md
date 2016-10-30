@@ -11,6 +11,16 @@ Updates should follow the [Keep a CHANGELOG](http://keepachangelog.com/) princip
 
 ### Removed
 
+## [1.2.0]
+### Fixed
+ - Menu items now update the status when progress is reset (#131, #86)
+   
+### Changed
+ - Improved failure message so it is a bit friendlier (#129)
+ 
+### Added
+ - Added list support to markdown problem files (#132)
+
 ## [1.1.0]
 ### Fixed
  - Added tests for ResultRendererFactory and fixed the interface validation (#126)
