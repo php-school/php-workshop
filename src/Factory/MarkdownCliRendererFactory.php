@@ -2,9 +2,13 @@
 
 namespace PhpSchool\PhpWorkshop\Factory;
 
+use AydinHassan\CliMdRenderer\Renderer\ListBlockRenderer;
+use AydinHassan\CliMdRenderer\Renderer\ListItemRenderer;
 use Colors\Color;
 use Interop\Container\ContainerInterface;
 use League\CommonMark\Block\Element\Heading;
+use League\CommonMark\Block\Element\ListBlock;
+use League\CommonMark\Block\Element\ListItem;
 use PhpSchool\CliMenu\Terminal\TerminalInterface;
 use League\CommonMark\Block\Element\Document;
 use League\CommonMark\Block\Element\FencedCode;
@@ -55,6 +59,8 @@ class MarkdownCliRendererFactory
             ThematicBreak::class => new HorizontalRuleRenderer($terminal->getWidth()),
             Paragraph::class => new ParagraphRenderer,
             FencedCode::class => $codeRender,
+            ListBlock::class        => new ListBlockRenderer,
+            ListItem::class         => new ListItemRenderer,
         ];
 
         $inlineBlockRenderers = [
