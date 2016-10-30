@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "6131dd4336b6da5ef329e0c40ecd285e",
+    "content-hash": "87289bfee8ab370b8af121daeef32638",
     "packages": [
         {
             "name": "aydin-hassan/cli-md-renderer",
@@ -536,20 +536,21 @@
         },
         {
             "name": "php-school/cli-menu",
-            "version": "1.2.0",
+            "version": "2.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/php-school/cli-menu.git",
-                "reference": "c7bdb1b67a9d394151b8c4bc78f8d1594d21c0c5"
+                "reference": "5472d7d4fc7b5753820cfb2628f4bf907937e90c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/php-school/cli-menu/zipball/c7bdb1b67a9d394151b8c4bc78f8d1594d21c0c5",
-                "reference": "c7bdb1b67a9d394151b8c4bc78f8d1594d21c0c5",
+                "url": "https://api.github.com/repos/php-school/cli-menu/zipball/5472d7d4fc7b5753820cfb2628f4bf907937e90c",
+                "reference": "5472d7d4fc7b5753820cfb2628f4bf907937e90c",
                 "shasum": ""
             },
             "require": {
                 "beberlei/assert": "^2.4",
+                "ext-posix": "*",
                 "php": ">=5.6"
             },
             "require-dev": {
@@ -585,7 +586,7 @@
                 "phpschool",
                 "terminal"
             ],
-            "time": "2016-10-03T18:37:45+00:00"
+            "time": "2016-10-27T21:31:02+00:00"
         },
         {
             "name": "php-school/psx",
