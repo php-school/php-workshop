@@ -60,6 +60,11 @@ final class Application
     private $bgColour = 'black';
 
     /**
+     * @var string
+     */
+    private $frameworkConfigLocation = __DIR__ . '/../app/config.php';
+
+    /**
      * It should be instantiated with the title of
      * the workshop and the path to the DI configuration file.
      *
@@ -156,24 +161,7 @@ final class Application
      */
     public function run()
     {
-        $containerBuilder = new ContainerBuilder;
-        $containerBuilder->addDefinitions(__DIR__ . '/../app/config.php');
-        $containerBuilder->addDefinitions($this->diConfigFile);
-        
-        $containerBuilder->addDefinitions(array_merge(
-            [
-                'workshopTitle' => $this->workshopTitle,
-                'exercises'     => $this->exercises,
-                'workshopLogo'  => $this->logo,
-                'bgColour'      => $this->bgColour,
-                'fgColour'      => $this->fgColour,
-            ]
-        ));
-        
-        $containerBuilder->useAutowiring(false);
-        $containerBuilder->useAnnotations(false);
-
-        $container = $containerBuilder->build();
+        $container = $this->getContainer();
         
         foreach ($this->exercises as $exercise) {
             if (false === $container->has($exercise)) {
@@ -228,5 +216,34 @@ final class Application
             return 1;
         }
         return $exitCode;
+    }
+
+    /**
+     * @return \DI\Container
+     */
+    private function getContainer()
+    {
+        $containerBuilder = new ContainerBuilder;
+        $containerBuilder->addDefinitions(
+            array_merge_recursive(
+                require $this->frameworkConfigLocation,
+                require $this->diConfigFile
+            )
+        );
+
+        $containerBuilder->addDefinitions(
+            [
+                'workshopTitle' => $this->workshopTitle,
+                'exercises'     => $this->exercises,
+                'workshopLogo'  => $this->logo,
+                'bgColour'      => $this->bgColour,
+                'fgColour'      => $this->fgColour,
+            ]
+        );
+
+        $containerBuilder->useAutowiring(false);
+        $containerBuilder->useAnnotations(false);
+
+        return $containerBuilder->build();
     }
 }
