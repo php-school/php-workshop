@@ -84,7 +84,7 @@ class CommandRouter
      *
      * @param array $args
      * @return int
-     * @throws CliRouteNotExists
+     * @throws CliRouteNotExistsException
      */
     public function route(array $args = null)
     {
