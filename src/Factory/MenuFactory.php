@@ -50,20 +50,21 @@ class MenuFactory
             ->addLineBreak('_')
             ->addLineBreak()
             ->addStaticItem('Exercises')
-            ->addStaticItem('---------')
-            ->addItems(
-                array_map(function (ExerciseInterface $exercise) use ($exerciseRenderer, $userState, $workshopType, $eventDispatcher) {
-                    return [
-                        $exercise->getName(),
-                        function (CliMenu $menu) use ($exerciseRenderer, $eventDispatcher, $exercise) {
-                            $this->dispatchExerciseSelectedEvent($eventDispatcher, $exercise);
-                            $exerciseRenderer->__invoke($menu);
-                        },
-                        $userState->completedExercise($exercise->getName()),
-                        $this->isExerciseDisabled($exercise, $userState, $workshopType)
-                    ];
-                }, $exerciseRepository->findAll())
-            )
+            ->addStaticItem('---------');
+
+        foreach ($exerciseRepository->findAll() as $exercise) {
+            $builder->addItem(
+                $exercise->getName(),
+                function (CliMenu $menu) use ($exerciseRenderer, $eventDispatcher, $exercise) {
+                    $this->dispatchExerciseSelectedEvent($eventDispatcher, $exercise);
+                    $exerciseRenderer->__invoke($menu);
+                },
+                $userState->completedExercise($exercise->getName()),
+                $this->isExerciseDisabled($exercise, $userState, $workshopType)
+            );
+        }
+
+        $builder
             ->addLineBreak()
             ->addLineBreak('-')
             ->addLineBreak()
