@@ -59,7 +59,6 @@ class MenuFactory
                             $this->dispatchExerciseSelectedEvent($eventDispatcher, $exercise);
                             $exerciseRenderer->__invoke($menu);
                         },
-                        $exerciseRenderer,
                         $userState->completedExercise($exercise->getName()),
                         $this->isExerciseDisabled($exercise, $userState, $workshopType)
                     ];
