@@ -109,6 +109,11 @@ class EventDispatcherFactoryTest extends PHPUnit_Framework_TestCase
             ->will($this->returnValue($selfCheckListener));
 
         $c->expects($this->at(4))
+            ->method('has')
+            ->with('eventListeners')
+            ->willReturn(true);
+
+        $c->expects($this->at(5))
             ->method('get')
             ->with('eventListeners')
             ->will($this->returnValue(new \stdClass));
@@ -150,6 +155,11 @@ class EventDispatcherFactoryTest extends PHPUnit_Framework_TestCase
             ->will($this->returnValue($selfCheckListener));
 
         $c->expects($this->at(4))
+            ->method('has')
+            ->with('eventListeners')
+            ->willReturn(true);
+
+        $c->expects($this->at(5))
             ->method('get')
             ->with('eventListeners')
             ->will($this->returnValue([ 'someEvent' => new \stdClass]));
@@ -191,6 +201,11 @@ class EventDispatcherFactoryTest extends PHPUnit_Framework_TestCase
             ->will($this->returnValue($selfCheckListener));
 
         $c->expects($this->at(4))
+            ->method('has')
+            ->with('eventListeners')
+            ->willReturn(true);
+
+        $c->expects($this->at(5))
             ->method('get')
             ->with('eventListeners')
             ->will($this->returnValue([ 'someEvent' => [new \stdClass]]));
@@ -232,11 +247,16 @@ class EventDispatcherFactoryTest extends PHPUnit_Framework_TestCase
             ->will($this->returnValue($selfCheckListener));
 
         $c->expects($this->at(4))
+            ->method('has')
+            ->with('eventListeners')
+            ->willReturn(true);
+
+        $c->expects($this->at(5))
             ->method('get')
             ->with('eventListeners')
             ->will($this->returnValue([ 'someEvent' => ['nonExistingContainerEntry']]));
 
-        $c->expects($this->once())
+        $c->expects($this->at(6))
             ->method('has')
             ->with('nonExistingContainerEntry')
             ->will($this->returnValue(false));
@@ -278,16 +298,21 @@ class EventDispatcherFactoryTest extends PHPUnit_Framework_TestCase
             ->will($this->returnValue($selfCheckListener));
 
         $c->expects($this->at(4))
+            ->method('has')
+            ->with('eventListeners')
+            ->willReturn(true);
+
+        $c->expects($this->at(5))
             ->method('get')
             ->with('eventListeners')
             ->will($this->returnValue([ 'someEvent' => ['notCallableEntry']]));
 
-        $c->expects($this->once())
+        $c->expects($this->at(6))
             ->method('has')
             ->with('notCallableEntry')
             ->will($this->returnValue(true));
 
-        $c->expects($this->at(6))
+        $c->expects($this->at(7))
             ->method('get')
             ->with('notCallableEntry')
             ->will($this->returnValue(null));
@@ -332,10 +357,14 @@ class EventDispatcherFactoryTest extends PHPUnit_Framework_TestCase
         };
 
         $c->expects($this->at(4))
+            ->method('has')
+            ->with('eventListeners')
+            ->willReturn(true);
+
+        $c->expects($this->at(5))
             ->method('get')
             ->with('eventListeners')
             ->will($this->returnValue([ 'someEvent' => [$callback]]));
-
 
         $dispatcher = (new EventDispatcherFactory)->__invoke($c);
         $this->assertInstanceOf(EventDispatcher::class, $dispatcher);
@@ -398,14 +427,17 @@ class EventDispatcherFactoryTest extends PHPUnit_Framework_TestCase
             ->with(SelfCheckListener::class)
             ->will($this->returnValue($selfCheckListener));
 
-
-
         $c->expects($this->at(4))
+            ->method('has')
+            ->with('eventListeners')
+            ->willReturn(true);
+
+        $c->expects($this->at(5))
             ->method('get')
             ->with('eventListeners')
             ->will($this->returnValue([ 'someEvent' => ['containerEntry']]));
 
-        $c->expects($this->once())
+        $c->expects($this->at(6))
             ->method('has')
             ->with('containerEntry')
             ->will($this->returnValue(true));
@@ -413,7 +445,7 @@ class EventDispatcherFactoryTest extends PHPUnit_Framework_TestCase
         $callback = function () {
         };
 
-        $c->expects($this->at(6))
+        $c->expects($this->at(7))
             ->method('get')
             ->with('containerEntry')
             ->will($this->returnValue($callback));

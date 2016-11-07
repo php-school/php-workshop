@@ -9,6 +9,9 @@ use PhpSchool\CliMenu\MenuItem\AsciiArtItem;
 use PhpSchool\PhpWorkshop\Command\CreditsCommand;
 use PhpSchool\PhpWorkshop\Command\HelpCommand;
 use PhpSchool\PhpWorkshop\Command\MenuCommandInvoker;
+use PhpSchool\PhpWorkshop\Event\Event;
+use PhpSchool\PhpWorkshop\Event\EventDispatcher;
+use PhpSchool\PhpWorkshop\Exercise\AbstractExercise;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpSchool\PhpWorkshop\ExerciseRenderer;
 use PhpSchool\PhpWorkshop\ExerciseRepository;
@@ -34,6 +37,7 @@ class MenuFactory
         $userState              = $userStateSerializer->deSerialize();
         $exerciseRenderer       = $c->get(ExerciseRenderer::class);
         $workshopType           = $c->get(WorkshopType::class);
+        $eventDispatcher        = $c->get(EventDispatcher::class);
 
         $builder = (new CliMenuBuilder)
             ->addLineBreak();
@@ -46,17 +50,21 @@ class MenuFactory
             ->addLineBreak('_')
             ->addLineBreak()
             ->addStaticItem('Exercises')
-            ->addStaticItem('---------')
-            ->addItems(
-                array_map(function (ExerciseInterface $exercise) use ($exerciseRenderer, $userState, $workshopType) {
-                    return [
-                        $exercise->getName(),
-                        $exerciseRenderer,
-                        $userState->completedExercise($exercise->getName()),
-                        $this->isExerciseDisabled($exercise, $userState, $workshopType)
-                    ];
-                }, $exerciseRepository->findAll())
-            )
+            ->addStaticItem('---------');
+
+        foreach ($exerciseRepository->findAll() as $exercise) {
+            $builder->addItem(
+                $exercise->getName(),
+                function (CliMenu $menu) use ($exerciseRenderer, $eventDispatcher, $exercise) {
+                    $this->dispatchExerciseSelectedEvent($eventDispatcher, $exercise);
+                    $exerciseRenderer->__invoke($menu);
+                },
+                $userState->completedExercise($exercise->getName()),
+                $this->isExerciseDisabled($exercise, $userState, $workshopType)
+            );
+        }
+
+        $builder
             ->addLineBreak()
             ->addLineBreak('-')
             ->addLineBreak()
@@ -120,5 +128,21 @@ class MenuFactory
 
         $previous = $exercise;
         return true;
+    }
+
+    /**
+     * @param EventDispatcher $eventDispatcher
+     * @param ExerciseInterface $exercise
+     */
+    private function dispatchExerciseSelectedEvent(EventDispatcher $eventDispatcher, ExerciseInterface $exercise)
+    {
+        $eventDispatcher->dispatch(
+            new Event(
+                sprintf(
+                    'exercise.selected.%s',
+                    AbstractExercise::normaliseName($exercise->getName())
+                )
+            )
+        );
     }
 }

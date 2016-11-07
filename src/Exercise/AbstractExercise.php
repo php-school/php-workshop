@@ -41,7 +41,7 @@ abstract class AbstractExercise
                 sprintf(
                     '%s/../../exercises/%s/solution/solution.php',
                     dirname((new ReflectionClass(static::class))->getFileName()),
-                    $this->normaliseName($this->getName())
+                    self::normaliseName($this->getName())
                 )
             )
         );
@@ -55,7 +55,7 @@ abstract class AbstractExercise
      */
     public function getProblem()
     {
-        $name = $this->normaliseName($this->getName());
+        $name = self::normaliseName($this->getName());
         $dir  = dirname((new ReflectionClass(static::class))->getFileName());
         return sprintf('%s/../../exercises/%s/problem/problem.md', $dir, $name);
     }
@@ -74,7 +74,7 @@ abstract class AbstractExercise
      * @param string $name
      * @return string
      */
-    private function normaliseName($name)
+    public static function normaliseName($name)
     {
         return preg_replace('/[^A-Za-z\-]+/', '', str_replace(' ', '-', strtolower($name)));
     }

@@ -6,6 +6,7 @@ use Interop\Container\ContainerInterface;
 use PhpSchool\CliMenu\CliMenu;
 use PhpSchool\PhpWorkshop\Command\CreditsCommand;
 use PhpSchool\PhpWorkshop\Command\HelpCommand;
+use PhpSchool\PhpWorkshop\Event\EventDispatcher;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpSchool\PhpWorkshop\ExerciseRenderer;
 use PhpSchool\PhpWorkshop\ExerciseRepository;
@@ -53,7 +54,8 @@ class MenuFactoryTest extends PHPUnit_Framework_TestCase
             'bgColour'      => 'black',
             'fgColour'      => 'green',
             'workshopTitle' => 'TITLE',
-            WorkshopType::class => WorkshopType::STANDARD()
+            WorkshopType::class => WorkshopType::STANDARD(),
+            EventDispatcher::class => $this->createMock(EventDispatcher::class),
         ];
         
         $container

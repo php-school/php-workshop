@@ -40,7 +40,7 @@ class EventDispatcherFactory
         $dispatcher->listen('verify.post.check', $container->get(SelfCheckListener::class));
 
         //add listeners from config
-        $eventListeners = $container->get('eventListeners') ?: [];
+        $eventListeners = $container->has('eventListeners') ? $container->get('eventListeners') : [];
 
         if (!is_array($eventListeners)) {
             throw InvalidArgumentException::typeMisMatch('array', $eventListeners);
