@@ -11,6 +11,12 @@ Updates should follow the [Keep a CHANGELOG](http://keepachangelog.com/) princip
 
 ### Removed
 
+## [1.2.0]
+ 
+### Added
+ - Added ability to register event listeners via config as either callables or the name of a callable container entry (#133)
+ - Added an event dispatch for whenever an exercise is selected via the menu (#134)
+
 ## [1.1.0]
 ### Fixed
  - Menu items now update the status when progress is reset (#131, #86)
