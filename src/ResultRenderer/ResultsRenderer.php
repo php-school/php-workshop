@@ -131,10 +131,10 @@ class ResultsRenderer
             $output->emptyLine();
         }
 
-        $output->writeLine($this->style(" FAIL!", ['red', 'bg_default', 'bold']));
+        $output->writeLine($this->style(' Your solution was unsuccessful!', ['red', 'bg_default', 'bold']));
         $output->emptyLine();
 
-        $output->writeLine(sprintf("Your solution to %s didn't pass. Try again!", $exercise->getName()));
+        $output->writeLine(sprintf(" Your solution to %s didn't pass. Try again!", $exercise->getName()));
         $output->emptyLine();
         $output->emptyLine();
     }

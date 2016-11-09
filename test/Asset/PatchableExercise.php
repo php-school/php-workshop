@@ -4,10 +4,9 @@ namespace PhpSchool\PhpWorkshopTest\Asset;
 
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseType;
-use PhpSchool\PhpWorkshop\Exercise\PreProcessable;
 use PhpSchool\PhpWorkshop\Exercise\SubmissionPatchable;
 use PhpSchool\PhpWorkshop\ExerciseDispatcher;
-use PhpSchool\PhpWorkshop\SubmissionPatch;
+use PhpSchool\PhpWorkshop\Patch;
 
 /**
  * Class PatchableExercise
@@ -54,10 +53,11 @@ class PatchableExercise implements ExerciseInterface, SubmissionPatchable
      */
     public function tearDown()
     {
+        // TODO: Implement tearDown() method.
     }
 
     /**
-     * @return SubmissionPatch
+     * @return Patch
      */
     public function getPatch()
     {

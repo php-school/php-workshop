@@ -32,6 +32,7 @@ use PhpSchool\PhpWorkshop\Output\StdOutput;
 use PhpSchool\PhpWorkshop\Patch;
 use PhpSchool\PhpWorkshop\ResultAggregator;
 use PhpSchool\PSX\Factory as PsxFactory;
+use PhpSchool\PhpWorkshop\WorkshopType;
 use PhpSchool\PSX\SyntaxHighlighter;
 use PhpSchool\PhpWorkshop\Check\FileExistsCheck;
 use PhpSchool\PhpWorkshop\Check\FunctionRequirementsCheck;
@@ -46,7 +47,6 @@ use PhpSchool\PhpWorkshop\CommandDefinition;
 use PhpSchool\PhpWorkshop\CommandRouter;
 use PhpSchool\PhpWorkshop\ExerciseRenderer;
 use PhpSchool\PhpWorkshop\ExerciseRepository;
-use PhpSchool\PhpWorkshop\ExerciseRunner;
 use PhpSchool\PhpWorkshop\Factory\MarkdownCliRendererFactory;
 use PhpSchool\PhpWorkshop\MarkdownRenderer;
 use PhpSchool\PhpWorkshop\ResultRenderer\ResultsRenderer;
@@ -58,6 +58,7 @@ use Faker\Generator as FakerGenerator;
 
 return [
     'appName' => basename($_SERVER['argv'][0]),
+    WorkshopType::class => WorkshopType::STANDARD(),
     ExerciseDispatcher::class => function (ContainerInterface $c) {
         return new ExerciseDispatcher(
             $c->get(RunnerFactory::class),
@@ -239,10 +240,7 @@ return [
     SyntaxHighlighter::class => factory(PsxFactory::class),
     PsxFactory::class => object(),
     ResetProgress::class => function (ContainerInterface $c) {
-        return new ResetProgress(
-            $c->get(UserStateSerializer::class),
-            $c->get(OutputInterface::class)
-        );
+        return new ResetProgress($c->get(UserStateSerializer::class));
     },
     ResultRendererFactory::class => object(),
     ResultsRenderer::class => function (ContainerInterface $c) {

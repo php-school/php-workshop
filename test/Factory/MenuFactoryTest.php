@@ -6,6 +6,7 @@ use Interop\Container\ContainerInterface;
 use PhpSchool\CliMenu\CliMenu;
 use PhpSchool\PhpWorkshop\Command\CreditsCommand;
 use PhpSchool\PhpWorkshop\Command\HelpCommand;
+use PhpSchool\PhpWorkshop\Event\EventDispatcher;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpSchool\PhpWorkshop\ExerciseRenderer;
 use PhpSchool\PhpWorkshop\ExerciseRepository;
@@ -13,6 +14,7 @@ use PhpSchool\PhpWorkshop\Factory\MenuFactory;
 use PhpSchool\PhpWorkshop\MenuItem\ResetProgress;
 use PhpSchool\PhpWorkshop\UserState;
 use PhpSchool\PhpWorkshop\UserStateSerializer;
+use PhpSchool\PhpWorkshop\WorkshopType;
 use PHPUnit_Framework_TestCase;
 
 /**
@@ -52,6 +54,8 @@ class MenuFactoryTest extends PHPUnit_Framework_TestCase
             'bgColour'      => 'black',
             'fgColour'      => 'green',
             'workshopTitle' => 'TITLE',
+            WorkshopType::class => WorkshopType::STANDARD(),
+            EventDispatcher::class => $this->createMock(EventDispatcher::class),
         ];
         
         $container
