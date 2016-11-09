@@ -2,6 +2,7 @@
 
 namespace PhpSchool\PhpWorkshopTest\Exception;
 
+use Countable;
 use PhpSchool\PhpWorkshop\Exception\InvalidArgumentException;
 use PHPUnit_Framework_TestCase;
 
@@ -28,6 +29,12 @@ class InvalidArgumentExceptionTest extends PHPUnit_Framework_TestCase
     {
         $e = InvalidArgumentException::notValidParameter('number', [1, 2], 3);
         $this->assertEquals('Parameter: "number" can only be one of: "1", "2" Received: "3"', $e->getMessage());
+    }
+
+    public function testExceptionFromMissingImplements()
+    {
+        $e = InvalidArgumentException::missingImplements(new \stdClass, Countable::class);
+        self::assertEquals('"stdClass" is required to implement "Countable", but it does not', $e->getMessage());
     }
 
     /**

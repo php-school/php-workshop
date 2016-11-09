@@ -9,6 +9,7 @@ use League\CommonMark\Environment;
 use PhpSchool\CliMenu\CliMenu;
 use PhpSchool\CliMenu\MenuItem\MenuItemInterface;
 use PhpSchool\CliMenu\Terminal\TerminalInterface;
+use PhpSchool\PhpWorkshop\Exercise\CliExercise;
 use PHPUnit_Framework_TestCase;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpSchool\PhpWorkshop\ExerciseRenderer;
@@ -43,8 +44,8 @@ class ExerciseRendererTest extends PHPUnit_Framework_TestCase
             ->expects($this->once())
             ->method('close');
 
-        $exercise1 = $this->createMock(ExerciseInterface::class);
-        $exercise2 = $this->createMock(ExerciseInterface::class);
+        $exercise1 = $this->createMock([ExerciseInterface::class, CliExercise::class]);
+        $exercise2 = $this->createMock([ExerciseInterface::class, CliExercise::class]);
         $exercises = [$exercise1, $exercise2];
         $exerciseRepository = $this->createMock(ExerciseRepository::class);
         $userState = $this->createMock(UserState::class);
