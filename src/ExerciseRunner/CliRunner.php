@@ -12,6 +12,7 @@ use PhpSchool\PhpWorkshop\Exception\CodeExecutionException;
 use PhpSchool\PhpWorkshop\Exception\SolutionExecutionException;
 use PhpSchool\PhpWorkshop\Exercise\CliExercise;
 use PhpSchool\PhpWorkshop\ExerciseDispatcher;
+use PhpSchool\PhpWorkshop\Input\Input;
 use PhpSchool\PhpWorkshop\Output\OutputInterface;
 use PhpSchool\PhpWorkshop\Result\Failure;
 use PhpSchool\PhpWorkshop\Result\ResultInterface;
@@ -124,10 +125,10 @@ class CliRunner implements ExerciseRunnerInterface
      * * cli.verify.student.executing
      * * cli.verify.student-execute.fail (if the student's solution fails to execute)
      *
-     * @param string $fileName The absolute path to the student's solution.
+     * @param Input $input The command line arguments passed to the command.
      * @return ResultInterface The result of the check.
      */
-    public function verify($fileName)
+    public function verify(Input $input)
     {
         //arrays are not pass-by-ref
         $args = new ArrayObject($this->exercise->getArgs());
@@ -146,7 +147,7 @@ class CliRunner implements ExerciseRunnerInterface
 
         try {
             $event = $this->eventDispatcher->dispatch(new CliExecuteEvent('cli.verify.student-execute.pre', $args));
-            $userOutput = $this->executePhpFile($fileName, $event->getArgs(), 'student');
+            $userOutput = $this->executePhpFile($input->getArgument('program'), $event->getArgs(), 'student');
         } catch (CodeExecutionException $e) {
             $this->eventDispatcher->dispatch(new Event('cli.verify.student-execute.fail', ['exception' => $e]));
             return Failure::fromNameAndCodeExecutionFailure($this->getName(), $e);
@@ -170,11 +171,11 @@ class CliRunner implements ExerciseRunnerInterface
      *  * cli.run.student-execute.pre
      *  * cli.run.student.executing
      *
-     * @param string $fileName The absolute path to the student's solution.
+     * @param Input $input The command line arguments passed to the command.
      * @param OutputInterface $output A wrapper around STDOUT.
      * @return bool If the solution was successfully executed, eg. exit code was 0.
      */
-    public function run($fileName, OutputInterface $output)
+    public function run(Input $input, OutputInterface $output)
     {
         /** @var CliExecuteEvent $event */
         $event = $this->eventDispatcher->dispatch(
@@ -192,7 +193,7 @@ class CliRunner implements ExerciseRunnerInterface
         }
 
         $output->writeTitle("Output");
-        $process = $this->getPhpProcess($fileName, $args);
+        $process = $this->getPhpProcess($input->getArgument('program'), $args);
         $process->start();
         $this->eventDispatcher->dispatch(
             new CliExecuteEvent('cli.run.student.executing', $args, ['output' => $output])

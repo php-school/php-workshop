@@ -8,6 +8,7 @@ use PhpSchool\CliMenu\Terminal\TerminalInterface;
 use PhpSchool\PhpWorkshop\Event\EventDispatcher;
 use PhpSchool\PhpWorkshop\Exception\SolutionExecutionException;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseType;
+use PhpSchool\PhpWorkshop\Input\Input;
 use PhpSchool\PhpWorkshop\Output\StdOutput;
 use PhpSchool\PhpWorkshop\Result\Failure;
 use PhpSchool\PhpWorkshop\Result\StdOutFailure;
@@ -62,7 +63,7 @@ class CliRunnerTest extends PHPUnit_Framework_TestCase
         $regex .= ", expecting ',' or ';'/";
         $this->expectException(SolutionExecutionException::class);
         $this->expectExceptionMessageRegExp($regex);
-        $this->runner->verify('');
+        $this->runner->verify(new Input('app', ['program' => '']));
     }
 
     public function testVerifyReturnsSuccessIfSolutionOutputMatchesUserOutput()
@@ -80,7 +81,7 @@ class CliRunnerTest extends PHPUnit_Framework_TestCase
 
         $this->assertInstanceOf(
             Success::class,
-            $this->runner->verify(__DIR__ . '/../res/cli/user.php')
+            $this->runner->verify(new Input('app', ['program' => __DIR__ . '/../res/cli/user.php']))
         );
     }
 
@@ -97,7 +98,7 @@ class CliRunnerTest extends PHPUnit_Framework_TestCase
             ->method('getArgs')
             ->will($this->returnValue([1, 2, 3]));
 
-        $failure = $this->runner->verify(__DIR__ . '/../res/cli/user-error.php');
+        $failure = $this->runner->verify(new Input('app', ['program' => __DIR__ . '/../res/cli/user-error.php']));
 
         $failureMsg  = "/^PHP Code failed to execute. Error: \"PHP Parse error:  syntax error, ";
         $failureMsg .= "unexpected end of file, expecting ',' or ';'/";
@@ -119,7 +120,7 @@ class CliRunnerTest extends PHPUnit_Framework_TestCase
             ->method('getArgs')
             ->will($this->returnValue([1, 2, 3]));
 
-        $failure = $this->runner->verify(__DIR__ . '/../res/cli/user-wrong.php');
+        $failure = $this->runner->verify(new Input('app', ['program' => __DIR__ . '/../res/cli/user-wrong.php']));
 
         $this->assertInstanceOf(StdOutFailure::class, $failure);
         $this->assertEquals('6', $failure->getExpectedOutput());
@@ -143,7 +144,7 @@ class CliRunnerTest extends PHPUnit_Framework_TestCase
 
         $this->expectOutputString($exp);
 
-        $success = $this->runner->run(__DIR__ . '/../res/cli/user.php', $output);
+        $success = $this->runner->run(new Input('app', ['program' => __DIR__ . '/../res/cli/user.php']), $output);
         $this->assertTrue($success);
     }
 
@@ -158,7 +159,7 @@ class CliRunnerTest extends PHPUnit_Framework_TestCase
 
         $this->expectOutputRegex('/PHP Parse error:  syntax error, unexpected end of file, expecting \',\' or \';\' /');
 
-        $success = $this->runner->run(__DIR__ . '/../res/cli/user-error.php', $output);
+        $success = $this->runner->run(new Input('app', ['program' => __DIR__ . '/../res/cli/user-error.php']), $output);
         $this->assertFalse($success);
     }
 }
