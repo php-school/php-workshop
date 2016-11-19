@@ -6,6 +6,7 @@ use Colors\Color;
 use PhpSchool\CliMenu\Terminal\TerminalInterface;
 use PhpSchool\PhpWorkshop\Check\CheckInterface;
 use PhpSchool\PhpWorkshop\ExerciseDispatcher;
+use PhpSchool\PhpWorkshop\Input\Input;
 use PhpSchool\PhpWorkshop\Output\OutputInterface;
 use PhpSchool\PhpWorkshop\Output\StdOutput;
 use PHPUnit_Framework_TestCase;
@@ -58,7 +59,7 @@ class VerifyCommandTest extends PHPUnit_Framework_TestCase
         $renderer = $this->createMock(ResultsRenderer::class);
 
         $command = new VerifyCommand($repo, $dispatcher, $state, $serializer, $output, $renderer);
-        $this->assertSame(1, $command->__invoke('appname', $programFile));
+        $this->assertSame(1, $command->__invoke(new Input('appName', ['program' => $programFile])));
     }
 
     public function testVerifyPrintsErrorIfNoExerciseAssigned()
@@ -80,7 +81,7 @@ class VerifyCommandTest extends PHPUnit_Framework_TestCase
         $renderer = $this->createMock(ResultsRenderer::class);
 
         $command = new VerifyCommand($repo, $dispatcher, $state, $serializer, $output, $renderer);
-        $this->assertSame(1, $command->__invoke('appname', $file));
+        $this->assertSame(1, $command->__invoke(new Input('appName', ['program' => $file])));
 
         unlink($file);
     }
@@ -89,6 +90,8 @@ class VerifyCommandTest extends PHPUnit_Framework_TestCase
     {
         $file = tempnam(sys_get_temp_dir(), 'pws');
         touch($file);
+
+        $input = new Input('appName', ['program' => $file]);
 
         $e = $this->createMock(ExerciseInterface::class);
         $e->expects($this->any())
@@ -117,17 +120,17 @@ class VerifyCommandTest extends PHPUnit_Framework_TestCase
         $dispatcher
             ->expects($this->once())
             ->method('verify')
-            ->with($e, $file)
+            ->with($e, $input)
             ->will($this->returnValue($results));
         
         $renderer
             ->expects($this->once())
             ->method('render')
             ->with($results, $e, $state, $output);
-        
+
     
         $command = new VerifyCommand($repo, $dispatcher, $state, $serializer, $output, $renderer);
-        $this->assertEquals(0, $command->__invoke('appname', $file));
+        $this->assertEquals(0, $command->__invoke($input));
         $this->assertEquals(['exercise1'], $state->getCompletedExercises());
         unlink($file);
     }
@@ -136,6 +139,8 @@ class VerifyCommandTest extends PHPUnit_Framework_TestCase
     {
         $file = tempnam(sys_get_temp_dir(), 'pws');
         touch($file);
+
+        $input = new Input('appName', ['program' => $file]);
 
         $e = $this->createMock(ExerciseInterface::class);
         $e->expects($this->any())
@@ -165,7 +170,7 @@ class VerifyCommandTest extends PHPUnit_Framework_TestCase
         $dispatcher
             ->expects($this->once())
             ->method('verify')
-            ->with($e, $file)
+            ->with($e, $input)
             ->will($this->returnValue($results));
 
         $renderer
@@ -174,7 +179,7 @@ class VerifyCommandTest extends PHPUnit_Framework_TestCase
             ->with($results, $e, $state, $output);
 
         $command = new VerifyCommand($repo, $dispatcher, $state, $serializer, $output, $renderer);
-        $this->assertEquals(1, $command->__invoke('appname', $file));
+        $this->assertEquals(1, $command->__invoke($input));
         $this->assertEquals([], $state->getCompletedExercises());
         unlink($file);
     }

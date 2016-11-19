@@ -5,6 +5,7 @@ namespace PhpSchool\PhpWorkshop\Command;
 use PhpSchool\PhpWorkshop\ExerciseDispatcher;
 use PhpSchool\PhpWorkshop\ExerciseRepository;
 use PhpSchool\PhpWorkshop\ExerciseRunner;
+use PhpSchool\PhpWorkshop\Input\Input;
 use PhpSchool\PhpWorkshop\Output\OutputInterface;
 use PhpSchool\PhpWorkshop\ResultRenderer\ResultsRenderer;
 use PhpSchool\PhpWorkshop\UserState;
@@ -72,13 +73,13 @@ class VerifyCommand
     }
 
     /**
-     * @param string $appName
-     * @param string $program
+     * @param Input $input The command line arguments passed to the command.
      *
      * @return int|void
      */
-    public function __invoke($appName, $program)
+    public function __invoke(Input $input)
     {
+        $program = $input->getArgument('program');
         if (!file_exists($program)) {
             $this->output->printError(
                 sprintf('Could not verify. File: "%s" does not exist', $program)
@@ -93,7 +94,7 @@ class VerifyCommand
         }
 
         $exercise   = $this->exerciseRepository->findByName($this->userState->getCurrentExercise());
-        $results    = $this->exerciseDispatcher->verify($exercise, $program);
+        $results    = $this->exerciseDispatcher->verify($exercise, $input);
 
         if ($results->isSuccessful()) {
             $this->userState->addCompletedExercise($exercise->getName());

@@ -4,6 +4,7 @@ namespace PhpSchool\PhpWorkshop\Command;
 
 use PhpSchool\PhpWorkshop\ExerciseDispatcher;
 use PhpSchool\PhpWorkshop\ExerciseRepository;
+use PhpSchool\PhpWorkshop\Input\Input;
 use PhpSchool\PhpWorkshop\Output\OutputInterface;
 use PhpSchool\PhpWorkshop\UserState;
 use PhpSchool\PhpWorkshop\UserStateSerializer;
@@ -62,13 +63,13 @@ class RunCommand
     }
 
     /**
-     * @param string $appName
-     * @param string $program
+     * @param Input $input The command line arguments passed to the command.
      *
      * @return int|void
      */
-    public function __invoke($appName, $program)
+    public function __invoke(Input $input)
     {
+        $program = $input->getArgument('program');
         if (!file_exists($program)) {
             $this->output->printError(
                 sprintf('Could not run. File: "%s" does not exist', $program)
