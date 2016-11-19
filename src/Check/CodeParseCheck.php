@@ -8,6 +8,7 @@ use PhpParser\NodeTraverser;
 use PhpParser\Parser;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseType;
+use PhpSchool\PhpWorkshop\Input\Input;
 use PhpSchool\PhpWorkshop\Result\Failure;
 use PhpSchool\PhpWorkshop\Result\ResultInterface;
 use PhpSchool\PhpWorkshop\Result\Success;
@@ -51,18 +52,18 @@ class CodeParseCheck implements SimpleCheckInterface
      * by the parser, it is treated as a failure.
      *
      * @param ExerciseInterface $exercise The exercise to check against.
-     * @param string $fileName The absolute path to the student's solution.
+     * @param Input $input The command line arguments passed to the command.
      * @return ResultInterface The result of the check.
      */
-    public function check(ExerciseInterface $exercise, $fileName)
+    public function check(ExerciseInterface $exercise, Input $input)
     {
         
-        $code = file_get_contents($fileName);
+        $code = file_get_contents($input->getArgument('program'));
 
         try {
             $this->parser->parse($code);
         } catch (Error $e) {
-            return Failure::fromCheckAndCodeParseFailure($this, $e, $fileName);
+            return Failure::fromCheckAndCodeParseFailure($this, $e, $input->getArgument('program'));
         }
         
         return Success::fromCheck($this);
@@ -76,7 +77,7 @@ class CodeParseCheck implements SimpleCheckInterface
      */
     public function canRun(ExerciseType $exerciseType)
     {
-        return true;
+        return in_array($exerciseType->getValue(), [ExerciseType::CGI, ExerciseType::CLI]);
     }
 
     /**

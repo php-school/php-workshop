@@ -4,6 +4,7 @@ namespace PhpSchool\PhpWorkshop\Check;
 
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseType;
+use PhpSchool\PhpWorkshop\Input\Input;
 use PhpSchool\PhpWorkshop\Result\ResultInterface;
 
 /**
@@ -47,10 +48,10 @@ interface SimpleCheckInterface extends CheckInterface
      * should be returned.
      *
      * @param ExerciseInterface $exercise The exercise to check against.
-     * @param string $fileName The absolute path to the student's solution.
+     * @param Input $input The command line arguments passed to the command.
      * @return ResultInterface The result of the check.
      */
-    public function check(ExerciseInterface $exercise, $fileName);
+    public function check(ExerciseInterface $exercise, Input $input);
 
     /**
      * Either `static::CHECK_BEFORE` | `static::CHECK_AFTER`.

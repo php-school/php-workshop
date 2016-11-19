@@ -8,6 +8,7 @@ use PhpSchool\PhpWorkshop\Check\CodeParseCheck;
 use PhpSchool\PhpWorkshop\Check\SimpleCheckInterface;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseType;
+use PhpSchool\PhpWorkshop\Input\Input;
 use PhpSchool\PhpWorkshop\Result\Failure;
 use PhpSchool\PhpWorkshop\Result\Success;
 use PHPUnit_Framework_TestCase;
@@ -20,7 +21,7 @@ use PHPUnit_Framework_TestCase;
 class CodeParseCheckTest extends PHPUnit_Framework_TestCase
 {
     /**
-     * @var CheckInterface
+     * @var SimpleCheckInterface
      */
     private $check;
 
@@ -48,7 +49,10 @@ class CodeParseCheckTest extends PHPUnit_Framework_TestCase
     {
         file_put_contents($this->file, '<?php $lol');
         
-        $result = $this->check->check($this->createMock(ExerciseInterface::class), $this->file);
+        $result = $this->check->check(
+            $this->createMock(ExerciseInterface::class),
+            new Input('app', ['program' => $this->file])
+        );
         $this->assertInstanceOf(Failure::class, $result);
         
         $this->assertEquals('Code Parse Check', $result->getCheckName());
@@ -62,7 +66,10 @@ class CodeParseCheckTest extends PHPUnit_Framework_TestCase
     {
         file_put_contents($this->file, '<?php $lol = "lol";');
 
-        $result = $this->check->check($this->createMock(ExerciseInterface::class), $this->file);
+        $result = $this->check->check(
+            $this->createMock(ExerciseInterface::class),
+            new Input('app', ['program' => $this->file])
+        );
         $this->assertInstanceOf(Success::class, $result);
 
         $this->assertEquals('Code Parse Check', $result->getCheckName());

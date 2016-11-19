@@ -9,6 +9,7 @@ use PhpParser\Parser;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseType;
 use PhpSchool\PhpWorkshop\ExerciseCheck\FunctionRequirementsExerciseCheck;
+use PhpSchool\PhpWorkshop\Input\Input;
 use PhpSchool\PhpWorkshop\NodeVisitor\FunctionVisitor;
 use PhpSchool\PhpWorkshop\Result\Failure;
 use PhpSchool\PhpWorkshop\Result\FunctionRequirementsFailure;
@@ -54,10 +55,10 @@ class FunctionRequirementsCheck implements SimpleCheckInterface
      * are pulled from the exercise.
      *
      * @param ExerciseInterface $exercise The exercise to check against.
-     * @param string $fileName The absolute path to the student's solution.
+     * @param Input $input The command line arguments passed to the command.
      * @return ResultInterface The result of the check.
      */
-    public function check(ExerciseInterface $exercise, $fileName)
+    public function check(ExerciseInterface $exercise, Input $input)
     {
         if (!$exercise instanceof FunctionRequirementsExerciseCheck) {
             throw new \InvalidArgumentException;
@@ -66,12 +67,12 @@ class FunctionRequirementsCheck implements SimpleCheckInterface
         $requiredFunctions  = $exercise->getRequiredFunctions();
         $bannedFunctions    = $exercise->getBannedFunctions();
 
-        $code = file_get_contents($fileName);
+        $code = file_get_contents($input->getArgument('program'));
 
         try {
             $ast = $this->parser->parse($code);
         } catch (Error $e) {
-            return Failure::fromCheckAndCodeParseFailure($this, $e, $fileName);
+            return Failure::fromCheckAndCodeParseFailure($this, $e, $input->getArgument('program'));
         }
 
         $visitor    = new FunctionVisitor($requiredFunctions, $bannedFunctions);
@@ -107,7 +108,7 @@ class FunctionRequirementsCheck implements SimpleCheckInterface
      */
     public function canRun(ExerciseType $exerciseType)
     {
-        return true;
+        return in_array($exerciseType->getValue(), [ExerciseType::CGI, ExerciseType::CLI]);
     }
 
     /**

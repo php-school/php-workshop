@@ -6,6 +6,7 @@ use PhpSchool\PhpWorkshop\ComposerUtil\LockFileParser;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseType;
 use PhpSchool\PhpWorkshop\ExerciseCheck\ComposerExerciseCheck;
+use PhpSchool\PhpWorkshop\Input\Input;
 use PhpSchool\PhpWorkshop\Result\Failure;
 use PhpSchool\PhpWorkshop\Result\ResultInterface;
 use PhpSchool\PhpWorkshop\Result\Success;
@@ -35,24 +36,24 @@ class ComposerCheck implements SimpleCheckInterface
      * a success is returned.
      *
      * @param ExerciseInterface $exercise The exercise to check against.
-     * @param string $fileName The absolute path to the student's solution.
+     * @param Input $input The command line arguments passed to the command.
      * @return ResultInterface The result of the check.
      */
-    public function check(ExerciseInterface $exercise, $fileName)
+    public function check(ExerciseInterface $exercise, Input $input)
     {
         if (!$exercise instanceof ComposerExerciseCheck) {
             throw new \InvalidArgumentException;
         }
         
-        if (!file_exists(sprintf('%s/composer.json', dirname($fileName)))) {
+        if (!file_exists(sprintf('%s/composer.json', dirname($input->getArgument('program'))))) {
             return new Failure($this->getName(), 'No composer.json file found');
         }
 
-        if (!file_exists(sprintf('%s/composer.lock', dirname($fileName)))) {
+        if (!file_exists(sprintf('%s/composer.lock', dirname($input->getArgument('program'))))) {
             return new Failure($this->getName(), 'No composer.lock file found');
         }
         
-        $lockFile = new LockFileParser(sprintf('%s/composer.lock', dirname($fileName)));
+        $lockFile = new LockFileParser(sprintf('%s/composer.lock', dirname($input->getArgument('program'))));
         $missingPackages = array_filter($exercise->getRequiredPackages(), function ($package) use ($lockFile) {
             return !$lockFile->hasInstalledPackage($package);
         });
@@ -78,7 +79,7 @@ class ComposerCheck implements SimpleCheckInterface
      */
     public function canRun(ExerciseType $exerciseType)
     {
-        return true;
+        return in_array($exerciseType->getValue(), [ExerciseType::CGI, ExerciseType::CLI]);
     }
 
     /**

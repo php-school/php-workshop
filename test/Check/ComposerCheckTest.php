@@ -8,6 +8,7 @@ use PhpSchool\PhpWorkshop\Check\SimpleCheckInterface;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseType;
 use PhpSchool\PhpWorkshop\ExerciseCheck\ComposerExerciseCheck;
+use PhpSchool\PhpWorkshop\Input\Input;
 use PhpSchool\PhpWorkshop\Result\Failure;
 use PhpSchool\PhpWorkshop\Result\Success;
 use PhpSchool\PhpWorkshopTest\Asset\ComposerExercise;
@@ -47,12 +48,15 @@ class ComposerCheckTest extends PHPUnit_Framework_TestCase
         $exercise = $this->createMock(ExerciseInterface::class);
         $this->expectException(InvalidArgumentException::class);
 
-        $this->check->check($exercise, '');
+        $this->check->check($exercise, new Input('app'));
     }
 
     public function testCheckReturnsFailureIfNoComposerFile()
     {
-        $result = $this->check->check($this->exercise, 'invalid/solution');
+        $result = $this->check->check(
+            $this->exercise,
+            new Input('app', ['program' => 'invalid/solution'])
+        );
 
         $this->assertInstanceOf(Failure::class, $result);
         $this->assertSame('Composer Dependency Check', $result->getCheckName());
@@ -61,7 +65,10 @@ class ComposerCheckTest extends PHPUnit_Framework_TestCase
 
     public function testCheckReturnsFailureIfNoComposerLockFile()
     {
-        $result = $this->check->check($this->exercise, __DIR__ . '/../res/composer/not-locked/solution.php');
+        $result = $this->check->check(
+            $this->exercise,
+            new Input('app', ['program' => __DIR__ . '/../res/composer/not-locked/solution.php'])
+        );
 
         $this->assertInstanceOf(Failure::class, $result);
         $this->assertSame('Composer Dependency Check', $result->getCheckName());
@@ -80,8 +87,8 @@ class ComposerCheckTest extends PHPUnit_Framework_TestCase
         $exercise->expects($this->once())
             ->method('getRequiredPackages')
             ->will($this->returnValue([$dependency]));
-        
-        $result = $this->check->check($exercise, $solutionFile);
+
+        $result = $this->check->check($exercise, new Input('app', ['program' => $solutionFile]));
 
         $this->assertInstanceOf(Failure::class, $result);
         $this->assertSame('Composer Dependency Check', $result->getCheckName());
@@ -104,7 +111,10 @@ class ComposerCheckTest extends PHPUnit_Framework_TestCase
 
     public function testCheckReturnsSuccessIfCorrectLockFile()
     {
-        $result = $this->check->check($this->exercise, __DIR__ . '/../res/composer/good-solution/solution.php');
+        $result = $this->check->check(
+            $this->exercise,
+            new Input('app', ['program' => __DIR__ . '/../res/composer/good-solution/solution.php'])
+        );
 
         $this->assertInstanceOf(Success::class, $result);
         $this->assertSame('Composer Dependency Check', $result->getCheckName());

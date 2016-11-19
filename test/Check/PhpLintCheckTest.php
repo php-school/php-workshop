@@ -4,6 +4,7 @@ namespace PhpSchool\PhpWorkshopTest\Check;
 
 use PhpSchool\PhpWorkshop\Check\SimpleCheckInterface;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseType;
+use PhpSchool\PhpWorkshop\Input\Input;
 use PHPUnit_Framework_TestCase;
 use PhpSchool\PhpWorkshop\Check\PhpLintCheck;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
@@ -44,13 +45,16 @@ class PhpLintCheckTest extends PHPUnit_Framework_TestCase
     {
         $this->assertInstanceOf(
             Success::class,
-            $this->check->check($this->exercise, __DIR__ . '/../res/lint/pass.php')
+            $this->check->check($this->exercise, new Input('app', ['program' => __DIR__ . '/../res/lint/pass.php']))
         );
     }
 
     public function testFailure()
     {
-        $failure = $this->check->check($this->exercise, __DIR__ . '/../res/lint/fail.php');
+        $failure = $this->check->check(
+            $this->exercise,
+            new Input('app', ['program' => __DIR__ . '/../res/lint/fail.php'])
+        );
         $this->assertInstanceOf(Failure::class, $failure);
         $this->assertRegExp(
             "/^PHP Parse error:  syntax error, unexpected end of file, expecting ',' or ';'/",
