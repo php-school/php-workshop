@@ -4,6 +4,7 @@ namespace PhpSchool\PhpWorkshop\Listener;
 
 use PhpSchool\PhpWorkshop\CodePatcher;
 use PhpSchool\PhpWorkshop\Event\Event;
+use PhpSchool\PhpWorkshop\Input\Input;
 use RuntimeException;
 
 /**
@@ -37,7 +38,10 @@ class CodePatchListener
      */
     public function patch(Event $event)
     {
-        $fileName           = $event->getParameter('fileName');
+        /** @var Input $input */
+        $input = $event->getParameter('input');
+        $fileName = $input->getArgument('program');
+
         $this->originalCode = file_get_contents($fileName);
         file_put_contents(
             $fileName,
@@ -54,6 +58,10 @@ class CodePatchListener
             throw new RuntimeException('Can only revert previously patched code');
         }
 
-        file_put_contents($event->getParameter('fileName'), $this->originalCode);
+        /** @var Input $input */
+        $input = $event->getParameter('input');
+        $fileName = $input->getArgument('program');
+
+        file_put_contents($fileName, $this->originalCode);
     }
 }

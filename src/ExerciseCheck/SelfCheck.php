@@ -2,6 +2,7 @@
 
 namespace PhpSchool\PhpWorkshop\ExerciseCheck;
 
+use PhpSchool\PhpWorkshop\Input\Input;
 use PhpSchool\PhpWorkshop\Result\ResultInterface;
 
 /**
@@ -21,8 +22,8 @@ interface SelfCheck
      * The method is passed the absolute file path to the student's solution and should return a result
      * object which indicates the success or not of the check.
      *
-     * @param string $fileName The absolute path to the student's solution.
+     * @param Input $input The command line arguments passed to the command.
      * @return ResultInterface The result of the check.
      */
-    public function check($fileName);
+    public function check(Input $input);
 }

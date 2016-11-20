@@ -5,6 +5,7 @@ namespace PhpSchool\PhpWorkshopTest\Listener;
 use PhpSchool\PhpWorkshop\CodePatcher;
 use PhpSchool\PhpWorkshop\Event\Event;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
+use PhpSchool\PhpWorkshop\Input\Input;
 use PhpSchool\PhpWorkshop\Listener\CodePatchListener;
 use PHPUnit_Framework_TestCase;
 use RuntimeException;
@@ -44,11 +45,11 @@ class CodePatchListenerTest extends PHPUnit_Framework_TestCase
 
     public function testRevertThrowsExceptionIfPatchNotPreviouslyCalled()
     {
-        $fileName = $this->file;
+        $input    = new Input('app', ['program' => $this->file]);
         $exercise = $this->createMock(ExerciseInterface::class);
 
         $listener   = new CodePatchListener($this->codePatcher);
-        $event      = new Event('event', compact('exercise', 'fileName'));
+        $event      = new Event('event', compact('exercise', 'input'));
 
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('Can only revert previously patched code');
@@ -59,7 +60,7 @@ class CodePatchListenerTest extends PHPUnit_Framework_TestCase
     {
         file_put_contents($this->file, 'ORIGINAL CONTENT');
 
-        $fileName = $this->file;
+        $input    = new Input('app', ['program' => $this->file]);
         $exercise = $this->createMock(ExerciseInterface::class);
 
         $this->codePatcher
@@ -69,7 +70,7 @@ class CodePatchListenerTest extends PHPUnit_Framework_TestCase
             ->will($this->returnValue('MODIFIED CONTENT'));
 
         $listener   = new CodePatchListener($this->codePatcher);
-        $event      = new Event('event', compact('exercise', 'fileName'));
+        $event      = new Event('event', compact('exercise', 'input'));
         $listener->patch($event);
 
         $this->assertStringEqualsFile($this->file, 'MODIFIED CONTENT');
@@ -79,7 +80,7 @@ class CodePatchListenerTest extends PHPUnit_Framework_TestCase
     {
         file_put_contents($this->file, 'ORIGINAL CONTENT');
 
-        $fileName = $this->file;
+        $input    = new Input('app', ['program' => $this->file]);
         $exercise = $this->createMock(ExerciseInterface::class);
 
         $this->codePatcher
@@ -89,7 +90,7 @@ class CodePatchListenerTest extends PHPUnit_Framework_TestCase
             ->will($this->returnValue('MODIFIED CONTENT'));
 
         $listener   = new CodePatchListener($this->codePatcher);
-        $event      = new Event('event', compact('exercise', 'fileName'));
+        $event      = new Event('event', compact('exercise', 'input'));
         $listener->patch($event);
         $listener->revert($event);
 
