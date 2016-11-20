@@ -25,13 +25,11 @@ interface ExerciseRunnerInterface
     public function getName();
 
     /**
-     * Configure the exercise dispatcher. For example set the required checks
-     * for this exercise type.
+     * Get an array of the class names of the required checks this runner needs.
      *
-     * @param ExerciseDispatcher $exerciseDispatcher
-     * @return self
+     * @return array
      */
-    public function configure(ExerciseDispatcher $exerciseDispatcher);
+    public function getRequiredChecks();
 
     /**
      * Verify a solution to an exercise. Verification involves executing the reference solution

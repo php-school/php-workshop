@@ -20,12 +20,15 @@ use PhpSchool\PhpWorkshop\CodeInsertion as Insertion;
 use PhpSchool\PhpWorkshop\CodePatcher;
 use PhpSchool\PhpWorkshop\Event\EventDispatcher;
 use PhpSchool\PhpWorkshop\ExerciseDispatcher;
+use PhpSchool\PhpWorkshop\ExerciseRunner\Factory\CgiRunnerFactory;
+use PhpSchool\PhpWorkshop\ExerciseRunner\Factory\CliRunnerFactory;
+use PhpSchool\PhpWorkshop\ExerciseRunner\RunnerManager;
 use PhpSchool\PhpWorkshop\Factory\EventDispatcherFactory;
 use PhpSchool\PhpWorkshop\Factory\MenuFactory;
 use PhpSchool\PhpWorkshop\Factory\ResultRendererFactory;
-use PhpSchool\PhpWorkshop\Factory\RunnerFactory;
 use PhpSchool\PhpWorkshop\Listener\CheckExerciseAssignedListener;
 use PhpSchool\PhpWorkshop\Listener\CodePatchListener;
+use PhpSchool\PhpWorkshop\Listener\ConfigureCommandListener;
 use PhpSchool\PhpWorkshop\Listener\PrepareSolutionListener;
 use PhpSchool\PhpWorkshop\Listener\SelfCheckListener;
 use PhpSchool\PhpWorkshop\MenuItem\ResetProgress;
@@ -63,7 +66,7 @@ return [
     WorkshopType::class => WorkshopType::STANDARD(),
     ExerciseDispatcher::class => function (ContainerInterface $c) {
         return new ExerciseDispatcher(
-            $c->get(RunnerFactory::class),
+            $c->get(RunnerManager::class),
             $c->get(ResultAggregator::class),
             $c->get(EventDispatcher::class),
             $c->get(CheckRepository::class)
@@ -86,8 +89,8 @@ return [
                 new CommandDefinition('menu', [], MenuCommand::class),
                 new CommandDefinition('help', [], HelpCommand::class),
                 new CommandDefinition('print', [], PrintCommand::class),
-                new CommandDefinition('verify', ['program'], VerifyCommand::class),
-                new CommandDefinition('run', ['program'], RunCommand::class),
+                new CommandDefinition('verify', [], VerifyCommand::class),
+                new CommandDefinition('run', [], RunCommand::class),
                 new CommandDefinition('credits', [], CreditsCommand::class)
             ],
             'menu',
@@ -117,7 +120,12 @@ return [
     EventDispatcherFactory::class => object(),
 
     //Exercise Runners
-    RunnerFactory::class => object(),
+    RunnerManager::class => function (ContainerInterface $c) {
+        $manager = new RunnerManager;
+        $manager->addFactory(new CliRunnerFactory($c->get(EventDispatcher::class)));
+        $manager->addFactory(new CgiRunnerFactory($c->get(EventDispatcher::class)));
+        return $manager;
+    },
 
     //commands
     MenuCommand::class => function (ContainerInterface $c) {
@@ -172,15 +180,22 @@ return [
     },
 
     //Listeners
-    PrepareSolutionListener::class      => object(),
-    CodePatchListener::class            => function (ContainerInterface $c) {
+    PrepareSolutionListener::class       => object(),
+    CodePatchListener::class             => function (ContainerInterface $c) {
         return new CodePatchListener($c->get(CodePatcher::class));
     },
-    SelfCheckListener::class            => function (ContainerInterface $c) {
+    SelfCheckListener::class             => function (ContainerInterface $c) {
         return new SelfCheckListener($c->get(ResultAggregator::class));
     },
     CheckExerciseAssignedListener::class => function (ContainerInterface $c) {
         return new CheckExerciseAssignedListener($c->get(UserState::class));
+    },
+    ConfigureCommandListener::class      => function (ContainerInterface $c) {
+        return new ConfigureCommandListener(
+            $c->get(UserState::class),
+            $c->get(ExerciseRepository::class),
+            $c->get(RunnerManager::class)
+        );
     },
     
     //checks
@@ -269,6 +284,11 @@ return [
         'check-exercise-assigned' => [
             'route.pre.resolve.args' => [
                 containerListener(CheckExerciseAssignedListener::class)
+            ],
+        ],
+        'configure-command-arguments' => [
+            'route.pre.resolve.args' => [
+                containerListener(ConfigureCommandListener::class)
             ],
         ],
         'prepare-solution' => [

@@ -12,7 +12,7 @@ use PhpSchool\PhpWorkshop\Exception\CheckNotApplicableException;
 use PhpSchool\PhpWorkshop\Exception\ExerciseNotConfiguredException;
 use PhpSchool\PhpWorkshop\Exception\InvalidArgumentException;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
-use PhpSchool\PhpWorkshop\Factory\RunnerFactory;
+use PhpSchool\PhpWorkshop\ExerciseRunner\RunnerManager;
 use PhpSchool\PhpWorkshop\Input\Input;
 use PhpSchool\PhpWorkshop\Output\OutputInterface;
 
@@ -36,7 +36,7 @@ class ExerciseDispatcher
     private $checksToRunAfter = [];
 
     /**
-     * @var RunnerFactory
+     * @var RunnerManager
      */
     private $runnerFactory;
 
@@ -56,18 +56,18 @@ class ExerciseDispatcher
     private $checkRepository;
 
     /**
-     * @param RunnerFactory $runnerFactory Factory capable of building an exercise runner based on the exercise type.
+     * @param RunnerManager $runnerManager Factory capable of building an exercise runner based on the exercise type.
      * @param ResultAggregator $resultAggregator
      * @param EventDispatcher $eventDispatcher
      * @param CheckRepository $checkRepository
      */
     public function __construct(
-        RunnerFactory $runnerFactory,
+        RunnerManager $runnerManager,
         ResultAggregator $resultAggregator,
         EventDispatcher $eventDispatcher,
         CheckRepository $checkRepository
     ) {
-        $this->runnerFactory    = $runnerFactory;
+        $this->runnerManager    = $runnerManager;
         $this->results          = $resultAggregator;
         $this->eventDispatcher  = $eventDispatcher;
         $this->checkRepository  = $checkRepository;
@@ -130,7 +130,12 @@ class ExerciseDispatcher
     {
         $exercise->configure($this);
 
-        $runner = $this->runnerFactory->create($exercise, $this->eventDispatcher, $this);
+        $runner = $this->runnerManager->getRunner($exercise);
+
+        foreach ($runner->getRequiredChecks() as $requiredCheck) {
+            $this->requireCheck($requiredCheck);
+        }
+
         $this->eventDispatcher->dispatch(new Event('verify.start', compact('exercise', 'input')));
 
         $this->validateChecks($this->checksToRunBefore, $exercise);
@@ -179,8 +184,8 @@ class ExerciseDispatcher
         $this->eventDispatcher->dispatch(new Event('run.start', compact('exercise', 'input')));
 
         try {
-            $exitStatus = $this->runnerFactory
-                ->create($exercise, $this->eventDispatcher, $this)
+            $exitStatus = $this->runnerManager
+                ->getRunner($exercise)
                 ->run($input, $output);
         } finally {
             $this->eventDispatcher->dispatch(new Event('run.finish', compact('exercise', 'input')));
