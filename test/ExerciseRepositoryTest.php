@@ -3,6 +3,8 @@
 namespace PhpSchool\PhpWorkshopTest;
 
 use InvalidArgumentException;
+use PhpSchool\PhpWorkshop\Exercise\ExerciseType;
+use PhpSchool\PhpWorkshopTest\Asset\CliExerciseInterface;
 use PHPUnit_Framework_TestCase;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpSchool\PhpWorkshop\ExerciseRepository;
@@ -16,9 +18,14 @@ class ExerciseRepositoryTest extends PHPUnit_Framework_TestCase
 {
     public function testFindAll()
     {
+        $exercise1 = $this->prophesize(CliExerciseInterface::class);
+        $exercise2 = $this->prophesize(CliExerciseInterface::class);
+        $exercise1->getType()->willReturn(ExerciseType::CLI());
+        $exercise2->getType()->willReturn(ExerciseType::CLI());
+
         $exercises = [
-            $this->createMock(ExerciseInterface::class),
-            $this->createMock(ExerciseInterface::class),
+            $exercise1->reveal(),
+            $exercise2->reveal()
         ];
 
         $repo = new ExerciseRepository($exercises);
@@ -28,18 +35,15 @@ class ExerciseRepositoryTest extends PHPUnit_Framework_TestCase
 
     public function testFindByName()
     {
-        $exercise1 = $this->createMock(ExerciseInterface::class);
-        $exercise2 = $this->createMock(ExerciseInterface::class);
+        $exercise1 = $this->prophesize(CliExerciseInterface::class);
+        $exercise2 = $this->prophesize(CliExerciseInterface::class);
+        $exercise1->getType()->willReturn(ExerciseType::CLI());
+        $exercise2->getType()->willReturn(ExerciseType::CLI());
+        $exercise1->getName()->willReturn('exercise1');
+        $exercise2->getName()->willReturn('exercise2');
 
-        $exercise1
-            ->expects($this->any())
-            ->method('getName')
-            ->will($this->returnValue('exercise1'));
-
-        $exercise2
-            ->expects($this->any())
-            ->method('getName')
-            ->will($this->returnValue('exercise2'));
+        $exercise1 = $exercise1->reveal();
+        $exercise2 = $exercise2->reveal();
 
         $repo = new ExerciseRepository([$exercise1, $exercise2]);
         $this->assertSame($exercise2, $repo->findByName('exercise2'));
@@ -56,28 +60,27 @@ class ExerciseRepositoryTest extends PHPUnit_Framework_TestCase
 
     public function testGetAllNames()
     {
-        $exercise1 = $this->createMock(ExerciseInterface::class);
-        $exercise2 = $this->createMock(ExerciseInterface::class);
+        $exercise1 = $this->prophesize(CliExerciseInterface::class);
+        $exercise2 = $this->prophesize(CliExerciseInterface::class);
+        $exercise1->getType()->willReturn(ExerciseType::CLI());
+        $exercise2->getType()->willReturn(ExerciseType::CLI());
+        $exercise1->getName()->willReturn('exercise1');
+        $exercise2->getName()->willReturn('exercise2');
 
-        $exercise1
-            ->expects($this->any())
-            ->method('getName')
-            ->will($this->returnValue('exercise1'));
-
-        $exercise2
-            ->expects($this->any())
-            ->method('getName')
-            ->will($this->returnValue('exercise2'));
-
-        $repo = new ExerciseRepository([$exercise1, $exercise2]);
+        $repo = new ExerciseRepository([$exercise1->reveal(), $exercise2->reveal()]);
         $this->assertSame(['exercise1', 'exercise2'], $repo->getAllNames());
     }
 
     public function testCount()
     {
+        $exercise1 = $this->prophesize(CliExerciseInterface::class);
+        $exercise2 = $this->prophesize(CliExerciseInterface::class);
+        $exercise1->getType()->willReturn(ExerciseType::CLI());
+        $exercise2->getType()->willReturn(ExerciseType::CLI());
+
         $exercises = [
-            $this->createMock(ExerciseInterface::class),
-            $this->createMock(ExerciseInterface::class),
+            $exercise1->reveal(),
+            $exercise2->reveal()
         ];
 
         $repo = new ExerciseRepository($exercises);
@@ -86,9 +89,14 @@ class ExerciseRepositoryTest extends PHPUnit_Framework_TestCase
 
     public function testIterator()
     {
+        $exercise1 = $this->prophesize(CliExerciseInterface::class);
+        $exercise2 = $this->prophesize(CliExerciseInterface::class);
+        $exercise1->getType()->willReturn(ExerciseType::CLI());
+        $exercise2->getType()->willReturn(ExerciseType::CLI());
+
         $exercises = [
-            $this->createMock(ExerciseInterface::class),
-            $this->createMock(ExerciseInterface::class),
+            $exercise1->reveal(),
+            $exercise2->reveal()
         ];
 
         $repo = new ExerciseRepository($exercises);

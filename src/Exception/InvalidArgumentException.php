@@ -1,6 +1,7 @@
 <?php
 
 namespace PhpSchool\PhpWorkshop\Exception;
+use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 
 /**
  * Represents invalid argument exceptions.
@@ -44,6 +45,22 @@ class InvalidArgumentException extends \InvalidArgumentException
                 $parameterName,
                 static::stringify($allowedValues),
                 static::stringify($actualValue)
+            )
+        );
+    }
+
+    /**
+     * @param object $object
+     * @param string $requiredInterface
+     * @return static
+     */
+    public static function missingImplements($object, $requiredInterface)
+    {
+        return new static(
+            sprintf(
+                '"%s" is required to implement "%s", but it does not',
+                get_class($object),
+                $requiredInterface
             )
         );
     }

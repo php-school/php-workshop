@@ -2,7 +2,6 @@
 
 namespace PhpSchool\PhpWorkshopTest;
 
-use Interop\Container\ContainerInterface;
 use PhpSchool\PhpWorkshop\Check\CheckInterface;
 use PhpSchool\PhpWorkshop\Check\CheckRepository;
 use PhpSchool\PhpWorkshop\Check\ListenableCheckInterface;
@@ -16,7 +15,7 @@ use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseType;
 use PhpSchool\PhpWorkshop\ExerciseDispatcher;
 use PhpSchool\PhpWorkshop\ExerciseRunner\ExerciseRunnerInterface;
-use PhpSchool\PhpWorkshop\Factory\RunnerFactory;
+use PhpSchool\PhpWorkshop\ExerciseRunner\RunnerManager;
 use PhpSchool\PhpWorkshop\Input\Input;
 use PhpSchool\PhpWorkshop\Output\OutputInterface;
 use PhpSchool\PhpWorkshop\Result\Failure;
@@ -62,9 +61,9 @@ class ExerciseDispatcherTest extends PHPUnit_Framework_TestCase
     private $runner;
 
     /**
-     * @var RunnerFactory
+     * @var RunnerManager
      */
-    private $runnerFactory;
+    private $runnerManager;
 
     /**
      * @var string
@@ -112,12 +111,17 @@ class ExerciseDispatcherTest extends PHPUnit_Framework_TestCase
 
         $this->checkRepository = new CheckRepository([$this->check]);
         $this->runner = $this->createMock(ExerciseRunnerInterface::class);
-        $this->runnerFactory = $this->createMock(RunnerFactory::class);
+        $this->runner
+            ->expects($this->any())
+            ->method('getRequiredChecks')
+            ->willReturn([]);
+
+        $this->runnerManager = $this->createMock(RunnerManager::class);
         $this->results = new ResultAggregator;
         $this->eventDispatcher = $this->createMock(EventDispatcher::class);
 
         $this->exerciseDispatcher = new ExerciseDispatcher(
-            $this->runnerFactory,
+            $this->runnerManager,
             $this->results,
             $this->eventDispatcher,
             $this->checkRepository
@@ -151,10 +155,10 @@ class ExerciseDispatcherTest extends PHPUnit_Framework_TestCase
 
     private function mockRunner(ExerciseInterface $exercise = null)
     {
-        $this->runnerFactory
+        $this->runnerManager
             ->expects($this->once())
-            ->method('create')
-            ->with($exercise ? $exercise : $this->exercise, $this->eventDispatcher)
+            ->method('getRunner')
+            ->with($exercise ? $exercise : $this->exercise)
             ->will($this->returnValue($this->runner));
     }
 
@@ -249,8 +253,9 @@ class ExerciseDispatcherTest extends PHPUnit_Framework_TestCase
             ->with($this->exerciseType)
             ->will($this->returnValue(false));
 
-        $msg  = 'Check: "Some Check" cannot process exercise: "Some Exercise" with ';
-        $msg .= 'type: "PhpSchool\PhpWorkshop\ExerciseRunner\CliRunner"';
+        $this->mockRunner();
+
+        $msg  = 'Check: "Some Check" cannot process exercise: "Some Exercise" with type: "CLI"';
         $this->expectException(CheckNotApplicableException::class);
         $this->expectExceptionMessage($msg);
 
@@ -271,6 +276,8 @@ class ExerciseDispatcherTest extends PHPUnit_Framework_TestCase
             ->expects($this->once())
             ->method('getExerciseInterface')
             ->will($this->returnValue('LolIDoNotExist'));
+
+        $this->mockRunner();
 
         $this->expectException(ExerciseNotConfiguredException::class);
         $this->expectExceptionMessage('Exercise: "Some Exercise" should implement interface: "LolIDoNotExist"');
@@ -404,6 +411,8 @@ class ExerciseDispatcherTest extends PHPUnit_Framework_TestCase
             ->expects($this->once())
             ->method('getExerciseInterface')
             ->will($this->returnValue(ExerciseInterface::class));
+
+        $this->mockRunner();
 
         $this->checkRepository->registerCheck($doNotRunMe);
 

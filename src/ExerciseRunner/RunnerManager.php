@@ -41,7 +41,7 @@ class RunnerManager
      */
     public function getRunner(ExerciseInterface $exercise)
     {
-        return $this->getFactory($exercise)->create($exercise, $this->container);
+        return $this->getFactory($exercise)->create($exercise);
     }
 
     /**

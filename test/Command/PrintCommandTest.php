@@ -3,6 +3,9 @@
 namespace PhpSchool\PhpWorkshop\Command;
 
 use Colors\Color;
+use PhpSchool\PhpWorkshop\Exercise\ExerciseType;
+use PhpSchool\PhpWorkshopTest\Asset\CliExerciseInterface;
+use PhpSchool\PhpWorkshopTest\Asset\ComposerExercise;
 use PHPUnit_Framework_TestCase;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpSchool\PhpWorkshop\ExerciseRepository;
@@ -22,21 +25,15 @@ class PrintCommandTest extends PHPUnit_Framework_TestCase
         $file = tempnam(sys_get_temp_dir(), 'pws');
         file_put_contents($file, '### Exercise 1');
 
-        $exercise = $this->createMock(ExerciseInterface::class);
-        $exercise
-            ->expects($this->once())
-            ->method('getProblem')
-            ->will($this->returnValue($file));
+        $exercise = $this->prophesize(CliExerciseInterface::class);
+        $exercise->getProblem()->willReturn($file);
+        $exercise->getType()->willReturn(ExerciseType::CLI());
+        $exercise->getName()->willReturn('some-exercise');
 
-        $exercise
-            ->expects($this->once())
-            ->method('getName')
-            ->will($this->returnValue('current-exercise'));
-
-        $repo = new ExerciseRepository([$exercise]);
+        $repo = new ExerciseRepository([$exercise->reveal()]);
 
         $state = new UserState;
-        $state->setCurrentExercise('current-exercise');
+        $state->setCurrentExercise('some-exercise');
 
         $output = $this->createMock(OutputInterface::class);
         $renderer = $this->createMock(MarkdownRenderer::class);

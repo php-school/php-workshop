@@ -4,7 +4,7 @@ namespace PhpSchool\PhpWorkshop;
 
 use ArrayIterator;
 use Countable;
-use InvalidArgumentException;
+use PhpSchool\PhpWorkshop\Exception\InvalidArgumentException;
 use IteratorAggregate;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 
@@ -28,10 +28,26 @@ class ExerciseRepository implements IteratorAggregate, Countable
      */
     public function __construct(array $exercises)
     {
-        //type safety
-        $this->exercises = array_map(function (ExerciseInterface $e) {
-            return $e;
+        $this->exercises = array_map(function (ExerciseInterface $exercise) {
+            return $this->validateExercise($exercise);
         }, $exercises);
+    }
+
+    /**
+     * @param ExerciseInterface $exercise
+     * @return ExerciseInterface
+     */
+    private function validateExercise(ExerciseInterface $exercise)
+    {
+        $type = $exercise->getType();
+
+        $requiredInterface = $type->getExerciseInterface();
+
+        if (!$exercise instanceof $requiredInterface) {
+            throw InvalidArgumentException::missingImplements($exercise, $requiredInterface);
+        }
+
+        return $exercise;
     }
 
     /**

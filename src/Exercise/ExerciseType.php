@@ -3,8 +3,6 @@
 namespace PhpSchool\PhpWorkshop\Exercise;
 
 use MyCLabs\Enum\Enum;
-use PhpSchool\PhpWorkshop\ExerciseRunner\CgiRunner;
-use PhpSchool\PhpWorkshop\ExerciseRunner\CliRunner;
 
 /**
  * This class is a ENUM which represents the types that exercises can be. Instantiation looks like:
@@ -12,6 +10,7 @@ use PhpSchool\PhpWorkshop\ExerciseRunner\CliRunner;
  * ```php
  * $typeCli = ExerciseType::CLI();
  * $typeCgi = ExerciseType::CGI();
+ * $typeCustom = ExerciseType::CUSTOM();
  * ```
  *
  * @package PhpSchool\PhpWorkshop\Exercise
@@ -19,6 +18,28 @@ use PhpSchool\PhpWorkshop\ExerciseRunner\CliRunner;
  */
 class ExerciseType extends Enum
 {
-    const CLI = CliRunner::class;
-    const CGI = CgiRunner::class;
+    const CLI    = 'CLI';
+    const CGI    = 'CGI';
+
+    /**
+     * Map of exercise types to the required interfaces exercises of that particular
+     * type should implement.
+     *
+     * @var array
+     */
+    private static $exerciseTypeToExerciseInterfaceMap = [
+        self::CLI    => CliExercise::class,
+        self::CGI    => CgiExercise::class,
+    ];
+
+    /**
+     * Get the FQCN of the interface this exercise should implement for this
+     * exercise type.
+     *
+     * @return string
+     */
+    public function getExerciseInterface()
+    {
+        return static::$exerciseTypeToExerciseInterfaceMap[$this->getKey()];
+    }
 }

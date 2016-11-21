@@ -14,7 +14,7 @@ use PhpSchool\PhpWorkshop\Exercise\ExerciseType;
 use PhpSchool\PhpWorkshop\ExerciseCheck\DatabaseExerciseCheck;
 use PhpSchool\PhpWorkshop\ExerciseDispatcher;
 use PhpSchool\PhpWorkshop\ExerciseRunner\CliRunner;
-use PhpSchool\PhpWorkshop\Factory\RunnerFactory;
+use PhpSchool\PhpWorkshop\ExerciseRunner\RunnerManager;
 use PhpSchool\PhpWorkshop\Input\Input;
 use PhpSchool\PhpWorkshop\Output\OutputInterface;
 use PhpSchool\PhpWorkshop\ResultAggregator;
@@ -61,6 +61,7 @@ class DatabaseCheckTest extends PHPUnit_Framework_TestCase
 
         $this->check = new DatabaseCheck;
         $this->exercise = $this->createMock(DatabaseExerciseInterface::class);
+        $this->exercise->expects($this->any())->method('getType')->willReturn(ExerciseType::CLI());
         $this->dbDir = sprintf(
             '%s/PhpSchool_PhpWorkshop_Check_DatabaseCheck',
             str_replace('\\', '/', realpath(sys_get_temp_dir()))
@@ -75,20 +76,25 @@ class DatabaseCheckTest extends PHPUnit_Framework_TestCase
      * @param EventDispatcher $eventDispatcher
      * @return \PHPUnit_Framework_MockObject_MockObject
      */
-    private function getRunnerFactory(ExerciseInterface $exercise, EventDispatcher $eventDispatcher)
+    private function getRunnerManager(ExerciseInterface $exercise, EventDispatcher $eventDispatcher)
     {
         $runner = $this->getMockBuilder(CliRunner::class)
             ->setConstructorArgs([$exercise, $eventDispatcher])
-            ->setMethods(['configure'])
+            ->setMethods(['configure', 'getRequiredChecks'])
             ->getMock();
 
-        $runnerFactory = $this->createMock(RunnerFactory::class);
-        $runnerFactory
+        $runner
+            ->expects($this->any())
+            ->method('getRequiredChecks')
+            ->willReturn([]);
+
+        $runnerManager = $this->createMock(RunnerManager::class);
+        $runnerManager
             ->expects($this->once())
-            ->method('create')
+            ->method('getRunner')
             ->willReturn($runner);
 
-        return $runnerFactory;
+        return $runnerManager;
     }
 
     public function testIfDatabaseFolderExistsExceptionIsThrown()
@@ -153,7 +159,7 @@ class DatabaseCheckTest extends PHPUnit_Framework_TestCase
         $results            = new ResultAggregator;
         $eventDispatcher    = new EventDispatcher($results);
         $dispatcher         = new ExerciseDispatcher(
-            $this->getRunnerFactory($this->exercise, $eventDispatcher),
+            $this->getRunnerManager($this->exercise, $eventDispatcher),
             $results,
             $eventDispatcher,
             $this->checkRepository
@@ -194,7 +200,7 @@ class DatabaseCheckTest extends PHPUnit_Framework_TestCase
         $results            = new ResultAggregator;
         $eventDispatcher    = new EventDispatcher($results);
         $dispatcher         = new ExerciseDispatcher(
-            $this->getRunnerFactory($this->exercise, $eventDispatcher),
+            $this->getRunnerManager($this->exercise, $eventDispatcher),
             $results,
             $eventDispatcher,
             $this->checkRepository
@@ -225,7 +231,7 @@ class DatabaseCheckTest extends PHPUnit_Framework_TestCase
         $results            = new ResultAggregator;
         $eventDispatcher    = new EventDispatcher($results);
         $dispatcher         = new ExerciseDispatcher(
-            $this->getRunnerFactory($this->exercise, $eventDispatcher),
+            $this->getRunnerManager($this->exercise, $eventDispatcher),
             $results,
             $eventDispatcher,
             $this->checkRepository
@@ -241,6 +247,8 @@ class DatabaseCheckTest extends PHPUnit_Framework_TestCase
     public function testFailureIsReturnedIfDatabaseVerificationFails()
     {
         $solution = SingleFileSolution::fromFile(realpath(__DIR__ . '/../res/database/solution.php'));
+
+
         $this->exercise
             ->expects($this->once())
             ->method('getSolution')
@@ -269,7 +277,7 @@ class DatabaseCheckTest extends PHPUnit_Framework_TestCase
         $results            = new ResultAggregator;
         $eventDispatcher    = new EventDispatcher($results);
         $dispatcher         = new ExerciseDispatcher(
-            $this->getRunnerFactory($this->exercise, $eventDispatcher),
+            $this->getRunnerManager($this->exercise, $eventDispatcher),
             $results,
             $eventDispatcher,
             $this->checkRepository
@@ -337,7 +345,7 @@ class DatabaseCheckTest extends PHPUnit_Framework_TestCase
         $results            = new ResultAggregator;
         $eventDispatcher    = new EventDispatcher($results);
         $dispatcher         = new ExerciseDispatcher(
-            $this->getRunnerFactory($this->exercise, $eventDispatcher),
+            $this->getRunnerManager($this->exercise, $eventDispatcher),
             $results,
             $eventDispatcher,
             $this->checkRepository

@@ -43,8 +43,7 @@ class CheckNotApplicableExceptionTest extends PHPUnit_Framework_TestCase
 
         $e = CheckNotApplicableException::fromCheckAndExercise($check, $exercise);
 
-        $msg  = 'Check: "Some Check" cannot process exercise: "Some Exercise" with ';
-        $msg .= 'type: "PhpSchool\PhpWorkshop\ExerciseRunner\CliRunner"';
+        $msg  = 'Check: "Some Check" cannot process exercise: "Some Exercise" with type: "CLI"';
         $this->assertSame($msg, $e->getMessage());
     }
 }

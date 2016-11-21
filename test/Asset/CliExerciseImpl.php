@@ -3,17 +3,17 @@
 namespace PhpSchool\PhpWorkshopTest\Asset;
 
 use PhpSchool\PhpWorkshop\Check\ComposerCheck;
+use PhpSchool\PhpWorkshop\Exercise\CliExercise;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseType;
 use PhpSchool\PhpWorkshop\ExerciseCheck\ComposerExerciseCheck;
 use PhpSchool\PhpWorkshop\ExerciseDispatcher;
 
 /**
- * Class ComposerExercise
  * @package PhpSchool\PhpWorkshopTest\Asset
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
-class ComposerExercise implements ExerciseInterface, ComposerExerciseCheck
+class CliExerciseImpl implements ExerciseInterface, CliExercise
 {
 
     /**
@@ -21,7 +21,7 @@ class ComposerExercise implements ExerciseInterface, ComposerExerciseCheck
      */
     public function getName()
     {
-        return 'composer-exercise';
+        return 'my-exercise';
     }
 
     /**
@@ -29,7 +29,7 @@ class ComposerExercise implements ExerciseInterface, ComposerExerciseCheck
      */
     public function getDescription()
     {
-        // TODO: Implement getDescription() method.
+        return 'my-exercise';
     }
 
     /**
@@ -62,17 +62,6 @@ class ComposerExercise implements ExerciseInterface, ComposerExerciseCheck
     public function getArgs()
     {
         // TODO: Implement getArgs() method.
-    }
-
-    /**
-     * @return array[]
-     */
-    public function getRequiredPackages()
-    {
-        return [
-            'klein/klein',
-            'danielstjules/stringy'
-        ];
     }
 
     /**
