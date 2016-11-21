@@ -62,30 +62,6 @@ class VerifyCommandTest extends PHPUnit_Framework_TestCase
         $this->assertSame(1, $command->__invoke(new Input('appName', ['program' => $programFile])));
     }
 
-    public function testVerifyPrintsErrorIfNoExerciseAssigned()
-    {
-        $file = tempnam(sys_get_temp_dir(), 'pws');
-        touch($file);
-
-        $repo = new ExerciseRepository([]);
-        $state = new UserState;
-        $output = $this->createMock(OutputInterface::class);
-        $dispatcher = $this->createMock(ExerciseDispatcher::class);
-
-        $output
-            ->expects($this->once())
-            ->method('printError')
-            ->with('No active exercises. Select one from the menu');
-
-        $serializer = $this->createMock(UserStateSerializer::class);
-        $renderer = $this->createMock(ResultsRenderer::class);
-
-        $command = new VerifyCommand($repo, $dispatcher, $state, $serializer, $output, $renderer);
-        $this->assertSame(1, $command->__invoke(new Input('appName', ['program' => $file])));
-
-        unlink($file);
-    }
-
     public function testVerifyAddsCompletedExerciseAndReturnsCorrectCodeOnSuccess()
     {
         $file = tempnam(sys_get_temp_dir(), 'pws');

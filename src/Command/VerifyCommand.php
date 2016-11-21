@@ -88,11 +88,6 @@ class VerifyCommand
         }
         $program = realpath($program);
 
-        if (!$this->userState->isAssignedExercise()) {
-            $this->output->printError("No active exercises. Select one from the menu");
-            return 1;
-        }
-
         $exercise   = $this->exerciseRepository->findByName($this->userState->getCurrentExercise());
         $results    = $this->exerciseDispatcher->verify($exercise, $input);
 

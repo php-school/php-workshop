@@ -17,22 +17,6 @@ use PhpSchool\PhpWorkshop\UserState;
  */
 class PrintCommandTest extends PHPUnit_Framework_TestCase
 {
-    public function testErrorIsPrintedIfNoExerciseAssigned()
-    {
-        $repo = new ExerciseRepository([]);
-        $state = new UserState;
-        $output = $this->createMock(OutputInterface::class);
-        $renderer = $this->createMock(MarkdownRenderer::class);
-
-        $output
-            ->expects($this->once())
-            ->method('printError')
-            ->with('No active exercises. Select one from the menu');
-
-        $command = new PrintCommand('phpschool', $repo, $state, $renderer, $output);
-        $this->assertSame(1, $command->__invoke());
-    }
-
     public function testExerciseIsPrintedIfAssigned()
     {
         $file = tempnam(sys_get_temp_dir(), 'pws');

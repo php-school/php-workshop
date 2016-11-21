@@ -23,6 +23,7 @@ use PhpSchool\PhpWorkshop\Factory\EventDispatcherFactory;
 use PhpSchool\PhpWorkshop\Factory\MenuFactory;
 use PhpSchool\PhpWorkshop\Factory\ResultRendererFactory;
 use PhpSchool\PhpWorkshop\Factory\RunnerFactory;
+use PhpSchool\PhpWorkshop\Listener\CheckExerciseAssignedListener;
 use PhpSchool\PhpWorkshop\Listener\CodePatchListener;
 use PhpSchool\PhpWorkshop\Listener\PrepareSolutionListener;
 use PhpSchool\PhpWorkshop\Listener\SelfCheckListener;
@@ -148,7 +149,6 @@ return [
             $c->get(ExerciseRepository::class),
             $c->get(ExerciseDispatcher::class),
             $c->get(UserState::class),
-            $c->get(UserStateSerializer::class),
             $c->get(OutputInterface::class)
         );
     },
@@ -177,6 +177,9 @@ return [
     },
     SelfCheckListener::class            => function (ContainerInterface $c) {
         return new SelfCheckListener($c->get(ResultAggregator::class));
+    },
+    CheckExerciseAssignedListener::class => function (ContainerInterface $c) {
+        return new CheckExerciseAssignedListener($c->get(UserState::class));
     },
     
     //checks
@@ -260,5 +263,10 @@ return [
         '@shakeyShane' => 'Shane Osbourne',
         '@chris3ailey' => 'Chris Bailey'
     ],
-    'appContributors' => []
+    'appContributors' => [],
+    'eventListeners' => [
+        'route.pre.resolve.args' => [
+            CheckExerciseAssignedListener::class
+        ],
+    ]
 ];
