@@ -3,7 +3,6 @@
 namespace PhpSchool\PhpWorkshop\Listener;
 
 use PhpSchool\PhpWorkshop\Event\Event;
-use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use RuntimeException;
 use Symfony\Component\Process\Process;
 

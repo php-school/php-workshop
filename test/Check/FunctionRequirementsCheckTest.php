@@ -7,6 +7,7 @@ use PhpParser\Parser;
 use PhpParser\ParserFactory;
 use PhpSchool\PhpWorkshop\Check\SimpleCheckInterface;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseType;
+use PhpSchool\PhpWorkshop\Input\Input;
 use PhpSchool\PhpWorkshopTest\Asset\FunctionRequirementsExercise;
 use PHPUnit_Framework_TestCase;
 use PhpSchool\PhpWorkshop\Check\FunctionRequirementsCheck;
@@ -57,14 +58,13 @@ class FunctionRequirementsCheckTest extends PHPUnit_Framework_TestCase
         $exercise = $this->createMock(ExerciseInterface::class);
         $this->expectException(InvalidArgumentException::class);
 
-        $this->check->check($exercise, '');
+        $this->check->check($exercise, new Input('app'));
     }
 
     public function testFailureIsReturnedIfCodeCouldNotBeParsed()
     {
-
         $file = __DIR__ . '/../res/function-requirements/fail-invalid-code.php';
-        $failure = $this->check->check($this->exercise, $file);
+        $failure = $this->check->check($this->exercise, new Input('app', ['program' => $file]));
         $this->assertInstanceOf(Failure::class, $failure);
 
         $message = sprintf('File: "%s" could not be parsed. Error: "Syntax error, unexpected T_ECHO on line 4"', $file);
@@ -75,7 +75,7 @@ class FunctionRequirementsCheckTest extends PHPUnit_Framework_TestCase
     {
         $failure = $this->check->check(
             $this->exercise,
-            __DIR__ . '/../res/function-requirements/fail-banned-function.php'
+            new Input('app', ['program' => __DIR__ . '/../res/function-requirements/fail-banned-function.php'])
         );
         $this->assertInstanceOf(FunctionRequirementsFailure::class, $failure);
         $this->assertEquals([['function' => 'file', 'line' => 3]], $failure->getBannedFunctions());
@@ -97,7 +97,7 @@ class FunctionRequirementsCheckTest extends PHPUnit_Framework_TestCase
 
         $failure = $this->check->check(
             $exercise,
-            __DIR__ . '/../res/function-requirements/fail-banned-function.php'
+            new Input('app', ['program' => __DIR__ . '/../res/function-requirements/fail-banned-function.php'])
         );
         $this->assertInstanceOf(FunctionRequirementsFailure::class, $failure);
         
@@ -118,7 +118,10 @@ class FunctionRequirementsCheckTest extends PHPUnit_Framework_TestCase
             ->method('getRequiredFunctions')
             ->will($this->returnValue(['file_get_contents']));
 
-        $success = $this->check->check($exercise, __DIR__ . '/../res/function-requirements/success.php');
+        $success = $this->check->check(
+            $exercise,
+            new Input('app', ['program' => __DIR__ . '/../res/function-requirements/success.php'])
+        );
         $this->assertInstanceOf(Success::class, $success);
     }
 }

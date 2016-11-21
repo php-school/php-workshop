@@ -4,6 +4,7 @@ namespace PhpSchool\PhpWorkshop\ExerciseRunner;
 
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpSchool\PhpWorkshop\ExerciseDispatcher;
+use PhpSchool\PhpWorkshop\Input\Input;
 use PhpSchool\PhpWorkshop\Output\OutputInterface;
 use PhpSchool\PhpWorkshop\Result\ResultInterface;
 
@@ -42,19 +43,19 @@ interface ExerciseRunnerInterface
      * Other things that could go wrong include the student's solution returning a non-zero
      * exit code, or a notice/warning being exhibited.
      *
-     * @param string $fileName The absolute path to the student's solution.
+     * @param Input $input The command line arguments passed to the command.
      * @return ResultInterface The result of the check.
      */
-    public function verify($fileName);
+    public function verify(Input $input);
 
     /**
      * Run a solution to an exercise. This simply run's the student's solution with the correct input from the exercise
      * (such as the CLI arguments) and prints the output directly. This allows the student to have the environment
      * setup for them including getting a different set of arguments each time (if the exercise supports that).
      *
-     * @param string $fileName The absolute path to the student's solution.
+     * @param Input $input The command line arguments passed to the command.
      * @param OutputInterface $output A wrapper around STDOUT.
      * @return bool If the solution was successfully executed, eg. exit code was 0.
      */
-    public function run($fileName, OutputInterface $output);
+    public function run(Input $input, OutputInterface $output);
 }

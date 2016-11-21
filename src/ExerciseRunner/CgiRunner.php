@@ -12,6 +12,7 @@ use PhpSchool\PhpWorkshop\Exception\CodeExecutionException;
 use PhpSchool\PhpWorkshop\Exception\SolutionExecutionException;
 use PhpSchool\PhpWorkshop\Exercise\CgiExercise;
 use PhpSchool\PhpWorkshop\ExerciseDispatcher;
+use PhpSchool\PhpWorkshop\Input\Input;
 use PhpSchool\PhpWorkshop\Output\OutputInterface;
 use PhpSchool\PhpWorkshop\Result\CgiOutFailure;
 use PhpSchool\PhpWorkshop\Result\CgiOutRequestFailure;
@@ -233,16 +234,16 @@ class CgiRunner implements ExerciseRunnerInterface
      * * cgi.verify.student.executing
      * * cgi.verify.student-execute.fail (if the student's solution fails to execute)
      *
-     * @param string $fileName The absolute path to the student's solution.
+     * @param Input $input The command line arguments passed to the command.
      * @return ResultInterface The result of the check.
      */
-    public function verify($fileName)
+    public function verify(Input $input)
     {
         return new CgiOutResult(
             $this->getName(),
             array_map(
-                function (RequestInterface $request) use ($fileName) {
-                    return $this->checkRequest($request, $fileName);
+                function (RequestInterface $request) use ($input) {
+                    return $this->checkRequest($request, $input->getArgument('program'));
                 },
                 $this->exercise->getRequests()
             )
@@ -262,18 +263,18 @@ class CgiRunner implements ExerciseRunnerInterface
      * * cgi.run.student-execute.pre
      * * cgi.run.student.executing
      *
-     * @param string $fileName The absolute path to the student's solution.
+     * @param Input $input The command line arguments passed to the command.
      * @param OutputInterface $output A wrapper around STDOUT.
      * @return bool If the solution was successfully executed, eg. exit code was 0.
      */
-    public function run($fileName, OutputInterface $output)
+    public function run(Input $input, OutputInterface $output)
     {
         $success = true;
         foreach ($this->exercise->getRequests() as $i => $request) {
             $event = $this->eventDispatcher->dispatch(
                 new CgiExecuteEvent('cgi.run.student-execute.pre', $request)
             );
-            $process = $this->getProcess($fileName, $event->getRequest());
+            $process = $this->getProcess($input->getArgument('program'), $event->getRequest());
 
             $output->writeTitle("Request");
             $output->emptyLine();

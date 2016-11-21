@@ -7,6 +7,7 @@ use PhpSchool\CliMenu\Terminal\TerminalInterface;
 use PhpSchool\PhpWorkshop\Event\EventDispatcher;
 use PhpSchool\PhpWorkshop\Exception\SolutionExecutionException;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseType;
+use PhpSchool\PhpWorkshop\Input\Input;
 use PhpSchool\PhpWorkshop\Output\StdOutput;
 use PhpSchool\PhpWorkshop\Result\CgiOutRequestFailure;
 use PhpSchool\PhpWorkshop\Result\CgiOutResult;
@@ -66,7 +67,7 @@ class CgiRunnerTest extends PHPUnit_Framework_TestCase
         $regex  = "/^PHP Code failed to execute\\. Error: \"PHP Parse error:  syntax error, unexpected end of file in/";
         $this->expectException(SolutionExecutionException::class);
         $this->expectExceptionMessageRegExp($regex);
-        $this->runner->verify('');
+        $this->runner->verify(new Input('app', ['program' => '']));
     }
 
     public function testVerifyReturnsSuccessIfGetSolutionOutputMatchesUserOutput()
@@ -88,7 +89,7 @@ class CgiRunnerTest extends PHPUnit_Framework_TestCase
 
         $this->assertInstanceOf(
             CgiOutResult::class,
-            $this->runner->verify(realpath(__DIR__ . '/../res/cgi/get-solution.php'))
+            $this->runner->verify(new Input('app', ['program' => realpath(__DIR__ . '/../res/cgi/get-solution.php')]))
         );
     }
 
@@ -114,7 +115,7 @@ class CgiRunnerTest extends PHPUnit_Framework_TestCase
 
         $this->assertInstanceOf(
             CgiOutResult::class,
-            $this->runner->verify(realpath(__DIR__ . '/../res/cgi/post-solution.php'))
+            $this->runner->verify(new Input('app', ['program' => realpath(__DIR__ . '/../res/cgi/post-solution.php')]))
         );
     }
 
@@ -138,7 +139,10 @@ class CgiRunnerTest extends PHPUnit_Framework_TestCase
             ->method('getRequests')
             ->will($this->returnValue([$request]));
 
-        $result = $this->runner->verify(realpath(__DIR__ . '/../res/cgi/post-multiple-solution.php'));
+        $result = $this->runner->verify(
+            new Input('app', ['program' => realpath(__DIR__ . '/../res/cgi/post-multiple-solution.php')])
+        );
+
         $this->assertInstanceOf(CgiOutResult::class, $result);
     }
 
@@ -159,7 +163,10 @@ class CgiRunnerTest extends PHPUnit_Framework_TestCase
             ->method('getRequests')
             ->will($this->returnValue([$request]));
 
-        $failure = $this->runner->verify(realpath(__DIR__ . '/../res/cgi/user-error.php'));
+        $failure = $this->runner->verify(
+            new Input('app', ['program' => realpath(__DIR__ . '/../res/cgi/user-error.php')])
+        );
+
         $this->assertInstanceOf(CgiOutResult::class, $failure);
         $this->assertCount(1, $failure);
 
@@ -188,7 +195,10 @@ class CgiRunnerTest extends PHPUnit_Framework_TestCase
             ->method('getRequests')
             ->will($this->returnValue([$request]));
 
-        $failure = $this->runner->verify(realpath(__DIR__ . '/../res/cgi/get-user-wrong.php'));
+        $failure = $this->runner->verify(
+            new Input('app', ['program' => realpath(__DIR__ . '/../res/cgi/get-user-wrong.php')])
+        );
+
         $this->assertInstanceOf(CgiOutResult::class, $failure);
         $this->assertCount(1, $failure);
 
@@ -217,7 +227,9 @@ class CgiRunnerTest extends PHPUnit_Framework_TestCase
             ->method('getRequests')
             ->will($this->returnValue([$request]));
 
-        $failure = $this->runner->verify(realpath(__DIR__ . '/../res/cgi/get-user-header-wrong.php'));
+        $failure = $this->runner->verify(
+            new Input('app', ['program' => realpath(__DIR__ . '/../res/cgi/get-user-header-wrong.php')])
+        );
 
         $this->assertInstanceOf(CgiOutResult::class, $failure);
         $this->assertCount(1, $failure);
@@ -283,7 +295,11 @@ class CgiRunnerTest extends PHPUnit_Framework_TestCase
 
         $this->expectOutputString($exp);
 
-        $success = $this->runner->run(realpath(__DIR__ . '/../res/cgi/get-solution.php'), $output);
+        $success = $this->runner->run(
+            new Input('app', ['program' => realpath(__DIR__ . '/../res/cgi/get-solution.php')]),
+            $output
+        );
+
         $this->assertTrue($success);
     }
 
@@ -315,7 +331,10 @@ class CgiRunnerTest extends PHPUnit_Framework_TestCase
 
         $this->expectOutputString($exp);
 
-        $success = $this->runner->run('', $output);
+        $success = $this->runner->run(
+            new Input('app', ['program' => '']),
+            $output
+        );
         $this->assertFalse($success);
     }
 }

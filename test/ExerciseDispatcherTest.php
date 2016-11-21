@@ -17,6 +17,7 @@ use PhpSchool\PhpWorkshop\Exercise\ExerciseType;
 use PhpSchool\PhpWorkshop\ExerciseDispatcher;
 use PhpSchool\PhpWorkshop\ExerciseRunner\ExerciseRunnerInterface;
 use PhpSchool\PhpWorkshop\Factory\RunnerFactory;
+use PhpSchool\PhpWorkshop\Input\Input;
 use PhpSchool\PhpWorkshop\Output\OutputInterface;
 use PhpSchool\PhpWorkshop\Result\Failure;
 use PhpSchool\PhpWorkshop\Result\Success;
@@ -253,7 +254,7 @@ class ExerciseDispatcherTest extends PHPUnit_Framework_TestCase
         $this->expectException(CheckNotApplicableException::class);
         $this->expectExceptionMessage($msg);
 
-        $this->exerciseDispatcher->verify($this->exercise, '');
+        $this->exerciseDispatcher->verify($this->exercise, new Input('app'));
     }
 
     public function testVerifyThrowsExceptionIfExerciseDoesNotImplementCorrectInterface()
@@ -274,12 +275,13 @@ class ExerciseDispatcherTest extends PHPUnit_Framework_TestCase
         $this->expectException(ExerciseNotConfiguredException::class);
         $this->expectExceptionMessage('Exercise: "Some Exercise" should implement interface: "LolIDoNotExist"');
 
-        $this->exerciseDispatcher->verify($this->exercise, '');
+        $this->exerciseDispatcher->verify($this->exercise, new Input('app'));
     }
 
     public function testVerify()
     {
         $this->createExercise();
+        $input = new Input('app', ['program' => $this->file]);
         $this->exercise
             ->expects($this->once())
             ->method('configure')
@@ -305,12 +307,12 @@ class ExerciseDispatcherTest extends PHPUnit_Framework_TestCase
         $this->runner
             ->expects($this->once())
             ->method('verify')
-            ->with($this->file)
+            ->with($input)
             ->will($this->returnValue($this->createMock(SuccessInterface::class)));
 
         $this->exerciseDispatcher->requireCheck(get_class($this->check));
 
-        $result = $this->exerciseDispatcher->verify($this->exercise, $this->file);
+        $result = $this->exerciseDispatcher->verify($this->exercise, $input);
         $this->assertInstanceOf(ResultAggregator::class, $result);
         $this->assertTrue($result->isSuccessful());
     }
@@ -318,6 +320,7 @@ class ExerciseDispatcherTest extends PHPUnit_Framework_TestCase
     public function testVerifyOnlyRunsRequiredChecks()
     {
         $this->createExercise();
+        $input = new Input('app', ['program' => $this->file]);
         $this->check
             ->expects($this->exactly(2))
             ->method('check')
@@ -346,7 +349,7 @@ class ExerciseDispatcherTest extends PHPUnit_Framework_TestCase
         $this->runner
             ->expects($this->once())
             ->method('verify')
-            ->with($this->file)
+            ->with($input)
             ->will($this->returnValue($this->createMock(SuccessInterface::class)));
 
         $this->checkRepository->registerCheck($doNotRunMe);
@@ -354,7 +357,7 @@ class ExerciseDispatcherTest extends PHPUnit_Framework_TestCase
         $this->exerciseDispatcher->requireCheck(get_class($this->check));
         $this->exerciseDispatcher->requireCheck(get_class($this->check));
 
-        $result = $this->exerciseDispatcher->verify($this->exercise, $this->file);
+        $result = $this->exerciseDispatcher->verify($this->exercise, $input);
         $this->assertInstanceOf(ResultAggregator::class, $result);
         $this->assertTrue($result->isSuccessful());
     }
@@ -362,6 +365,7 @@ class ExerciseDispatcherTest extends PHPUnit_Framework_TestCase
     public function testWhenBeforeChecksFailTheyReturnImmediately()
     {
         $this->createExercise();
+        $input = new Input('app', ['program' => $this->file]);
         $this->check
             ->expects($this->once())
             ->method('check')
@@ -406,13 +410,14 @@ class ExerciseDispatcherTest extends PHPUnit_Framework_TestCase
         $this->exerciseDispatcher->requireCheck(get_class($this->check));
         $this->exerciseDispatcher->requireCheck(get_class($doNotRunMe));
 
-        $result = $this->exerciseDispatcher->verify($this->exercise, $this->file);
+        $result = $this->exerciseDispatcher->verify($this->exercise, $input);
         $this->assertInstanceOf(ResultAggregator::class, $result);
         $this->assertFalse($result->isSuccessful());
     }
 
     public function testAllEventsAreDispatched()
     {
+        $input = new Input('app', ['program' => $this->file]);
         $this->eventDispatcher
             ->expects($this->exactly(5))
             ->method('dispatch')
@@ -429,14 +434,15 @@ class ExerciseDispatcherTest extends PHPUnit_Framework_TestCase
         $this->runner
             ->expects($this->once())
             ->method('verify')
-            ->with($this->file)
+            ->with($input)
             ->will($this->returnValue(new Success('test')));
 
-        $this->exerciseDispatcher->verify($this->exercise, $this->file);
+        $this->exerciseDispatcher->verify($this->exercise, $input);
     }
 
     public function testVerifyPostExecuteIsStillDispatchedEvenIfRunnerThrowsException()
     {
+        $input = new Input('app', ['program' => $this->file]);
         $this->eventDispatcher
             ->expects($this->exactly(3))
             ->method('dispatch')
@@ -451,15 +457,16 @@ class ExerciseDispatcherTest extends PHPUnit_Framework_TestCase
         $this->runner
             ->expects($this->once())
             ->method('verify')
-            ->with($this->file)
+            ->with($input)
             ->will($this->throwException(new RuntimeException));
 
         $this->expectException(RuntimeException::class);
-        $this->exerciseDispatcher->verify($this->exercise, $this->file);
+        $this->exerciseDispatcher->verify($this->exercise, $input);
     }
 
     public function testRun()
     {
+        $input      = new Input('app', ['program' => $this->file]);
         $exercise   = $this->createMock(ExerciseInterface::class);
         $output     = $this->createMock(OutputInterface::class);
 
@@ -467,10 +474,10 @@ class ExerciseDispatcherTest extends PHPUnit_Framework_TestCase
         $this->runner
             ->expects($this->once())
             ->method('run')
-            ->with($this->file, $output)
+            ->with($input, $output)
             ->will($this->returnValue(true));
 
-        $this->assertTrue($this->exerciseDispatcher->run($exercise, $this->file, $output));
+        $this->assertTrue($this->exerciseDispatcher->run($exercise, $input, $output));
     }
 
     public function tearDown()

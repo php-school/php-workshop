@@ -4,6 +4,7 @@ namespace PhpSchool\PhpWorkshopTest\Check;
 
 use PhpSchool\PhpWorkshop\Check\SimpleCheckInterface;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseType;
+use PhpSchool\PhpWorkshop\Input\Input;
 use PHPUnit_Framework_TestCase;
 use PhpSchool\PhpWorkshop\Check\FileExistsCheck;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
@@ -51,14 +52,17 @@ class FileExistsCheckTest extends PHPUnit_Framework_TestCase
         $file = sprintf('%s/test.txt', $this->testDir);
         touch($file);
 
-        $this->assertInstanceOf(Success::class, $this->check->check($this->exercise, $file));
+        $this->assertInstanceOf(
+            Success::class,
+            $this->check->check($this->exercise, new Input('app', ['program' => $file]))
+        );
         unlink($file);
     }
 
     public function testFailure()
     {
         $file = sprintf('%s/test.txt', $this->testDir);
-        $failure = $this->check->check($this->exercise, $file);
+        $failure = $this->check->check($this->exercise, new Input('app', ['program' => $file]));
         $this->assertInstanceOf(Failure::class, $failure);
         $this->assertEquals(sprintf('File: "%s" does not exist', $file), $failure->getReason());
     }

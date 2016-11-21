@@ -13,6 +13,7 @@ use PhpSchool\PhpWorkshop\Exception\ExerciseNotConfiguredException;
 use PhpSchool\PhpWorkshop\Exception\InvalidArgumentException;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpSchool\PhpWorkshop\Factory\RunnerFactory;
+use PhpSchool\PhpWorkshop\Input\Input;
 use PhpSchool\PhpWorkshop\Output\OutputInterface;
 
 /**
@@ -119,46 +120,46 @@ class ExerciseDispatcher
      * correct runner for the exercise based on the exercise type. Various events are triggered throughout the process.
      *
      * @param ExerciseInterface $exercise The exercise instance.
-     * @param string $fileName The absolute file name of the students solution.
+     * @param Input $input The command line arguments passed to the command.
      * @return ResultAggregator Contains all the results injected via the runner, checks and events.
      * @throws CheckNotApplicableException If the check is not applicable to the exercise type.
      * @throws ExerciseNotConfiguredException If the exercise does not implement the correct interface based on
      * the checks required.
      */
-    public function verify(ExerciseInterface $exercise, $fileName)
+    public function verify(ExerciseInterface $exercise, Input $input)
     {
         $exercise->configure($this);
 
         $runner = $this->runnerFactory->create($exercise, $this->eventDispatcher, $this);
-        $this->eventDispatcher->dispatch(new Event('verify.start', compact('exercise', 'fileName')));
+        $this->eventDispatcher->dispatch(new Event('verify.start', compact('exercise', 'input')));
 
         $this->validateChecks($this->checksToRunBefore, $exercise);
         $this->validateChecks($this->checksToRunAfter, $exercise);
 
         foreach ($this->checksToRunBefore as $check) {
-            $this->results->add($check->check($exercise, $fileName));
+            $this->results->add($check->check($exercise, $input));
 
             if (!$this->results->isSuccessful()) {
                 return $this->results;
             }
         }
 
-        $this->eventDispatcher->dispatch(new Event('verify.pre.execute', compact('exercise', 'fileName')));
+        $this->eventDispatcher->dispatch(new Event('verify.pre.execute', compact('exercise', 'input')));
 
         try {
-            $this->results->add($runner->verify($fileName));
+            $this->results->add($runner->verify($input));
         } finally {
-            $this->eventDispatcher->dispatch(new Event('verify.post.execute', compact('exercise', 'fileName')));
+            $this->eventDispatcher->dispatch(new Event('verify.post.execute', compact('exercise', 'input')));
         }
 
         foreach ($this->checksToRunAfter as $check) {
-            $this->results->add($check->check($exercise, $fileName));
+            $this->results->add($check->check($exercise, $input));
         }
 
-        $this->eventDispatcher->dispatch(new Event('verify.post.check', compact('exercise', 'fileName')));
+        $this->eventDispatcher->dispatch(new Event('verify.post.check', compact('exercise', 'input')));
         $exercise->tearDown();
 
-        $this->eventDispatcher->dispatch(new Event('verify.finish', compact('exercise', 'fileName')));
+        $this->eventDispatcher->dispatch(new Event('verify.finish', compact('exercise', 'input')));
         return $this->results;
     }
 
@@ -168,21 +169,21 @@ class ExerciseDispatcher
      * The output of the solution is written directly to the `OutputInterface` instance.
      *
      * @param ExerciseInterface $exercise The exercise instance.
-     * @param string $fileName The absolute file name of the students solution.
+     * @param Input $input The command line arguments passed to the command.
      * @param OutputInterface $output An output instance capable of writing to stdout.
      * @return bool Whether the solution ran successfully or not.
      */
-    public function run(ExerciseInterface $exercise, $fileName, OutputInterface $output)
+    public function run(ExerciseInterface $exercise, Input $input, OutputInterface $output)
     {
         $exercise->configure($this);
-        $this->eventDispatcher->dispatch(new Event('run.start', compact('exercise', 'fileName')));
+        $this->eventDispatcher->dispatch(new Event('run.start', compact('exercise', 'input')));
 
         try {
             $exitStatus = $this->runnerFactory
                 ->create($exercise, $this->eventDispatcher, $this)
-                ->run($fileName, $output);
+                ->run($input, $output);
         } finally {
-            $this->eventDispatcher->dispatch(new Event('run.finish', compact('exercise', 'fileName')));
+            $this->eventDispatcher->dispatch(new Event('run.finish', compact('exercise', 'input')));
         }
 
         return $exitStatus;

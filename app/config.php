@@ -89,6 +89,7 @@ return [
                 new CommandDefinition('credits', [], CreditsCommand::class)
             ],
             'menu',
+            $c->get(EventDispatcher::class),
             $c
         );
     },

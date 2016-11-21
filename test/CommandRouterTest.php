@@ -5,6 +5,8 @@ namespace PhpSchool\PhpWorkshopTest;
 use Interop\Container\ContainerInterface;
 use InvalidArgumentException;
 use PhpSchool\PhpWorkshop\CommandArgument;
+use PhpSchool\PhpWorkshop\Event\EventDispatcher;
+use PhpSchool\PhpWorkshop\Input\Input;
 use PHPUnit_Framework_TestCase;
 use PhpSchool\PhpWorkshop\CommandDefinition;
 use PhpSchool\PhpWorkshop\CommandRouter;
@@ -25,7 +27,8 @@ class CommandRouterTest extends PHPUnit_Framework_TestCase
         $this->expectExceptionMessage('Default command: "cmd" is not available');
 
         $c = $this->createMock(ContainerInterface::class);
-        new CommandRouter([], 'cmd', $c);
+        $eventDispatcher = $this->createMock(EventDispatcher::class);
+        new CommandRouter([], 'cmd', $eventDispatcher, $c);
     }
 
     public function testAddCommandThrowsExceptionIfCommandWithSameNameExists()
@@ -34,16 +37,18 @@ class CommandRouterTest extends PHPUnit_Framework_TestCase
         $this->expectExceptionMessage('Command with name: "cmd" already exists');
 
         $c = $this->createMock(ContainerInterface::class);
+        $eventDispatcher = $this->createMock(EventDispatcher::class);
         new CommandRouter([
             new CommandDefinition('cmd', [], 'service'),
             new CommandDefinition('cmd', [], 'service'),
-        ], 'default', $c);
+        ], 'default', $eventDispatcher, $c);
     }
 
     public function testConstruct()
     {
         $c = $this->createMock(ContainerInterface::class);
-        new CommandRouter([new CommandDefinition('cmd', [], 'service'),], 'cmd', $c);
+        $eventDispatcher = $this->createMock(EventDispatcher::class);
+        new CommandRouter([new CommandDefinition('cmd', [], 'service'),], 'cmd', $eventDispatcher, $c);
     }
 
     public function testRouteCommandWithNoArgsFromArrayUsesDefaultCommand()
@@ -59,7 +64,8 @@ class CommandRouterTest extends PHPUnit_Framework_TestCase
             ->will($this->returnValue(true));
 
         $c = $this->createMock(ContainerInterface::class);
-        $router = new CommandRouter([new CommandDefinition('cmd', [], $mock),], 'cmd', $c);
+        $eventDispatcher = $this->createMock(EventDispatcher::class);
+        $router = new CommandRouter([new CommandDefinition('cmd', [], $mock),], 'cmd', $eventDispatcher, $c);
 
         $router->route($args);
     }
@@ -77,7 +83,8 @@ class CommandRouterTest extends PHPUnit_Framework_TestCase
             ->will($this->returnValue(true));
 
         $c = $this->createMock(ContainerInterface::class);
-        $router = new CommandRouter([new CommandDefinition('cmd', [], $mock),], 'cmd', $c);
+        $eventDispatcher = $this->createMock(EventDispatcher::class);
+        $router = new CommandRouter([new CommandDefinition('cmd', [], $mock),], 'cmd', $eventDispatcher, $c);
 
         $router->route();
         $_SERVER = $server;
@@ -89,8 +96,10 @@ class CommandRouterTest extends PHPUnit_Framework_TestCase
         $this->expectExceptionMessage('Command: "not-a-cmd" does not exist');
 
         $c = $this->createMock(ContainerInterface::class);
+        $eventDispatcher = $this->createMock(EventDispatcher::class);
+
         $router = new CommandRouter([new CommandDefinition('cmd', [], function () {
-        }),], 'cmd', $c);
+        }),], 'cmd', $eventDispatcher, $c);
         $router->route(['app', 'not-a-cmd']);
     }
 
@@ -100,10 +109,12 @@ class CommandRouterTest extends PHPUnit_Framework_TestCase
         $this->expectExceptionMessage('Command: "verify" is missing the following arguments: "exercise", "program"');
 
         $c = $this->createMock(ContainerInterface::class);
+        $eventDispatcher = $this->createMock(EventDispatcher::class);
         $router = new CommandRouter(
             [new CommandDefinition('verify', ['exercise', 'program'], function () {
             }),],
             'verify',
+            $eventDispatcher,
             $c
         );
         $router->route(['app', 'verify']);
@@ -115,10 +126,12 @@ class CommandRouterTest extends PHPUnit_Framework_TestCase
         $this->expectExceptionMessage('Command: "verify" is missing the following arguments: "program"');
 
         $c = $this->createMock(ContainerInterface::class);
+        $eventDispatcher = $this->createMock(EventDispatcher::class);
         $router = new CommandRouter(
             [new CommandDefinition('verify', ['exercise', 'program'], function () {
             }),],
             'verify',
+            $eventDispatcher,
             $c
         );
         $router->route(['app', 'verify', 'some-exercise']);
@@ -132,13 +145,19 @@ class CommandRouterTest extends PHPUnit_Framework_TestCase
 
         $mock->expects($this->once())
             ->method('__invoke')
-            ->with('app', 'some-exercise', 'program.php')
+            ->with($this->callback(function (Input $input) {
+                return $input->getAppName() === 'app'
+                    && $input->getArgument('exercise') === 'some-exercise'
+                    && $input->getArgument('program') === 'program.php';
+            }))
             ->will($this->returnValue(true));
 
         $c = $this->createMock(ContainerInterface::class);
+        $eventDispatcher = $this->createMock(EventDispatcher::class);
         $router = new CommandRouter(
             [new CommandDefinition('verify', ['exercise', 'program'], $mock),],
             'verify',
+            $eventDispatcher,
             $c
         );
         $router->route(['app', 'verify', 'some-exercise', 'program.php']);
@@ -150,9 +169,11 @@ class CommandRouterTest extends PHPUnit_Framework_TestCase
         $this->expectExceptionMessage('Callable must be a callable or a container entry for a callable service');
 
         $c = $this->createMock(ContainerInterface::class);
+        $eventDispatcher = $this->createMock(EventDispatcher::class);
         $router = new CommandRouter(
             [new CommandDefinition('verify', ['exercise', 'program'], new \stdClass),],
             'verify',
+            $eventDispatcher,
             $c
         );
         $router->route(['app', 'verify', 'some-exercise', 'program.php']);
@@ -164,6 +185,7 @@ class CommandRouterTest extends PHPUnit_Framework_TestCase
         $this->expectExceptionMessage('Container has no entry named: "some.service"');
 
         $c = $this->createMock(ContainerInterface::class);
+        $eventDispatcher = $this->createMock(EventDispatcher::class);
 
         $c
             ->expects($this->once())
@@ -174,6 +196,7 @@ class CommandRouterTest extends PHPUnit_Framework_TestCase
         $router = new CommandRouter(
             [new CommandDefinition('verify', ['exercise', 'program'], 'some.service'),],
             'verify',
+            $eventDispatcher,
             $c
         );
         $router->route(['app', 'verify', 'some-exercise', 'program.php']);
@@ -185,6 +208,7 @@ class CommandRouterTest extends PHPUnit_Framework_TestCase
         $this->expectExceptionMessage('Container entry: "some.service" not callable');
 
         $c = $this->createMock(ContainerInterface::class);
+        $eventDispatcher = $this->createMock(EventDispatcher::class);
 
         $c
             ->expects($this->once())
@@ -201,6 +225,7 @@ class CommandRouterTest extends PHPUnit_Framework_TestCase
         $router = new CommandRouter(
             [new CommandDefinition('verify', ['exercise', 'program'], 'some.service'),],
             'verify',
+            $eventDispatcher,
             $c
         );
         $router->route(['app', 'verify', 'some-exercise', 'program.php']);
@@ -216,7 +241,11 @@ class CommandRouterTest extends PHPUnit_Framework_TestCase
 
         $mock->expects($this->once())
             ->method('__invoke')
-            ->with('app', 'some-exercise', 'program.php')
+            ->with($this->callback(function (Input $input) {
+                return $input->getAppName() === 'app'
+                    && $input->getArgument('exercise') === 'some-exercise'
+                    && $input->getArgument('program') === 'program.php';
+            }))
             ->will($this->returnValue(true));
 
         $c
@@ -231,9 +260,12 @@ class CommandRouterTest extends PHPUnit_Framework_TestCase
             ->with('some.service')
             ->will($this->returnValue($mock));
 
+        $eventDispatcher = $this->createMock(EventDispatcher::class);
+
         $router = new CommandRouter(
             [new CommandDefinition('verify', ['exercise', 'program'], 'some.service'),],
             'verify',
+            $eventDispatcher,
             $c
         );
         $router->route(['app', 'verify', 'some-exercise', 'program.php']);
@@ -249,7 +281,11 @@ class CommandRouterTest extends PHPUnit_Framework_TestCase
 
         $mock->expects($this->once())
             ->method('__invoke')
-            ->with('app', 'some-exercise', 'program.php')
+            ->with($this->callback(function (Input $input) {
+                return $input->getAppName() === 'app'
+                    && $input->getArgument('exercise') === 'some-exercise'
+                    && $input->getArgument('program') === 'program.php';
+            }))
             ->will($this->returnValue(10));
 
         $c
@@ -264,9 +300,12 @@ class CommandRouterTest extends PHPUnit_Framework_TestCase
             ->with('some.service')
             ->will($this->returnValue($mock));
 
+        $eventDispatcher = $this->createMock(EventDispatcher::class);
+
         $router = new CommandRouter(
             [new CommandDefinition('verify', ['exercise', 'program'], 'some.service'),],
             'verify',
+            $eventDispatcher,
             $c
         );
         $res = $router->route(['app', 'verify', 'some-exercise', 'program.php']);
@@ -281,13 +320,20 @@ class CommandRouterTest extends PHPUnit_Framework_TestCase
 
         $mock->expects($this->once())
             ->method('__invoke')
-            ->with('app', 'some-exercise', 'program.php')
+            ->with($this->callback(function (Input $input) {
+                return $input->getAppName() === 'app'
+                && $input->getArgument('exercise') === 'some-exercise'
+                && $input->getArgument('program') === 'program.php';
+            }))
             ->will($this->returnValue(true));
 
         $c = $this->createMock(ContainerInterface::class);
+        $eventDispatcher = $this->createMock(EventDispatcher::class);
+
         $router = new CommandRouter(
             [new CommandDefinition('verify', ['exercise', 'program'], $mock),],
             'verify',
+            $eventDispatcher,
             $c
         );
         $router->route(['app', 'verifu', 'some-exercise', 'program.php']);
@@ -301,15 +347,23 @@ class CommandRouterTest extends PHPUnit_Framework_TestCase
 
         $mock->expects($this->at(0))
             ->method('__invoke')
-            ->with('app', 'some-exercise')
+            ->with($this->callback(function (Input $input) {
+                return $input->getAppName() === 'app'
+                && $input->getArgument('exercise') === 'some-exercise';
+            }))
             ->will($this->returnValue(true));
 
         $mock->expects($this->at(1))
             ->method('__invoke')
-            ->with('app', 'some-exercise', 'program.php')
+            ->with($this->callback(function (Input $input) {
+                return $input->getAppName() === 'app'
+                && $input->getArgument('exercise') === 'some-exercise'
+                && $input->getArgument('program') === 'program.php';
+            }))
             ->will($this->returnValue(true));
 
         $c = $this->createMock(ContainerInterface::class);
+        $eventDispatcher = $this->createMock(EventDispatcher::class);
         $router = new CommandRouter(
             [
                 new CommandDefinition(
@@ -323,6 +377,7 @@ class CommandRouterTest extends PHPUnit_Framework_TestCase
                 )
             ],
             'verify',
+            $eventDispatcher,
             $c
         );
         $router->route(['app', 'verify', 'some-exercise']);

@@ -4,6 +4,8 @@ namespace PhpSchool\PhpWorkshop\Check;
 
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseType;
+use PhpSchool\PhpWorkshop\Input\Input;
+use PhpSchool\PhpWorkshop\Result\ResultInterface;
 use PhpSchool\PhpWorkshop\Result\Success;
 use PhpSchool\PhpWorkshop\Result\Failure;
 use Symfony\Component\Process\Process;
@@ -32,12 +34,12 @@ class PhpLintCheck implements SimpleCheckInterface
      * Simply check the student's solution can be linted with `php -l`.
      *
      * @param ExerciseInterface $exercise The exercise to check against.
-     * @param string $fileName The absolute path to the student's solution.
+     * @param Input $input The command line arguments passed to the command.
      * @return ResultInterface The result of the check.
      */
-    public function check(ExerciseInterface $exercise, $fileName)
+    public function check(ExerciseInterface $exercise, Input $input)
     {
-        $process = new Process(sprintf('%s -l %s', PHP_BINARY, $fileName));
+        $process = new Process(sprintf('%s -l %s', PHP_BINARY, $input->getArgument('program')));
         $process->run();
 
         if ($process->isSuccessful()) {
@@ -55,7 +57,7 @@ class PhpLintCheck implements SimpleCheckInterface
      */
     public function canRun(ExerciseType $exerciseType)
     {
-        return true;
+        return in_array($exerciseType->getValue(), [ExerciseType::CGI, ExerciseType::CLI]);
     }
 
     /**

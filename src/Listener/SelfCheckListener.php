@@ -34,7 +34,7 @@ class SelfCheckListener
         $exercise = $event->getParameter('exercise');
 
         if ($exercise instanceof SelfCheck) {
-            $this->results->add($exercise->check($event->getParameter('fileName')));
+            $this->results->add($exercise->check($event->getParameter('input')));
         }
     }
 }

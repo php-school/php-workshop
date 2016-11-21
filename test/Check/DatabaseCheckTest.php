@@ -15,6 +15,7 @@ use PhpSchool\PhpWorkshop\ExerciseCheck\DatabaseExerciseCheck;
 use PhpSchool\PhpWorkshop\ExerciseDispatcher;
 use PhpSchool\PhpWorkshop\ExerciseRunner\CliRunner;
 use PhpSchool\PhpWorkshop\Factory\RunnerFactory;
+use PhpSchool\PhpWorkshop\Input\Input;
 use PhpSchool\PhpWorkshop\Output\OutputInterface;
 use PhpSchool\PhpWorkshop\ResultAggregator;
 use PhpSchool\PhpWorkshop\Solution\SingleFileSolution;
@@ -24,7 +25,6 @@ use ReflectionProperty;
 use RuntimeException;
 
 /**
- * Class DatabaseCheckTest
  * @package PhpSchool\PhpWorkshopTest\Check
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
@@ -159,7 +159,7 @@ class DatabaseCheckTest extends PHPUnit_Framework_TestCase
             $this->checkRepository
         );
 
-        $dispatcher->verify($this->exercise, __DIR__ . '/../res/database/user.php');
+        $dispatcher->verify($this->exercise, new Input('app', ['program' => __DIR__ . '/../res/database/user.php']));
         $this->assertTrue($results->isSuccessful());
     }
 
@@ -200,7 +200,8 @@ class DatabaseCheckTest extends PHPUnit_Framework_TestCase
             $this->checkRepository
         );
 
-        $dispatcher->verify($this->exercise, __DIR__ . '/../res/database/user.php');
+
+        $dispatcher->verify($this->exercise, new Input('app', ['program' => __DIR__ . '/../res/database/user.php']));
 
         $this->assertTrue($results->isSuccessful());
     }
@@ -232,7 +233,7 @@ class DatabaseCheckTest extends PHPUnit_Framework_TestCase
 
         $dispatcher->run(
             $this->exercise,
-            __DIR__ . '/../res/database/user-solution-alter-db.php',
+            new Input('app', ['program' => __DIR__ . '/../res/database/user-solution-alter-db.php']),
             $this->createMock(OutputInterface::class)
         );
     }
@@ -274,7 +275,7 @@ class DatabaseCheckTest extends PHPUnit_Framework_TestCase
             $this->checkRepository
         );
 
-        $dispatcher->verify($this->exercise, __DIR__ . '/../res/database/user.php');
+        $dispatcher->verify($this->exercise, new Input('app', ['program' => __DIR__ . '/../res/database/user.php']));
 
         $this->assertFalse($results->isSuccessful());
         $results = iterator_to_array($results);
@@ -342,6 +343,9 @@ class DatabaseCheckTest extends PHPUnit_Framework_TestCase
             $this->checkRepository
         );
 
-        $dispatcher->verify($this->exercise, __DIR__ . '/../res/database/user-solution-alter-db.php');
+        $dispatcher->verify(
+            $this->exercise,
+            new Input('app', ['program' => __DIR__ . '/../res/database/user-solution-alter-db.php'])
+        );
     }
 }

@@ -2,9 +2,11 @@
 
 namespace PhpSchool\PhpWorkshop;
 
+use PhpSchool\PhpWorkshop\Event\EventDispatcher;
 use PhpSchool\PhpWorkshop\Exception\CliRouteNotExistsException;
 use PhpSchool\PhpWorkshop\Exception\MissingArgumentException;
 use Interop\Container\ContainerInterface;
+use PhpSchool\PhpWorkshop\Input\Input;
 use SebastianBergmann\Environment\Runtime;
 
 /**
@@ -29,6 +31,11 @@ class CommandRouter
     private $defaultCommand;
 
     /**
+     * @var EventDispatcher
+     */
+    private $eventDispatcher;
+
+    /**
      * @var ContainerInterface
      */
     private $container;
@@ -42,10 +49,15 @@ class CommandRouter
      *
      * @param CommandDefinition[] $commands An array of command definitions
      * @param string $default The default command to use (if the workshop was invoked with no arguments)
+     * @param EventDispatcher $eventDispatcher
      * @param ContainerInterface $container An instance of the container
      */
-    public function __construct(array $commands, $default, ContainerInterface $container)
-    {
+    public function __construct(
+        array $commands,
+        $default,
+        EventDispatcher $eventDispatcher,
+        ContainerInterface $container
+    ) {
         foreach ($commands as $command) {
             $this->addCommand($command);
         }
@@ -54,6 +66,7 @@ class CommandRouter
             throw new \InvalidArgumentException(sprintf('Default command: "%s" is not available', $default));
         }
         $this->defaultCommand   = $default;
+        $this->eventDispatcher  = $eventDispatcher;
         $this->container        = $container;
     }
 
@@ -88,6 +101,7 @@ class CommandRouter
      */
     public function route(array $args = null)
     {
+
         if (null === $args) {
             $args = isset($_SERVER['argv']) ? $_SERVER['argv'] : [];
         }
@@ -95,33 +109,39 @@ class CommandRouter
         $appName = array_shift($args);
 
         if (empty($args)) {
-            return $this->resolveCallable($this->commands[$this->defaultCommand], array_merge([$appName], $args));
+            return $this->resolveCallable($this->commands[$this->defaultCommand], new Input($appName));
         }
 
         $commandName = array_shift($args);
         if (!isset($this->commands[$commandName])) {
             $command = $this->findNearestCommand($commandName, $this->commands);
-            
+
             if (false === $command) {
                 throw new CliRouteNotExistsException($commandName);
             }
-            
+
             $commandName = $command;
         }
         $command = $this->commands[$commandName];
 
-        $this->checkRequiredArgs($commandName, $command->getRequiredArgs(), $args);
+        $this->eventDispatcher->dispatch(new Event\Event('route.pre.resolve.args', ['command' => $command]));
 
-        return $this->resolveCallable($command, array_merge([$appName], $args));
+        $input = $this->parseArgs($commandName, $command->getRequiredArgs(), $appName, $args);
+
+        return $this->resolveCallable($command, $input);
     }
 
     /**
      * @param string $commandName
-     * @param array $definitionArgs
+     * @param CommandArgument[] $definitionArgs
+     * @param string $appName
      * @param array $givenArgs
+     * @return Input
      */
-    private function checkRequiredArgs($commandName, array $definitionArgs, array $givenArgs)
+    private function parseArgs($commandName, array $definitionArgs, $appName, array $givenArgs)
     {
+        $parsedArgs = [];
+
         while (null !== ($definitionArg = array_shift($definitionArgs))) {
             $arg = array_shift($givenArgs);
 
@@ -130,7 +150,11 @@ class CommandRouter
                     return $argument->getName();
                 }, array_merge([$definitionArg], $definitionArgs)));
             }
+
+            $parsedArgs[$definitionArg->getName()] = $arg;
         }
+
+        return new Input($appName, $parsedArgs);
     }
 
     /**
@@ -147,29 +171,29 @@ class CommandRouter
         foreach (array_keys($commands) as $command) {
             $distances[$command] = levenshtein($commandName, $command);
         }
-        
+
         $distances = array_filter(array_unique($distances), function ($distance) {
             return $distance <= 3;
         });
-        
+
         if (empty($distances)) {
             return false;
         }
-        
+
         return array_search(min($distances), $distances);
     }
 
     /**
      * @param CommandDefinition $command
-     * @param array $args
+     * @param Input $input
      * @return int
      */
-    private function resolveCallable(CommandDefinition $command, array $args)
+    private function resolveCallable(CommandDefinition $command, Input $input)
     {
         $commandCallable = $command->getCommandCallable();
 
         if (is_callable($commandCallable)) {
-            return $this->callCommand($commandCallable, $args);
+            return $this->callCommand($command, $commandCallable, $input);
         }
 
         if (!is_string($commandCallable)) {
@@ -186,7 +210,7 @@ class CommandRouter
             throw new \RuntimeException(sprintf('Container entry: "%s" not callable', $commandCallable));
         }
 
-        $return = $this->callCommand($callable, $args);
+        $return = $this->callCommand($command, $callable, $input);
 
         if (is_int($return)) {
             return $return;
@@ -196,12 +220,16 @@ class CommandRouter
     }
 
     /**
-     * @param callable $command
-     * @param array $arguments
+     * @param CommandDefinition $command
+     * @param callable $callable
+     * @param Input $input
      * @return int
      */
-    private function callCommand(callable $command, array $arguments)
+    private function callCommand(CommandDefinition $command, callable  $callable, Input $input)
     {
-        return $command(...$arguments);
+        $this->eventDispatcher->dispatch(new Event\Event('route.pre.invoke'));
+        $this->eventDispatcher->dispatch(new Event\Event(sprintf('route.pre.invoke.%s', $command->getName())));
+
+        return $callable($input);
     }
 }
