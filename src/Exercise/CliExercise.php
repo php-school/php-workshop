@@ -7,7 +7,7 @@ namespace PhpSchool\PhpWorkshop\Exercise;
  *
  * @package PhpSchool\PhpWorkshop\Exercise
  */
-interface CliExercise
+interface CliExercise extends ProvidesSolution
 {
     /**
      * This method should return an array of strings which will be passed to the student's solution
