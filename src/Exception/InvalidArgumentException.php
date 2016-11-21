@@ -1,7 +1,6 @@
 <?php
 
 namespace PhpSchool\PhpWorkshop\Exception;
-use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 
 /**
  * Represents invalid argument exceptions.
