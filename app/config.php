@@ -3,6 +3,7 @@
 use Colors\Color;
 use function DI\object;
 use function DI\factory;
+use function PhpSchool\PhpWorkshop\Event\containerListener;
 use Interop\Container\ContainerInterface;
 use League\CommonMark\DocParser;
 use League\CommonMark\Environment;
@@ -264,9 +265,38 @@ return [
         '@chris3ailey' => 'Chris Bailey'
     ],
     'appContributors' => [],
-    'eventListeners' => [
-        'route.pre.resolve.args' => [
-            CheckExerciseAssignedListener::class
+    'eventListeners'  => [
+        'check-exercise-assigned' => [
+            'route.pre.resolve.args' => [
+                containerListener(CheckExerciseAssignedListener::class)
+            ],
         ],
-    ]
+        'prepare-solution' => [
+            'verify.start' => [
+                containerListener(PrepareSolutionListener::class),
+            ],
+            'run.start' => [
+                containerListener(PrepareSolutionListener::class),
+            ],
+        ],
+        'code-patcher' => [
+            'run.start' => [
+                containerListener(CodePatchListener::class, 'patch'),
+            ],
+            'verify.pre.execute' => [
+                containerListener(CodePatchListener::class, 'patch'),
+            ],
+            'verify.post.execute' => [
+                containerListener(CodePatchListener::class, 'revert'),
+            ],
+            'run.finish' => [
+                containerListener(CodePatchListener::class, 'revert'),
+            ],
+        ],
+        'self-check' => [
+            'verify.post.check' => [
+                containerListener(SelfCheckListener::class)
+            ],
+        ],
+    ],
 ];
