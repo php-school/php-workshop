@@ -9,7 +9,7 @@ use Psr\Http\Message\RequestInterface;
  *
  * @package PhpSchool\PhpWorkshop\Exercise
  */
-interface CgiExercise
+interface CgiExercise extends ProvidesSolution
 {
     /**
      * This method should return an array of PSR-7 requests, which will be forwarded to the student's

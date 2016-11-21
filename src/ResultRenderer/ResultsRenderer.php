@@ -4,6 +4,7 @@ namespace PhpSchool\PhpWorkshop\ResultRenderer;
 
 use Colors\Color;
 use PhpSchool\CliMenu\Terminal\TerminalInterface;
+use PhpSchool\PhpWorkshop\Exercise\ProvidesSolution;
 use PhpSchool\PhpWorkshop\Factory\ResultRendererFactory;
 use PhpSchool\PhpWorkshop\Output\OutputInterface;
 use PhpSchool\PhpWorkshop\Result\SuccessInterface;
@@ -153,23 +154,25 @@ class ResultsRenderer
         $output->writeLine($this->style(" PASS!", ['green', 'bg_default', 'bold']));
         $output->emptyLine();
 
-        $output->writeLine("Here's the official solution in case you want to compare notes:");
-        $output->writeLine($this->lineBreak());
-
-        foreach ($exercise->getSolution()->getFiles() as $file) {
-            $output->writeLine($this->style($file->getRelativePath(), ['bold', 'cyan', 'underline']));
-            $output->emptyLine();
-
-            $code = $file->getContents();
-            if (pathinfo($file->getRelativePath(), PATHINFO_EXTENSION) === 'php') {
-                $code = $this->syntaxHighlighter->highlight($code);
-            }
-
-            //make sure there is a new line at the end
-            $code = preg_replace('/\n$/', '', $code) . "\n";
-
-            $output->write($code);
+        if ($exercise instanceof ProvidesSolution) {
+            $output->writeLine("Here's the official solution in case you want to compare notes:");
             $output->writeLine($this->lineBreak());
+
+            foreach ($exercise->getSolution()->getFiles() as $file) {
+                $output->writeLine($this->style($file->getRelativePath(), ['bold', 'cyan', 'underline']));
+                $output->emptyLine();
+
+                $code = $file->getContents();
+                if (pathinfo($file->getRelativePath(), PATHINFO_EXTENSION) === 'php') {
+                    $code = $this->syntaxHighlighter->highlight($code);
+                }
+
+                //make sure there is a new line at the end
+                $code = preg_replace('/\n$/', '', $code) . "\n";
+
+                $output->write($code);
+                $output->writeLine($this->lineBreak());
+            }
         }
 
         $completedCount = count($userState->getCompletedExercises());
