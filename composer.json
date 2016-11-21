@@ -40,7 +40,10 @@
     "autoload" : {
         "psr-4" : {
             "PhpSchool\\PhpWorkshop\\": "src"
-        }
+        },
+        "files": [
+            "src/Event/functions.php"
+        ]
     },
     "autoload-dev": {
         "psr-4": { 
