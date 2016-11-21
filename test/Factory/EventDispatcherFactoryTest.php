@@ -22,187 +22,117 @@ class EventDispatcherFactoryTest extends PHPUnit_Framework_TestCase
 
     public function testCreateWithNoConfig()
     {
-        $c = $this->createMock(ContainerInterface::class);
+        $c = $this->prophesize(ContainerInterface::class);
+        $c->get(ResultAggregator::class)->willReturn(new ResultAggregator);
+        $c->has('eventListeners')->willReturn(false);
 
-        $c->expects($this->at(0))
-            ->method('get')
-            ->with(ResultAggregator::class)
-            ->will($this->returnValue(new ResultAggregator));
-
-        $dispatcher = (new EventDispatcherFactory)->__invoke($c);
+        $dispatcher = (new EventDispatcherFactory)->__invoke($c->reveal());
         $this->assertInstanceOf(EventDispatcher::class, $dispatcher);
         $this->assertSame([], $this->readAttribute($dispatcher, 'listeners'));
     }
 
     public function testExceptionIsThrownIfEventListenerGroupsNotArray()
     {
-        $c = $this->createMock(ContainerInterface::class);
-
-        $c->expects($this->at(0))
-            ->method('get')
-            ->with(ResultAggregator::class)
-            ->will($this->returnValue(new ResultAggregator));
-
-        $c->expects($this->at(1))
-            ->method('has')
-            ->with('eventListeners')
-            ->willReturn(true);
-
-        $c->expects($this->at(2))
-            ->method('get')
-            ->with('eventListeners')
-            ->will($this->returnValue(new \stdClass));
+        $c = $this->prophesize(ContainerInterface::class);
+        $c->get(ResultAggregator::class)->willReturn(new ResultAggregator);
+        $c->has('eventListeners')->willReturn(true);
+        $c->get('eventListeners')->willReturn(new \stdClass);
 
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Expected: "array" Received: "stdClass"');
 
-        (new EventDispatcherFactory)->__invoke($c);
+        (new EventDispatcherFactory)->__invoke($c->reveal());
     }
 
     public function testExceptionIsThrownIfEventsNotArray()
     {
-        $c = $this->createMock(ContainerInterface::class);
-
-        $c->expects($this->at(0))
-            ->method('get')
-            ->with(ResultAggregator::class)
-            ->will($this->returnValue(new ResultAggregator));
-
-        $c->expects($this->at(1))
-            ->method('has')
-            ->with('eventListeners')
-            ->willReturn(true);
-
-        $c->expects($this->at(2))
-            ->method('get')
-            ->with('eventListeners')
-            ->will($this->returnValue(['my-group' => new \stdClass]));
+        $c = $this->prophesize(ContainerInterface::class);
+        $c->get(ResultAggregator::class)->willReturn(new ResultAggregator);
+        $c->has('eventListeners')->willReturn(true);
+        $c->get('eventListeners')->willReturn(['my-group' => new \stdClass]);
 
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Expected: "array" Received: "stdClass"');
 
-        (new EventDispatcherFactory)->__invoke($c);
+        (new EventDispatcherFactory)->__invoke($c->reveal());
     }
 
     public function testExceptionIsThrownIfEventListenersNotArray()
     {
-        $c = $this->createMock(ContainerInterface::class);
+        $eventConfig = [
+            'my-group' => [
+                'someEvent' => new \stdClass
+            ]
+        ];
 
-        $c->expects($this->at(0))
-            ->method('get')
-            ->with(ResultAggregator::class)
-            ->will($this->returnValue(new ResultAggregator));
-
-        $c->expects($this->at(1))
-            ->method('has')
-            ->with('eventListeners')
-            ->willReturn(true);
-
-        $c->expects($this->at(2))
-            ->method('get')
-            ->with('eventListeners')
-            ->will($this->returnValue([
-                'my-group' => [
-                    'someEvent' => new \stdClass
-                ]
-            ]));
+        $c = $this->prophesize(ContainerInterface::class);
+        $c->get(ResultAggregator::class)->willReturn(new ResultAggregator);
+        $c->has('eventListeners')->willReturn(true);
+        $c->get('eventListeners')->willReturn($eventConfig);
 
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Expected: "array" Received: "stdClass"');
 
-        (new EventDispatcherFactory)->__invoke($c);
+        (new EventDispatcherFactory)->__invoke($c->reveal());
     }
 
     public function testExceptionIsThrownIfListenerNotCallable()
     {
-        $c = $this->createMock(ContainerInterface::class);
+        $eventConfig = [
+            'my-group' => [
+                'someEvent' => [new \stdClass]
+            ]
+        ];
 
-        $c->expects($this->at(0))
-            ->method('get')
-            ->with(ResultAggregator::class)
-            ->will($this->returnValue(new ResultAggregator));
-
-        $c->expects($this->at(1))
-            ->method('has')
-            ->with('eventListeners')
-            ->willReturn(true);
-
-        $c->expects($this->at(2))
-            ->method('get')
-            ->with('eventListeners')
-            ->will($this->returnValue([
-                'my-group' => [
-                    'someEvent' => [new \stdClass]
-                ]
-            ]));
+        $c = $this->prophesize(ContainerInterface::class);
+        $c->get(ResultAggregator::class)->willReturn(new ResultAggregator);
+        $c->has('eventListeners')->willReturn(true);
+        $c->get('eventListeners')->willReturn($eventConfig);
 
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Listener must be a callable or a container entry for a callable service.');
 
-        (new EventDispatcherFactory)->__invoke($c);
+        (new EventDispatcherFactory)->__invoke($c->reveal());
     }
 
     public function testExceptionIsThrownIfEventsListenerContainerEntryNotExist()
     {
-        $c = $this->createMock(ContainerInterface::class);
+        $eventConfig = [
+            'my-group' => [
+                'someEvent' => [containerListener('nonExistingContainerEntry')]
+            ]
+        ];
 
-        $c->expects($this->at(0))
-            ->method('get')
-            ->with(ResultAggregator::class)
-            ->will($this->returnValue(new ResultAggregator));
+        $c = $this->prophesize(ContainerInterface::class);
+        $c->get(ResultAggregator::class)->willReturn(new ResultAggregator);
+        $c->has('eventListeners')->willReturn(true);
+        $c->get('eventListeners')->willReturn($eventConfig);
 
-        $c->expects($this->at(1))
-            ->method('has')
-            ->with('eventListeners')
-            ->willReturn(true);
-
-        $c->expects($this->at(2))
-            ->method('get')
-            ->with('eventListeners')
-            ->will($this->returnValue([
-                'my-group' => [
-                    'someEvent' => [containerListener('nonExistingContainerEntry')]
-                ]
-            ]));
-
-        $c->expects($this->at(3))
-            ->method('has')
-            ->with('nonExistingContainerEntry')
-            ->will($this->returnValue(false));
+        $c->has('nonExistingContainerEntry')->willReturn(false);
 
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Container has no entry named: "nonExistingContainerEntry"');
 
-        (new EventDispatcherFactory)->__invoke($c);
+        (new EventDispatcherFactory)->__invoke($c->reveal());
     }
 
     public function testConfigEventListenersWithAnonymousFunction()
     {
-        $c = $this->createMock(ContainerInterface::class);
-
-        $c->expects($this->at(0))
-            ->method('get')
-            ->with(ResultAggregator::class)
-            ->will($this->returnValue(new ResultAggregator));
-
         $callback = function () {
         };
 
-        $c->expects($this->at(1))
-            ->method('has')
-            ->with('eventListeners')
-            ->willReturn(true);
+        $eventConfig = [
+            'my-group' => [
+                'someEvent' => [$callback]
+            ]
+        ];
 
-        $c->expects($this->at(2))
-            ->method('get')
-            ->with('eventListeners')
-            ->will($this->returnValue([
-                'my-group' => [
-                    'someEvent' => [$callback]
-                ]
-            ]));
+        $c = $this->prophesize(ContainerInterface::class);
+        $c->get(ResultAggregator::class)->willReturn(new ResultAggregator);
+        $c->has('eventListeners')->willReturn(true);
+        $c->get('eventListeners')->willReturn($eventConfig);
 
-        $dispatcher = (new EventDispatcherFactory)->__invoke($c);
+        $dispatcher = (new EventDispatcherFactory)->__invoke($c->reveal());
         $this->assertInstanceOf(EventDispatcher::class, $dispatcher);
         $this->assertSame(
             [
@@ -216,15 +146,17 @@ class EventDispatcherFactoryTest extends PHPUnit_Framework_TestCase
 
     public function testListenerFromContainerIsNotFetchedDuringAttaching()
     {
+        $eventConfig = [
+            'my-group' => [
+                'someEvent' => [containerListener('containerEntry')]
+            ]
+        ];
+
         $c = $this->prophesize(ContainerInterface::class);
 
         $c->get(ResultAggregator::class)->willReturn(new ResultAggregator);
         $c->has('eventListeners')->willReturn(true);
-        $c->get('eventListeners')->willReturn([
-            'my-group' => [
-                'someEvent' => [containerListener('containerEntry')]
-            ]
-        ]);
+        $c->get('eventListeners')->willReturn($eventConfig);
         $c->has('containerEntry')->willReturn(true);
 
 
@@ -237,15 +169,17 @@ class EventDispatcherFactoryTest extends PHPUnit_Framework_TestCase
 
     public function testListenerFromContainerIsFetchedWhenEventDispatched()
     {
+        $eventConfig = [
+            'my-group' => [
+                'someEvent' => [containerListener('containerEntry')]
+            ]
+        ];
+
         $c = $this->prophesize(ContainerInterface::class);
 
         $c->get(ResultAggregator::class)->willReturn(new ResultAggregator);
         $c->has('eventListeners')->willReturn(true);
-        $c->get('eventListeners')->willReturn([
-            'my-group' => [
-                'someEvent' => [containerListener('containerEntry')]
-            ]
-        ]);
+        $c->get('eventListeners')->willReturn($eventConfig);
         $c->has('containerEntry')->willReturn(true);
         $c->get('containerEntry')->willReturn(function () {
         });
@@ -259,15 +193,17 @@ class EventDispatcherFactoryTest extends PHPUnit_Framework_TestCase
 
     public function testExceptionIsThrownIfMethodDoesNotExistOnContainerEntry()
     {
+        $eventConfig = [
+            'my-group' => [
+                'someEvent' => [containerListener('containerEntry', 'notHere')]
+            ]
+        ];
+
         $c = $this->prophesize(ContainerInterface::class);
 
         $c->get(ResultAggregator::class)->willReturn(new ResultAggregator);
         $c->has('eventListeners')->willReturn(true);
-        $c->get('eventListeners')->willReturn([
-            'my-group' => [
-                'someEvent' => [containerListener('containerEntry', 'notHere')]
-            ]
-        ]);
+        $c->get('eventListeners')->willReturn($eventConfig);
         $c->has('containerEntry')->willReturn(true);
         $c->get('containerEntry')->willReturn(new \stdClass);
 
