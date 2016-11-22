@@ -17,11 +17,24 @@ class CliExerciseImpl implements ExerciseInterface, CliExercise
 {
 
     /**
+     * @var string
+     */
+    private $name;
+
+    /**
+     * @param string $name
+     */
+    public function __construct($name = 'my-exercise')
+    {
+        $this->name = $name;
+    }
+
+    /**
      * @return string
      */
     public function getName()
     {
-        return 'my-exercise';
+        return $this->name;
     }
 
     /**
@@ -29,7 +42,7 @@ class CliExerciseImpl implements ExerciseInterface, CliExercise
      */
     public function getDescription()
     {
-        return 'my-exercise';
+        return $this->name;
     }
 
     /**
