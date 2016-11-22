@@ -2,10 +2,11 @@
 
 namespace PhpSchool\PhpWorkshopTest;
 
-use InvalidArgumentException;
+use PhpSchool\PhpWorkshop\Exception\InvalidArgumentException;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseType;
 use PhpSchool\PhpWorkshopTest\Asset\CliExerciseImpl;
 use PhpSchool\PhpWorkshopTest\Asset\CliExerciseInterface;
+use PhpSchool\PhpWorkshopTest\Asset\CliExerciseMissingInterface;
 use PHPUnit_Framework_TestCase;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpSchool\PhpWorkshop\ExerciseRepository;
@@ -80,5 +81,16 @@ class ExerciseRepositoryTest extends PHPUnit_Framework_TestCase
 
         $repo = new ExerciseRepository($exercises);
         $this->assertEquals($exercises, iterator_to_array($repo));
+    }
+
+    public function testExceptionIsThrownWhenTryingToAddExerciseWhichDoesNotImplementCorrectInterface()
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $message  = '"PhpSchool\PhpWorkshopTest\Asset\CliExerciseMissingInterface" is required to implement ';
+        $message .= '"PhpSchool\PhpWorkshop\Exercise\CliExercise", but it does not';
+        $this->expectExceptionMessage($message);
+
+        $exercise = new CliExerciseMissingInterface;
+        new ExerciseRepository([$exercise]);
     }
 }
