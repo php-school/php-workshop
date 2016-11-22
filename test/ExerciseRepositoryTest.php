@@ -4,6 +4,7 @@ namespace PhpSchool\PhpWorkshopTest;
 
 use InvalidArgumentException;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseType;
+use PhpSchool\PhpWorkshopTest\Asset\CliExerciseImpl;
 use PhpSchool\PhpWorkshopTest\Asset\CliExerciseInterface;
 use PHPUnit_Framework_TestCase;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
@@ -18,14 +19,9 @@ class ExerciseRepositoryTest extends PHPUnit_Framework_TestCase
 {
     public function testFindAll()
     {
-        $exercise1 = $this->prophesize(CliExerciseInterface::class);
-        $exercise2 = $this->prophesize(CliExerciseInterface::class);
-        $exercise1->getType()->willReturn(ExerciseType::CLI());
-        $exercise2->getType()->willReturn(ExerciseType::CLI());
-
         $exercises = [
-            $exercise1->reveal(),
-            $exercise2->reveal()
+            new CliExerciseImpl('Exercise 1'),
+            new CliExerciseImpl('Exercise 2'),
         ];
 
         $repo = new ExerciseRepository($exercises);
@@ -35,18 +31,13 @@ class ExerciseRepositoryTest extends PHPUnit_Framework_TestCase
 
     public function testFindByName()
     {
-        $exercise1 = $this->prophesize(CliExerciseInterface::class);
-        $exercise2 = $this->prophesize(CliExerciseInterface::class);
-        $exercise1->getType()->willReturn(ExerciseType::CLI());
-        $exercise2->getType()->willReturn(ExerciseType::CLI());
-        $exercise1->getName()->willReturn('exercise1');
-        $exercise2->getName()->willReturn('exercise2');
+        $exercises = [
+            new CliExerciseImpl('Exercise 1'),
+            new CliExerciseImpl('Exercise 2'),
+        ];
 
-        $exercise1 = $exercise1->reveal();
-        $exercise2 = $exercise2->reveal();
-
-        $repo = new ExerciseRepository([$exercise1, $exercise2]);
-        $this->assertSame($exercise2, $repo->findByName('exercise2'));
+        $repo = new ExerciseRepository($exercises);
+        $this->assertSame($exercises[1], $repo->findByName('Exercise 2'));
     }
 
     public function testFindByNameThrowsExceptionIfNotFound()
@@ -60,27 +51,20 @@ class ExerciseRepositoryTest extends PHPUnit_Framework_TestCase
 
     public function testGetAllNames()
     {
-        $exercise1 = $this->prophesize(CliExerciseInterface::class);
-        $exercise2 = $this->prophesize(CliExerciseInterface::class);
-        $exercise1->getType()->willReturn(ExerciseType::CLI());
-        $exercise2->getType()->willReturn(ExerciseType::CLI());
-        $exercise1->getName()->willReturn('exercise1');
-        $exercise2->getName()->willReturn('exercise2');
+        $exercises = [
+            new CliExerciseImpl('Exercise 1'),
+            new CliExerciseImpl('Exercise 2'),
+        ];
 
-        $repo = new ExerciseRepository([$exercise1->reveal(), $exercise2->reveal()]);
-        $this->assertSame(['exercise1', 'exercise2'], $repo->getAllNames());
+        $repo = new ExerciseRepository($exercises);
+        $this->assertSame(['Exercise 1', 'Exercise 2'], $repo->getAllNames());
     }
 
     public function testCount()
     {
-        $exercise1 = $this->prophesize(CliExerciseInterface::class);
-        $exercise2 = $this->prophesize(CliExerciseInterface::class);
-        $exercise1->getType()->willReturn(ExerciseType::CLI());
-        $exercise2->getType()->willReturn(ExerciseType::CLI());
-
         $exercises = [
-            $exercise1->reveal(),
-            $exercise2->reveal()
+            new CliExerciseImpl('Exercise 1'),
+            new CliExerciseImpl('Exercise 2'),
         ];
 
         $repo = new ExerciseRepository($exercises);
@@ -89,14 +73,9 @@ class ExerciseRepositoryTest extends PHPUnit_Framework_TestCase
 
     public function testIterator()
     {
-        $exercise1 = $this->prophesize(CliExerciseInterface::class);
-        $exercise2 = $this->prophesize(CliExerciseInterface::class);
-        $exercise1->getType()->willReturn(ExerciseType::CLI());
-        $exercise2->getType()->willReturn(ExerciseType::CLI());
-
         $exercises = [
-            $exercise1->reveal(),
-            $exercise2->reveal()
+            new CliExerciseImpl('Exercise 1'),
+            new CliExerciseImpl('Exercise 2'),
         ];
 
         $repo = new ExerciseRepository($exercises);
