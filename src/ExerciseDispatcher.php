@@ -38,7 +38,7 @@ class ExerciseDispatcher
     /**
      * @var RunnerManager
      */
-    private $runnerFactory;
+    private $runnerManager;
 
     /**
      * @var ResultAggregator

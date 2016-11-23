@@ -90,6 +90,5 @@ class CliExerciseImpl implements ExerciseInterface, CliExercise
      */
     public function configure(ExerciseDispatcher $dispatcher)
     {
-        $dispatcher->requireCheck(ComposerCheck::class);
     }
 }
