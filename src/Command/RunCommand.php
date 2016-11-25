@@ -61,15 +61,7 @@ class RunCommand
      */
     public function __invoke(Input $input)
     {
-        $program = $input->getArgument('program');
-        if (!file_exists($program)) {
-            $this->output->printError(
-                sprintf('Could not run. File: "%s" does not exist', $program)
-            );
-            return 1;
-        }
-        $program = realpath($program);
         $exercise = $this->exerciseRepository->findByName($this->userState->getCurrentExercise());
-        $this->exerciseDispatcher->run($exercise, $program, $this->output);
+        $this->exerciseDispatcher->run($exercise, $input, $this->output);
     }
 }

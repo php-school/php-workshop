@@ -30,6 +30,7 @@ use PhpSchool\PhpWorkshop\Listener\CheckExerciseAssignedListener;
 use PhpSchool\PhpWorkshop\Listener\CodePatchListener;
 use PhpSchool\PhpWorkshop\Listener\ConfigureCommandListener;
 use PhpSchool\PhpWorkshop\Listener\PrepareSolutionListener;
+use PhpSchool\PhpWorkshop\Listener\RealPathListener;
 use PhpSchool\PhpWorkshop\Listener\SelfCheckListener;
 use PhpSchool\PhpWorkshop\MenuItem\ResetProgress;
 use PhpSchool\PhpWorkshop\Output\OutputInterface;
@@ -197,6 +198,7 @@ return [
             $c->get(RunnerManager::class)
         );
     },
+    RealPathListener::class => object(),
 
     //checks
     FileExistsCheck::class              => object(),
@@ -281,6 +283,20 @@ return [
     ],
     'appContributors' => [],
     'eventListeners'  => [
+        'realpath-student-submission' => [
+            'cli.verify.start' => [
+                containerListener(RealPathListener::class)
+            ],
+            'cli.run.start' => [
+                containerListener(RealPathListener::class)
+            ],
+            'cgi.verify.start' => [
+                containerListener(RealPathListener::class)
+            ],
+            'cgi.run.start' => [
+                containerListener(RealPathListener::class)
+            ]
+        ],
         'check-exercise-assigned' => [
             'route.pre.resolve.args' => [
                 containerListener(CheckExerciseAssignedListener::class)

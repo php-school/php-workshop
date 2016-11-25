@@ -45,26 +45,6 @@ class VerifyCommandTest extends PHPUnit_Framework_TestCase
             ->will($this->returnValue('Some Check'));
     }
 
-    public function testVerifyPrintsErrorIfProgramDoesNotExist()
-    {
-        $repo = new ExerciseRepository([]);
-        $state = new UserState;
-        $output = $this->createMock(OutputInterface::class);
-        $dispatcher = $this->createMock(ExerciseDispatcher::class);
-
-        $programFile = sprintf('%s/%s/program.php', sys_get_temp_dir(), $this->getName());
-        $output
-            ->expects($this->once())
-            ->method('printError')
-            ->with(sprintf('Could not verify. File: "%s" does not exist', $programFile));
-
-        $serializer = $this->createMock(UserStateSerializer::class);
-        $renderer = $this->createMock(ResultsRenderer::class);
-
-        $command = new VerifyCommand($repo, $dispatcher, $state, $serializer, $output, $renderer);
-        $this->assertSame(1, $command->__invoke(new Input('appName', ['program' => $programFile])));
-    }
-
     public function testVerifyAddsCompletedExerciseAndReturnsCorrectCodeOnSuccess()
     {
         $file = tempnam(sys_get_temp_dir(), 'pws');
