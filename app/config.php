@@ -197,7 +197,7 @@ return [
             $c->get(RunnerManager::class)
         );
     },
-    
+
     //checks
     FileExistsCheck::class              => object(),
     PhpLintCheck::class                 => object(),
@@ -292,25 +292,43 @@ return [
             ],
         ],
         'prepare-solution' => [
-            'verify.start' => [
+            'cli.verify.start' => [
                 containerListener(PrepareSolutionListener::class),
             ],
-            'run.start' => [
+            'cli.run.start' => [
+                containerListener(PrepareSolutionListener::class),
+            ],
+            'cgi.verify.start' => [
+                containerListener(PrepareSolutionListener::class),
+            ],
+            'cgi.run.start' => [
                 containerListener(PrepareSolutionListener::class),
             ],
         ],
         'code-patcher' => [
-            'run.start' => [
+            'cli.verify.start' => [
                 containerListener(CodePatchListener::class, 'patch'),
             ],
-            'verify.pre.execute' => [
+            'cli.verify.finish' => [
                 containerListener(CodePatchListener::class, 'patch'),
             ],
-            'verify.post.execute' => [
-                containerListener(CodePatchListener::class, 'revert'),
+            'cli.run.start' => [
+                containerListener(CodePatchListener::class, 'patch'),
             ],
-            'run.finish' => [
-                containerListener(CodePatchListener::class, 'revert'),
+            'cli.run.finish' => [
+                containerListener(CodePatchListener::class, 'patch'),
+            ],
+            'cgi.verify.start' => [
+                containerListener(CodePatchListener::class, 'patch'),
+            ],
+            'cgi.verify.finish' => [
+                containerListener(CodePatchListener::class, 'patch'),
+            ],
+            'cgi.run.start' => [
+                containerListener(CodePatchListener::class, 'patch'),
+            ],
+            'cgi.run.finish' => [
+                containerListener(CodePatchListener::class, 'patch'),
             ],
         ],
         'self-check' => [

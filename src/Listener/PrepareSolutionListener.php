@@ -3,6 +3,7 @@
 namespace PhpSchool\PhpWorkshop\Listener;
 
 use PhpSchool\PhpWorkshop\Event\Event;
+use PhpSchool\PhpWorkshop\Event\ExerciseRunnerEvent;
 use RuntimeException;
 use Symfony\Component\Process\Process;
 
@@ -25,11 +26,11 @@ class PrepareSolutionListener
     ];
 
     /**
-     * @param Event $event
+     * @param ExerciseRunnerEvent $event
      */
-    public function __invoke(Event $event)
+    public function __invoke(ExerciseRunnerEvent $event)
     {
-        $solution = $event->getParameter('exercise')->getSolution();
+        $solution = $event->getExercise()->getSolution();
 
         if ($solution->hasComposerFile()) {
             //prepare composer deps
