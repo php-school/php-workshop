@@ -33,7 +33,7 @@
         "nikic/php-parser": "^2.1"
     },
     "require-dev": {
-        "composer/composer": "^1.0-alpha",
+        "composer/composer": "^1.2",
         "phpunit/phpunit": "^5.6",
         "squizlabs/php_codesniffer": "^2.4"
     },
