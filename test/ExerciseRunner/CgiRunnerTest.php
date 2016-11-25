@@ -1,12 +1,16 @@
 <?php
 
-namespace PhpSchool\PhpWorkshop\ExerciseRunner;
+namespace PhpSchool\PhpWorkshopTest\ExerciseRunner;
 
 use Colors\Color;
 use PhpSchool\CliMenu\Terminal\TerminalInterface;
+use PhpSchool\PhpWorkshop\Check\CodeParseCheck;
+use PhpSchool\PhpWorkshop\Check\FileExistsCheck;
+use PhpSchool\PhpWorkshop\Check\PhpLintCheck;
 use PhpSchool\PhpWorkshop\Event\EventDispatcher;
 use PhpSchool\PhpWorkshop\Exception\SolutionExecutionException;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseType;
+use PhpSchool\PhpWorkshop\ExerciseRunner\CgiRunner;
 use PhpSchool\PhpWorkshop\Input\Input;
 use PhpSchool\PhpWorkshop\Output\StdOutput;
 use PhpSchool\PhpWorkshop\Result\CgiOutRequestFailure;
@@ -20,7 +24,6 @@ use Zend\Diactoros\Request;
 use Zend\Diactoros\Uri;
 
 /**
- * Class CgiRunnerTest
  * @package PhpSchool\PhpWorkshop\ExerciseRunner
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
@@ -45,6 +48,17 @@ class CgiRunnerTest extends PHPUnit_Framework_TestCase
             ->will($this->returnValue(ExerciseType::CGI()));
 
         $this->assertEquals('CGI Program Runner', $this->runner->getName());
+    }
+
+    public function testRequiredChecks()
+    {
+        $requiredChecks = [
+            FileExistsCheck::class,
+            PhpLintCheck::class,
+            CodeParseCheck::class,
+        ];
+
+        $this->assertEquals($requiredChecks, $this->runner->getRequiredChecks());
     }
 
     public function testVerifyThrowsExceptionIfSolutionFailsExecution()

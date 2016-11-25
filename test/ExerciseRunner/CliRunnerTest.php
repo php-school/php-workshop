@@ -1,13 +1,17 @@
 <?php
 
-namespace PhpSchool\PhpWorkshop\ExerciseRunner;
+namespace PhpSchool\PhpWorkshopTest\ExerciseRunner;
 
 use Colors\Color;
 use InvalidArgumentException;
 use PhpSchool\CliMenu\Terminal\TerminalInterface;
+use PhpSchool\PhpWorkshop\Check\CodeParseCheck;
+use PhpSchool\PhpWorkshop\Check\FileExistsCheck;
+use PhpSchool\PhpWorkshop\Check\PhpLintCheck;
 use PhpSchool\PhpWorkshop\Event\EventDispatcher;
 use PhpSchool\PhpWorkshop\Exception\SolutionExecutionException;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseType;
+use PhpSchool\PhpWorkshop\ExerciseRunner\CliRunner;
 use PhpSchool\PhpWorkshop\Input\Input;
 use PhpSchool\PhpWorkshop\Output\StdOutput;
 use PhpSchool\PhpWorkshop\Result\Failure;
@@ -19,7 +23,6 @@ use PhpSchool\PhpWorkshopTest\Asset\CliExerciseInterface;
 use PHPUnit_Framework_TestCase;
 
 /**
- * Class CliRunnerTest
  * @package PhpSchool\PhpWorkshop\ExerciseRunner
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
@@ -44,6 +47,17 @@ class CliRunnerTest extends PHPUnit_Framework_TestCase
             ->will($this->returnValue(ExerciseType::CLI()));
 
         $this->assertEquals('CLI Program Runner', $this->runner->getName());
+    }
+
+    public function testRequiredChecks()
+    {
+        $requiredChecks = [
+            FileExistsCheck::class,
+            PhpLintCheck::class,
+            CodeParseCheck::class,
+        ];
+
+        $this->assertEquals($requiredChecks, $this->runner->getRequiredChecks());
     }
 
     public function testVerifyThrowsExceptionIfSolutionFailsExecution()

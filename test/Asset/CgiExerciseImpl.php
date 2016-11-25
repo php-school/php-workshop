@@ -3,25 +3,40 @@
 namespace PhpSchool\PhpWorkshopTest\Asset;
 
 use PhpSchool\PhpWorkshop\Check\ComposerCheck;
+use PhpSchool\PhpWorkshop\Exercise\CgiExercise;
+use PhpSchool\PhpWorkshop\Exercise\CliExercise;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseType;
 use PhpSchool\PhpWorkshop\ExerciseCheck\ComposerExerciseCheck;
 use PhpSchool\PhpWorkshop\ExerciseDispatcher;
+use Psr\Http\Message\RequestInterface;
 
 /**
- * Class ComposerExercise
  * @package PhpSchool\PhpWorkshopTest\Asset
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
-class ComposerExercise implements ExerciseInterface, ComposerExerciseCheck
+class CgiExerciseImpl implements ExerciseInterface, CgiExercise
 {
+
+    /**
+     * @var string
+     */
+    private $name;
+
+    /**
+     * @param string $name
+     */
+    public function __construct($name = 'my-exercise')
+    {
+        $this->name = $name;
+    }
 
     /**
      * @return string
      */
     public function getName()
     {
-        return 'composer-exercise';
+        return $this->name;
     }
 
     /**
@@ -29,7 +44,7 @@ class ComposerExercise implements ExerciseInterface, ComposerExerciseCheck
      */
     public function getDescription()
     {
-        // TODO: Implement getDescription() method.
+        return $this->name;
     }
 
     /**
@@ -57,22 +72,14 @@ class ComposerExercise implements ExerciseInterface, ComposerExerciseCheck
     }
 
     /**
-     * @return array
+     * This method should return an array of PSR-7 requests, which will be forwarded to the student's
+     * solution.
+     *
+     * @return RequestInterface[] An array of PSR-7 requests.
      */
-    public function getArgs()
+    public function getRequests()
     {
-        // TODO: Implement getArgs() method.
-    }
-
-    /**
-     * @return array[]
-     */
-    public function getRequiredPackages()
-    {
-        return [
-            'klein/klein',
-            'danielstjules/stringy'
-        ];
+        // TODO: Implement getRequests() method.
     }
 
     /**
@@ -80,7 +87,7 @@ class ComposerExercise implements ExerciseInterface, ComposerExerciseCheck
      */
     public function getType()
     {
-        return ExerciseType::CLI();
+        return ExerciseType::CGI();
     }
 
     /**
@@ -88,6 +95,5 @@ class ComposerExercise implements ExerciseInterface, ComposerExerciseCheck
      */
     public function configure(ExerciseDispatcher $dispatcher)
     {
-        $dispatcher->requireCheck(ComposerCheck::class);
     }
 }

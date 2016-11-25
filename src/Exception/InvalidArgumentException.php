@@ -49,6 +49,22 @@ class InvalidArgumentException extends \InvalidArgumentException
     }
 
     /**
+     * @param object $object
+     * @param string $requiredInterface
+     * @return static
+     */
+    public static function missingImplements($object, $requiredInterface)
+    {
+        return new static(
+            sprintf(
+                '"%s" is required to implement "%s", but it does not',
+                get_class($object),
+                $requiredInterface
+            )
+        );
+    }
+
+    /**
      * @param $value
      * @return string
      */

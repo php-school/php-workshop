@@ -5,10 +5,13 @@ namespace PhpSchool\PhpWorkshopTest\Command;
 use Colors\Color;
 use PhpSchool\CliMenu\Terminal\TerminalInterface;
 use PhpSchool\PhpWorkshop\Check\CheckInterface;
+use PhpSchool\PhpWorkshop\Exercise\ExerciseType;
 use PhpSchool\PhpWorkshop\ExerciseDispatcher;
 use PhpSchool\PhpWorkshop\Input\Input;
 use PhpSchool\PhpWorkshop\Output\OutputInterface;
 use PhpSchool\PhpWorkshop\Output\StdOutput;
+use PhpSchool\PhpWorkshopTest\Asset\CliExerciseImpl;
+use PhpSchool\PhpWorkshopTest\Asset\CliExerciseInterface;
 use PHPUnit_Framework_TestCase;
 use PhpSchool\PhpWorkshop\Command\VerifyCommand;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
@@ -69,13 +72,11 @@ class VerifyCommandTest extends PHPUnit_Framework_TestCase
 
         $input = new Input('appName', ['program' => $file]);
 
-        $e = $this->createMock(ExerciseInterface::class);
-        $e->expects($this->any())
-            ->method('getName')
-            ->will($this->returnValue('exercise1'));
-        $repo = new ExerciseRepository([$e]);
+        $exercise = new CliExerciseImpl;
+        $repo = new ExerciseRepository([$exercise]);
+
         $state = new UserState;
-        $state->setCurrentExercise('exercise1');
+        $state->setCurrentExercise('my-exercise');
         $color = new Color;
         $color->setForceStyle(true);
         $output = new StdOutput($color, $this->createMock(TerminalInterface::class));
@@ -96,18 +97,18 @@ class VerifyCommandTest extends PHPUnit_Framework_TestCase
         $dispatcher
             ->expects($this->once())
             ->method('verify')
-            ->with($e, $input)
+            ->with($exercise, $input)
             ->will($this->returnValue($results));
         
         $renderer
             ->expects($this->once())
             ->method('render')
-            ->with($results, $e, $state, $output);
+            ->with($results, $exercise, $state, $output);
 
     
         $command = new VerifyCommand($repo, $dispatcher, $state, $serializer, $output, $renderer);
         $this->assertEquals(0, $command->__invoke($input));
-        $this->assertEquals(['exercise1'], $state->getCompletedExercises());
+        $this->assertEquals(['my-exercise'], $state->getCompletedExercises());
         unlink($file);
     }
 
@@ -118,13 +119,10 @@ class VerifyCommandTest extends PHPUnit_Framework_TestCase
 
         $input = new Input('appName', ['program' => $file]);
 
-        $e = $this->createMock(ExerciseInterface::class);
-        $e->expects($this->any())
-            ->method('getName')
-            ->will($this->returnValue('exercise1'));
-        $repo = new ExerciseRepository([$e]);
+        $exercise = new CliExerciseImpl;
+        $repo = new ExerciseRepository([$exercise]);
         $state = new UserState;
-        $state->setCurrentExercise('exercise1');
+        $state->setCurrentExercise('my-exercise');
         $color = new Color;
         $color->setForceStyle(true);
         $output = new StdOutput($color, $this->createMock(TerminalInterface::class));
@@ -146,13 +144,13 @@ class VerifyCommandTest extends PHPUnit_Framework_TestCase
         $dispatcher
             ->expects($this->once())
             ->method('verify')
-            ->with($e, $input)
+            ->with($exercise, $input)
             ->will($this->returnValue($results));
 
         $renderer
             ->expects($this->once())
             ->method('render')
-            ->with($results, $e, $state, $output);
+            ->with($results, $exercise, $state, $output);
 
         $command = new VerifyCommand($repo, $dispatcher, $state, $serializer, $output, $renderer);
         $this->assertEquals(1, $command->__invoke($input));

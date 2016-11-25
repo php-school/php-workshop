@@ -3,25 +3,38 @@
 namespace PhpSchool\PhpWorkshopTest\Asset;
 
 use PhpSchool\PhpWorkshop\Check\ComposerCheck;
+use PhpSchool\PhpWorkshop\Exercise\CliExercise;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseType;
 use PhpSchool\PhpWorkshop\ExerciseCheck\ComposerExerciseCheck;
 use PhpSchool\PhpWorkshop\ExerciseDispatcher;
 
 /**
- * Class ComposerExercise
  * @package PhpSchool\PhpWorkshopTest\Asset
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
-class ComposerExercise implements ExerciseInterface, ComposerExerciseCheck
+class CliExerciseImpl implements ExerciseInterface, CliExercise
 {
+
+    /**
+     * @var string
+     */
+    private $name;
+
+    /**
+     * @param string $name
+     */
+    public function __construct($name = 'my-exercise')
+    {
+        $this->name = $name;
+    }
 
     /**
      * @return string
      */
     public function getName()
     {
-        return 'composer-exercise';
+        return $this->name;
     }
 
     /**
@@ -29,7 +42,7 @@ class ComposerExercise implements ExerciseInterface, ComposerExerciseCheck
      */
     public function getDescription()
     {
-        // TODO: Implement getDescription() method.
+        return $this->name;
     }
 
     /**
@@ -65,17 +78,6 @@ class ComposerExercise implements ExerciseInterface, ComposerExerciseCheck
     }
 
     /**
-     * @return array[]
-     */
-    public function getRequiredPackages()
-    {
-        return [
-            'klein/klein',
-            'danielstjules/stringy'
-        ];
-    }
-
-    /**
      * @return ExerciseType
      */
     public function getType()
@@ -88,6 +90,5 @@ class ComposerExercise implements ExerciseInterface, ComposerExerciseCheck
      */
     public function configure(ExerciseDispatcher $dispatcher)
     {
-        $dispatcher->requireCheck(ComposerCheck::class);
     }
 }
