@@ -8,13 +8,12 @@ use PhpSchool\PhpWorkshop\Check\PhpLintCheck;
 use PhpSchool\PhpWorkshop\Event\CgiExecuteEvent;
 use PhpSchool\PhpWorkshop\Event\Event;
 use PhpSchool\PhpWorkshop\Event\EventDispatcher;
+use PhpSchool\PhpWorkshop\Event\ExerciseRunnerEvent;
 use PhpSchool\PhpWorkshop\Exception\CodeExecutionException;
 use PhpSchool\PhpWorkshop\Exception\SolutionExecutionException;
 use PhpSchool\PhpWorkshop\Exercise\CgiExercise;
-use PhpSchool\PhpWorkshop\ExerciseDispatcher;
 use PhpSchool\PhpWorkshop\Input\Input;
 use PhpSchool\PhpWorkshop\Output\OutputInterface;
-use PhpSchool\PhpWorkshop\Result\CgiOutFailure;
 use PhpSchool\PhpWorkshop\Result\CgiOutRequestFailure;
 use PhpSchool\PhpWorkshop\Result\CgiOutResult;
 use PhpSchool\PhpWorkshop\Result\Failure;
@@ -237,7 +236,8 @@ class CgiRunner implements ExerciseRunnerInterface
      */
     public function verify(Input $input)
     {
-        return new CgiOutResult(
+        $this->eventDispatcher->dispatch(new ExerciseRunnerEvent('cgi.verify.start', $this->exercise, $input));
+        $result = new CgiOutResult(
             $this->getName(),
             array_map(
                 function (RequestInterface $request) use ($input) {
@@ -246,6 +246,8 @@ class CgiRunner implements ExerciseRunnerInterface
                 $this->exercise->getRequests()
             )
         );
+        $this->eventDispatcher->dispatch(new ExerciseRunnerEvent('cgi.verify.finish', $this->exercise, $input));
+        return $result;
     }
 
     /**
@@ -267,6 +269,7 @@ class CgiRunner implements ExerciseRunnerInterface
      */
     public function run(Input $input, OutputInterface $output)
     {
+        $this->eventDispatcher->dispatch(new ExerciseRunnerEvent('cgi.run.start', $this->exercise, $input));
         $success = true;
         foreach ($this->exercise->getRequests() as $i => $request) {
             $event = $this->eventDispatcher->dispatch(
@@ -295,6 +298,7 @@ class CgiRunner implements ExerciseRunnerInterface
 
             $output->lineBreak();
         }
+        $this->eventDispatcher->dispatch(new ExerciseRunnerEvent('cgi.run.finish', $this->exercise, $input));
         return $success;
     }
 }
