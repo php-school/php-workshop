@@ -32,6 +32,11 @@ class ExtRunnerTest extends PHPUnit_Framework_TestCase
         $this->assertEquals('Custom Verifying Runner', $this->runner->getName());
     }
 
+    public function testRequiredChecks()
+    {
+        $this->assertEquals([], $this->runner->getRequiredChecks());
+    }
+
     public function testRunOutputsErrorMessage()
     {
         $color = new Color;
