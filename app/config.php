@@ -22,7 +22,7 @@ use PhpSchool\PhpWorkshop\Event\EventDispatcher;
 use PhpSchool\PhpWorkshop\ExerciseDispatcher;
 use PhpSchool\PhpWorkshop\ExerciseRunner\Factory\CgiRunnerFactory;
 use PhpSchool\PhpWorkshop\ExerciseRunner\Factory\CliRunnerFactory;
-use PhpSchool\PhpWorkshop\ExerciseRunner\Factory\CustomRunnerFactory;
+use PhpSchool\PhpWorkshop\ExerciseRunner\Factory\CustomVerifyingRunnerFactory;
 use PhpSchool\PhpWorkshop\ExerciseRunner\RunnerManager;
 use PhpSchool\PhpWorkshop\Factory\EventDispatcherFactory;
 use PhpSchool\PhpWorkshop\Factory\MenuFactory;
@@ -126,7 +126,7 @@ return [
         $manager = new RunnerManager;
         $manager->addFactory(new CliRunnerFactory($c->get(EventDispatcher::class)));
         $manager->addFactory(new CgiRunnerFactory($c->get(EventDispatcher::class)));
-        $manager->addFactory(new CustomRunnerFactory);
+        $manager->addFactory(new CustomVerifyingRunnerFactory);
         return $manager;
     },
 
