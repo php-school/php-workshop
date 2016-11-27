@@ -7,7 +7,7 @@ use PhpSchool\PhpWorkshop\Result\ResultInterface;
 /**
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
-interface CustomExercise
+interface CustomVerifyingExercise
 {
     /**
      * @return ResultInterface

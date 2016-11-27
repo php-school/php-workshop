@@ -4,10 +4,9 @@ namespace PhpSchool\PhpWorkshop\ExerciseRunner;
 
 use Colors\Color;
 use PhpSchool\CliMenu\Terminal\TerminalInterface;
-use PhpSchool\PhpWorkshop\ExerciseDispatcher;
 use PhpSchool\PhpWorkshop\Input\Input;
 use PhpSchool\PhpWorkshop\Output\StdOutput;
-use PhpSchool\PhpWorkshopTest\Asset\ExtExerciseImpl;
+use PhpSchool\PhpWorkshopTest\Asset\CustomVerifyingExerciseImpl;
 use PHPUnit_Framework_TestCase;
 
 /**
@@ -16,21 +15,21 @@ use PHPUnit_Framework_TestCase;
 class ExtRunnerTest extends PHPUnit_Framework_TestCase
 {
     /**
-     * @var CustomRunner
+     * @var CustomVerifyingRunner
      */
     private $runner;
 
     /**
-     * @var ExtExerciseImpl
+     * @var CustomVerifyingExerciseImpl
      */
     private $exercise;
 
     public function setUp()
     {
-        $this->exercise = new ExtExerciseImpl;
-        $this->runner = new CustomRunner($this->exercise);
+        $this->exercise = new CustomVerifyingExerciseImpl;
+        $this->runner = new CustomVerifyingRunner($this->exercise);
 
-        $this->assertEquals('External Runner', $this->runner->getName());
+        $this->assertEquals('Custom Verifying Runner', $this->runner->getName());
     }
 
     public function testRunOutputsErrorMessage()
@@ -39,7 +38,7 @@ class ExtRunnerTest extends PHPUnit_Framework_TestCase
         $color->setForceStyle(true);
         $output = new StdOutput($color, $this->createMock(TerminalInterface::class));
 
-        $exp  = "Nothing to run here. This exercise does not require a code solution, ";
+        $exp  = 'Nothing to run here. This exercise does not require a code solution, ';
         $exp .= "so there is nothing to execute.\n";
 
         $this->expectOutputString($exp);

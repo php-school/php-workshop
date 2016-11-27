@@ -2,19 +2,16 @@
 
 namespace PhpSchool\PhpWorkshop\ExerciseRunner\Factory;
 
-use PhpSchool\PhpWorkshop\CommandArgument;
 use PhpSchool\PhpWorkshop\CommandDefinition;
-use PhpSchool\PhpWorkshop\Event\EventDispatcher;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseType;
-use PhpSchool\PhpWorkshop\ExerciseRunner\CgiRunner;
-use PhpSchool\PhpWorkshop\ExerciseRunner\CustomRunner;
+use PhpSchool\PhpWorkshop\ExerciseRunner\CustomVerifyingRunner;
 use PhpSchool\PhpWorkshop\ExerciseRunner\ExerciseRunnerInterface;
 
 /**
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
-class CustomRunnerFactory implements ExerciseRunnerFactoryInterface
+class CustomVerifyingRunnerFactory implements ExerciseRunnerFactoryInterface
 {
     /**
      * @var string
@@ -49,6 +46,6 @@ class CustomRunnerFactory implements ExerciseRunnerFactoryInterface
      */
     public function create(ExerciseInterface $exercise)
     {
-        return new CustomRunner($exercise);
+        return new CustomVerifyingRunner($exercise);
     }
 }

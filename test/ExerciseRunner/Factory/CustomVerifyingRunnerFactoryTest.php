@@ -3,13 +3,12 @@
 namespace PhpSchool\PhpWorkshopTest\ExerciseRunner\Factory;
 
 use PhpSchool\PhpWorkshop\CommandDefinition;
-use PhpSchool\PhpWorkshop\Event\EventDispatcher;
-use PhpSchool\PhpWorkshop\Exercise\CustomExercise;
+use PhpSchool\PhpWorkshop\Exercise\CustomVerifyingExercise;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseType;
-use PhpSchool\PhpWorkshop\ExerciseRunner\CustomRunner;
-use PhpSchool\PhpWorkshop\ExerciseRunner\Factory\CustomRunnerFactory;
-use PhpSchool\PhpWorkshopTest\Asset\ExtExerciseImpl;
+use PhpSchool\PhpWorkshop\ExerciseRunner\CustomVerifyingRunner;
+use PhpSchool\PhpWorkshop\ExerciseRunner\Factory\CustomVerifyingRunnerFactory;
+use PhpSchool\PhpWorkshopTest\Asset\CustomVerifyingExerciseImpl;
 use PHPUnit_Framework_TestCase;
 
 /**
@@ -18,13 +17,13 @@ use PHPUnit_Framework_TestCase;
 class CustomRunnerFactoryTest extends PHPUnit_Framework_TestCase
 {
     /**
-     * @var CustomRunnerFactory
+     * @var CustomVerifyingRunnerFactory
      */
     private $factory;
 
     public function setUp()
     {
-        $this->factory = new CustomRunnerFactory;
+        $this->factory = new CustomVerifyingRunnerFactory;
     }
 
     public function testSupports()
@@ -52,7 +51,7 @@ class CustomRunnerFactoryTest extends PHPUnit_Framework_TestCase
 
     public function testCreateReturnsRunner()
     {
-        $exercise = new ExtExerciseImpl;
-        $this->assertInstanceOf(CustomRunner::class, $this->factory->create($exercise));
+        $exercise = new CustomVerifyingExerciseImpl;
+        $this->assertInstanceOf(CustomVerifyingRunner::class, $this->factory->create($exercise));
     }
 }

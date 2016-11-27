@@ -32,7 +32,7 @@ class ExerciseType extends Enum
     private static $exerciseTypeToExerciseInterfaceMap = [
         self::CLI    => CliExercise::class,
         self::CGI    => CgiExercise::class,
-        self::CUSTOM => CustomExercise::class,
+        self::CUSTOM => CustomVerifyingExercise::class,
     ];
 
     /**

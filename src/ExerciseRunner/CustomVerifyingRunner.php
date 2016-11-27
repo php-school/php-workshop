@@ -2,7 +2,7 @@
 
 namespace PhpSchool\PhpWorkshop\ExerciseRunner;
 
-use PhpSchool\PhpWorkshop\Exercise\CustomExercise;
+use PhpSchool\PhpWorkshop\Exercise\CustomVerifyingExercise;
 use PhpSchool\PhpWorkshop\Input\Input;
 use PhpSchool\PhpWorkshop\Output\OutputInterface;
 use PhpSchool\PhpWorkshop\Result\ResultInterface;
@@ -10,17 +10,17 @@ use PhpSchool\PhpWorkshop\Result\ResultInterface;
 /**
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
-class CustomRunner implements ExerciseRunnerInterface
+class CustomVerifyingRunner implements ExerciseRunnerInterface
 {
     /**
-     * @var CustomExercise
+     * @var CustomVerifyingExercise
      */
     private $exercise;
 
     /**
-     * @param CustomExercise $exercise
+     * @param CustomVerifyingExercise $exercise
      */
-    public function __construct(CustomExercise $exercise)
+    public function __construct(CustomVerifyingExercise $exercise)
     {
         $this->exercise = $exercise;
     }
@@ -32,7 +32,7 @@ class CustomRunner implements ExerciseRunnerInterface
      */
     public function getName()
     {
-        return 'External Runner';
+        return 'Custom Verifying Runner';
     }
 
     /**

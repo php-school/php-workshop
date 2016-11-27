@@ -5,14 +5,14 @@ namespace PhpSchool\PhpWorkshopTest\Asset;
 use PhpSchool\PhpWorkshop\Exercise\AbstractExercise;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseType;
-use PhpSchool\PhpWorkshop\Exercise\CustomExercise;
+use PhpSchool\PhpWorkshop\Exercise\CustomVerifyingExercise;
 use PhpSchool\PhpWorkshop\Result\ResultInterface;
 use PhpSchool\PhpWorkshop\Result\Success;
 
 /**
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
-class ExtExerciseImpl extends AbstractExercise implements ExerciseInterface, CustomExercise
+class CustomVerifyingExerciseImpl extends AbstractExercise implements ExerciseInterface, CustomVerifyingExercise
 {
 
     /**
@@ -22,7 +22,7 @@ class ExtExerciseImpl extends AbstractExercise implements ExerciseInterface, Cus
      */
     public function getName()
     {
-        return 'EXT exercise';
+        return 'Custom Verifying exercise';
     }
 
     /**
@@ -32,7 +32,7 @@ class ExtExerciseImpl extends AbstractExercise implements ExerciseInterface, Cus
      */
     public function getDescription()
     {
-        return 'EXT exercise';
+        return 'Custom Verifying exercise';
     }
 
     /**
@@ -42,7 +42,7 @@ class ExtExerciseImpl extends AbstractExercise implements ExerciseInterface, Cus
      */
     public function getType()
     {
-        return ExerciseType::EXT();
+        return ExerciseType::CUSTOM();
     }
 
     /**
