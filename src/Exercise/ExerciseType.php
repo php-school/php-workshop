@@ -20,6 +20,8 @@ class ExerciseType extends Enum
 {
     const CLI    = 'CLI';
     const CGI    = 'CGI';
+    const CUSTOM = 'CUSTOM';
+
 
     /**
      * Map of exercise types to the required interfaces exercises of that particular
@@ -30,6 +32,7 @@ class ExerciseType extends Enum
     private static $exerciseTypeToExerciseInterfaceMap = [
         self::CLI    => CliExercise::class,
         self::CGI    => CgiExercise::class,
+        self::CUSTOM => CustomVerifyingExercise::class,
     ];
 
     /**

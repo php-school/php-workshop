@@ -22,6 +22,7 @@ use PhpSchool\PhpWorkshop\Event\EventDispatcher;
 use PhpSchool\PhpWorkshop\ExerciseDispatcher;
 use PhpSchool\PhpWorkshop\ExerciseRunner\Factory\CgiRunnerFactory;
 use PhpSchool\PhpWorkshop\ExerciseRunner\Factory\CliRunnerFactory;
+use PhpSchool\PhpWorkshop\ExerciseRunner\Factory\CustomVerifyingRunnerFactory;
 use PhpSchool\PhpWorkshop\ExerciseRunner\RunnerManager;
 use PhpSchool\PhpWorkshop\Factory\EventDispatcherFactory;
 use PhpSchool\PhpWorkshop\Factory\MenuFactory;
@@ -125,6 +126,7 @@ return [
         $manager = new RunnerManager;
         $manager->addFactory(new CliRunnerFactory($c->get(EventDispatcher::class)));
         $manager->addFactory(new CgiRunnerFactory($c->get(EventDispatcher::class)));
+        $manager->addFactory(new CustomVerifyingRunnerFactory);
         return $manager;
     },
 
@@ -326,25 +328,25 @@ return [
                 containerListener(CodePatchListener::class, 'patch'),
             ],
             'cli.verify.finish' => [
-                containerListener(CodePatchListener::class, 'patch'),
+                containerListener(CodePatchListener::class, 'revert'),
             ],
             'cli.run.start' => [
                 containerListener(CodePatchListener::class, 'patch'),
             ],
             'cli.run.finish' => [
-                containerListener(CodePatchListener::class, 'patch'),
+                containerListener(CodePatchListener::class, 'revert'),
             ],
             'cgi.verify.start' => [
                 containerListener(CodePatchListener::class, 'patch'),
             ],
             'cgi.verify.finish' => [
-                containerListener(CodePatchListener::class, 'patch'),
+                containerListener(CodePatchListener::class, 'revert'),
             ],
             'cgi.run.start' => [
                 containerListener(CodePatchListener::class, 'patch'),
             ],
             'cgi.run.finish' => [
-                containerListener(CodePatchListener::class, 'patch'),
+                containerListener(CodePatchListener::class, 'revert'),
             ],
         ],
         'self-check' => [
