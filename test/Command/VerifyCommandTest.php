@@ -5,16 +5,12 @@ namespace PhpSchool\PhpWorkshopTest\Command;
 use Colors\Color;
 use PhpSchool\CliMenu\Terminal\TerminalInterface;
 use PhpSchool\PhpWorkshop\Check\CheckInterface;
-use PhpSchool\PhpWorkshop\Exercise\ExerciseType;
 use PhpSchool\PhpWorkshop\ExerciseDispatcher;
 use PhpSchool\PhpWorkshop\Input\Input;
-use PhpSchool\PhpWorkshop\Output\OutputInterface;
 use PhpSchool\PhpWorkshop\Output\StdOutput;
 use PhpSchool\PhpWorkshopTest\Asset\CliExerciseImpl;
-use PhpSchool\PhpWorkshopTest\Asset\CliExerciseInterface;
 use PHPUnit_Framework_TestCase;
 use PhpSchool\PhpWorkshop\Command\VerifyCommand;
-use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpSchool\PhpWorkshop\ExerciseRepository;
 use PhpSchool\PhpWorkshop\Result\Failure;
 use PhpSchool\PhpWorkshop\Result\Success;
@@ -43,26 +39,6 @@ class VerifyCommandTest extends PHPUnit_Framework_TestCase
             ->expects($this->any())
             ->method('getName')
             ->will($this->returnValue('Some Check'));
-    }
-
-    public function testVerifyPrintsErrorIfProgramDoesNotExist()
-    {
-        $repo = new ExerciseRepository([]);
-        $state = new UserState;
-        $output = $this->createMock(OutputInterface::class);
-        $dispatcher = $this->createMock(ExerciseDispatcher::class);
-
-        $programFile = sprintf('%s/%s/program.php', sys_get_temp_dir(), $this->getName());
-        $output
-            ->expects($this->once())
-            ->method('printError')
-            ->with(sprintf('Could not verify. File: "%s" does not exist', $programFile));
-
-        $serializer = $this->createMock(UserStateSerializer::class);
-        $renderer = $this->createMock(ResultsRenderer::class);
-
-        $command = new VerifyCommand($repo, $dispatcher, $state, $serializer, $output, $renderer);
-        $this->assertSame(1, $command->__invoke(new Input('appName', ['program' => $programFile])));
     }
 
     public function testVerifyAddsCompletedExerciseAndReturnsCorrectCodeOnSuccess()

@@ -8,10 +8,10 @@ use PhpSchool\PhpWorkshop\Check\PhpLintCheck;
 use PhpSchool\PhpWorkshop\Event\CliExecuteEvent;
 use PhpSchool\PhpWorkshop\Event\Event;
 use PhpSchool\PhpWorkshop\Event\EventDispatcher;
+use PhpSchool\PhpWorkshop\Event\ExerciseRunnerEvent;
 use PhpSchool\PhpWorkshop\Exception\CodeExecutionException;
 use PhpSchool\PhpWorkshop\Exception\SolutionExecutionException;
 use PhpSchool\PhpWorkshop\Exercise\CliExercise;
-use PhpSchool\PhpWorkshop\ExerciseDispatcher;
 use PhpSchool\PhpWorkshop\Input\Input;
 use PhpSchool\PhpWorkshop\Output\OutputInterface;
 use PhpSchool\PhpWorkshop\Result\Failure;
@@ -128,6 +128,18 @@ class CliRunner implements ExerciseRunnerInterface
      */
     public function verify(Input $input)
     {
+        $this->eventDispatcher->dispatch(new ExerciseRunnerEvent('cli.verify.start', $this->exercise, $input));
+        $result = $this->doVerify($input);
+        $this->eventDispatcher->dispatch(new ExerciseRunnerEvent('cli.verify.finish', $this->exercise, $input));
+        return $result;
+    }
+
+    /**
+     * @param Input $input
+     * @return ResultInterface
+     */
+    private function doVerify(Input $input)
+    {
         //arrays are not pass-by-ref
         $args = new ArrayObject($this->exercise->getArgs());
 
@@ -175,6 +187,7 @@ class CliRunner implements ExerciseRunnerInterface
      */
     public function run(Input $input, OutputInterface $output)
     {
+        $this->eventDispatcher->dispatch(new ExerciseRunnerEvent('cli.run.start', $this->exercise, $input));
         /** @var CliExecuteEvent $event */
         $event = $this->eventDispatcher->dispatch(
             new CliExecuteEvent('cli.run.student-execute.pre', new ArrayObject($this->exercise->getArgs()))
@@ -200,6 +213,7 @@ class CliRunner implements ExerciseRunnerInterface
             $output->writeLine($outputBuffer);
         });
 
+        $this->eventDispatcher->dispatch(new ExerciseRunnerEvent('cli.run.finish', $this->exercise, $input));
         return $process->isSuccessful();
     }
 }

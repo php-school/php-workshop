@@ -51,6 +51,20 @@ class ExerciseDispatcherTest extends PHPUnit_Framework_TestCase
         touch($this->file);
     }
 
+    public function testGetEventDispatcher()
+    {
+        $eventDispatcher = new EventDispatcher($results = new ResultAggregator);
+
+        $exerciseDispatcher = new ExerciseDispatcher(
+            $this->prophesize(RunnerManager::class)->reveal(),
+            $results,
+            $eventDispatcher,
+            new CheckRepository
+        );
+
+        $this->assertSame($eventDispatcher, $exerciseDispatcher->getEventDispatcher());
+    }
+
     public function testRequireCheckThrowsExceptionIfCheckDoesNotExist()
     {
         $this->expectException(InvalidArgumentException::class);
@@ -173,7 +187,7 @@ class ExerciseDispatcherTest extends PHPUnit_Framework_TestCase
         $check = $checkProphecy->reveal();
 
         $runner = $this->prophesize(ExerciseRunnerInterface::class);
-        $runner->getRequiredChecks()->willReturn([]);
+        $runner->getRequiredChecks()->willReturn([get_class($check)]);
         $runnerManager = $this->prophesize(RunnerManager::class);
         $runnerManager->getRunner($exercise)->willReturn($runner->reveal());
 
@@ -183,8 +197,6 @@ class ExerciseDispatcherTest extends PHPUnit_Framework_TestCase
             $this->prophesize(EventDispatcher::class)->reveal(),
             new CheckRepository([$check])
         );
-
-        $exerciseDispatcher->requireCheck(get_class($check));
 
         $msg  = 'Check: "Some Check" cannot process exercise: "Some Exercise" with type: "CLI"';
         $this->expectException(CheckNotApplicableException::class);
@@ -205,7 +217,7 @@ class ExerciseDispatcherTest extends PHPUnit_Framework_TestCase
         $check = $checkProphecy->reveal();
 
         $runner = $this->prophesize(ExerciseRunnerInterface::class);
-        $runner->getRequiredChecks()->willReturn([]);
+        $runner->getRequiredChecks()->willReturn([get_class($check)]);
         $runnerManager = $this->prophesize(RunnerManager::class);
         $runnerManager->getRunner($exercise)->willReturn($runner->reveal());
 
@@ -215,8 +227,6 @@ class ExerciseDispatcherTest extends PHPUnit_Framework_TestCase
             $this->prophesize(EventDispatcher::class)->reveal(),
             new CheckRepository([$check])
         );
-
-        $exerciseDispatcher->requireCheck(get_class($check));
 
         $msg  = 'Exercise: "Some Exercise" should implement interface: "LolIDoNotExist"';
         $this->expectException(ExerciseNotConfiguredException::class);
@@ -239,7 +249,7 @@ class ExerciseDispatcherTest extends PHPUnit_Framework_TestCase
         $check = $checkProphecy->reveal();
 
         $runner = $this->prophesize(ExerciseRunnerInterface::class);
-        $runner->getRequiredChecks()->willReturn([]);
+        $runner->getRequiredChecks()->willReturn([get_class($check)]);
         $runner->verify($input)->willReturn(new Success('Success!'));
         $runnerManager = $this->prophesize(RunnerManager::class);
         $runnerManager->getRunner($exercise)->willReturn($runner->reveal());
@@ -250,8 +260,6 @@ class ExerciseDispatcherTest extends PHPUnit_Framework_TestCase
             $this->prophesize(EventDispatcher::class)->reveal(),
             new CheckRepository([$check])
         );
-
-        $exerciseDispatcher->requireCheck(get_class($check));
 
         $result = $exerciseDispatcher->verify($exercise, $input);
         $this->assertInstanceOf(ResultAggregator::class, $result);
@@ -276,7 +284,7 @@ class ExerciseDispatcherTest extends PHPUnit_Framework_TestCase
         $check2 = $checkProphecy2->reveal();
 
         $runner = $this->prophesize(ExerciseRunnerInterface::class);
-        $runner->getRequiredChecks()->willReturn([]);
+        $runner->getRequiredChecks()->willReturn([get_class($check1)]);
         $runner->verify($input)->willReturn(new Success('Success!'));
         $runnerManager = $this->prophesize(RunnerManager::class);
         $runnerManager->getRunner($exercise)->willReturn($runner->reveal());
@@ -288,12 +296,50 @@ class ExerciseDispatcherTest extends PHPUnit_Framework_TestCase
             new CheckRepository([$check1, $check2])
         );
 
-        $exerciseDispatcher->requireCheck(get_class($check1));
-
         $result = $exerciseDispatcher->verify($exercise, $input);
         $this->assertInstanceOf(ResultAggregator::class, $result);
         $this->assertTrue($result->isSuccessful());
     }
+
+    public function testVerifyWithBeforeAndAfterRequiredChecks()
+    {
+        $input = new Input('app', ['program' => $this->file]);
+        $exercise = new CliExerciseImpl('Some Exercise');
+
+        $checkProphecy1 = $this->prophesize(SimpleCheckInterface::class);
+        $checkProphecy1->canRun($exercise->getType())->willReturn(true);
+        $checkProphecy1->getPosition()->willReturn(SimpleCheckInterface::CHECK_BEFORE);
+        $checkProphecy1->getExerciseInterface()->willReturn(ExerciseInterface::class);
+        $checkProphecy1->check($exercise, $input)->willReturn(new Success('Success!'));
+
+        $checkProphecy2 = $this->prophesize(SimpleCheckInterface::class);
+        $checkProphecy2->canRun($exercise->getType())->willReturn(true);
+        $checkProphecy2->getPosition()->willReturn(SimpleCheckInterface::CHECK_AFTER);
+        $checkProphecy2->getExerciseInterface()->willReturn(ExerciseInterface::class);
+        $checkProphecy2->check($exercise, $input)->willReturn(new Success('Success!'));
+
+        $check1 = $checkProphecy1->reveal();
+        $check2 = $checkProphecy2->reveal();
+
+        $runner = $this->prophesize(ExerciseRunnerInterface::class);
+        $runner->getRequiredChecks()->willReturn([get_class($check1), get_class($check2)]);
+        $runner->verify($input)->willReturn(new Success('Success!'));
+        $runnerManager = $this->prophesize(RunnerManager::class);
+        $runnerManager->getRunner($exercise)->willReturn($runner->reveal());
+
+        $exerciseDispatcher = new ExerciseDispatcher(
+            $runnerManager->reveal(),
+            new ResultAggregator,
+            $this->prophesize(EventDispatcher::class)->reveal(),
+            new CheckRepository([$check1, $check2])
+        );
+
+        $result = $exerciseDispatcher->verify($exercise, $input);
+        $this->assertInstanceOf(ResultAggregator::class, $result);
+        $this->assertTrue($result->isSuccessful());
+        $this->assertCount(3, $result);
+    }
+
 
     public function testWhenBeforeChecksFailTheyReturnImmediately()
     {
@@ -316,7 +362,7 @@ class ExerciseDispatcherTest extends PHPUnit_Framework_TestCase
         $check2 = $checkProphecy2->reveal();
 
         $runner = $this->prophesize(ExerciseRunnerInterface::class);
-        $runner->getRequiredChecks()->willReturn([]);
+        $runner->getRequiredChecks()->willReturn([get_class($check1), get_class($check2)]);
         $runner->verify($input)->shouldNotBeCalled();
         $runnerManager = $this->prophesize(RunnerManager::class);
         $runnerManager->getRunner($exercise)->willReturn($runner->reveal());
@@ -327,9 +373,6 @@ class ExerciseDispatcherTest extends PHPUnit_Framework_TestCase
             $this->prophesize(EventDispatcher::class)->reveal(),
             new CheckRepository([$check1, $check2])
         );
-
-        $exerciseDispatcher->requireCheck(get_class($check1));
-        $exerciseDispatcher->requireCheck(get_class($check2));
 
         $result = $exerciseDispatcher->verify($exercise, $input);
         $this->assertInstanceOf(ResultAggregator::class, $result);
@@ -431,8 +474,6 @@ class ExerciseDispatcherTest extends PHPUnit_Framework_TestCase
         $input    = new Input('app', ['program' => $this->file]);
         $output   = $this->prophesize(OutputInterface::class)->reveal();
         $exercise = new CliExerciseImpl('Some Exercise');
-
-
 
         $runner = $this->prophesize(ExerciseRunnerInterface::class);
         $runner->getRequiredChecks()->willReturn([]);

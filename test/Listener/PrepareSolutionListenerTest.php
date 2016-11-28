@@ -3,8 +3,10 @@
 namespace PhpSchool\PhpWorkshopTest\Listener;
 
 use PhpSchool\PhpWorkshop\Event\Event;
+use PhpSchool\PhpWorkshop\Event\ExerciseRunnerEvent;
 use PhpSchool\PhpWorkshop\Exercise\CliExercise;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
+use PhpSchool\PhpWorkshop\Input\Input;
 use PhpSchool\PhpWorkshop\Listener\PrepareSolutionListener;
 use PhpSchool\PhpWorkshop\Solution\SolutionInterface;
 use PHPUnit_Framework_TestCase;
@@ -63,8 +65,8 @@ class PrepareSolutionListenerTest extends PHPUnit_Framework_TestCase
 
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('Composer could not be located on the system');
-        $e = new Event('epic-event', ['exercise' => $exercise, 'file' => 'file.php']);
-        $this->listener->__invoke($e);
+        $event = new ExerciseRunnerEvent('event', $exercise, new Input('app'));
+        $this->listener->__invoke($event);
     }
 
     public function testIfSolutionRequiresComposerButVendorDirExistsNothingIsDone()
@@ -88,8 +90,8 @@ class PrepareSolutionListenerTest extends PHPUnit_Framework_TestCase
             ->method('getBaseDirectory')
             ->will($this->returnValue(dirname($this->file)));
 
-        $e = new Event('epic-event', ['exercise' => $exercise, 'file' => 'file.php']);
-        $this->listener->__invoke($e);
+        $event = new ExerciseRunnerEvent('event', $exercise, new Input('app'));
+        $this->listener->__invoke($event);
 
         $this->assertFileExists(sprintf('%s/vendor', dirname($this->file)));
         //check for non existence of lock file, composer generates this when updating if it doesn't exist
@@ -121,8 +123,8 @@ class PrepareSolutionListenerTest extends PHPUnit_Framework_TestCase
             ->method('getBaseDirectory')
             ->will($this->returnValue(dirname($this->file)));
 
-        $e = new Event('epic-event', ['exercise' => $exercise, 'file' => 'file.php']);
-        $this->listener->__invoke($e);
+        $event = new ExerciseRunnerEvent('event', $exercise, new Input('app'));
+        $this->listener->__invoke($event);
 
         $this->assertFileExists(sprintf('%s/vendor', dirname($this->file)));
     }

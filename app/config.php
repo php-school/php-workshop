@@ -30,6 +30,7 @@ use PhpSchool\PhpWorkshop\Listener\CheckExerciseAssignedListener;
 use PhpSchool\PhpWorkshop\Listener\CodePatchListener;
 use PhpSchool\PhpWorkshop\Listener\ConfigureCommandListener;
 use PhpSchool\PhpWorkshop\Listener\PrepareSolutionListener;
+use PhpSchool\PhpWorkshop\Listener\RealPathListener;
 use PhpSchool\PhpWorkshop\Listener\SelfCheckListener;
 use PhpSchool\PhpWorkshop\MenuItem\ResetProgress;
 use PhpSchool\PhpWorkshop\Output\OutputInterface;
@@ -197,7 +198,8 @@ return [
             $c->get(RunnerManager::class)
         );
     },
-    
+    RealPathListener::class => object(),
+
     //checks
     FileExistsCheck::class              => object(),
     PhpLintCheck::class                 => object(),
@@ -281,6 +283,20 @@ return [
     ],
     'appContributors' => [],
     'eventListeners'  => [
+        'realpath-student-submission' => [
+            'cli.verify.start' => [
+                containerListener(RealPathListener::class)
+            ],
+            'cli.run.start' => [
+                containerListener(RealPathListener::class)
+            ],
+            'cgi.verify.start' => [
+                containerListener(RealPathListener::class)
+            ],
+            'cgi.run.start' => [
+                containerListener(RealPathListener::class)
+            ]
+        ],
         'check-exercise-assigned' => [
             'route.pre.resolve.args' => [
                 containerListener(CheckExerciseAssignedListener::class)
@@ -292,25 +308,43 @@ return [
             ],
         ],
         'prepare-solution' => [
-            'verify.start' => [
+            'cli.verify.start' => [
                 containerListener(PrepareSolutionListener::class),
             ],
-            'run.start' => [
+            'cli.run.start' => [
+                containerListener(PrepareSolutionListener::class),
+            ],
+            'cgi.verify.start' => [
+                containerListener(PrepareSolutionListener::class),
+            ],
+            'cgi.run.start' => [
                 containerListener(PrepareSolutionListener::class),
             ],
         ],
         'code-patcher' => [
-            'run.start' => [
+            'cli.verify.start' => [
                 containerListener(CodePatchListener::class, 'patch'),
             ],
-            'verify.pre.execute' => [
+            'cli.verify.finish' => [
                 containerListener(CodePatchListener::class, 'patch'),
             ],
-            'verify.post.execute' => [
-                containerListener(CodePatchListener::class, 'revert'),
+            'cli.run.start' => [
+                containerListener(CodePatchListener::class, 'patch'),
             ],
-            'run.finish' => [
-                containerListener(CodePatchListener::class, 'revert'),
+            'cli.run.finish' => [
+                containerListener(CodePatchListener::class, 'patch'),
+            ],
+            'cgi.verify.start' => [
+                containerListener(CodePatchListener::class, 'patch'),
+            ],
+            'cgi.verify.finish' => [
+                containerListener(CodePatchListener::class, 'patch'),
+            ],
+            'cgi.run.start' => [
+                containerListener(CodePatchListener::class, 'patch'),
+            ],
+            'cgi.run.finish' => [
+                containerListener(CodePatchListener::class, 'patch'),
             ],
         ],
         'self-check' => [

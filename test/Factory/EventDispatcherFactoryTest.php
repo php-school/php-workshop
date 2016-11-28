@@ -227,11 +227,10 @@ class EventDispatcherFactoryTest extends PHPUnit_Framework_TestCase
 
         $listeners = $this->readAttribute($dispatcher, 'listeners');
 
-        $this->assertArrayHasKey('verify.start', $listeners);
-        $this->assertArrayHasKey('run.start', $listeners);
-        $this->assertArrayHasKey('verify.pre.execute', $listeners);
-        $this->assertArrayHasKey('verify.post.execute', $listeners);
-        $this->assertArrayHasKey('run.finish', $listeners);
+        $this->assertArrayHasKey('cli.verify.start', $listeners);
+        $this->assertArrayHasKey('cli.run.start', $listeners);
+        $this->assertArrayHasKey('cgi.verify.start', $listeners);
+        $this->assertArrayHasKey('cgi.run.start', $listeners);
         $this->assertArrayHasKey('verify.post.check', $listeners);
     }
 }

@@ -79,15 +79,6 @@ class VerifyCommand
      */
     public function __invoke(Input $input)
     {
-        $program = $input->getArgument('program');
-        if (!file_exists($program)) {
-            $this->output->printError(
-                sprintf('Could not verify. File: "%s" does not exist', $program)
-            );
-            return 1;
-        }
-        $program = realpath($program);
-
         $exercise   = $this->exerciseRepository->findByName($this->userState->getCurrentExercise());
         $results    = $this->exerciseDispatcher->verify($exercise, $input);
 
