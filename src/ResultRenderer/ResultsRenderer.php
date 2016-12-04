@@ -113,7 +113,9 @@ class ResultsRenderer
 
         foreach ($successes as $success) {
             $output->writeLine($this->center($this->style(str_repeat(' ', $longest), ['bg_green'])));
-            $output->writeLine($this->center($this->style(\mb_str_pad($success, $longest), ['bg_green', 'white', 'bold'])));
+            $output->writeLine(
+                $this->center($this->style(mb_str_pad($success, $longest), ['bg_green', 'white', 'bold']))
+            );
             $output->writeLine($this->center($this->style(str_repeat(' ', $longest), ['bg_green'])));
             $output->emptyLine();
         }
@@ -152,7 +154,9 @@ class ResultsRenderer
         $this->fullWidthBlock($output, 'Your solution was unsuccessful!', ['white', 'bg_red', 'bold']);
         $output->emptyLine();
 
-        $output->writeLine($this->center(sprintf(" Your solution to %s didn't pass. Try again!", $exercise->getName())));
+        $output->writeLine(
+            $this->center(sprintf(" Your solution to %s didn't pass. Try again!", $exercise->getName()))
+        );
         $output->emptyLine();
         $output->emptyLine();
     }

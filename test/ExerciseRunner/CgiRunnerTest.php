@@ -131,7 +131,9 @@ class CgiRunnerTest extends PHPUnit_Framework_TestCase
 
         $this->assertInstanceOf(
             CgiResult::class,
-            $res = $this->runner->verify(new Input('app', ['program' => realpath(__DIR__ . '/../res/cgi/post-solution.php')]))
+            $res = $this->runner->verify(
+                new Input('app', ['program' => realpath(__DIR__ . '/../res/cgi/post-solution.php')])
+            )
         );
 
         $this->assertTrue($res->isSuccessful());

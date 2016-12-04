@@ -59,8 +59,8 @@
     },
     "scripts" : {
         "cs" : [
-            "phpcs src --standard=PSR2",
-            "phpcs test --standard=PSR2"
+            "phpcs src --standard=PSR2 --encoding=UTF-8",
+            "phpcs test --standard=PSR2 --encoding=UTF-8"
         ]
     }
 }
