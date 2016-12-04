@@ -106,44 +106,4 @@ class StdOutput implements OutputInterface
     {
         echo $this->color->__invoke(str_repeat('─', $this->terminal->getWidth()))->yellow();
     }
-
-    /**
-     * Write a PSR-7 request.
-     *
-     * @param RequestInterface $request
-     */
-    public function writeRequest(RequestInterface $request)
-    {
-        echo sprintf("URL:     %s\n", $request->getUri());
-        echo sprintf("METHOD:  %s\n", $request->getMethod());
-
-        if ($request->getHeaders()) {
-            echo 'HEADERS:';
-        }
-
-        $indent = false;
-        foreach ($request->getHeaders() as $name => $values) {
-            if ($indent) {
-                echo str_repeat(' ', 9);
-            }
-
-            echo sprintf(" %s: %s\n", $name, implode(', ', $values));
-            $indent  = true;
-        }
-
-        if ($body = (string) $request->getBody()) {
-            echo "\nBODY:";
-
-            switch ($request->getHeaderLine('Content-Type')) {
-                case 'application/json':
-                    echo json_encode(json_decode($body, true), JSON_PRETTY_PRINT);
-                    break;
-                default:
-                    echo $body;
-                    break;
-            }
-
-            $this->emptyLine();
-        }
-    }
 }

@@ -48,7 +48,7 @@ class StdOutputTest extends PHPUnit_Framework_TestCase
 
     public function testWrite()
     {
-        $message  = "There are people who actually like programming. ";
+        $message  = 'There are people who actually like programming. ';
         $message .= "I don't understand why they like programming.";
 
         $this->expectOutputString($message);
@@ -57,7 +57,7 @@ class StdOutputTest extends PHPUnit_Framework_TestCase
 
     public function testWriteLine()
     {
-        $message = "Talk is cheap. Show me the code.";
+        $message = 'Talk is cheap. Show me the code.';
         $this->expectOutputString($message . "\n");
         $this->output->writeLine($message);
     }
