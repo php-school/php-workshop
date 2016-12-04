@@ -11,8 +11,6 @@ use PHPUnit_Framework_TestCase;
 use Psr\Http\Message\RequestInterface;
 
 /**
- *
- * @package PhpSchool\PhpWorkshopTest\Result
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
 class RequestFailureTest extends PHPUnit_Framework_TestCase

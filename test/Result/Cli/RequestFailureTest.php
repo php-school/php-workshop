@@ -9,7 +9,6 @@ use PHPUnit_Framework_TestCase;
 use PhpSchool\PhpWorkshop\Result\StdOutFailure;
 
 /**
- * @package PhpSchool\PhpWorkshopTest\Result
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
 class RequestFailureTest extends PHPUnit_Framework_TestCase
@@ -22,11 +21,9 @@ class RequestFailureTest extends PHPUnit_Framework_TestCase
         $this->assertSame($args, $failure->getArgs());
     }
 
-
     public function testGetters()
     {
         $args = new ArrayObject;
-
         $failure = new RequestFailure($args, 'Expected Output', 'Actual Output');
         $this->assertEquals('Expected Output', $failure->getExpectedOutput());
         $this->assertEquals('Actual Output', $failure->getActualOutput());
@@ -36,7 +33,6 @@ class RequestFailureTest extends PHPUnit_Framework_TestCase
     public function testFailureFromArgsAndOutput()
     {
         $args = new ArrayObject;
-
         $failure = RequestFailure::fromArgsAndOutput($args, 'Expected Output', 'Actual Output');
         $this->assertEquals('Expected Output', $failure->getExpectedOutput());
         $this->assertEquals('Actual Output', $failure->getActualOutput());
