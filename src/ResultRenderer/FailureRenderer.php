@@ -33,6 +33,6 @@ class FailureRenderer implements ResultRendererInterface
      */
     public function render(ResultsRenderer $renderer)
     {
-        return '  ' . $this->result->getReason() . "\n";
+        return $renderer->center($this->result->getReason()) . "\n";
     }
 }

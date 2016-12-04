@@ -6,6 +6,7 @@ use ArrayIterator;
 use Countable;
 use IteratorAggregate;
 use PhpSchool\PhpWorkshop\Result\FailureInterface;
+use PhpSchool\PhpWorkshop\Result\ResultGroupInterface;
 use PhpSchool\PhpWorkshop\Result\ResultInterface;
 
 /**
@@ -42,7 +43,7 @@ class ResultAggregator implements IteratorAggregate
     {
         return count(
             array_filter($this->results, function ($result) {
-                if ($result instanceof self) {
+                if ($result instanceof ResultGroupInterface) {
                     return !$result->isSuccessful();
                 }
                 return $result instanceof FailureInterface;

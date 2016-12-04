@@ -3,15 +3,7 @@
 namespace PhpSchool\PhpWorkshop\Factory;
 
 use PhpSchool\PhpWorkshop\Exception\InvalidArgumentException;
-use PhpSchool\PhpWorkshop\Result\CgiOutResult;
-use PhpSchool\PhpWorkshop\Result\Failure;
-use PhpSchool\PhpWorkshop\Result\FunctionRequirementsFailure;
 use PhpSchool\PhpWorkshop\Result\ResultInterface;
-use PhpSchool\PhpWorkshop\Result\StdOutFailure;
-use PhpSchool\PhpWorkshop\ResultRenderer\CgiOutResultRenderer;
-use PhpSchool\PhpWorkshop\ResultRenderer\FailureRenderer;
-use PhpSchool\PhpWorkshop\ResultRenderer\FunctionRequirementsFailureRenderer;
-use PhpSchool\PhpWorkshop\ResultRenderer\OutputFailureRenderer;
 use PhpSchool\PhpWorkshop\ResultRenderer\ResultRendererInterface;
 
 /**
@@ -24,18 +16,19 @@ class ResultRendererFactory
     /**
      * @var array
      */
-    private $mappings = [
-        StdOutFailure::class                => OutputFailureRenderer::class,
-        CgiOutResult::class                 => CgiOutResultRenderer::class,
-        FunctionRequirementsFailure::class  => FunctionRequirementsFailureRenderer::class,
-        Failure::class                      => FailureRenderer::class,
-    ];
+    private $mappings = [];
+
+    /**
+     * @var array
+     */
+    private $factories = [];
 
     /**
      * @param string $resultClass
      * @param string $rendererClass
+     * @param callable $factory
      */
-    public function registerRenderer($resultClass, $rendererClass)
+    public function registerRenderer($resultClass, $rendererClass, callable $factory = null)
     {
         if (!$this->isImplementationNameOfClass($resultClass, ResultInterface::class)) {
             throw new InvalidArgumentException;
@@ -46,6 +39,10 @@ class ResultRendererFactory
         }
 
         $this->mappings[$resultClass] = $rendererClass;
+
+        $this->factories[$rendererClass] = $factory ?: function (ResultInterface $result) use ($rendererClass) {
+            return new $rendererClass($result);
+        };
     }
 
     /**
@@ -59,7 +56,23 @@ class ResultRendererFactory
             throw new \RuntimeException(sprintf('No renderer found for "%s"', $class));
         }
 
-        return new $this->mappings[$class]($result);
+        $class = $this->mappings[$class];
+        $factory = $this->factories[$class];
+
+        $renderer = $factory($result);
+
+        if (!$renderer instanceof $class) {
+            throw new \RuntimeException(
+                sprintf(
+                    'Renderer Factory for "%s" produced "%s" instead of expected "%s"',
+                    $class,
+                    is_object($renderer) ? get_class($renderer) : gettype($renderer),
+                    $class
+                )
+            );
+        }
+
+        return $renderer;
     }
 
     protected function isImplementationNameOfClass($implementationName, $className)

@@ -14,10 +14,12 @@ use PhpSchool\PhpWorkshop\Exception\SolutionExecutionException;
 use PhpSchool\PhpWorkshop\Exercise\CliExercise;
 use PhpSchool\PhpWorkshop\Input\Input;
 use PhpSchool\PhpWorkshop\Output\OutputInterface;
-use PhpSchool\PhpWorkshop\Result\Failure;
+use PhpSchool\PhpWorkshop\Result\Cli\RequestFailure;
+use PhpSchool\PhpWorkshop\Result\Cli\CliResult;
+use PhpSchool\PhpWorkshop\Result\Cli\GenericFailure;
+use PhpSchool\PhpWorkshop\Result\Cli\Success;
 use PhpSchool\PhpWorkshop\Result\ResultInterface;
 use PhpSchool\PhpWorkshop\Result\StdOutFailure;
-use PhpSchool\PhpWorkshop\Result\Success;
 use PhpSchool\PhpWorkshop\Utils\ArrayObject;
 use Symfony\Component\Process\Process;
 
@@ -124,24 +126,40 @@ class CliRunner implements ExerciseRunnerInterface
      * * cli.verify.student-execute.fail (if the student's solution fails to execute)
      *
      * @param Input $input The command line arguments passed to the command.
-     * @return ResultInterface The result of the check.
+     * @return CliResult The result of the check.
      */
     public function verify(Input $input)
     {
         $this->eventDispatcher->dispatch(new ExerciseRunnerEvent('cli.verify.start', $this->exercise, $input));
-        $result = $this->doVerify($input);
+        //BC - getArgs only returned 1 set of args in v1 instead of multiple sets of args in v2
+        $args = $this->exercise->getArgs();
+        if (isset($args[0]) && !is_array($args[0])) {
+            $args = [$args];
+        } elseif (empty($args)) {
+            $args = [[]];
+        }
+        //END BC
+        $result = new CliResult(
+            array_map(
+                function (array $args) use ($input) {
+                    return $this->doVerify($args, $input);
+                },
+                $args
+            )
+        );
         $this->eventDispatcher->dispatch(new ExerciseRunnerEvent('cli.verify.finish', $this->exercise, $input));
         return $result;
     }
 
     /**
+     * @param array $args
      * @param Input $input
      * @return ResultInterface
      */
-    private function doVerify(Input $input)
+    private function doVerify(array $args, Input $input)
     {
         //arrays are not pass-by-ref
-        $args = new ArrayObject($this->exercise->getArgs());
+        $args = new ArrayObject($args);
 
         try {
             $event = $this->eventDispatcher->dispatch(new CliExecuteEvent('cli.verify.reference-execute.pre', $args));
@@ -160,13 +178,13 @@ class CliRunner implements ExerciseRunnerInterface
             $userOutput = $this->executePhpFile($input->getArgument('program'), $event->getArgs(), 'student');
         } catch (CodeExecutionException $e) {
             $this->eventDispatcher->dispatch(new Event('cli.verify.student-execute.fail', ['exception' => $e]));
-            return Failure::fromNameAndCodeExecutionFailure($this->getName(), $e);
+            return GenericFailure::fromArgsAndCodeExecutionFailure($args, $e);
         }
         if ($solutionOutput === $userOutput) {
-            return new Success($this->getName());
+            return new Success($args);
         }
 
-        return StdOutFailure::fromNameAndOutput($this->getName(), $solutionOutput, $userOutput);
+        return RequestFailure::fromArgsAndOutput($args, $solutionOutput, $userOutput);
     }
 
     /**

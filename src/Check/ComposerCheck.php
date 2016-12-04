@@ -52,6 +52,10 @@ class ComposerCheck implements SimpleCheckInterface
         if (!file_exists(sprintf('%s/composer.lock', dirname($input->getArgument('program'))))) {
             return new Failure($this->getName(), 'No composer.lock file found');
         }
+
+        if (!file_exists(sprintf('%s/vendor', dirname($input->getArgument('program'))))) {
+            return new Failure($this->getName(), 'No vendor folder found');
+        }
         
         $lockFile = new LockFileParser(sprintf('%s/composer.lock', dirname($input->getArgument('program'))));
         $missingPackages = array_filter($exercise->getRequiredPackages(), function ($package) use ($lockFile) {

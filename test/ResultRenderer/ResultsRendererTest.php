@@ -8,6 +8,7 @@ use PhpSchool\PhpWorkshop\ExerciseRepository;
 use PhpSchool\PhpWorkshop\Factory\ResultRendererFactory;
 use PhpSchool\PhpWorkshop\Result\Failure;
 use PhpSchool\PhpWorkshop\Result\ResultInterface;
+use PhpSchool\PhpWorkshop\ResultRenderer\FailureRenderer;
 use PhpSchool\PhpWorkshop\ResultRenderer\ResultRendererInterface;
 use PhpSchool\PhpWorkshop\ResultRenderer\ResultsRenderer;
 use PhpSchool\PSX\Factory;
@@ -21,22 +22,30 @@ use PHPUnit_Framework_TestCase;
  */
 class ResultsRendererTest extends PHPUnit_Framework_TestCase
 {
+
     public function testRenderIndividualResult()
     {
         $color = new Color;
         $color->setForceStyle(true);
 
+        $resultRendererFactory = new ResultRendererFactory;
+        $resultRendererFactory->registerRenderer(Failure::class, FailureRenderer::class);
+
+        $terminal = $this->prophesize(TerminalInterface::class);
+        $terminal->getWidth()->willReturn(30);
+
         $renderer = new ResultsRenderer(
             'app',
             $color,
-            $this->createMock(TerminalInterface::class),
+            $terminal->reveal(),
             new ExerciseRepository([]),
             (new Factory)->__invoke(),
-            new ResultRendererFactory
+            $resultRendererFactory
         );
 
+
         $result = new Failure('Failure', 'Some Failure');
-        $this->assertSame("  Some Failure\n", $renderer->renderResult($result));
+        $this->assertSame("         Some Failure\n", $renderer->renderResult($result));
     }
 
     public function testLineBreak()
@@ -44,16 +53,13 @@ class ResultsRendererTest extends PHPUnit_Framework_TestCase
         $color = new Color;
         $color->setForceStyle(true);
 
-        $terminal = $this->createMock(TerminalInterface::class);
-        $terminal
-            ->expects($this->once())
-            ->method('getWidth')
-            ->will($this->returnValue(10));
+        $terminal = $this->prophesize(TerminalInterface::class);
+        $terminal->getWidth()->willReturn(10);
 
         $renderer = new ResultsRenderer(
             'app',
             $color,
-            $terminal,
+            $terminal->reveal(),
             new ExerciseRepository([]),
             (new Factory)->__invoke(),
             new ResultRendererFactory

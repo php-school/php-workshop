@@ -1,27 +1,28 @@
 <?php
 
-namespace PhpSchool\PhpWorkshop\ResultRenderer;
+namespace PhpSchool\PhpWorkshop\ResultRenderer\Cli;
 
-use PhpSchool\PhpWorkshop\Result\CgiOutBodyFailure;
-use PhpSchool\PhpWorkshop\Result\StdOutFailure;
+use PhpSchool\PhpWorkshop\Result\Cli\RequestFailure;
+use PhpSchool\PhpWorkshop\ResultRenderer\ResultRendererInterface;
+use PhpSchool\PhpWorkshop\ResultRenderer\ResultsRenderer;
 
 /**
- * Renderer for `PhpSchool\PhpWorkshop\Result\StdOutFailure`.
+ * Renderer for `PhpSchool\PhpWorkshop\Result\Cli\RequestFailure`.
  *
  * @package PhpSchool\PhpWorkshop\ResultRenderer
  */
-class OutputFailureRenderer implements ResultRendererInterface
+class RequestFailureRenderer implements ResultRendererInterface
 {
 
     /**
-     * @var StdOutFailure
+     * @var RequestFailure
      */
     private $result;
 
     /**
-     * @param StdOutFailure $result The failure.
+     * @param RequestFailure $result The failure.
      */
-    public function __construct(StdOutFailure $result)
+    public function __construct(RequestFailure $result)
     {
         $this->result = $result;
     }

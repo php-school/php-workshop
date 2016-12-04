@@ -4,10 +4,14 @@
 namespace PhpSchool\PhpWorkshopTest;
 
 use PhpSchool\PhpWorkshop\Check\CheckInterface;
+use PhpSchool\PhpWorkshop\Result\Cli\CliResult;
+use PhpSchool\PhpWorkshop\Utils\ArrayObject;
 use PhpSchool\PhpWorkshopTest\Asset\ResultResultAggregator;
 use PHPUnit_Framework_TestCase;
 use PhpSchool\PhpWorkshop\Result\Failure;
 use PhpSchool\PhpWorkshop\Result\Success;
+use PhpSchool\PhpWorkshop\Result\Cli\Success as CliSuccess;
+use PhpSchool\PhpWorkshop\Result\Cli\GenericFailure as CliGenericFailure;
 use PhpSchool\PhpWorkshop\ResultAggregator;
 
 /**
@@ -43,18 +47,18 @@ class ResultAggregatorTest extends PHPUnit_Framework_TestCase
         $this->assertFalse($resultAggregator->isSuccessful());
     }
 
-    public function testIsSuccessfulWithNestedResults()
+    public function testIsSuccessfulWithResultGroups()
     {
         $resultAggregator = new ResultAggregator;
         $this->assertTrue($resultAggregator->isSuccessful());
         
-        $resultResultAggregator = new ResultResultAggregator;
-        $resultResultAggregator->add(new Success($this->check));
+        $resultGroup = new CliResult;
+        $resultGroup->add(new CliSuccess(new ArrayObject));
 
-        $resultAggregator->add($resultResultAggregator);
+        $resultAggregator->add($resultGroup);
         $this->assertTrue($resultAggregator->isSuccessful());
 
-        $resultResultAggregator->add(new Failure($this->check, 'nope'));
+        $resultGroup->add(new CliGenericFailure(new ArrayObject, 'nop'));
 
         $this->assertFalse($resultAggregator->isSuccessful());
     }

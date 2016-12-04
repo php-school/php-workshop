@@ -4,6 +4,7 @@ namespace PhpSchool\PhpWorkshop\ResultRenderer;
 
 use Colors\Color;
 use PhpSchool\CliMenu\Terminal\TerminalInterface;
+use PhpSchool\CliMenu\Util\StringUtil;
 use PhpSchool\PhpWorkshop\Exercise\ProvidesSolution;
 use PhpSchool\PhpWorkshop\Factory\ResultRendererFactory;
 use PhpSchool\PhpWorkshop\Output\OutputInterface;
@@ -41,7 +42,7 @@ class ResultsRenderer
      * @var TerminalInterface
      */
     private $terminal;
-    
+
     /**
      * @var SyntaxHighlighter
      */
@@ -58,6 +59,7 @@ class ResultsRenderer
      * @param TerminalInterface $terminal A helper to get information regarding the current terminal.
      * @param ExerciseRepository $exerciseRepository The exercise repository.
      * @param SyntaxHighlighter $syntaxHighlighter A PHP syntax highlighter for the terminal, uses ANSI escape codes.
+     * @param ResultRendererFactory $resultRendererFactory
      */
     public function __construct(
         $appName,
@@ -101,11 +103,20 @@ class ResultsRenderer
                 $failures[] = [$result, sprintf(' ✗ Check: %s', $result->getCheckName())];
             }
         }
-        
-        $longest = max(array_map('strlen', array_merge($successes, array_column($failures, 1)))) + 2;
-        $output->writeLines(
-            $this->padArray($this->styleArray($successes, ['green', 'bg_black', 'bold']), $longest)
-        );
+
+        $output->emptyLine();
+        $output->writeLine($this->center($this->style('*** RESULTS ***', ['magenta', 'bold'])));
+        $output->emptyLine();
+
+        $messages = array_merge($successes, array_column($failures, 1));
+        $longest = max(array_map('mb_strlen', $messages)) + 4;
+
+        foreach ($successes as $success) {
+            $output->writeLine($this->center($this->style(str_repeat(' ', $longest), ['bg_green'])));
+            $output->writeLine($this->center($this->style($this->mbStrPad($success, $longest), ['bg_green', 'white', 'bold'])));
+            $output->writeLine($this->center($this->style(str_repeat(' ', $longest), ['bg_green'])));
+            $output->emptyLine();
+        }
 
         if ($results->isSuccessful()) {
             return $this->renderSuccessInformation($exercise, $userState, $output);
@@ -127,15 +138,21 @@ class ResultsRenderer
     ) {
         foreach ($failures as $result) {
             list ($failure, $message) = $result;
-            $output->writeLine(str_pad($this->style($message, ['red', 'bg_black', 'bold']), $padLength));
-            $output->write($this->renderResult($failure));
+            $output->writeLine($this->center($this->style(str_repeat(' ', $padLength), ['bg_red'])));
+            $output->writeLine($this->center($this->style($this->mbStrPad($message, $padLength), ['bg_red'])));
+            $output->writeLine($this->center($this->style(str_repeat(' ', $padLength), ['bg_red'])));
+
             $output->emptyLine();
+            $output->write($this->renderResult($failure));
         }
 
-        $output->writeLine($this->style(' Your solution was unsuccessful!', ['red', 'bg_default', 'bold']));
+        $output->lineBreak();
+        $output->emptyLine();
+        $output->emptyLine();
+        $this->fullWidthBlock($output, 'Your solution was unsuccessful!', ['white', 'bg_red', 'bold']);
         $output->emptyLine();
 
-        $output->writeLine(sprintf(" Your solution to %s didn't pass. Try again!", $exercise->getName()));
+        $output->writeLine($this->center(sprintf(" Your solution to %s didn't pass. Try again!", $exercise->getName())));
         $output->emptyLine();
         $output->emptyLine();
     }
@@ -150,12 +167,15 @@ class ResultsRenderer
         UserState $userState,
         OutputInterface $output
     ) {
+        $output->lineBreak();
         $output->emptyLine();
-        $output->writeLine($this->style(" PASS!", ['green', 'bg_default', 'bold']));
+        $output->emptyLine();
+        $this->fullWidthBlock($output, 'PASS!', ['white', 'bg_green', 'bold']);
         $output->emptyLine();
 
         if ($exercise instanceof ProvidesSolution) {
-            $output->writeLine("Here's the official solution in case you want to compare notes:");
+            $output->writeLine($this->center("Here's the official solution in case you want to compare notes:"));
+            $output->emptyLine();
             $output->writeLine($this->lineBreak());
 
             foreach ($exercise->getSolution()->getFiles() as $file) {
@@ -178,33 +198,54 @@ class ResultsRenderer
         $completedCount = count($userState->getCompletedExercises());
         $numExercises   = $this->exerciseRepository->count();
 
-        $output->writeLine(sprintf('You have %d challenges left.', $numExercises - $completedCount));
-        $output->writeLine(sprintf('Type "%s" to show the menu.', $this->appName));
+        $output->emptyLine();
+        $output->writeLine($this->center(sprintf('You have %d challenges left.', $numExercises - $completedCount)));
+        $output->writeLine($this->center(sprintf('Type "%s" and hit enter to show the menu.', $this->appName)));
         $output->emptyLine();
     }
 
     /**
-     * @param array $lines
-     * @param int $length
-     * @return array
+     * @param string $string
+     * @return string string
      */
-    private function padArray(array $lines, $length)
+    public function center($string)
     {
-        return array_map(function ($line) use ($length) {
-            return str_pad($line, $length);
-        }, $lines);
+        $stringHalfLength = mb_strlen(StringUtil::stripAnsiEscapeSequence($string)) / 2;
+        $widthHalfLength  = ceil($this->terminal->getWidth() / 2);
+        $start            = $widthHalfLength - $stringHalfLength;
+
+        if ($start < 0) {
+            $start = 0;
+        }
+
+        return str_repeat(' ', $start) . $string;
     }
 
     /**
-     * @param array $lines
-     * @param array $styles
-     * @return array
+     * @param OutputInterface $output
+     * @param $string
+     * @param array $style
      */
-    private function styleArray(array $lines, array $styles)
+    private function fullWidthBlock(OutputInterface $output, $string, array $style)
     {
-        return array_map(function ($line) use ($styles) {
-            return $this->style($line, $styles);
-        }, $lines);
+        $stringLength     = mb_strlen(StringUtil::stripAnsiEscapeSequence($string));
+        $stringHalfLength = $stringLength / 2;
+        $widthHalfLength  = ceil($this->terminal->getWidth() / 2);
+        $start            = ceil($widthHalfLength - $stringHalfLength);
+
+        $output->writeLine($this->style(str_repeat(' ', $this->terminal->getWidth()), $style));
+        $output->writeLine(
+            $this->style(
+                sprintf(
+                    '%s%s%s',
+                    str_repeat(' ', $start),
+                    $string,
+                    str_repeat(' ', $this->terminal->getWidth() - $stringLength - $start)
+                ),
+                $style
+            )
+        );
+        $output->writeLine($this->style(str_repeat(' ', $this->terminal->getWidth()), $style));
     }
 
     /**
@@ -249,6 +290,19 @@ class ResultsRenderer
      */
     public function lineBreak()
     {
-        return $this->style(str_repeat("─", $this->terminal->getWidth()), 'yellow');
+        return $this->style(str_repeat('─', $this->terminal->getWidth()), 'yellow');
+    }
+
+    /**
+     * @param string $input
+     * @param int $padLength
+     * @param string $padString
+     * @param int $padType
+     * @return string
+     */
+    public function mbStrPad($input, $padLength, $padString = ' ', $padType = STR_PAD_RIGHT)
+    {
+        $diff = strlen($input) - mb_strlen($input);
+        return str_pad($input, $padLength + $diff, $padString, $padType);
     }
 }
