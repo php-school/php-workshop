@@ -131,24 +131,33 @@ class CliRunner implements ExerciseRunnerInterface
     public function verify(Input $input)
     {
         $this->eventDispatcher->dispatch(new ExerciseRunnerEvent('cli.verify.start', $this->exercise, $input));
-        //BC - getArgs only returned 1 set of args in v1 instead of multiple sets of args in v2
-        $args = $this->exercise->getArgs();
-        if (isset($args[0]) && !is_array($args[0])) {
-            $args = [$args];
-        } elseif (empty($args)) {
-            $args = [[]];
-        }
-        //END BC
         $result = new CliResult(
             array_map(
                 function (array $args) use ($input) {
                     return $this->doVerify($args, $input);
                 },
-                $args
+                $this->preserveOldArgFormat($this->exercise->getArgs())
             )
         );
         $this->eventDispatcher->dispatch(new ExerciseRunnerEvent('cli.verify.finish', $this->exercise, $input));
         return $result;
+    }
+
+    /**
+     * BC - getArgs only returned 1 set of args in v1 instead of multiple sets of args in v2
+     *
+     * @param array $args
+     * @return array
+     */
+    private function preserveOldArgFormat(array $args)
+    {
+        if (isset($args[0]) && !is_array($args[0])) {
+            $args = [$args];
+        } elseif (empty($args)) {
+            $args = [[]];
+        }
+
+        return $args;
     }
 
     /**
@@ -206,32 +215,42 @@ class CliRunner implements ExerciseRunnerInterface
     public function run(Input $input, OutputInterface $output)
     {
         $this->eventDispatcher->dispatch(new ExerciseRunnerEvent('cli.run.start', $this->exercise, $input));
-        /** @var CliExecuteEvent $event */
-        $event = $this->eventDispatcher->dispatch(
-            new CliExecuteEvent('cli.run.student-execute.pre', new ArrayObject($this->exercise->getArgs()))
-        );
+        $success = true;
+        foreach ($this->preserveOldArgFormat($this->exercise->getArgs()) as $i => $args) {
+            /** @var CliExecuteEvent $event */
+            $event = $this->eventDispatcher->dispatch(
+                new CliExecuteEvent('cli.run.student-execute.pre', new ArrayObject($args))
+            );
 
-        $args = $event->getArgs();
+            $args = $event->getArgs();
 
-        if (count($args)) {
-            $glue = max(array_map('strlen', $args->getArrayCopy())) > 30 ? "\n" : ', ';
+            if (count($args)) {
+                $glue = max(array_map('strlen', $args->getArrayCopy())) > 30 ? "\n" : ', ';
 
-            $output->writeTitle('Arguments');
-            $output->write(implode($glue, $args->getArrayCopy()));
+                $output->writeTitle('Arguments');
+                $output->write(implode($glue, $args->getArrayCopy()));
+                $output->emptyLine();
+            }
+
+            $output->writeTitle("Output");
+            $process = $this->getPhpProcess($input->getArgument('program'), $args);
+            $process->start();
+            $this->eventDispatcher->dispatch(
+                new CliExecuteEvent('cli.run.student.executing', $args, ['output' => $output])
+            );
+            $process->wait(function ($outputType, $outputBuffer) use ($output) {
+                $output->write($outputBuffer);
+            });
             $output->emptyLine();
+
+            if (!$process->isSuccessful()) {
+                $success = false;
+            }
+
+            $output->lineBreak();
         }
 
-        $output->writeTitle("Output");
-        $process = $this->getPhpProcess($input->getArgument('program'), $args);
-        $process->start();
-        $this->eventDispatcher->dispatch(
-            new CliExecuteEvent('cli.run.student.executing', $args, ['output' => $output])
-        );
-        $process->wait(function ($outputType, $outputBuffer) use ($output) {
-            $output->writeLine($outputBuffer);
-        });
-
         $this->eventDispatcher->dispatch(new ExerciseRunnerEvent('cli.run.finish', $this->exercise, $input));
-        return $process->isSuccessful();
+        return $success;
     }
 }

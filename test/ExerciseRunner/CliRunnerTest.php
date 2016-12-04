@@ -72,7 +72,7 @@ class CliRunnerTest extends PHPUnit_Framework_TestCase
         $this->exercise
             ->expects($this->once())
             ->method('getArgs')
-            ->will($this->returnValue([]));
+            ->will($this->returnValue([[]]));
 
         $regex  = "/^PHP Code failed to execute\\. Error: \"PHP Parse error:  syntax error, unexpected end of file";
         $regex .= ", expecting ',' or ';'/";
@@ -134,7 +134,7 @@ class CliRunnerTest extends PHPUnit_Framework_TestCase
         $this->exercise
             ->expects($this->once())
             ->method('getArgs')
-            ->will($this->returnValue([1, 2, 3]));
+            ->will($this->returnValue([[1, 2, 3]]));
 
         $failure = $this->runner->verify(new Input('app', ['program' => __DIR__ . '/../res/cli/user-error.php']));
 
@@ -160,7 +160,7 @@ class CliRunnerTest extends PHPUnit_Framework_TestCase
         $this->exercise
             ->expects($this->once())
             ->method('getArgs')
-            ->will($this->returnValue([1, 2, 3]));
+            ->will($this->returnValue([[1, 2, 3]]));
 
         $failure = $this->runner->verify(new Input('app', ['program' => __DIR__ . '/../res/cli/user-wrong.php']));
 
@@ -176,18 +176,25 @@ class CliRunnerTest extends PHPUnit_Framework_TestCase
 
     public function testRunPassesOutputAndReturnsSuccessIfScriptIsSuccessful()
     {
-        $output = new StdOutput(new Color, $this->createMock(TerminalInterface::class));
+        $color = new Color;
+        $color->setForceStyle(true);
+        $output = new StdOutput($color, $this->createMock(TerminalInterface::class));
 
         $this->exercise
             ->expects($this->once())
             ->method('getArgs')
-            ->will($this->returnValue([1, 2, 3]));
+            ->will($this->returnValue([[1, 2, 3], [4, 5, 6]]));
 
         $exp  = "\n\e[1m\e[4mArguments\e[0m\e[0m\n";
-        $exp .= "1, 2, 3\n\n";
-        $exp .= "\e[1m\e[4m";
-        $exp .= "Output\e[0m\e[0m\n";
+        $exp .= "1, 2, 3\n";
+        $exp .= "\n\e[1m\e[4mOutput\e[0m\e[0m\n";
         $exp .= "6\n";
+        $exp .= "\e[33m\e[0m\n";
+        $exp .= "\e[1m\e[4mArguments\e[0m\e[0m\n";
+        $exp .= "4, 5, 6\n\n";
+        $exp .= "\e[1m\e[4mOutput\e[0m\e[0m\n";
+        $exp .= "15\n";
+        $exp .= "\e[33m\e[0m";
 
         $this->expectOutputString($exp);
 
@@ -202,7 +209,7 @@ class CliRunnerTest extends PHPUnit_Framework_TestCase
         $this->exercise
             ->expects($this->once())
             ->method('getArgs')
-            ->will($this->returnValue([1, 2, 3]));
+            ->will($this->returnValue([[1, 2, 3]]));
 
         $this->expectOutputRegex('/PHP Parse error:  syntax error, unexpected end of file, expecting \',\' or \';\' /');
 
