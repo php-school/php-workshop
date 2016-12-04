@@ -6,9 +6,8 @@ use PhpSchool\PhpWorkshop\Check\CheckInterface;
 use Psr\Http\Message\RequestInterface;
 
 /**
- * Default implementation of `PhpSchool\PhpWorkshop\Result\SuccessInterface`.
+ * Default implementation of `PhpSchool\PhpWorkshop\Result\Cgi\SuccessInterface`.
  *
- * @package PhpSchool\PhpWorkshop
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
 class Success implements SuccessInterface
@@ -24,7 +23,7 @@ class Success implements SuccessInterface
     private $name = 'CGI Program Runner';
 
     /**
-     * @param RequestInterface $request The request that caused the failure.
+     * @param RequestInterface $request The request for this success.
      */
     public function __construct(RequestInterface $request)
     {
@@ -42,6 +41,8 @@ class Success implements SuccessInterface
     }
 
     /**
+     * Get the request for this success.
+     *
      * @return RequestInterface
      */
     public function getRequest()

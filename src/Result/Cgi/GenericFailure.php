@@ -47,7 +47,7 @@ class GenericFailure extends Failure implements FailureInterface
     /**
      * Static constructor to create from a `PhpSchool\PhpWorkshop\Exception\CodeExecutionException` exception.
      *
-     * @param RequestInterface $request The request that caused the failure
+     * @param RequestInterface $request The request that caused the failure.
      * @param CodeExecutionException $e The exception.
      * @return static The result.
      */
@@ -57,6 +57,8 @@ class GenericFailure extends Failure implements FailureInterface
     }
 
     /**
+     * Get the request that caused the failure.
+     *
      * @return RequestInterface
      */
     public function getRequest()

@@ -60,7 +60,7 @@ class RequestFailure implements FailureInterface
     }
 
     /**
-     * Get the request object associated with this failure.
+     * Get the request that caused the failure.
      *
      * @return RequestInterface
      */

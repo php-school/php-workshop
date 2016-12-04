@@ -23,8 +23,8 @@ class GenericFailure extends Failure implements FailureInterface
     private static $name = 'CLI Program Runner';
 
     /**
-     * @param ArrayObject $args
-     * @param null $reason
+     * @param ArrayObject $args The arguments that caused the failure.
+     * @param null $reason The reason (if any) of the failure.
      */
     public function __construct(ArrayObject $args, $reason = null)
     {

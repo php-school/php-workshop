@@ -13,7 +13,7 @@ interface ResultGroupInterface extends ResultInterface
     public function isSuccessful();
 
     /**
-     * @return ResultInterface
+     * @return ResultInterface[]
      */
     public function getResults();
 }

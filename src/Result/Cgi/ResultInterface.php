@@ -10,6 +10,8 @@ use Psr\Http\Message\RequestInterface;
 interface ResultInterface extends \PhpSchool\PhpWorkshop\Result\ResultInterface
 {
     /**
+     * Get the request associated with this result.
+     *
      * @return RequestInterface
      */
     public function getRequest();

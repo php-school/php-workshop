@@ -9,7 +9,6 @@ use Psr\Http\Message\RequestInterface;
 /**
  * Default implementation of `PhpSchool\PhpWorkshop\Result\Cli\SuccessInterface`.
  *
- * @package PhpSchool\PhpWorkshop
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
 class Success implements SuccessInterface
@@ -25,7 +24,7 @@ class Success implements SuccessInterface
     private $name = 'CLI Program Runner';
 
     /**
-     * @param ArrayObject $args The arguments used for this execution
+     * @param ArrayObject $args The arguments for this success.
      */
     public function __construct(ArrayObject $args)
     {
@@ -43,6 +42,8 @@ class Success implements SuccessInterface
     }
 
     /**
+     * Get the arguments for this success.
+     *
      * @return ArrayObject
      */
     public function getArgs()

@@ -29,7 +29,7 @@ class RequestFailure implements FailureInterface
     private $actualOutput;
 
     /**
-     * @param ArrayObject $args
+     * @param ArrayObject $args The arguments that caused the failure.
      * @param string $expectedOutput The expected output.
      * @param string $actualOutput The actual output.
      */
@@ -43,7 +43,7 @@ class RequestFailure implements FailureInterface
     /**
      * Named constructor, for added code legibility.
      *
-     * @param ArrayObject $args
+     * @param ArrayObject $args The arguments that caused the failure.
      * @param string $expectedOutput The expected result.
      * @param string $actualOutput The actual output.
      * @return static The result.
@@ -54,6 +54,8 @@ class RequestFailure implements FailureInterface
     }
 
     /**
+     * Get the arguments that caused the failure.
+     *
      * @return ArrayObject
      */
     public function getArgs()

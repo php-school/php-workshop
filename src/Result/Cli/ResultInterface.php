@@ -10,6 +10,8 @@ use PhpSchool\PhpWorkshop\Utils\ArrayObject;
 interface ResultInterface extends \PhpSchool\PhpWorkshop\Result\ResultInterface
 {
     /**
+     * Get the arguments associated with this result.
+     *
      * @return ArrayObject
      */
     public function getArgs();
