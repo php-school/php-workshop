@@ -113,7 +113,7 @@ class ResultsRenderer
 
         foreach ($successes as $success) {
             $output->writeLine($this->center($this->style(str_repeat(' ', $longest), ['bg_green'])));
-            $output->writeLine($this->center($this->style($this->mbStrPad($success, $longest), ['bg_green', 'white', 'bold'])));
+            $output->writeLine($this->center($this->style(\mb_str_pad($success, $longest), ['bg_green', 'white', 'bold'])));
             $output->writeLine($this->center($this->style(str_repeat(' ', $longest), ['bg_green'])));
             $output->emptyLine();
         }
@@ -139,7 +139,7 @@ class ResultsRenderer
         foreach ($failures as $result) {
             list ($failure, $message) = $result;
             $output->writeLine($this->center($this->style(str_repeat(' ', $padLength), ['bg_red'])));
-            $output->writeLine($this->center($this->style($this->mbStrPad($message, $padLength), ['bg_red'])));
+            $output->writeLine($this->center($this->style(\mb_str_pad($message, $padLength), ['bg_red'])));
             $output->writeLine($this->center($this->style(str_repeat(' ', $padLength), ['bg_red'])));
 
             $output->emptyLine();
@@ -291,18 +291,5 @@ class ResultsRenderer
     public function lineBreak()
     {
         return $this->style(str_repeat('─', $this->terminal->getWidth()), 'yellow');
-    }
-
-    /**
-     * @param string $input
-     * @param int $padLength
-     * @param string $padString
-     * @param int $padType
-     * @return string
-     */
-    public function mbStrPad($input, $padLength, $padString = ' ', $padType = STR_PAD_RIGHT)
-    {
-        $diff = strlen($input) - mb_strlen($input);
-        return str_pad($input, $padLength + $diff, $padString, $padType);
     }
 }

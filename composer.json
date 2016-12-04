@@ -43,7 +43,8 @@
             "PhpSchool\\PhpWorkshop\\": "src"
         },
         "files": [
-            "src/Event/functions.php"
+            "src/Event/functions.php",
+            "src/functions.php"
         ]
     },
     "autoload-dev": {
