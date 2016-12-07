@@ -1,13 +1,11 @@
 <?php
 
-namespace PhpSchool\PhpWorkshopTest;
+namespace PhpSchool\PhpWorkshopTest\Output;
 
 use Colors\Color;
 use PhpSchool\CliMenu\Terminal\TerminalInterface;
 use PHPUnit_Framework_TestCase;
 use PhpSchool\PhpWorkshop\Output\StdOutput;
-use Symfony\Component\Console\Output\OutputInterface;
-use Zend\Diactoros\Request;
 
 /**
  * Class StdOutputTest
