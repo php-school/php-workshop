@@ -87,4 +87,19 @@ class ResultsRendererFactoryTest extends PHPUnit_Framework_TestCase
 
         $this->assertInstanceOf($rendererClassName, $returnedRenderer);
     }
+
+    public function testExceptionIsThrownIfFactoryReturnsInCorrectRenderer()
+    {
+        $resultClass = $this->createMock(ResultInterface::class);
+        $resultClassName = get_class($resultClass);
+        $rendererClassName = get_class($this->createMock(ResultRendererInterface::class));
+        $factory = new ResultRendererFactory();
+        $factory->registerRenderer($resultClassName, $rendererClassName, function () {
+            return new \stdClass;
+        });
+
+        $this->expectException(RuntimeException::class);
+
+        $factory->create($resultClass);
+    }
 }
