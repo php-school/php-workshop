@@ -187,4 +187,12 @@ class ArrayObject implements IteratorAggregate, Countable
     {
         return count($this->array);
     }
+
+    /**
+     * @return bool
+     */
+    public function isEmpty()
+    {
+        return $this->array === [];
+    }
 }
