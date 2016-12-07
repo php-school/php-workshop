@@ -43,8 +43,22 @@ class CliResultRenderer implements ResultRendererInterface
         });
 
         $output = '';
+        if (count($results)) {
+            $output .= $renderer->center("Some executions of your solution produced incorrect output!\n");
+        }
+
+        /** @var FailureInterface $request **/
         foreach ($results as $key => $request) {
-            $output .= $renderer->renderResult($request) . "\n";
+            $output .= $renderer->lineBreak();
+            $output .= "\n";
+            $output .= $renderer->style(sprintf('Execution %d', $key + 1), ['bold', 'underline', 'blue']);
+            $output .= ' ' . $renderer->style(' FAILED ', ['bg_red', 'bold']) . "\n\n";
+
+            $output .= $request->getArgs()->isEmpty()
+                ? "Arguments: None\n"
+                : sprintf("Arguments: \"%s\"\n", $request->getArgs()->implode('", "'));
+
+            $output .= "\n" . $renderer->renderResult($request) . "\n";
         }
 
         return $output;
