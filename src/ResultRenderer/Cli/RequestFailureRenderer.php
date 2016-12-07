@@ -37,10 +37,10 @@ class RequestFailureRenderer implements ResultRendererInterface
     {
         return sprintf(
             "  %s\n%s\n\n  %s\n%s\n",
-            $renderer->style("ACTUAL", ['bold', 'underline', 'yellow']),
+            $renderer->style('YOUR OUTPUT:', ['bold', 'yellow']),
             $this->indent($renderer->style(sprintf('"%s"', $this->result->getActualOutput()), 'red')),
-            $renderer->style("EXPECTED", ['yellow', 'bold', 'underline']),
-            $this->indent($renderer->style(sprintf('"%s"', $this->result->getExpectedOutput()), 'red'))
+            $renderer->style('EXPECTED OUTPUT:', ['bold', 'yellow']),
+            $this->indent($renderer->style(sprintf('"%s"', $this->result->getExpectedOutput()), 'green'))
         );
     }
 

@@ -39,9 +39,9 @@ class RequestFailureRenderer implements ResultRendererInterface
         if ($this->result->headersDifferent()) {
             $output .= sprintf(
                 "%s      %s\n%s  %s",
-                $renderer->style("YOUR HEADERS:", ['bold', 'yellow']),
+                $renderer->style('YOUR HEADERS:', ['bold', 'yellow']),
                 $this->headers($this->result->getActualHeaders(), $renderer),
-                $renderer->style("EXPECTED HEADERS:", ['bold', 'yellow']),
+                $renderer->style('EXPECTED HEADERS:', ['bold', 'yellow']),
                 $this->headers($this->result->getExpectedHeaders(), $renderer, false)
             );
         }

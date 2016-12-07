@@ -17,10 +17,10 @@ class RequestFailureRendererTest extends AbstractResultRendererTest
         $failure  = new RequestFailure(new ArrayObject, 'EXPECTED OUTPUT', 'ACTUAL OUTPUT');
         $renderer = new RequestFailureRenderer($failure);
 
-        $expected  = "  [33m[4m[1mACTUAL[0m[0m[0m\n";
-        $expected .= "  [31m\"ACTUAL OUTPUT\"[0m\n\n";
-        $expected .= "  [4m[1m[33mEXPECTED[0m[0m[0m\n";
-        $expected .= "  [31m\"EXPECTED OUTPUT\"[0m\n";
+        $expected  = "  \e[33m\e[1mYOUR OUTPUT:\e[0m\e[0m\n";
+        $expected .= "  \e[31m\"ACTUAL OUTPUT\"\e[0m\n\n";
+        $expected .= "  \e[33m\e[1mEXPECTED OUTPUT:\e[0m\e[0m\n";
+        $expected .= "  \e[32m\"EXPECTED OUTPUT\"\e[0m\n";
 
         $this->assertEquals($expected, $renderer->render($this->getRenderer()));
     }
