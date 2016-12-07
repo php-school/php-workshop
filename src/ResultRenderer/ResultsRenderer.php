@@ -138,8 +138,7 @@ class ResultsRenderer
         ExerciseInterface $exercise,
         OutputInterface $output
     ) {
-        foreach ($failures as $result) {
-            list ($failure, $message) = $result;
+        foreach ($failures as list ($failure, $message)) {
             $output->writeLine($this->center($this->style(str_repeat(' ', $padLength), ['bg_red'])));
             $output->writeLine($this->center($this->style(\mb_str_pad($message, $padLength), ['bg_red'])));
             $output->writeLine($this->center($this->style(str_repeat(' ', $padLength), ['bg_red'])));

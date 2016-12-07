@@ -2,7 +2,6 @@
 
 namespace PhpSchool\PhpWorkshop\ResultRenderer;
 
-use PhpSchool\PhpWorkshop\Result\Cgi\RequestFailure;
 use PhpSchool\PhpWorkshop\Result\CgiOutRequestFailure;
 use PhpSchool\PhpWorkshop\Result\Cgi\CgiResult;
 use PhpSchool\PhpWorkshop\Result\Cgi\FailureInterface;

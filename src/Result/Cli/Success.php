@@ -2,9 +2,7 @@
 
 namespace PhpSchool\PhpWorkshop\Result\Cli;
 
-use PhpSchool\PhpWorkshop\Check\CheckInterface;
 use PhpSchool\PhpWorkshop\Utils\ArrayObject;
-use Psr\Http\Message\RequestInterface;
 
 /**
  * Default implementation of `PhpSchool\PhpWorkshop\Result\Cli\SuccessInterface`.
