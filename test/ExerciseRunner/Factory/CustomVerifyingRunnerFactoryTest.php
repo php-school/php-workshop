@@ -3,7 +3,6 @@
 namespace PhpSchool\PhpWorkshopTest\ExerciseRunner\Factory;
 
 use PhpSchool\PhpWorkshop\CommandDefinition;
-use PhpSchool\PhpWorkshop\Exercise\CustomVerifyingExercise;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseType;
 use PhpSchool\PhpWorkshop\ExerciseRunner\CustomVerifyingRunner;

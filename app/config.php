@@ -45,7 +45,6 @@ use PhpSchool\PhpWorkshop\Result\Cli\GenericFailure as CliGenericFailure;
 use PhpSchool\PhpWorkshop\Result\Cli\RequestFailure as CliRequestFailure;
 use PhpSchool\PhpWorkshop\Result\Failure;
 use PhpSchool\PhpWorkshop\Result\FunctionRequirementsFailure;
-use PhpSchool\PhpWorkshop\Result\StdOutFailure;
 use PhpSchool\PhpWorkshop\ResultAggregator;
 use PhpSchool\PhpWorkshop\ResultRenderer\CgiResultRenderer;
 use PhpSchool\PhpWorkshop\ResultRenderer\CliResultRenderer;

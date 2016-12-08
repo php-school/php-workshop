@@ -2,12 +2,9 @@
 
 namespace PhpSchool\PhpWorkshop\Command;
 
-use Colors\Color;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseType;
 use PhpSchool\PhpWorkshopTest\Asset\CliExerciseInterface;
-use PhpSchool\PhpWorkshopTest\Asset\ComposerExercise;
 use PHPUnit_Framework_TestCase;
-use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpSchool\PhpWorkshop\ExerciseRepository;
 use PhpSchool\PhpWorkshop\MarkdownRenderer;
 use PhpSchool\PhpWorkshop\Output\OutputInterface;

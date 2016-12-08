@@ -24,7 +24,7 @@ class GenericFailure extends Failure implements FailureInterface
 
     /**
      * @param RequestInterface $request The request that caused the failure.
-     * @param null $reason
+     * @param string|null $reason
      */
     public function __construct(RequestInterface $request, $reason = null)
     {

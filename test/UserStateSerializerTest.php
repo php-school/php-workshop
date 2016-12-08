@@ -2,7 +2,6 @@
 
 namespace PhpSchool\PhpWorkshopTest;
 
-use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseType;
 use PhpSchool\PhpWorkshop\ExerciseRepository;
 use PhpSchool\PhpWorkshop\UserState;
