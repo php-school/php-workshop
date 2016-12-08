@@ -11,6 +11,21 @@ Updates should follow the [Keep a CHANGELOG](http://keepachangelog.com/) princip
 
 ### Removed
 
+## [2.0.0]
+### Added
+ - Added new exercise runner (Custom Runner) which allows for an exercise to not require a php solution. For example an exercise can now request the student install a piece of software and then the exercise will verify that it was installed. (#141)
+ - Global function for specifying an event listener as lazy. Eg the listener is registered in the container and should be pulled at runtime (#138)
+ - Exercise runners now return their required checks via getRequiredChecks (#137)
+ - Each runner now requires a factory which implements `ExerciseRunnerFactoryInterface` which can add arguments to the command and create instances of the runner (#137)
+
+### Changed
+ - Refactor results and result renderers and improve the verification output (#142)
+ - CLI exercises can now return an array of argument arrays which will run the program with each set of arguments, just like CGI exercises (BC is preserved here - 1 set of arguments is still accepted) (#142)
+ - Event listener config format has changed. Listeners must be grouped under an arbitrary key (think name of the feature requiring the listeners - see PR for example) (#138)
+ - Refactored some listeners to use more specific events and event objects (#140)
+ - Extract getSolution to it's own interface `ProvidesSolution`. BC is preserved as CliExercise & CgiExercise now extend from it (#139)
+ - Refactor everything dealing with the input file to use an `Input` object where the command line arguments can be retrieved from. This is BC break for checks, commands, self checking exercises and event listeners dealing with the `fileName` parameter (#135)
+
 ## [1.2.0]
  
 ### Added
