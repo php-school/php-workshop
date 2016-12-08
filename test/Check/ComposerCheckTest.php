@@ -75,6 +75,18 @@ class ComposerCheckTest extends PHPUnit_Framework_TestCase
         $this->assertSame('No composer.lock file found', $result->getReason());
     }
 
+    public function testCheckReturnsFailureIfNoVendorFolder()
+    {
+        $result = $this->check->check(
+            $this->exercise,
+            new Input('app', ['program' => __DIR__ . '/../res/composer/no-vendor/solution.php'])
+        );
+
+        $this->assertInstanceOf(Failure::class, $result);
+        $this->assertSame('Composer Dependency Check', $result->getCheckName());
+        $this->assertSame('No vendor folder found', $result->getReason());
+    }
+
     /**
      * @dataProvider dependencyProvider
      *

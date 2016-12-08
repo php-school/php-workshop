@@ -13,11 +13,13 @@ use PhpSchool\PhpWorkshop\Exercise\ExerciseType;
 use PhpSchool\PhpWorkshop\ExerciseRunner\CgiRunner;
 use PhpSchool\PhpWorkshop\Input\Input;
 use PhpSchool\PhpWorkshop\Output\StdOutput;
+use PhpSchool\PhpWorkshop\Result\Cgi\RequestFailure;
 use PhpSchool\PhpWorkshop\Result\CgiOutRequestFailure;
-use PhpSchool\PhpWorkshop\Result\CgiOutResult;
+use PhpSchool\PhpWorkshop\Result\Cgi\CgiResult;
 use PhpSchool\PhpWorkshop\Result\Failure;
 use PhpSchool\PhpWorkshop\ResultAggregator;
 use PhpSchool\PhpWorkshop\Solution\SingleFileSolution;
+use PhpSchool\PhpWorkshop\Utils\RequestRenderer;
 use PhpSchool\PhpWorkshopTest\Asset\CgiExerciseInterface;
 use PHPUnit_Framework_TestCase;
 use Zend\Diactoros\Request;
@@ -40,7 +42,7 @@ class CgiRunnerTest extends PHPUnit_Framework_TestCase
     public function setUp()
     {
         $this->exercise = $this->createMock(CgiExerciseInterface::class);
-        $this->runner = new CgiRunner($this->exercise, new EventDispatcher(new ResultAggregator));
+        $this->runner = new CgiRunner($this->exercise, new EventDispatcher(new ResultAggregator), new RequestRenderer);
 
         $this->exercise
             ->expects($this->any())
@@ -102,7 +104,7 @@ class CgiRunnerTest extends PHPUnit_Framework_TestCase
             ->will($this->returnValue([$request]));
 
         $this->assertInstanceOf(
-            CgiOutResult::class,
+            CgiResult::class,
             $this->runner->verify(new Input('app', ['program' => realpath(__DIR__ . '/../res/cgi/get-solution.php')]))
         );
     }
@@ -128,9 +130,13 @@ class CgiRunnerTest extends PHPUnit_Framework_TestCase
             ->will($this->returnValue([$request]));
 
         $this->assertInstanceOf(
-            CgiOutResult::class,
-            $this->runner->verify(new Input('app', ['program' => realpath(__DIR__ . '/../res/cgi/post-solution.php')]))
+            CgiResult::class,
+            $res = $this->runner->verify(
+                new Input('app', ['program' => realpath(__DIR__ . '/../res/cgi/post-solution.php')])
+            )
         );
+
+        $this->assertTrue($res->isSuccessful());
     }
 
     public function testVerifyReturnsSuccessIfPostSolutionOutputMatchesUserOutputWithMultipleParams()
@@ -157,7 +163,7 @@ class CgiRunnerTest extends PHPUnit_Framework_TestCase
             new Input('app', ['program' => realpath(__DIR__ . '/../res/cgi/post-multiple-solution.php')])
         );
 
-        $this->assertInstanceOf(CgiOutResult::class, $result);
+        $this->assertInstanceOf(CgiResult::class, $result);
     }
 
     public function testVerifyReturnsFailureIfUserSolutionFailsToExecute()
@@ -181,7 +187,7 @@ class CgiRunnerTest extends PHPUnit_Framework_TestCase
             new Input('app', ['program' => realpath(__DIR__ . '/../res/cgi/user-error.php')])
         );
 
-        $this->assertInstanceOf(CgiOutResult::class, $failure);
+        $this->assertInstanceOf(CgiResult::class, $failure);
         $this->assertCount(1, $failure);
 
         $result = iterator_to_array($failure)[0];
@@ -213,11 +219,11 @@ class CgiRunnerTest extends PHPUnit_Framework_TestCase
             new Input('app', ['program' => realpath(__DIR__ . '/../res/cgi/get-user-wrong.php')])
         );
 
-        $this->assertInstanceOf(CgiOutResult::class, $failure);
+        $this->assertInstanceOf(CgiResult::class, $failure);
         $this->assertCount(1, $failure);
 
         $result = iterator_to_array($failure)[0];
-        $this->assertInstanceOf(CgiOutRequestFailure::class, $result);
+        $this->assertInstanceOf(RequestFailure::class, $result);
         $this->assertEquals('10', $result->getExpectedOutput());
         $this->assertEquals('15', $result->getActualOutput());
         $this->assertEquals(['Content-type' => 'text/html; charset=UTF-8'], $result->getExpectedHeaders());
@@ -245,11 +251,11 @@ class CgiRunnerTest extends PHPUnit_Framework_TestCase
             new Input('app', ['program' => realpath(__DIR__ . '/../res/cgi/get-user-header-wrong.php')])
         );
 
-        $this->assertInstanceOf(CgiOutResult::class, $failure);
+        $this->assertInstanceOf(CgiResult::class, $failure);
         $this->assertCount(1, $failure);
 
         $result = iterator_to_array($failure)[0];
-        $this->assertInstanceOf(CgiOutRequestFailure::class, $result);
+        $this->assertInstanceOf(RequestFailure::class, $result);
 
         $this->assertSame($result->getExpectedOutput(), $result->getActualOutput());
         $this->assertEquals(

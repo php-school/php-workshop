@@ -6,7 +6,7 @@ use Colors\Color;
 use PhpSchool\CliMenu\Terminal\TerminalInterface;
 use PhpSchool\PhpWorkshop\Factory\ResultRendererFactory;
 use PhpSchool\PSX\Factory;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 use PhpSchool\PhpWorkshop\ExerciseRepository;
 use PhpSchool\PhpWorkshop\ResultRenderer\ResultsRenderer;
 
@@ -15,36 +15,54 @@ use PhpSchool\PhpWorkshop\ResultRenderer\ResultsRenderer;
  * @package PhpSchool\PhpWorkshopTest\ResultRenderer
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
-abstract class AbstractResultRendererTest extends PHPUnit_Framework_TestCase
+abstract class AbstractResultRendererTest extends TestCase
 {
     /**
-     * @var TerminalInterface
+     * @var ResultRendererFactory
      */
-    protected $terminal;
+    private $resultRendererFactory;
+
+    /**
+     * @var ResultsRenderer
+     */
+    private $renderer;
+
+    /**
+     * @return ResultRendererFactory
+     */
+    public function getResultRendererFactory()
+    {
+        if (null === $this->resultRendererFactory) {
+            $this->resultRendererFactory = new ResultRendererFactory;
+        }
+
+        return $this->resultRendererFactory;
+    }
 
     /**
      * @return ResultsRenderer
      */
     protected function getRenderer()
     {
-        $color = new Color;
-        $color->setForceStyle(true);
+        if (null === $this->renderer) {
+            $color = new Color;
+            $color->setForceStyle(true);
 
-        $this->terminal = $this->createMock(TerminalInterface::class);
-        $exerciseRepo = $this->createMock(ExerciseRepository::class);
-        $this->terminal
-            ->expects($this->any())
-            ->method('getWidth')
-            ->will($this->returnValue(20));
+            $terminal = $this->prophesize(TerminalInterface::class);
+            $terminal->getWidth()->willReturn(50);
+            $exerciseRepo = $this->createMock(ExerciseRepository::class);
 
-        $syntaxHighlighter = (new Factory)->__invoke();
-        return new ResultsRenderer(
-            'appName',
-            $color,
-            $this->terminal,
-            $exerciseRepo,
-            $syntaxHighlighter,
-            new ResultRendererFactory
-        );
+            $syntaxHighlighter = (new Factory)->__invoke();
+            $this->renderer = new ResultsRenderer(
+                'appName',
+                $color,
+                $terminal->reveal(),
+                $exerciseRepo,
+                $syntaxHighlighter,
+                $this->getResultRendererFactory()
+            );
+        }
+
+        return $this->renderer;
     }
 }

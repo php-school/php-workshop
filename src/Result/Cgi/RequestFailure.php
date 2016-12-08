@@ -1,6 +1,6 @@
 <?php
 
-namespace PhpSchool\PhpWorkshop\Result;
+namespace PhpSchool\PhpWorkshop\Result\Cgi;
 
 use Psr\Http\Message\RequestInterface;
 
@@ -11,7 +11,7 @@ use Psr\Http\Message\RequestInterface;
  * @package PhpSchool\PhpWorkshop\Result
  * @author  Aydin Hassan <aydin@hotmail.co.uk>
  */
-class CgiOutRequestFailure implements FailureInterface
+class RequestFailure implements FailureInterface
 {
     /**
      * @var RequestInterface
@@ -39,7 +39,7 @@ class CgiOutRequestFailure implements FailureInterface
     private $actualHeaders;
 
     /**
-     * @param RequestInterface $request
+     * @param RequestInterface $request The request that caused the failure.
      * @param string $expectedOutput
      * @param string $actualOutput
      * @param array $expectedHeaders
@@ -60,7 +60,7 @@ class CgiOutRequestFailure implements FailureInterface
     }
 
     /**
-     * Get the request object associated with this failure.
+     * Get the request that caused the failure.
      *
      * @return RequestInterface
      */
@@ -140,6 +140,8 @@ class CgiOutRequestFailure implements FailureInterface
     }
 
     /**
+     * Get the name of the check that this result was produced from.
+     *
      * @return string
      */
     public function getCheckName()

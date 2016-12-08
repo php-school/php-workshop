@@ -180,7 +180,7 @@ class DatabaseCheckTest extends PHPUnit_Framework_TestCase
         $this->exercise
             ->expects($this->once())
             ->method('getArgs')
-            ->will($this->returnValue([1, 2, 3]));
+            ->will($this->returnValue([[1, 2, 3]]));
 
         $this->exercise
             ->expects($this->once())

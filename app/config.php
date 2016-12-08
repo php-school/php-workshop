@@ -37,7 +37,23 @@ use PhpSchool\PhpWorkshop\MenuItem\ResetProgress;
 use PhpSchool\PhpWorkshop\Output\OutputInterface;
 use PhpSchool\PhpWorkshop\Output\StdOutput;
 use PhpSchool\PhpWorkshop\Patch;
+use PhpSchool\PhpWorkshop\Result\Cgi\GenericFailure as CgiGenericFailure;
+use PhpSchool\PhpWorkshop\Result\Cgi\RequestFailure as CgiRequestFailure;
+use PhpSchool\PhpWorkshop\Result\Cgi\CgiResult;
+use PhpSchool\PhpWorkshop\Result\Cli\CliResult;
+use PhpSchool\PhpWorkshop\Result\Cli\GenericFailure as CliGenericFailure;
+use PhpSchool\PhpWorkshop\Result\Cli\RequestFailure as CliRequestFailure;
+use PhpSchool\PhpWorkshop\Result\Failure;
+use PhpSchool\PhpWorkshop\Result\FunctionRequirementsFailure;
+use PhpSchool\PhpWorkshop\Result\StdOutFailure;
 use PhpSchool\PhpWorkshop\ResultAggregator;
+use PhpSchool\PhpWorkshop\ResultRenderer\CgiResultRenderer;
+use PhpSchool\PhpWorkshop\ResultRenderer\CliResultRenderer;
+use PhpSchool\PhpWorkshop\ResultRenderer\FailureRenderer;
+use PhpSchool\PhpWorkshop\ResultRenderer\FunctionRequirementsFailureRenderer;
+use PhpSchool\PhpWorkshop\ResultRenderer\Cli\RequestFailureRenderer as CliRequestFailureRenderer;
+use PhpSchool\PhpWorkshop\ResultRenderer\Cgi\RequestFailureRenderer as CgiRequestFailureRenderer;
+use PhpSchool\PhpWorkshop\Utils\RequestRenderer;
 use PhpSchool\PSX\Factory as PsxFactory;
 use PhpSchool\PhpWorkshop\WorkshopType;
 use PhpSchool\PSX\SyntaxHighlighter;
@@ -125,7 +141,7 @@ return [
     RunnerManager::class => function (ContainerInterface $c) {
         $manager = new RunnerManager;
         $manager->addFactory(new CliRunnerFactory($c->get(EventDispatcher::class)));
-        $manager->addFactory(new CgiRunnerFactory($c->get(EventDispatcher::class)));
+        $manager->addFactory(new CgiRunnerFactory($c->get(EventDispatcher::class), $c->get(RequestRenderer::class)));
         $manager->addFactory(new CustomVerifyingRunnerFactory);
         return $manager;
     },
@@ -231,6 +247,7 @@ return [
     FakerGenerator::class => function () {
         return FakerFactory::create();
     },
+    RequestRenderer::class => object(),
     
     TerminalInterface::class => factory([TerminalFactory::class, 'fromSystem']),
     'menu' => factory(MenuFactory::class),
@@ -266,7 +283,26 @@ return [
     ResetProgress::class => function (ContainerInterface $c) {
         return new ResetProgress($c->get(UserStateSerializer::class));
     },
-    ResultRendererFactory::class => object(),
+    ResultRendererFactory::class => function (ContainerInterface $c) {
+        $factory = new ResultRendererFactory;
+        $factory->registerRenderer(FunctionRequirementsFailure::class, FunctionRequirementsFailureRenderer::class);
+        $factory->registerRenderer(Failure::class, FailureRenderer::class);
+        $factory->registerRenderer(
+            CgiResult::class,
+            CgiResultRenderer::class,
+            function (CgiResult $result) use ($c) {
+                return new CgiResultRenderer($result, $c->get(RequestRenderer::class));
+            }
+        );
+        $factory->registerRenderer(CgiGenericFailure::class, FailureRenderer::class);
+        $factory->registerRenderer(CgiRequestFailure::class, CgiRequestFailureRenderer::class);
+
+        $factory->registerRenderer(CliResult::class, CliResultRenderer::class);
+        $factory->registerRenderer(CliGenericFailure::class, FailureRenderer::class);
+        $factory->registerRenderer(CliRequestFailure::class, CliRequestFailureRenderer::class);
+
+        return $factory;
+    },
     ResultsRenderer::class => function (ContainerInterface $c) {
         return new ResultsRenderer(
             $c->get('appName'),
@@ -277,6 +313,7 @@ return [
             $c->get(ResultRendererFactory::class)
         );
     },
+
     'coreContributors' => [
         '@AydinHassan' => 'Aydin Hassan',
         '@mikeymike'   => 'Michael Woodward',

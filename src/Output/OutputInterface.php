@@ -3,7 +3,6 @@
 namespace PhpSchool\PhpWorkshop\Output;
 
 use Psr\Http\Message\RequestInterface;
-use Zend\Diactoros\Request;
 
 /**
  * Interface StdOutput
@@ -60,11 +59,4 @@ interface OutputInterface
      * @param string $title
      */
     public function writeTitle($title);
-
-    /**
-     * Write a PSR-7 request.
-     *
-     * @param RequestInterface $request
-     */
-    public function writeRequest(RequestInterface $request);
 }

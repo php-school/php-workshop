@@ -24,8 +24,7 @@ before_script:
 
 script:
   - ./vendor/bin/phpunit --coverage-clover ./build/logs/clover.xml
-  - ./vendor/bin/phpcs --standard=PSR2 ./src/
-  - ./vendor/bin/phpcs --standard=PSR2 ./test/
+  - composer cs
 
 after_script:
   - bash <(curl -s https://codecov.io/bash)

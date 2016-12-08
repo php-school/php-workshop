@@ -14,11 +14,12 @@ use PhpSchool\PhpWorkshop\Exception\SolutionExecutionException;
 use PhpSchool\PhpWorkshop\Exercise\CgiExercise;
 use PhpSchool\PhpWorkshop\Input\Input;
 use PhpSchool\PhpWorkshop\Output\OutputInterface;
-use PhpSchool\PhpWorkshop\Result\CgiOutRequestFailure;
-use PhpSchool\PhpWorkshop\Result\CgiOutResult;
-use PhpSchool\PhpWorkshop\Result\Failure;
+use PhpSchool\PhpWorkshop\Result\Cgi\CgiResult;
+use PhpSchool\PhpWorkshop\Result\Cgi\RequestFailure;
+use PhpSchool\PhpWorkshop\Result\Cgi\GenericFailure;
+use PhpSchool\PhpWorkshop\Result\Cgi\Success;
 use PhpSchool\PhpWorkshop\Result\ResultInterface;
-use PhpSchool\PhpWorkshop\Result\Success;
+use PhpSchool\PhpWorkshop\Utils\RequestRenderer;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use RuntimeException;
@@ -45,16 +46,24 @@ class CgiRunner implements ExerciseRunnerInterface
     private $eventDispatcher;
 
     /**
+     * @var RequestRenderer
+     */
+    private $requestRenderer;
+
+    /**
      * Requires the exercise instance and an event dispatcher. This runner requires the `php-cgi` binary to
      * be available. It will check for it's existence in the system's $PATH variable or the same
      * folder that the CLI php binary lives in.
      *
      * @param CgiExercise $exercise The exercise to be invoked.
      * @param EventDispatcher $eventDispatcher The event dispatcher.
-     * @throws RuntimeException If the `php-cgi` binary cannot be found.
+     * @param RequestRenderer $requestRenderer
      */
-    public function __construct(CgiExercise $exercise, EventDispatcher $eventDispatcher)
-    {
+    public function __construct(
+        CgiExercise $exercise,
+        EventDispatcher $eventDispatcher,
+        RequestRenderer $requestRenderer
+    ) {
         if (strpos(PHP_OS, 'WIN') !== false) {
             // Check if in path. 2> nul > nul equivalent to 2>&1 /dev/null
             $silence  = (PHP_OS == 'CYGWIN' ? '> /dev/null 2>&1' : '2> nul > nul');
@@ -79,6 +88,7 @@ class CgiRunner implements ExerciseRunnerInterface
         }
         $this->eventDispatcher = $eventDispatcher;
         $this->exercise = $exercise;
+        $this->requestRenderer = $requestRenderer;
     }
 
     /**
@@ -129,7 +139,7 @@ class CgiRunner implements ExerciseRunnerInterface
             $userResponse = $this->executePhpFile($fileName, $event->getRequest(), 'student');
         } catch (CodeExecutionException $e) {
             $this->eventDispatcher->dispatch(new Event('cgi.verify.student-execute.fail', ['exception' => $e]));
-            return Failure::fromNameAndCodeExecutionFailure($this->getName(), $e);
+            return GenericFailure::fromRequestAndCodeExecutionFailure($request, $e);
         }
 
         $solutionBody       = (string) $solutionResponse->getBody();
@@ -138,10 +148,10 @@ class CgiRunner implements ExerciseRunnerInterface
         $userHeaders        = $this->getHeaders($userResponse);
 
         if ($solutionBody !== $userBody || $solutionHeaders !== $userHeaders) {
-            return new CgiOutRequestFailure($request, $solutionBody, $userBody, $solutionHeaders, $userHeaders);
+            return new RequestFailure($request, $solutionBody, $userBody, $solutionHeaders, $userHeaders);
         }
 
-        return new Success($this->getName());
+        return new Success($request);
     }
 
     /**
@@ -232,13 +242,12 @@ class CgiRunner implements ExerciseRunnerInterface
      * * cgi.verify.student-execute.fail (if the student's solution fails to execute)
      *
      * @param Input $input The command line arguments passed to the command.
-     * @return ResultInterface The result of the check.
+     * @return CgiResult The result of the check.
      */
     public function verify(Input $input)
     {
         $this->eventDispatcher->dispatch(new ExerciseRunnerEvent('cgi.verify.start', $this->exercise, $input));
-        $result = new CgiOutResult(
-            $this->getName(),
+        $result = new CgiResult(
             array_map(
                 function (RequestInterface $request) use ($input) {
                     return $this->checkRequest($request, $input->getArgument('program'));
@@ -279,7 +288,7 @@ class CgiRunner implements ExerciseRunnerInterface
 
             $output->writeTitle("Request");
             $output->emptyLine();
-            $output->writeRequest($request);
+            $output->write($this->requestRenderer->renderRequest($request));
 
             $output->writeTitle("Output");
             $output->emptyLine();

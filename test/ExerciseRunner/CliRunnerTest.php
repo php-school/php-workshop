@@ -3,7 +3,6 @@
 namespace PhpSchool\PhpWorkshopTest\ExerciseRunner;
 
 use Colors\Color;
-use InvalidArgumentException;
 use PhpSchool\CliMenu\Terminal\TerminalInterface;
 use PhpSchool\PhpWorkshop\Check\CodeParseCheck;
 use PhpSchool\PhpWorkshop\Check\FileExistsCheck;
@@ -14,7 +13,9 @@ use PhpSchool\PhpWorkshop\Exercise\ExerciseType;
 use PhpSchool\PhpWorkshop\ExerciseRunner\CliRunner;
 use PhpSchool\PhpWorkshop\Input\Input;
 use PhpSchool\PhpWorkshop\Output\StdOutput;
-use PhpSchool\PhpWorkshop\Result\Failure;
+use PhpSchool\PhpWorkshop\Result\Cli\CliResult;
+use PhpSchool\PhpWorkshop\Result\Cli\GenericFailure;
+use PhpSchool\PhpWorkshop\Result\Cli\RequestFailure;
 use PhpSchool\PhpWorkshop\Result\StdOutFailure;
 use PhpSchool\PhpWorkshop\Result\Success;
 use PhpSchool\PhpWorkshop\ResultAggregator;
@@ -71,7 +72,7 @@ class CliRunnerTest extends PHPUnit_Framework_TestCase
         $this->exercise
             ->expects($this->once())
             ->method('getArgs')
-            ->will($this->returnValue([]));
+            ->will($this->returnValue([[]]));
 
         $regex  = "/^PHP Code failed to execute\\. Error: \"PHP Parse error:  syntax error, unexpected end of file";
         $regex .= ", expecting ',' or ';'/";
@@ -91,12 +92,35 @@ class CliRunnerTest extends PHPUnit_Framework_TestCase
         $this->exercise
             ->expects($this->once())
             ->method('getArgs')
+            ->will($this->returnValue([[1, 2, 3]]));
+
+        $this->assertInstanceOf(
+            CliResult::class,
+            $res = $this->runner->verify(new Input('app', ['program' => __DIR__ . '/../res/cli/user.php']))
+        );
+
+        $this->assertTrue($res->isSuccessful());
+    }
+
+    public function testSuccessWithSingleSetOfArgsForBC()
+    {
+        $solution = SingleFileSolution::fromFile(realpath(__DIR__ . '/../res/cli/solution.php'));
+        $this->exercise
+            ->expects($this->once())
+            ->method('getSolution')
+            ->will($this->returnValue($solution));
+
+        $this->exercise
+            ->expects($this->once())
+            ->method('getArgs')
             ->will($this->returnValue([1, 2, 3]));
 
         $this->assertInstanceOf(
-            Success::class,
-            $this->runner->verify(new Input('app', ['program' => __DIR__ . '/../res/cli/user.php']))
+            CliResult::class,
+            $res = $this->runner->verify(new Input('app', ['program' => __DIR__ . '/../res/cli/user.php']))
         );
+
+        $this->assertTrue($res->isSuccessful());
     }
 
     public function testVerifyReturnsFailureIfUserSolutionFailsToExecute()
@@ -110,15 +134,19 @@ class CliRunnerTest extends PHPUnit_Framework_TestCase
         $this->exercise
             ->expects($this->once())
             ->method('getArgs')
-            ->will($this->returnValue([1, 2, 3]));
+            ->will($this->returnValue([[1, 2, 3]]));
 
         $failure = $this->runner->verify(new Input('app', ['program' => __DIR__ . '/../res/cli/user-error.php']));
 
         $failureMsg  = "/^PHP Code failed to execute. Error: \"PHP Parse error:  syntax error, ";
         $failureMsg .= "unexpected end of file, expecting ',' or ';'/";
 
-        $this->assertInstanceOf(Failure::class, $failure);
-        $this->assertRegExp($failureMsg, $failure->getReason());
+        $this->assertInstanceOf(CLiResult::class, $failure);
+        $this->assertCount(1, $failure);
+
+        $result = iterator_to_array($failure)[0];
+        $this->assertInstanceOf(GenericFailure::class, $result);
+        $this->assertRegExp($failureMsg, $result->getReason());
     }
 
     public function testVerifyReturnsFailureIfSolutionOutputDoesNotMatchUserOutput()
@@ -132,29 +160,41 @@ class CliRunnerTest extends PHPUnit_Framework_TestCase
         $this->exercise
             ->expects($this->once())
             ->method('getArgs')
-            ->will($this->returnValue([1, 2, 3]));
+            ->will($this->returnValue([[1, 2, 3]]));
 
         $failure = $this->runner->verify(new Input('app', ['program' => __DIR__ . '/../res/cli/user-wrong.php']));
 
-        $this->assertInstanceOf(StdOutFailure::class, $failure);
-        $this->assertEquals('6', $failure->getExpectedOutput());
-        $this->assertEquals('10', $failure->getActualOutput());
+        $this->assertInstanceOf(CLiResult::class, $failure);
+        $this->assertCount(1, $failure);
+
+        $result = iterator_to_array($failure)[0];
+        $this->assertInstanceOf(RequestFailure::class, $result);
+
+        $this->assertEquals('6', $result->getExpectedOutput());
+        $this->assertEquals('10', $result->getActualOutput());
     }
 
     public function testRunPassesOutputAndReturnsSuccessIfScriptIsSuccessful()
     {
-        $output = new StdOutput(new Color, $this->createMock(TerminalInterface::class));
+        $color = new Color;
+        $color->setForceStyle(true);
+        $output = new StdOutput($color, $this->createMock(TerminalInterface::class));
 
         $this->exercise
             ->expects($this->once())
             ->method('getArgs')
-            ->will($this->returnValue([1, 2, 3]));
+            ->will($this->returnValue([[1, 2, 3], [4, 5, 6]]));
 
         $exp  = "\n\e[1m\e[4mArguments\e[0m\e[0m\n";
-        $exp .= "1, 2, 3\n\n";
-        $exp .= "\e[1m\e[4m";
-        $exp .= "Output\e[0m\e[0m\n";
+        $exp .= "1, 2, 3\n";
+        $exp .= "\n\e[1m\e[4mOutput\e[0m\e[0m\n";
         $exp .= "6\n";
+        $exp .= "\e[33m\e[0m\n";
+        $exp .= "\e[1m\e[4mArguments\e[0m\e[0m\n";
+        $exp .= "4, 5, 6\n\n";
+        $exp .= "\e[1m\e[4mOutput\e[0m\e[0m\n";
+        $exp .= "15\n";
+        $exp .= "\e[33m\e[0m";
 
         $this->expectOutputString($exp);
 
@@ -169,7 +209,7 @@ class CliRunnerTest extends PHPUnit_Framework_TestCase
         $this->exercise
             ->expects($this->once())
             ->method('getArgs')
-            ->will($this->returnValue([1, 2, 3]));
+            ->will($this->returnValue([[1, 2, 3]]));
 
         $this->expectOutputRegex('/PHP Parse error:  syntax error, unexpected end of file, expecting \',\' or \';\' /');
 

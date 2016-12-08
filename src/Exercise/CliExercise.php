@@ -10,10 +10,10 @@ namespace PhpSchool\PhpWorkshop\Exercise;
 interface CliExercise extends ProvidesSolution
 {
     /**
-     * This method should return an array of strings which will be passed to the student's solution
-     * as command line arguments.
+     * This method should return an array of an array of strings.
+     * Each set of arguments will be passed to the students solution as command line arguments.
      *
-     * @return string[] An array of string arguments.
+     * @return string[][] An array of string arguments.
      */
     public function getArgs();
 }

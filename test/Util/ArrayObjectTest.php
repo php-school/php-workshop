@@ -130,4 +130,13 @@ class ArrayObjectTest extends PHPUnit_Framework_TestCase
         $this->assertNotSame($new, $arrayObject);
         $this->assertSame(['one' => 1, 'two' => 2, 'three' => 4], $new->getArrayCopy());
     }
+
+    public function testIsEmpty()
+    {
+        $arrayObject = new ArrayObject([1, 2, 3]);
+        self::assertFalse($arrayObject->isEmpty());
+
+        $arrayObject = new ArrayObject;
+        self::assertTrue($arrayObject->isEmpty());
+    }
 }
