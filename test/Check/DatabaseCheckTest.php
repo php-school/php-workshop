@@ -2,10 +2,8 @@
 
 namespace PhpSchool\PhpWorkshopTest\Check;
 
-use DI\Container;
 use DI\ContainerBuilder;
 use PDO;
-use PhpSchool\PhpWorkshop\Check\CheckInterface;
 use PhpSchool\PhpWorkshop\Check\CheckRepository;
 use PhpSchool\PhpWorkshop\Check\DatabaseCheck;
 use PhpSchool\PhpWorkshop\Event\EventDispatcher;

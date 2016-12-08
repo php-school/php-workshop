@@ -3,7 +3,6 @@
 namespace PhpSchool\PhpWorkshop\Check;
 
 use PDO;
-use PhpSchool\PhpWorkshop\Event\CliEvent;
 use PhpSchool\PhpWorkshop\Event\CliExecuteEvent;
 use PhpSchool\PhpWorkshop\Event\Event;
 use PhpSchool\PhpWorkshop\Event\EventDispatcher;
@@ -11,7 +10,6 @@ use PhpSchool\PhpWorkshop\Exercise\TemporaryDirectoryTrait;
 use PhpSchool\PhpWorkshop\ExerciseCheck\DatabaseExerciseCheck;
 use PhpSchool\PhpWorkshop\Result\Failure;
 use PhpSchool\PhpWorkshop\Result\Success;
-use Symfony\Component\Process\Process;
 
 /**
  * This check sets up a database and a `PDO` object. It prepends the database DSN as a CLI argument to the student's
