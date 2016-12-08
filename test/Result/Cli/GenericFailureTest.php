@@ -6,7 +6,6 @@ use PhpSchool\PhpWorkshop\Exception\CodeExecutionException;
 use PhpSchool\PhpWorkshop\Result\CLi\GenericFailure;
 use PhpSchool\PhpWorkshop\Utils\ArrayObject;
 use PHPUnit_Framework_TestCase;
-use Psr\Http\Message\RequestInterface;
 
 /**
  * @author Aydin Hassan <aydin@hotmail.co.uk>

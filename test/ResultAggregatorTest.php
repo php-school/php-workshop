@@ -6,7 +6,6 @@ namespace PhpSchool\PhpWorkshopTest;
 use PhpSchool\PhpWorkshop\Check\CheckInterface;
 use PhpSchool\PhpWorkshop\Result\Cli\CliResult;
 use PhpSchool\PhpWorkshop\Utils\ArrayObject;
-use PhpSchool\PhpWorkshopTest\Asset\ResultResultAggregator;
 use PHPUnit_Framework_TestCase;
 use PhpSchool\PhpWorkshop\Result\Failure;
 use PhpSchool\PhpWorkshop\Result\Success;

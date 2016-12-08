@@ -24,7 +24,7 @@ class GenericFailure extends Failure implements FailureInterface
 
     /**
      * @param ArrayObject $args The arguments that caused the failure.
-     * @param null $reason The reason (if any) of the failure.
+     * @param string|null $reason The reason (if any) of the failure.
      */
     public function __construct(ArrayObject $args, $reason = null)
     {
