@@ -8,7 +8,6 @@ use PhpSchool\PhpWorkshop\Result\Cli\CliResult;
 use PhpSchool\PhpWorkshop\ResultRenderer\Cli\RequestFailureRenderer;
 use PhpSchool\PhpWorkshop\ResultRenderer\CliResultRenderer;
 use PhpSchool\PhpWorkshop\Utils\ArrayObject;
-use PhpSchool\PhpWorkshop\Utils\RequestRenderer;
 
 /**
  * @author Aydin Hassan <aydin@hotmail.co.uk>
@@ -42,7 +41,7 @@ class CliResultRendererTest extends AbstractResultRendererTest
             'ACTUAL OUTPUT'
         );
         $result = new CliResult([$failure]);
-        $renderer = new CliResultRenderer($result, new RequestRenderer);
+        $renderer = new CliResultRenderer($result);
 
         $expected  = "Some executions of your solution produced incorrect output!\n";
         $expected .= "\e[33m──────────────────────────────────────────────────\e[0m\n";
@@ -72,7 +71,7 @@ class CliResultRendererTest extends AbstractResultRendererTest
             'ACTUAL OUTPUT'
         );
         $result = new CliResult([$failure]);
-        $renderer = new CliResultRenderer($result, new RequestRenderer);
+        $renderer = new CliResultRenderer($result);
 
         $expected  = "Some executions of your solution produced incorrect output!\n";
         $expected .= "\e[33m──────────────────────────────────────────────────\e[0m\n";
