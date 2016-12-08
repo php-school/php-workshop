@@ -18,7 +18,7 @@ class CliResultRendererTest extends AbstractResultRendererTest
     public function testNothingIsOutputIfNoFailures()
     {
         $result = new CliResult([new Success(new ArrayObject)]);
-        $renderer = new CliResultRenderer($result, new RequestRenderer);
+        $renderer = new CliResultRenderer($result);
 
         $this->assertEmpty($renderer->render($this->getRenderer()));
     }
