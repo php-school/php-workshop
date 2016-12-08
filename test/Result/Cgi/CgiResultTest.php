@@ -27,7 +27,7 @@ class CgiResultTest extends TestCase
         
         $this->assertFalse($cgiResult->isSuccessful());
 
-        $cgiResult = new CgiResult([new Success($this->createMock(RequestInterface::class), 'Successful Check')]);
+        $cgiResult = new CgiResult([new Success($this->createMock(RequestInterface::class))]);
         $this->assertTrue($cgiResult->isSuccessful());
         
         $cgiResult->add($request);

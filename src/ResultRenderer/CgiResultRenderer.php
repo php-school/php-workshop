@@ -16,7 +16,7 @@ class CgiResultRenderer implements ResultRendererInterface
 {
 
     /**
-     * @var CgiOutResult
+     * @var CgiResult
      */
     private $result;
 
