@@ -14,6 +14,11 @@ use PhpSchool\PhpWorkshop\UserState;
 class ConfigureCommandListener
 {
     /**
+     * @var UserState
+     */
+    private $userState;
+
+    /**
      * @var ExerciseRepository
      */
     private $exerciseRepository;
