@@ -45,6 +45,15 @@ class CliRunner implements ExerciseRunnerInterface
     private $eventDispatcher;
 
     /**
+     * @var array
+     */
+    private static $requiredChecks = [
+        FileExistsCheck::class,
+        PhpLintCheck::class,
+        CodeParseCheck::class,
+    ];
+
+    /**
      * Requires the exercise instance and an event dispatcher.
      *
      * @param CliExercise $exercise The exercise to be invoked.
@@ -71,11 +80,7 @@ class CliRunner implements ExerciseRunnerInterface
      */
     public function getRequiredChecks()
     {
-        return [
-            FileExistsCheck::class,
-            PhpLintCheck::class,
-            CodeParseCheck::class,
-        ];
+        return static::$requiredChecks;
     }
 
     /**

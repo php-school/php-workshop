@@ -51,6 +51,15 @@ class CgiRunner implements ExerciseRunnerInterface
     private $requestRenderer;
 
     /**
+     * @var array
+     */
+    private static $requiredChecks = [
+        FileExistsCheck::class,
+        PhpLintCheck::class,
+        CodeParseCheck::class,
+    ];
+
+    /**
      * Requires the exercise instance and an event dispatcher. This runner requires the `php-cgi` binary to
      * be available. It will check for it's existence in the system's $PATH variable or the same
      * folder that the CLI php binary lives in.
@@ -106,11 +115,7 @@ class CgiRunner implements ExerciseRunnerInterface
      */
     public function getRequiredChecks()
     {
-        return [
-            FileExistsCheck::class,
-            PhpLintCheck::class,
-            CodeParseCheck::class,
-        ];
+        return static::$requiredChecks;
     }
 
     /**
