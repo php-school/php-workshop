@@ -43,11 +43,13 @@ use PhpSchool\PhpWorkshop\Result\Cgi\CgiResult;
 use PhpSchool\PhpWorkshop\Result\Cli\CliResult;
 use PhpSchool\PhpWorkshop\Result\Cli\GenericFailure as CliGenericFailure;
 use PhpSchool\PhpWorkshop\Result\Cli\RequestFailure as CliRequestFailure;
+use PhpSchool\PhpWorkshop\Result\ComparisonFailure;
 use PhpSchool\PhpWorkshop\Result\Failure;
 use PhpSchool\PhpWorkshop\Result\FunctionRequirementsFailure;
 use PhpSchool\PhpWorkshop\ResultAggregator;
 use PhpSchool\PhpWorkshop\ResultRenderer\CgiResultRenderer;
 use PhpSchool\PhpWorkshop\ResultRenderer\CliResultRenderer;
+use PhpSchool\PhpWorkshop\ResultRenderer\ComparisonFailureRenderer;
 use PhpSchool\PhpWorkshop\ResultRenderer\FailureRenderer;
 use PhpSchool\PhpWorkshop\ResultRenderer\FunctionRequirementsFailureRenderer;
 use PhpSchool\PhpWorkshop\ResultRenderer\Cli\RequestFailureRenderer as CliRequestFailureRenderer;
@@ -299,6 +301,8 @@ return [
         $factory->registerRenderer(CliResult::class, CliResultRenderer::class);
         $factory->registerRenderer(CliGenericFailure::class, FailureRenderer::class);
         $factory->registerRenderer(CliRequestFailure::class, CliRequestFailureRenderer::class);
+
+        $factory->registerRenderer(ComparisonFailure::class, ComparisonFailureRenderer::class);
 
         return $factory;
     },
