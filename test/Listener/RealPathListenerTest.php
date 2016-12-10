@@ -1,6 +1,6 @@
 <?php
 
-namespace PhpSchool\PhpWorkshopTest;
+namespace PhpSchool\PhpWorkshopTest\Listener;
 
 use PhpSchool\PhpWorkshop\Event\Event;
 use PhpSchool\PhpWorkshop\Event\ExerciseRunnerEvent;
@@ -45,11 +45,13 @@ class RealPathListenerTest extends PHPUnit_Framework_TestCase
         $this->assertEquals('test-file.php', $input->getArgument('program'));
     }
 
-    private function runInDir($dir, callable $callback)
+    public function testInputIsUnchangedIfNoProgramArgument()
     {
-        $current = getcwd();
-        chdir($dir);
-        $callback($dir);
-        chdir($current);
+        $exercise = new CliExerciseImpl;
+        $input = new Input('app', ['some-arg' => 'some-value']);
+        $listener = new RealPathListener;
+        $listener->__invoke(new ExerciseRunnerEvent('some.event', $exercise, $input));
+
+        $this->assertEquals('some-value', $input->getArgument('some-arg'));
     }
 }
