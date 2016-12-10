@@ -326,18 +326,12 @@ return [
     'appContributors' => [],
     'eventListeners'  => [
         'realpath-student-submission' => [
-            'cli.verify.start' => [
+            'verify.start' => [
                 containerListener(RealPathListener::class)
             ],
-            'cli.run.start' => [
+            'run.start' => [
                 containerListener(RealPathListener::class)
             ],
-            'cgi.verify.start' => [
-                containerListener(RealPathListener::class)
-            ],
-            'cgi.run.start' => [
-                containerListener(RealPathListener::class)
-            ]
         ],
         'check-exercise-assigned' => [
             'route.pre.resolve.args' => [
