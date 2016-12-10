@@ -8,6 +8,7 @@ use PhpSchool\CliMenu\Util\StringUtil;
 use PhpSchool\PhpWorkshop\Exercise\ProvidesSolution;
 use PhpSchool\PhpWorkshop\Factory\ResultRendererFactory;
 use PhpSchool\PhpWorkshop\Output\OutputInterface;
+use PhpSchool\PhpWorkshop\Result\ResultGroupInterface;
 use PhpSchool\PhpWorkshop\Result\SuccessInterface;
 use PhpSchool\PSX\SyntaxHighlighter;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
@@ -96,7 +97,7 @@ class ResultsRenderer
         $failures   = [];
         foreach ($results as $result) {
             if ($result instanceof SuccessInterface
-                || ($result instanceof ResultAggregator && $result->isSuccessful())
+                || ($result instanceof ResultGroupInterface && $result->isSuccessful())
             ) {
                 $successes[] = sprintf(' ✔ Check: %s', $result->getCheckName());
             } else {
