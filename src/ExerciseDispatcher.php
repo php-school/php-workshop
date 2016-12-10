@@ -8,6 +8,7 @@ use PhpSchool\PhpWorkshop\Check\ListenableCheckInterface;
 use PhpSchool\PhpWorkshop\Check\SimpleCheckInterface;
 use PhpSchool\PhpWorkshop\Event\Event;
 use PhpSchool\PhpWorkshop\Event\EventDispatcher;
+use PhpSchool\PhpWorkshop\Event\ExerciseRunnerEvent;
 use PhpSchool\PhpWorkshop\Exception\CheckNotApplicableException;
 use PhpSchool\PhpWorkshop\Exception\ExerciseNotConfiguredException;
 use PhpSchool\PhpWorkshop\Exception\InvalidArgumentException;
@@ -136,7 +137,7 @@ class ExerciseDispatcher
             $this->requireCheck($requiredCheck);
         }
 
-        $this->eventDispatcher->dispatch(new Event('verify.start', compact('exercise', 'input')));
+        $this->eventDispatcher->dispatch(new ExerciseRunnerEvent('verify.start', $exercise, $input));
 
         $this->validateChecks($this->checksToRunBefore, $exercise);
         $this->validateChecks($this->checksToRunAfter, $exercise);
@@ -149,22 +150,22 @@ class ExerciseDispatcher
             }
         }
 
-        $this->eventDispatcher->dispatch(new Event('verify.pre.execute', compact('exercise', 'input')));
+        $this->eventDispatcher->dispatch(new ExerciseRunnerEvent('verify.pre.execute', $exercise, $input));
 
         try {
             $this->results->add($runner->verify($input));
         } finally {
-            $this->eventDispatcher->dispatch(new Event('verify.post.execute', compact('exercise', 'input')));
+            $this->eventDispatcher->dispatch(new ExerciseRunnerEvent('verify.post.execute', $exercise, $input));
         }
 
         foreach ($this->checksToRunAfter as $check) {
             $this->results->add($check->check($exercise, $input));
         }
 
-        $this->eventDispatcher->dispatch(new Event('verify.post.check', compact('exercise', 'input')));
+        $this->eventDispatcher->dispatch(new ExerciseRunnerEvent('verify.post.check', $exercise, $input));
         $exercise->tearDown();
 
-        $this->eventDispatcher->dispatch(new Event('verify.finish', compact('exercise', 'input')));
+        $this->eventDispatcher->dispatch(new ExerciseRunnerEvent('verify.finish', $exercise, $input));
         return $this->results;
     }
 
@@ -181,14 +182,14 @@ class ExerciseDispatcher
     public function run(ExerciseInterface $exercise, Input $input, OutputInterface $output)
     {
         $exercise->configure($this);
-        $this->eventDispatcher->dispatch(new Event('run.start', compact('exercise', 'input')));
+        $this->eventDispatcher->dispatch(new ExerciseRunnerEvent('run.start', $exercise, $input));
 
         try {
             $exitStatus = $this->runnerManager
                 ->getRunner($exercise)
                 ->run($input, $output);
         } finally {
-            $this->eventDispatcher->dispatch(new Event('run.finish', compact('exercise', 'input')));
+            $this->eventDispatcher->dispatch(new ExerciseRunnerEvent('run.finish', $exercise, $input));
         }
 
         return $exitStatus;
