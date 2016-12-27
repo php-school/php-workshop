@@ -3,6 +3,7 @@
 use Colors\Color;
 use function DI\object;
 use function DI\factory;
+use Kadet\Highlighter\KeyLighter;
 use function PhpSchool\PhpWorkshop\Event\containerListener;
 use Interop\Container\ContainerInterface;
 use League\CommonMark\DocParser;
@@ -312,9 +313,13 @@ return [
             $c->get(Color::class),
             $c->get(TerminalInterface::class),
             $c->get(ExerciseRepository::class),
-            $c->get(SyntaxHighlighter::class),
+            $c->get(KeyLighter::class),
             $c->get(ResultRendererFactory::class)
         );
+    },
+
+    KeyLighter::class => function () {
+        return new KeyLighter;
     },
 
     'coreContributors' => [

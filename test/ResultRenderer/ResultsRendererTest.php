@@ -3,6 +3,9 @@
 namespace PhpSchool\PhpWorkshopTest\ResultRenderer;
 
 use Colors\Color;
+use Kadet\Highlighter\Formatter\CliFormatter;
+use Kadet\Highlighter\KeyLighter;
+use Kadet\Highlighter\Language\Php;
 use PhpSchool\CliMenu\Terminal\TerminalInterface;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpSchool\PhpWorkshop\Exercise\ProvidesSolution;
@@ -47,7 +50,7 @@ class ResultsRendererTest extends PHPUnit_Framework_TestCase
             $color,
             $terminal->reveal(),
             new ExerciseRepository([]),
-            (new Factory)->__invoke(),
+            new KeyLighter,
             $resultRendererFactory
         );
 
@@ -69,7 +72,7 @@ class ResultsRendererTest extends PHPUnit_Framework_TestCase
             $color,
             $terminal->reveal(),
             new ExerciseRepository([]),
-            (new Factory)->__invoke(),
+            new KeyLighter,
             new ResultRendererFactory
         );
 
@@ -95,7 +98,7 @@ class ResultsRendererTest extends PHPUnit_Framework_TestCase
             $color,
             $terminal,
             $exerciseRepo->reveal(),
-            (new Factory)->__invoke(),
+            new KeyLighter,
             $resultRendererFactory
         );
 
@@ -142,7 +145,7 @@ class ResultsRendererTest extends PHPUnit_Framework_TestCase
             $color,
             $terminal,
             $exerciseRepo->reveal(),
-            (new Factory)->__invoke(),
+            new KeyLighter,
             $resultRendererFactory
         );
 
@@ -187,8 +190,12 @@ class ResultsRendererTest extends PHPUnit_Framework_TestCase
         $exercise->willImplement(ProvidesSolution::class);
         $exercise->getSolution()->willReturn($solution);
 
-        $syntaxHighlighter = $this->prophesize(SyntaxHighlighter::class);
-        $syntaxHighlighter->highlight('FILE CONTENTS')->willReturn('FILE CONTENTS');
+        $syntaxHighlighter = $this->prophesize(KeyLighter::class);
+        $php = new Php;
+        $syntaxHighlighter->languageByExt('.php')->willReturn($php);
+        $syntaxHighlighter
+            ->highlight('FILE CONTENTS', $php, Argument::type(CliFormatter::class))
+            ->willReturn('FILE CONTENTS');
 
         $renderer = new ResultsRenderer(
             'app',
@@ -240,7 +247,7 @@ class ResultsRendererTest extends PHPUnit_Framework_TestCase
             $color,
             $terminal,
             $exerciseRepo->reveal(),
-            (new Factory)->__invoke(),
+            new KeyLighter,
             $resultRendererFactory
         );
 
@@ -283,7 +290,7 @@ class ResultsRendererTest extends PHPUnit_Framework_TestCase
             $color,
             $terminal,
             $exerciseRepo->reveal(),
-            (new Factory)->__invoke(),
+            new KeyLighter,
             $resultRendererFactory
         );
 
@@ -327,7 +334,7 @@ class ResultsRendererTest extends PHPUnit_Framework_TestCase
             $color,
             $terminal,
             $exerciseRepo->reveal(),
-            (new Factory)->__invoke(),
+            new KeyLighter,
             $resultRendererFactory
         );
 

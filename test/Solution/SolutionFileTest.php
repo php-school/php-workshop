@@ -92,4 +92,16 @@ class SolutionFileTest extends PHPUnit_Framework_TestCase
         unlink($filePath);
         rmdir($tempPath);
     }
+
+    public function testGetExtension()
+    {
+        $tempPath   = sprintf('%s/%s/sub-dir', sys_get_temp_dir(), $this->getName());
+        $filePath   = sprintf('%s/test.php', $tempPath);
+
+        @mkdir($tempPath, 0775, true);
+        touch($filePath);
+
+        $file = new SolutionFile('test.php', $tempPath);
+        $this->assertSame('php', $file->getExtension());
+    }
 }

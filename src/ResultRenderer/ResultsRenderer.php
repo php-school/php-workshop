@@ -3,6 +3,8 @@
 namespace PhpSchool\PhpWorkshop\ResultRenderer;
 
 use Colors\Color;
+use Kadet\Highlighter\Formatter\CliFormatter;
+use Kadet\Highlighter\KeyLighter;
 use PhpSchool\CliMenu\Terminal\TerminalInterface;
 use PhpSchool\CliMenu\Util\StringUtil;
 use PhpSchool\PhpWorkshop\Exercise\ProvidesSolution;
@@ -45,9 +47,9 @@ class ResultsRenderer
     private $terminal;
 
     /**
-     * @var SyntaxHighlighter
+     * @var KeyLighter
      */
-    private $syntaxHighlighter;
+    private $keyLighter;
 
     /**
      * @var ResultRendererFactory
@@ -59,7 +61,7 @@ class ResultsRenderer
      * @param Color $color A instance of `Color` used to colour strings with ANSI escape codes.
      * @param TerminalInterface $terminal A helper to get information regarding the current terminal.
      * @param ExerciseRepository $exerciseRepository The exercise repository.
-     * @param SyntaxHighlighter $syntaxHighlighter A PHP syntax highlighter for the terminal, uses ANSI escape codes.
+     * @param KeyLighter $keyLighter A syntax highlighter
      * @param ResultRendererFactory $resultRendererFactory
      */
     public function __construct(
@@ -67,13 +69,13 @@ class ResultsRenderer
         Color $color,
         TerminalInterface $terminal,
         ExerciseRepository $exerciseRepository,
-        SyntaxHighlighter $syntaxHighlighter,
+        KeyLighter $keyLighter,
         ResultRendererFactory $resultRendererFactory
     ) {
         $this->color                 = $color;
         $this->terminal              = $terminal;
         $this->exerciseRepository    = $exerciseRepository;
-        $this->syntaxHighlighter     = $syntaxHighlighter;
+        $this->keyLighter            = $keyLighter;
         $this->appName               = $appName;
         $this->resultRendererFactory = $resultRendererFactory;
     }
@@ -186,10 +188,11 @@ class ResultsRenderer
                 $output->writeLine($this->style($file->getRelativePath(), ['bold', 'cyan', 'underline']));
                 $output->emptyLine();
 
-                $code = $file->getContents();
-                if (pathinfo($file->getRelativePath(), PATHINFO_EXTENSION) === 'php') {
-                    $code = $this->syntaxHighlighter->highlight($code);
-                }
+                $code = $this->keyLighter->highlight(
+                    $file->getContents(),
+                    $this->keyLighter->languageByExt('.' . $file->getExtension()),
+                    new CliFormatter
+                );
 
                 //make sure there is a new line at the end
                 $code = preg_replace('/\n$/', '', $code) . "\n";
