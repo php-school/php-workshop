@@ -108,7 +108,7 @@ class CodePatcherTest extends PHPUnit_Framework_TestCase
                 (new Patch)
                     ->withTransformer(function (array $statements) {
                         return [
-                            new TryCatch($statements, [new Catch_(new Name(\Exception::class), 'e', [])])
+                            new TryCatch($statements, [new Catch_([new Name(\Exception::class)], 'e', [])])
                         ];
                     }),
                 "<?php\n\ntry {\n    \$original = true;\n} catch (Exception \$e) {\n}"
@@ -119,7 +119,7 @@ class CodePatcherTest extends PHPUnit_Framework_TestCase
                     ->withInsertion(new Insertion(Insertion::TYPE_BEFORE, '$before = "here";'))
                     ->withTransformer(function (array $statements) {
                         return [
-                            new TryCatch($statements, [new Catch_(new Name(\Exception::class), 'e', [])])
+                            new TryCatch($statements, [new Catch_([new Name(\Exception::class)], 'e', [])])
                         ];
                     }),
                 "<?php\n\ntry {\n    \$before = \"here\";\n    \$original = true;\n} catch (Exception \$e) {\n}"
