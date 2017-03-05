@@ -11,6 +11,12 @@ Updates should follow the [Keep a CHANGELOG](http://keepachangelog.com/) princip
 
 ### Removed
 
+## [2.1.0]
+### Changed
+ - Updated `nikic/php-parser` to `^3.0` (#154)
+ - Dropped `php-school/psx` in favour of `kadet/keylighter` (#154)
+ - Updated `aydin-hassan/cli-md-renderer` to `^2.2` which also uses `kadet/keylighter` instead of `php-school/psx` (#154)
+
 ## [2.0.0]
 ### Added
  - Added new exercise runner (Custom Runner) which allows for an exercise to not require a php solution. For example an exercise can now request the student install a piece of software and then the exercise will verify that it was installed. (#141)
