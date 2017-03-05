@@ -90,6 +90,16 @@ class SolutionFile
     }
 
     /**
+     * Get the file extension.
+     *
+     * @return string
+     */
+    public function getExtension()
+    {
+        return pathinfo($this->getRelativePath(), PATHINFO_EXTENSION);
+    }
+
+    /**
      * Proxy to the absolute path.
      *
      * @return string

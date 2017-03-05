@@ -6,6 +6,7 @@ use AydinHassan\CliMdRenderer\Renderer\ListBlockRenderer;
 use AydinHassan\CliMdRenderer\Renderer\ListItemRenderer;
 use Colors\Color;
 use Interop\Container\ContainerInterface;
+use Kadet\Highlighter\KeyLighter;
 use League\CommonMark\Block\Element\Heading;
 use League\CommonMark\Block\Element\ListBlock;
 use League\CommonMark\Block\Element\ListItem;
@@ -20,7 +21,6 @@ use League\CommonMark\Inline\Element\Link;
 use League\CommonMark\Inline\Element\Newline;
 use League\CommonMark\Inline\Element\Strong;
 use League\CommonMark\Inline\Element\Text;
-use PhpSchool\PSX\Factory as PSXFactory;
 use AydinHassan\CliMdRenderer\Highlighter\PhpHighlighter;
 use AydinHassan\CliMdRenderer\InlineRenderer\CodeRenderer;
 use AydinHassan\CliMdRenderer\InlineRenderer\EmphasisRenderer;
@@ -49,9 +49,8 @@ class MarkdownCliRendererFactory
     {
         $terminal = $c->get(TerminalInterface::class);
 
-        $highlighterFactory = new PSXFactory;
         $codeRender = new FencedCodeRenderer();
-        $codeRender->addSyntaxHighlighter('php', new PhpHighlighter($highlighterFactory->__invoke()));
+        $codeRender->addSyntaxHighlighter('php', new PhpHighlighter(new KeyLighter));
 
         $blockRenderers = [
             Document::class => new DocumentRenderer,

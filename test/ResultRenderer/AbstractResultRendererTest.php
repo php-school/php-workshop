@@ -3,9 +3,9 @@
 namespace PhpSchool\PhpWorkshopTest\ResultRenderer;
 
 use Colors\Color;
+use Kadet\Highlighter\KeyLighter;
 use PhpSchool\CliMenu\Terminal\TerminalInterface;
 use PhpSchool\PhpWorkshop\Factory\ResultRendererFactory;
-use PhpSchool\PSX\Factory;
 use PHPUnit\Framework\TestCase;
 use PhpSchool\PhpWorkshop\ExerciseRepository;
 use PhpSchool\PhpWorkshop\ResultRenderer\ResultsRenderer;
@@ -52,13 +52,12 @@ abstract class AbstractResultRendererTest extends TestCase
             $terminal->getWidth()->willReturn(50);
             $exerciseRepo = $this->createMock(ExerciseRepository::class);
 
-            $syntaxHighlighter = (new Factory)->__invoke();
             $this->renderer = new ResultsRenderer(
                 'appName',
                 $color,
                 $terminal->reveal(),
                 $exerciseRepo,
-                $syntaxHighlighter,
+                new KeyLighter,
                 $this->getResultRendererFactory()
             );
         }

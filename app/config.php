@@ -3,6 +3,7 @@
 use Colors\Color;
 use function DI\object;
 use function DI\factory;
+use Kadet\Highlighter\KeyLighter;
 use function PhpSchool\PhpWorkshop\Event\containerListener;
 use Interop\Container\ContainerInterface;
 use League\CommonMark\DocParser;
@@ -55,9 +56,7 @@ use PhpSchool\PhpWorkshop\ResultRenderer\FunctionRequirementsFailureRenderer;
 use PhpSchool\PhpWorkshop\ResultRenderer\Cli\RequestFailureRenderer as CliRequestFailureRenderer;
 use PhpSchool\PhpWorkshop\ResultRenderer\Cgi\RequestFailureRenderer as CgiRequestFailureRenderer;
 use PhpSchool\PhpWorkshop\Utils\RequestRenderer;
-use PhpSchool\PSX\Factory as PsxFactory;
 use PhpSchool\PhpWorkshop\WorkshopType;
-use PhpSchool\PSX\SyntaxHighlighter;
 use PhpSchool\PhpWorkshop\Check\FileExistsCheck;
 use PhpSchool\PhpWorkshop\Check\FunctionRequirementsCheck;
 use PhpSchool\PhpWorkshop\Check\PhpLintCheck;
@@ -279,8 +278,6 @@ return [
     UserState::class => function (ContainerInterface $c) {
         return $c->get(UserStateSerializer::class)->deSerialize();
     },
-    SyntaxHighlighter::class => factory(PsxFactory::class),
-    PsxFactory::class => object(),
     ResetProgress::class => function (ContainerInterface $c) {
         return new ResetProgress($c->get(UserStateSerializer::class));
     },
@@ -312,9 +309,13 @@ return [
             $c->get(Color::class),
             $c->get(TerminalInterface::class),
             $c->get(ExerciseRepository::class),
-            $c->get(SyntaxHighlighter::class),
+            $c->get(KeyLighter::class),
             $c->get(ResultRendererFactory::class)
         );
+    },
+
+    KeyLighter::class => function () {
+        return new KeyLighter;
     },
 
     'coreContributors' => [
