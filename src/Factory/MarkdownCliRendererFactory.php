@@ -21,7 +21,6 @@ use League\CommonMark\Inline\Element\Link;
 use League\CommonMark\Inline\Element\Newline;
 use League\CommonMark\Inline\Element\Strong;
 use League\CommonMark\Inline\Element\Text;
-use PhpSchool\PSX\Factory as PSXFactory;
 use AydinHassan\CliMdRenderer\Highlighter\PhpHighlighter;
 use AydinHassan\CliMdRenderer\InlineRenderer\CodeRenderer;
 use AydinHassan\CliMdRenderer\InlineRenderer\EmphasisRenderer;

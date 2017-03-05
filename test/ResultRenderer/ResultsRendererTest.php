@@ -13,16 +13,12 @@ use PhpSchool\PhpWorkshop\ExerciseRepository;
 use PhpSchool\PhpWorkshop\Factory\ResultRendererFactory;
 use PhpSchool\PhpWorkshop\Output\StdOutput;
 use PhpSchool\PhpWorkshop\Result\Failure;
-use PhpSchool\PhpWorkshop\Result\ResultInterface;
 use PhpSchool\PhpWorkshop\Result\Success;
 use PhpSchool\PhpWorkshop\ResultAggregator;
 use PhpSchool\PhpWorkshop\ResultRenderer\FailureRenderer;
-use PhpSchool\PhpWorkshop\ResultRenderer\ResultRendererInterface;
 use PhpSchool\PhpWorkshop\ResultRenderer\ResultsRenderer;
 use PhpSchool\PhpWorkshop\Solution\SingleFileSolution;
 use PhpSchool\PhpWorkshop\UserState;
-use PhpSchool\PSX\Factory;
-use PhpSchool\PSX\SyntaxHighlighter;
 use PHPUnit_Framework_TestCase;
 use Prophecy\Argument;
 

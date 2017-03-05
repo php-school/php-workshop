@@ -6,7 +6,6 @@ use Colors\Color;
 use Kadet\Highlighter\KeyLighter;
 use PhpSchool\CliMenu\Terminal\TerminalInterface;
 use PhpSchool\PhpWorkshop\Factory\ResultRendererFactory;
-use PhpSchool\PSX\Factory;
 use PHPUnit\Framework\TestCase;
 use PhpSchool\PhpWorkshop\ExerciseRepository;
 use PhpSchool\PhpWorkshop\ResultRenderer\ResultsRenderer;
