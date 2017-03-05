@@ -4,20 +4,20 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "fb844a308c2e30db2f86e3707b2d8b18",
+    "content-hash": "c73a3c5ce8050c3481c108a0a9ff0194",
     "packages": [
         {
             "name": "aydin-hassan/cli-md-renderer",
-            "version": "dev-use-keylighter",
+            "version": "2.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/AydinHassan/cli-md-renderer.git",
-                "reference": "8b95ba98ebf5c1c58aa830f0b3c6df00c77b6d6f"
+                "reference": "7b4280cb482a6ff08ff629863b37f04d079b4de9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/AydinHassan/cli-md-renderer/zipball/8b95ba98ebf5c1c58aa830f0b3c6df00c77b6d6f",
-                "reference": "8b95ba98ebf5c1c58aa830f0b3c6df00c77b6d6f",
+                "url": "https://api.github.com/repos/AydinHassan/cli-md-renderer/zipball/7b4280cb482a6ff08ff629863b37f04d079b4de9",
+                "reference": "7b4280cb482a6ff08ff629863b37f04d079b4de9",
                 "shasum": ""
             },
             "require": {
@@ -47,7 +47,7 @@
                 }
             ],
             "description": "A CLI Markdown Render for league/commonmark compatibile AST",
-            "time": "2017-03-04 19:11:13"
+            "time": "2017-03-05T08:32:08+00:00"
         },
         {
             "name": "beberlei/assert",
@@ -3021,9 +3021,7 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": {
-        "aydin-hassan/cli-md-renderer": 20
-    },
+    "stability-flags": [],
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
