@@ -21,6 +21,7 @@ The core of PHP School, the workshop application. This is the library which runs
     <img src="https://phpschool.herokuapp.com/badge.svg">
 </a>
 </p>
+
 ----
 
 <p align="center">
