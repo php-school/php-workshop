@@ -4,30 +4,30 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "4c11fd8ea9512bc894e43100a805b60f",
+    "content-hash": "c0214403d501d53a934831a0cb42e721",
     "packages": [
         {
             "name": "aydin-hassan/cli-md-renderer",
-            "version": "2.2.0",
+            "version": "2.3.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/AydinHassan/cli-md-renderer.git",
-                "reference": "7b4280cb482a6ff08ff629863b37f04d079b4de9"
+                "reference": "521f9ace2aeadd58bf8a3910704be8360f5bd7b2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/AydinHassan/cli-md-renderer/zipball/7b4280cb482a6ff08ff629863b37f04d079b4de9",
-                "reference": "7b4280cb482a6ff08ff629863b37f04d079b4de9",
+                "url": "https://api.github.com/repos/AydinHassan/cli-md-renderer/zipball/521f9ace2aeadd58bf8a3910704be8360f5bd7b2",
+                "reference": "521f9ace2aeadd58bf8a3910704be8360f5bd7b2",
                 "shasum": ""
             },
             "require": {
-                "kadet/keylighter": "^0.8.2",
+                "kadet/keylighter": "^0.8.3",
                 "kevinlebrun/colors.php": "^1.0",
                 "league/commonmark": "^0.13",
-                "php": ">=5.5"
+                "php": ">=5.6"
             },
             "require-dev": {
-                "phpunit/phpunit": "~4.1",
+                "phpunit/phpunit": "^5.7",
                 "squizlabs/php_codesniffer": "~2.0"
             },
             "type": "library",
@@ -47,7 +47,7 @@
                 }
             ],
             "description": "A CLI Markdown Render for league/commonmark compatibile AST",
-            "time": "2017-03-05T08:32:08+00:00"
+            "time": "2018-02-28T15:55:32+00:00"
         },
         {
             "name": "beberlei/assert",
