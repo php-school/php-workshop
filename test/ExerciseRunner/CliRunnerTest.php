@@ -224,9 +224,12 @@ class CliRunnerTest extends PHPUnit_Framework_TestCase
 
     public function testsArgsAppendedByEventsArePassedToResults()
     {
-        $this->eventDispatcher->listen(['cli.verify.student-execute.pre', 'cli.verify.reference-execute.pre'], function (CliExecuteEvent $e) {
-            $e->appendArg('4');
-        });
+        $this->eventDispatcher->listen(
+            ['cli.verify.student-execute.pre', 'cli.verify.reference-execute.pre'],
+            function (CliExecuteEvent $e) {
+                $e->appendArg('4');
+            }
+        );
 
         $solution = SingleFileSolution::fromFile(realpath(__DIR__ . '/../res/cli/solution.php'));
         $this->exercise
