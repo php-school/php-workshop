@@ -18,10 +18,9 @@
         "php" : ">=5.6",
         "ext-pdo_sqlite": "*",
         "php-di/php-di": "^5.0",
-        "php-di/invoker": "^1.0",
         "container-interop/container-interop": "^1.0",
-        "symfony/process": "^2.3|^3.0",
-        "symfony/filesystem": "^2.3|^3.0",
+        "symfony/process": "^3.0",
+        "symfony/filesystem": "^3.0",
         "fzaninotto/faker": "^1.5",
         "aydin-hassan/cli-md-renderer": "^2.2",
         "php-school/cli-menu": "^2.0",
@@ -50,11 +49,6 @@
     "autoload-dev": {
         "psr-4": { 
             "PhpSchool\\PhpWorkshopTest\\": "test" 
-        }
-    },
-    "extra" : {
-        "branch-alias": {
-            "dev-master": "0.1.x-dev"
         }
     },
     "scripts" : {
