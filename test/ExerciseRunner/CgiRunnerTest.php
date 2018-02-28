@@ -351,7 +351,7 @@ class CgiRunnerTest extends PHPUnit_Framework_TestCase
         $this->expectOutputString($exp);
 
         $success = $this->runner->run(
-            new Input('app', ['program' => '']),
+            new Input('app', ['program' => 'not-existing-file.php']),
             $output
         );
         $this->assertFalse($success);
