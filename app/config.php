@@ -315,7 +315,9 @@ return [
     },
 
     KeyLighter::class => function () {
-        return new KeyLighter;
+        $keylighter = new KeyLighter;
+        $keylighter->init();
+        return $keylighter;
     },
 
     'coreContributors' => [
