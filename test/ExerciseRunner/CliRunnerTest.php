@@ -7,6 +7,7 @@ use PhpSchool\CliMenu\Terminal\TerminalInterface;
 use PhpSchool\PhpWorkshop\Check\CodeParseCheck;
 use PhpSchool\PhpWorkshop\Check\FileExistsCheck;
 use PhpSchool\PhpWorkshop\Check\PhpLintCheck;
+use PhpSchool\PhpWorkshop\Event\CliExecuteEvent;
 use PhpSchool\PhpWorkshop\Event\EventDispatcher;
 use PhpSchool\PhpWorkshop\Exception\SolutionExecutionException;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseType;
@@ -31,14 +32,20 @@ class CliRunnerTest extends PHPUnit_Framework_TestCase
     private $runner;
 
     /**
-     * @var CliExerciseInterface
+     * @var CliExerciseInterface|\PHPUnit_Framework_MockObject_MockObject
      */
     private $exercise;
+
+    /**
+     * @var EventDispatcher
+     */
+    private $eventDispatcher;
 
     public function setUp()
     {
         $this->exercise = $this->createMock(CliExerciseInterface::class);
-        $this->runner = new CliRunner($this->exercise, new EventDispatcher(new ResultAggregator));
+        $this->eventDispatcher = new EventDispatcher(new ResultAggregator);
+        $this->runner = new CliRunner($this->exercise, $this->eventDispatcher);
 
         $this->exercise
             ->expects($this->any())
@@ -213,5 +220,34 @@ class CliRunnerTest extends PHPUnit_Framework_TestCase
 
         $success = $this->runner->run(new Input('app', ['program' => __DIR__ . '/../res/cli/user-error.php']), $output);
         $this->assertFalse($success);
+    }
+
+    public function testsArgsAppendedByEventsArePassedToResults()
+    {
+        $this->eventDispatcher->listen(
+            ['cli.verify.student-execute.pre', 'cli.verify.reference-execute.pre'],
+            function (CliExecuteEvent $e) {
+                $e->appendArg('4');
+            }
+        );
+
+        $solution = SingleFileSolution::fromFile(realpath(__DIR__ . '/../res/cli/solution.php'));
+        $this->exercise
+            ->expects($this->once())
+            ->method('getSolution')
+            ->will($this->returnValue($solution));
+
+        $this->exercise
+            ->expects($this->once())
+            ->method('getArgs')
+            ->will($this->returnValue([1, 2, 3]));
+
+        $this->assertInstanceOf(
+            CliResult::class,
+            $res = $this->runner->verify(new Input('app', ['program' => __DIR__ . '/../res/cli/user.php']))
+        );
+
+        $this->assertTrue($res->isSuccessful());
+        $this->assertEquals([1, 2, 3, 4], $res->getResults()[0]->getArgs()->getArrayCopy());
     }
 }

@@ -194,10 +194,10 @@ class CliRunner implements ExerciseRunnerInterface
             return GenericFailure::fromArgsAndCodeExecutionFailure($args, $e);
         }
         if ($solutionOutput === $userOutput) {
-            return new Success($args);
+            return new Success($event->getArgs());
         }
 
-        return RequestFailure::fromArgsAndOutput($args, $solutionOutput, $userOutput);
+        return RequestFailure::fromArgsAndOutput($event->getArgs(), $solutionOutput, $userOutput);
     }
 
     /**
