@@ -11,6 +11,21 @@ Updates should follow the [Keep a CHANGELOG](http://keepachangelog.com/) princip
 
 ### Removed
 
+## [2.2.0]
+### Added
+ - Builds for PHP 7.1 & 7.2 (#160)
+
+### Changed
+ - Updated `kadet/keylighter` to `0.8.3` to fix an error on PHP 7.2 (#159)
+ - Updated `aydin-hassan/cli-md-renderer` to `^2.3` (#162)
+
+### Fixed
+ - Fixed a bug where cli arguments added via events were not passed to the result objects (#157)
+ - Fixed solution program syntax highlighting (#161)
+
+### Removed
+ - Removed support for symfony 2.x components and dropped builds from travis with different versions of symfony (#160)
+
 ## [2.1.0]
 ### Changed
  - Updated `nikic/php-parser` to `^3.0` (#154)
