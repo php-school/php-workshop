@@ -21,7 +21,7 @@ class FailureTest extends TestCase
      */
     private $check;
 
-    public function setUp()
+    public function setUp() : void
     {
         $this->check = $this->createMock(CheckInterface::class);
         $this->check
@@ -32,7 +32,7 @@ class FailureTest extends TestCase
         $this->assertSame('Some Check', $failure->getCheckName());
     }
     
-    public function testFailure()
+    public function testFailure() : void
     {
         $failure = new Failure($this->check->getName(), 'Something went wrong yo');
         $this->assertInstanceOf(ResultInterface::class, $failure);
@@ -40,7 +40,7 @@ class FailureTest extends TestCase
         $this->assertEquals('Some Check', $failure->getCheckName());
     }
 
-    public function testFailureWithNameAndReason()
+    public function testFailureWithNameAndReason() : void
     {
         $failure = Failure::fromNameAndReason('Some Check', 'Something went wrong yo');
         $this->assertInstanceOf(ResultInterface::class, $failure);
@@ -48,7 +48,7 @@ class FailureTest extends TestCase
         $this->assertEquals('Some Check', $failure->getCheckName());
     }
 
-    public function testFailureWithReason()
+    public function testFailureWithReason() : void
     {
         $failure = Failure::fromCheckAndReason($this->check, 'Something went wrong yo');
         $this->assertInstanceOf(ResultInterface::class, $failure);
@@ -56,7 +56,7 @@ class FailureTest extends TestCase
         $this->assertEquals('Some Check', $failure->getCheckName());
     }
 
-    public function testFailureFromCodeExecutionException()
+    public function testFailureFromCodeExecutionException() : void
     {
         $e = new CodeExecutionException('Something went wrong yo');
         $failure = Failure::fromNameAndCodeExecutionFailure('Some Check', $e);
@@ -65,7 +65,7 @@ class FailureTest extends TestCase
         $this->assertEquals('Some Check', $failure->getCheckName());
     }
 
-    public function testFailureFromCodeParseException()
+    public function testFailureFromCodeParseException() : void
     {
         $e = new Error('Something went wrong yo');
         $failure = Failure::fromCheckAndCodeParseFailure($this->check, $e, 'exercise.php');

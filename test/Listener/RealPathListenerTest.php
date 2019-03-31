@@ -14,7 +14,7 @@ use PHPUnit\Framework\TestCase;
  */
 class RealPathListenerTest extends TestCase
 {
-    public function testInputArgumentIsReplacesWithAbsolutePathIfFileExists()
+    public function testInputArgumentIsReplacesWithAbsolutePathIfFileExists() : void
     {
         $current = getcwd();
 
@@ -35,7 +35,7 @@ class RealPathListenerTest extends TestCase
         chdir($current);
     }
 
-    public function testInputArgumentIsLeftUnchangedIfFileDoesNotExist()
+    public function testInputArgumentIsLeftUnchangedIfFileDoesNotExist() : void
     {
         $exercise = new CliExerciseImpl;
         $input = new Input('app', ['program' => 'test-file.php']);
@@ -45,7 +45,7 @@ class RealPathListenerTest extends TestCase
         $this->assertEquals('test-file.php', $input->getArgument('program'));
     }
 
-    public function testInputIsUnchangedIfNoProgramArgument()
+    public function testInputIsUnchangedIfNoProgramArgument() : void
     {
         $exercise = new CliExerciseImpl;
         $input = new Input('app', ['some-arg' => 'some-value']);

@@ -14,7 +14,7 @@ use Zend\Diactoros\Request;
  */
 class CgiExecuteEventTest extends TestCase
 {
-    public function testAddHeader()
+    public function testAddHeader() : void
     {
         $request = new Request;
         $e = new CgiExecuteEvent('event', $request);
@@ -24,7 +24,7 @@ class CgiExecuteEventTest extends TestCase
         $this->assertNotSame($request, $e->getRequest());
     }
 
-    public function testModifyRequest()
+    public function testModifyRequest() : void
     {
         $request = new Request;
         $e = new CgiExecuteEvent('event', $request);
@@ -39,7 +39,7 @@ class CgiExecuteEventTest extends TestCase
         $this->assertNotSame($request, $e->getRequest());
     }
 
-    public function testGetRequest()
+    public function testGetRequest() : void
     {
         $request = new Request;
         $e = new CgiExecuteEvent('event', $request);

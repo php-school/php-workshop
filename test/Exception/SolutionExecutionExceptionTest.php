@@ -12,7 +12,7 @@ use PhpSchool\PhpWorkshop\Exception\SolutionExecutionException;
  */
 class SolutionExecutionExceptionTest extends TestCase
 {
-    public function testException()
+    public function testException() : void
     {
         $e = new SolutionExecutionException('nope');
         $this->assertEquals('nope', $e->getMessage());

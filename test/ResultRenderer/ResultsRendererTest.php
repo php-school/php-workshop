@@ -30,7 +30,7 @@ use Prophecy\Argument;
 class ResultsRendererTest extends TestCase
 {
 
-    public function testRenderIndividualResult()
+    public function testRenderIndividualResult() : void
     {
         $color = new Color;
         $color->setForceStyle(true);
@@ -55,7 +55,7 @@ class ResultsRendererTest extends TestCase
         $this->assertSame("         Some Failure\n", $renderer->renderResult($result));
     }
 
-    public function testLineBreak()
+    public function testLineBreak() : void
     {
         $color = new Color;
         $color->setForceStyle(true);
@@ -75,7 +75,7 @@ class ResultsRendererTest extends TestCase
         $this->assertSame("\e[33m──────────\e[0m", $renderer->lineBreak());
     }
 
-    public function testRenderSuccess()
+    public function testRenderSuccess() : void
     {
         $color = new Color;
         $color->setForceStyle(true);
@@ -112,7 +112,7 @@ class ResultsRendererTest extends TestCase
         );
     }
 
-    public function testRenderSuccessWithSolution()
+    public function testRenderSuccessWithSolution() : void
     {
         $color = new Color;
         $color->setForceStyle(true);
@@ -162,7 +162,7 @@ class ResultsRendererTest extends TestCase
         rmdir(dirname($tmpFile));
     }
 
-    public function testRenderSuccessWithPhpSolutionFileIsSyntaxHighlighted()
+    public function testRenderSuccessWithPhpSolutionFileIsSyntaxHighlighted() : void
     {
         $color = new Color;
         $color->setForceStyle(true);
@@ -219,7 +219,7 @@ class ResultsRendererTest extends TestCase
         rmdir(dirname($tmpFile));
     }
 
-    public function testRenderSuccessAndFailure()
+    public function testRenderSuccessAndFailure() : void
     {
         $color = new Color;
         $color->setForceStyle(true);
@@ -262,7 +262,7 @@ class ResultsRendererTest extends TestCase
         );
     }
 
-    public function testAllSuccessResultsAreHoistedToTheTop()
+    public function testAllSuccessResultsAreHoistedToTheTop() : void
     {
         $color = new Color;
         $color->setForceStyle(true);
@@ -306,7 +306,7 @@ class ResultsRendererTest extends TestCase
         );
     }
 
-    public function testRenderAllFailures()
+    public function testRenderAllFailures() : void
     {
         $color = new Color;
         $color->setForceStyle(true);
@@ -348,10 +348,7 @@ class ResultsRendererTest extends TestCase
         );
     }
 
-    /**
-     * @return string
-     */
-    private function getExpectedOutput()
+    private function getExpectedOutput() : string
     {
         $name = camel_case_to_kebab_case($this->getName());
         return file_get_contents(sprintf('%s/../res/exercise-renderer/%s.txt', __DIR__, $name));

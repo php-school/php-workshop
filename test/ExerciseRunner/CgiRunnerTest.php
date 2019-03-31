@@ -38,7 +38,7 @@ class CgiRunnerTest extends TestCase
      */
     private $exercise;
 
-    public function setUp()
+    public function setUp() : void
     {
         $this->exercise = $this->createMock(CgiExerciseInterface::class);
         $this->runner = new CgiRunner($this->exercise, new EventDispatcher(new ResultAggregator), new RequestRenderer);
@@ -50,7 +50,7 @@ class CgiRunnerTest extends TestCase
         $this->assertEquals('CGI Program Runner', $this->runner->getName());
     }
 
-    public function testRequiredChecks()
+    public function testRequiredChecks() : void
     {
         $requiredChecks = [
             FileExistsCheck::class,
@@ -61,7 +61,7 @@ class CgiRunnerTest extends TestCase
         $this->assertEquals($requiredChecks, $this->runner->getRequiredChecks());
     }
 
-    public function testVerifyThrowsExceptionIfSolutionFailsExecution()
+    public function testVerifyThrowsExceptionIfSolutionFailsExecution() : void
     {
         $solution = SingleFileSolution::fromFile(__DIR__ . '/../res/cgi/solution-error.php');
         $this->exercise
@@ -84,7 +84,7 @@ class CgiRunnerTest extends TestCase
         $this->runner->verify(new Input('app', ['program' => '']));
     }
 
-    public function testVerifyReturnsSuccessIfGetSolutionOutputMatchesUserOutput()
+    public function testVerifyReturnsSuccessIfGetSolutionOutputMatchesUserOutput() : void
     {
         $solution = SingleFileSolution::fromFile(__DIR__ . '/../res/cgi/get-solution.php');
         $this->exercise
@@ -107,7 +107,7 @@ class CgiRunnerTest extends TestCase
         );
     }
 
-    public function testVerifyReturnsSuccessIfPostSolutionOutputMatchesUserOutput()
+    public function testVerifyReturnsSuccessIfPostSolutionOutputMatchesUserOutput() : void
     {
         $solution = SingleFileSolution::fromFile(__DIR__ . '/../res/cgi/post-solution.php');
         $this->exercise
@@ -137,7 +137,7 @@ class CgiRunnerTest extends TestCase
         $this->assertTrue($res->isSuccessful());
     }
 
-    public function testVerifyReturnsSuccessIfPostSolutionOutputMatchesUserOutputWithMultipleParams()
+    public function testVerifyReturnsSuccessIfPostSolutionOutputMatchesUserOutputWithMultipleParams() : void
     {
         $solution = SingleFileSolution::fromFile(__DIR__ . '/../res/cgi/post-multiple-solution.php');
         $this->exercise
@@ -164,7 +164,7 @@ class CgiRunnerTest extends TestCase
         $this->assertInstanceOf(CgiResult::class, $result);
     }
 
-    public function testVerifyReturnsFailureIfUserSolutionFailsToExecute()
+    public function testVerifyReturnsFailureIfUserSolutionFailsToExecute() : void
     {
         $solution = SingleFileSolution::fromFile(__DIR__ . '/../res/cgi/get-solution.php');
         $this->exercise
@@ -196,7 +196,7 @@ class CgiRunnerTest extends TestCase
         $this->assertRegExp($failureMsg, $result->getReason());
     }
 
-    public function testVerifyReturnsFailureIfSolutionOutputDoesNotMatchUserOutput()
+    public function testVerifyReturnsFailureIfSolutionOutputDoesNotMatchUserOutput() : void
     {
         $solution = SingleFileSolution::fromFile(__DIR__ . '/../res/cgi/get-solution.php');
         $this->exercise
@@ -228,7 +228,7 @@ class CgiRunnerTest extends TestCase
         $this->assertEquals(['Content-type' => 'text/html; charset=UTF-8'], $result->getActualHeaders());
     }
 
-    public function testVerifyReturnsFailureIfSolutionOutputHeadersDoesNotMatchUserOutputHeaders()
+    public function testVerifyReturnsFailureIfSolutionOutputHeadersDoesNotMatchUserOutputHeaders() : void
     {
         $solution = SingleFileSolution::fromFile(__DIR__ . '/../res/cgi/get-solution-header.php');
         $this->exercise
@@ -272,7 +272,7 @@ class CgiRunnerTest extends TestCase
         );
     }
 
-    public function testRunPassesOutputAndReturnsSuccessIfAllRequestsAreSuccessful()
+    public function testRunPassesOutputAndReturnsSuccessIfAllRequestsAreSuccessful() : void
     {
         $color = new Color;
         $color->setForceStyle(true);
@@ -321,7 +321,7 @@ class CgiRunnerTest extends TestCase
         $this->assertTrue($success);
     }
 
-    public function testRunPassesOutputAndReturnsFailureIfARequestFails()
+    public function testRunPassesOutputAndReturnsFailureIfARequestFails() : void
     {
         $color = new Color;
         $color->setForceStyle(true);

@@ -18,7 +18,7 @@ use PHPUnit\Framework\TestCase;
  */
 class SelfCheckListenerTest extends TestCase
 {
-    public function testSelfCheck()
+    public function testSelfCheck() : void
     {
         $exercise = $this->createMock(SelfCheckExerciseInterface::class);
         $input    = new Input('app', ['program' => 'some-file.php']);
@@ -39,7 +39,7 @@ class SelfCheckListenerTest extends TestCase
         $this->assertCount(1, $results);
     }
 
-    public function testExerciseWithOutSelfCheck()
+    public function testExerciseWithOutSelfCheck() : void
     {
         $exercise = $this->createMock(ExerciseInterface::class);
         $input    = new Input('app', ['program' => 'some-file.php']);

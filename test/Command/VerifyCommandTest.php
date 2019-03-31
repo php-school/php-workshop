@@ -32,7 +32,7 @@ class VerifyCommandTest extends TestCase
      */
     private $check;
     
-    public function setUp()
+    public function setUp() : void
     {
         $this->check = $this->createMock(CheckInterface::class);
         $this->check
@@ -40,7 +40,7 @@ class VerifyCommandTest extends TestCase
             ->willReturn('Some Check');
     }
 
-    public function testVerifyAddsCompletedExerciseAndReturnsCorrectCodeOnSuccess()
+    public function testVerifyAddsCompletedExerciseAndReturnsCorrectCodeOnSuccess() : void
     {
         $file = tempnam(sys_get_temp_dir(), 'pws');
         touch($file);
@@ -87,7 +87,7 @@ class VerifyCommandTest extends TestCase
         unlink($file);
     }
 
-    public function testVerifyDoesNotAddCompletedExerciseAndReturnsCorrectCodeOnFailure()
+    public function testVerifyDoesNotAddCompletedExerciseAndReturnsCorrectCodeOnFailure() : void
     {
         $file = tempnam(sys_get_temp_dir(), 'pws');
         touch($file);

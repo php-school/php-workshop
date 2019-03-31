@@ -12,7 +12,7 @@ use PhpSchool\PhpWorkshopTest\ResultRenderer\AbstractResultRendererTest;
  */
 class RequestFailureRendererTest extends AbstractResultRendererTest
 {
-    public function testRender()
+    public function testRender() : void
     {
         $failure  = new RequestFailure(new ArrayObject, 'EXPECTED OUTPUT', 'ACTUAL OUTPUT');
         $renderer = new RequestFailureRenderer($failure);

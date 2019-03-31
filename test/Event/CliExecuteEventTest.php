@@ -13,7 +13,7 @@ use PHPUnit\Framework\TestCase;
  */
 class CliExecuteEventTest extends TestCase
 {
-    public function testAppendArg()
+    public function testAppendArg() : void
     {
         $arr = new ArrayObject([1, 2, 3]);
         $e = new CliExecuteEvent('event', $arr);
@@ -23,7 +23,7 @@ class CliExecuteEventTest extends TestCase
         $this->assertNotSame($arr, $e->getArgs());
     }
 
-    public function testPrependArg()
+    public function testPrependArg() : void
     {
         $arr = new ArrayObject([1, 2, 3]);
         $e = new CliExecuteEvent('event', $arr);
@@ -33,7 +33,7 @@ class CliExecuteEventTest extends TestCase
         $this->assertNotSame($arr, $e->getArgs());
     }
 
-    public function testGetArgs()
+    public function testGetArgs() : void
     {
         $arr = new ArrayObject([1, 2, 3]);
         $e = new CliExecuteEvent('event', $arr);

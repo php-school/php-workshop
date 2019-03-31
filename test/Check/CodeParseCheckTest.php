@@ -30,7 +30,7 @@ class CodeParseCheckTest extends TestCase
      */
     private $file;
     
-    public function setUp()
+    public function setUp() : void
     {
         $this->check = new CodeParseCheck((new ParserFactory)->create(ParserFactory::PREFER_PHP7));
         $this->assertEquals('Code Parse Check', $this->check->getName());
@@ -45,7 +45,7 @@ class CodeParseCheckTest extends TestCase
         touch($this->file);
     }
 
-    public function testUnParseableCodeReturnsFailure()
+    public function testUnParseableCodeReturnsFailure() : void
     {
         file_put_contents($this->file, '<?php $lol');
         
@@ -62,7 +62,7 @@ class CodeParseCheckTest extends TestCase
         );
     }
 
-    public function testParseableCodeReturnsSuccess()
+    public function testParseableCodeReturnsSuccess() : void
     {
         file_put_contents($this->file, '<?php $lol = "lol";');
 

@@ -35,7 +35,7 @@ class PrepareSolutionListenerTest extends TestCase
      */
     private $filesystem;
 
-    public function setUp()
+    public function setUp() : void
     {
         $this->filesystem = new Filesystem;
         $this->listener = new PrepareSolutionListener;
@@ -45,7 +45,7 @@ class PrepareSolutionListenerTest extends TestCase
         touch($this->file);
     }
 
-    public function testIfSolutionRequiresComposerButComposerCannotBeLocatedExceptionIsThrown()
+    public function testIfSolutionRequiresComposerButComposerCannotBeLocatedExceptionIsThrown() : void
     {
         $refProp = new ReflectionProperty(PrepareSolutionListener::class, 'composerLocations');
         $refProp->setAccessible(true);
@@ -68,7 +68,7 @@ class PrepareSolutionListenerTest extends TestCase
         $this->listener->__invoke($event);
     }
 
-    public function testIfSolutionRequiresComposerButVendorDirExistsNothingIsDone()
+    public function testIfSolutionRequiresComposerButVendorDirExistsNothingIsDone() : void
     {
         mkdir(sprintf('%s/vendor', dirname($this->file)));
         $this->assertFileExists(sprintf('%s/vendor', dirname($this->file)));
@@ -96,7 +96,7 @@ class PrepareSolutionListenerTest extends TestCase
         $this->assertFileNotExists(sprintf('%s/composer.lock', dirname($this->file)));
     }
 
-    public function testIfSolutionRequiresComposerComposerInstallIsExecuted()
+    public function testIfSolutionRequiresComposerComposerInstallIsExecuted() : void
     {
         $this->assertFileNotExists(sprintf('%s/vendor', dirname($this->file)));
         file_put_contents(sprintf('%s/composer.json', dirname($this->file)), json_encode([
@@ -126,7 +126,7 @@ class PrepareSolutionListenerTest extends TestCase
         $this->assertFileExists(sprintf('%s/vendor', dirname($this->file)));
     }
 
-    public function tearDown()
+    public function tearDown() : void
     {
         $this->filesystem->remove(dirname($this->file));
     }

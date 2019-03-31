@@ -14,7 +14,7 @@ use PHPUnit\Framework\TestCase;
  */
 class DirectorySolutionTest extends TestCase
 {
-    public function testExceptionIsThrownIfEntryPointDoesNotExist()
+    public function testExceptionIsThrownIfEntryPointDoesNotExist() : void
     {
         $tempPath = sprintf('%s/%s', realpath(sys_get_temp_dir()), $this->getName());
         @mkdir($tempPath, 0775, true);
@@ -29,7 +29,7 @@ class DirectorySolutionTest extends TestCase
         rmdir($tempPath);
     }
 
-    public function testWithDefaultEntryPoint()
+    public function testWithDefaultEntryPoint() : void
     {
         $tempPath = sprintf('%s/%s', realpath(sys_get_temp_dir()), $this->getName());
         @mkdir($tempPath, 0775, true);
@@ -53,7 +53,7 @@ class DirectorySolutionTest extends TestCase
         rmdir($tempPath);
     }
 
-    public function testWithManualEntryPoint()
+    public function testWithManualEntryPoint() : void
     {
         $tempPath = sprintf('%s/%s', realpath(sys_get_temp_dir()), $this->getName());
         @mkdir($tempPath, 0775, true);
@@ -77,7 +77,7 @@ class DirectorySolutionTest extends TestCase
         rmdir($tempPath);
     }
 
-    public function testHasComposerFileReturnsTrueIfPresent()
+    public function testHasComposerFileReturnsTrueIfPresent() : void
     {
         $tempPath = sprintf('%s/%s', realpath(sys_get_temp_dir()), $this->getName());
         @mkdir($tempPath, 0775, true);
@@ -102,7 +102,7 @@ class DirectorySolutionTest extends TestCase
         unlink(sprintf('%s/some-class.php', $tempPath));
     }
 
-    public function testWithExceptions()
+    public function testWithExceptions() : void
     {
         $tempPath = sprintf('%s/%s', realpath(sys_get_temp_dir()), $this->getName());
         @mkdir($tempPath, 0775, true);
@@ -128,7 +128,7 @@ class DirectorySolutionTest extends TestCase
         rmdir($tempPath);
     }
 
-    public function testWithNestedDirectories()
+    public function testWithNestedDirectories() : void
     {
         $tempPath = sprintf('%s/%s', realpath(sys_get_temp_dir()), $this->getName());
         @mkdir($tempPath, 0775, true);
@@ -165,7 +165,7 @@ class DirectorySolutionTest extends TestCase
         rmdir($tempPath);
     }
 
-    public function testExceptionsWithNestedDirectories()
+    public function testExceptionsWithNestedDirectories() : void
     {
         $tempPath = sprintf('%s/%s', realpath(sys_get_temp_dir()), $this->getName());
         @mkdir($tempPath, 0775, true);

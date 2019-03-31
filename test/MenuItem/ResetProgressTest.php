@@ -20,7 +20,7 @@ use PHPUnit\Framework\TestCase;
  */
 class ResetProgressTest extends TestCase
 {
-    public function testResetProgressDisablesParentMenuItems()
+    public function testResetProgressDisablesParentMenuItems() : void
     {
         $item1 = $this->createMock(MenuItemInterface::class);
         $item2 = $this->createMock(MenuItemInterface::class);

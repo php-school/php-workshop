@@ -11,20 +11,13 @@ class FunctionsTest extends TestCase
 {
     /**
      * @dataProvider mbStrPadProvider
-     *
-     * @param string $string
-     * @param string $pad
-     * @param string $expected
      */
-    public function testMbStrPad($string, $pad, $expected)
+    public function testMbStrPad(string $string, string $pad, string $expected) : void
     {
         self::assertSame(mb_str_pad($string, $pad), $expected);
     }
 
-    /**
-     * @return array
-     */
-    public function mbStrPadProvider()
+    public function mbStrPadProvider() : array
     {
         return [
             ['hello', 10, 'hello     '],
@@ -34,19 +27,13 @@ class FunctionsTest extends TestCase
 
     /**
      * @dataProvider camelCaseToKebabCaseProvider
-     *
-     * @param string $string
-     * @param string $expected
      */
-    public function testCamelCaseToKebabCase($string, $expected)
+    public function testCamelCaseToKebabCase(string $string, string $expected) : void
     {
         self::assertSame(camel_case_to_kebab_case($string), $expected);
     }
 
-    /**
-     * @return array
-     */
-    public function camelCaseToKebabCaseProvider()
+    public function camelCaseToKebabCaseProvider() : array
     {
         return [
             ['camelCase', 'camel-case'],

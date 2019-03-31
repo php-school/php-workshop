@@ -17,7 +17,7 @@ use Zend\Diactoros\Request;
  */
 class CgiResultRendererTest extends AbstractResultRendererTest
 {
-    public function testNothingIsOutputIfNoFailures()
+    public function testNothingIsOutputIfNoFailures() : void
     {
         $result = new CgiResult([new Success($this->request())]);
         $renderer = new CgiResultRenderer($result, new RequestRenderer);
@@ -25,7 +25,7 @@ class CgiResultRendererTest extends AbstractResultRendererTest
         $this->assertEmpty($renderer->render($this->getRenderer()));
     }
 
-    public function testRenderWithFailedRequest()
+    public function testRenderWithFailedRequest() : void
     {
         $failureRenderer = $this->prophesize(RequestFailureRenderer::class);
         $failureRenderer->render($this->getRenderer())->willReturn("REQUEST FAILURE\n");
@@ -63,7 +63,7 @@ class CgiResultRendererTest extends AbstractResultRendererTest
         $this->assertSame($expected, $renderer->render($this->getRenderer()));
     }
 
-    public function testMultipleFailedRequests()
+    public function testMultipleFailedRequests() : void
     {
         $failureRenderer = $this->prophesize(RequestFailureRenderer::class);
         $failureRenderer->render($this->getRenderer())->willReturn("REQUEST FAILURE\n");
@@ -121,7 +121,7 @@ class CgiResultRendererTest extends AbstractResultRendererTest
         $this->assertSame($expected, $renderer->render($this->getRenderer()));
     }
 
-    public function testRenderWithFailedRequestAndSuccess()
+    public function testRenderWithFailedRequestAndSuccess() : void
     {
         $failureRenderer = $this->prophesize(RequestFailureRenderer::class);
         $failureRenderer->render($this->getRenderer())->willReturn("REQUEST FAILURE\n");
@@ -159,7 +159,7 @@ class CgiResultRendererTest extends AbstractResultRendererTest
         $this->assertSame($expected, $renderer->render($this->getRenderer()));
     }
 
-    public function testRenderWithFailedRequestAndGenericFailure()
+    public function testRenderWithFailedRequestAndGenericFailure() : void
     {
 
         $requestFailureRenderer = $this->prophesize(RequestFailureRenderer::class);
@@ -223,7 +223,7 @@ class CgiResultRendererTest extends AbstractResultRendererTest
         $this->assertSame($expected, $renderer->render($this->getRenderer()));
     }
 
-    private function request()
+    private function request() : Request
     {
         return (new Request('http://www.test.com'))
             ->withMethod('POST')

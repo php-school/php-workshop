@@ -15,59 +15,37 @@ use PhpSchool\PhpWorkshop\ExerciseDispatcher;
  */
 class FunctionRequirementsExercise implements ExerciseInterface, FunctionRequirementsExerciseCheck
 {
-
-    /**
-     * @return string
-     */
-    public function getName()
+    public function getName() : string
     {
         // TODO: Implement getName() method.
     }
 
-    /**
-     * @return string
-     */
-    public function getDescription()
+    public function getDescription() : string
     {
         // TODO: Implement getDescription() method.
     }
 
-    /**
-     * @return string
-     */
-    public function getSolution()
+    public function getSolution() : string
     {
         // TODO: Implement getSolution() method.
     }
 
-    /**
-     * @return string
-     */
-    public function getProblem()
+    public function getProblem() : string
     {
         // TODO: Implement getProblem() method.
     }
 
-    /**
-     * @return void
-     */
-    public function tearDown()
+    public function tearDown() : void
     {
         // TODO: Implement tearDown() method.
     }
 
-    /**
-     * @return array
-     */
-    public function getArgs()
+    public function getArgs() : array
     {
-        // TODO: Implement getArgs() method.
+        return []; // TODO: Implement getArgs() method.
     }
 
-    /**
-     * @return array[]
-     */
-    public function getRequiredPackages()
+    public function getRequiredPackages() : array
     {
         return [
             'klein/klein',
@@ -75,18 +53,12 @@ class FunctionRequirementsExercise implements ExerciseInterface, FunctionRequire
         ];
     }
 
-    /**
-     * @return ExerciseType
-     */
-    public function getType()
+    public function getType() : ExerciseType
     {
         return ExerciseType::CLI();
     }
 
-    /**
-     * @param ExerciseDispatcher $dispatcher
-     */
-    public function configure(ExerciseDispatcher $dispatcher)
+    public function configure(ExerciseDispatcher $dispatcher) : void
     {
         $dispatcher->requireCheck(ComposerCheck::class);
     }
@@ -94,7 +66,7 @@ class FunctionRequirementsExercise implements ExerciseInterface, FunctionRequire
     /**
      * @return string[]
      */
-    public function getRequiredFunctions()
+    public function getRequiredFunctions() : array
     {
         return [];
     }
@@ -102,7 +74,7 @@ class FunctionRequirementsExercise implements ExerciseInterface, FunctionRequire
     /**
      * @return string[]
      */
-    public function getBannedFunctions()
+    public function getBannedFunctions() : array
     {
         return ['file'];
     }

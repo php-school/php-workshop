@@ -12,7 +12,7 @@ use PHPUnit\Framework\TestCase;
  */
 class ExerciseRunnerEventTest extends TestCase
 {
-    public function testGetters()
+    public function testGetters() : void
     {
         $exercise = new CliExerciseImpl;
         $input = new Input('app');

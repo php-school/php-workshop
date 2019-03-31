@@ -16,7 +16,7 @@ use PhpSchool\PhpWorkshop\MarkdownRenderer;
  */
 class MarkdownRendererTest extends TestCase
 {
-    public function testRender()
+    public function testRender() : void
     {
         $docParser      = new DocParser(Environment::createCommonMarkEnvironment());
         $cliRenderer    = (new CliRendererFactory())->__invoke();

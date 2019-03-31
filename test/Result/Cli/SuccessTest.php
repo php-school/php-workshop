@@ -11,7 +11,7 @@ use PHPUnit\Framework\TestCase;
  */
 class SuccessTest extends TestCase
 {
-    public function testSuccess()
+    public function testSuccess() : void
     {
         $args = new ArrayObject;
         $success = new Success($args);

@@ -13,7 +13,7 @@ use PhpSchool\PhpWorkshop\Result\FunctionRequirementsFailure;
  */
 class FunctionRequirementsFailureTest extends TestCase
 {
-    public function testGetters()
+    public function testGetters() : void
     {
         $check = $this->createMock(CheckInterface::class);
         $check

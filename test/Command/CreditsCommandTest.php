@@ -18,7 +18,7 @@ use PHPUnit\Framework\TestCase;
 class CreditsCommandTest extends TestCase
 {
 
-    public function testInvoke()
+    public function testInvoke() : void
     {
         $this->expectOutputString(file_get_contents(__DIR__ . '/../res/app-credits-expected.txt'));
 
@@ -43,7 +43,7 @@ class CreditsCommandTest extends TestCase
         $command->__invoke();
     }
 
-    public function testWithOnlyCoreContributors()
+    public function testWithOnlyCoreContributors() : void
     {
         $this->expectOutputString(file_get_contents(__DIR__ . '/../res/app-credits-core-expected.txt'));
 
@@ -65,7 +65,7 @@ class CreditsCommandTest extends TestCase
         $command->__invoke();
     }
 
-    public function testWithNoContributors()
+    public function testWithNoContributors() : void
     {
         $this->expectOutputString('');
         

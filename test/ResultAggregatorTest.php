@@ -25,7 +25,7 @@ class ResultAggregatorTest extends TestCase
      */
     private $check;
 
-    public function setUp()
+    public function setUp() : void
     {
         $this->check = $this->createMock(CheckInterface::class);
         $this->check
@@ -33,7 +33,7 @@ class ResultAggregatorTest extends TestCase
             ->willReturn('Some Check');
     }
     
-    public function testIsSuccessful()
+    public function testIsSuccessful() : void
     {
         $resultAggregator = new ResultAggregator;
         $this->assertTrue($resultAggregator->isSuccessful());
@@ -45,7 +45,7 @@ class ResultAggregatorTest extends TestCase
         $this->assertFalse($resultAggregator->isSuccessful());
     }
 
-    public function testIsSuccessfulWithResultGroups()
+    public function testIsSuccessfulWithResultGroups() : void
     {
         $resultAggregator = new ResultAggregator;
         $this->assertTrue($resultAggregator->isSuccessful());
@@ -61,7 +61,7 @@ class ResultAggregatorTest extends TestCase
         $this->assertFalse($resultAggregator->isSuccessful());
     }
 
-    public function testIterator()
+    public function testIterator() : void
     {
         $results = [
             new Success($this->check),

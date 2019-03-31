@@ -17,7 +17,7 @@ use PhpSchool\PhpWorkshop\UserState;
  */
 class PrintCommandTest extends TestCase
 {
-    public function testExerciseIsPrintedIfAssigned()
+    public function testExerciseIsPrintedIfAssigned() : void
     {
         $file = tempnam(sys_get_temp_dir(), 'pws');
         file_put_contents($file, '### Exercise 1');

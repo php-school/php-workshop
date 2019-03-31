@@ -13,7 +13,7 @@ use PhpSchool\PhpWorkshop\CommandDefinition;
 class CommandDefinitionTest extends TestCase
 {
 
-    public function testGettersSettersWithStringArgs()
+    public function testGettersSettersWithStringArgs() : void
     {
         $callable = function () {
         };
@@ -29,7 +29,7 @@ class CommandDefinitionTest extends TestCase
         $this->assertSame($callable, $definition->getCommandCallable());
     }
 
-    public function testGettersSettersWithObjArgs()
+    public function testGettersSettersWithObjArgs() : void
     {
         $callable = function () {
         };
@@ -45,7 +45,7 @@ class CommandDefinitionTest extends TestCase
         $this->assertSame($callable, $definition->getCommandCallable());
     }
 
-    public function testExceptionIsThrowWhenTryingToAddRequiredArgAfterOptionalArg()
+    public function testExceptionIsThrowWhenTryingToAddRequiredArgAfterOptionalArg() : void
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('A required argument cannot follow an optional argument');
@@ -56,7 +56,7 @@ class CommandDefinitionTest extends TestCase
             ->addArgument(CommandArgument::required('required-arg'));
     }
 
-    public function testExceptionIsThrownWithWrongParameterToAddArgument()
+    public function testExceptionIsThrownWithWrongParameterToAddArgument() : void
     {
         $this->expectException(InvalidArgumentException::class);
         $msg  = 'Parameter: "argument" can only be one of: "string", "PhpSchool\PhpWorkshop\CommandArgument" ';

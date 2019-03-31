@@ -13,7 +13,7 @@ use PHPUnit\Framework\TestCase;
  */
 class PatchTest extends TestCase
 {
-    public function testWithInsertion()
+    public function testWithInsertion() : void
     {
         $patch = new Patch;
         $insertion = new CodeInsertion(CodeInsertion::TYPE_BEFORE, 'MEH');
@@ -24,7 +24,7 @@ class PatchTest extends TestCase
         $this->assertEquals([$insertion], $new->getModifiers());
     }
 
-    public function testWithTransformer()
+    public function testWithTransformer() : void
     {
         $patch = new Patch;
         $transformer = function (array $statements) {

@@ -14,14 +14,14 @@ use PHPUnit\Framework\TestCase;
  */
 class CheckRepositoryTest extends TestCase
 {
-    public function testRegisterViaConstructor()
+    public function testRegisterViaConstructor() : void
     {
         $check = $this->createMock(CheckInterface::class);
         $repository = new CheckRepository([$check]);
         $this->assertEquals([$check], $repository->getAll());
     }
 
-    public function testRegisterCheck()
+    public function testRegisterCheck() : void
     {
         $repository = new CheckRepository;
         $this->assertEquals([], $repository->getAll());
@@ -31,7 +31,7 @@ class CheckRepositoryTest extends TestCase
         $this->assertEquals([$check], $repository->getAll());
     }
 
-    public function testHas()
+    public function testHas() : void
     {
         $repository = new CheckRepository;
         $repository->registerCheck($this->createMock(CheckInterface::class));
@@ -43,7 +43,7 @@ class CheckRepositoryTest extends TestCase
         $this->assertFalse($repository->has('SomeClassWhichDoesNotExist'));
     }
 
-    public function testGetByClassThrowsExceptionIfNotExist()
+    public function testGetByClassThrowsExceptionIfNotExist() : void
     {
         $repository = new CheckRepository;
         $repository->registerCheck($this->createMock(CheckInterface::class));
@@ -54,7 +54,7 @@ class CheckRepositoryTest extends TestCase
         $repository->getByClass('SomeClassWhichDoesNotExist');
     }
 
-    public function testGetByClass()
+    public function testGetByClass() : void
     {
         $repository = new CheckRepository;
         $repository->registerCheck($this->createMock(CheckInterface::class));

@@ -23,7 +23,7 @@ use PhpSchool\PhpWorkshop\CodeInsertion as Insertion;
  */
 class CodePatcherTest extends TestCase
 {
-    public function testDefaultPatchIsAppliedIfAvailable()
+    public function testDefaultPatchIsAppliedIfAvailable() : void
     {
         $patch = (new Patch)
             ->withInsertion(new Insertion(Insertion::TYPE_BEFORE, 'ini_set("display_errors", 1);'));
@@ -36,7 +36,7 @@ class CodePatcherTest extends TestCase
     }
     
     
-    public function testPatcherDoesNotApplyPatchIfNotPatchableExercise()
+    public function testPatcherDoesNotApplyPatchIfNotPatchableExercise() : void
     {
         $patcher = new CodePatcher((new ParserFactory)->create(ParserFactory::PREFER_PHP7), new Standard);
         $exercise = $this->createMock(ExerciseInterface::class);
@@ -47,12 +47,8 @@ class CodePatcherTest extends TestCase
     
     /**
      * @dataProvider codeProvider
-     *
-     * @param string $code
-     * @param Patch $patch
-     * @param string $expectedResult
      */
-    public function testPatcher($code, Patch $patch, $expectedResult)
+    public function testPatcher(string $code, Patch $patch, string $expectedResult) : void
     {
         $patcher = new CodePatcher((new ParserFactory)->create(ParserFactory::PREFER_PHP7), new Standard);
         
@@ -67,7 +63,7 @@ class CodePatcherTest extends TestCase
         $this->assertEquals($expectedResult, $result);
     }
 
-    public function codeProvider()
+    public function codeProvider() : array
     {
         return [
             'only-before-insertion' => [

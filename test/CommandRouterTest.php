@@ -21,7 +21,7 @@ use RuntimeException;
  */
 class CommandRouterTest extends TestCase
 {
-    public function testInvalidDefaultThrowsException()
+    public function testInvalidDefaultThrowsException() : void
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Default command: "cmd" is not available');
@@ -31,7 +31,7 @@ class CommandRouterTest extends TestCase
         new CommandRouter([], 'cmd', $eventDispatcher, $c);
     }
 
-    public function testAddCommandThrowsExceptionIfCommandWithSameNameExists()
+    public function testAddCommandThrowsExceptionIfCommandWithSameNameExists() : void
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Command with name: "cmd" already exists');
@@ -44,7 +44,7 @@ class CommandRouterTest extends TestCase
         ], 'default', $eventDispatcher, $c);
     }
 
-    public function testRouteCommandWithNoArgsFromArrayUsesDefaultCommand()
+    public function testRouteCommandWithNoArgsFromArrayUsesDefaultCommand() : void
     {
         $args = ['app'];
 
@@ -63,7 +63,7 @@ class CommandRouterTest extends TestCase
         $router->route($args);
     }
 
-    public function testRouteCommandWithNoArgsFromArgVUsesDefaultCommand()
+    public function testRouteCommandWithNoArgsFromArgVUsesDefaultCommand() : void
     {
         $server = $_SERVER;
         $_SERVER['argv'] = ['app'];
@@ -83,7 +83,7 @@ class CommandRouterTest extends TestCase
         $_SERVER = $server;
     }
 
-    public function testRouteCommandThrowsExceptionIfCommandWithNameNotExist()
+    public function testRouteCommandThrowsExceptionIfCommandWithNameNotExist() : void
     {
         $this->expectException(CliRouteNotExistsException::class);
         $this->expectExceptionMessage('Command: "not-a-cmd" does not exist');
@@ -96,7 +96,7 @@ class CommandRouterTest extends TestCase
         $router->route(['app', 'not-a-cmd']);
     }
 
-    public function testRouteCommandThrowsExceptionIfCommandIsMissingAllArguments()
+    public function testRouteCommandThrowsExceptionIfCommandIsMissingAllArguments() : void
     {
         $this->expectException(MissingArgumentException::class);
         $this->expectExceptionMessage('Command: "verify" is missing the following arguments: "exercise", "program"');
@@ -113,7 +113,7 @@ class CommandRouterTest extends TestCase
         $router->route(['app', 'verify']);
     }
 
-    public function testRouteCommandThrowsExceptionIfCommandIsMissingArguments()
+    public function testRouteCommandThrowsExceptionIfCommandIsMissingArguments() : void
     {
         $this->expectException(MissingArgumentException::class);
         $this->expectExceptionMessage('Command: "verify" is missing the following arguments: "program"');
@@ -130,7 +130,7 @@ class CommandRouterTest extends TestCase
         $router->route(['app', 'verify', 'some-exercise']);
     }
 
-    public function testRouteCommandWithArgs()
+    public function testRouteCommandWithArgs() : void
     {
         $mock = $this->getMockBuilder('stdClass')
             ->setMethods(['__invoke'])
@@ -156,7 +156,7 @@ class CommandRouterTest extends TestCase
         $router->route(['app', 'verify', 'some-exercise', 'program.php']);
     }
 
-    public function testExceptionIsThrownIfCallableNotCallableAndNotContainerReference()
+    public function testExceptionIsThrownIfCallableNotCallableAndNotContainerReference() : void
     {
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('Callable must be a callable or a container entry for a callable service');
@@ -172,7 +172,7 @@ class CommandRouterTest extends TestCase
         $router->route(['app', 'verify', 'some-exercise', 'program.php']);
     }
 
-    public function testExceptionIsThrownIfCallableNotCallableAndNotExistingContainerEntry()
+    public function testExceptionIsThrownIfCallableNotCallableAndNotExistingContainerEntry() : void
     {
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('Container has no entry named: "some.service"');
@@ -195,7 +195,7 @@ class CommandRouterTest extends TestCase
         $router->route(['app', 'verify', 'some-exercise', 'program.php']);
     }
 
-    public function testExceptionIsThrownIfContainerEntryNotCallable()
+    public function testExceptionIsThrownIfContainerEntryNotCallable() : void
     {
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('Container entry: "some.service" not callable');
@@ -224,7 +224,7 @@ class CommandRouterTest extends TestCase
         $router->route(['app', 'verify', 'some-exercise', 'program.php']);
     }
 
-    public function testCallableFromContainer()
+    public function testCallableFromContainer() : void
     {
         $c = $this->createMock(ContainerInterface::class);
 
@@ -264,7 +264,7 @@ class CommandRouterTest extends TestCase
         $router->route(['app', 'verify', 'some-exercise', 'program.php']);
     }
 
-    public function testCallableFromContainerWithIntegerReturnCode()
+    public function testCallableFromContainerWithIntegerReturnCode() : void
     {
         $c = $this->createMock(ContainerInterface::class);
 
@@ -305,7 +305,7 @@ class CommandRouterTest extends TestCase
         $this->assertEquals(10, $res);
     }
 
-    public function testRouteCommandSpeltIncorrectlyStillRoutes()
+    public function testRouteCommandSpeltIncorrectlyStillRoutes() : void
     {
         $mock = $this->getMockBuilder('stdClass')
             ->setMethods(['__invoke'])
@@ -332,7 +332,7 @@ class CommandRouterTest extends TestCase
         $router->route(['app', 'verifu', 'some-exercise', 'program.php']);
     }
 
-    public function testRouteCommandWithOptionalArgument()
+    public function testRouteCommandWithOptionalArgument() : void
     {
         $mock = $this->getMockBuilder('stdClass')
             ->setMethods(['__invoke'])

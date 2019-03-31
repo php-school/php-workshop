@@ -10,7 +10,7 @@ use PHPUnit\Framework\TestCase;
  */
 class ApplicationTest extends TestCase
 {
-    public function testEventListenersFromLocalAndWorkshopConfigAreMerged()
+    public function testEventListenersFromLocalAndWorkshopConfigAreMerged() : void
     {
 
         $frameworkFileContent  = '<?php return [';

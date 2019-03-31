@@ -13,7 +13,7 @@ use PhpSchool\PhpWorkshop\Result\StdOutFailure;
  */
 class RequestFailureTest extends TestCase
 {
-    public function setUp()
+    public function setUp() : void
     {
         $args = new ArrayObject;
         $failure = new RequestFailure($args, 'Expected Output', 'Actual Output');
@@ -21,7 +21,7 @@ class RequestFailureTest extends TestCase
         $this->assertSame($args, $failure->getArgs());
     }
 
-    public function testGetters()
+    public function testGetters() : void
     {
         $args = new ArrayObject;
         $failure = new RequestFailure($args, 'Expected Output', 'Actual Output');
@@ -30,7 +30,7 @@ class RequestFailureTest extends TestCase
         $this->assertSame($args, $failure->getArgs());
     }
 
-    public function testFailureFromArgsAndOutput()
+    public function testFailureFromArgsAndOutput() : void
     {
         $args = new ArrayObject;
         $failure = RequestFailure::fromArgsAndOutput($args, 'Expected Output', 'Actual Output');

@@ -13,25 +13,25 @@ use PHPUnit\Framework\TestCase;
  */
 class InvalidArgumentExceptionTest extends TestCase
 {
-    public function testException()
+    public function testException() : void
     {
         $e = new InvalidArgumentException('nope');
         $this->assertEquals('nope', $e->getMessage());
     }
 
-    public function testExceptionFromTypeMisMatchConstructor()
+    public function testExceptionFromTypeMisMatchConstructor() : void
     {
         $e = InvalidArgumentException::typeMisMatch('string', new \stdClass);
         $this->assertEquals('Expected: "string" Received: "stdClass"', $e->getMessage());
     }
 
-    public function testExceptionFromNotValidParameterConstructor()
+    public function testExceptionFromNotValidParameterConstructor() : void
     {
         $e = InvalidArgumentException::notValidParameter('number', [1, 2], 3);
         $this->assertEquals('Parameter: "number" can only be one of: "1", "2" Received: "3"', $e->getMessage());
     }
 
-    public function testExceptionFromMissingImplements()
+    public function testExceptionFromMissingImplements() : void
     {
         $e = InvalidArgumentException::missingImplements(new \stdClass, Countable::class);
         self::assertEquals('"stdClass" is required to implement "Countable", but it does not', $e->getMessage());
@@ -39,10 +39,8 @@ class InvalidArgumentExceptionTest extends TestCase
 
     /**
      * @dataProvider stringifyProvider
-     * @param mixed $value
-     * @param string $expected
      */
-    public function testStringify($value, $expected)
+    public function testStringify($value, string $expected) : void
     {
         $rM = new \ReflectionMethod(InvalidArgumentException::class, 'stringify');
         $rM->setAccessible(true);
@@ -50,10 +48,7 @@ class InvalidArgumentExceptionTest extends TestCase
         $this->assertEquals($rM->invoke(null, $value), $expected);
     }
 
-    /**
-     * @return array
-     */
-    public function stringifyProvider()
+    public function stringifyProvider() : array
     {
         return [
             [new \stdClass, 'stdClass'],

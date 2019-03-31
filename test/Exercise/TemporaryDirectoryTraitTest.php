@@ -12,7 +12,7 @@ use PHPUnit\Framework\TestCase;
  */
 class TemporaryDirectoryTraitTest extends TestCase
 {
-    public function testGetTemporaryPath()
+    public function testGetTemporaryPath() : void
     {
         $impl = new TemporaryDirectoryTraitImpl;
         $path = $impl->getTemporaryPath();

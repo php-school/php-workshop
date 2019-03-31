@@ -25,7 +25,7 @@ class CustomRunnerFactoryTest extends TestCase
         $this->factory = new CustomVerifyingRunnerFactory;
     }
 
-    public function testSupports()
+    public function testSupports() : void
     {
         $exercise1 = $this->prophesize(ExerciseInterface::class);
         $exercise2 = $this->prophesize(ExerciseInterface::class);
@@ -40,7 +40,7 @@ class CustomRunnerFactoryTest extends TestCase
         $this->assertTrue($this->factory->supports($exercise3->reveal()));
     }
 
-    public function testConfigureInputAddsNoArgument()
+    public function testConfigureInputAddsNoArgument() : void
     {
         $command = new CommandDefinition('my-command', [], 'var_dump');
 
@@ -48,7 +48,7 @@ class CustomRunnerFactoryTest extends TestCase
         $this->assertCount(0, $command->getRequiredArgs());
     }
 
-    public function testCreateReturnsRunner()
+    public function testCreateReturnsRunner() : void
     {
         $exercise = new CustomVerifyingExerciseImpl;
         $this->assertInstanceOf(CustomVerifyingRunner::class, $this->factory->create($exercise));

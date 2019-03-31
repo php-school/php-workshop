@@ -15,7 +15,7 @@ use PHPUnit\Framework\TestCase;
  */
 class CliRendererFactoryTest extends TestCase
 {
-    public function testFactoryReturnsInstance()
+    public function testFactoryReturnsInstance() : void
     {
         $terminal = $this->createMock(TerminalInterface::class);
         $terminal

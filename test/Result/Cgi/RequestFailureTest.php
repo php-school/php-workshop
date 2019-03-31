@@ -15,7 +15,7 @@ use Psr\Http\Message\RequestInterface;
  */
 class RequestFailureTest extends TestCase
 {
-    public function setUp()
+    public function setUp() : void
     {
         $request = $this->createMock(RequestInterface::class);
         $requestFailure = new RequestFailure($request, '', '', [], []);
@@ -23,7 +23,7 @@ class RequestFailureTest extends TestCase
         $this->assertSame($request, $requestFailure->getRequest());
     }
     
-    public function testWhenOnlyOutputDifferent()
+    public function testWhenOnlyOutputDifferent() : void
     {
         $requestFailure = new RequestFailure(
             $this->createMock(RequestInterface::class),
@@ -41,7 +41,7 @@ class RequestFailureTest extends TestCase
         $this->assertSame($requestFailure->getExpectedHeaders(), $requestFailure->getActualHeaders());
     }
 
-    public function testWhenOnlyHeadersDifferent()
+    public function testWhenOnlyHeadersDifferent() : void
     {
         $requestFailure = new RequestFailure(
             $this->createMock(RequestInterface::class),
@@ -59,7 +59,7 @@ class RequestFailureTest extends TestCase
         $this->assertSame($requestFailure->getExpectedOutput(), $requestFailure->getActualOutput());
     }
 
-    public function testWhenOutputAndHeadersDifferent()
+    public function testWhenOutputAndHeadersDifferent() : void
     {
         $requestFailure = new RequestFailure(
             $this->createMock(RequestInterface::class),

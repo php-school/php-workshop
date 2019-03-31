@@ -31,7 +31,7 @@ class StdOutputTest extends TestCase
         $this->output = new StdOutput($this->color, $this->createMock(TerminalInterface::class));
     }
 
-    public function testPrintError()
+    public function testPrintError(): void
     {
         $error  = "\n";
         $error .= " [41m       [0m\n";
@@ -44,7 +44,7 @@ class StdOutputTest extends TestCase
         $this->output->printError('ERROR');
     }
 
-    public function testWrite()
+    public function testWrite(): void
     {
         $message  = 'There are people who actually like programming. ';
         $message .= "I don't understand why they like programming.";
@@ -53,21 +53,21 @@ class StdOutputTest extends TestCase
         $this->output->write($message);
     }
 
-    public function testWriteLine()
+    public function testWriteLine(): void
     {
         $message = 'Talk is cheap. Show me the code.';
         $this->expectOutputString($message . "\n");
         $this->output->writeLine($message);
     }
 
-    public function testWriteLines()
+    public function testWriteLines(): void
     {
         $lines = ['Line 1', 'Line 2', 'Line 3'];
         $this->expectOutputString("Line 1\nLine 2\nLine 3\n");
         $this->output->writeLines($lines);
     }
 
-    public function testEmptyLine()
+    public function testEmptyLine(): void
     {
         $this->expectOutputString("\n");
         $this->output->emptyLine();

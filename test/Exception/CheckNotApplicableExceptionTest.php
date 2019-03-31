@@ -15,13 +15,13 @@ use PHPUnit\Framework\TestCase;
  */
 class CheckNotApplicableExceptionTest extends TestCase
 {
-    public function testException()
+    public function testException() : void
     {
         $e = new CheckNotApplicableException('nope');
         $this->assertEquals('nope', $e->getMessage());
     }
 
-    public function testFromCheckAndExerciseConstructor()
+    public function testFromCheckAndExerciseConstructor() : void
     {
         $exercise = $this->createMock(ExerciseInterface::class);
         $exercise

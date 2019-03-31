@@ -30,7 +30,7 @@ abstract class AbstractResultRendererTest extends TestCase
     /**
      * @return ResultRendererFactory
      */
-    public function getResultRendererFactory()
+    public function getResultRendererFactory(): ResultRendererFactory
     {
         if (null === $this->resultRendererFactory) {
             $this->resultRendererFactory = new ResultRendererFactory;
@@ -42,7 +42,7 @@ abstract class AbstractResultRendererTest extends TestCase
     /**
      * @return ResultsRenderer
      */
-    protected function getRenderer()
+    protected function getRenderer(): ResultsRenderer
     {
         if (null === $this->renderer) {
             $color = new Color;

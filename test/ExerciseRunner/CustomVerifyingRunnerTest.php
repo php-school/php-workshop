@@ -24,7 +24,7 @@ class ExtRunnerTest extends TestCase
      */
     private $exercise;
 
-    public function setUp()
+    public function setUp() : void
     {
         $this->exercise = new CustomVerifyingExerciseImpl;
         $this->runner = new CustomVerifyingRunner($this->exercise);
@@ -32,12 +32,12 @@ class ExtRunnerTest extends TestCase
         $this->assertEquals('Custom Verifying Runner', $this->runner->getName());
     }
 
-    public function testRequiredChecks()
+    public function testRequiredChecks() : void
     {
         $this->assertEquals([], $this->runner->getRequiredChecks());
     }
 
-    public function testRunOutputsErrorMessage()
+    public function testRunOutputsErrorMessage() : void
     {
         $color = new Color;
         $color->setForceStyle(true);
@@ -51,7 +51,7 @@ class ExtRunnerTest extends TestCase
         $this->runner->run(new Input('app'), $output);
     }
 
-    public function testVerifyProxiesToExercise()
+    public function testVerifyProxiesToExercise() : void
     {
         self::assertEquals($this->exercise->verify(), $this->runner->verify(new Input('app')));
     }

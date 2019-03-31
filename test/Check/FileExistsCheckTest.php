@@ -33,7 +33,7 @@ class FileExistsCheckTest extends TestCase
      */
     private $exercise;
 
-    public function setUp()
+    public function setUp() : void
     {
         $this->testDir = sprintf('%s/%s', sys_get_temp_dir(), $this->getName());
         mkdir($this->testDir, 0777, true);
@@ -47,7 +47,7 @@ class FileExistsCheckTest extends TestCase
         $this->assertTrue($this->check->canRun(ExerciseType::CLI()));
     }
 
-    public function testSuccess()
+    public function testSuccess() : void
     {
         $file = sprintf('%s/test.txt', $this->testDir);
         touch($file);
@@ -59,7 +59,7 @@ class FileExistsCheckTest extends TestCase
         unlink($file);
     }
 
-    public function testFailure()
+    public function testFailure() : void
     {
         $file = sprintf('%s/test.txt', $this->testDir);
         $failure = $this->check->check($this->exercise, new Input('app', ['program' => $file]));
@@ -67,7 +67,7 @@ class FileExistsCheckTest extends TestCase
         $this->assertEquals(sprintf('File: "%s" does not exist', $file), $failure->getReason());
     }
 
-    public function tearDown()
+    public function tearDown() : void
     {
         rmdir($this->testDir);
     }

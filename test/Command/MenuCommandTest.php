@@ -14,7 +14,7 @@ use PhpSchool\PhpWorkshop\Command\MenuCommand;
  */
 class MenuCommandTest extends TestCase
 {
-    public function testInvoke()
+    public function testInvoke() : void
     {
         $menu = $this->createMock(CliMenu::class);
         $menu

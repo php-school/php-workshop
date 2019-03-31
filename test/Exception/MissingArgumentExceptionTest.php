@@ -12,7 +12,7 @@ use PhpSchool\PhpWorkshop\Exception\MissingArgumentException;
  */
 class MissingArgumentExceptionTest extends TestCase
 {
-    public function testException()
+    public function testException() : void
     {
         $e = new MissingArgumentException('some-route', ['arg1', 'arg2']);
         $this->assertEquals(

@@ -12,7 +12,7 @@ use Psr\Http\Message\RequestInterface;
  */
 class GenericFailureTest extends TestCase
 {
-    public function testFailure()
+    public function testFailure(): void
     {
         $request = $this->createMock(RequestInterface::class);
         $failure = new GenericFailure($request, 'Oops');
@@ -22,7 +22,7 @@ class GenericFailureTest extends TestCase
         $this->assertEquals('CGI Program Runner', $failure->getCheckName());
     }
 
-    public function testFailureWithRequestAndReason()
+    public function testFailureWithRequestAndReason() : void
     {
         $request = $this->createMock(RequestInterface::class);
         $failure = GenericFailure::fromRequestAndReason($request, 'Oops');
@@ -32,7 +32,7 @@ class GenericFailureTest extends TestCase
         $this->assertEquals('CGI Program Runner', $failure->getCheckName());
     }
 
-    public function testFailureFromCodeExecutionException()
+    public function testFailureFromCodeExecutionException() : void
     {
         $e = new CodeExecutionException('Something went wrong yo');
         $request = $this->createMock(RequestInterface::class);

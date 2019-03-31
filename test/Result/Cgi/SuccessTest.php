@@ -11,7 +11,7 @@ use Psr\Http\Message\RequestInterface;
  */
 class SuccessTest extends TestCase
 {
-    public function testSuccess()
+    public function testSuccess() : void
     {
         $request = $this->createMock(RequestInterface::class);
         $success = new Success($request);

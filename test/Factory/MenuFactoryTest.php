@@ -24,7 +24,7 @@ use PHPUnit\Framework\TestCase;
  */
 class MenuFactoryTest extends TestCase
 {
-    public function testFactoryReturnsInstance()
+    public function testFactoryReturnsInstance() : void
     {
         $container = $this->createMock(ContainerInterface::class);
         $userStateSerializer = $this->createMock(UserStateSerializer::class);

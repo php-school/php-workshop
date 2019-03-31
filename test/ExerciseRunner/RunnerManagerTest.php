@@ -14,7 +14,7 @@ use PHPUnit\Framework\TestCase;
  */
 class RunnerManagerTest extends TestCase
 {
-    public function testConfigureInputCallsCorrectFactory()
+    public function testConfigureInputCallsCorrectFactory() : void
     {
         $exercise = new CliExerciseImpl;
         $manager  = new RunnerManager;
@@ -33,7 +33,7 @@ class RunnerManagerTest extends TestCase
         $manager->configureInput($exercise, $command);
     }
 
-    public function testGetRunnerCallsCorrectFactory()
+    public function testGetRunnerCallsCorrectFactory() : void
     {
         $exercise = new CliExerciseImpl;
         $manager  = new RunnerManager;
@@ -51,7 +51,7 @@ class RunnerManagerTest extends TestCase
         $manager->getRunner($exercise);
     }
 
-    public function testExceptionIsThrownWhenConfiguringInputIfNoFactorySupportsExercise()
+    public function testExceptionIsThrownWhenConfiguringInputIfNoFactorySupportsExercise() : void
     {
         $exercise = new CliExerciseImpl;
         $manager = new RunnerManager;
@@ -62,7 +62,7 @@ class RunnerManagerTest extends TestCase
         $manager->configureInput($exercise, new CommandDefinition('my-command', [], 'var_dump'));
     }
 
-    public function testExceptionIsThrownWhenGettingRunnerIfNoFactorySupportsExercise()
+    public function testExceptionIsThrownWhenGettingRunnerIfNoFactorySupportsExercise() : void
     {
         $exercise = new CliExerciseImpl;
         $manager = new RunnerManager;

@@ -18,7 +18,7 @@ use PHPUnit\Framework\TestCase;
  */
 class RunCommandTest extends TestCase
 {
-    public function test()
+    public function test() : void
     {
         $input = new Input('appName', ['program' => 'solution.php']);
 

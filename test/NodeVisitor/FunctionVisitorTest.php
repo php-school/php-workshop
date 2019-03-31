@@ -14,7 +14,7 @@ use PhpSchool\PhpWorkshop\NodeVisitor\FunctionVisitor;
  */
 class FunctionVisitorTest extends TestCase
 {
-    public function testLeaveNodeWithARequiredFunctionIsRecorded()
+    public function testLeaveNodeWithARequiredFunctionIsRecorded() : void
     {
         $node = new FuncCall(new Name('file_get_contents'));
         $visitor = new FunctionVisitor(['file_get_contents'], []);
@@ -25,7 +25,7 @@ class FunctionVisitorTest extends TestCase
         $this->assertSame([], $visitor->getMissingRequirements());
     }
 
-    public function testLeaveNodeWithARequiredFunctionIsNotRecorded()
+    public function testLeaveNodeWithARequiredFunctionIsNotRecorded() : void
     {
         $node = new FuncCall(new Name('file'));
         $visitor = new FunctionVisitor(['file_get_contents'], []);
@@ -36,7 +36,7 @@ class FunctionVisitorTest extends TestCase
         $this->assertSame(['file_get_contents'], $visitor->getMissingRequirements());
     }
 
-    public function testBannedUsagesAreRecorded()
+    public function testBannedUsagesAreRecorded() : void
     {
         $node = new FuncCall(new Name('file_get_contents'));
         $visitor = new FunctionVisitor([], ['file_get_contents']);
@@ -46,7 +46,7 @@ class FunctionVisitorTest extends TestCase
         $this->assertSame([$node], $visitor->getBannedUsages());
     }
 
-    public function testBannedUsagesAreNotRecorded()
+    public function testBannedUsagesAreNotRecorded() : void
     {
         $node = new FuncCall(new Name('file'));
         $visitor = new FunctionVisitor([], ['file_get_contents']);

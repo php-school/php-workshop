@@ -25,7 +25,7 @@ use PhpSchool\PhpWorkshop\UserStateSerializer;
  */
 class ExerciseRendererTest extends TestCase
 {
-    public function testExerciseRendererSetsCurrentExerciseAndRendersExercise()
+    public function testExerciseRendererSetsCurrentExerciseAndRendersExercise() : void
     {
         $menu = $this->createMock(CliMenu::class);
 

@@ -5,6 +5,7 @@ namespace PhpSchool\PhpWorkshopTest\Listener;
 use PhpSchool\PhpWorkshop\CommandDefinition;
 use PhpSchool\PhpWorkshop\Event\Event;
 use PhpSchool\PhpWorkshop\Listener\CheckExerciseAssignedListener;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use PhpSchool\PhpWorkshop\UserState;
 
@@ -15,9 +16,8 @@ class CheckExerciseAssignedListenerTest extends TestCase
 {
     /**
      * @dataProvider commandsThatRequireAssignedExercise
-     * @param CommandDefinition $command
      */
-    public function testExceptionIsThrownIfNoExerciseAssigned(CommandDefinition $command)
+    public function testExceptionIsThrownIfNoExerciseAssigned(CommandDefinition $command) : void
     {
         $state = new UserState;
 
@@ -30,9 +30,8 @@ class CheckExerciseAssignedListenerTest extends TestCase
 
     /**
      * @dataProvider commandsThatRequireAssignedExercise
-     * @param CommandDefinition $command
      */
-    public function testExceptionIsNotThrownIfExerciseAssigned(CommandDefinition $command)
+    public function testExceptionIsNotThrownIfExerciseAssigned(CommandDefinition $command) : void
     {
         $state = new UserState(['exercise1'], 'exercise1');
         $listener = new CheckExerciseAssignedListener($state);
@@ -41,10 +40,7 @@ class CheckExerciseAssignedListenerTest extends TestCase
         $this->assertTrue($state->isAssignedExercise());
     }
 
-    /**
-     * @return array
-     */
-    public function commandsThatRequireAssignedExercise()
+    public function commandsThatRequireAssignedExercise() : array
     {
         return [
             [$this->command('verify')],
@@ -55,9 +51,8 @@ class CheckExerciseAssignedListenerTest extends TestCase
 
     /**
      * @dataProvider commandsThatDoNotRequireAssignedExercise
-     * @param CommandDefinition $command
      */
-    public function testExceptionIsNotThrownIfCommandDoesNotRequireAssignedExercise(CommandDefinition $command)
+    public function testExceptionIsNotThrownIfCommandDoesNotRequireAssignedExercise(CommandDefinition $command) : void
     {
         $state = new UserState(['exercise1'], 'exercise1');
         $listener = new CheckExerciseAssignedListener($state);
@@ -66,10 +61,7 @@ class CheckExerciseAssignedListenerTest extends TestCase
         $this->assertTrue($state->isAssignedExercise());
     }
 
-    /**
-     * @return array
-     */
-    public function commandsThatDoNotRequireAssignedExercise()
+    public function commandsThatDoNotRequireAssignedExercise() : array
     {
         return [
             [$this->command('help')],
@@ -79,10 +71,9 @@ class CheckExerciseAssignedListenerTest extends TestCase
     }
 
     /**
-     * @param $commandName
-     * @return \PHPUnit_Framework_MockObject_MockObject|CommandDefinition
+     * @return MockObject|CommandDefinition
      */
-    private function command($commandName)
+    private function command(string $commandName) : MockObject
     {
         $command = $this->createMock(CommandDefinition::class);
         $command
