@@ -2,10 +2,8 @@
 
 namespace PhpSchool\PhpWorkshopTest\Check;
 
-use DI\Container;
 use DI\ContainerBuilder;
 use PDO;
-use PhpSchool\PhpWorkshop\Check\CheckInterface;
 use PhpSchool\PhpWorkshop\Check\CheckRepository;
 use PhpSchool\PhpWorkshop\Check\DatabaseCheck;
 use PhpSchool\PhpWorkshop\Event\EventDispatcher;
@@ -141,8 +139,7 @@ class DatabaseCheckTest extends TestCase
             ->method('configure')
             ->willReturnCallback(function (ExerciseDispatcher $dispatcher) {
                 $dispatcher->requireCheck(DatabaseCheck::class);
-            }
-            );
+            });
 
         $this->exercise
             ->expects($this->once())
@@ -183,8 +180,7 @@ class DatabaseCheckTest extends TestCase
             ->method('configure')
             ->willReturnCallback(function (ExerciseDispatcher $dispatcher) {
                 $dispatcher->requireCheck(DatabaseCheck::class);
-            }
-            );
+            });
 
         $this->exercise
             ->expects($this->once())
@@ -221,8 +217,7 @@ class DatabaseCheckTest extends TestCase
             ->method('configure')
             ->willReturnCallback(function (ExerciseDispatcher $dispatcher) {
                 $dispatcher->requireCheck(DatabaseCheck::class);
-            }
-            );
+            });
 
         $this->checkRepository->registerCheck($this->check);
 
@@ -262,8 +257,7 @@ class DatabaseCheckTest extends TestCase
             ->method('configure')
             ->willReturnCallback(function (ExerciseDispatcher $dispatcher) {
                 $dispatcher->requireCheck(DatabaseCheck::class);
-            }
-            );
+            });
 
         $this->exercise
             ->expects($this->once())
@@ -307,8 +301,7 @@ class DatabaseCheckTest extends TestCase
             ->method('configure')
             ->willReturnCallback(function (ExerciseDispatcher $dispatcher) {
                 $dispatcher->requireCheck(DatabaseCheck::class);
-            }
-            );
+            });
 
         $this->exercise
             ->expects($this->once())
@@ -320,8 +313,7 @@ class DatabaseCheckTest extends TestCase
                 );
                 $stmt = $db->prepare('INSERT into users (name, age, gender) VALUES (:name, :age, :gender)');
                 $stmt->execute([':name' => 'Jimi Hendrix', ':age' => 27, ':gender' => 'Male']);
-            }
-            );
+            });
 
         $this->exercise
             ->expects($this->once())
@@ -338,8 +330,7 @@ class DatabaseCheckTest extends TestCase
                     ],
                     $users
                 );
-            }
-            );
+            });
 
         $this->checkRepository->registerCheck($this->check);
 

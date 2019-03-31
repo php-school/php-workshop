@@ -39,7 +39,7 @@ class ArrayObject implements IteratorAggregate, Countable
      */
     public function map(callable $callback)
     {
-        return new static (array_map($callback, $this->array));
+        return new static(array_map($callback, $this->array));
     }
 
     /**
