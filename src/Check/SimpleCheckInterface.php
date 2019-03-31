@@ -18,22 +18,19 @@ interface SimpleCheckInterface extends CheckInterface
      *
      * @return string
      */
-    const CHECK_BEFORE = 'before';
+    public const CHECK_BEFORE = 'before';
 
     /**
      * Run this check after exercise verifying
      *
      * @return string
      */
-    const CHECK_AFTER = 'after';
+    public const CHECK_AFTER = 'after';
 
     /**
      * Can this check run this exercise?
-     *
-     * @param ExerciseType $exerciseType
-     * @return bool
      */
-    public function canRun(ExerciseType $exerciseType);
+    public function canRun(ExerciseType $exerciseType) : bool;
 
     /**
      * The check is ran against an exercise and a filename which
@@ -48,12 +45,12 @@ interface SimpleCheckInterface extends CheckInterface
      * @param Input $input The command line arguments passed to the command.
      * @return ResultInterface The result of the check.
      */
-    public function check(ExerciseInterface $exercise, Input $input);
+    public function check(ExerciseInterface $exercise, Input $input) : ResultInterface;
 
     /**
      * Either `static::CHECK_BEFORE` | `static::CHECK_AFTER`.
      *
      * @return string
      */
-    public function getPosition();
+    public function getPosition() : string;
 }

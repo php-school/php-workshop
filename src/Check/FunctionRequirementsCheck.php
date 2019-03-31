@@ -38,10 +38,8 @@ class FunctionRequirementsCheck implements SimpleCheckInterface
 
     /**
      * Return the check's name.
-     *
-     * @return string
      */
-    public function getName()
+    public function getName() : string
     {
         return 'Function Requirements Check';
     }
@@ -55,7 +53,7 @@ class FunctionRequirementsCheck implements SimpleCheckInterface
      * @param Input $input The command line arguments passed to the command.
      * @return ResultInterface The result of the check.
      */
-    public function check(ExerciseInterface $exercise, Input $input)
+    public function check(ExerciseInterface $exercise, Input $input) : ResultInterface
     {
         if (!$exercise instanceof FunctionRequirementsExerciseCheck) {
             throw new \InvalidArgumentException;
@@ -99,19 +97,13 @@ class FunctionRequirementsCheck implements SimpleCheckInterface
 
     /**
      * This check can run on any exercise type.
-     *
-     * @param ExerciseType $exerciseType
-     * @return bool
      */
-    public function canRun(ExerciseType $exerciseType)
+    public function canRun(ExerciseType $exerciseType) : bool
     {
-        return in_array($exerciseType->getValue(), [ExerciseType::CGI, ExerciseType::CLI]);
+        return in_array($exerciseType->getValue(), [ExerciseType::CGI, ExerciseType::CLI], true);
     }
 
-    /**
-     * @return string
-     */
-    public function getExerciseInterface()
+    public function getExerciseInterface() : string
     {
         return FunctionRequirementsExerciseCheck::class;
     }
@@ -120,10 +112,8 @@ class FunctionRequirementsCheck implements SimpleCheckInterface
      * This is performed after executing the student's solution because the solution may produce the correct
      * output, but do it in a way that was not correct for the task. This way the student can see the program works
      * but missed some requirements.
-     *
-     * @return string
      */
-    public function getPosition()
+    public function getPosition() : string
     {
         return SimpleCheckInterface::CHECK_AFTER;
     }
