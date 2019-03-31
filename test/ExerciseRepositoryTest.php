@@ -7,7 +7,7 @@ use PhpSchool\PhpWorkshop\Exercise\ExerciseType;
 use PhpSchool\PhpWorkshopTest\Asset\CliExerciseImpl;
 use PhpSchool\PhpWorkshopTest\Asset\CliExerciseInterface;
 use PhpSchool\PhpWorkshopTest\Asset\CliExerciseMissingInterface;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpSchool\PhpWorkshop\ExerciseRepository;
 
@@ -16,7 +16,7 @@ use PhpSchool\PhpWorkshop\ExerciseRepository;
  * @package PhpSchool\PhpWorkshopTest
  * @author  Aydin Hassan <aydin@hotmail.co.uk>
  */
-class ExerciseRepositoryTest extends PHPUnit_Framework_TestCase
+class ExerciseRepositoryTest extends TestCase
 {
     public function testFindAll()
     {

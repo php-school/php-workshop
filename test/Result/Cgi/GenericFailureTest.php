@@ -4,13 +4,13 @@ namespace PhpSchool\PhpWorkshopTest\Result\Cgi;
 
 use PhpSchool\PhpWorkshop\Exception\CodeExecutionException;
 use PhpSchool\PhpWorkshop\Result\Cgi\GenericFailure;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\RequestInterface;
 
 /**
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
-class GenericFailureTest extends PHPUnit_Framework_TestCase
+class GenericFailureTest extends TestCase
 {
     public function testFailure()
     {

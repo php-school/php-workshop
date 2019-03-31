@@ -6,14 +6,14 @@ use PhpSchool\PhpWorkshop\Check\CheckInterface;
 use PhpSchool\PhpWorkshop\Exception\CheckNotApplicableException;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseType;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Class CheckNotApplicableExceptionTest
  * @package PhpSchool\PhpWorkshopTest\Exception
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
-class CheckNotApplicableExceptionTest extends PHPUnit_Framework_TestCase
+class CheckNotApplicableExceptionTest extends TestCase
 {
     public function testException()
     {

@@ -7,13 +7,14 @@ use PhpSchool\PhpWorkshop\ExerciseRepository;
 use PhpSchool\PhpWorkshop\UserState;
 use PhpSchool\PhpWorkshop\UserStateSerializer;
 use PhpSchool\PhpWorkshopTest\Asset\CliExerciseInterface;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Class UserStateSerializerTest
  * @package PhpSchool\PhpWorkshopTest
  * @author  Aydin Hassan <aydin@hotmail.co.uk>
  */
-class UserStateSerializerTest extends \PHPUnit_Framework_TestCase
+class UserStateSerializerTest extends TestCase
 {
     /**
      * @var string

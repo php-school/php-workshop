@@ -6,7 +6,7 @@ use PhpSchool\PhpWorkshop\ExerciseDispatcher;
 use PhpSchool\PhpWorkshop\Solution\SolutionFile;
 use PhpSchool\PhpWorkshop\Solution\SolutionInterface;
 use PhpSchool\PhpWorkshopTest\Asset\AbstractExerciseImpl;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 use ReflectionClass;
 
 /**
@@ -14,7 +14,7 @@ use ReflectionClass;
  * @package PhpSchool\PhpWorkshopTest\Exercise
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
-class AbstractExerciseTest extends PHPUnit_Framework_TestCase
+class AbstractExerciseTest extends TestCase
 {
     public function testTearDownReturnsVoid()
     {

@@ -19,7 +19,7 @@ use PhpSchool\PhpWorkshop\ResultRenderer\FailureRenderer;
 use PhpSchool\PhpWorkshop\ResultRenderer\ResultsRenderer;
 use PhpSchool\PhpWorkshop\Solution\SingleFileSolution;
 use PhpSchool\PhpWorkshop\UserState;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 
 /**
@@ -27,7 +27,7 @@ use Prophecy\Argument;
  * @package PhpSchool\PhpWorkshopTest\ResultRenderer
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
-class ResultsRendererTest extends PHPUnit_Framework_TestCase
+class ResultsRendererTest extends TestCase
 {
 
     public function testRenderIndividualResult()

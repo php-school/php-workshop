@@ -15,14 +15,14 @@ use PhpSchool\PhpWorkshop\MenuItem\ResetProgress;
 use PhpSchool\PhpWorkshop\UserState;
 use PhpSchool\PhpWorkshop\UserStateSerializer;
 use PhpSchool\PhpWorkshop\WorkshopType;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Class MenuFactoryTest
  * @package PhpSchool\PhpWorkshopTest\Factory
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
-class MenuFactoryTest extends PHPUnit_Framework_TestCase
+class MenuFactoryTest extends TestCase
 {
     public function testFactoryReturnsInstance()
     {

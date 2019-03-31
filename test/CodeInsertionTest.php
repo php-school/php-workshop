@@ -4,14 +4,14 @@ namespace PhpSchool\PhpWorkshopTest;
 
 use Assert\InvalidArgumentException;
 use PhpSchool\PhpWorkshop\CodeInsertion;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Class CodeInsertionTest
  * @package PhpSchool\PhpWorkshopTest
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
-class CodeInsertionTest extends PHPUnit_Framework_TestCase
+class CodeInsertionTest extends TestCase
 {
     public function testInvalidType()
     {

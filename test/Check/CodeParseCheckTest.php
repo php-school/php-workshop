@@ -11,14 +11,14 @@ use PhpSchool\PhpWorkshop\Exercise\ExerciseType;
 use PhpSchool\PhpWorkshop\Input\Input;
 use PhpSchool\PhpWorkshop\Result\Failure;
 use PhpSchool\PhpWorkshop\Result\Success;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Class CodeParseCheckTest
  * @package PhpSchool\PhpWorkshopTest\Check
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
-class CodeParseCheckTest extends PHPUnit_Framework_TestCase
+class CodeParseCheckTest extends TestCase
 {
     /**
      * @var SimpleCheckInterface

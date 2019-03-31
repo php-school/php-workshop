@@ -4,7 +4,7 @@ namespace PhpSchool\PhpWorkshopTest\Output;
 
 use Colors\Color;
 use PhpSchool\CliMenu\Terminal\TerminalInterface;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 use PhpSchool\PhpWorkshop\Output\StdOutput;
 
 /**
@@ -12,7 +12,7 @@ use PhpSchool\PhpWorkshop\Output\StdOutput;
  * @package PhpSchool\PhpWorkshopTest
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
-class StdOutputTest extends PHPUnit_Framework_TestCase
+class StdOutputTest extends TestCase
 {
     /**
      * @var Color

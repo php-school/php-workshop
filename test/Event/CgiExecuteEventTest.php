@@ -3,7 +3,7 @@
 namespace PhpSchool\PhpWorkshopTest\Event;
 
 use PhpSchool\PhpWorkshop\Event\CgiExecuteEvent;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\RequestInterface;
 use Zend\Diactoros\Request;
 
@@ -12,7 +12,7 @@ use Zend\Diactoros\Request;
  * @package PhpSchool\PhpWorkshopTest\Event
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
-class CgiExecuteEventTest extends PHPUnit_Framework_TestCase
+class CgiExecuteEventTest extends TestCase
 {
     public function testAddHeader()
     {

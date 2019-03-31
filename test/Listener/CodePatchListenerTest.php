@@ -7,7 +7,7 @@ use PhpSchool\PhpWorkshop\Event\ExerciseRunnerEvent;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpSchool\PhpWorkshop\Input\Input;
 use PhpSchool\PhpWorkshop\Listener\CodePatchListener;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 use RuntimeException;
 use Symfony\Component\Filesystem\Filesystem;
 
@@ -16,7 +16,7 @@ use Symfony\Component\Filesystem\Filesystem;
  * @package PhpSchool\PhpWorkshopTest\Listener
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
-class CodePatchListenerTest extends PHPUnit_Framework_TestCase
+class CodePatchListenerTest extends TestCase
 {
     /**
      * @var string

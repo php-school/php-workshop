@@ -3,7 +3,7 @@
 namespace PhpSchool\PhpWorkshopTest\Result;
 
 use PhpSchool\PhpWorkshop\Check\CheckInterface;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 use PhpSchool\PhpWorkshop\Result\FunctionRequirementsFailure;
 
 /**
@@ -11,7 +11,7 @@ use PhpSchool\PhpWorkshop\Result\FunctionRequirementsFailure;
  * @package PhpSchool\PhpWorkshopTest\Result
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
-class FunctionRequirementsFailureTest extends PHPUnit_Framework_TestCase
+class FunctionRequirementsFailureTest extends TestCase
 {
     public function testGetters()
     {

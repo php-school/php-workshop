@@ -4,7 +4,7 @@ namespace PhpSchool\PhpWorkshop\Command;
 
 use PhpSchool\PhpWorkshop\Exercise\ExerciseType;
 use PhpSchool\PhpWorkshopTest\Asset\CliExerciseInterface;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 use PhpSchool\PhpWorkshop\ExerciseRepository;
 use PhpSchool\PhpWorkshop\MarkdownRenderer;
 use PhpSchool\PhpWorkshop\Output\OutputInterface;
@@ -15,7 +15,7 @@ use PhpSchool\PhpWorkshop\UserState;
  * @package PhpSchool\PhpWorkshop\Command
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
-class PrintCommandTest extends PHPUnit_Framework_TestCase
+class PrintCommandTest extends TestCase
 {
     public function testExerciseIsPrintedIfAssigned()
     {

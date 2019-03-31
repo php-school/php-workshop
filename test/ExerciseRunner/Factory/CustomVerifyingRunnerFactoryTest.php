@@ -8,12 +8,12 @@ use PhpSchool\PhpWorkshop\Exercise\ExerciseType;
 use PhpSchool\PhpWorkshop\ExerciseRunner\CustomVerifyingRunner;
 use PhpSchool\PhpWorkshop\ExerciseRunner\Factory\CustomVerifyingRunnerFactory;
 use PhpSchool\PhpWorkshopTest\Asset\CustomVerifyingExerciseImpl;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 
 /**
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
-class CustomRunnerFactoryTest extends PHPUnit_Framework_TestCase
+class CustomRunnerFactoryTest extends TestCase
 {
     /**
      * @var CustomVerifyingRunnerFactory

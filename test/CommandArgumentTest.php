@@ -3,12 +3,12 @@
 namespace PhpSchool\PhpWorkshopTest;
 
 use PhpSchool\PhpWorkshop\CommandArgument;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 
 /**
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
-class CommandArgumentTest extends PHPUnit_Framework_TestCase
+class CommandArgumentTest extends TestCase
 {
     public function testRequiredArgument()
     {

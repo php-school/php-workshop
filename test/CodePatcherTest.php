@@ -13,7 +13,7 @@ use PhpSchool\PhpWorkshop\Exercise\PreProcessable;
 use PhpSchool\PhpWorkshop\Exercise\SubmissionPatchable;
 use PhpSchool\PhpWorkshop\Patch;
 use PhpSchool\PhpWorkshopTest\Asset\PatchableExercise;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 use PhpSchool\PhpWorkshop\CodeInsertion as Insertion;
 
 /**
@@ -21,7 +21,7 @@ use PhpSchool\PhpWorkshop\CodeInsertion as Insertion;
  * @package PhpSchool\PhpWorkshopTest
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
-class CodePatcherTest extends PHPUnit_Framework_TestCase
+class CodePatcherTest extends TestCase
 {
     public function testDefaultPatchIsAppliedIfAvailable()
     {

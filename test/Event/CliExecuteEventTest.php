@@ -4,14 +4,14 @@ namespace PhpSchool\PhpWorkshopTest\Event;
 
 use PhpSchool\PhpWorkshop\Event\CliExecuteEvent;
 use PhpSchool\PhpWorkshop\Utils\ArrayObject;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Class CliExecuteEventTest
  * @package PhpSchool\PhpWorkshopTest\Event
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
-class CliExecuteEventTest extends PHPUnit_Framework_TestCase
+class CliExecuteEventTest extends TestCase
 {
     public function testAppendArg()
     {

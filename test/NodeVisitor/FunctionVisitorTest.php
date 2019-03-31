@@ -4,7 +4,7 @@ namespace PhpSchool\PhpWorkshopTest\NodeVisitor;
 
 use PhpParser\Node\Expr\FuncCall;
 use PhpParser\Node\Name;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 use PhpSchool\PhpWorkshop\NodeVisitor\FunctionVisitor;
 
 /**
@@ -12,7 +12,7 @@ use PhpSchool\PhpWorkshop\NodeVisitor\FunctionVisitor;
  * @package PhpSchool\PhpWorkshopTest\NodeVisitor
  * @author  Aydin Hassan <aydin@hotmail.co.uk>
  */
-class FunctionVisitorTest extends PHPUnit_Framework_TestCase
+class FunctionVisitorTest extends TestCase
 {
     public function testLeaveNodeWithARequiredFunctionIsRecorded()
     {

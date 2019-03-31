@@ -21,7 +21,7 @@ use PhpSchool\PhpWorkshop\Result\Failure;
 use PhpSchool\PhpWorkshop\Result\Success;
 use PhpSchool\PhpWorkshop\ResultAggregator;
 use PhpSchool\PhpWorkshopTest\Asset\CliExerciseImpl;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use RuntimeException;
 use Symfony\Component\Filesystem\Filesystem;
@@ -31,7 +31,7 @@ use Symfony\Component\Filesystem\Filesystem;
  * @package PhpSchool\PhpWorkshopTest
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
-class ExerciseDispatcherTest extends PHPUnit_Framework_TestCase
+class ExerciseDispatcherTest extends TestCase
 {
     /**
      * @var Filesystem

@@ -5,7 +5,7 @@ namespace PhpSchool\PhpWorkshopTest\Result;
 use PhpParser\Error;
 use PhpSchool\PhpWorkshop\Check\CheckInterface;
 use PhpSchool\PhpWorkshop\Exception\CodeExecutionException;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 use PhpSchool\PhpWorkshop\Result\ResultInterface;
 use PhpSchool\PhpWorkshop\Result\Failure;
 
@@ -14,7 +14,7 @@ use PhpSchool\PhpWorkshop\Result\Failure;
  * @package PhpSchool\PhpWorkshopTest\Result
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
-class FailureTest extends PHPUnit_Framework_TestCase
+class FailureTest extends TestCase
 {
     /**
      * @var CheckInterface

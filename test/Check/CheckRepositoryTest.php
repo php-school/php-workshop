@@ -5,14 +5,14 @@ namespace PhpSchool\PhpWorkshopTest\Check;
 use PhpSchool\PhpWorkshop\Check\CheckInterface;
 use PhpSchool\PhpWorkshop\Check\CheckRepository;
 use PhpSchool\PhpWorkshop\Exception\InvalidArgumentException;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Class CheckRepositoryTest
  * @package PhpSchool\PhpWorkshopTest\Check
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
-class CheckRepositoryTest extends PHPUnit_Framework_TestCase
+class CheckRepositoryTest extends TestCase
 {
     public function testRegisterViaConstructor()
     {

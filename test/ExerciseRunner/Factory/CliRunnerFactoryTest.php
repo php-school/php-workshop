@@ -9,12 +9,12 @@ use PhpSchool\PhpWorkshop\Exercise\ExerciseType;
 use PhpSchool\PhpWorkshop\ExerciseRunner\CliRunner;
 use PhpSchool\PhpWorkshop\ExerciseRunner\Factory\CliRunnerFactory;
 use PhpSchool\PhpWorkshopTest\Asset\CliExerciseImpl;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 
 /**
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
-class CliRunnerFactoryTest extends PHPUnit_Framework_TestCase
+class CliRunnerFactoryTest extends TestCase
 {
     /**
      * @var EventDispatcher

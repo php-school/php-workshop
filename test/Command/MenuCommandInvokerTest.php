@@ -4,14 +4,14 @@ namespace PhpSchool\PhpWorkshopTest\Command;
 
 use PhpSchool\CliMenu\CliMenu;
 use PhpSchool\PhpWorkshop\Command\MenuCommandInvoker;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Class MenuCommandInvokerTest
  * @package PhpSchool\PhpWorkshopTest\Command
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
-class MenuCommandInvokerTest extends PHPUnit_Framework_TestCase
+class MenuCommandInvokerTest extends TestCase
 {
     public function testInvoker()
     {

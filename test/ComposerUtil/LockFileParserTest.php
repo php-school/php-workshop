@@ -4,13 +4,13 @@ namespace PhpSchool\PhpWorkshopTest\ComposerUtil;
 
 use PhpSchool\PhpWorkshop\ComposerUtil\LockFileParser;
 use PhpSchool\PhpWorkshop\Exception\InvalidArgumentException;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Class LockFileParserTest
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
-class LockFileParserTest extends PHPUnit_Framework_TestCase
+class LockFileParserTest extends TestCase
 {
     public function testGetPackages()
     {

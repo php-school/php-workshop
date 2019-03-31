@@ -20,13 +20,13 @@ use PhpSchool\PhpWorkshop\Result\Cli\RequestFailure;
 use PhpSchool\PhpWorkshop\ResultAggregator;
 use PhpSchool\PhpWorkshop\Solution\SingleFileSolution;
 use PhpSchool\PhpWorkshopTest\Asset\CliExerciseInterface;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 
 /**
  * @package PhpSchool\PhpWorkshop\ExerciseRunner
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
-class CliRunnerTest extends PHPUnit_Framework_TestCase
+class CliRunnerTest extends TestCase
 {
     /** @var  CliRunner */
     private $runner;
@@ -216,7 +216,7 @@ class CliRunnerTest extends PHPUnit_Framework_TestCase
             ->method('getArgs')
             ->will($this->returnValue([[1, 2, 3]]));
 
-        $this->expectOutputRegex('/PHP Parse error:  syntax error, unexpected end of file, expecting \',\' or \';\' /');
+        $this->expectOutputRegex('/Parse error: syntax error, unexpected end of file, expecting \',\' or \';\' /');
 
         $success = $this->runner->run(new Input('app', ['program' => __DIR__ . '/../res/cli/user-error.php']), $output);
         $this->assertFalse($success);

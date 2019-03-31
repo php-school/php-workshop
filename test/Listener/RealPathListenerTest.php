@@ -7,12 +7,12 @@ use PhpSchool\PhpWorkshop\Event\ExerciseRunnerEvent;
 use PhpSchool\PhpWorkshop\Input\Input;
 use PhpSchool\PhpWorkshop\Listener\RealPathListener;
 use PhpSchool\PhpWorkshopTest\Asset\CliExerciseImpl;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 
 /**
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
-class RealPathListenerTest extends PHPUnit_Framework_TestCase
+class RealPathListenerTest extends TestCase
 {
     public function testInputArgumentIsReplacesWithAbsolutePathIfFileExists()
     {

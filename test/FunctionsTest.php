@@ -2,12 +2,12 @@
 
 namespace PhpSchool\PhpWorkshopTest;
 
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 
 /**
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
-class FunctionsTest extends PHPUnit_Framework_TestCase
+class FunctionsTest extends TestCase
 {
     /**
      * @dataProvider mbStrPadProvider

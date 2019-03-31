@@ -5,13 +5,13 @@ namespace PhpSchool\PhpWorkshopTest\Listener;
 use PhpSchool\PhpWorkshop\CommandDefinition;
 use PhpSchool\PhpWorkshop\Event\Event;
 use PhpSchool\PhpWorkshop\Listener\CheckExerciseAssignedListener;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 use PhpSchool\PhpWorkshop\UserState;
 
 /**
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
-class CheckExerciseAssignedListenerTest extends PHPUnit_Framework_TestCase
+class CheckExerciseAssignedListenerTest extends TestCase
 {
     /**
      * @dataProvider commandsThatRequireAssignedExercise
@@ -37,6 +37,8 @@ class CheckExerciseAssignedListenerTest extends PHPUnit_Framework_TestCase
         $state = new UserState(['exercise1'], 'exercise1');
         $listener = new CheckExerciseAssignedListener($state);
         $listener->__invoke(new Event('some-event', ['command' => $command]));
+
+        $this->assertTrue($state->isAssignedExercise());
     }
 
     /**
@@ -60,6 +62,8 @@ class CheckExerciseAssignedListenerTest extends PHPUnit_Framework_TestCase
         $state = new UserState(['exercise1'], 'exercise1');
         $listener = new CheckExerciseAssignedListener($state);
         $listener->__invoke(new Event('some-event', ['command' => $command]));
+
+        $this->assertTrue($state->isAssignedExercise());
     }
 
     /**

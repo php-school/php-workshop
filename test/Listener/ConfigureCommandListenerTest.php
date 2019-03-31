@@ -9,12 +9,12 @@ use PhpSchool\PhpWorkshop\ExerciseRunner\RunnerManager;
 use PhpSchool\PhpWorkshop\Listener\ConfigureCommandListener;
 use PhpSchool\PhpWorkshop\UserState;
 use PhpSchool\PhpWorkshopTest\Asset\CliExerciseImpl;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 
 /**
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
-class ConfigureCommandListenerTest extends PHPUnit_Framework_TestCase
+class ConfigureCommandListenerTest extends TestCase
 {
     /**
      * @dataProvider configurableCommands

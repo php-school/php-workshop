@@ -5,13 +5,13 @@ namespace PhpSchool\PhpWorkshopTest\Result\Cli;
 use PhpSchool\PhpWorkshop\Check\CheckInterface;
 use PhpSchool\PhpWorkshop\Result\Cli\RequestFailure;
 use PhpSchool\PhpWorkshop\Utils\ArrayObject;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 use PhpSchool\PhpWorkshop\Result\StdOutFailure;
 
 /**
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
-class RequestFailureTest extends PHPUnit_Framework_TestCase
+class RequestFailureTest extends TestCase
 {
     public function setUp()
     {

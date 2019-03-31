@@ -46,7 +46,7 @@ class PhpLintCheck implements SimpleCheckInterface
             return Success::fromCheck($this);
         }
 
-        return Failure::fromCheckAndReason($this, $process->getErrorOutput());
+        return Failure::fromCheckAndReason($this, trim($process->getOutput()));
     }
 
     /**

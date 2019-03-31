@@ -4,14 +4,14 @@ namespace PhpSchool\PhpWorkshopTest\Event;
 
 use PhpSchool\PhpWorkshop\Event\Event;
 use PhpSchool\PhpWorkshop\Exception\InvalidArgumentException;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Class EventTest
  * @package PhpSchool\PhpWorkshopTest\Event
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
-class EventTest extends PHPUnit_Framework_TestCase
+class EventTest extends TestCase
 {
     public function testGetName()
     {

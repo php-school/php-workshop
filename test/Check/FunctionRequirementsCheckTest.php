@@ -9,7 +9,7 @@ use PhpSchool\PhpWorkshop\Check\SimpleCheckInterface;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseType;
 use PhpSchool\PhpWorkshop\Input\Input;
 use PhpSchool\PhpWorkshopTest\Asset\FunctionRequirementsExercise;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 use PhpSchool\PhpWorkshop\Check\FunctionRequirementsCheck;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpSchool\PhpWorkshop\ExerciseCheck\FunctionRequirementsExerciseCheck;
@@ -22,7 +22,7 @@ use PhpSchool\PhpWorkshop\Result\Success;
  * @package PhpSchool\PhpWorkshopTest\Check
  * @author  Aydin Hassan <aydin@hotmail.co.uk>
  */
-class FunctionRequirementsCheckTest extends PHPUnit_Framework_TestCase
+class FunctionRequirementsCheckTest extends TestCase
 {
     /**
      * @var FunctionRequirementsCheck

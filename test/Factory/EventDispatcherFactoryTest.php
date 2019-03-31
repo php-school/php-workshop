@@ -10,14 +10,14 @@ use PhpSchool\PhpWorkshop\Event\EventDispatcher;
 use PhpSchool\PhpWorkshop\Exception\InvalidArgumentException;
 use PhpSchool\PhpWorkshop\Factory\EventDispatcherFactory;
 use PhpSchool\PhpWorkshop\ResultAggregator;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Class EventDispatcherFactoryTest
  * @package PhpSchool\PhpWorkshopTest\Event
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
-class EventDispatcherFactoryTest extends PHPUnit_Framework_TestCase
+class EventDispatcherFactoryTest extends TestCase
 {
 
     public function testCreateWithNoConfig()

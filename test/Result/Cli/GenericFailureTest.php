@@ -5,12 +5,12 @@ namespace PhpSchool\PhpWorkshopTest\Result\CLi;
 use PhpSchool\PhpWorkshop\Exception\CodeExecutionException;
 use PhpSchool\PhpWorkshop\Result\CLi\GenericFailure;
 use PhpSchool\PhpWorkshop\Utils\ArrayObject;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 
 /**
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
-class GenericFailureTest extends PHPUnit_Framework_TestCase
+class GenericFailureTest extends TestCase
 {
     public function testFailure()
     {

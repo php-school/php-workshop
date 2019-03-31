@@ -8,7 +8,7 @@ use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpSchool\PhpWorkshop\Input\Input;
 use PhpSchool\PhpWorkshop\Listener\PrepareSolutionListener;
 use PhpSchool\PhpWorkshop\Solution\SolutionInterface;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 use ReflectionProperty;
 use RuntimeException;
 use Symfony\Component\Filesystem\Filesystem;
@@ -18,7 +18,7 @@ use Symfony\Component\Filesystem\Filesystem;
  * @package PhpSchool\PhpWorkshopTest\Listener
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
-class PrepareSolutionListenerTest extends PHPUnit_Framework_TestCase
+class PrepareSolutionListenerTest extends TestCase
 {
     /**
      * @var string

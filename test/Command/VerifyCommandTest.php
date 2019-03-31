@@ -9,7 +9,7 @@ use PhpSchool\PhpWorkshop\ExerciseDispatcher;
 use PhpSchool\PhpWorkshop\Input\Input;
 use PhpSchool\PhpWorkshop\Output\StdOutput;
 use PhpSchool\PhpWorkshopTest\Asset\CliExerciseImpl;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 use PhpSchool\PhpWorkshop\Command\VerifyCommand;
 use PhpSchool\PhpWorkshop\ExerciseRepository;
 use PhpSchool\PhpWorkshop\Result\Failure;
@@ -24,7 +24,7 @@ use PhpSchool\PhpWorkshop\UserStateSerializer;
  * @package PhpSchool\PhpWorkshop\Command
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
-class VerifyCommandTest extends PHPUnit_Framework_TestCase
+class VerifyCommandTest extends TestCase
 {
 
     /**

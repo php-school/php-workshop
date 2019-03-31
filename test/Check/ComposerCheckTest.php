@@ -12,14 +12,14 @@ use PhpSchool\PhpWorkshop\Input\Input;
 use PhpSchool\PhpWorkshop\Result\Failure;
 use PhpSchool\PhpWorkshop\Result\Success;
 use PhpSchool\PhpWorkshopTest\Asset\ComposerExercise;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Class ComposerCheckTest
  * @package PhpSchool\PhpWorkshopTest\Check
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
-class ComposerCheckTest extends PHPUnit_Framework_TestCase
+class ComposerCheckTest extends TestCase
 {
     /**
      * @var ComposerCheck

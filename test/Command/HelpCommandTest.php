@@ -6,14 +6,14 @@ use Colors\Color;
 use PhpSchool\CliMenu\Terminal\TerminalInterface;
 use PhpSchool\PhpWorkshop\Command\HelpCommand;
 use PhpSchool\PhpWorkshop\Output\StdOutput;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Class HelpCommandTest
  * @package PhpSchool\PhpWorkshop\Command
  * @author Michael Woodward <aydin@hotmail.co.uk>
  */
-class HelpCommandTest extends PHPUnit_Framework_TestCase
+class HelpCommandTest extends TestCase
 {
     public function testInvoke()
     {

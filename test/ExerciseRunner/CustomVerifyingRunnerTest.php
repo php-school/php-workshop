@@ -7,12 +7,12 @@ use PhpSchool\CliMenu\Terminal\TerminalInterface;
 use PhpSchool\PhpWorkshop\Input\Input;
 use PhpSchool\PhpWorkshop\Output\StdOutput;
 use PhpSchool\PhpWorkshopTest\Asset\CustomVerifyingExerciseImpl;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 
 /**
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
-class ExtRunnerTest extends PHPUnit_Framework_TestCase
+class ExtRunnerTest extends TestCase
 {
     /**
      * @var CustomVerifyingRunner

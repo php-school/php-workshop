@@ -4,14 +4,14 @@ namespace PhpSchool\PhpWorkshopTest\Solution;
 
 use InvalidArgumentException;
 use PhpSchool\PhpWorkshop\Solution\SolutionFile;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Class SolutionFileTest
  * @package PhpSchool\PhpWorkshop\Solution
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
-class SolutionFileTest extends PHPUnit_Framework_TestCase
+class SolutionFileTest extends TestCase
 {
     public function testExceptionIsThrowIfFileNotExists()
     {

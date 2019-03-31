@@ -7,13 +7,13 @@ use PhpSchool\PhpWorkshop\Result\CgiOutBodyFailure;
 use PhpSchool\PhpWorkshop\Result\CgiOutFailure;
 use PhpSchool\PhpWorkshop\Result\CgiOutRequestFailure;
 use PhpSchool\PhpWorkshop\Result\CgiOutResult;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\RequestInterface;
 
 /**
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
-class RequestFailureTest extends PHPUnit_Framework_TestCase
+class RequestFailureTest extends TestCase
 {
     public function setUp()
     {

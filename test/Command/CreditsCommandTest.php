@@ -7,7 +7,7 @@ use PhpSchool\CliMenu\Terminal\TerminalInterface;
 use PhpSchool\PhpWorkshop\Command\CreditsCommand;
 use PhpSchool\PhpWorkshop\Output\OutputInterface;
 use PhpSchool\PhpWorkshop\Output\StdOutput;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Class CreditsCommandTest
@@ -15,7 +15,7 @@ use PHPUnit_Framework_TestCase;
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  * @author Michael Woodward <mikeymike.mw@gmail.com>
  */
-class CreditsCommandTest extends PHPUnit_Framework_TestCase
+class CreditsCommandTest extends TestCase
 {
 
     public function testInvoke()

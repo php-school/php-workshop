@@ -7,14 +7,14 @@ use PhpSchool\PhpWorkshop\Event\EventDispatcher;
 use PhpSchool\PhpWorkshop\Event\EventInterface;
 use PhpSchool\PhpWorkshop\Result\ResultInterface;
 use PhpSchool\PhpWorkshop\ResultAggregator;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Class EventDispatcherTest
  * @package PhpSchool\PhpWorkshopTest\Event
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
-class EventDispatcherTest extends PHPUnit_Framework_TestCase
+class EventDispatcherTest extends TestCase
 {
     /**
      * @var ResultAggregator

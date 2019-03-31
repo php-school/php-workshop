@@ -7,13 +7,13 @@ use Colors\Color;
 use PhpSchool\PhpWorkshop\Factory\MarkdownCliRendererFactory;
 use Interop\Container\ContainerInterface;
 use PhpSchool\CliMenu\Terminal\TerminalInterface;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Class CliRendererFactoryTest
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
-class CliRendererFactoryTest extends PHPUnit_Framework_TestCase
+class CliRendererFactoryTest extends TestCase
 {
     public function testFactoryReturnsInstance()
     {

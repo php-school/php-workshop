@@ -9,7 +9,7 @@ use League\CommonMark\Environment;
 use PhpSchool\CliMenu\CliMenu;
 use PhpSchool\CliMenu\MenuItem\MenuItemInterface;
 use PhpSchool\CliMenu\Terminal\TerminalInterface;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpSchool\PhpWorkshop\ExerciseRenderer;
 use PhpSchool\PhpWorkshop\ExerciseRepository;
@@ -23,7 +23,7 @@ use PhpSchool\PhpWorkshop\UserStateSerializer;
  * @package PhpSchool\PhpWorkshopTest
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
-class ExerciseRendererTest extends PHPUnit_Framework_TestCase
+class ExerciseRendererTest extends TestCase
 {
     public function testExerciseRendererSetsCurrentExerciseAndRendersExercise()
     {

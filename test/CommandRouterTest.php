@@ -7,7 +7,7 @@ use InvalidArgumentException;
 use PhpSchool\PhpWorkshop\CommandArgument;
 use PhpSchool\PhpWorkshop\Event\EventDispatcher;
 use PhpSchool\PhpWorkshop\Input\Input;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 use PhpSchool\PhpWorkshop\CommandDefinition;
 use PhpSchool\PhpWorkshop\CommandRouter;
 use PhpSchool\PhpWorkshop\Exception\CliRouteNotExistsException;
@@ -19,7 +19,7 @@ use RuntimeException;
  * @package PhpSchool\PhpWorkshopTest
  * @author  Aydin Hassan <aydin@hotmail.co.uk>
  */
-class CommandRouterTest extends PHPUnit_Framework_TestCase
+class CommandRouterTest extends TestCase
 {
     public function testInvalidDefaultThrowsException()
     {
@@ -42,13 +42,6 @@ class CommandRouterTest extends PHPUnit_Framework_TestCase
             new CommandDefinition('cmd', [], 'service'),
             new CommandDefinition('cmd', [], 'service'),
         ], 'default', $eventDispatcher, $c);
-    }
-
-    public function testConstruct()
-    {
-        $c = $this->createMock(ContainerInterface::class);
-        $eventDispatcher = $this->createMock(EventDispatcher::class);
-        new CommandRouter([new CommandDefinition('cmd', [], 'service'),], 'cmd', $eventDispatcher, $c);
     }
 
     public function testRouteCommandWithNoArgsFromArrayUsesDefaultCommand()

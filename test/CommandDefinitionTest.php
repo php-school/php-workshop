@@ -4,13 +4,13 @@ namespace PhpSchool\PhpWorkshopTest;
 
 use PhpSchool\PhpWorkshop\CommandArgument;
 use PhpSchool\PhpWorkshop\Exception\InvalidArgumentException;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 use PhpSchool\PhpWorkshop\CommandDefinition;
 
 /**
  * @author  Aydin Hassan <aydin@hotmail.co.uk>
  */
-class CommandDefinitionTest extends PHPUnit_Framework_TestCase
+class CommandDefinitionTest extends TestCase
 {
 
     public function testGettersSettersWithStringArgs()

@@ -3,13 +3,13 @@
 namespace PhpSchool\PhpWorkshopTest\Result;
 
 use PhpSchool\PhpWorkshop\Result\ComparisonFailure;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 use PhpSchool\PhpWorkshop\Result\StdOutFailure;
 
 /**
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
-class ComparisonFailureTest extends PHPUnit_Framework_TestCase
+class ComparisonFailureTest extends TestCase
 {
     public function testGetters()
     {

@@ -9,14 +9,14 @@ use PhpSchool\PhpWorkshop\Listener\SelfCheckListener;
 use PhpSchool\PhpWorkshop\Result\Success;
 use PhpSchool\PhpWorkshop\ResultAggregator;
 use PhpSchool\PhpWorkshopTest\Asset\SelfCheckExerciseInterface;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Class SelfCheckListenerTest
  * @package PhpSchool\PhpWorkshopTest\Listener
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
-class SelfCheckListenerTest extends PHPUnit_Framework_TestCase
+class SelfCheckListenerTest extends TestCase
 {
     public function testSelfCheck()
     {

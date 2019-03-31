@@ -4,14 +4,14 @@ namespace PhpSchool\PhpWorkshopTest\Exception;
 
 use Countable;
 use PhpSchool\PhpWorkshop\Exception\InvalidArgumentException;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Class InvalidArgumentExceptionTest
  * @package PhpSchool\PhpWorkshopTest\Exception
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
-class InvalidArgumentExceptionTest extends PHPUnit_Framework_TestCase
+class InvalidArgumentExceptionTest extends TestCase
 {
     public function testException()
     {

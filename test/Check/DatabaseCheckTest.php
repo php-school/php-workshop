@@ -20,7 +20,7 @@ use PhpSchool\PhpWorkshop\Output\OutputInterface;
 use PhpSchool\PhpWorkshop\ResultAggregator;
 use PhpSchool\PhpWorkshop\Solution\SingleFileSolution;
 use PhpSchool\PhpWorkshopTest\Asset\DatabaseExerciseInterface;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 use ReflectionProperty;
 use RuntimeException;
 
@@ -28,7 +28,7 @@ use RuntimeException;
  * @package PhpSchool\PhpWorkshopTest\Check
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
-class DatabaseCheckTest extends PHPUnit_Framework_TestCase
+class DatabaseCheckTest extends TestCase
 {
 
     /**

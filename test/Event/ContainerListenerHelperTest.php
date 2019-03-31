@@ -3,12 +3,12 @@
 namespace PhpSchool\PhpWorkshopTest\Event;
 
 use PhpSchool\PhpWorkshop\Event\ContainerListenerHelper;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 
 /**
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
-class ContainerListenerHelperTest extends PHPUnit_Framework_TestCase
+class ContainerListenerHelperTest extends TestCase
 {
     public function testDefaultMethodIsInvoke()
     {

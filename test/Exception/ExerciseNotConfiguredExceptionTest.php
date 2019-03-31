@@ -4,14 +4,14 @@ namespace PhpSchool\PhpWorkshopTest\Exception;
 
 use PhpSchool\PhpWorkshop\Exception\ExerciseNotConfiguredException;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Class ExerciseNotConfiguredExceptionTest
  * @package PhpSchool\PhpWorkshopTest\Exception
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
-class ExerciseNotConfiguredExceptionTest extends PHPUnit_Framework_TestCase
+class ExerciseNotConfiguredExceptionTest extends TestCase
 {
     public function testException()
     {

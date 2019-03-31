@@ -4,7 +4,7 @@ namespace PhpSchool\PhpWorkshopTest\Solution;
 
 use InvalidArgumentException;
 use PhpSchool\PhpWorkshop\Solution\DirectorySolution;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Class DirectorySolutionTest
@@ -12,7 +12,7 @@ use PHPUnit_Framework_TestCase;
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  * @author Michael Woodward <mikeymike.mw@gmail.com>
  */
-class DirectorySolutionTest extends PHPUnit_Framework_TestCase
+class DirectorySolutionTest extends TestCase
 {
     public function testExceptionIsThrownIfEntryPointDoesNotExist()
     {

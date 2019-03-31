@@ -3,14 +3,14 @@
 namespace PhpSchool\PhpWorkshopTest\Solution;
 
 use PhpSchool\PhpWorkshop\Solution\SingleFileSolution;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Class SingleFileSolutionTest
  * @package PhpSchool\PhpWorkshop\Solution
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
-class SingleFileSolutionTest extends PHPUnit_Framework_TestCase
+class SingleFileSolutionTest extends TestCase
 {
     public function testGetters()
     {

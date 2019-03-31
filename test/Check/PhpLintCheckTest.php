@@ -5,7 +5,7 @@ namespace PhpSchool\PhpWorkshopTest\Check;
 use PhpSchool\PhpWorkshop\Check\SimpleCheckInterface;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseType;
 use PhpSchool\PhpWorkshop\Input\Input;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 use PhpSchool\PhpWorkshop\Check\PhpLintCheck;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpSchool\PhpWorkshop\Result\Failure;
@@ -16,7 +16,7 @@ use PhpSchool\PhpWorkshop\Result\Success;
  * @package PhpSchool\PhpWorkshopTest
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
-class PhpLintCheckTest extends PHPUnit_Framework_TestCase
+class PhpLintCheckTest extends TestCase
 {
 
     /**
@@ -41,7 +41,7 @@ class PhpLintCheckTest extends PHPUnit_Framework_TestCase
         $this->assertTrue($this->check->canRun(ExerciseType::CLI()));
     }
 
-    public function testSuccess()
+    public function testSuccess() : void
     {
         $this->assertInstanceOf(
             Success::class,
@@ -49,7 +49,7 @@ class PhpLintCheckTest extends PHPUnit_Framework_TestCase
         );
     }
 
-    public function testFailure()
+    public function testFailure() : void
     {
         $failure = $this->check->check(
             $this->exercise,
@@ -57,7 +57,7 @@ class PhpLintCheckTest extends PHPUnit_Framework_TestCase
         );
         $this->assertInstanceOf(Failure::class, $failure);
         $this->assertRegExp(
-            "/^PHP Parse error:  syntax error, unexpected end of file, expecting ',' or ';'/",
+            "/^Parse error: syntax error, unexpected end of file, expecting ',' or ';'/",
             $failure->getReason()
         );
     }

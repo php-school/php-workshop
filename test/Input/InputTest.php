@@ -4,12 +4,12 @@ namespace PhpSchool\PhpWorkshopTest;
 
 use PhpSchool\PhpWorkshop\Exception\InvalidArgumentException;
 use PhpSchool\PhpWorkshop\Input\Input;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 
 /**
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
-class InputTest extends PHPUnit_Framework_TestCase
+class InputTest extends TestCase
 {
     public function testGetAppName()
     {

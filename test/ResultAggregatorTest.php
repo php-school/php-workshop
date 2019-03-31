@@ -6,7 +6,7 @@ namespace PhpSchool\PhpWorkshopTest;
 use PhpSchool\PhpWorkshop\Check\CheckInterface;
 use PhpSchool\PhpWorkshop\Result\Cli\CliResult;
 use PhpSchool\PhpWorkshop\Utils\ArrayObject;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 use PhpSchool\PhpWorkshop\Result\Failure;
 use PhpSchool\PhpWorkshop\Result\Success;
 use PhpSchool\PhpWorkshop\Result\Cli\Success as CliSuccess;
@@ -18,7 +18,7 @@ use PhpSchool\PhpWorkshop\ResultAggregator;
  * @package PhpSchool\PhpWorkshopTest
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
-class ResultAggregatorTest extends PHPUnit_Framework_TestCase
+class ResultAggregatorTest extends TestCase
 {
     /**
      * @var CheckInterface
