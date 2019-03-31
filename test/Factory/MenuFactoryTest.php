@@ -62,8 +62,7 @@ class MenuFactoryTest extends TestCase
             ->method('get')
             ->willReturnCallback(function ($name) use ($services) {
                 return $services[$name];
-            }
-            );
+            });
         
         
         $factory = new MenuFactory;

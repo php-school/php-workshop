@@ -3,7 +3,7 @@
 namespace PhpSchool\PhpWorkshopTest\ExerciseRunner;
 
 use Colors\Color;
-use PhpSchool\CliMenu\Terminal\TerminalInterface;
+use PhpSchool\Terminal\Terminal;
 use PhpSchool\PhpWorkshop\ExerciseRunner\CustomVerifyingRunner;
 use PhpSchool\PhpWorkshop\Input\Input;
 use PhpSchool\PhpWorkshop\Output\StdOutput;
@@ -42,7 +42,7 @@ class CustomVerifyingRunnerTest extends TestCase
     {
         $color = new Color;
         $color->setForceStyle(true);
-        $output = new StdOutput($color, $this->createMock(TerminalInterface::class));
+        $output = new StdOutput($color, $this->createMock(Terminal::class));
 
         $exp  = 'Nothing to run here. This exercise does not require a code solution, ';
         $exp .= "so there is nothing to execute.\n";

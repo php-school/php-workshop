@@ -3,7 +3,7 @@
 namespace PhpSchool\PhpWorkshopTest\Output;
 
 use Colors\Color;
-use PhpSchool\CliMenu\Terminal\TerminalInterface;
+use PhpSchool\Terminal\Terminal;
 use PHPUnit\Framework\TestCase;
 use PhpSchool\PhpWorkshop\Output\StdOutput;
 
@@ -28,7 +28,7 @@ class StdOutputTest extends TestCase
     {
         $this->color = new Color();
         $this->color->setForceStyle(true);
-        $this->output = new StdOutput($this->color, $this->createMock(TerminalInterface::class));
+        $this->output = new StdOutput($this->color, $this->createMock(Terminal::class));
     }
 
     public function testPrintError(): void

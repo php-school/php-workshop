@@ -8,7 +8,7 @@ use League\CommonMark\DocParser;
 use League\CommonMark\Environment;
 use PhpSchool\CliMenu\CliMenu;
 use PhpSchool\CliMenu\MenuItem\MenuItemInterface;
-use PhpSchool\CliMenu\Terminal\TerminalInterface;
+use PhpSchool\Terminal\Terminal;
 use PHPUnit\Framework\TestCase;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpSchool\PhpWorkshop\ExerciseRenderer;
@@ -95,7 +95,7 @@ class ExerciseRendererTest extends TestCase
             $userStateSerializer,
             $markdownRenderer,
             $color,
-            new StdOutput($color, $this->createMock(TerminalInterface::class))
+            new StdOutput($color, $this->createMock(Terminal::class))
         );
 
         $this->expectOutputString(file_get_contents(__DIR__ . '/res/exercise-help-expected.txt'));

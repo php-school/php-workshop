@@ -6,7 +6,7 @@ use AydinHassan\CliMdRenderer\CliRenderer;
 use Colors\Color;
 use PhpSchool\PhpWorkshop\Factory\MarkdownCliRendererFactory;
 use Interop\Container\ContainerInterface;
-use PhpSchool\CliMenu\Terminal\TerminalInterface;
+use PhpSchool\Terminal\Terminal;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -17,14 +17,14 @@ class CliRendererFactoryTest extends TestCase
 {
     public function testFactoryReturnsInstance() : void
     {
-        $terminal = $this->createMock(TerminalInterface::class);
+        $terminal = $this->createMock(Terminal::class);
         $terminal
             ->expects($this->once())
             ->method('getWidth')
             ->willReturn(10);
 
         $services = [
-            TerminalInterface::class => $terminal,
+            Terminal::class => $terminal,
             Color::class => new Color,
         ];
 
@@ -33,8 +33,7 @@ class CliRendererFactoryTest extends TestCase
             ->method('get')
             ->willReturnCallback(function ($service) use ($services) {
                 return $services[$service];
-            }
-            );
+            });
 
         $factory = new MarkdownCliRendererFactory();
         $this->assertInstanceOf(CliRenderer::class, $factory->__invoke($c));

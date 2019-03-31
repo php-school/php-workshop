@@ -4,7 +4,7 @@ namespace PhpSchool\PhpWorkshop\Factory;
 
 use Interop\Container\ContainerInterface;
 use PhpSchool\CliMenu\CliMenu;
-use PhpSchool\CliMenu\CliMenuBuilder;
+use PhpSchool\CliMenu\Builder\CliMenuBuilder;
 use PhpSchool\CliMenu\MenuItem\AsciiArtItem;
 use PhpSchool\PhpWorkshop\Command\CreditsCommand;
 use PhpSchool\PhpWorkshop\Command\HelpCommand;
@@ -78,29 +78,33 @@ class MenuFactory
             ->setSelectedMarker('↳')
             ->setItemExtra('[COMPLETED]');
 
-        $subMenu = $builder
-            ->addSubMenu('OPTIONS')
+        $builder
+            ->addSubMenu('OPTIONS', function (CliMenuBuilder $subMenu) use ($c) {
+                if (null !== $c->get('workshopLogo')) {
+                    $subMenu->addAsciiArt($c->get('workshopLogo'), AsciiArtItem::POSITION_CENTER);
+                }
+
+                $subMenu
+                    ->addLineBreak('_')
+                    ->addLineBreak()
+                    ->addStaticItem('Options')
+                    ->addStaticItem('-------')
+                    ->addItem('Reset workshop progress', $c->get(ResetProgress::class))
+                    ->addLineBreak()
+                    ->addLineBreak('-')
+                    ->addLineBreak()
+                    ->setGoBackButtonText('GO BACK')
+                    ->setExitButtonText('EXIT');
+
+                if (null !== $c->get('workshopTitle')) {
+                    $subMenu->setTitle($c->get('workshopTitle'));
+                }
+            })
             ->addLineBreak();
 
-        if (null !== $c->get('workshopLogo')) {
-            $subMenu->addAsciiArt($c->get('workshopLogo'), AsciiArtItem::POSITION_CENTER);
-        }
-
-        $subMenu
-            ->addLineBreak('_')
-            ->addLineBreak()
-            ->addStaticItem('Options')
-            ->addStaticItem('-------')
-            ->addItem('Reset workshop progress', $c->get(ResetProgress::class))
-            ->addLineBreak()
-            ->addLineBreak('-')
-            ->addLineBreak()
-            ->setGoBackButtonText('GO BACK')
-            ->setExitButtonText('EXIT');
 
         if (null !== $c->get('workshopTitle')) {
             $builder->setTitle($c->get('workshopTitle'));
-            $subMenu->setTitle($c->get('workshopTitle'));
         }
 
         return $builder->build();

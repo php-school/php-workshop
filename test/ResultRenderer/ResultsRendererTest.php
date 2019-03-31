@@ -6,7 +6,7 @@ use Colors\Color;
 use Kadet\Highlighter\Formatter\CliFormatter;
 use Kadet\Highlighter\KeyLighter;
 use Kadet\Highlighter\Language\Php;
-use PhpSchool\CliMenu\Terminal\TerminalInterface;
+use PhpSchool\Terminal\Terminal;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpSchool\PhpWorkshop\Exercise\ProvidesSolution;
 use PhpSchool\PhpWorkshop\ExerciseRepository;
@@ -38,7 +38,7 @@ class ResultsRendererTest extends TestCase
         $resultRendererFactory = new ResultRendererFactory;
         $resultRendererFactory->registerRenderer(Failure::class, FailureRenderer::class);
 
-        $terminal = $this->prophesize(TerminalInterface::class);
+        $terminal = $this->prophesize(Terminal::class);
         $terminal->getWidth()->willReturn(30);
 
         $renderer = new ResultsRenderer(
@@ -60,7 +60,7 @@ class ResultsRendererTest extends TestCase
         $color = new Color;
         $color->setForceStyle(true);
 
-        $terminal = $this->prophesize(TerminalInterface::class);
+        $terminal = $this->prophesize(Terminal::class);
         $terminal->getWidth()->willReturn(10);
 
         $renderer = new ResultsRenderer(
@@ -82,7 +82,7 @@ class ResultsRendererTest extends TestCase
 
         $resultRendererFactory = new ResultRendererFactory;
 
-        $terminal = $this->prophesize(TerminalInterface::class);
+        $terminal = $this->prophesize(Terminal::class);
         $terminal->getWidth()->willReturn(100);
         $terminal = $terminal->reveal();
 
@@ -119,7 +119,7 @@ class ResultsRendererTest extends TestCase
 
         $resultRendererFactory = new ResultRendererFactory;
 
-        $terminal = $this->prophesize(TerminalInterface::class);
+        $terminal = $this->prophesize(Terminal::class);
         $terminal->getWidth()->willReturn(100);
         $terminal = $terminal->reveal();
 
@@ -169,7 +169,7 @@ class ResultsRendererTest extends TestCase
 
         $resultRendererFactory = new ResultRendererFactory;
 
-        $terminal = $this->prophesize(TerminalInterface::class);
+        $terminal = $this->prophesize(Terminal::class);
         $terminal->getWidth()->willReturn(100);
         $terminal = $terminal->reveal();
 
@@ -231,7 +231,7 @@ class ResultsRendererTest extends TestCase
              return $renderer->reveal();
         });
 
-        $terminal = $this->prophesize(TerminalInterface::class);
+        $terminal = $this->prophesize(Terminal::class);
         $terminal->getWidth()->willReturn(100);
         $terminal = $terminal->reveal();
 
@@ -274,7 +274,7 @@ class ResultsRendererTest extends TestCase
             return $renderer->reveal();
         });
 
-        $terminal = $this->prophesize(TerminalInterface::class);
+        $terminal = $this->prophesize(Terminal::class);
         $terminal->getWidth()->willReturn(100);
         $terminal = $terminal->reveal();
 
@@ -318,7 +318,7 @@ class ResultsRendererTest extends TestCase
             return $renderer->reveal();
         });
 
-        $terminal = $this->prophesize(TerminalInterface::class);
+        $terminal = $this->prophesize(Terminal::class);
         $terminal->getWidth()->willReturn(100);
         $terminal = $terminal->reveal();
 

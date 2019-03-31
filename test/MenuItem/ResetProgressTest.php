@@ -6,7 +6,7 @@ use PhpSchool\CliMenu\CliMenu;
 use PhpSchool\CliMenu\Dialogue\Confirm;
 use PhpSchool\CliMenu\MenuItem\MenuItemInterface;
 use PhpSchool\CliMenu\MenuStyle;
-use PhpSchool\CliMenu\Terminal\TerminalInterface;
+use PhpSchool\Terminal\Terminal;
 use PhpSchool\PhpWorkshop\MenuItem\ResetProgress;
 use PhpSchool\PhpWorkshop\Output\OutputInterface;
 use PhpSchool\PhpWorkshop\UserState;
@@ -33,7 +33,7 @@ class ResetProgressTest extends TestCase
             ->expects($this->once())
             ->method('hideItemExtra');
 
-        $terminal = $this->createMock(TerminalInterface::class);
+        $terminal = $this->createMock(Terminal::class);
 
         $menu = new CliMenu('Menu', [$item1, $item2], $terminal);
 

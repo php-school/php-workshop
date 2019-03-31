@@ -3,7 +3,7 @@
 namespace PhpSchool\PhpWorkshop\Output;
 
 use Colors\Color;
-use PhpSchool\CliMenu\Terminal\TerminalInterface;
+use PhpSchool\Terminal\Terminal;
 
 /**
  * Class StdOutput
@@ -18,15 +18,11 @@ class StdOutput implements OutputInterface
     private $color;
 
     /**
-     * @var TerminalInterface
+     * @var Terminal
      */
     private $terminal;
 
-    /**
-     * @param Color             $color
-     * @param TerminalInterface $terminal
-     */
-    public function __construct(Color $color, TerminalInterface $terminal)
+    public function __construct(Color $color, Terminal $terminal)
     {
         $this->color = $color;
         $this->terminal = $terminal;

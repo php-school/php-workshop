@@ -3,7 +3,7 @@
 namespace PhpSchool\PhpWorkshopTest\ExerciseRunner;
 
 use Colors\Color;
-use PhpSchool\CliMenu\Terminal\TerminalInterface;
+use PhpSchool\Terminal\Terminal;
 use PhpSchool\PhpWorkshop\Check\CodeParseCheck;
 use PhpSchool\PhpWorkshop\Check\FileExistsCheck;
 use PhpSchool\PhpWorkshop\Check\PhpLintCheck;
@@ -276,7 +276,7 @@ class CgiRunnerTest extends TestCase
     {
         $color = new Color;
         $color->setForceStyle(true);
-        $output = new StdOutput($color, $this->createMock(TerminalInterface::class));
+        $output = new StdOutput($color, $this->createMock(Terminal::class));
         $request1 = (new Request)
             ->withMethod('GET')
             ->withUri(new Uri('http://some.site?number=5'));
@@ -325,7 +325,7 @@ class CgiRunnerTest extends TestCase
     {
         $color = new Color;
         $color->setForceStyle(true);
-        $output = new StdOutput($color, $this->createMock(TerminalInterface::class));
+        $output = new StdOutput($color, $this->createMock(Terminal::class));
         $request1 = (new Request)
             ->withMethod('GET')
             ->withUri(new Uri('http://some.site?number=5'));

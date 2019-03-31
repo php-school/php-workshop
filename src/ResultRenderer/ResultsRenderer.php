@@ -5,7 +5,7 @@ namespace PhpSchool\PhpWorkshop\ResultRenderer;
 use Colors\Color;
 use Kadet\Highlighter\Formatter\CliFormatter;
 use Kadet\Highlighter\KeyLighter;
-use PhpSchool\CliMenu\Terminal\TerminalInterface;
+use PhpSchool\Terminal\Terminal;
 use PhpSchool\CliMenu\Util\StringUtil;
 use PhpSchool\PhpWorkshop\Exercise\ProvidesSolution;
 use PhpSchool\PhpWorkshop\Factory\ResultRendererFactory;
@@ -41,7 +41,7 @@ class ResultsRenderer
     private $exerciseRepository;
 
     /**
-     * @var TerminalInterface
+     * @var Terminal
      */
     private $terminal;
 
@@ -58,15 +58,15 @@ class ResultsRenderer
     /**
      * @param string $appName The name of the binary to run this workshop.
      * @param Color $color A instance of `Color` used to colour strings with ANSI escape codes.
-     * @param TerminalInterface $terminal A helper to get information regarding the current terminal.
+     * @param Terminal $terminal A helper to get information regarding the current terminal.
      * @param ExerciseRepository $exerciseRepository The exercise repository.
      * @param KeyLighter $keyLighter A syntax highlighter
      * @param ResultRendererFactory $resultRendererFactory
      */
     public function __construct(
-        $appName,
+        string $appName,
         Color $color,
-        TerminalInterface $terminal,
+        Terminal $terminal,
         ExerciseRepository $exerciseRepository,
         KeyLighter $keyLighter,
         ResultRendererFactory $resultRendererFactory

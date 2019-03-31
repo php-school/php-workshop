@@ -3,7 +3,7 @@
 namespace PhpSchool\PhpWorkshopTest\Command;
 
 use Colors\Color;
-use PhpSchool\CliMenu\Terminal\TerminalInterface;
+use PhpSchool\Terminal\Terminal;
 use PhpSchool\PhpWorkshop\Command\HelpCommand;
 use PhpSchool\PhpWorkshop\Output\StdOutput;
 use PHPUnit\Framework\TestCase;
@@ -24,7 +24,7 @@ class HelpCommandTest extends TestCase
 
         $command = new HelpCommand(
             'learnyouphp',
-            new StdOutput($color, $this->createMock(TerminalInterface::class)),
+            new StdOutput($color, $this->createMock(Terminal::class)),
             $color
         );
 
