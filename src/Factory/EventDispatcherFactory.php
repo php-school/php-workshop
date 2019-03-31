@@ -2,7 +2,7 @@
 
 namespace PhpSchool\PhpWorkshop\Factory;
 
-use Interop\Container\ContainerInterface;
+use Psr\Container\ContainerInterface;
 use PhpSchool\PhpWorkshop\Event\EventDispatcher;
 use PhpSchool\PhpWorkshop\Event\ContainerListenerHelper;
 use PhpSchool\PhpWorkshop\Exception\InvalidArgumentException;

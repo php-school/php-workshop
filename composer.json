@@ -17,10 +17,10 @@
     "require" : {
         "php" : ">=7.1",
         "ext-pdo_sqlite": "*",
-        "php-di/php-di": "^5.0",
+        "php-di/php-di": "^6.0",
         "container-interop/container-interop": "^1.0",
         "symfony/process": "^3.0 | ^4.0",
-        "symfony/filesystem": "^3.0",
+        "symfony/filesystem": "^3.0 | ^4.0",
         "fzaninotto/faker": "^1.5",
         "aydin-hassan/cli-md-renderer": "^2.3",
         "php-school/cli-menu": "dev-master",
@@ -34,7 +34,7 @@
     "require-dev": {
         "composer/composer": "^1.2",
         "phpunit/phpunit": "^7",
-        "squizlabs/php_codesniffer": "^2.4"
+        "squizlabs/php_codesniffer": "^3.4"
     },
     "autoload" : {
         "psr-4" : {
