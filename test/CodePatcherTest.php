@@ -2,6 +2,7 @@
 
 namespace PhpSchool\PhpWorkshopTest;
 
+use PhpParser\Node\Expr\Variable;
 use PhpParser\Node\Name;
 use PhpParser\Node\Stmt\Catch_;
 use PhpParser\Node\Stmt\TryCatch;
@@ -102,7 +103,7 @@ class CodePatcherTest extends TestCase
                 (new Patch)
                     ->withTransformer(function (array $statements) {
                         return [
-                            new TryCatch($statements, [new Catch_([new Name(\Exception::class)], 'e', [])])
+                            new TryCatch($statements, [new Catch_([new Name(\Exception::class)], new Variable('e'), [])])
                         ];
                     }),
                 "<?php\n\ntry {\n    \$original = true;\n} catch (Exception \$e) {\n}"
@@ -113,7 +114,7 @@ class CodePatcherTest extends TestCase
                     ->withInsertion(new Insertion(Insertion::TYPE_BEFORE, '$before = "here";'))
                     ->withTransformer(function (array $statements) {
                         return [
-                            new TryCatch($statements, [new Catch_([new Name(\Exception::class)], 'e', [])])
+                            new TryCatch($statements, [new Catch_([new Name(\Exception::class)], new Variable('e'), [])])
                         ];
                     }),
                 "<?php\n\ntry {\n    \$before = \"here\";\n    \$original = true;\n} catch (Exception \$e) {\n}"

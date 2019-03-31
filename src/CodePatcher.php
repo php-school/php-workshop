@@ -5,11 +5,8 @@ namespace PhpSchool\PhpWorkshop;
 use PhpParser\Error;
 use PhpParser\Parser;
 use PhpParser\PrettyPrinter\Standard;
-use PhpSchool\PhpWorkshop\Exercise\AstIntrospectable;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
-use PhpSchool\PhpWorkshop\Exercise\PreProcessable;
 use PhpSchool\PhpWorkshop\Exercise\SubmissionPatchable;
-use PhpSchool\PhpWorkshop\Exercise\SubmissionPatcher;
 
 /**
  * Service to apply patches to a student's solution. Accepts a default patch via the constructor.
