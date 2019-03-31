@@ -123,7 +123,7 @@ return [
         return $colors;
     },
     OutputInterface::class => function (ContainerInterface $c) {
-        return new StdOutput($c->get(Color::class), $c->get(TerminalInterface::class));
+        return new StdOutput($c->get(Color::class), $c->get(Terminal::class));
     },
 
     ExerciseRepository::class => function (ContainerInterface $c) {
@@ -307,7 +307,7 @@ return [
         return new ResultsRenderer(
             $c->get('appName'),
             $c->get(Color::class),
-            $c->get(TerminalInterface::class),
+            $c->get(Terminal::class),
             $c->get(ExerciseRepository::class),
             $c->get(KeyLighter::class),
             $c->get(ResultRendererFactory::class)
