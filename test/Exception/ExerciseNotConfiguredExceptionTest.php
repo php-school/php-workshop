@@ -25,7 +25,7 @@ class ExerciseNotConfiguredExceptionTest extends TestCase
         $exercise
             ->expects($this->once())
             ->method('getName')
-            ->will($this->returnValue('Some Exercise'));
+            ->willReturn('Some Exercise');
 
         $e = ExerciseNotConfiguredException::missingImplements($exercise, 'SomeInterface');
         $this->assertSame('Exercise: "Some Exercise" should implement interface: "SomeInterface"', $e->getMessage());

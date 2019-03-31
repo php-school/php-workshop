@@ -44,9 +44,8 @@ class CgiRunnerTest extends TestCase
         $this->runner = new CgiRunner($this->exercise, new EventDispatcher(new ResultAggregator), new RequestRenderer);
 
         $this->exercise
-            ->expects($this->any())
             ->method('getType')
-            ->will($this->returnValue(ExerciseType::CGI()));
+            ->willReturn(ExerciseType::CGI());
 
         $this->assertEquals('CGI Program Runner', $this->runner->getName());
     }
@@ -68,7 +67,7 @@ class CgiRunnerTest extends TestCase
         $this->exercise
             ->expects($this->once())
             ->method('getSolution')
-            ->will($this->returnValue($solution));
+            ->willReturn($solution);
 
         $request = (new Request)
             ->withMethod('GET')
@@ -77,7 +76,7 @@ class CgiRunnerTest extends TestCase
         $this->exercise
             ->expects($this->once())
             ->method('getRequests')
-            ->will($this->returnValue([$request]));
+            ->willReturn([$request]);
 
         $regex  = "/^PHP Code failed to execute\. Error: \"PHP Parse error:  syntax error, unexpected end of file in/";
         $this->expectException(SolutionExecutionException::class);
@@ -91,7 +90,7 @@ class CgiRunnerTest extends TestCase
         $this->exercise
             ->expects($this->once())
             ->method('getSolution')
-            ->will($this->returnValue($solution));
+            ->willReturn($solution);
 
         $request = (new Request)
             ->withMethod('GET')
@@ -100,7 +99,7 @@ class CgiRunnerTest extends TestCase
         $this->exercise
             ->expects($this->once())
             ->method('getRequests')
-            ->will($this->returnValue([$request]));
+            ->willReturn([$request]);
 
         $this->assertInstanceOf(
             CgiResult::class,
@@ -114,7 +113,7 @@ class CgiRunnerTest extends TestCase
         $this->exercise
             ->expects($this->once())
             ->method('getSolution')
-            ->will($this->returnValue($solution));
+            ->willReturn($solution);
 
         $request = (new Request)
             ->withMethod('POST')
@@ -126,7 +125,7 @@ class CgiRunnerTest extends TestCase
         $this->exercise
             ->expects($this->once())
             ->method('getRequests')
-            ->will($this->returnValue([$request]));
+            ->willReturn([$request]);
 
         $this->assertInstanceOf(
             CgiResult::class,
@@ -144,7 +143,7 @@ class CgiRunnerTest extends TestCase
         $this->exercise
             ->expects($this->once())
             ->method('getSolution')
-            ->will($this->returnValue($solution));
+            ->willReturn($solution);
 
         $request = (new Request)
             ->withMethod('POST')
@@ -156,7 +155,7 @@ class CgiRunnerTest extends TestCase
         $this->exercise
             ->expects($this->once())
             ->method('getRequests')
-            ->will($this->returnValue([$request]));
+            ->willReturn([$request]);
 
         $result = $this->runner->verify(
             new Input('app', ['program' => realpath(__DIR__ . '/../res/cgi/post-multiple-solution.php')])
@@ -171,7 +170,7 @@ class CgiRunnerTest extends TestCase
         $this->exercise
             ->expects($this->once())
             ->method('getSolution')
-            ->will($this->returnValue($solution));
+            ->willReturn($solution);
 
         $request = (new Request)
             ->withMethod('GET')
@@ -180,7 +179,7 @@ class CgiRunnerTest extends TestCase
         $this->exercise
             ->expects($this->once())
             ->method('getRequests')
-            ->will($this->returnValue([$request]));
+            ->willReturn([$request]);
 
         $failure = $this->runner->verify(
             new Input('app', ['program' => realpath(__DIR__ . '/../res/cgi/user-error.php')])
@@ -192,8 +191,8 @@ class CgiRunnerTest extends TestCase
         $result = iterator_to_array($failure)[0];
         $this->assertInstanceOf(Failure::class, $result);
 
-        $failureMsg  = "/^PHP Code failed to execute. Error: \"PHP Parse error:  syntax error, unexpected end of file";
-        $failureMsg .= " in/";
+        $failureMsg  = '/^PHP Code failed to execute. Error: "PHP Parse error:  syntax error, unexpected end of file';
+        $failureMsg .= ' in/';
         $this->assertRegExp($failureMsg, $result->getReason());
     }
 
@@ -203,7 +202,7 @@ class CgiRunnerTest extends TestCase
         $this->exercise
             ->expects($this->once())
             ->method('getSolution')
-            ->will($this->returnValue($solution));
+            ->willReturn($solution);
 
         $request = (new Request)
             ->withMethod('GET')
@@ -212,7 +211,7 @@ class CgiRunnerTest extends TestCase
         $this->exercise
             ->expects($this->once())
             ->method('getRequests')
-            ->will($this->returnValue([$request]));
+            ->willReturn([$request]);
 
         $failure = $this->runner->verify(
             new Input('app', ['program' => realpath(__DIR__ . '/../res/cgi/get-user-wrong.php')])
@@ -235,7 +234,7 @@ class CgiRunnerTest extends TestCase
         $this->exercise
             ->expects($this->once())
             ->method('getSolution')
-            ->will($this->returnValue($solution));
+            ->willReturn($solution);
 
         $request = (new Request)
             ->withMethod('GET')
@@ -244,7 +243,7 @@ class CgiRunnerTest extends TestCase
         $this->exercise
             ->expects($this->once())
             ->method('getRequests')
-            ->will($this->returnValue([$request]));
+            ->willReturn([$request]);
 
         $failure = $this->runner->verify(
             new Input('app', ['program' => realpath(__DIR__ . '/../res/cgi/get-user-header-wrong.php')])
@@ -289,7 +288,7 @@ class CgiRunnerTest extends TestCase
         $this->exercise
             ->expects($this->once())
             ->method('getRequests')
-            ->will($this->returnValue([$request1, $request2]));
+            ->willReturn([$request1, $request2]);
 
         $exp  = "\n\e[1m\e[4mRequest";
         $exp .= "\e[0m\e[0m\n\n";
@@ -334,7 +333,7 @@ class CgiRunnerTest extends TestCase
         $this->exercise
             ->expects($this->once())
             ->method('getRequests')
-            ->will($this->returnValue([$request1]));
+            ->willReturn([$request1]);
 
         $exp = "\n\e[1m\e[4mRequest";
         $exp .= "\e[0m\e[0m\n\n";

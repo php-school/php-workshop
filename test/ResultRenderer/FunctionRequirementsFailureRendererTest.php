@@ -27,7 +27,7 @@ class FunctionRequirementsFailureRendererTest extends AbstractResultRendererTest
         $expected .= "    file on line 3\n";
         $expected .= "    explode on line 5\n";
 
-        $expected .= "  [33m[4m[1mSome function requirements were missing. You should use the functions[0m[0m[0m";
+        $expected .= '  [33m[4m[1mSome function requirements were missing. You should use the functions[0m[0m[0m';
         $expected .= "\n";
         $expected .= "    implode\n";
 

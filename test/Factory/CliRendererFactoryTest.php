@@ -21,7 +21,7 @@ class CliRendererFactoryTest extends TestCase
         $terminal
             ->expects($this->once())
             ->method('getWidth')
-            ->will($this->returnValue(10));
+            ->willReturn(10);
 
         $services = [
             TerminalInterface::class => $terminal,
@@ -29,11 +29,12 @@ class CliRendererFactoryTest extends TestCase
         ];
 
         $c = $this->createMock(ContainerInterface::class);
-        $c->expects($this->any())
+        $c
             ->method('get')
-            ->will($this->returnCallback(function ($service) use ($services) {
+            ->willReturnCallback(function ($service) use ($services) {
                 return $services[$service];
-            }));
+            }
+            );
 
         $factory = new MarkdownCliRendererFactory();
         $this->assertInstanceOf(CliRenderer::class, $factory->__invoke($c));

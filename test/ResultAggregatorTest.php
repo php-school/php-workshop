@@ -29,9 +29,8 @@ class ResultAggregatorTest extends TestCase
     {
         $this->check = $this->createMock(CheckInterface::class);
         $this->check
-            ->expects($this->any())
             ->method('getName')
-            ->will($this->returnValue('Some Check'));
+            ->willReturn('Some Check');
     }
     
     public function testIsSuccessful()

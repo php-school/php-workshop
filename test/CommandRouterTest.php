@@ -54,7 +54,7 @@ class CommandRouterTest extends TestCase
 
         $mock->expects($this->once())
             ->method('__invoke')
-            ->will($this->returnValue(true));
+            ->willReturn(true);
 
         $c = $this->createMock(ContainerInterface::class);
         $eventDispatcher = $this->createMock(EventDispatcher::class);
@@ -73,7 +73,7 @@ class CommandRouterTest extends TestCase
 
         $mock->expects($this->once())
             ->method('__invoke')
-            ->will($this->returnValue(true));
+            ->willReturn(true);
 
         $c = $this->createMock(ContainerInterface::class);
         $eventDispatcher = $this->createMock(EventDispatcher::class);
@@ -143,7 +143,7 @@ class CommandRouterTest extends TestCase
                     && $input->getArgument('exercise') === 'some-exercise'
                     && $input->getArgument('program') === 'program.php';
             }))
-            ->will($this->returnValue(true));
+            ->willReturn(true);
 
         $c = $this->createMock(ContainerInterface::class);
         $eventDispatcher = $this->createMock(EventDispatcher::class);
@@ -184,7 +184,7 @@ class CommandRouterTest extends TestCase
             ->expects($this->once())
             ->method('has')
             ->with('some.service')
-            ->will($this->returnValue(false));
+            ->willReturn(false);
 
         $router = new CommandRouter(
             [new CommandDefinition('verify', ['exercise', 'program'], 'some.service'),],
@@ -207,13 +207,13 @@ class CommandRouterTest extends TestCase
             ->expects($this->once())
             ->method('has')
             ->with('some.service')
-            ->will($this->returnValue(true));
+            ->willReturn(true);
 
         $c
             ->expects($this->once())
             ->method('get')
             ->with('some.service')
-            ->will($this->returnValue(null));
+            ->willReturn(null);
 
         $router = new CommandRouter(
             [new CommandDefinition('verify', ['exercise', 'program'], 'some.service'),],
@@ -239,19 +239,19 @@ class CommandRouterTest extends TestCase
                     && $input->getArgument('exercise') === 'some-exercise'
                     && $input->getArgument('program') === 'program.php';
             }))
-            ->will($this->returnValue(true));
+            ->willReturn(true);
 
         $c
             ->expects($this->once())
             ->method('has')
             ->with('some.service')
-            ->will($this->returnValue(true));
+            ->willReturn(true);
 
         $c
             ->expects($this->once())
             ->method('get')
             ->with('some.service')
-            ->will($this->returnValue($mock));
+            ->willReturn($mock);
 
         $eventDispatcher = $this->createMock(EventDispatcher::class);
 
@@ -279,19 +279,19 @@ class CommandRouterTest extends TestCase
                     && $input->getArgument('exercise') === 'some-exercise'
                     && $input->getArgument('program') === 'program.php';
             }))
-            ->will($this->returnValue(10));
+            ->willReturn(10);
 
         $c
             ->expects($this->once())
             ->method('has')
             ->with('some.service')
-            ->will($this->returnValue(true));
+            ->willReturn(true);
 
         $c
             ->expects($this->once())
             ->method('get')
             ->with('some.service')
-            ->will($this->returnValue($mock));
+            ->willReturn($mock);
 
         $eventDispatcher = $this->createMock(EventDispatcher::class);
 
@@ -318,7 +318,7 @@ class CommandRouterTest extends TestCase
                 && $input->getArgument('exercise') === 'some-exercise'
                 && $input->getArgument('program') === 'program.php';
             }))
-            ->will($this->returnValue(true));
+            ->willReturn(true);
 
         $c = $this->createMock(ContainerInterface::class);
         $eventDispatcher = $this->createMock(EventDispatcher::class);
@@ -344,7 +344,7 @@ class CommandRouterTest extends TestCase
                 return $input->getAppName() === 'app'
                 && $input->getArgument('exercise') === 'some-exercise';
             }))
-            ->will($this->returnValue(true));
+            ->willReturn(true);
 
         $mock->expects($this->at(1))
             ->method('__invoke')
@@ -353,7 +353,7 @@ class CommandRouterTest extends TestCase
                 && $input->getArgument('exercise') === 'some-exercise'
                 && $input->getArgument('program') === 'program.php';
             }))
-            ->will($this->returnValue(true));
+            ->willReturn(true);
 
         $c = $this->createMock(ContainerInterface::class);
         $eventDispatcher = $this->createMock(EventDispatcher::class);

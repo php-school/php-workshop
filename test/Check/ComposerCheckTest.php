@@ -98,7 +98,7 @@ class ComposerCheckTest extends TestCase
         $exercise = $this->createMock(ComposerExercise::class);
         $exercise->expects($this->once())
             ->method('getRequiredPackages')
-            ->will($this->returnValue([$dependency]));
+            ->willReturn([$dependency]);
 
         $result = $this->check->check($exercise, new Input('app', ['program' => $solutionFile]));
 

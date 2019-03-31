@@ -29,7 +29,7 @@ class SelfCheckListenerTest extends TestCase
             ->expects($this->once())
             ->method('check')
             ->with($input)
-            ->will($this->returnValue($success));
+            ->willReturn($success);
 
         $results = new ResultAggregator;
         $listener = new SelfCheckListener($results);

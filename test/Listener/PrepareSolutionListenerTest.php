@@ -53,14 +53,14 @@ class PrepareSolutionListenerTest extends TestCase
 
         $solution = $this->createMock(SolutionInterface::class);
         $exercise = $this->createMock([ExerciseInterface::class, CliExercise::class]);
-        $exercise->expects($this->any())
+        $exercise
             ->method('getSolution')
-            ->will($this->returnValue($solution));
+            ->willReturn($solution);
 
         $solution
             ->expects($this->once())
             ->method('hasComposerFile')
-            ->will($this->returnValue(true));
+            ->willReturn(true);
 
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('Composer could not be located on the system');
@@ -75,19 +75,18 @@ class PrepareSolutionListenerTest extends TestCase
 
         $solution = $this->createMock(SolutionInterface::class);
         $exercise = $this->createMock([ExerciseInterface::class, CliExercise::class]);
-        $exercise->expects($this->any())
+        $exercise
             ->method('getSolution')
-            ->will($this->returnValue($solution));
+            ->willReturn($solution);
 
         $solution
             ->expects($this->once())
             ->method('hasComposerFile')
-            ->will($this->returnValue(true));
+            ->willReturn(true);
 
         $solution
-            ->expects($this->any())
             ->method('getBaseDirectory')
-            ->will($this->returnValue(dirname($this->file)));
+            ->willReturn(dirname($this->file));
 
         $event = new ExerciseRunnerEvent('event', $exercise, new Input('app'));
         $this->listener->__invoke($event);
@@ -108,19 +107,18 @@ class PrepareSolutionListenerTest extends TestCase
 
         $solution = $this->createMock(SolutionInterface::class);
         $exercise = $this->createMock([ExerciseInterface::class, CliExercise::class]);
-        $exercise->expects($this->any())
+        $exercise
             ->method('getSolution')
-            ->will($this->returnValue($solution));
+            ->willReturn($solution);
 
         $solution
             ->expects($this->once())
             ->method('hasComposerFile')
-            ->will($this->returnValue(true));
+            ->willReturn(true);
 
         $solution
-            ->expects($this->any())
             ->method('getBaseDirectory')
-            ->will($this->returnValue(dirname($this->file)));
+            ->willReturn(dirname($this->file));
 
         $event = new ExerciseRunnerEvent('event', $exercise, new Input('app'));
         $this->listener->__invoke($event);

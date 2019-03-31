@@ -88,12 +88,12 @@ class FunctionRequirementsCheckTest extends TestCase
         $exercise
             ->expects($this->once())
             ->method('getBannedFunctions')
-            ->will($this->returnValue([]));
+            ->willReturn([]);
 
         $exercise
             ->expects($this->once())
             ->method('getRequiredFunctions')
-            ->will($this->returnValue(['file_get_contents', 'implode']));
+            ->willReturn(['file_get_contents', 'implode']);
 
         $failure = $this->check->check(
             $exercise,
@@ -111,12 +111,12 @@ class FunctionRequirementsCheckTest extends TestCase
         $exercise
             ->expects($this->once())
             ->method('getBannedFunctions')
-            ->will($this->returnValue([]));
+            ->willReturn([]);
 
         $exercise
             ->expects($this->once())
             ->method('getRequiredFunctions')
-            ->will($this->returnValue(['file_get_contents']));
+            ->willReturn(['file_get_contents']);
 
         $success = $this->check->check(
             $exercise,

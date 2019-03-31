@@ -67,7 +67,7 @@ class CodePatchListenerTest extends TestCase
             ->expects($this->once())
             ->method('patch')
             ->with($exercise, 'ORIGINAL CONTENT')
-            ->will($this->returnValue('MODIFIED CONTENT'));
+            ->willReturn('MODIFIED CONTENT');
 
         $listener   = new CodePatchListener($this->codePatcher);
         $event      = new ExerciseRunnerEvent('event', $exercise, $input);
@@ -87,7 +87,7 @@ class CodePatchListenerTest extends TestCase
             ->expects($this->once())
             ->method('patch')
             ->with($exercise, 'ORIGINAL CONTENT')
-            ->will($this->returnValue('MODIFIED CONTENT'));
+            ->willReturn('MODIFIED CONTENT');
 
         $listener   = new CodePatchListener($this->codePatcher);
         $event      = new ExerciseRunnerEvent('event', $exercise, $input);

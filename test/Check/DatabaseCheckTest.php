@@ -61,7 +61,7 @@ class DatabaseCheckTest extends TestCase
 
         $this->check = new DatabaseCheck;
         $this->exercise = $this->createMock(DatabaseExerciseInterface::class);
-        $this->exercise->expects($this->any())->method('getType')->willReturn(ExerciseType::CLI());
+        $this->exercise->method('getType')->willReturn(ExerciseType::CLI());
         $this->dbDir = sprintf(
             '%s/PhpSchool_PhpWorkshop_Check_DatabaseCheck',
             str_replace('\\', '/', realpath(sys_get_temp_dir()))
@@ -84,7 +84,6 @@ class DatabaseCheckTest extends TestCase
             ->getMock();
 
         $runner
-            ->expects($this->any())
             ->method('getRequiredChecks')
             ->willReturn([]);
 
@@ -134,25 +133,26 @@ class DatabaseCheckTest extends TestCase
         $this->exercise
             ->expects($this->once())
             ->method('getSolution')
-            ->will($this->returnValue($solution));
+            ->willReturn($solution);
 
         $this->exercise
             ->expects($this->once())
             ->method('getArgs')
-            ->will($this->returnValue([1, 2, 3]));
+            ->willReturn([1, 2, 3]);
 
         $this->exercise
             ->expects($this->once())
             ->method('configure')
-            ->will($this->returnCallback(function (ExerciseDispatcher $dispatcher) {
+            ->willReturnCallback(function (ExerciseDispatcher $dispatcher) {
                 $dispatcher->requireCheck(DatabaseCheck::class);
-            }));
+            }
+            );
 
         $this->exercise
             ->expects($this->once())
             ->method('verify')
             ->with($this->isInstanceOf(PDO::class))
-            ->will($this->returnValue(true));
+            ->willReturn(true);
 
         $this->checkRepository->registerCheck($this->check);
 
@@ -175,25 +175,26 @@ class DatabaseCheckTest extends TestCase
         $this->exercise
             ->expects($this->once())
             ->method('getSolution')
-            ->will($this->returnValue($solution));
+            ->willReturn($solution);
 
         $this->exercise
             ->expects($this->once())
             ->method('getArgs')
-            ->will($this->returnValue([[1, 2, 3]]));
+            ->willReturn([[1, 2, 3]]);
 
         $this->exercise
             ->expects($this->once())
             ->method('configure')
-            ->will($this->returnCallback(function (ExerciseDispatcher $dispatcher) {
+            ->willReturnCallback(function (ExerciseDispatcher $dispatcher) {
                 $dispatcher->requireCheck(DatabaseCheck::class);
-            }));
+            }
+            );
 
         $this->exercise
             ->expects($this->once())
             ->method('verify')
             ->with($this->isInstanceOf(PDO::class))
-            ->will($this->returnValue(true));
+            ->willReturn(true);
 
         $this->checkRepository->registerCheck($this->check);
 
@@ -217,14 +218,15 @@ class DatabaseCheckTest extends TestCase
         $this->exercise
             ->expects($this->once())
             ->method('getArgs')
-            ->will($this->returnValue([]));
+            ->willReturn([]);
 
         $this->exercise
             ->expects($this->once())
             ->method('configure')
-            ->will($this->returnCallback(function (ExerciseDispatcher $dispatcher) {
+            ->willReturnCallback(function (ExerciseDispatcher $dispatcher) {
                 $dispatcher->requireCheck(DatabaseCheck::class);
-            }));
+            }
+            );
 
         $this->checkRepository->registerCheck($this->check);
 
@@ -252,25 +254,26 @@ class DatabaseCheckTest extends TestCase
         $this->exercise
             ->expects($this->once())
             ->method('getSolution')
-            ->will($this->returnValue($solution));
+            ->willReturn($solution);
 
         $this->exercise
             ->expects($this->once())
             ->method('getArgs')
-            ->will($this->returnValue([1, 2, 3]));
+            ->willReturn([1, 2, 3]);
 
         $this->exercise
             ->expects($this->once())
             ->method('configure')
-            ->will($this->returnCallback(function (ExerciseDispatcher $dispatcher) {
+            ->willReturnCallback(function (ExerciseDispatcher $dispatcher) {
                 $dispatcher->requireCheck(DatabaseCheck::class);
-            }));
+            }
+            );
 
         $this->exercise
             ->expects($this->once())
             ->method('verify')
             ->with($this->isInstanceOf(PDO::class))
-            ->will($this->returnValue(false));
+            ->willReturn(false);
 
         $this->checkRepository->registerCheck($this->check);
 
@@ -297,37 +300,38 @@ class DatabaseCheckTest extends TestCase
         $this->exercise
             ->expects($this->once())
             ->method('getSolution')
-            ->will($this->returnValue($solution));
+            ->willReturn($solution);
 
         $this->exercise
-            ->expects($this->any())
             ->method('getArgs')
-            ->will($this->returnValue([]));
+            ->willReturn([]);
 
         $this->exercise
             ->expects($this->once())
             ->method('configure')
-            ->will($this->returnCallback(function (ExerciseDispatcher $dispatcher) {
+            ->willReturnCallback(function (ExerciseDispatcher $dispatcher) {
                 $dispatcher->requireCheck(DatabaseCheck::class);
-            }));
+            }
+            );
 
         $this->exercise
             ->expects($this->once())
             ->method('seed')
             ->with($this->isInstanceOf(PDO::class))
-            ->will($this->returnCallback(function (PDO $db) {
+            ->willReturnCallback(function (PDO $db) {
                 $db->exec(
                     'CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY, name TEXT, age INTEGER, gender TEXT)'
                 );
                 $stmt = $db->prepare('INSERT into users (name, age, gender) VALUES (:name, :age, :gender)');
                 $stmt->execute([':name' => 'Jimi Hendrix', ':age' => 27, ':gender' => 'Male']);
-            }));
+            }
+            );
 
         $this->exercise
             ->expects($this->once())
             ->method('verify')
             ->with($this->isInstanceOf(PDO::class))
-            ->will($this->returnCallback(function (PDO $db) {
+            ->willReturnCallback(function (PDO $db) {
                 $users = $db->query('SELECT * FROM users');
                 $users = $users->fetchAll(PDO::FETCH_ASSOC);
 
@@ -338,7 +342,8 @@ class DatabaseCheckTest extends TestCase
                     ],
                     $users
                 );
-            }));
+            }
+            );
 
         $this->checkRepository->registerCheck($this->check);
 

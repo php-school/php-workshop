@@ -31,13 +31,12 @@ class ExerciseRendererTest extends TestCase
 
         $item = $this->createMock(MenuItemInterface::class);
         $item
-            ->expects($this->any())
             ->method('getText')
-            ->will($this->returnValue('Exercise 2'));
+            ->willReturn('Exercise 2');
         $menu
             ->expects($this->once())
             ->method('getSelectedItem')
-            ->will($this->returnValue($item));
+            ->willReturn($item);
 
         $menu
             ->expects($this->once())
@@ -54,12 +53,12 @@ class ExerciseRendererTest extends TestCase
             ->expects($this->once())
             ->method('findByName')
             ->with('Exercise 2')
-            ->will($this->returnValue($exercise2));
+            ->willReturn($exercise2);
 
         $exerciseRepository
             ->expects($this->once())
             ->method('findAll')
-            ->will($this->returnValue($exercises));
+            ->willReturn($exercises);
 
         $userState
             ->expects($this->once())
@@ -74,7 +73,7 @@ class ExerciseRendererTest extends TestCase
         $exercise2
             ->expects($this->once())
             ->method('getProblem')
-            ->will($this->returnValue($problemFile));
+            ->willReturn($problemFile);
 
         if (!is_dir(dirname($problemFile))) {
             mkdir(dirname($problemFile), 0775, true);

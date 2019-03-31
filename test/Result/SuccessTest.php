@@ -25,9 +25,8 @@ class SuccessTest extends TestCase
     {
         $check = $this->createMock(CheckInterface::class);
         $check
-            ->expects($this->any())
             ->method('getName')
-            ->will($this->returnValue('Some Check'));
+            ->willReturn('Some Check');
 
         $success = Success::fromCheck($check);
         $this->assertInstanceOf(ResultInterface::class, $success);

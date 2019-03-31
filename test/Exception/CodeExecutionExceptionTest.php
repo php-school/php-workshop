@@ -26,7 +26,7 @@ class CodeExecutionExceptionTest extends TestCase
         $process
             ->expects($this->once())
             ->method('getErrorOutput')
-            ->will($this->returnValue('Error Output'));
+            ->willReturn('Error Output');
         
         $e = CodeExecutionException::fromProcess($process);
         $this->assertEquals('PHP Code failed to execute. Error: "Error Output"', $e->getMessage());
@@ -38,12 +38,12 @@ class CodeExecutionExceptionTest extends TestCase
         $process
             ->expects($this->once())
             ->method('getErrorOutput')
-            ->will($this->returnValue(''));
+            ->willReturn('');
 
         $process
             ->expects($this->once())
             ->method('getOutput')
-            ->will($this->returnValue('Std Output'));
+            ->willReturn('Std Output');
 
         $e = CodeExecutionException::fromProcess($process);
         $this->assertEquals('PHP Code failed to execute. Error: "Std Output"', $e->getMessage());

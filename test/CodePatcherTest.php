@@ -61,7 +61,7 @@ class CodePatcherTest extends TestCase
         $exercise
             ->expects($this->once())
             ->method('getPatch')
-            ->will($this->returnValue($patch));
+            ->willReturn($patch);
         
         $result = $patcher->patch($exercise, $code);
         $this->assertEquals($expectedResult, $result);

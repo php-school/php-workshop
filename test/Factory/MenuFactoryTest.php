@@ -31,17 +31,17 @@ class MenuFactoryTest extends TestCase
         $userStateSerializer
             ->expects($this->once())
             ->method('deSerialize')
-            ->will($this->returnValue(new UserState));
+            ->willReturn(new UserState);
 
         $exerciseRepository = $this->createMock(ExerciseRepository::class);
         $exercise = $this->createMock(ExerciseInterface::class);
         $exercise->expects($this->exactly(2))
             ->method('getName')
-            ->will($this->returnValue('Exercise'));
+            ->willReturn('Exercise');
         $exerciseRepository
             ->expects($this->once())
             ->method('findAll')
-            ->will($this->returnValue([$exercise]));
+            ->willReturn([$exercise]);
             
         $services = [
             UserStateSerializer::class => $userStateSerializer,
@@ -59,11 +59,11 @@ class MenuFactoryTest extends TestCase
         ];
         
         $container
-            ->expects($this->any())
             ->method('get')
-            ->will($this->returnCallback(function ($name) use ($services) {
+            ->willReturnCallback(function ($name) use ($services) {
                 return $services[$name];
-            }));
+            }
+            );
         
         
         $factory = new MenuFactory;

@@ -39,7 +39,7 @@ class PrintCommandTest extends TestCase
             ->expects($this->once())
             ->method('render')
             ->with('### Exercise 1')
-            ->will($this->returnValue('### Exercise 1'));
+            ->willReturn('### Exercise 1');
 
         $output
             ->expects($this->once())

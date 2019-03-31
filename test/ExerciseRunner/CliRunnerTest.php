@@ -48,14 +48,13 @@ class CliRunnerTest extends TestCase
         $this->runner = new CliRunner($this->exercise, $this->eventDispatcher);
 
         $this->exercise
-            ->expects($this->any())
             ->method('getType')
-            ->will($this->returnValue(ExerciseType::CLI()));
+            ->willReturn(ExerciseType::CLI());
 
         $this->assertEquals('CLI Program Runner', $this->runner->getName());
     }
 
-    public function testRequiredChecks()
+    public function testRequiredChecks(): void
     {
         $requiredChecks = [
             FileExistsCheck::class,
@@ -66,18 +65,18 @@ class CliRunnerTest extends TestCase
         $this->assertEquals($requiredChecks, $this->runner->getRequiredChecks());
     }
 
-    public function testVerifyThrowsExceptionIfSolutionFailsExecution()
+    public function testVerifyThrowsExceptionIfSolutionFailsExecution(): void
     {
         $solution = SingleFileSolution::fromFile(realpath(__DIR__ . '/../res/cli/solution-error.php'));
         $this->exercise
             ->expects($this->once())
             ->method('getSolution')
-            ->will($this->returnValue($solution));
+            ->willReturn($solution);
 
         $this->exercise
             ->expects($this->once())
             ->method('getArgs')
-            ->will($this->returnValue([[]]));
+            ->willReturn([[]]);
 
         $regex  = "/^PHP Code failed to execute\\. Error: \"PHP Parse error:  syntax error, unexpected end of file";
         $regex .= ", expecting ',' or ';'/";
@@ -92,12 +91,12 @@ class CliRunnerTest extends TestCase
         $this->exercise
             ->expects($this->once())
             ->method('getSolution')
-            ->will($this->returnValue($solution));
+            ->willReturn($solution);
 
         $this->exercise
             ->expects($this->once())
             ->method('getArgs')
-            ->will($this->returnValue([[1, 2, 3]]));
+            ->willReturn([[1, 2, 3]]);
 
         $this->assertInstanceOf(
             CliResult::class,
@@ -113,12 +112,12 @@ class CliRunnerTest extends TestCase
         $this->exercise
             ->expects($this->once())
             ->method('getSolution')
-            ->will($this->returnValue($solution));
+            ->willReturn($solution);
 
         $this->exercise
             ->expects($this->once())
             ->method('getArgs')
-            ->will($this->returnValue([1, 2, 3]));
+            ->willReturn([1, 2, 3]);
 
         $this->assertInstanceOf(
             CliResult::class,
@@ -134,16 +133,16 @@ class CliRunnerTest extends TestCase
         $this->exercise
             ->expects($this->once())
             ->method('getSolution')
-            ->will($this->returnValue($solution));
+            ->willReturn($solution);
 
         $this->exercise
             ->expects($this->once())
             ->method('getArgs')
-            ->will($this->returnValue([[1, 2, 3]]));
+            ->willReturn([[1, 2, 3]]);
 
         $failure = $this->runner->verify(new Input('app', ['program' => __DIR__ . '/../res/cli/user-error.php']));
 
-        $failureMsg  = "/^PHP Code failed to execute. Error: \"PHP Parse error:  syntax error, ";
+        $failureMsg  = '/^PHP Code failed to execute. Error: "PHP Parse error:  syntax error, ';
         $failureMsg .= "unexpected end of file, expecting ',' or ';'/";
 
         $this->assertInstanceOf(CLiResult::class, $failure);
@@ -160,12 +159,12 @@ class CliRunnerTest extends TestCase
         $this->exercise
             ->expects($this->once())
             ->method('getSolution')
-            ->will($this->returnValue($solution));
+            ->willReturn($solution);
 
         $this->exercise
             ->expects($this->once())
             ->method('getArgs')
-            ->will($this->returnValue([[1, 2, 3]]));
+            ->willReturn([[1, 2, 3]]);
 
         $failure = $this->runner->verify(new Input('app', ['program' => __DIR__ . '/../res/cli/user-wrong.php']));
 
@@ -188,7 +187,7 @@ class CliRunnerTest extends TestCase
         $this->exercise
             ->expects($this->once())
             ->method('getArgs')
-            ->will($this->returnValue([[1, 2, 3], [4, 5, 6]]));
+            ->willReturn([[1, 2, 3], [4, 5, 6]]);
 
         $exp  = "\n\e[1m\e[4mArguments\e[0m\e[0m\n";
         $exp .= "1, 2, 3\n";
@@ -214,7 +213,7 @@ class CliRunnerTest extends TestCase
         $this->exercise
             ->expects($this->once())
             ->method('getArgs')
-            ->will($this->returnValue([[1, 2, 3]]));
+            ->willReturn([[1, 2, 3]]);
 
         $this->expectOutputRegex('/Parse error: syntax error, unexpected end of file, expecting \',\' or \';\' /');
 
@@ -235,12 +234,12 @@ class CliRunnerTest extends TestCase
         $this->exercise
             ->expects($this->once())
             ->method('getSolution')
-            ->will($this->returnValue($solution));
+            ->willReturn($solution);
 
         $this->exercise
             ->expects($this->once())
             ->method('getArgs')
-            ->will($this->returnValue([1, 2, 3]));
+            ->willReturn([1, 2, 3]);
 
         $this->assertInstanceOf(
             CliResult::class,

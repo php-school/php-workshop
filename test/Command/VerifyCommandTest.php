@@ -36,9 +36,8 @@ class VerifyCommandTest extends TestCase
     {
         $this->check = $this->createMock(CheckInterface::class);
         $this->check
-            ->expects($this->any())
             ->method('getName')
-            ->will($this->returnValue('Some Check'));
+            ->willReturn('Some Check');
     }
 
     public function testVerifyAddsCompletedExerciseAndReturnsCorrectCodeOnSuccess()
@@ -74,7 +73,7 @@ class VerifyCommandTest extends TestCase
             ->expects($this->once())
             ->method('verify')
             ->with($exercise, $input)
-            ->will($this->returnValue($results));
+            ->willReturn($results);
         
         $renderer
             ->expects($this->once())
@@ -121,7 +120,7 @@ class VerifyCommandTest extends TestCase
             ->expects($this->once())
             ->method('verify')
             ->with($exercise, $input)
-            ->will($this->returnValue($results));
+            ->willReturn($results);
 
         $renderer
             ->expects($this->once())

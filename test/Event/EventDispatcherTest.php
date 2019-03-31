@@ -42,7 +42,7 @@ class EventDispatcherTest extends TestCase
         $mockCallback1->expects($this->exactly(2))
             ->method('__invoke')
             ->with($e)
-            ->will($this->returnValue(true));
+            ->willReturn(true);
 
         $mockCallback2 = $this->getMockBuilder('stdClass')
             ->setMethods(['doNotInvokeMe'])
@@ -75,7 +75,7 @@ class EventDispatcherTest extends TestCase
         $mockCallback1->expects($this->exactly(2))
             ->method('__invoke')
             ->with($e)
-            ->will($this->returnValue($result));
+            ->willReturn($result);
 
         $cb = function (Event $e) use ($mockCallback1) {
             return $mockCallback1($e);
@@ -98,7 +98,7 @@ class EventDispatcherTest extends TestCase
         $mockCallback1->expects($this->once())
             ->method('__invoke')
             ->with($e)
-            ->will($this->returnValue(null));
+            ->willReturn(null);
 
         $this->eventDispatcher->insertVerifier('some-event', function (Event $e) use ($mockCallback1) {
             $mockCallback1($e);
@@ -119,7 +119,7 @@ class EventDispatcherTest extends TestCase
         $mockCallback1->expects($this->exactly(2))
             ->method('__invoke')
             ->withConsecutive([$e1], [$e2])
-            ->will($this->returnValue(true));
+            ->willReturn(true);
 
         $this->eventDispatcher->listen(['some-event', 'second-event'], $mockCallback1);
         $this->eventDispatcher->dispatch($e1);

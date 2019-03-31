@@ -86,7 +86,6 @@ class CheckExerciseAssignedListenerTest extends TestCase
     {
         $command = $this->createMock(CommandDefinition::class);
         $command
-            ->expects($this->any())
             ->method('getName')
             ->willReturn($commandName);
 

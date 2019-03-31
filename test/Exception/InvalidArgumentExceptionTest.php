@@ -58,9 +58,9 @@ class InvalidArgumentExceptionTest extends TestCase
         return [
             [new \stdClass, 'stdClass'],
             [[1, 2, 3], '1", "2", "3'],
-            [1, "1"],
-            ["1", "1"],
-            [true, "true"],
+            [1, '1'],
+            ['1', '1'],
+            [true, 'true'],
         ];
     }
 }

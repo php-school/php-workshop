@@ -17,9 +17,8 @@ class FunctionRequirementsFailureTest extends TestCase
     {
         $check = $this->createMock(CheckInterface::class);
         $check
-            ->expects($this->any())
             ->method('getName')
-            ->will($this->returnValue('Some Check'));
+            ->willReturn('Some Check');
         
         $failure = new FunctionRequirementsFailure($check, ['function' => 'file', 'line' => 3], ['explode']);
         $this->assertEquals(['function' => 'file', 'line' => 3], $failure->getBannedFunctions());

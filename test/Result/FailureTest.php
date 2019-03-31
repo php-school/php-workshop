@@ -25,9 +25,8 @@ class FailureTest extends TestCase
     {
         $this->check = $this->createMock(CheckInterface::class);
         $this->check
-            ->expects($this->any())
             ->method('getName')
-            ->will($this->returnValue('Some Check'));
+            ->willReturn('Some Check');
 
         $failure = new Failure($this->check->getName(), '');
         $this->assertSame('Some Check', $failure->getCheckName());

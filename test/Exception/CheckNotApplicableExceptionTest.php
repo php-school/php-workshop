@@ -27,18 +27,18 @@ class CheckNotApplicableExceptionTest extends TestCase
         $exercise
             ->expects($this->once())
             ->method('getName')
-            ->will($this->returnValue('Some Exercise'));
+            ->willReturn('Some Exercise');
 
         $exercise
             ->expects($this->once())
             ->method('getType')
-            ->will($this->returnValue(ExerciseType::CLI()));
+            ->willReturn(ExerciseType::CLI());
 
         $check = $this->createMock(CheckInterface::class);
         $check
             ->expects($this->once())
             ->method('getName')
-            ->will($this->returnValue('Some Check'));
+            ->willReturn('Some Check');
 
 
         $e = CheckNotApplicableException::fromCheckAndExercise($check, $exercise);
