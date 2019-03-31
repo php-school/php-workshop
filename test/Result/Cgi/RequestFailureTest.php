@@ -3,10 +3,6 @@
 namespace PhpSchool\PhpWorkshopTest\Result\Cgi;
 
 use PhpSchool\PhpWorkshop\Result\Cgi\RequestFailure;
-use PhpSchool\PhpWorkshop\Result\CgiOutBodyFailure;
-use PhpSchool\PhpWorkshop\Result\CgiOutFailure;
-use PhpSchool\PhpWorkshop\Result\CgiOutRequestFailure;
-use PhpSchool\PhpWorkshop\Result\CgiOutResult;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\RequestInterface;
 

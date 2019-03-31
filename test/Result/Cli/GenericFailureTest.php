@@ -1,9 +1,9 @@
 <?php
 
-namespace PhpSchool\PhpWorkshopTest\Result\CLi;
+namespace PhpSchool\PhpWorkshopTest\Result\Cli;
 
 use PhpSchool\PhpWorkshop\Exception\CodeExecutionException;
-use PhpSchool\PhpWorkshop\Result\CLi\GenericFailure;
+use PhpSchool\PhpWorkshop\Result\Cli\GenericFailure;
 use PhpSchool\PhpWorkshop\Utils\ArrayObject;
 use PHPUnit\Framework\TestCase;
 

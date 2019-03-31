@@ -2,11 +2,9 @@
 
 namespace PhpSchool\PhpWorkshopTest\Result\Cli;
 
-use PhpSchool\PhpWorkshop\Check\CheckInterface;
 use PhpSchool\PhpWorkshop\Result\Cli\RequestFailure;
 use PhpSchool\PhpWorkshop\Utils\ArrayObject;
 use PHPUnit\Framework\TestCase;
-use PhpSchool\PhpWorkshop\Result\StdOutFailure;
 
 /**
  * @author Aydin Hassan <aydin@hotmail.co.uk>

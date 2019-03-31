@@ -4,7 +4,6 @@ namespace PhpSchool\PhpWorkshopTest\Result;
 
 use PhpSchool\PhpWorkshop\Result\ComparisonFailure;
 use PHPUnit\Framework\TestCase;
-use PhpSchool\PhpWorkshop\Result\StdOutFailure;
 
 /**
  * @author Aydin Hassan <aydin@hotmail.co.uk>

@@ -1,7 +1,8 @@
 <?php
 
-namespace PhpSchool\PhpWorkshop\Command;
+namespace PhpSchool\PhpWorkshopTest\Command;
 
+use PhpSchool\PhpWorkshop\Command\PrintCommand;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseType;
 use PhpSchool\PhpWorkshopTest\Asset\CliExerciseInterface;
 use PHPUnit\Framework\TestCase;

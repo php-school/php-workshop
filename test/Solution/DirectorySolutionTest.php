@@ -41,7 +41,6 @@ class DirectorySolutionTest extends TestCase
         $this->assertSame($tempPath, $solution->getBaseDirectory());
         $this->assertFalse($solution->hasComposerFile());
         $this->assertSame(sprintf('%s/solution.php', $tempPath), $solution->getEntryPoint());
-        $this->assertInternalType('array', $solution->getFiles());
         $files = $solution->getFiles();
         $this->assertCount(2, $files);
         
@@ -65,7 +64,6 @@ class DirectorySolutionTest extends TestCase
         $this->assertSame($tempPath, $solution->getBaseDirectory());
         $this->assertFalse($solution->hasComposerFile());
         $this->assertSame(sprintf('%s/index.php', $tempPath), $solution->getEntryPoint());
-        $this->assertInternalType('array', $solution->getFiles());
         $files = $solution->getFiles();
         $this->assertCount(2, $files);
 
@@ -90,7 +88,6 @@ class DirectorySolutionTest extends TestCase
         $this->assertSame($tempPath, $solution->getBaseDirectory());
         $this->assertTrue($solution->hasComposerFile());
         $this->assertSame(sprintf('%s/solution.php', $tempPath), $solution->getEntryPoint());
-        $this->assertInternalType('array', $solution->getFiles());
         $files = $solution->getFiles();
         $this->assertCount(2, $files);
 
@@ -115,7 +112,6 @@ class DirectorySolutionTest extends TestCase
         $solution = DirectorySolution::fromDirectory($tempPath, $exclusions);
 
         $this->assertSame(sprintf('%s/solution.php', $tempPath), $solution->getEntryPoint());
-        $this->assertInternalType('array', $solution->getFiles());
         $files = $solution->getFiles();
         $this->assertCount(2, $files);
 
@@ -145,7 +141,6 @@ class DirectorySolutionTest extends TestCase
         $solution = DirectorySolution::fromDirectory($tempPath);
 
         $this->assertSame(sprintf('%s/solution.php', $tempPath), $solution->getEntryPoint());
-        $this->assertInternalType('array', $solution->getFiles());
         $files = $solution->getFiles();
         $this->assertCount(5, $files);
 
@@ -187,7 +182,6 @@ class DirectorySolutionTest extends TestCase
         $solution = DirectorySolution::fromDirectory($tempPath, $exclusions);
 
         $this->assertSame(sprintf('%s/solution.php', $tempPath), $solution->getEntryPoint());
-        $this->assertInternalType('array', $solution->getFiles());
         $files = $solution->getFiles();
         $this->assertCount(2, $files);
 

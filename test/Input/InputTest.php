@@ -1,6 +1,6 @@
 <?php
 
-namespace PhpSchool\PhpWorkshopTest;
+namespace PhpSchool\PhpWorkshopTest\Input;
 
 use PhpSchool\PhpWorkshop\Exception\InvalidArgumentException;
 use PhpSchool\PhpWorkshop\Input\Input;

@@ -1,9 +1,10 @@
 <?php
 
-namespace PhpSchool\PhpWorkshop\ExerciseRunner;
+namespace PhpSchool\PhpWorkshopTest\ExerciseRunner;
 
 use Colors\Color;
 use PhpSchool\CliMenu\Terminal\TerminalInterface;
+use PhpSchool\PhpWorkshop\ExerciseRunner\CustomVerifyingRunner;
 use PhpSchool\PhpWorkshop\Input\Input;
 use PhpSchool\PhpWorkshop\Output\StdOutput;
 use PhpSchool\PhpWorkshopTest\Asset\CustomVerifyingExerciseImpl;
@@ -12,7 +13,7 @@ use PHPUnit\Framework\TestCase;
 /**
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
-class ExtRunnerTest extends TestCase
+class CustomVerifyingRunnerTest extends TestCase
 {
     /**
      * @var CustomVerifyingRunner

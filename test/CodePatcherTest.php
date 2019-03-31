@@ -9,8 +9,6 @@ use PhpParser\ParserFactory;
 use PhpParser\PrettyPrinter\Standard;
 use PhpSchool\PhpWorkshop\CodePatcher;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
-use PhpSchool\PhpWorkshop\Exercise\PreProcessable;
-use PhpSchool\PhpWorkshop\Exercise\SubmissionPatchable;
 use PhpSchool\PhpWorkshop\Patch;
 use PhpSchool\PhpWorkshopTest\Asset\PatchableExercise;
 use PHPUnit\Framework\TestCase;

@@ -14,7 +14,7 @@ use RuntimeException;
  * @package PhpSchool\PhpWorkshopTest\Factory
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
-class ResultsRendererFactoryTest extends TestCase
+class ResultRendererFactoryTest extends TestCase
 {
     /**
      * @expectedException InvalidArgumentException

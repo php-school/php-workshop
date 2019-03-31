@@ -13,7 +13,7 @@ use PHPUnit\Framework\TestCase;
 /**
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
-class CustomRunnerFactoryTest extends TestCase
+class CustomVerifyingRunnerFactoryTest extends TestCase
 {
     /**
      * @var CustomVerifyingRunnerFactory
