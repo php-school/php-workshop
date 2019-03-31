@@ -6,9 +6,6 @@ use PhpSchool\PhpWorkshop\Event\EventDispatcher;
 
 /**
  * The interface for advanced listener checks which can execute logic at any dispatched event.
- *
- * @package PhpSchool\PhpWorkshop\Check
- * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
 interface ListenableCheckInterface extends CheckInterface
 {

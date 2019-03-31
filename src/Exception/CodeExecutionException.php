@@ -7,9 +7,6 @@ use Symfony\Component\Process\Process;
 
 /**
  * Represents the situation where some PHP code could not be executed successfully.
- *
- * @package PhpSchool\PhpWorkshop\Exception
- * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
 class CodeExecutionException extends RuntimeException
 {

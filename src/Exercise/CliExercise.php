@@ -4,8 +4,6 @@ namespace PhpSchool\PhpWorkshop\Exercise;
 
 /**
  * This interface describes the additional methods a CLI type exercise should implement.
- *
- * @package PhpSchool\PhpWorkshop\Exercise
  */
 interface CliExercise extends ProvidesSolution
 {

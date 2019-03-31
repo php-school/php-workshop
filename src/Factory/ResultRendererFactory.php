@@ -6,11 +6,6 @@ use PhpSchool\PhpWorkshop\Exception\InvalidArgumentException;
 use PhpSchool\PhpWorkshop\Result\ResultInterface;
 use PhpSchool\PhpWorkshop\ResultRenderer\ResultRendererInterface;
 
-/**
- * Class ResultRendererFactory
- * @package PhpSchool\PhpWorkshop\Factory
- * @author Aydin Hassan <aydin@hotmail.co.uk>
- */
 class ResultRendererFactory
 {
     /**

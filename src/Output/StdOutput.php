@@ -5,11 +5,6 @@ namespace PhpSchool\PhpWorkshop\Output;
 use Colors\Color;
 use PhpSchool\Terminal\Terminal;
 
-/**
- * Class StdOutput
- * @package PhpSchool\PhpWorkshop
- * @author Aydin Hassan <aydin@hotmail.co.uk>
- */
 class StdOutput implements OutputInterface
 {
     /**

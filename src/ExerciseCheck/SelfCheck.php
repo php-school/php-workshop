@@ -12,9 +12,6 @@ use PhpSchool\PhpWorkshop\Result\ResultInterface;
  * information.
  *
  * Self checking runs *after* the student's solution has been run/verified.
- *
- * @package PhpSchool\PhpWorkshop\ExerciseCheck
- * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
 interface SelfCheck
 {

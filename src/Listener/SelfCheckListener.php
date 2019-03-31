@@ -6,11 +6,6 @@ use PhpSchool\PhpWorkshop\Event\Event;
 use PhpSchool\PhpWorkshop\ExerciseCheck\SelfCheck;
 use PhpSchool\PhpWorkshop\ResultAggregator;
 
-/**
- * Class SelfCheckListener
- * @package PhpSchool\PhpWorkshopTest\Listener
- * @author Aydin Hassan <aydin@hotmail.co.uk>
- */
 class SelfCheckListener
 {
     /**

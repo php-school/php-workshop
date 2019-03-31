@@ -4,9 +4,6 @@ namespace PhpSchool\PhpWorkshop\Exception;
 
 /**
  * Represents invalid argument exceptions.
- *
- * @package PhpSchool\PhpWorkshop\Exception
- * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
 class InvalidArgumentException extends \InvalidArgumentException
 {

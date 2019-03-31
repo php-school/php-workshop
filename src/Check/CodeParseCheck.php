@@ -16,9 +16,6 @@ use PhpSchool\PhpWorkshop\Result\Success;
 /**
  * This check attempts to parse a student's solution and returns
  * a success or failure based on the result of the parsing.
- *
- * @package PhpSchool\PhpWorkshop\Check
- * @author  Aydin Hassan <aydin@hotmail.co.uk>
  */
 class CodeParseCheck implements SimpleCheckInterface
 {

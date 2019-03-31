@@ -8,9 +8,6 @@ use AydinHassan\CliMdRenderer\CliRenderer;
 /**
  * Utility to render a markdown string to a string formatted with ANSI escape codes for output
  * on the console.
- *
- * @package PhpSchool\PhpWorkshop
- * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
 class MarkdownRenderer
 {

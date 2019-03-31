@@ -6,9 +6,6 @@ use InvalidArgumentException;
 
 /**
  * This class represents a file on the file system which is part of the reference solution.
- *
- * @package PhpSchool\PhpWorkshop\Solution
- * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
 class SolutionFile
 {

@@ -8,9 +8,6 @@ use PhpSchool\PhpWorkshop\Exception\CodeExecutionException;
 
 /**
  * Default implementation of `PhpSchool\PhpWorkshop\Result\FailureInterface`.
- *
- * @package PhpSchool\PhpWorkshop
- * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
 class Failure implements FailureInterface
 {

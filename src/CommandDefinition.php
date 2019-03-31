@@ -8,9 +8,6 @@ use PhpSchool\PhpWorkshop\Exception\InvalidArgumentException;
  * Represents a command in the workshop framework. Simply consists of a
  * command name, required arguments and either a service name or callable to
  * execute when the command is run.
- *
- * @package PhpSchool\PhpWorkshop
- * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
 class CommandDefinition
 {

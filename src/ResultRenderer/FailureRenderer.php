@@ -7,8 +7,6 @@ use PhpSchool\PhpWorkshop\Result\ResultInterface;
 
 /**
  * Renderer for `PhpSchool\PhpWorkshop\Result\Failure`.
- *
- * @package PhpSchool\PhpWorkshop\ResultRenderer
  */
 class FailureRenderer implements ResultRendererInterface
 {

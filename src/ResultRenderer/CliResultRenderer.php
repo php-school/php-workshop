@@ -11,8 +11,6 @@ use PhpSchool\PhpWorkshop\Utils\RequestRenderer;
 
 /**
  * Renderer for `PhpSchool\PhpWorkshop\Result\Cli\CliResult`.
- *
- * @package PhpSchool\PhpWorkshop\ResultRenderer
  */
 class CliResultRenderer implements ResultRendererInterface
 {

@@ -6,9 +6,6 @@ use RuntimeException;
 
 /**
  * Represents the situation where a command is called which does not exist in the framework.
- *
- * @package PhpSchool\PhpWorkshop\Exception
- * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
 class CliRouteNotExistsException extends RuntimeException
 {

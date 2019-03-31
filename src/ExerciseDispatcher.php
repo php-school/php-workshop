@@ -20,9 +20,6 @@ use PhpSchool\PhpWorkshop\Output\OutputInterface;
 /**
  * This class is used to verify/run a student's solution to an exercise. It routes to the correct
  * runner based on the exercise type.
- *
- * @package PhpSchool\PhpWorkshop
- * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
 class ExerciseDispatcher
 {

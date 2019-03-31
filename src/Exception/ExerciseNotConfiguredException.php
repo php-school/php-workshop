@@ -8,9 +8,6 @@ use RuntimeException;
 /**
  * Represents the situation where an exercise requires a check but does not implement
  * the correct interface enforced by the check.
- *
- * @package PhpSchool\PhpWorkshop\Exception
- * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
 class ExerciseNotConfiguredException extends RuntimeException
 {

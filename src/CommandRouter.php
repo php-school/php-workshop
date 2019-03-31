@@ -12,9 +12,6 @@ use PhpSchool\PhpWorkshop\Input\Input;
  * Parses $argv (or passed array) and attempts to find a command
  * which is suitable for what was typed on the cli. It then executes the callable
  * associated with that command definition.
- *
- * @package PhpSchool\PhpWorkshop
- * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
 class CommandRouter
 {

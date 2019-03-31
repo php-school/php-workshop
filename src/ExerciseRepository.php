@@ -10,9 +10,6 @@ use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 
 /**
  * Exercise repository, use to locate individual/all exercises by certain criteria.
- *
- * @package PhpSchool\PhpWorkshop
- * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
 class ExerciseRepository implements IteratorAggregate, Countable
 {

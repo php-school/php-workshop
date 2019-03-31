@@ -7,9 +7,6 @@ use Psr\Http\Message\RequestInterface;
 /**
  * A failure result representing the situation where the output of a student's solution did not match the
  * expected output in the context of a HTTP request.
- *
- * @package PhpSchool\PhpWorkshop\Result
- * @author  Aydin Hassan <aydin@hotmail.co.uk>
  */
 class RequestFailure implements FailureInterface
 {

@@ -6,9 +6,6 @@ use PhpSchool\PhpWorkshop\Exception\InvalidArgumentException;
 
 /**
  * A generic `PhpSchool\PhpWorkshop\Event\EventInterface` implementation.
- *
- * @package PhpSchool\PhpWorkshop\Event
- * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
 class Event implements EventInterface
 {

@@ -7,9 +7,6 @@ use PhpSchool\PhpWorkshop\Exception\InvalidArgumentException;
 /**
  * This class is the repository containing all the available checks
  * for the workshop framework.
- *
- * @package PhpSchool\PhpWorkshop\Check
- * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
 class CheckRepository
 {

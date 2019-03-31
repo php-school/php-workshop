@@ -6,9 +6,6 @@ use RuntimeException;
 
 /**
  * Represents the situation where a command was called without required parameters.
- *
- * @package PhpSchool\PhpWorkshop\Exception
- * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
 class MissingArgumentException extends RuntimeException
 {

@@ -19,9 +19,6 @@ use PhpSchool\PhpWorkshop\Result\Success;
 /**
  * This check verifies that the student's solution contains usages of some required functions
  * and also does not use certain functions (specified by the exercise).
- *
- * @package PhpSchool\PhpWorkshop\Check
- * @author  Aydin Hassan <aydin@hotmail.co.uk>
  */
 class FunctionRequirementsCheck implements SimpleCheckInterface
 {

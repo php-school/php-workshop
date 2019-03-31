@@ -7,8 +7,6 @@ use PDO;
 /**
  * This interface should be implemented when you require the check `PhpSchool\PhpWorkshop\Check\DatabaseCheck` in your
  * exercise.
- *
- * @package PhpSchool\PhpWorkshop\ExerciseCheck
  */
 interface DatabaseExerciseCheck
 {

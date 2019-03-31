@@ -4,9 +4,6 @@ namespace PhpSchool\PhpWorkshop;
 
 /**
  * Reads and persists the `UserState` instance to storage (file based).
- *
- * @package PhpSchool\PhpWorkshop
- * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
 class UserStateSerializer
 {

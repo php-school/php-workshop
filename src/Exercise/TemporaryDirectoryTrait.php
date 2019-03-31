@@ -5,9 +5,6 @@ namespace PhpSchool\PhpWorkshop\Exercise;
 /**
  * Helper trait to use in exercises to get a temporary path
  * for IO stuff.
- *
- * @package PhpSchool\PhpWorkshop\Exercise
- * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
 trait TemporaryDirectoryTrait
 {

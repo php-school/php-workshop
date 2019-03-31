@@ -10,9 +10,6 @@ use PhpSchool\PhpWorkshop\Result\ResultInterface;
 /**
  * The interface for simple checks, checks that execute at one defined point, before or after
  * output verification.
- *
- * @package PhpSchool\PhpWorkshop\Comparator
- * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
 interface SimpleCheckInterface extends CheckInterface
 {

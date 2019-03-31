@@ -10,9 +10,6 @@ use PhpSchool\PhpWorkshop\Patch;
  * injecting variables. The exercise should implement the `getPatch()` method and it should return a `Patch`.
  * See [Patching Exercise Submissions](https://www.phpschool.io/docs/reference/patching-exercise-solutions) for
  * more details.
- *
- * @package PhpSchool\PhpWorkshop\Exercise
- * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
 interface SubmissionPatchable
 {

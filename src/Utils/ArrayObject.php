@@ -8,9 +8,6 @@ use IteratorAggregate;
 
 /**
  * Utility collection class.
- *
- * @package PhpSchool\PhpWorkshop\Utils
- * @author  Aydin Hassan <aydin@hotmail.co.uk>
  */
 class ArrayObject implements IteratorAggregate, Countable
 {

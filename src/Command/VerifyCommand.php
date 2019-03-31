@@ -11,11 +11,6 @@ use PhpSchool\PhpWorkshop\ResultRenderer\ResultsRenderer;
 use PhpSchool\PhpWorkshop\UserState;
 use PhpSchool\PhpWorkshop\UserStateSerializer;
 
-/**
- * Class VerifyCommand
- * @package PhpSchool\PhpWorkshop\Command
- * @author Aydin Hassan <aydin@hotmail.co.uk>
- */
 class VerifyCommand
 {
     /**

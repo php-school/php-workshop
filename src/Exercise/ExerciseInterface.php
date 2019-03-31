@@ -8,9 +8,6 @@ use PhpSchool\PhpWorkshop\Solution\SolutionInterface;
 /**
  * This interface describes all of the methods an exercise
  * should implement.
- *
- * @package PhpSchool\PhpWorkshop\Exercise
- * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
 interface ExerciseInterface
 {

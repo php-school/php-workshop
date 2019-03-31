@@ -7,8 +7,6 @@ use PhpSchool\PhpWorkshop\Result\ComparisonFailure;
 
 /**
  * Renderer for `PhpSchool\PhpWorkshop\Result\ComparisonFailure`.
- *
- * @package PhpSchool\PhpWorkshop\ResultRenderer
  */
 class ComparisonFailureRenderer implements ResultRendererInterface
 {

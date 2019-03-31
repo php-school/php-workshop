@@ -6,8 +6,6 @@ use Psr\Http\Message\RequestInterface;
 
 /**
  * This interface describes the additional methods a CGI type exercise should implement.
- *
- * @package PhpSchool\PhpWorkshop\Exercise
  */
 interface CgiExercise extends ProvidesSolution
 {

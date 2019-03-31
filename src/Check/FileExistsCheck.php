@@ -11,9 +11,6 @@ use PhpSchool\PhpWorkshop\Result\Success;
 
 /**
  * This check verifies that the student's solution file actually exists.
- *
- * @package PhpSchool\PhpWorkshop\Check
- * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
 class FileExistsCheck implements SimpleCheckInterface
 {

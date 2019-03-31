@@ -9,11 +9,6 @@ use PhpSchool\PhpWorkshop\Exception\InvalidArgumentException;
 use PhpSchool\PhpWorkshop\ResultAggregator;
 use PhpSchool\PhpWorkshop\Utils\Collection;
 
-/**
- * Class EventDispatcherFactory
- * @package PhpSchool\PhpWorkshop\Factory
- * @author Aydin Hassan <aydin@hotmail.co.uk>
- */
 class EventDispatcherFactory
 {
 

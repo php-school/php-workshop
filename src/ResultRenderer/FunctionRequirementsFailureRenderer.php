@@ -6,9 +6,6 @@ use PhpSchool\PhpWorkshop\Result\FunctionRequirementsFailure;
 
 /**
  * Renderer for `PhpSchool\PhpWorkshop\Result\FunctionRequirementsFailure`.
- *
- * @package PhpSchool\PhpWorkshop\ResultRenderer
- * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
 class FunctionRequirementsFailureRenderer implements ResultRendererInterface
 {

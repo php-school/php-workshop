@@ -20,8 +20,6 @@ use PhpSchool\PhpWorkshop\UserState;
 
 /**
  * Renderer which renders a `PhpSchool\PhpWorkshop\ResultAggregator` and writes it the output.
- *
- * @package PhpSchool\PhpWorkshop\ResultRenderer
  */
 class ResultsRenderer
 {

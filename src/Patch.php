@@ -11,9 +11,6 @@ use Closure;
  * representation of the student's solution and it should return the modified AST.
  * An insertion is a block of code that can be inserted at the top or bottom of
  * the students solution.
- *
- * @package PhpSchool\PhpWorkshop
- * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
 class Patch
 {

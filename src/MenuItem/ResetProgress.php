@@ -7,11 +7,6 @@ use PhpSchool\PhpWorkshop\Output\OutputInterface;
 use PhpSchool\PhpWorkshop\UserState;
 use PhpSchool\PhpWorkshop\UserStateSerializer;
 
-/**
- * Class ResetProgress
- * @package PhpSchool\PhpWorkshop\MenuItem
- * @author Aydin Hassan <aydin@hotmail.co.uk>
- */
 class ResetProgress
 {
     /**

@@ -4,9 +4,6 @@ namespace PhpSchool\PhpWorkshop\Event;
 
 /**
  * An event representation.
- *
- * @package PhpSchool\PhpWorkshop\Event
- * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
 interface EventInterface
 {
