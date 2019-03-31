@@ -38,7 +38,7 @@ class UserStateSerializerTest extends TestCase
 
     public function setUp()
     {
-        $this->tmpDir = sprintf('%s/%s/%s', sys_get_temp_dir(), $this->getName(), rand(1, 100));
+        $this->tmpDir = sprintf('%s/%s/%s', sys_get_temp_dir(), $this->getName(), random_int(1, 100));
         $this->tmpFile = sprintf('%s/.phpschool-save.json', $this->tmpDir);
         $this->exerciseRepository = new ExerciseRepository([]);
     }
