@@ -5,7 +5,7 @@ namespace PhpSchool\PhpWorkshop\Factory;
 use AydinHassan\CliMdRenderer\Renderer\ListBlockRenderer;
 use AydinHassan\CliMdRenderer\Renderer\ListItemRenderer;
 use Colors\Color;
-use Interop\Container\ContainerInterface;
+use Psr\Container\ContainerInterface;
 use Kadet\Highlighter\KeyLighter;
 use League\CommonMark\Block\Element\Heading;
 use League\CommonMark\Block\Element\ListBlock;
