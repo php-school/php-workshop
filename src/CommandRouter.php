@@ -5,9 +5,8 @@ namespace PhpSchool\PhpWorkshop;
 use PhpSchool\PhpWorkshop\Event\EventDispatcher;
 use PhpSchool\PhpWorkshop\Exception\CliRouteNotExistsException;
 use PhpSchool\PhpWorkshop\Exception\MissingArgumentException;
-use Interop\Container\ContainerInterface;
+use Psr\Container\ContainerInterface;
 use PhpSchool\PhpWorkshop\Input\Input;
-use SebastianBergmann\Environment\Runtime;
 
 /**
  * Parses $argv (or passed array) and attempts to find a command
