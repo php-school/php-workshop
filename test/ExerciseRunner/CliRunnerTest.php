@@ -81,7 +81,7 @@ class CliRunnerTest extends TestCase
         $regex  = "/^PHP Code failed to execute\\. Error: \"PHP Parse error:  syntax error, unexpected end of file";
         $regex .= ", expecting ',' or ';'/";
         $this->expectException(SolutionExecutionException::class);
-        $this->expectExceptionMessageRegExp($regex);
+        $this->expectExceptionMessageMatches($regex);
         $this->runner->verify(new Input('app', ['program' => '']));
     }
 
