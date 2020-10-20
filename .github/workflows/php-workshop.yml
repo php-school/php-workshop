@@ -26,7 +26,7 @@ jobs:
           tools: composer:v2
 
       - name: Install Dependencies
-        run: composer install --prefer-dist
+        run: composer update --prefer-dist
 
       - name: Run phpunit tests
         run: |
