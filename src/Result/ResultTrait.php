@@ -7,9 +7,6 @@ use PhpSchool\PhpWorkshop\Check\CheckInterface;
 /**
  * Helper to proxy the `getCheckName()` method through to the `PhpSchool\PhpWorkshop\Check\CheckInterface`
  * instance.
- *
- * @package PhpSchool\PhpWorkshop\Result
- * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
 trait ResultTrait
 {

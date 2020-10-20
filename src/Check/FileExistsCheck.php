@@ -11,18 +11,13 @@ use PhpSchool\PhpWorkshop\Result\Success;
 
 /**
  * This check verifies that the student's solution file actually exists.
- *
- * @package PhpSchool\PhpWorkshop\Check
- * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
 class FileExistsCheck implements SimpleCheckInterface
 {
     /**
      * Return the check's name.
-     *
-     * @return string
      */
-    public function getName()
+    public function getName() : string
     {
         return 'File Exists Check';
     }
@@ -34,7 +29,7 @@ class FileExistsCheck implements SimpleCheckInterface
      * @param Input $input The command line arguments passed to the command.
      * @return ResultInterface The result of the check.
      */
-    public function check(ExerciseInterface $exercise, Input $input)
+    public function check(ExerciseInterface $exercise, Input $input) : ResultInterface
     {
         if (file_exists($input->getArgument('program'))) {
             return Success::fromCheck($this);
@@ -45,30 +40,21 @@ class FileExistsCheck implements SimpleCheckInterface
 
     /**
      * This check can run on any exercise type.
-     *
-     * @param ExerciseType $exerciseType
-     * @return bool
      */
-    public function canRun(ExerciseType $exerciseType)
+    public function canRun(ExerciseType $exerciseType) : bool
     {
-        return in_array($exerciseType->getValue(), [ExerciseType::CGI, ExerciseType::CLI]);
+        return in_array($exerciseType->getValue(), [ExerciseType::CGI, ExerciseType::CLI], true);
     }
 
-    /**
-     *
-     * @return string
-     */
-    public function getExerciseInterface()
+    public function getExerciseInterface() : string
     {
         return ExerciseInterface::class;
     }
 
     /**
      * This check must run before executing the solution becuase it may not exist.
-     *
-     * @return string
      */
-    public function getPosition()
+    public function getPosition() : string
     {
         return SimpleCheckInterface::CHECK_BEFORE;
     }

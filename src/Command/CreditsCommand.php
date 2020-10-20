@@ -7,10 +7,6 @@ use PhpSchool\PhpWorkshop\Output\OutputInterface;
 
 /**
  * A command to display the framework and workshop credits.
- *
- * @package PhpSchool\PhpWorkshop\Command
- * @author Aydin Hassan <aydin@hotmail.co.uk>
- * @author Michael Woodward <mikeymike.mw@gmail.com>
  */
 class CreditsCommand
 {

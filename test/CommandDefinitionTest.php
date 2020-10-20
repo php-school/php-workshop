@@ -4,16 +4,16 @@ namespace PhpSchool\PhpWorkshopTest;
 
 use PhpSchool\PhpWorkshop\CommandArgument;
 use PhpSchool\PhpWorkshop\Exception\InvalidArgumentException;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 use PhpSchool\PhpWorkshop\CommandDefinition;
 
 /**
  * @author  Aydin Hassan <aydin@hotmail.co.uk>
  */
-class CommandDefinitionTest extends PHPUnit_Framework_TestCase
+class CommandDefinitionTest extends TestCase
 {
 
-    public function testGettersSettersWithStringArgs()
+    public function testGettersSettersWithStringArgs() : void
     {
         $callable = function () {
         };
@@ -29,7 +29,7 @@ class CommandDefinitionTest extends PHPUnit_Framework_TestCase
         $this->assertSame($callable, $definition->getCommandCallable());
     }
 
-    public function testGettersSettersWithObjArgs()
+    public function testGettersSettersWithObjArgs() : void
     {
         $callable = function () {
         };
@@ -45,7 +45,7 @@ class CommandDefinitionTest extends PHPUnit_Framework_TestCase
         $this->assertSame($callable, $definition->getCommandCallable());
     }
 
-    public function testExceptionIsThrowWhenTryingToAddRequiredArgAfterOptionalArg()
+    public function testExceptionIsThrowWhenTryingToAddRequiredArgAfterOptionalArg() : void
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('A required argument cannot follow an optional argument');
@@ -56,7 +56,7 @@ class CommandDefinitionTest extends PHPUnit_Framework_TestCase
             ->addArgument(CommandArgument::required('required-arg'));
     }
 
-    public function testExceptionIsThrownWithWrongParameterToAddArgument()
+    public function testExceptionIsThrownWithWrongParameterToAddArgument() : void
     {
         $this->expectException(InvalidArgumentException::class);
         $msg  = 'Parameter: "argument" can only be one of: "string", "PhpSchool\PhpWorkshop\CommandArgument" ';

@@ -6,21 +6,21 @@ use PhpSchool\CliMenu\CliMenu;
 use PhpSchool\CliMenu\Dialogue\Confirm;
 use PhpSchool\CliMenu\MenuItem\MenuItemInterface;
 use PhpSchool\CliMenu\MenuStyle;
-use PhpSchool\CliMenu\Terminal\TerminalInterface;
+use PhpSchool\Terminal\Terminal;
 use PhpSchool\PhpWorkshop\MenuItem\ResetProgress;
 use PhpSchool\PhpWorkshop\Output\OutputInterface;
 use PhpSchool\PhpWorkshop\UserState;
 use PhpSchool\PhpWorkshop\UserStateSerializer;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Class ResetProgressTest
  * @package PhpSchool\PhpWorkshopTest\MenuItem
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
-class ResetProgressTest extends PHPUnit_Framework_TestCase
+class ResetProgressTest extends TestCase
 {
-    public function testResetProgressDisablesParentMenuItems()
+    public function testResetProgressDisablesParentMenuItems() : void
     {
         $item1 = $this->createMock(MenuItemInterface::class);
         $item2 = $this->createMock(MenuItemInterface::class);
@@ -33,7 +33,10 @@ class ResetProgressTest extends PHPUnit_Framework_TestCase
             ->expects($this->once())
             ->method('hideItemExtra');
 
-        $terminal = $this->createMock(TerminalInterface::class);
+        $terminal = $this->createMock(Terminal::class);
+        $terminal
+            ->method('getWidth')
+            ->willReturn(100);
 
         $menu = new CliMenu('Menu', [$item1, $item2], $terminal);
 

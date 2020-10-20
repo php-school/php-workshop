@@ -3,16 +3,16 @@
 namespace PhpSchool\PhpWorkshopTest\Exercise;
 
 use PhpSchool\PhpWorkshopTest\Asset\TemporaryDirectoryTraitImpl;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Class TemporaryDirectoryTraitTest
  * @package PhpSchool\PhpWorkshopTest\Exercise
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
-class TemporaryDirectoryTraitTest extends PHPUnit_Framework_TestCase
+class TemporaryDirectoryTraitTest extends TestCase
 {
-    public function testGetTemporaryPath()
+    public function testGetTemporaryPath() : void
     {
         $impl = new TemporaryDirectoryTraitImpl;
         $path = $impl->getTemporaryPath();

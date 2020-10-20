@@ -12,9 +12,6 @@ use PhpSchool\PhpWorkshop\Result\ResultInterface;
 /**
  * This class is a container to hold all the results produced
  * throughout the verification of a students solution.
- *
- * @package PhpSchool\PhpWorkshop
- * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
 class ResultAggregator implements IteratorAggregate
 {

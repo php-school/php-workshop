@@ -4,16 +4,16 @@ namespace PhpSchool\PhpWorkshopTest;
 
 use PhpSchool\PhpWorkshop\CodeInsertion;
 use PhpSchool\PhpWorkshop\Patch;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Class PatchTest
  * @package PhpSchool\PhpWorkshopTest
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
-class PatchTest extends PHPUnit_Framework_TestCase
+class PatchTest extends TestCase
 {
-    public function testWithInsertion()
+    public function testWithInsertion() : void
     {
         $patch = new Patch;
         $insertion = new CodeInsertion(CodeInsertion::TYPE_BEFORE, 'MEH');
@@ -24,7 +24,7 @@ class PatchTest extends PHPUnit_Framework_TestCase
         $this->assertEquals([$insertion], $new->getModifiers());
     }
 
-    public function testWithTransformer()
+    public function testWithTransformer() : void
     {
         $patch = new Patch;
         $transformer = function (array $statements) {

@@ -4,7 +4,7 @@ namespace PhpSchool\PhpWorkshopTest\ResultRenderer;
 
 use Colors\Color;
 use Kadet\Highlighter\KeyLighter;
-use PhpSchool\CliMenu\Terminal\TerminalInterface;
+use PhpSchool\Terminal\Terminal;
 use PhpSchool\PhpWorkshop\Factory\ResultRendererFactory;
 use PHPUnit\Framework\TestCase;
 use PhpSchool\PhpWorkshop\ExerciseRepository;
@@ -30,7 +30,7 @@ abstract class AbstractResultRendererTest extends TestCase
     /**
      * @return ResultRendererFactory
      */
-    public function getResultRendererFactory()
+    public function getResultRendererFactory(): ResultRendererFactory
     {
         if (null === $this->resultRendererFactory) {
             $this->resultRendererFactory = new ResultRendererFactory;
@@ -42,13 +42,13 @@ abstract class AbstractResultRendererTest extends TestCase
     /**
      * @return ResultsRenderer
      */
-    protected function getRenderer()
+    protected function getRenderer(): ResultsRenderer
     {
         if (null === $this->renderer) {
             $color = new Color;
             $color->setForceStyle(true);
 
-            $terminal = $this->prophesize(TerminalInterface::class);
+            $terminal = $this->prophesize(Terminal::class);
             $terminal->getWidth()->willReturn(50);
             $exerciseRepo = $this->createMock(ExerciseRepository::class);
 

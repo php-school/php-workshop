@@ -15,33 +15,33 @@ use PhpSchool\PhpWorkshop\MenuItem\ResetProgress;
 use PhpSchool\PhpWorkshop\UserState;
 use PhpSchool\PhpWorkshop\UserStateSerializer;
 use PhpSchool\PhpWorkshop\WorkshopType;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Class MenuFactoryTest
  * @package PhpSchool\PhpWorkshopTest\Factory
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
-class MenuFactoryTest extends PHPUnit_Framework_TestCase
+class MenuFactoryTest extends TestCase
 {
-    public function testFactoryReturnsInstance()
+    public function testFactoryReturnsInstance() : void
     {
         $container = $this->createMock(ContainerInterface::class);
         $userStateSerializer = $this->createMock(UserStateSerializer::class);
         $userStateSerializer
             ->expects($this->once())
             ->method('deSerialize')
-            ->will($this->returnValue(new UserState));
+            ->willReturn(new UserState);
 
         $exerciseRepository = $this->createMock(ExerciseRepository::class);
         $exercise = $this->createMock(ExerciseInterface::class);
         $exercise->expects($this->exactly(2))
             ->method('getName')
-            ->will($this->returnValue('Exercise'));
+            ->willReturn('Exercise');
         $exerciseRepository
             ->expects($this->once())
             ->method('findAll')
-            ->will($this->returnValue([$exercise]));
+            ->willReturn([$exercise]);
             
         $services = [
             UserStateSerializer::class => $userStateSerializer,
@@ -59,11 +59,10 @@ class MenuFactoryTest extends PHPUnit_Framework_TestCase
         ];
         
         $container
-            ->expects($this->any())
             ->method('get')
-            ->will($this->returnCallback(function ($name) use ($services) {
+            ->willReturnCallback(function ($name) use ($services) {
                 return $services[$name];
-            }));
+            });
         
         
         $factory = new MenuFactory;

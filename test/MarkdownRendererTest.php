@@ -6,7 +6,7 @@ use AydinHassan\CliMdRenderer\CliRenderer;
 use AydinHassan\CliMdRenderer\CliRendererFactory;
 use League\CommonMark\DocParser;
 use League\CommonMark\Environment;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 use PhpSchool\PhpWorkshop\MarkdownRenderer;
 
 /**
@@ -14,9 +14,9 @@ use PhpSchool\PhpWorkshop\MarkdownRenderer;
  * @package PhpSchool\PhpWorkshopTest
  * @author  Aydin Hassan <aydin@hotmail.co.uk>
  */
-class MarkdownRendererTest extends PHPUnit_Framework_TestCase
+class MarkdownRendererTest extends TestCase
 {
-    public function testRender()
+    public function testRender() : void
     {
         $docParser      = new DocParser(Environment::createCommonMarkEnvironment());
         $cliRenderer    = (new CliRendererFactory())->__invoke();

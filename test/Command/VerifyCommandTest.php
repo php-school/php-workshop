@@ -3,13 +3,13 @@
 namespace PhpSchool\PhpWorkshopTest\Command;
 
 use Colors\Color;
-use PhpSchool\CliMenu\Terminal\TerminalInterface;
+use PhpSchool\Terminal\Terminal;
 use PhpSchool\PhpWorkshop\Check\CheckInterface;
 use PhpSchool\PhpWorkshop\ExerciseDispatcher;
 use PhpSchool\PhpWorkshop\Input\Input;
 use PhpSchool\PhpWorkshop\Output\StdOutput;
 use PhpSchool\PhpWorkshopTest\Asset\CliExerciseImpl;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 use PhpSchool\PhpWorkshop\Command\VerifyCommand;
 use PhpSchool\PhpWorkshop\ExerciseRepository;
 use PhpSchool\PhpWorkshop\Result\Failure;
@@ -24,7 +24,7 @@ use PhpSchool\PhpWorkshop\UserStateSerializer;
  * @package PhpSchool\PhpWorkshop\Command
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
-class VerifyCommandTest extends PHPUnit_Framework_TestCase
+class VerifyCommandTest extends TestCase
 {
 
     /**
@@ -32,16 +32,15 @@ class VerifyCommandTest extends PHPUnit_Framework_TestCase
      */
     private $check;
     
-    public function setUp()
+    public function setUp() : void
     {
         $this->check = $this->createMock(CheckInterface::class);
         $this->check
-            ->expects($this->any())
             ->method('getName')
-            ->will($this->returnValue('Some Check'));
+            ->willReturn('Some Check');
     }
 
-    public function testVerifyAddsCompletedExerciseAndReturnsCorrectCodeOnSuccess()
+    public function testVerifyAddsCompletedExerciseAndReturnsCorrectCodeOnSuccess() : void
     {
         $file = tempnam(sys_get_temp_dir(), 'pws');
         touch($file);
@@ -55,7 +54,7 @@ class VerifyCommandTest extends PHPUnit_Framework_TestCase
         $state->setCurrentExercise('my-exercise');
         $color = new Color;
         $color->setForceStyle(true);
-        $output = new StdOutput($color, $this->createMock(TerminalInterface::class));
+        $output = new StdOutput($color, $this->createMock(Terminal::class));
         
         $serializer = $this->createMock(UserStateSerializer::class);
         $serializer
@@ -74,7 +73,7 @@ class VerifyCommandTest extends PHPUnit_Framework_TestCase
             ->expects($this->once())
             ->method('verify')
             ->with($exercise, $input)
-            ->will($this->returnValue($results));
+            ->willReturn($results);
         
         $renderer
             ->expects($this->once())
@@ -88,7 +87,7 @@ class VerifyCommandTest extends PHPUnit_Framework_TestCase
         unlink($file);
     }
 
-    public function testVerifyDoesNotAddCompletedExerciseAndReturnsCorrectCodeOnFailure()
+    public function testVerifyDoesNotAddCompletedExerciseAndReturnsCorrectCodeOnFailure() : void
     {
         $file = tempnam(sys_get_temp_dir(), 'pws');
         touch($file);
@@ -101,7 +100,7 @@ class VerifyCommandTest extends PHPUnit_Framework_TestCase
         $state->setCurrentExercise('my-exercise');
         $color = new Color;
         $color->setForceStyle(true);
-        $output = new StdOutput($color, $this->createMock(TerminalInterface::class));
+        $output = new StdOutput($color, $this->createMock(Terminal::class));
 
         $serializer = $this->createMock(UserStateSerializer::class);
 
@@ -121,7 +120,7 @@ class VerifyCommandTest extends PHPUnit_Framework_TestCase
             ->expects($this->once())
             ->method('verify')
             ->with($exercise, $input)
-            ->will($this->returnValue($results));
+            ->willReturn($results);
 
         $renderer
             ->expects($this->once())

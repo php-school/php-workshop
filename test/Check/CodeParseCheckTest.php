@@ -11,14 +11,14 @@ use PhpSchool\PhpWorkshop\Exercise\ExerciseType;
 use PhpSchool\PhpWorkshop\Input\Input;
 use PhpSchool\PhpWorkshop\Result\Failure;
 use PhpSchool\PhpWorkshop\Result\Success;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Class CodeParseCheckTest
  * @package PhpSchool\PhpWorkshopTest\Check
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
-class CodeParseCheckTest extends PHPUnit_Framework_TestCase
+class CodeParseCheckTest extends TestCase
 {
     /**
      * @var SimpleCheckInterface
@@ -30,7 +30,7 @@ class CodeParseCheckTest extends PHPUnit_Framework_TestCase
      */
     private $file;
     
-    public function setUp()
+    public function setUp() : void
     {
         $this->check = new CodeParseCheck((new ParserFactory)->create(ParserFactory::PREFER_PHP7));
         $this->assertEquals('Code Parse Check', $this->check->getName());
@@ -45,7 +45,7 @@ class CodeParseCheckTest extends PHPUnit_Framework_TestCase
         touch($this->file);
     }
 
-    public function testUnParseableCodeReturnsFailure()
+    public function testUnParseableCodeReturnsFailure() : void
     {
         file_put_contents($this->file, '<?php $lol');
         
@@ -62,7 +62,7 @@ class CodeParseCheckTest extends PHPUnit_Framework_TestCase
         );
     }
 
-    public function testParseableCodeReturnsSuccess()
+    public function testParseableCodeReturnsSuccess() : void
     {
         file_put_contents($this->file, '<?php $lol = "lol";');
 

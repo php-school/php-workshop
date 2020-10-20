@@ -3,11 +3,10 @@
 namespace PhpSchool\PhpWorkshopTest\Command;
 
 use Colors\Color;
-use PhpSchool\CliMenu\Terminal\TerminalInterface;
+use PhpSchool\Terminal\Terminal;
 use PhpSchool\PhpWorkshop\Command\CreditsCommand;
-use PhpSchool\PhpWorkshop\Output\OutputInterface;
 use PhpSchool\PhpWorkshop\Output\StdOutput;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Class CreditsCommandTest
@@ -15,10 +14,10 @@ use PHPUnit_Framework_TestCase;
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  * @author Michael Woodward <mikeymike.mw@gmail.com>
  */
-class CreditsCommandTest extends PHPUnit_Framework_TestCase
+class CreditsCommandTest extends TestCase
 {
 
-    public function testInvoke()
+    public function testInvoke() : void
     {
         $this->expectOutputString(file_get_contents(__DIR__ . '/../res/app-credits-expected.txt'));
 
@@ -36,14 +35,14 @@ class CreditsCommandTest extends PHPUnit_Framework_TestCase
                 '@AydinHassan' => 'Aydin Hassan',
                 '@mikeymike'   => 'Michael Woodward',
             ],
-            new StdOutput($color, $this->createMock(TerminalInterface::class)),
+            new StdOutput($color, $this->createMock(Terminal::class)),
             $color
         );
 
         $command->__invoke();
     }
 
-    public function testWithOnlyCoreContributors()
+    public function testWithOnlyCoreContributors() : void
     {
         $this->expectOutputString(file_get_contents(__DIR__ . '/../res/app-credits-core-expected.txt'));
 
@@ -58,14 +57,14 @@ class CreditsCommandTest extends PHPUnit_Framework_TestCase
                 '@chris3ailey' => 'Chris Bailey'
             ],
             [],
-            new StdOutput($color, $this->createMock(TerminalInterface::class)),
+            new StdOutput($color, $this->createMock(Terminal::class)),
             $color
         );
 
         $command->__invoke();
     }
 
-    public function testWithNoContributors()
+    public function testWithNoContributors() : void
     {
         $this->expectOutputString('');
         
@@ -75,7 +74,7 @@ class CreditsCommandTest extends PHPUnit_Framework_TestCase
         $command = new CreditsCommand(
             [],
             [],
-            new StdOutput($color, $this->createMock(TerminalInterface::class)),
+            new StdOutput($color, $this->createMock(Terminal::class)),
             $color
         );
         

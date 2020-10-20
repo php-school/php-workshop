@@ -1,16 +1,16 @@
-<?php
+<?php /** @noinspection PhpFullyQualifiedNameUsageInspection */
 
 namespace PhpSchool\PhpWorkshopTest;
 
 use PhpSchool\PhpWorkshop\Application;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 
 /**
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
-class ApplicationTest extends PHPUnit_Framework_TestCase
+class ApplicationTest extends TestCase
 {
-    public function testEventListenersFromLocalAndWorkshopConfigAreMerged()
+    public function testEventListenersFromLocalAndWorkshopConfigAreMerged() : void
     {
 
         $frameworkFileContent  = '<?php return [';

@@ -7,9 +7,6 @@ use Assert\Assertion;
 /**
  * This class is a simple DTO to represent a code insertion which should
  * be performed on a students solution.
- *
- * @package PhpSchool\PhpWorkshop
- * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
 class CodeInsertion
 {

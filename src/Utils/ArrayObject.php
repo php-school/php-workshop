@@ -8,9 +8,6 @@ use IteratorAggregate;
 
 /**
  * Utility collection class.
- *
- * @package PhpSchool\PhpWorkshop\Utils
- * @author  Aydin Hassan <aydin@hotmail.co.uk>
  */
 class ArrayObject implements IteratorAggregate, Countable
 {
@@ -39,7 +36,7 @@ class ArrayObject implements IteratorAggregate, Countable
      */
     public function map(callable $callback)
     {
-        return new static (array_map($callback, $this->array));
+        return new static(array_map($callback, $this->array));
     }
 
     /**

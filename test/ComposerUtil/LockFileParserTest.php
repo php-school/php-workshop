@@ -4,15 +4,15 @@ namespace PhpSchool\PhpWorkshopTest\ComposerUtil;
 
 use PhpSchool\PhpWorkshop\ComposerUtil\LockFileParser;
 use PhpSchool\PhpWorkshop\Exception\InvalidArgumentException;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Class LockFileParserTest
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
-class LockFileParserTest extends PHPUnit_Framework_TestCase
+class LockFileParserTest extends TestCase
 {
-    public function testGetPackages()
+    public function testGetPackages() : void
     {
         $locker = new LockFileParser(__DIR__ . '/../res/composer.lock');
         $this->assertEquals([
@@ -21,7 +21,7 @@ class LockFileParserTest extends PHPUnit_Framework_TestCase
         ], $locker->getInstalledPackages());
     }
 
-    public function testHasPackage()
+    public function testHasPackage() : void
     {
         $locker = new LockFileParser(__DIR__ . '/../res/composer.lock');
         $this->assertTrue($locker->hasInstalledPackage('danielstjules/stringy'));
@@ -29,7 +29,7 @@ class LockFileParserTest extends PHPUnit_Framework_TestCase
         $this->assertFalse($locker->hasInstalledPackage('not-a-package'));
     }
 
-    public function testExceptionIsThrownIfFileNotExists()
+    public function testExceptionIsThrownIfFileNotExists() : void
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Lock File: "not-a-file" does not exist');

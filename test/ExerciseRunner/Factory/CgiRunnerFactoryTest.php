@@ -10,12 +10,12 @@ use PhpSchool\PhpWorkshop\ExerciseRunner\CgiRunner;
 use PhpSchool\PhpWorkshop\ExerciseRunner\Factory\CgiRunnerFactory;
 use PhpSchool\PhpWorkshop\Utils\RequestRenderer;
 use PhpSchool\PhpWorkshopTest\Asset\CgiExerciseImpl;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 
 /**
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
-class CgiRunnerFactoryTest extends PHPUnit_Framework_TestCase
+class CgiRunnerFactoryTest extends TestCase
 {
     /**
      * @var EventDispatcher
@@ -33,7 +33,7 @@ class CgiRunnerFactoryTest extends PHPUnit_Framework_TestCase
         $this->factory = new CgiRunnerFactory($this->eventDispatcher, new RequestRenderer);
     }
 
-    public function testSupports()
+    public function testSupports() : void
     {
         $exercise1 = $this->prophesize(ExerciseInterface::class);
         $exercise2 = $this->prophesize(ExerciseInterface::class);
@@ -45,7 +45,7 @@ class CgiRunnerFactoryTest extends PHPUnit_Framework_TestCase
         $this->assertFalse($this->factory->supports($exercise2->reveal()));
     }
 
-    public function testConfigureInputAddsProgramArgument()
+    public function testConfigureInputAddsProgramArgument() : void
     {
         $command = new CommandDefinition('my-command', [], 'var_dump');
 
@@ -56,7 +56,7 @@ class CgiRunnerFactoryTest extends PHPUnit_Framework_TestCase
         $this->assertTrue($command->getRequiredArgs()[0]->isRequired());
     }
 
-    public function testCreateReturnsRunner()
+    public function testCreateReturnsRunner() : void
     {
         $exercise = new CgiExerciseImpl;
         $this->assertInstanceOf(CgiRunner::class, $this->factory->create($exercise));

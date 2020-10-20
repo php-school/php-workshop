@@ -6,7 +6,7 @@ use Colors\Color;
 use Kadet\Highlighter\Formatter\CliFormatter;
 use Kadet\Highlighter\KeyLighter;
 use Kadet\Highlighter\Language\Php;
-use PhpSchool\CliMenu\Terminal\TerminalInterface;
+use PhpSchool\Terminal\Terminal;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpSchool\PhpWorkshop\Exercise\ProvidesSolution;
 use PhpSchool\PhpWorkshop\ExerciseRepository;
@@ -19,7 +19,7 @@ use PhpSchool\PhpWorkshop\ResultRenderer\FailureRenderer;
 use PhpSchool\PhpWorkshop\ResultRenderer\ResultsRenderer;
 use PhpSchool\PhpWorkshop\Solution\SingleFileSolution;
 use PhpSchool\PhpWorkshop\UserState;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 
 /**
@@ -27,10 +27,10 @@ use Prophecy\Argument;
  * @package PhpSchool\PhpWorkshopTest\ResultRenderer
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
-class ResultsRendererTest extends PHPUnit_Framework_TestCase
+class ResultsRendererTest extends TestCase
 {
 
-    public function testRenderIndividualResult()
+    public function testRenderIndividualResult() : void
     {
         $color = new Color;
         $color->setForceStyle(true);
@@ -38,7 +38,7 @@ class ResultsRendererTest extends PHPUnit_Framework_TestCase
         $resultRendererFactory = new ResultRendererFactory;
         $resultRendererFactory->registerRenderer(Failure::class, FailureRenderer::class);
 
-        $terminal = $this->prophesize(TerminalInterface::class);
+        $terminal = $this->prophesize(Terminal::class);
         $terminal->getWidth()->willReturn(30);
 
         $renderer = new ResultsRenderer(
@@ -55,12 +55,12 @@ class ResultsRendererTest extends PHPUnit_Framework_TestCase
         $this->assertSame("         Some Failure\n", $renderer->renderResult($result));
     }
 
-    public function testLineBreak()
+    public function testLineBreak() : void
     {
         $color = new Color;
         $color->setForceStyle(true);
 
-        $terminal = $this->prophesize(TerminalInterface::class);
+        $terminal = $this->prophesize(Terminal::class);
         $terminal->getWidth()->willReturn(10);
 
         $renderer = new ResultsRenderer(
@@ -75,14 +75,14 @@ class ResultsRendererTest extends PHPUnit_Framework_TestCase
         $this->assertSame("\e[33m──────────\e[0m", $renderer->lineBreak());
     }
 
-    public function testRenderSuccess()
+    public function testRenderSuccess() : void
     {
         $color = new Color;
         $color->setForceStyle(true);
 
         $resultRendererFactory = new ResultRendererFactory;
 
-        $terminal = $this->prophesize(TerminalInterface::class);
+        $terminal = $this->prophesize(Terminal::class);
         $terminal->getWidth()->willReturn(100);
         $terminal = $terminal->reveal();
 
@@ -112,14 +112,14 @@ class ResultsRendererTest extends PHPUnit_Framework_TestCase
         );
     }
 
-    public function testRenderSuccessWithSolution()
+    public function testRenderSuccessWithSolution() : void
     {
         $color = new Color;
         $color->setForceStyle(true);
 
         $resultRendererFactory = new ResultRendererFactory;
 
-        $terminal = $this->prophesize(TerminalInterface::class);
+        $terminal = $this->prophesize(Terminal::class);
         $terminal->getWidth()->willReturn(100);
         $terminal = $terminal->reveal();
 
@@ -162,14 +162,14 @@ class ResultsRendererTest extends PHPUnit_Framework_TestCase
         rmdir(dirname($tmpFile));
     }
 
-    public function testRenderSuccessWithPhpSolutionFileIsSyntaxHighlighted()
+    public function testRenderSuccessWithPhpSolutionFileIsSyntaxHighlighted() : void
     {
         $color = new Color;
         $color->setForceStyle(true);
 
         $resultRendererFactory = new ResultRendererFactory;
 
-        $terminal = $this->prophesize(TerminalInterface::class);
+        $terminal = $this->prophesize(Terminal::class);
         $terminal->getWidth()->willReturn(100);
         $terminal = $terminal->reveal();
 
@@ -219,7 +219,7 @@ class ResultsRendererTest extends PHPUnit_Framework_TestCase
         rmdir(dirname($tmpFile));
     }
 
-    public function testRenderSuccessAndFailure()
+    public function testRenderSuccessAndFailure() : void
     {
         $color = new Color;
         $color->setForceStyle(true);
@@ -231,7 +231,7 @@ class ResultsRendererTest extends PHPUnit_Framework_TestCase
              return $renderer->reveal();
         });
 
-        $terminal = $this->prophesize(TerminalInterface::class);
+        $terminal = $this->prophesize(Terminal::class);
         $terminal->getWidth()->willReturn(100);
         $terminal = $terminal->reveal();
 
@@ -262,7 +262,7 @@ class ResultsRendererTest extends PHPUnit_Framework_TestCase
         );
     }
 
-    public function testAllSuccessResultsAreHoistedToTheTop()
+    public function testAllSuccessResultsAreHoistedToTheTop() : void
     {
         $color = new Color;
         $color->setForceStyle(true);
@@ -274,7 +274,7 @@ class ResultsRendererTest extends PHPUnit_Framework_TestCase
             return $renderer->reveal();
         });
 
-        $terminal = $this->prophesize(TerminalInterface::class);
+        $terminal = $this->prophesize(Terminal::class);
         $terminal->getWidth()->willReturn(100);
         $terminal = $terminal->reveal();
 
@@ -306,7 +306,7 @@ class ResultsRendererTest extends PHPUnit_Framework_TestCase
         );
     }
 
-    public function testRenderAllFailures()
+    public function testRenderAllFailures() : void
     {
         $color = new Color;
         $color->setForceStyle(true);
@@ -318,7 +318,7 @@ class ResultsRendererTest extends PHPUnit_Framework_TestCase
             return $renderer->reveal();
         });
 
-        $terminal = $this->prophesize(TerminalInterface::class);
+        $terminal = $this->prophesize(Terminal::class);
         $terminal->getWidth()->willReturn(100);
         $terminal = $terminal->reveal();
 
@@ -348,10 +348,7 @@ class ResultsRendererTest extends PHPUnit_Framework_TestCase
         );
     }
 
-    /**
-     * @return string
-     */
-    private function getExpectedOutput()
+    private function getExpectedOutput() : string
     {
         $name = camel_case_to_kebab_case($this->getName());
         return file_get_contents(sprintf('%s/../res/exercise-renderer/%s.txt', __DIR__, $name));

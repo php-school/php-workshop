@@ -1,18 +1,19 @@
 <?php
 
-namespace PhpSchool\PhpWorkshop\ExerciseRunner;
+namespace PhpSchool\PhpWorkshopTest\ExerciseRunner;
 
 use Colors\Color;
-use PhpSchool\CliMenu\Terminal\TerminalInterface;
+use PhpSchool\Terminal\Terminal;
+use PhpSchool\PhpWorkshop\ExerciseRunner\CustomVerifyingRunner;
 use PhpSchool\PhpWorkshop\Input\Input;
 use PhpSchool\PhpWorkshop\Output\StdOutput;
 use PhpSchool\PhpWorkshopTest\Asset\CustomVerifyingExerciseImpl;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 
 /**
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
-class ExtRunnerTest extends PHPUnit_Framework_TestCase
+class CustomVerifyingRunnerTest extends TestCase
 {
     /**
      * @var CustomVerifyingRunner
@@ -24,7 +25,7 @@ class ExtRunnerTest extends PHPUnit_Framework_TestCase
      */
     private $exercise;
 
-    public function setUp()
+    public function setUp() : void
     {
         $this->exercise = new CustomVerifyingExerciseImpl;
         $this->runner = new CustomVerifyingRunner($this->exercise);
@@ -32,16 +33,16 @@ class ExtRunnerTest extends PHPUnit_Framework_TestCase
         $this->assertEquals('Custom Verifying Runner', $this->runner->getName());
     }
 
-    public function testRequiredChecks()
+    public function testRequiredChecks() : void
     {
         $this->assertEquals([], $this->runner->getRequiredChecks());
     }
 
-    public function testRunOutputsErrorMessage()
+    public function testRunOutputsErrorMessage() : void
     {
         $color = new Color;
         $color->setForceStyle(true);
-        $output = new StdOutput($color, $this->createMock(TerminalInterface::class));
+        $output = new StdOutput($color, $this->createMock(Terminal::class));
 
         $exp  = 'Nothing to run here. This exercise does not require a code solution, ';
         $exp .= "so there is nothing to execute.\n";
@@ -51,7 +52,7 @@ class ExtRunnerTest extends PHPUnit_Framework_TestCase
         $this->runner->run(new Input('app'), $output);
     }
 
-    public function testVerifyProxiesToExercise()
+    public function testVerifyProxiesToExercise() : void
     {
         self::assertEquals($this->exercise->verify(), $this->runner->verify(new Input('app')));
     }

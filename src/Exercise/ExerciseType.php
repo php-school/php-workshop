@@ -12,9 +12,6 @@ use MyCLabs\Enum\Enum;
  * $typeCgi = ExerciseType::CGI();
  * $typeCustom = ExerciseType::CUSTOM();
  * ```
- *
- * @package PhpSchool\PhpWorkshop\Exercise
- * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
 class ExerciseType extends Enum
 {

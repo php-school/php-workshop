@@ -5,7 +5,7 @@ namespace PhpSchool\PhpWorkshopTest\Check;
 use PhpSchool\PhpWorkshop\Check\SimpleCheckInterface;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseType;
 use PhpSchool\PhpWorkshop\Input\Input;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 use PhpSchool\PhpWorkshop\Check\FileExistsCheck;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpSchool\PhpWorkshop\Result\Failure;
@@ -16,7 +16,7 @@ use PhpSchool\PhpWorkshop\Result\Success;
  * @package PhpSchool\PhpWorkshopTest
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
-class FileExistsCheckTest extends PHPUnit_Framework_TestCase
+class FileExistsCheckTest extends TestCase
 {
     /**
      * @var string
@@ -33,7 +33,7 @@ class FileExistsCheckTest extends PHPUnit_Framework_TestCase
      */
     private $exercise;
 
-    public function setUp()
+    public function setUp() : void
     {
         $this->testDir = sprintf('%s/%s', sys_get_temp_dir(), $this->getName());
         mkdir($this->testDir, 0777, true);
@@ -47,7 +47,7 @@ class FileExistsCheckTest extends PHPUnit_Framework_TestCase
         $this->assertTrue($this->check->canRun(ExerciseType::CLI()));
     }
 
-    public function testSuccess()
+    public function testSuccess() : void
     {
         $file = sprintf('%s/test.txt', $this->testDir);
         touch($file);
@@ -59,7 +59,7 @@ class FileExistsCheckTest extends PHPUnit_Framework_TestCase
         unlink($file);
     }
 
-    public function testFailure()
+    public function testFailure() : void
     {
         $file = sprintf('%s/test.txt', $this->testDir);
         $failure = $this->check->check($this->exercise, new Input('app', ['program' => $file]));
@@ -67,7 +67,7 @@ class FileExistsCheckTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(sprintf('File: "%s" does not exist', $file), $failure->getReason());
     }
 
-    public function tearDown()
+    public function tearDown() : void
     {
         rmdir($this->testDir);
     }

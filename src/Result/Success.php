@@ -6,9 +6,6 @@ use PhpSchool\PhpWorkshop\Check\CheckInterface;
 
 /**
  * Default implementation of `PhpSchool\PhpWorkshop\Result\SuccessInterface`.
- *
- * @package PhpSchool\PhpWorkshop
- * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
 class Success implements SuccessInterface
 {

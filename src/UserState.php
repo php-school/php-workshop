@@ -5,9 +5,6 @@ namespace PhpSchool\PhpWorkshop;
 /**
  * This class represents the current state of the user. Which exercises she/he has completed and
  * which is the current exercise being attempted.
- *
- * @package PhpSchool\PhpWorkshop
- * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
 class UserState
 {

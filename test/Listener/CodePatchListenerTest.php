@@ -7,7 +7,7 @@ use PhpSchool\PhpWorkshop\Event\ExerciseRunnerEvent;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpSchool\PhpWorkshop\Input\Input;
 use PhpSchool\PhpWorkshop\Listener\CodePatchListener;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 use RuntimeException;
 use Symfony\Component\Filesystem\Filesystem;
 
@@ -16,7 +16,7 @@ use Symfony\Component\Filesystem\Filesystem;
  * @package PhpSchool\PhpWorkshopTest\Listener
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
-class CodePatchListenerTest extends PHPUnit_Framework_TestCase
+class CodePatchListenerTest extends TestCase
 {
     /**
      * @var string
@@ -33,7 +33,7 @@ class CodePatchListenerTest extends PHPUnit_Framework_TestCase
      */
     private $codePatcher;
 
-    public function setUp()
+    public function setUp() : void
     {
         $this->filesystem = new Filesystem;
         $this->codePatcher = $this->createMock(CodePatcher::class);
@@ -43,7 +43,7 @@ class CodePatchListenerTest extends PHPUnit_Framework_TestCase
         touch($this->file);
     }
 
-    public function testRevertThrowsExceptionIfPatchNotPreviouslyCalled()
+    public function testRevertThrowsExceptionIfPatchNotPreviouslyCalled() : void
     {
         $input    = new Input('app', ['program' => $this->file]);
         $exercise = $this->createMock(ExerciseInterface::class);
@@ -56,7 +56,7 @@ class CodePatchListenerTest extends PHPUnit_Framework_TestCase
         $listener->revert($event);
     }
 
-    public function testPatchUpdatesCode()
+    public function testPatchUpdatesCode() : void
     {
         file_put_contents($this->file, 'ORIGINAL CONTENT');
 
@@ -67,7 +67,7 @@ class CodePatchListenerTest extends PHPUnit_Framework_TestCase
             ->expects($this->once())
             ->method('patch')
             ->with($exercise, 'ORIGINAL CONTENT')
-            ->will($this->returnValue('MODIFIED CONTENT'));
+            ->willReturn('MODIFIED CONTENT');
 
         $listener   = new CodePatchListener($this->codePatcher);
         $event      = new ExerciseRunnerEvent('event', $exercise, $input);
@@ -76,7 +76,7 @@ class CodePatchListenerTest extends PHPUnit_Framework_TestCase
         $this->assertStringEqualsFile($this->file, 'MODIFIED CONTENT');
     }
 
-    public function testRevertAfterPatch()
+    public function testRevertAfterPatch() : void
     {
         file_put_contents($this->file, 'ORIGINAL CONTENT');
 
@@ -87,7 +87,7 @@ class CodePatchListenerTest extends PHPUnit_Framework_TestCase
             ->expects($this->once())
             ->method('patch')
             ->with($exercise, 'ORIGINAL CONTENT')
-            ->will($this->returnValue('MODIFIED CONTENT'));
+            ->willReturn('MODIFIED CONTENT');
 
         $listener   = new CodePatchListener($this->codePatcher);
         $event      = new ExerciseRunnerEvent('event', $exercise, $input);
@@ -97,7 +97,7 @@ class CodePatchListenerTest extends PHPUnit_Framework_TestCase
         $this->assertStringEqualsFile($this->file, 'ORIGINAL CONTENT');
     }
 
-    public function tearDown()
+    public function tearDown() : void
     {
         $this->filesystem->remove(dirname($this->file));
     }

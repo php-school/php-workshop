@@ -12,7 +12,7 @@ use Zend\Diactoros\Request;
  */
 class RequestFailureRendererTest extends AbstractResultRendererTest
 {
-    public function testRenderWhenOnlyHeadersDifferent()
+    public function testRenderWhenOnlyHeadersDifferent() : void
     {
         $failure = new RequestFailure(
             $this->request(),
@@ -31,7 +31,7 @@ class RequestFailureRendererTest extends AbstractResultRendererTest
         $this->assertSame($expected, $renderer->render($this->getRenderer()));
     }
 
-    public function testRenderWhenOnlyOutputDifferent()
+    public function testRenderWhenOnlyOutputDifferent() : void
     {
         $failure = new RequestFailure(
             $this->request(),
@@ -49,7 +49,7 @@ class RequestFailureRendererTest extends AbstractResultRendererTest
         $this->assertSame($expected, $renderer->render($this->getRenderer()));
     }
 
-    public function testRenderWhenOutputAndHeadersDifferent()
+    public function testRenderWhenOutputAndHeadersDifferent() : void
     {
         $failure = new RequestFailure(
             $this->request(),
@@ -73,7 +73,7 @@ class RequestFailureRendererTest extends AbstractResultRendererTest
         $this->assertSame($expected, $renderer->render($this->getRenderer()));
     }
 
-    private function request()
+    private function request() : Request
     {
         return (new Request('http://www.test.com'))
             ->withMethod('POST')

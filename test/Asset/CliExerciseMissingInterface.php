@@ -14,30 +14,24 @@ class CliExerciseMissingInterface extends AbstractExercise implements ExerciseIn
 
     /**
      * Get the name of the exercise, like `Hello World!`.
-     *
-     * @return string
      */
-    public function getName()
+    public function getName() : string
     {
         return 'CLI exercise missing interface';
     }
 
     /**
      * A short description of the exercise.
-     *
-     * @return string
      */
-    public function getDescription()
+    public function getDescription() : string
     {
         return 'CLI exercise missing interface';
     }
 
     /**
      * Return the type of exercise. This is an ENUM. See `PhpSchool\PhpWorkshop\Exercise\ExerciseType`.
-     *
-     * @return ExerciseType
      */
-    public function getType()
+    public function getType() : ExerciseType
     {
         return ExerciseType::CLI();
     }

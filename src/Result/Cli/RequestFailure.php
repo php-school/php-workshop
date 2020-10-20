@@ -7,9 +7,6 @@ use PhpSchool\PhpWorkshop\Utils\ArrayObject;
 /**
  * A failure result representing the situation where the output of a solution does not match
  * that of the expected output in the context of a CLI request.
- *
- * @package PhpSchool\PhpWorkshop\Result
- * @author  Aydin Hassan <aydin@hotmail.co.uk>
  */
 class RequestFailure implements FailureInterface
 {

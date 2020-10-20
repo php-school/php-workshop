@@ -4,9 +4,6 @@ namespace PhpSchool\PhpWorkshop\ResultRenderer;
 
 /**
  * The interface, result renderers should adhere to.
- *
- * @package PhpSchool\PhpWorkshop\ResultRenderer
- * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
 interface ResultRendererInterface
 {

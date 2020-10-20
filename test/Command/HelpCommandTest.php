@@ -3,19 +3,19 @@
 namespace PhpSchool\PhpWorkshopTest\Command;
 
 use Colors\Color;
-use PhpSchool\CliMenu\Terminal\TerminalInterface;
+use PhpSchool\Terminal\Terminal;
 use PhpSchool\PhpWorkshop\Command\HelpCommand;
 use PhpSchool\PhpWorkshop\Output\StdOutput;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Class HelpCommandTest
  * @package PhpSchool\PhpWorkshop\Command
  * @author Michael Woodward <aydin@hotmail.co.uk>
  */
-class HelpCommandTest extends PHPUnit_Framework_TestCase
+class HelpCommandTest extends TestCase
 {
-    public function testInvoke()
+    public function testInvoke() : void
     {
         $this->expectOutputString(file_get_contents(__DIR__ . '/../res/app-help-expected.txt'));
 
@@ -24,7 +24,7 @@ class HelpCommandTest extends PHPUnit_Framework_TestCase
 
         $command = new HelpCommand(
             'learnyouphp',
-            new StdOutput($color, $this->createMock(TerminalInterface::class)),
+            new StdOutput($color, $this->createMock(Terminal::class)),
             $color
         );
 

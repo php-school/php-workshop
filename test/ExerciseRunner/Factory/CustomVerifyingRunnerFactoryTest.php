@@ -8,12 +8,12 @@ use PhpSchool\PhpWorkshop\Exercise\ExerciseType;
 use PhpSchool\PhpWorkshop\ExerciseRunner\CustomVerifyingRunner;
 use PhpSchool\PhpWorkshop\ExerciseRunner\Factory\CustomVerifyingRunnerFactory;
 use PhpSchool\PhpWorkshopTest\Asset\CustomVerifyingExerciseImpl;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 
 /**
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
-class CustomRunnerFactoryTest extends PHPUnit_Framework_TestCase
+class CustomVerifyingRunnerFactoryTest extends TestCase
 {
     /**
      * @var CustomVerifyingRunnerFactory
@@ -25,7 +25,7 @@ class CustomRunnerFactoryTest extends PHPUnit_Framework_TestCase
         $this->factory = new CustomVerifyingRunnerFactory;
     }
 
-    public function testSupports()
+    public function testSupports() : void
     {
         $exercise1 = $this->prophesize(ExerciseInterface::class);
         $exercise2 = $this->prophesize(ExerciseInterface::class);
@@ -40,7 +40,7 @@ class CustomRunnerFactoryTest extends PHPUnit_Framework_TestCase
         $this->assertTrue($this->factory->supports($exercise3->reveal()));
     }
 
-    public function testConfigureInputAddsNoArgument()
+    public function testConfigureInputAddsNoArgument() : void
     {
         $command = new CommandDefinition('my-command', [], 'var_dump');
 
@@ -48,7 +48,7 @@ class CustomRunnerFactoryTest extends PHPUnit_Framework_TestCase
         $this->assertCount(0, $command->getRequiredArgs());
     }
 
-    public function testCreateReturnsRunner()
+    public function testCreateReturnsRunner() : void
     {
         $exercise = new CustomVerifyingExerciseImpl;
         $this->assertInstanceOf(CustomVerifyingRunner::class, $this->factory->create($exercise));

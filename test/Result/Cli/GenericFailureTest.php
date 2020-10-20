@@ -1,18 +1,18 @@
 <?php
 
-namespace PhpSchool\PhpWorkshopTest\Result\CLi;
+namespace PhpSchool\PhpWorkshopTest\Result\Cli;
 
 use PhpSchool\PhpWorkshop\Exception\CodeExecutionException;
-use PhpSchool\PhpWorkshop\Result\CLi\GenericFailure;
+use PhpSchool\PhpWorkshop\Result\Cli\GenericFailure;
 use PhpSchool\PhpWorkshop\Utils\ArrayObject;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 
 /**
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
-class GenericFailureTest extends PHPUnit_Framework_TestCase
+class GenericFailureTest extends TestCase
 {
-    public function testFailure()
+    public function testFailure() : void
     {
         $args = new ArrayObject;
         $failure = new GenericFailure($args, 'Oops');
@@ -22,7 +22,7 @@ class GenericFailureTest extends PHPUnit_Framework_TestCase
         $this->assertEquals('CLI Program Runner', $failure->getCheckName());
     }
 
-    public function testFailureWithRequestAndReason()
+    public function testFailureWithRequestAndReason() : void
     {
         $args = new ArrayObject;
         $failure = GenericFailure::fromArgsAndReason($args, 'Oops');
@@ -32,7 +32,7 @@ class GenericFailureTest extends PHPUnit_Framework_TestCase
         $this->assertEquals('CLI Program Runner', $failure->getCheckName());
     }
 
-    public function testFailureFromCodeExecutionException()
+    public function testFailureFromCodeExecutionException() : void
     {
         $args = new ArrayObject;
         $e = new CodeExecutionException('Something went wrong yo');

@@ -1,16 +1,16 @@
 <?php
 
 use Colors\Color;
-use function DI\object;
+use function DI\create;
 use function DI\factory;
 use Kadet\Highlighter\KeyLighter;
 use function PhpSchool\PhpWorkshop\Event\containerListener;
-use Interop\Container\ContainerInterface;
+use Psr\Container\ContainerInterface;
 use League\CommonMark\DocParser;
 use League\CommonMark\Environment;
 use PhpParser\PrettyPrinter\Standard;
 use PhpSchool\CliMenu\Terminal\TerminalFactory;
-use PhpSchool\CliMenu\Terminal\TerminalInterface;
+use PhpSchool\Terminal\Terminal;
 use PhpParser\Parser;
 use PhpParser\ParserFactory;
 use PhpSchool\PhpWorkshop\Check\CheckRepository;
@@ -90,7 +90,7 @@ return [
             $c->get(CheckRepository::class)
         );
     },
-    ResultAggregator::class => object(ResultAggregator::class),
+    ResultAggregator::class => create(ResultAggregator::class),
     CheckRepository::class => function (ContainerInterface $c) {
         return new CheckRepository([
             $c->get(FileExistsCheck::class),
@@ -123,7 +123,7 @@ return [
         return $colors;
     },
     OutputInterface::class => function (ContainerInterface $c) {
-        return new StdOutput($c->get(Color::class), $c->get(TerminalInterface::class));
+        return new StdOutput($c->get(Color::class), $c->get(Terminal::class));
     },
 
     ExerciseRepository::class => function (ContainerInterface $c) {
@@ -135,7 +135,7 @@ return [
     },
 
     EventDispatcher::class => factory(EventDispatcherFactory::class),
-    EventDispatcherFactory::class => object(),
+    EventDispatcherFactory::class => create(),
 
     //Exercise Runners
     RunnerManager::class => function (ContainerInterface $c) {
@@ -199,7 +199,7 @@ return [
     },
 
     //Listeners
-    PrepareSolutionListener::class       => object(),
+    PrepareSolutionListener::class       => create(),
     CodePatchListener::class             => function (ContainerInterface $c) {
         return new CodePatchListener($c->get(CodePatcher::class));
     },
@@ -216,22 +216,22 @@ return [
             $c->get(RunnerManager::class)
         );
     },
-    RealPathListener::class => object(),
+    RealPathListener::class => create(),
 
     //checks
-    FileExistsCheck::class              => object(),
-    PhpLintCheck::class                 => object(),
+    FileExistsCheck::class              => create(),
+    PhpLintCheck::class                 => create(),
     CodeParseCheck::class               => function (ContainerInterface $c) {
         return new CodeParseCheck($c->get(Parser::class));
     },
     FunctionRequirementsCheck::class    => function (ContainerInterface $c) {
         return new FunctionRequirementsCheck($c->get(Parser::class));
     },
-    DatabaseCheck::class                => object(),
-    ComposerCheck::class                => object(),
+    DatabaseCheck::class                => create(),
+    ComposerCheck::class                => create(),
 
     //Utils
-    Filesystem::class   => object(),
+    Filesystem::class   => create(),
     Parser::class       => function () {
         $parserFactory = new ParserFactory;
         return $parserFactory->create(ParserFactory::PREFER_PHP7);
@@ -247,11 +247,11 @@ return [
     FakerGenerator::class => function () {
         return FakerFactory::create();
     },
-    RequestRenderer::class => object(),
+    RequestRenderer::class => create(),
     
-    TerminalInterface::class => factory([TerminalFactory::class, 'fromSystem']),
+    Terminal::class => factory([TerminalFactory::class, 'fromSystem']),
     'menu' => factory(MenuFactory::class),
-    MenuFactory::class => object(),
+    MenuFactory::class => create(),
     ExerciseRenderer::class => function (ContainerInterface $c) {
         return new ExerciseRenderer(
             $c->get('appName'),
@@ -307,7 +307,7 @@ return [
         return new ResultsRenderer(
             $c->get('appName'),
             $c->get(Color::class),
-            $c->get(TerminalInterface::class),
+            $c->get(Terminal::class),
             $c->get(ExerciseRepository::class),
             $c->get(KeyLighter::class),
             $c->get(ResultRendererFactory::class)

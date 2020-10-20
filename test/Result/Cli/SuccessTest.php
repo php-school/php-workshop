@@ -4,14 +4,14 @@ namespace PhpSchool\PhpWorkshopTest\Result\Cli;
 
 use PhpSchool\PhpWorkshop\Result\Cli\Success;
 use PhpSchool\PhpWorkshop\Utils\ArrayObject;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 
 /**
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
-class SuccessTest extends PHPUnit_Framework_TestCase
+class SuccessTest extends TestCase
 {
-    public function testSuccess()
+    public function testSuccess() : void
     {
         $args = new ArrayObject;
         $success = new Success($args);

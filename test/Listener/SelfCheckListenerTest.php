@@ -9,16 +9,16 @@ use PhpSchool\PhpWorkshop\Listener\SelfCheckListener;
 use PhpSchool\PhpWorkshop\Result\Success;
 use PhpSchool\PhpWorkshop\ResultAggregator;
 use PhpSchool\PhpWorkshopTest\Asset\SelfCheckExerciseInterface;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Class SelfCheckListenerTest
  * @package PhpSchool\PhpWorkshopTest\Listener
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
-class SelfCheckListenerTest extends PHPUnit_Framework_TestCase
+class SelfCheckListenerTest extends TestCase
 {
-    public function testSelfCheck()
+    public function testSelfCheck() : void
     {
         $exercise = $this->createMock(SelfCheckExerciseInterface::class);
         $input    = new Input('app', ['program' => 'some-file.php']);
@@ -29,7 +29,7 @@ class SelfCheckListenerTest extends PHPUnit_Framework_TestCase
             ->expects($this->once())
             ->method('check')
             ->with($input)
-            ->will($this->returnValue($success));
+            ->willReturn($success);
 
         $results = new ResultAggregator;
         $listener = new SelfCheckListener($results);
@@ -39,7 +39,7 @@ class SelfCheckListenerTest extends PHPUnit_Framework_TestCase
         $this->assertCount(1, $results);
     }
 
-    public function testExerciseWithOutSelfCheck()
+    public function testExerciseWithOutSelfCheck() : void
     {
         $exercise = $this->createMock(ExerciseInterface::class);
         $input    = new Input('app', ['program' => 'some-file.php']);

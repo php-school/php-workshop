@@ -6,7 +6,7 @@ namespace PhpSchool\PhpWorkshopTest;
 use PhpSchool\PhpWorkshop\Check\CheckInterface;
 use PhpSchool\PhpWorkshop\Result\Cli\CliResult;
 use PhpSchool\PhpWorkshop\Utils\ArrayObject;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 use PhpSchool\PhpWorkshop\Result\Failure;
 use PhpSchool\PhpWorkshop\Result\Success;
 use PhpSchool\PhpWorkshop\Result\Cli\Success as CliSuccess;
@@ -18,23 +18,22 @@ use PhpSchool\PhpWorkshop\ResultAggregator;
  * @package PhpSchool\PhpWorkshopTest
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
-class ResultAggregatorTest extends PHPUnit_Framework_TestCase
+class ResultAggregatorTest extends TestCase
 {
     /**
      * @var CheckInterface
      */
     private $check;
 
-    public function setUp()
+    public function setUp() : void
     {
         $this->check = $this->createMock(CheckInterface::class);
         $this->check
-            ->expects($this->any())
             ->method('getName')
-            ->will($this->returnValue('Some Check'));
+            ->willReturn('Some Check');
     }
     
-    public function testIsSuccessful()
+    public function testIsSuccessful() : void
     {
         $resultAggregator = new ResultAggregator;
         $this->assertTrue($resultAggregator->isSuccessful());
@@ -46,7 +45,7 @@ class ResultAggregatorTest extends PHPUnit_Framework_TestCase
         $this->assertFalse($resultAggregator->isSuccessful());
     }
 
-    public function testIsSuccessfulWithResultGroups()
+    public function testIsSuccessfulWithResultGroups() : void
     {
         $resultAggregator = new ResultAggregator;
         $this->assertTrue($resultAggregator->isSuccessful());
@@ -62,7 +61,7 @@ class ResultAggregatorTest extends PHPUnit_Framework_TestCase
         $this->assertFalse($resultAggregator->isSuccessful());
     }
 
-    public function testIterator()
+    public function testIterator() : void
     {
         $results = [
             new Success($this->check),

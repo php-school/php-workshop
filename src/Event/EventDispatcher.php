@@ -7,9 +7,6 @@ use PhpSchool\PhpWorkshop\ResultAggregator;
 
 /**
  * An event dispatcher implementation.
- *
- * @package PhpSchool\PhpWorkshop\EventManager
- * @author  Aydin Hassan <aydin@hotmail.co.uk>
  */
 class EventDispatcher
 {

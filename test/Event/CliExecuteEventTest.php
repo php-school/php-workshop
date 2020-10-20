@@ -4,16 +4,16 @@ namespace PhpSchool\PhpWorkshopTest\Event;
 
 use PhpSchool\PhpWorkshop\Event\CliExecuteEvent;
 use PhpSchool\PhpWorkshop\Utils\ArrayObject;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Class CliExecuteEventTest
  * @package PhpSchool\PhpWorkshopTest\Event
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
-class CliExecuteEventTest extends PHPUnit_Framework_TestCase
+class CliExecuteEventTest extends TestCase
 {
-    public function testAppendArg()
+    public function testAppendArg() : void
     {
         $arr = new ArrayObject([1, 2, 3]);
         $e = new CliExecuteEvent('event', $arr);
@@ -23,7 +23,7 @@ class CliExecuteEventTest extends PHPUnit_Framework_TestCase
         $this->assertNotSame($arr, $e->getArgs());
     }
 
-    public function testPrependArg()
+    public function testPrependArg() : void
     {
         $arr = new ArrayObject([1, 2, 3]);
         $e = new CliExecuteEvent('event', $arr);
@@ -33,7 +33,7 @@ class CliExecuteEventTest extends PHPUnit_Framework_TestCase
         $this->assertNotSame($arr, $e->getArgs());
     }
 
-    public function testGetArgs()
+    public function testGetArgs() : void
     {
         $arr = new ArrayObject([1, 2, 3]);
         $e = new CliExecuteEvent('event', $arr);

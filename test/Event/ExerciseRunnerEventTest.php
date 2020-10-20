@@ -5,14 +5,14 @@ namespace PhpSchool\PhpWorkshopTest\Event;
 use PhpSchool\PhpWorkshop\Event\ExerciseRunnerEvent;
 use PhpSchool\PhpWorkshop\Input\Input;
 use PhpSchool\PhpWorkshopTest\Asset\CliExerciseImpl;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 
 /**
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
-class ExerciseRunnerEventTest extends PHPUnit_Framework_TestCase
+class ExerciseRunnerEventTest extends TestCase
 {
-    public function testGetters()
+    public function testGetters() : void
     {
         $exercise = new CliExerciseImpl;
         $input = new Input('app');

@@ -6,7 +6,7 @@ use PhpSchool\PhpWorkshop\Exception\InvalidArgumentException;
 use PhpSchool\PhpWorkshop\Factory\ResultRendererFactory;
 use PhpSchool\PhpWorkshop\ResultRenderer\ResultRendererInterface;
 use PhpSchool\PhpWorkshop\Result\ResultInterface;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 use RuntimeException;
 
 /**
@@ -14,14 +14,14 @@ use RuntimeException;
  * @package PhpSchool\PhpWorkshopTest\Factory
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
-class ResultsRendererFactoryTest extends PHPUnit_Framework_TestCase
+class ResultRendererFactoryTest extends TestCase
 {
     /**
      * @expectedException InvalidArgumentException
      */
-    public function testRegisterRendererRequiresResultInterface()
+    public function testRegisterRendererRequiresResultInterface() : void
     {
-        $resultClass = get_class($this->createMock(PHPUnit_Framework_TestCase::class));
+        $resultClass = get_class($this->createMock(TestCase::class));
         $rendererClass = get_class($this->createMock(ResultRendererInterface::class));
         $factory = new ResultRendererFactory();
         
@@ -31,10 +31,10 @@ class ResultsRendererFactoryTest extends PHPUnit_Framework_TestCase
     /**
      * @expectedException InvalidArgumentException
      */
-    public function testRegisterRendererRequiresResultRendererInterface()
+    public function testRegisterRendererRequiresResultRendererInterface() : void
     {
         $resultClass = get_class($this->createMock(ResultInterface::class));
-        $rendererClass = get_class($this->createMock(PHPUnit_Framework_TestCase::class));
+        $rendererClass = get_class($this->createMock(TestCase::class));
         $factory = new ResultRendererFactory();
         
         $factory->registerRenderer($resultClass, $rendererClass);
@@ -43,7 +43,7 @@ class ResultsRendererFactoryTest extends PHPUnit_Framework_TestCase
     /**
      * @expectedException InvalidArgumentException
      */
-    public function testRegisterRendererRequiresResultClassToBeString()
+    public function testRegisterRendererRequiresResultClassToBeString() : void
     {
         $resultClass = $this->createMock(ResultInterface::class);
         $rendererClass = get_class($this->createMock(ResultRendererInterface::class));
@@ -55,7 +55,7 @@ class ResultsRendererFactoryTest extends PHPUnit_Framework_TestCase
     /**
      * @expectedException InvalidArgumentException
      */
-    public function testRegisterRendererRequiresRendererClassToBeString()
+    public function testRegisterRendererRequiresRendererClassToBeString() : void
     {
         $resultClass = get_class($this->createMock(ResultInterface::class));
         $rendererClass = $this->createMock(ResultRendererInterface::class);
@@ -67,7 +67,7 @@ class ResultsRendererFactoryTest extends PHPUnit_Framework_TestCase
     /**
      * @expectedException RuntimeException
      */
-    public function testCreateRequiresMappingToClassName()
+    public function testCreateRequiresMappingToClassName() : void
     {
         $resultClass = $this->createMock(ResultInterface::class);
         $factory = new ResultRendererFactory();
@@ -75,7 +75,7 @@ class ResultsRendererFactoryTest extends PHPUnit_Framework_TestCase
         $factory->create($resultClass);
     }
 
-    public function testCreateReturnsMappedRendererInterface()
+    public function testCreateReturnsMappedRendererInterface() : void
     {
         $resultClass = $this->createMock(ResultInterface::class);
         $resultClassName = get_class($resultClass);
@@ -88,7 +88,7 @@ class ResultsRendererFactoryTest extends PHPUnit_Framework_TestCase
         $this->assertInstanceOf($rendererClassName, $returnedRenderer);
     }
 
-    public function testExceptionIsThrownIfFactoryReturnsInCorrectRenderer()
+    public function testExceptionIsThrownIfFactoryReturnsInCorrectRenderer() : void
     {
         $resultClass = $this->createMock(ResultInterface::class);
         $resultClassName = get_class($resultClass);

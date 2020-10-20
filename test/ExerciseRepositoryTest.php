@@ -7,7 +7,7 @@ use PhpSchool\PhpWorkshop\Exercise\ExerciseType;
 use PhpSchool\PhpWorkshopTest\Asset\CliExerciseImpl;
 use PhpSchool\PhpWorkshopTest\Asset\CliExerciseInterface;
 use PhpSchool\PhpWorkshopTest\Asset\CliExerciseMissingInterface;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpSchool\PhpWorkshop\ExerciseRepository;
 
@@ -16,9 +16,9 @@ use PhpSchool\PhpWorkshop\ExerciseRepository;
  * @package PhpSchool\PhpWorkshopTest
  * @author  Aydin Hassan <aydin@hotmail.co.uk>
  */
-class ExerciseRepositoryTest extends PHPUnit_Framework_TestCase
+class ExerciseRepositoryTest extends TestCase
 {
-    public function testFindAll()
+    public function testFindAll(): void
     {
         $exercises = [
             new CliExerciseImpl('Exercise 1'),
@@ -30,7 +30,7 @@ class ExerciseRepositoryTest extends PHPUnit_Framework_TestCase
         $this->assertSame($exercises, $repo->findAll());
     }
 
-    public function testFindByName()
+    public function testFindByName() : void
     {
         $exercises = [
             new CliExerciseImpl('Exercise 1'),
@@ -41,7 +41,7 @@ class ExerciseRepositoryTest extends PHPUnit_Framework_TestCase
         $this->assertSame($exercises[1], $repo->findByName('Exercise 2'));
     }
 
-    public function testFindByNameThrowsExceptionIfNotFound()
+    public function testFindByNameThrowsExceptionIfNotFound() : void
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Exercise with name: "exercise1" does not exist');
@@ -50,7 +50,7 @@ class ExerciseRepositoryTest extends PHPUnit_Framework_TestCase
         $repo->findByName('exercise1');
     }
 
-    public function testGetAllNames()
+    public function testGetAllNames() : void
     {
         $exercises = [
             new CliExerciseImpl('Exercise 1'),
@@ -61,7 +61,7 @@ class ExerciseRepositoryTest extends PHPUnit_Framework_TestCase
         $this->assertSame(['Exercise 1', 'Exercise 2'], $repo->getAllNames());
     }
 
-    public function testCount()
+    public function testCount() : void
     {
         $exercises = [
             new CliExerciseImpl('Exercise 1'),
@@ -72,7 +72,7 @@ class ExerciseRepositoryTest extends PHPUnit_Framework_TestCase
         $this->assertCount(2, $repo);
     }
 
-    public function testIterator()
+    public function testIterator() : void
     {
         $exercises = [
             new CliExerciseImpl('Exercise 1'),
@@ -83,7 +83,7 @@ class ExerciseRepositoryTest extends PHPUnit_Framework_TestCase
         $this->assertEquals($exercises, iterator_to_array($repo));
     }
 
-    public function testExceptionIsThrownWhenTryingToAddExerciseWhichDoesNotImplementCorrectInterface()
+    public function testExceptionIsThrownWhenTryingToAddExerciseWhichDoesNotImplementCorrectInterface() : void
     {
         $this->expectException(InvalidArgumentException::class);
         $message  = '"PhpSchool\PhpWorkshopTest\Asset\CliExerciseMissingInterface" is required to implement ';

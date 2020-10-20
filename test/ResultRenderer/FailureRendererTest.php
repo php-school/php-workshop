@@ -16,7 +16,7 @@ use PhpSchool\PhpWorkshop\ResultRenderer\FailureRenderer;
  */
 class FailureRendererTest extends AbstractResultRendererTest
 {
-    public function testRender()
+    public function testRender() : void
     {
         $failure = new Failure($this->createMock(CheckInterface::class), 'Something went wrong');
         $renderer = new FailureRenderer($failure);

@@ -9,18 +9,17 @@ use PhpSchool\PhpWorkshop\ExerciseRunner\RunnerManager;
 use PhpSchool\PhpWorkshop\Listener\ConfigureCommandListener;
 use PhpSchool\PhpWorkshop\UserState;
 use PhpSchool\PhpWorkshopTest\Asset\CliExerciseImpl;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 
 /**
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
-class ConfigureCommandListenerTest extends PHPUnit_Framework_TestCase
+class ConfigureCommandListenerTest extends TestCase
 {
     /**
      * @dataProvider configurableCommands
-     * @param string $commandName
      */
-    public function testInputIsConfiguredForCorrectCommands($commandName)
+    public function testInputIsConfiguredForCorrectCommands(string $commandName) : void
     {
         $command = new CommandDefinition($commandName, [], function () {
         });
@@ -36,10 +35,7 @@ class ConfigureCommandListenerTest extends PHPUnit_Framework_TestCase
         (new ConfigureCommandListener($state, $repo, $runnerManager->reveal()))->__invoke($event);
     }
 
-    /**
-     * @return array
-     */
-    public function configurableCommands()
+    public function configurableCommands() : array
     {
         return [
             ['verify'],
@@ -49,9 +45,8 @@ class ConfigureCommandListenerTest extends PHPUnit_Framework_TestCase
 
     /**
      * @dataProvider nonConfigurableCommands
-     * @param string $commandName
      */
-    public function testInputIsNotConfiguredForCorrectCommands($commandName)
+    public function testInputIsNotConfiguredForCorrectCommands(string $commandName) : void
     {
         $command = new CommandDefinition($commandName, [], function () {
         });
@@ -68,10 +63,7 @@ class ConfigureCommandListenerTest extends PHPUnit_Framework_TestCase
         $runnerManager->configureInput($exercise, $command)->shouldNotHaveBeenCalled();
     }
 
-    /**
-     * @return array
-     */
-    public function nonConfigurableCommands()
+    public function nonConfigurableCommands() : array
     {
         return [
             ['print'],

@@ -8,7 +8,7 @@ use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpSchool\PhpWorkshop\Input\Input;
 use PhpSchool\PhpWorkshop\Listener\PrepareSolutionListener;
 use PhpSchool\PhpWorkshop\Solution\SolutionInterface;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 use ReflectionProperty;
 use RuntimeException;
 use Symfony\Component\Filesystem\Filesystem;
@@ -18,7 +18,7 @@ use Symfony\Component\Filesystem\Filesystem;
  * @package PhpSchool\PhpWorkshopTest\Listener
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
-class PrepareSolutionListenerTest extends PHPUnit_Framework_TestCase
+class PrepareSolutionListenerTest extends TestCase
 {
     /**
      * @var string
@@ -35,7 +35,7 @@ class PrepareSolutionListenerTest extends PHPUnit_Framework_TestCase
      */
     private $filesystem;
 
-    public function setUp()
+    public function setUp() : void
     {
         $this->filesystem = new Filesystem;
         $this->listener = new PrepareSolutionListener;
@@ -45,7 +45,7 @@ class PrepareSolutionListenerTest extends PHPUnit_Framework_TestCase
         touch($this->file);
     }
 
-    public function testIfSolutionRequiresComposerButComposerCannotBeLocatedExceptionIsThrown()
+    public function testIfSolutionRequiresComposerButComposerCannotBeLocatedExceptionIsThrown() : void
     {
         $refProp = new ReflectionProperty(PrepareSolutionListener::class, 'composerLocations');
         $refProp->setAccessible(true);
@@ -53,14 +53,14 @@ class PrepareSolutionListenerTest extends PHPUnit_Framework_TestCase
 
         $solution = $this->createMock(SolutionInterface::class);
         $exercise = $this->createMock([ExerciseInterface::class, CliExercise::class]);
-        $exercise->expects($this->any())
+        $exercise
             ->method('getSolution')
-            ->will($this->returnValue($solution));
+            ->willReturn($solution);
 
         $solution
             ->expects($this->once())
             ->method('hasComposerFile')
-            ->will($this->returnValue(true));
+            ->willReturn(true);
 
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('Composer could not be located on the system');
@@ -68,26 +68,25 @@ class PrepareSolutionListenerTest extends PHPUnit_Framework_TestCase
         $this->listener->__invoke($event);
     }
 
-    public function testIfSolutionRequiresComposerButVendorDirExistsNothingIsDone()
+    public function testIfSolutionRequiresComposerButVendorDirExistsNothingIsDone() : void
     {
         mkdir(sprintf('%s/vendor', dirname($this->file)));
         $this->assertFileExists(sprintf('%s/vendor', dirname($this->file)));
 
         $solution = $this->createMock(SolutionInterface::class);
         $exercise = $this->createMock([ExerciseInterface::class, CliExercise::class]);
-        $exercise->expects($this->any())
+        $exercise
             ->method('getSolution')
-            ->will($this->returnValue($solution));
+            ->willReturn($solution);
 
         $solution
             ->expects($this->once())
             ->method('hasComposerFile')
-            ->will($this->returnValue(true));
+            ->willReturn(true);
 
         $solution
-            ->expects($this->any())
             ->method('getBaseDirectory')
-            ->will($this->returnValue(dirname($this->file)));
+            ->willReturn(dirname($this->file));
 
         $event = new ExerciseRunnerEvent('event', $exercise, new Input('app'));
         $this->listener->__invoke($event);
@@ -97,7 +96,7 @@ class PrepareSolutionListenerTest extends PHPUnit_Framework_TestCase
         $this->assertFileNotExists(sprintf('%s/composer.lock', dirname($this->file)));
     }
 
-    public function testIfSolutionRequiresComposerComposerInstallIsExecuted()
+    public function testIfSolutionRequiresComposerComposerInstallIsExecuted() : void
     {
         $this->assertFileNotExists(sprintf('%s/vendor', dirname($this->file)));
         file_put_contents(sprintf('%s/composer.json', dirname($this->file)), json_encode([
@@ -108,19 +107,18 @@ class PrepareSolutionListenerTest extends PHPUnit_Framework_TestCase
 
         $solution = $this->createMock(SolutionInterface::class);
         $exercise = $this->createMock([ExerciseInterface::class, CliExercise::class]);
-        $exercise->expects($this->any())
+        $exercise
             ->method('getSolution')
-            ->will($this->returnValue($solution));
+            ->willReturn($solution);
 
         $solution
             ->expects($this->once())
             ->method('hasComposerFile')
-            ->will($this->returnValue(true));
+            ->willReturn(true);
 
         $solution
-            ->expects($this->any())
             ->method('getBaseDirectory')
-            ->will($this->returnValue(dirname($this->file)));
+            ->willReturn(dirname($this->file));
 
         $event = new ExerciseRunnerEvent('event', $exercise, new Input('app'));
         $this->listener->__invoke($event);
@@ -128,7 +126,7 @@ class PrepareSolutionListenerTest extends PHPUnit_Framework_TestCase
         $this->assertFileExists(sprintf('%s/vendor', dirname($this->file)));
     }
 
-    public function tearDown()
+    public function tearDown() : void
     {
         $this->filesystem->remove(dirname($this->file));
     }

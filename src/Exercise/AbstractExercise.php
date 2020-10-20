@@ -10,9 +10,6 @@ use ReflectionClass;
 /**
  * This abstract class implements many of the methods described in `PhpSchool\PhpWorkshop\Exercise\ExerciseInterface`.
  * It serves as a good base for an exercise, providing useful defaults for many of the methods.
- *
- * @package PhpSchool\PhpWorkshop\Exercise
- * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
 abstract class AbstractExercise
 {

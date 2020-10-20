@@ -9,11 +9,6 @@ use PhpSchool\PhpWorkshop\Output\OutputInterface;
 use PhpSchool\PhpWorkshop\UserState;
 use PhpSchool\PhpWorkshop\UserStateSerializer;
 
-/**
- * Class RunCommand
- * @package PhpSchool\PhpWorkshop\Command
- * @author Michael Woodward <mikeymike.mw@gmail.com>
- */
 class RunCommand
 {
     /**

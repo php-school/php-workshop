@@ -2,6 +2,7 @@
 
 namespace PhpSchool\PhpWorkshopTest;
 
+use PhpParser\Node\Expr\Variable;
 use PhpParser\Node\Name;
 use PhpParser\Node\Stmt\Catch_;
 use PhpParser\Node\Stmt\TryCatch;
@@ -9,11 +10,9 @@ use PhpParser\ParserFactory;
 use PhpParser\PrettyPrinter\Standard;
 use PhpSchool\PhpWorkshop\CodePatcher;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
-use PhpSchool\PhpWorkshop\Exercise\PreProcessable;
-use PhpSchool\PhpWorkshop\Exercise\SubmissionPatchable;
 use PhpSchool\PhpWorkshop\Patch;
 use PhpSchool\PhpWorkshopTest\Asset\PatchableExercise;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 use PhpSchool\PhpWorkshop\CodeInsertion as Insertion;
 
 /**
@@ -21,9 +20,9 @@ use PhpSchool\PhpWorkshop\CodeInsertion as Insertion;
  * @package PhpSchool\PhpWorkshopTest
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
-class CodePatcherTest extends PHPUnit_Framework_TestCase
+class CodePatcherTest extends TestCase
 {
-    public function testDefaultPatchIsAppliedIfAvailable()
+    public function testDefaultPatchIsAppliedIfAvailable() : void
     {
         $patch = (new Patch)
             ->withInsertion(new Insertion(Insertion::TYPE_BEFORE, 'ini_set("display_errors", 1);'));
@@ -36,7 +35,7 @@ class CodePatcherTest extends PHPUnit_Framework_TestCase
     }
     
     
-    public function testPatcherDoesNotApplyPatchIfNotPatchableExercise()
+    public function testPatcherDoesNotApplyPatchIfNotPatchableExercise() : void
     {
         $patcher = new CodePatcher((new ParserFactory)->create(ParserFactory::PREFER_PHP7), new Standard);
         $exercise = $this->createMock(ExerciseInterface::class);
@@ -47,12 +46,8 @@ class CodePatcherTest extends PHPUnit_Framework_TestCase
     
     /**
      * @dataProvider codeProvider
-     *
-     * @param string $code
-     * @param Patch $patch
-     * @param string $expectedResult
      */
-    public function testPatcher($code, Patch $patch, $expectedResult)
+    public function testPatcher(string $code, Patch $patch, string $expectedResult) : void
     {
         $patcher = new CodePatcher((new ParserFactory)->create(ParserFactory::PREFER_PHP7), new Standard);
         
@@ -61,13 +56,13 @@ class CodePatcherTest extends PHPUnit_Framework_TestCase
         $exercise
             ->expects($this->once())
             ->method('getPatch')
-            ->will($this->returnValue($patch));
+            ->willReturn($patch);
         
         $result = $patcher->patch($exercise, $code);
         $this->assertEquals($expectedResult, $result);
     }
 
-    public function codeProvider()
+    public function codeProvider() : array
     {
         return [
             'only-before-insertion' => [
@@ -108,7 +103,10 @@ class CodePatcherTest extends PHPUnit_Framework_TestCase
                 (new Patch)
                     ->withTransformer(function (array $statements) {
                         return [
-                            new TryCatch($statements, [new Catch_([new Name(\Exception::class)], 'e', [])])
+                            new TryCatch(
+                                $statements,
+                                [new Catch_([new Name(\Exception::class)], new Variable('e'), [])]
+                            )
                         ];
                     }),
                 "<?php\n\ntry {\n    \$original = true;\n} catch (Exception \$e) {\n}"
@@ -119,7 +117,10 @@ class CodePatcherTest extends PHPUnit_Framework_TestCase
                     ->withInsertion(new Insertion(Insertion::TYPE_BEFORE, '$before = "here";'))
                     ->withTransformer(function (array $statements) {
                         return [
-                            new TryCatch($statements, [new Catch_([new Name(\Exception::class)], 'e', [])])
+                            new TryCatch(
+                                $statements,
+                                [new Catch_([new Name(\Exception::class)], new Variable('e'), [])]
+                            )
                         ];
                     }),
                 "<?php\n\ntry {\n    \$before = \"here\";\n    \$original = true;\n} catch (Exception \$e) {\n}"

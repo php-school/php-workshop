@@ -8,8 +8,6 @@ use PhpSchool\PhpWorkshop\ResultRenderer\ResultsRenderer;
 
 /**
  * Renderer for `PhpSchool\PhpWorkshop\Result\Cli\RequestFailure`.
- *
- * @package PhpSchool\PhpWorkshop\ResultRenderer
  */
 class RequestFailureRenderer implements ResultRendererInterface
 {

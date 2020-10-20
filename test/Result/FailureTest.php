@@ -5,7 +5,7 @@ namespace PhpSchool\PhpWorkshopTest\Result;
 use PhpParser\Error;
 use PhpSchool\PhpWorkshop\Check\CheckInterface;
 use PhpSchool\PhpWorkshop\Exception\CodeExecutionException;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 use PhpSchool\PhpWorkshop\Result\ResultInterface;
 use PhpSchool\PhpWorkshop\Result\Failure;
 
@@ -14,26 +14,25 @@ use PhpSchool\PhpWorkshop\Result\Failure;
  * @package PhpSchool\PhpWorkshopTest\Result
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
-class FailureTest extends PHPUnit_Framework_TestCase
+class FailureTest extends TestCase
 {
     /**
      * @var CheckInterface
      */
     private $check;
 
-    public function setUp()
+    public function setUp() : void
     {
         $this->check = $this->createMock(CheckInterface::class);
         $this->check
-            ->expects($this->any())
             ->method('getName')
-            ->will($this->returnValue('Some Check'));
+            ->willReturn('Some Check');
 
         $failure = new Failure($this->check->getName(), '');
         $this->assertSame('Some Check', $failure->getCheckName());
     }
     
-    public function testFailure()
+    public function testFailure() : void
     {
         $failure = new Failure($this->check->getName(), 'Something went wrong yo');
         $this->assertInstanceOf(ResultInterface::class, $failure);
@@ -41,7 +40,7 @@ class FailureTest extends PHPUnit_Framework_TestCase
         $this->assertEquals('Some Check', $failure->getCheckName());
     }
 
-    public function testFailureWithNameAndReason()
+    public function testFailureWithNameAndReason() : void
     {
         $failure = Failure::fromNameAndReason('Some Check', 'Something went wrong yo');
         $this->assertInstanceOf(ResultInterface::class, $failure);
@@ -49,7 +48,7 @@ class FailureTest extends PHPUnit_Framework_TestCase
         $this->assertEquals('Some Check', $failure->getCheckName());
     }
 
-    public function testFailureWithReason()
+    public function testFailureWithReason() : void
     {
         $failure = Failure::fromCheckAndReason($this->check, 'Something went wrong yo');
         $this->assertInstanceOf(ResultInterface::class, $failure);
@@ -57,7 +56,7 @@ class FailureTest extends PHPUnit_Framework_TestCase
         $this->assertEquals('Some Check', $failure->getCheckName());
     }
 
-    public function testFailureFromCodeExecutionException()
+    public function testFailureFromCodeExecutionException() : void
     {
         $e = new CodeExecutionException('Something went wrong yo');
         $failure = Failure::fromNameAndCodeExecutionFailure('Some Check', $e);
@@ -66,7 +65,7 @@ class FailureTest extends PHPUnit_Framework_TestCase
         $this->assertEquals('Some Check', $failure->getCheckName());
     }
 
-    public function testFailureFromCodeParseException()
+    public function testFailureFromCodeParseException() : void
     {
         $e = new Error('Something went wrong yo');
         $failure = Failure::fromCheckAndCodeParseFailure($this->check, $e, 'exercise.php');

@@ -4,15 +4,15 @@ namespace PhpSchool\PhpWorkshopTest\Result\Cgi;
 
 use PhpSchool\PhpWorkshop\Exception\CodeExecutionException;
 use PhpSchool\PhpWorkshop\Result\Cgi\GenericFailure;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\RequestInterface;
 
 /**
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
-class GenericFailureTest extends PHPUnit_Framework_TestCase
+class GenericFailureTest extends TestCase
 {
-    public function testFailure()
+    public function testFailure(): void
     {
         $request = $this->createMock(RequestInterface::class);
         $failure = new GenericFailure($request, 'Oops');
@@ -22,7 +22,7 @@ class GenericFailureTest extends PHPUnit_Framework_TestCase
         $this->assertEquals('CGI Program Runner', $failure->getCheckName());
     }
 
-    public function testFailureWithRequestAndReason()
+    public function testFailureWithRequestAndReason() : void
     {
         $request = $this->createMock(RequestInterface::class);
         $failure = GenericFailure::fromRequestAndReason($request, 'Oops');
@@ -32,7 +32,7 @@ class GenericFailureTest extends PHPUnit_Framework_TestCase
         $this->assertEquals('CGI Program Runner', $failure->getCheckName());
     }
 
-    public function testFailureFromCodeExecutionException()
+    public function testFailureFromCodeExecutionException() : void
     {
         $e = new CodeExecutionException('Something went wrong yo');
         $request = $this->createMock(RequestInterface::class);

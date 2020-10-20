@@ -3,7 +3,7 @@
 namespace PhpSchool\PhpWorkshopTest\Exception;
 
 use PhpSchool\PhpWorkshop\Exception\CodeExecutionException;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\Process\Process;
 
 /**
@@ -11,39 +11,39 @@ use Symfony\Component\Process\Process;
  * @package PhpSchool\PhpWorkshopTest\Exception
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
-class CodeExecutionExceptionTest extends PHPUnit_Framework_TestCase
+class CodeExecutionExceptionTest extends TestCase
 {
-    public function testException()
+    public function testException() : void
     {
         $e = new CodeExecutionException('nope');
         $this->assertEquals('nope', $e->getMessage());
     }
 
-    public function testFromProcessUsesErrorOutputIfNotEmpty()
+    public function testFromProcessUsesErrorOutputIfNotEmpty() : void
     {
         $process = $this->createMock(Process::class);
 
         $process
-            ->expects($this->exactly(2))
+            ->expects($this->once())
             ->method('getErrorOutput')
-            ->will($this->returnValue('Error Output'));
+            ->willReturn('Error Output');
         
         $e = CodeExecutionException::fromProcess($process);
         $this->assertEquals('PHP Code failed to execute. Error: "Error Output"', $e->getMessage());
     }
 
-    public function testFromProcessUsesStdOutputIfErrorOutputEmpty()
+    public function testFromProcessUsesStdOutputIfErrorOutputEmpty() : void
     {
         $process = $this->createMock(Process::class);
         $process
-            ->expects($this->exactly(1))
+            ->expects($this->once())
             ->method('getErrorOutput')
-            ->will($this->returnValue(''));
+            ->willReturn('');
 
         $process
-            ->expects($this->exactly(1))
+            ->expects($this->once())
             ->method('getOutput')
-            ->will($this->returnValue('Std Output'));
+            ->willReturn('Std Output');
 
         $e = CodeExecutionException::fromProcess($process);
         $this->assertEquals('PHP Code failed to execute. Error: "Std Output"', $e->getMessage());

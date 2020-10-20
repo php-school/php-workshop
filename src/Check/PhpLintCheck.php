@@ -13,19 +13,14 @@ use Symfony\Component\Process\Process;
 /**
  * This check attempts to lint a student's solution and returns
  * a success or failure based on the result of the linting.
- *
- * @package PhpSchool\PhpWorkshop\Check
- * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
 class PhpLintCheck implements SimpleCheckInterface
 {
 
     /**
      * Return the check's name
-     *
-     * @return string
      */
-    public function getName()
+    public function getName() : string
     {
         return 'PHP Code Check';
     }
@@ -37,7 +32,7 @@ class PhpLintCheck implements SimpleCheckInterface
      * @param Input $input The command line arguments passed to the command.
      * @return ResultInterface The result of the check.
      */
-    public function check(ExerciseInterface $exercise, Input $input)
+    public function check(ExerciseInterface $exercise, Input $input) : ResultInterface
     {
         $process = new Process(sprintf('%s -l %s', PHP_BINARY, $input->getArgument('program')));
         $process->run();
@@ -46,24 +41,18 @@ class PhpLintCheck implements SimpleCheckInterface
             return Success::fromCheck($this);
         }
 
-        return Failure::fromCheckAndReason($this, $process->getErrorOutput());
+        return Failure::fromCheckAndReason($this, trim($process->getOutput()));
     }
 
     /**
      * This check can run on any exercise type.
-     *
-     * @param ExerciseType $exerciseType
-     * @return bool
      */
-    public function canRun(ExerciseType $exerciseType)
+    public function canRun(ExerciseType $exerciseType) : bool
     {
-        return in_array($exerciseType->getValue(), [ExerciseType::CGI, ExerciseType::CLI]);
+        return in_array($exerciseType->getValue(), [ExerciseType::CGI, ExerciseType::CLI], true);
     }
 
-    /**
-     * @return string
-     */
-    public function getExerciseInterface()
+    public function getExerciseInterface() : string
     {
         return ExerciseInterface::class;
     }
@@ -71,10 +60,8 @@ class PhpLintCheck implements SimpleCheckInterface
     /**
      * This check should be run before executing the student's solution, as, if it cannot be linted
      * it probably cannot be executed.
-     *
-     * @return string
      */
-    public function getPosition()
+    public function getPosition() : string
     {
         return SimpleCheckInterface::CHECK_BEFORE;
     }

@@ -3,7 +3,7 @@
 namespace PhpSchool\PhpWorkshopTest\Result;
 
 use PhpSchool\PhpWorkshop\Check\CheckInterface;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 use PhpSchool\PhpWorkshop\Result\ResultInterface;
 use PhpSchool\PhpWorkshop\Result\Success;
 
@@ -12,22 +12,21 @@ use PhpSchool\PhpWorkshop\Result\Success;
  * @package PhpSchool\PhpWorkshopTest\Result
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
-class SuccessTest extends PHPUnit_Framework_TestCase
+class SuccessTest extends TestCase
 {
-    public function testSuccess()
+    public function testSuccess() : void
     {
         $success = new Success('Some Check');
         $this->assertInstanceOf(ResultInterface::class, $success);
         $this->assertEquals('Some Check', $success->getCheckName());
     }
 
-    public function testSuccessFromCheck()
+    public function testSuccessFromCheck() : void
     {
         $check = $this->createMock(CheckInterface::class);
         $check
-            ->expects($this->any())
             ->method('getName')
-            ->will($this->returnValue('Some Check'));
+            ->willReturn('Some Check');
 
         $success = Success::fromCheck($check);
         $this->assertInstanceOf(ResultInterface::class, $success);

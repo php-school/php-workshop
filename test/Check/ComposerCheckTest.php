@@ -12,14 +12,14 @@ use PhpSchool\PhpWorkshop\Input\Input;
 use PhpSchool\PhpWorkshop\Result\Failure;
 use PhpSchool\PhpWorkshop\Result\Success;
 use PhpSchool\PhpWorkshopTest\Asset\ComposerExercise;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Class ComposerCheckTest
  * @package PhpSchool\PhpWorkshopTest\Check
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
-class ComposerCheckTest extends PHPUnit_Framework_TestCase
+class ComposerCheckTest extends TestCase
 {
     /**
      * @var ComposerCheck
@@ -31,7 +31,7 @@ class ComposerCheckTest extends PHPUnit_Framework_TestCase
      */
     private $exercise;
 
-    public function setUp()
+    public function setUp() : void
     {
         $this->check = new ComposerCheck;
         $this->exercise = new ComposerExercise;
@@ -43,7 +43,7 @@ class ComposerCheckTest extends PHPUnit_Framework_TestCase
         $this->assertTrue($this->check->canRun(ExerciseType::CLI()));
     }
     
-    public function testExceptionIsThrownIfNotValidExercise()
+    public function testExceptionIsThrownIfNotValidExercise() : void
     {
         $exercise = $this->createMock(ExerciseInterface::class);
         $this->expectException(InvalidArgumentException::class);
@@ -51,7 +51,7 @@ class ComposerCheckTest extends PHPUnit_Framework_TestCase
         $this->check->check($exercise, new Input('app'));
     }
 
-    public function testCheckReturnsFailureIfNoComposerFile()
+    public function testCheckReturnsFailureIfNoComposerFile() : void
     {
         $result = $this->check->check(
             $this->exercise,
@@ -63,7 +63,7 @@ class ComposerCheckTest extends PHPUnit_Framework_TestCase
         $this->assertSame('No composer.json file found', $result->getReason());
     }
 
-    public function testCheckReturnsFailureIfNoComposerLockFile()
+    public function testCheckReturnsFailureIfNoComposerLockFile() : void
     {
         $result = $this->check->check(
             $this->exercise,
@@ -75,7 +75,7 @@ class ComposerCheckTest extends PHPUnit_Framework_TestCase
         $this->assertSame('No composer.lock file found', $result->getReason());
     }
 
-    public function testCheckReturnsFailureIfNoVendorFolder()
+    public function testCheckReturnsFailureIfNoVendorFolder() : void
     {
         $result = $this->check->check(
             $this->exercise,
@@ -93,12 +93,12 @@ class ComposerCheckTest extends PHPUnit_Framework_TestCase
      * @param string $dependency
      * @param string $solutionFile
      */
-    public function testCheckReturnsFailureIfDependencyNotRequired($dependency, $solutionFile)
+    public function testCheckReturnsFailureIfDependencyNotRequired($dependency, $solutionFile) : void
     {
         $exercise = $this->createMock(ComposerExercise::class);
         $exercise->expects($this->once())
             ->method('getRequiredPackages')
-            ->will($this->returnValue([$dependency]));
+            ->willReturn([$dependency]);
 
         $result = $this->check->check($exercise, new Input('app', ['program' => $solutionFile]));
 
@@ -113,7 +113,7 @@ class ComposerCheckTest extends PHPUnit_Framework_TestCase
     /**
      * @return array
      */
-    public function dependencyProvider()
+    public function dependencyProvider() : array
     {
         return [
             ['klein/klein',           __DIR__ . '/../res/composer/no-klein/solution.php'],
@@ -121,7 +121,7 @@ class ComposerCheckTest extends PHPUnit_Framework_TestCase
         ];
     }
 
-    public function testCheckReturnsSuccessIfCorrectLockFile()
+    public function testCheckReturnsSuccessIfCorrectLockFile() : void
     {
         $result = $this->check->check(
             $this->exercise,

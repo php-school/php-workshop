@@ -4,16 +4,16 @@ namespace PhpSchool\PhpWorkshopTest\Solution;
 
 use InvalidArgumentException;
 use PhpSchool\PhpWorkshop\Solution\SolutionFile;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Class SolutionFileTest
  * @package PhpSchool\PhpWorkshop\Solution
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
-class SolutionFileTest extends PHPUnit_Framework_TestCase
+class SolutionFileTest extends TestCase
 {
-    public function testExceptionIsThrowIfFileNotExists()
+    public function testExceptionIsThrowIfFileNotExists() : void
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('File: "file/that/does/not/exist.php" does not exist');
@@ -21,7 +21,7 @@ class SolutionFileTest extends PHPUnit_Framework_TestCase
         SolutionFile::fromFile('file/that/does/not/exist.php');
     }
 
-    public function testPaths()
+    public function testPaths() : void
     {
         $tempPath   = sprintf('%s/%s', sys_get_temp_dir(), $this->getName());
         $filePath   = sprintf('%s/test.file', $tempPath);
@@ -39,7 +39,7 @@ class SolutionFileTest extends PHPUnit_Framework_TestCase
         rmdir($tempPath);
     }
 
-    public function testEmptyContents()
+    public function testEmptyContents() : void
     {
         $tempPath   = sprintf('%s/%s', sys_get_temp_dir(), $this->getName());
         $filePath   = sprintf('%s/test.file', $tempPath);
@@ -57,7 +57,7 @@ class SolutionFileTest extends PHPUnit_Framework_TestCase
         rmdir($tempPath);
     }
 
-    public function testGetContents()
+    public function testGetContents() : void
     {
         $tempPath   = sprintf('%s/%s', sys_get_temp_dir(), $this->getName());
         $filePath   = sprintf('%s/test.file', $tempPath);
@@ -75,7 +75,7 @@ class SolutionFileTest extends PHPUnit_Framework_TestCase
         rmdir($tempPath);
     }
 
-    public function testConstructionWithManualBaseDirectory()
+    public function testConstructionWithManualBaseDirectory() : void
     {
         $tempPath   = sprintf('%s/%s/sub-dir', sys_get_temp_dir(), $this->getName());
         $filePath   = sprintf('%s/test.file', $tempPath);
@@ -93,7 +93,7 @@ class SolutionFileTest extends PHPUnit_Framework_TestCase
         rmdir($tempPath);
     }
 
-    public function testGetExtension()
+    public function testGetExtension() : void
     {
         $tempPath   = sprintf('%s/%s/sub-dir', sys_get_temp_dir(), $this->getName());
         $filePath   = sprintf('%s/test.php', $tempPath);

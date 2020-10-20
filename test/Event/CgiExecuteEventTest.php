@@ -3,7 +3,7 @@
 namespace PhpSchool\PhpWorkshopTest\Event;
 
 use PhpSchool\PhpWorkshop\Event\CgiExecuteEvent;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\RequestInterface;
 use Zend\Diactoros\Request;
 
@@ -12,9 +12,9 @@ use Zend\Diactoros\Request;
  * @package PhpSchool\PhpWorkshopTest\Event
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
-class CgiExecuteEventTest extends PHPUnit_Framework_TestCase
+class CgiExecuteEventTest extends TestCase
 {
-    public function testAddHeader()
+    public function testAddHeader() : void
     {
         $request = new Request;
         $e = new CgiExecuteEvent('event', $request);
@@ -24,7 +24,7 @@ class CgiExecuteEventTest extends PHPUnit_Framework_TestCase
         $this->assertNotSame($request, $e->getRequest());
     }
 
-    public function testModifyRequest()
+    public function testModifyRequest() : void
     {
         $request = new Request;
         $e = new CgiExecuteEvent('event', $request);
@@ -39,7 +39,7 @@ class CgiExecuteEventTest extends PHPUnit_Framework_TestCase
         $this->assertNotSame($request, $e->getRequest());
     }
 
-    public function testGetRequest()
+    public function testGetRequest() : void
     {
         $request = new Request;
         $e = new CgiExecuteEvent('event', $request);

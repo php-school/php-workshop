@@ -10,17 +10,17 @@ use PhpSchool\PhpWorkshop\Event\EventDispatcher;
 use PhpSchool\PhpWorkshop\Exception\InvalidArgumentException;
 use PhpSchool\PhpWorkshop\Factory\EventDispatcherFactory;
 use PhpSchool\PhpWorkshop\ResultAggregator;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Class EventDispatcherFactoryTest
  * @package PhpSchool\PhpWorkshopTest\Event
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
-class EventDispatcherFactoryTest extends PHPUnit_Framework_TestCase
+class EventDispatcherFactoryTest extends TestCase
 {
 
-    public function testCreateWithNoConfig()
+    public function testCreateWithNoConfig() : void
     {
         $c = $this->prophesize(ContainerInterface::class);
         $c->get(ResultAggregator::class)->willReturn(new ResultAggregator);
@@ -31,7 +31,7 @@ class EventDispatcherFactoryTest extends PHPUnit_Framework_TestCase
         $this->assertSame([], $this->readAttribute($dispatcher, 'listeners'));
     }
 
-    public function testExceptionIsThrownIfEventListenerGroupsNotArray()
+    public function testExceptionIsThrownIfEventListenerGroupsNotArray() : void
     {
         $c = $this->prophesize(ContainerInterface::class);
         $c->get(ResultAggregator::class)->willReturn(new ResultAggregator);
@@ -44,7 +44,7 @@ class EventDispatcherFactoryTest extends PHPUnit_Framework_TestCase
         (new EventDispatcherFactory)->__invoke($c->reveal());
     }
 
-    public function testExceptionIsThrownIfEventsNotArray()
+    public function testExceptionIsThrownIfEventsNotArray() : void
     {
         $c = $this->prophesize(ContainerInterface::class);
         $c->get(ResultAggregator::class)->willReturn(new ResultAggregator);
@@ -57,7 +57,7 @@ class EventDispatcherFactoryTest extends PHPUnit_Framework_TestCase
         (new EventDispatcherFactory)->__invoke($c->reveal());
     }
 
-    public function testExceptionIsThrownIfEventListenersNotArray()
+    public function testExceptionIsThrownIfEventListenersNotArray() : void
     {
         $eventConfig = [
             'my-group' => [
@@ -76,7 +76,7 @@ class EventDispatcherFactoryTest extends PHPUnit_Framework_TestCase
         (new EventDispatcherFactory)->__invoke($c->reveal());
     }
 
-    public function testExceptionIsThrownIfListenerNotCallable()
+    public function testExceptionIsThrownIfListenerNotCallable() : void
     {
         $eventConfig = [
             'my-group' => [
@@ -95,7 +95,7 @@ class EventDispatcherFactoryTest extends PHPUnit_Framework_TestCase
         (new EventDispatcherFactory)->__invoke($c->reveal());
     }
 
-    public function testExceptionIsThrownIfEventsListenerContainerEntryNotExist()
+    public function testExceptionIsThrownIfEventsListenerContainerEntryNotExist() : void
     {
         $eventConfig = [
             'my-group' => [
@@ -116,7 +116,7 @@ class EventDispatcherFactoryTest extends PHPUnit_Framework_TestCase
         (new EventDispatcherFactory)->__invoke($c->reveal());
     }
 
-    public function testConfigEventListenersWithAnonymousFunction()
+    public function testConfigEventListenersWithAnonymousFunction() : void
     {
         $callback = function () {
         };
@@ -144,7 +144,7 @@ class EventDispatcherFactoryTest extends PHPUnit_Framework_TestCase
         );
     }
 
-    public function testListenerFromContainerIsNotFetchedDuringAttaching()
+    public function testListenerFromContainerIsNotFetchedDuringAttaching() : void
     {
         $eventConfig = [
             'my-group' => [
@@ -167,7 +167,7 @@ class EventDispatcherFactoryTest extends PHPUnit_Framework_TestCase
         $c->get('containerEntry')->shouldNotHaveBeenCalled();
     }
 
-    public function testListenerFromContainerIsFetchedWhenEventDispatched()
+    public function testListenerFromContainerIsFetchedWhenEventDispatched() : void
     {
         $eventConfig = [
             'my-group' => [
@@ -191,7 +191,7 @@ class EventDispatcherFactoryTest extends PHPUnit_Framework_TestCase
         $dispatcher->dispatch(new Event('someEvent'));
     }
 
-    public function testExceptionIsThrownIfMethodDoesNotExistOnContainerEntry()
+    public function testExceptionIsThrownIfMethodDoesNotExistOnContainerEntry() : void
     {
         $eventConfig = [
             'my-group' => [
@@ -216,7 +216,7 @@ class EventDispatcherFactoryTest extends PHPUnit_Framework_TestCase
         $dispatcher->dispatch(new Event('someEvent'));
     }
 
-    public function testDefaultListenersAreRegisteredFromConfig()
+    public function testDefaultListenersAreRegisteredFromConfig() : void
     {
         $containerBuilder = new ContainerBuilder;
         $containerBuilder->addDefinitions(__DIR__ . '/../../app/config.php');

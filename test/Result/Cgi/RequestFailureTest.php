@@ -3,19 +3,15 @@
 namespace PhpSchool\PhpWorkshopTest\Result\Cgi;
 
 use PhpSchool\PhpWorkshop\Result\Cgi\RequestFailure;
-use PhpSchool\PhpWorkshop\Result\CgiOutBodyFailure;
-use PhpSchool\PhpWorkshop\Result\CgiOutFailure;
-use PhpSchool\PhpWorkshop\Result\CgiOutRequestFailure;
-use PhpSchool\PhpWorkshop\Result\CgiOutResult;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\RequestInterface;
 
 /**
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
-class RequestFailureTest extends PHPUnit_Framework_TestCase
+class RequestFailureTest extends TestCase
 {
-    public function setUp()
+    public function setUp() : void
     {
         $request = $this->createMock(RequestInterface::class);
         $requestFailure = new RequestFailure($request, '', '', [], []);
@@ -23,7 +19,7 @@ class RequestFailureTest extends PHPUnit_Framework_TestCase
         $this->assertSame($request, $requestFailure->getRequest());
     }
     
-    public function testWhenOnlyOutputDifferent()
+    public function testWhenOnlyOutputDifferent() : void
     {
         $requestFailure = new RequestFailure(
             $this->createMock(RequestInterface::class),
@@ -41,7 +37,7 @@ class RequestFailureTest extends PHPUnit_Framework_TestCase
         $this->assertSame($requestFailure->getExpectedHeaders(), $requestFailure->getActualHeaders());
     }
 
-    public function testWhenOnlyHeadersDifferent()
+    public function testWhenOnlyHeadersDifferent() : void
     {
         $requestFailure = new RequestFailure(
             $this->createMock(RequestInterface::class),
@@ -59,7 +55,7 @@ class RequestFailureTest extends PHPUnit_Framework_TestCase
         $this->assertSame($requestFailure->getExpectedOutput(), $requestFailure->getActualOutput());
     }
 
-    public function testWhenOutputAndHeadersDifferent()
+    public function testWhenOutputAndHeadersDifferent() : void
     {
         $requestFailure = new RequestFailure(
             $this->createMock(RequestInterface::class),

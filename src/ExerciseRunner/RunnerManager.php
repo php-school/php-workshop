@@ -2,7 +2,6 @@
 
 namespace PhpSchool\PhpWorkshop\ExerciseRunner;
 
-use Interop\Container\ContainerInterface;
 use PhpSchool\PhpWorkshop\CommandDefinition;
 use PhpSchool\PhpWorkshop\Exception\InvalidArgumentException;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;

@@ -9,7 +9,7 @@ use PhpSchool\PhpWorkshop\Check\SimpleCheckInterface;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseType;
 use PhpSchool\PhpWorkshop\Input\Input;
 use PhpSchool\PhpWorkshopTest\Asset\FunctionRequirementsExercise;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 use PhpSchool\PhpWorkshop\Check\FunctionRequirementsCheck;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpSchool\PhpWorkshop\ExerciseCheck\FunctionRequirementsExerciseCheck;
@@ -22,7 +22,7 @@ use PhpSchool\PhpWorkshop\Result\Success;
  * @package PhpSchool\PhpWorkshopTest\Check
  * @author  Aydin Hassan <aydin@hotmail.co.uk>
  */
-class FunctionRequirementsCheckTest extends PHPUnit_Framework_TestCase
+class FunctionRequirementsCheckTest extends TestCase
 {
     /**
      * @var FunctionRequirementsCheck
@@ -39,7 +39,7 @@ class FunctionRequirementsCheckTest extends PHPUnit_Framework_TestCase
      */
     private $parser;
 
-    public function setUp()
+    public function setUp() : void
     {
         $parserFactory = new ParserFactory;
         $this->parser = $parserFactory->create(ParserFactory::PREFER_PHP7);
@@ -53,7 +53,7 @@ class FunctionRequirementsCheckTest extends PHPUnit_Framework_TestCase
         $this->assertTrue($this->check->canRun(ExerciseType::CLI()));
     }
 
-    public function testExceptionIsThrownIfNotValidExercise()
+    public function testExceptionIsThrownIfNotValidExercise() : void
     {
         $exercise = $this->createMock(ExerciseInterface::class);
         $this->expectException(InvalidArgumentException::class);
@@ -61,7 +61,7 @@ class FunctionRequirementsCheckTest extends PHPUnit_Framework_TestCase
         $this->check->check($exercise, new Input('app'));
     }
 
-    public function testFailureIsReturnedIfCodeCouldNotBeParsed()
+    public function testFailureIsReturnedIfCodeCouldNotBeParsed() : void
     {
         $file = __DIR__ . '/../res/function-requirements/fail-invalid-code.php';
         $failure = $this->check->check($this->exercise, new Input('app', ['program' => $file]));
@@ -71,7 +71,7 @@ class FunctionRequirementsCheckTest extends PHPUnit_Framework_TestCase
         $this->assertEquals($message, $failure->getReason());
     }
 
-    public function testFailureIsReturnedIfBannedFunctionsAreUsed()
+    public function testFailureIsReturnedIfBannedFunctionsAreUsed() : void
     {
         $failure = $this->check->check(
             $this->exercise,
@@ -82,18 +82,18 @@ class FunctionRequirementsCheckTest extends PHPUnit_Framework_TestCase
         $this->assertEquals([], $failure->getMissingFunctions());
     }
 
-    public function testFailureIsReturnedIfNotAllRequiredFunctionsHaveBeenUsed()
+    public function testFailureIsReturnedIfNotAllRequiredFunctionsHaveBeenUsed() : void
     {
         $exercise = $this->createMock(FunctionRequirementsExercise::class);
         $exercise
             ->expects($this->once())
             ->method('getBannedFunctions')
-            ->will($this->returnValue([]));
+            ->willReturn([]);
 
         $exercise
             ->expects($this->once())
             ->method('getRequiredFunctions')
-            ->will($this->returnValue(['file_get_contents', 'implode']));
+            ->willReturn(['file_get_contents', 'implode']);
 
         $failure = $this->check->check(
             $exercise,
@@ -105,18 +105,18 @@ class FunctionRequirementsCheckTest extends PHPUnit_Framework_TestCase
         $this->assertEquals([], $failure->getBannedFunctions());
     }
 
-    public function testSuccess()
+    public function testSuccess() : void
     {
         $exercise = $this->createMock(FunctionRequirementsExercise::class);
         $exercise
             ->expects($this->once())
             ->method('getBannedFunctions')
-            ->will($this->returnValue([]));
+            ->willReturn([]);
 
         $exercise
             ->expects($this->once())
             ->method('getRequiredFunctions')
-            ->will($this->returnValue(['file_get_contents']));
+            ->willReturn(['file_get_contents']);
 
         $success = $this->check->check(
             $exercise,

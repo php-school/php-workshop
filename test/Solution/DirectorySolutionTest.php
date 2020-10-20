@@ -4,7 +4,7 @@ namespace PhpSchool\PhpWorkshopTest\Solution;
 
 use InvalidArgumentException;
 use PhpSchool\PhpWorkshop\Solution\DirectorySolution;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Class DirectorySolutionTest
@@ -12,9 +12,9 @@ use PHPUnit_Framework_TestCase;
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  * @author Michael Woodward <mikeymike.mw@gmail.com>
  */
-class DirectorySolutionTest extends PHPUnit_Framework_TestCase
+class DirectorySolutionTest extends TestCase
 {
-    public function testExceptionIsThrownIfEntryPointDoesNotExist()
+    public function testExceptionIsThrownIfEntryPointDoesNotExist() : void
     {
         $tempPath = sprintf('%s/%s', realpath(sys_get_temp_dir()), $this->getName());
         @mkdir($tempPath, 0775, true);
@@ -29,7 +29,7 @@ class DirectorySolutionTest extends PHPUnit_Framework_TestCase
         rmdir($tempPath);
     }
 
-    public function testWithDefaultEntryPoint()
+    public function testWithDefaultEntryPoint() : void
     {
         $tempPath = sprintf('%s/%s', realpath(sys_get_temp_dir()), $this->getName());
         @mkdir($tempPath, 0775, true);
@@ -41,7 +41,6 @@ class DirectorySolutionTest extends PHPUnit_Framework_TestCase
         $this->assertSame($tempPath, $solution->getBaseDirectory());
         $this->assertFalse($solution->hasComposerFile());
         $this->assertSame(sprintf('%s/solution.php', $tempPath), $solution->getEntryPoint());
-        $this->assertInternalType('array', $solution->getFiles());
         $files = $solution->getFiles();
         $this->assertCount(2, $files);
         
@@ -53,7 +52,7 @@ class DirectorySolutionTest extends PHPUnit_Framework_TestCase
         rmdir($tempPath);
     }
 
-    public function testWithManualEntryPoint()
+    public function testWithManualEntryPoint() : void
     {
         $tempPath = sprintf('%s/%s', realpath(sys_get_temp_dir()), $this->getName());
         @mkdir($tempPath, 0775, true);
@@ -65,7 +64,6 @@ class DirectorySolutionTest extends PHPUnit_Framework_TestCase
         $this->assertSame($tempPath, $solution->getBaseDirectory());
         $this->assertFalse($solution->hasComposerFile());
         $this->assertSame(sprintf('%s/index.php', $tempPath), $solution->getEntryPoint());
-        $this->assertInternalType('array', $solution->getFiles());
         $files = $solution->getFiles();
         $this->assertCount(2, $files);
 
@@ -77,7 +75,7 @@ class DirectorySolutionTest extends PHPUnit_Framework_TestCase
         rmdir($tempPath);
     }
 
-    public function testHasComposerFileReturnsTrueIfPresent()
+    public function testHasComposerFileReturnsTrueIfPresent() : void
     {
         $tempPath = sprintf('%s/%s', realpath(sys_get_temp_dir()), $this->getName());
         @mkdir($tempPath, 0775, true);
@@ -90,7 +88,6 @@ class DirectorySolutionTest extends PHPUnit_Framework_TestCase
         $this->assertSame($tempPath, $solution->getBaseDirectory());
         $this->assertTrue($solution->hasComposerFile());
         $this->assertSame(sprintf('%s/solution.php', $tempPath), $solution->getEntryPoint());
-        $this->assertInternalType('array', $solution->getFiles());
         $files = $solution->getFiles();
         $this->assertCount(2, $files);
 
@@ -102,7 +99,7 @@ class DirectorySolutionTest extends PHPUnit_Framework_TestCase
         unlink(sprintf('%s/some-class.php', $tempPath));
     }
 
-    public function testWithExceptions()
+    public function testWithExceptions() : void
     {
         $tempPath = sprintf('%s/%s', realpath(sys_get_temp_dir()), $this->getName());
         @mkdir($tempPath, 0775, true);
@@ -115,7 +112,6 @@ class DirectorySolutionTest extends PHPUnit_Framework_TestCase
         $solution = DirectorySolution::fromDirectory($tempPath, $exclusions);
 
         $this->assertSame(sprintf('%s/solution.php', $tempPath), $solution->getEntryPoint());
-        $this->assertInternalType('array', $solution->getFiles());
         $files = $solution->getFiles();
         $this->assertCount(2, $files);
 
@@ -128,7 +124,7 @@ class DirectorySolutionTest extends PHPUnit_Framework_TestCase
         rmdir($tempPath);
     }
 
-    public function testWithNestedDirectories()
+    public function testWithNestedDirectories() : void
     {
         $tempPath = sprintf('%s/%s', realpath(sys_get_temp_dir()), $this->getName());
         @mkdir($tempPath, 0775, true);
@@ -145,7 +141,6 @@ class DirectorySolutionTest extends PHPUnit_Framework_TestCase
         $solution = DirectorySolution::fromDirectory($tempPath);
 
         $this->assertSame(sprintf('%s/solution.php', $tempPath), $solution->getEntryPoint());
-        $this->assertInternalType('array', $solution->getFiles());
         $files = $solution->getFiles();
         $this->assertCount(5, $files);
 
@@ -165,7 +160,7 @@ class DirectorySolutionTest extends PHPUnit_Framework_TestCase
         rmdir($tempPath);
     }
 
-    public function testExceptionsWithNestedDirectories()
+    public function testExceptionsWithNestedDirectories() : void
     {
         $tempPath = sprintf('%s/%s', realpath(sys_get_temp_dir()), $this->getName());
         @mkdir($tempPath, 0775, true);
@@ -187,7 +182,6 @@ class DirectorySolutionTest extends PHPUnit_Framework_TestCase
         $solution = DirectorySolution::fromDirectory($tempPath, $exclusions);
 
         $this->assertSame(sprintf('%s/solution.php', $tempPath), $solution->getEntryPoint());
-        $this->assertInternalType('array', $solution->getFiles());
         $files = $solution->getFiles();
         $this->assertCount(2, $files);
 

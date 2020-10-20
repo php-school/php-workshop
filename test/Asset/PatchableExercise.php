@@ -15,67 +15,42 @@ use PhpSchool\PhpWorkshop\Patch;
  */
 class PatchableExercise implements ExerciseInterface, SubmissionPatchable
 {
-
-    /**
-     * @return string
-     */
-    public function getName()
+    public function getName() : string
     {
         // TODO: Implement getName() method.
     }
 
-    /**
-     * @return string
-     */
-    public function getDescription()
+    public function getDescription() : string
     {
         // TODO: Implement getDescription() method.
     }
 
-    /**
-     * @return string
-     */
-    public function getSolution()
+    public function getSolution() : string
     {
         // TODO: Implement getSolution() method.
     }
 
-    /**
-     * @return string
-     */
-    public function getProblem()
+    public function getProblem() : string
     {
         // TODO: Implement getProblem() method.
     }
 
-    /**
-     * @return void
-     */
-    public function tearDown()
+    public function tearDown() : void
     {
         // TODO: Implement tearDown() method.
     }
 
-    /**
-     * @return Patch
-     */
-    public function getPatch()
+    public function getPatch() : Patch
     {
         // TODO: Implement getPatch() method.
     }
 
-    /**
-     * @return ExerciseType
-     */
-    public function getType()
+    public function getType() : ExerciseType
     {
         // TODO: Implement getType() method.
     }
 
-    /**
-     * @param ExerciseDispatcher $dispatcher
-     */
-    public function configure(ExerciseDispatcher $dispatcher)
+    public function configure(ExerciseDispatcher $dispatcher) : void
     {
         // TODO: Implement configure() method.
     }

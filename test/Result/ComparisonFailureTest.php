@@ -3,15 +3,14 @@
 namespace PhpSchool\PhpWorkshopTest\Result;
 
 use PhpSchool\PhpWorkshop\Result\ComparisonFailure;
-use PHPUnit_Framework_TestCase;
-use PhpSchool\PhpWorkshop\Result\StdOutFailure;
+use PHPUnit\Framework\TestCase;
 
 /**
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
-class ComparisonFailureTest extends PHPUnit_Framework_TestCase
+class ComparisonFailureTest extends TestCase
 {
-    public function testGetters()
+    public function testGetters() : void
     {
         $failure = new ComparisonFailure('Name', 'Expected Output', 'Actual Output');
         self::assertSame('Name', $failure->getCheckName());
@@ -19,7 +18,7 @@ class ComparisonFailureTest extends PHPUnit_Framework_TestCase
         self::assertEquals('Actual Output', $failure->getActualValue());
     }
 
-    public function testFailureFromArgsAndOutput()
+    public function testFailureFromArgsAndOutput() : void
     {
         $failure = ComparisonFailure::fromNameAndValues('Name', 'Expected Output', 'Actual Output');
         self::assertSame('Name', $failure->getCheckName());

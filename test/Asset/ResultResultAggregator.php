@@ -12,11 +12,7 @@ use PhpSchool\PhpWorkshop\ResultAggregator;
  */
 class ResultResultAggregator extends ResultAggregator implements ResultInterface
 {
-
-    /**
-     * @return string
-     */
-    public function getCheckName()
+    public function getCheckName() : string
     {
         return self::class;
     }

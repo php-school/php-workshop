@@ -8,9 +8,6 @@ use PhpSchool\PhpWorkshop\Utils\ArrayObject;
 /**
  * An event to represent events which occur throughout the verification and running process in
  * `\PhpSchool\PhpWorkshop\ExerciseRunner\CliRunner`.
- *
- * @package PhpSchool\PhpWorkshop\Event
- * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
 class CliExecuteEvent extends Event
 {

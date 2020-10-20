@@ -4,7 +4,7 @@
 namespace PhpSchool\PhpWorkshopTest\Command;
 
 use PhpSchool\CliMenu\CliMenu;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 use PhpSchool\PhpWorkshop\Command\MenuCommand;
 
 /**
@@ -12,9 +12,9 @@ use PhpSchool\PhpWorkshop\Command\MenuCommand;
  * @package PhpSchool\PhpWorkshop\Command
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
-class MenuCommandTest extends PHPUnit_Framework_TestCase
+class MenuCommandTest extends TestCase
 {
-    public function testInvoke()
+    public function testInvoke() : void
     {
         $menu = $this->createMock(CliMenu::class);
         $menu

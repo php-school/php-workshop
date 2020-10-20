@@ -9,8 +9,6 @@ use PhpSchool\PhpWorkshop\Utils\RequestRenderer;
 
 /**
  * Renderer for `PhpSchool\PhpWorkshop\Result\Cgi\CgiResult`.
- *
- * @package PhpSchool\PhpWorkshop\ResultRenderer
  */
 class CgiResultRenderer implements ResultRendererInterface
 {

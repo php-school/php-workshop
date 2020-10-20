@@ -13,9 +13,6 @@ use PhpSchool\PhpWorkshop\Output\OutputInterface;
 /**
  * This is the main application class, this takes care of bootstrapping, routing and
  * output.
- *
- * @package PhpSchool\PhpWorkshop
- * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
 final class Application
 {

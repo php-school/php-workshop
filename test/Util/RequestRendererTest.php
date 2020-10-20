@@ -11,7 +11,7 @@ use Zend\Diactoros\Request;
  */
 class RequestRendererTest extends TestCase
 {
-    public function testWriteRequestWithHeaders()
+    public function testWriteRequestWithHeaders() : void
     {
         $request = (new Request('http://www.time.com/api/pt?iso=2016-01-21T18:14:33+0000'))
             ->withMethod('GET');
@@ -23,7 +23,7 @@ class RequestRendererTest extends TestCase
         $this->assertEquals($expected, (new RequestRenderer)->renderRequest($request));
     }
 
-    public function testWriteRequestWithNoHeaders()
+    public function testWriteRequestWithNoHeaders() : void
     {
         $request = (new Request('/endpoint'))
             ->withMethod('GET');
@@ -34,7 +34,7 @@ class RequestRendererTest extends TestCase
         $this->assertEquals($expected, (new RequestRenderer)->renderRequest($request));
     }
 
-    public function testWriteRequestWithPostBodyJson()
+    public function testWriteRequestWithPostBodyJson() : void
     {
         $request = (new Request('/endpoint'))
             ->withMethod('POST')
@@ -55,7 +55,7 @@ class RequestRendererTest extends TestCase
         $this->assertEquals($expected, (new RequestRenderer)->renderRequest($request));
     }
 
-    public function testWriteRequestWithPostBodyUrlEncoded()
+    public function testWriteRequestWithPostBodyUrlEncoded() : void
     {
         $request = (new Request('/endpoint'))
             ->withMethod('POST')

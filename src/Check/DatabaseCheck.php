@@ -3,7 +3,6 @@
 namespace PhpSchool\PhpWorkshop\Check;
 
 use PDO;
-use PhpSchool\PhpWorkshop\Event\CliEvent;
 use PhpSchool\PhpWorkshop\Event\CliExecuteEvent;
 use PhpSchool\PhpWorkshop\Event\Event;
 use PhpSchool\PhpWorkshop\Event\EventDispatcher;
@@ -11,15 +10,12 @@ use PhpSchool\PhpWorkshop\Exercise\TemporaryDirectoryTrait;
 use PhpSchool\PhpWorkshop\ExerciseCheck\DatabaseExerciseCheck;
 use PhpSchool\PhpWorkshop\Result\Failure;
 use PhpSchool\PhpWorkshop\Result\Success;
-use Symfony\Component\Process\Process;
 
 /**
  * This check sets up a database and a `PDO` object. It prepends the database DSN as a CLI argument to the student's
  * solution so they can connect to the database. The `PDO` object is passed to the exercise before and after the
  * student's solution has been executed, allowing you to first seed the database and then verify the contents of the
  * database.
- *
- * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
 class DatabaseCheck implements ListenableCheckInterface
 {
@@ -64,18 +60,13 @@ class DatabaseCheck implements ListenableCheckInterface
 
     /**
      * Return the check's name
-     *
-     * @return string
      */
-    public function getName()
+    public function getName() : string
     {
         return 'Database Verification Check';
     }
 
-    /**
-     * @return string
-     */
-    public function getExerciseInterface()
+    public function getExerciseInterface() : string
     {
         return DatabaseExerciseCheck::class;
     }
@@ -83,10 +74,8 @@ class DatabaseCheck implements ListenableCheckInterface
     /**
      * Here we attach to various events to seed, verify and inject the DSN's
      * to the student & reference solution programs's CLI arguments.
-     *
-     * @param EventDispatcher $eventDispatcher
      */
-    public function attach(EventDispatcher $eventDispatcher)
+    public function attach(EventDispatcher $eventDispatcher) : void
     {
         if (file_exists($this->databaseDirectory)) {
             throw new \RuntimeException(

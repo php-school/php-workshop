@@ -4,11 +4,6 @@ namespace PhpSchool\PhpWorkshop\Command;
 
 use PhpSchool\CliMenu\CliMenu;
 
-/**
- * Class MenuCommand
- * @package PhpSchool\PhpWorkshop\Command
- * @author Aydin Hassan <aydin@hotmail.co.uk>
- */
 class MenuCommand
 {
     /**

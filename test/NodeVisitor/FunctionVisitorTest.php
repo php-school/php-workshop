@@ -4,7 +4,7 @@ namespace PhpSchool\PhpWorkshopTest\NodeVisitor;
 
 use PhpParser\Node\Expr\FuncCall;
 use PhpParser\Node\Name;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 use PhpSchool\PhpWorkshop\NodeVisitor\FunctionVisitor;
 
 /**
@@ -12,9 +12,9 @@ use PhpSchool\PhpWorkshop\NodeVisitor\FunctionVisitor;
  * @package PhpSchool\PhpWorkshopTest\NodeVisitor
  * @author  Aydin Hassan <aydin@hotmail.co.uk>
  */
-class FunctionVisitorTest extends PHPUnit_Framework_TestCase
+class FunctionVisitorTest extends TestCase
 {
-    public function testLeaveNodeWithARequiredFunctionIsRecorded()
+    public function testLeaveNodeWithARequiredFunctionIsRecorded() : void
     {
         $node = new FuncCall(new Name('file_get_contents'));
         $visitor = new FunctionVisitor(['file_get_contents'], []);
@@ -25,7 +25,7 @@ class FunctionVisitorTest extends PHPUnit_Framework_TestCase
         $this->assertSame([], $visitor->getMissingRequirements());
     }
 
-    public function testLeaveNodeWithARequiredFunctionIsNotRecorded()
+    public function testLeaveNodeWithARequiredFunctionIsNotRecorded() : void
     {
         $node = new FuncCall(new Name('file'));
         $visitor = new FunctionVisitor(['file_get_contents'], []);
@@ -36,7 +36,7 @@ class FunctionVisitorTest extends PHPUnit_Framework_TestCase
         $this->assertSame(['file_get_contents'], $visitor->getMissingRequirements());
     }
 
-    public function testBannedUsagesAreRecorded()
+    public function testBannedUsagesAreRecorded() : void
     {
         $node = new FuncCall(new Name('file_get_contents'));
         $visitor = new FunctionVisitor([], ['file_get_contents']);
@@ -46,7 +46,7 @@ class FunctionVisitorTest extends PHPUnit_Framework_TestCase
         $this->assertSame([$node], $visitor->getBannedUsages());
     }
 
-    public function testBannedUsagesAreNotRecorded()
+    public function testBannedUsagesAreNotRecorded() : void
     {
         $node = new FuncCall(new Name('file'));
         $visitor = new FunctionVisitor([], ['file_get_contents']);

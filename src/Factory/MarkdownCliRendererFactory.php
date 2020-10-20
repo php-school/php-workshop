@@ -5,12 +5,12 @@ namespace PhpSchool\PhpWorkshop\Factory;
 use AydinHassan\CliMdRenderer\Renderer\ListBlockRenderer;
 use AydinHassan\CliMdRenderer\Renderer\ListItemRenderer;
 use Colors\Color;
-use Interop\Container\ContainerInterface;
+use Psr\Container\ContainerInterface;
 use Kadet\Highlighter\KeyLighter;
 use League\CommonMark\Block\Element\Heading;
 use League\CommonMark\Block\Element\ListBlock;
 use League\CommonMark\Block\Element\ListItem;
-use PhpSchool\CliMenu\Terminal\TerminalInterface;
+use PhpSchool\Terminal\Terminal;
 use League\CommonMark\Block\Element\Document;
 use League\CommonMark\Block\Element\FencedCode;
 use League\CommonMark\Block\Element\ThematicBreak;
@@ -47,7 +47,7 @@ class MarkdownCliRendererFactory
      */
     public function __invoke(ContainerInterface $c)
     {
-        $terminal = $c->get(TerminalInterface::class);
+        $terminal = $c->get(Terminal::class);
 
         $codeRender = new FencedCodeRenderer();
         $codeRender->addSyntaxHighlighter('php', new PhpHighlighter(new KeyLighter));

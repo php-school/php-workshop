@@ -6,34 +6,34 @@ use AydinHassan\CliMdRenderer\CliRenderer;
 use Colors\Color;
 use PhpSchool\PhpWorkshop\Factory\MarkdownCliRendererFactory;
 use Interop\Container\ContainerInterface;
-use PhpSchool\CliMenu\Terminal\TerminalInterface;
-use PHPUnit_Framework_TestCase;
+use PhpSchool\Terminal\Terminal;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Class CliRendererFactoryTest
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
-class CliRendererFactoryTest extends PHPUnit_Framework_TestCase
+class CliRendererFactoryTest extends TestCase
 {
-    public function testFactoryReturnsInstance()
+    public function testFactoryReturnsInstance() : void
     {
-        $terminal = $this->createMock(TerminalInterface::class);
+        $terminal = $this->createMock(Terminal::class);
         $terminal
             ->expects($this->once())
             ->method('getWidth')
-            ->will($this->returnValue(10));
+            ->willReturn(10);
 
         $services = [
-            TerminalInterface::class => $terminal,
+            Terminal::class => $terminal,
             Color::class => new Color,
         ];
 
         $c = $this->createMock(ContainerInterface::class);
-        $c->expects($this->any())
+        $c
             ->method('get')
-            ->will($this->returnCallback(function ($service) use ($services) {
+            ->willReturnCallback(function ($service) use ($services) {
                 return $services[$service];
-            }));
+            });
 
         $factory = new MarkdownCliRendererFactory();
         $this->assertInstanceOf(CliRenderer::class, $factory->__invoke($c));

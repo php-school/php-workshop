@@ -2,18 +2,13 @@
 
 namespace PhpSchool\PhpWorkshop\Factory;
 
-use Interop\Container\ContainerInterface;
+use Psr\Container\ContainerInterface;
 use PhpSchool\PhpWorkshop\Event\EventDispatcher;
 use PhpSchool\PhpWorkshop\Event\ContainerListenerHelper;
 use PhpSchool\PhpWorkshop\Exception\InvalidArgumentException;
 use PhpSchool\PhpWorkshop\ResultAggregator;
 use PhpSchool\PhpWorkshop\Utils\Collection;
 
-/**
- * Class EventDispatcherFactory
- * @package PhpSchool\PhpWorkshop\Factory
- * @author Aydin Hassan <aydin@hotmail.co.uk>
- */
 class EventDispatcherFactory
 {
 

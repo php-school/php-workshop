@@ -7,9 +7,6 @@ use PhpSchool\PhpWorkshop\Exception\InvalidArgumentException;
 /**
  * This class is the repository containing all the available checks
  * for the workshop framework.
- *
- * @package PhpSchool\PhpWorkshop\Check
- * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
 class CheckRepository
 {
@@ -30,10 +27,8 @@ class CheckRepository
 
     /**
      * Add a new check to the repository.
-     *
-     * @param CheckInterface $check The check instance to add.
      */
-    public function registerCheck(CheckInterface $check)
+    public function registerCheck(CheckInterface $check) : void
     {
         $this->checks[get_class($check)] = $check;
     }
@@ -43,7 +38,7 @@ class CheckRepository
      *
      * @return array
      */
-    public function getAll()
+    public function getAll() : array
     {
         return array_values($this->checks);
     }
@@ -55,7 +50,7 @@ class CheckRepository
      * @return CheckInterface The instance.
      * @throws InvalidArgumentException If an instance of the check does not exist.
      */
-    public function getByClass($class)
+    public function getByClass(string $class) : CheckInterface
     {
         if (!isset($this->checks[$class])) {
             throw new InvalidArgumentException(sprintf('Check: "%s" does not exist', $class));
@@ -66,11 +61,8 @@ class CheckRepository
 
     /**
      * Query whether a check instance exists in this repository via its class name.
-     *
-     * @param string $class
-     * @return bool
      */
-    public function has($class)
+    public function has(string $class) : bool
     {
         try {
             $this->getByClass($class);

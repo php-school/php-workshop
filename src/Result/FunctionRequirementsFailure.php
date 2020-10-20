@@ -7,9 +7,6 @@ use PhpSchool\PhpWorkshop\Check\CheckInterface;
 /**
  * A failure result representing the situation where there were function usage requirements
  * and they were not met.
- *
- * @package PhpSchool\PhpWorkshop\Result
- * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
 class FunctionRequirementsFailure implements FailureInterface
 {

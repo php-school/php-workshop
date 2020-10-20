@@ -1,4 +1,4 @@
 <?php
 
-header("Pragma: cache");
+header('Pragma: cache');
 echo $_GET['number'] * 2;

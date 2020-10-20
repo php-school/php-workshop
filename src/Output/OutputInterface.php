@@ -4,11 +4,6 @@ namespace PhpSchool\PhpWorkshop\Output;
 
 use Psr\Http\Message\RequestInterface;
 
-/**
- * Interface StdOutput
- * @package PhpSchool\PhpWorkshop
- * @author Aydin Hassan <aydin@hotmail.co.uk>
- */
 interface OutputInterface
 {
     /**

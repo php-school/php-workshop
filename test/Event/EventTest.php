@@ -4,29 +4,29 @@ namespace PhpSchool\PhpWorkshopTest\Event;
 
 use PhpSchool\PhpWorkshop\Event\Event;
 use PhpSchool\PhpWorkshop\Exception\InvalidArgumentException;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Class EventTest
  * @package PhpSchool\PhpWorkshopTest\Event
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
-class EventTest extends PHPUnit_Framework_TestCase
+class EventTest extends TestCase
 {
-    public function testGetName()
+    public function testGetName() : void
     {
         $e = new Event('super-sweet-event!');
         $this->assertEquals('super-sweet-event!', $e->getName());
     }
 
-    public function testGetParameters()
+    public function testGetParameters() : void
     {
         $e = new Event('super-sweet-event-with-cool-params', ['cool' => 'stuff']);
         $this->assertEquals('stuff', $e->getParameter('cool'));
         $this->assertEquals(['cool' => 'stuff'], $e->getParameters());
     }
 
-    public function testExeceptionIsThrownIfParameterDoesNotExist()
+    public function testExeceptionIsThrownIfParameterDoesNotExist() : void
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Parameter: "cool" does not exist');

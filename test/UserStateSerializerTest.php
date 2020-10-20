@@ -7,13 +7,14 @@ use PhpSchool\PhpWorkshop\ExerciseRepository;
 use PhpSchool\PhpWorkshop\UserState;
 use PhpSchool\PhpWorkshop\UserStateSerializer;
 use PhpSchool\PhpWorkshopTest\Asset\CliExerciseInterface;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Class UserStateSerializerTest
  * @package PhpSchool\PhpWorkshopTest
  * @author  Aydin Hassan <aydin@hotmail.co.uk>
  */
-class UserStateSerializerTest extends \PHPUnit_Framework_TestCase
+class UserStateSerializerTest extends TestCase
 {
     /**
      * @var string
@@ -35,28 +36,28 @@ class UserStateSerializerTest extends \PHPUnit_Framework_TestCase
      */
     private $exerciseRepository;
 
-    public function setUp()
+    public function setUp() : void
     {
-        $this->tmpDir = sprintf('%s/%s/%s', sys_get_temp_dir(), $this->getName(), rand(1, 100));
+        $this->tmpDir = sprintf('%s/%s/%s', sys_get_temp_dir(), $this->getName(), random_int(1, 100));
         $this->tmpFile = sprintf('%s/.phpschool-save.json', $this->tmpDir);
         $this->exerciseRepository = new ExerciseRepository([]);
     }
 
-    public function testIfDirNotExistsItIsCreated()
+    public function testIfDirNotExistsItIsCreated() : void
     {
         $this->assertFileNotExists($this->tmpDir);
         new UserStateSerializer($this->tmpDir, $this->workshopName, $this->exerciseRepository);
         $this->assertFileExists($this->tmpDir);
     }
 
-    public function testConstructWhenFileExists()
+    public function testConstructWhenFileExists() : void
     {
         mkdir($this->tmpDir, 0777, true);
         $this->assertFileExists($this->tmpDir);
         new UserStateSerializer($this->tmpDir, $this->workshopName, $this->exerciseRepository);
     }
 
-    public function testSerializeEmptySate()
+    public function testSerializeEmptySate() : void
     {
         mkdir($this->tmpDir, 0777, true);
         $serializer = new UserStateSerializer($this->tmpDir, $this->workshopName, $this->exerciseRepository);
@@ -75,7 +76,7 @@ class UserStateSerializerTest extends \PHPUnit_Framework_TestCase
         $this->assertSame($expected, file_get_contents($this->tmpFile));
     }
 
-    public function testSerialize()
+    public function testSerialize() : void
     {
         mkdir($this->tmpDir, 0777, true);
         $serializer = new UserStateSerializer($this->tmpDir, $this->workshopName, $this->exerciseRepository);
@@ -95,7 +96,7 @@ class UserStateSerializerTest extends \PHPUnit_Framework_TestCase
         $this->assertSame($expected, file_get_contents($this->tmpFile));
     }
 
-    public function testDeserializeNonExistingFile()
+    public function testDeserializeNonExistingFile() : void
     {
         mkdir($this->tmpDir, 0777, true);
         $serializer = new UserStateSerializer($this->tmpDir, $this->workshopName, $this->exerciseRepository);
@@ -104,7 +105,7 @@ class UserStateSerializerTest extends \PHPUnit_Framework_TestCase
         $this->assertEmpty($state->getCompletedExercises());
     }
 
-    public function testDeserializeEmptyFile()
+    public function testDeserializeEmptyFile() : void
     {
         mkdir($this->tmpDir, 0777, true);
         file_put_contents($this->tmpFile, '');
@@ -114,7 +115,7 @@ class UserStateSerializerTest extends \PHPUnit_Framework_TestCase
         $this->assertEmpty($state->getCompletedExercises());
     }
 
-    public function testDeserializeNonValidJson()
+    public function testDeserializeNonValidJson() : void
     {
         mkdir($this->tmpDir, 0777, true);
         file_put_contents($this->tmpFile, 'yayayayayanotjson');
@@ -125,11 +126,9 @@ class UserStateSerializerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @param array $data
-     * @param array $expected
      * @dataProvider deserializerProvider
      */
-    public function testDeserialize(array $data, array $expected)
+    public function testDeserialize(array $data, array $expected) : void
     {
         mkdir($this->tmpDir, 0777, true);
         file_put_contents($this->tmpFile, json_encode($data));
@@ -145,7 +144,7 @@ class UserStateSerializerTest extends \PHPUnit_Framework_TestCase
         rmdir($this->tmpDir);
     }
 
-    public function deserializerProvider()
+    public function deserializerProvider() : array
     {
         return [
             'empty-array' => [
@@ -187,7 +186,7 @@ class UserStateSerializerTest extends \PHPUnit_Framework_TestCase
         ];
     }
 
-    public function testOldDataWillBeMigratedWhenInCorrectWorkshop()
+    public function testOldDataWillBeMigratedWhenInCorrectWorkshop() : void
     {
         $oldSave = sprintf('%s/.phpschool.json', $this->tmpDir);
         $newSave = sprintf('%s/.phpschool-save.json', $this->tmpDir);
@@ -232,7 +231,7 @@ class UserStateSerializerTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($expected, json_decode(file_get_contents($newSave), true));
     }
 
-    public function testOldDataWillNotBeMigratedWhenNotInCorrectWorkshop()
+    public function testOldDataWillNotBeMigratedWhenNotInCorrectWorkshop() : void
     {
         $oldSave = sprintf('%s/.phpschool.json', $this->tmpDir);
         $newSave = sprintf('%s/.phpschool-save.json', $this->tmpDir);
@@ -271,7 +270,7 @@ class UserStateSerializerTest extends \PHPUnit_Framework_TestCase
         unlink($oldSave);
     }
 
-    public function testOldDataWillNotBeMigratedWhenNotInCorrectWorkshopWithOtherWorkshop()
+    public function testOldDataWillNotBeMigratedWhenNotInCorrectWorkshopWithOtherWorkshop() : void
     {
         $oldSave = sprintf('%s/.phpschool.json', $this->tmpDir);
         $newSave = sprintf('%s/.phpschool-save.json', $this->tmpDir);
@@ -326,7 +325,7 @@ class UserStateSerializerTest extends \PHPUnit_Framework_TestCase
         unlink($oldSave);
     }
 
-    public function tearDown()
+    public function tearDown() : void
     {
         if (file_exists($this->tmpFile)) {
             unlink($this->tmpFile);

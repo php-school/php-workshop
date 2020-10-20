@@ -9,9 +9,6 @@ use PhpSchool\PhpWorkshop\Output\OutputInterface;
 /**
  * This class is used to render the exercise problem to the student, it also sets the current exercise
  * on to the user state object.
- *
- * @package PhpSchool\PhpWorkshop
- * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
 class ExerciseRenderer
 {

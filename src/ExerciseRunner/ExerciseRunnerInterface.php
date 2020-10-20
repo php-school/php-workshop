@@ -11,9 +11,6 @@ use PhpSchool\PhpWorkshop\Result\ResultInterface;
 /**
  * This interface describes how an exercise runner should work. Each exercise type
  * maps to an exercise runner.
- *
- * @package PhpSchool\PhpWorkshop\ExerciseRunner
- * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
 interface ExerciseRunnerInterface
 {

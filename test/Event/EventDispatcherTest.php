@@ -7,14 +7,14 @@ use PhpSchool\PhpWorkshop\Event\EventDispatcher;
 use PhpSchool\PhpWorkshop\Event\EventInterface;
 use PhpSchool\PhpWorkshop\Result\ResultInterface;
 use PhpSchool\PhpWorkshop\ResultAggregator;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Class EventDispatcherTest
  * @package PhpSchool\PhpWorkshopTest\Event
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
-class EventDispatcherTest extends PHPUnit_Framework_TestCase
+class EventDispatcherTest extends TestCase
 {
     /**
      * @var ResultAggregator
@@ -26,13 +26,13 @@ class EventDispatcherTest extends PHPUnit_Framework_TestCase
      */
     private $eventDispatcher;
 
-    public function setUp()
+    public function setUp() : void
     {
         $this->results = new ResultAggregator;
         $this->eventDispatcher = new EventDispatcher($this->results);
     }
 
-    public function testOnlyAppropriateListenersAreCalledForEvent()
+    public function testOnlyAppropriateListenersAreCalledForEvent() : void
     {
         $e = new Event('some-event', ['arg1' => 1, 'arg2' => 2]);
         $mockCallback1 = $this->getMockBuilder('stdClass')
@@ -42,7 +42,7 @@ class EventDispatcherTest extends PHPUnit_Framework_TestCase
         $mockCallback1->expects($this->exactly(2))
             ->method('__invoke')
             ->with($e)
-            ->will($this->returnValue(true));
+            ->willReturn(true);
 
         $mockCallback2 = $this->getMockBuilder('stdClass')
             ->setMethods(['doNotInvokeMe'])
@@ -63,7 +63,7 @@ class EventDispatcherTest extends PHPUnit_Framework_TestCase
         $this->eventDispatcher->dispatch($e);
     }
 
-    public function testOnlyAppropriateVerifiersAreCalledForEvent()
+    public function testOnlyAppropriateVerifiersAreCalledForEvent() : void
     {
         $e = new Event('some-event', ['arg1' => 1, 'arg2' => 2]);
         $result = $this->createMock(ResultInterface::class);
@@ -75,7 +75,7 @@ class EventDispatcherTest extends PHPUnit_Framework_TestCase
         $mockCallback1->expects($this->exactly(2))
             ->method('__invoke')
             ->with($e)
-            ->will($this->returnValue($result));
+            ->willReturn($result);
 
         $cb = function (Event $e) use ($mockCallback1) {
             return $mockCallback1($e);
@@ -88,7 +88,7 @@ class EventDispatcherTest extends PHPUnit_Framework_TestCase
         $this->assertEquals([$result, $result], iterator_to_array($this->results));
     }
 
-    public function testVerifyReturnIsSkippedIfNotInstanceOfResult()
+    public function testVerifyReturnIsSkippedIfNotInstanceOfResult() : void
     {
         $e = new Event('some-event', ['arg1' => 1, 'arg2' => 2]);
         $mockCallback1 = $this->getMockBuilder('stdClass')
@@ -98,7 +98,7 @@ class EventDispatcherTest extends PHPUnit_Framework_TestCase
         $mockCallback1->expects($this->once())
             ->method('__invoke')
             ->with($e)
-            ->will($this->returnValue(null));
+            ->willReturn(null);
 
         $this->eventDispatcher->insertVerifier('some-event', function (Event $e) use ($mockCallback1) {
             $mockCallback1($e);
@@ -108,7 +108,7 @@ class EventDispatcherTest extends PHPUnit_Framework_TestCase
         $this->assertEquals([], iterator_to_array($this->results));
     }
 
-    public function testListenWithMultipleEvents()
+    public function testListenWithMultipleEvents() : void
     {
         $e1 = new Event('some-event', ['arg1' => 1, 'arg2' => 2]);
         $e2 = new Event('some-event', ['arg1' => 1, 'arg2' => 2]);
@@ -119,14 +119,14 @@ class EventDispatcherTest extends PHPUnit_Framework_TestCase
         $mockCallback1->expects($this->exactly(2))
             ->method('__invoke')
             ->withConsecutive([$e1], [$e2])
-            ->will($this->returnValue(true));
+            ->willReturn(true);
 
         $this->eventDispatcher->listen(['some-event', 'second-event'], $mockCallback1);
         $this->eventDispatcher->dispatch($e1);
         $this->eventDispatcher->dispatch($e2);
     }
 
-    public function testListenersAndVerifiersAreCalledInOrderOfAttachment()
+    public function testListenersAndVerifiersAreCalledInOrderOfAttachment() : void
     {
         $e1 = new Event('first-event', ['arg1' => 1, 'arg2' => 2]);
 

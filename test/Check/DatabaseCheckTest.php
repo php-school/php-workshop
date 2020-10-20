@@ -2,10 +2,8 @@
 
 namespace PhpSchool\PhpWorkshopTest\Check;
 
-use DI\Container;
 use DI\ContainerBuilder;
 use PDO;
-use PhpSchool\PhpWorkshop\Check\CheckInterface;
 use PhpSchool\PhpWorkshop\Check\CheckRepository;
 use PhpSchool\PhpWorkshop\Check\DatabaseCheck;
 use PhpSchool\PhpWorkshop\Event\EventDispatcher;
@@ -20,7 +18,8 @@ use PhpSchool\PhpWorkshop\Output\OutputInterface;
 use PhpSchool\PhpWorkshop\ResultAggregator;
 use PhpSchool\PhpWorkshop\Solution\SingleFileSolution;
 use PhpSchool\PhpWorkshopTest\Asset\DatabaseExerciseInterface;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 use ReflectionProperty;
 use RuntimeException;
 
@@ -28,7 +27,7 @@ use RuntimeException;
  * @package PhpSchool\PhpWorkshopTest\Check
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
-class DatabaseCheckTest extends PHPUnit_Framework_TestCase
+class DatabaseCheckTest extends TestCase
 {
 
     /**
@@ -51,7 +50,7 @@ class DatabaseCheckTest extends PHPUnit_Framework_TestCase
      */
     private $dbDir;
 
-    public function setUp()
+    public function setUp() : void
     {
         $containerBuilder = new ContainerBuilder;
         $containerBuilder->addDefinitions(__DIR__ . '/../../app/config.php');
@@ -61,7 +60,7 @@ class DatabaseCheckTest extends PHPUnit_Framework_TestCase
 
         $this->check = new DatabaseCheck;
         $this->exercise = $this->createMock(DatabaseExerciseInterface::class);
-        $this->exercise->expects($this->any())->method('getType')->willReturn(ExerciseType::CLI());
+        $this->exercise->method('getType')->willReturn(ExerciseType::CLI());
         $this->dbDir = sprintf(
             '%s/PhpSchool_PhpWorkshop_Check_DatabaseCheck',
             str_replace('\\', '/', realpath(sys_get_temp_dir()))
@@ -71,12 +70,7 @@ class DatabaseCheckTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(DatabaseExerciseCheck::class, $this->check->getExerciseInterface());
     }
 
-    /**
-     * @param ExerciseInterface $exercise
-     * @param EventDispatcher $eventDispatcher
-     * @return \PHPUnit_Framework_MockObject_MockObject
-     */
-    private function getRunnerManager(ExerciseInterface $exercise, EventDispatcher $eventDispatcher)
+    private function getRunnerManager(ExerciseInterface $exercise, EventDispatcher $eventDispatcher) : MockObject
     {
         $runner = $this->getMockBuilder(CliRunner::class)
             ->setConstructorArgs([$exercise, $eventDispatcher])
@@ -84,7 +78,6 @@ class DatabaseCheckTest extends PHPUnit_Framework_TestCase
             ->getMock();
 
         $runner
-            ->expects($this->any())
             ->method('getRequiredChecks')
             ->willReturn([]);
 
@@ -97,7 +90,7 @@ class DatabaseCheckTest extends PHPUnit_Framework_TestCase
         return $runnerManager;
     }
 
-    public function testIfDatabaseFolderExistsExceptionIsThrown()
+    public function testIfDatabaseFolderExistsExceptionIsThrown() : void
     {
         $eventDispatcher = new EventDispatcher(new ResultAggregator);
         @mkdir($this->dbDir);
@@ -114,7 +107,7 @@ class DatabaseCheckTest extends PHPUnit_Framework_TestCase
      * If an exception is thrown from PDO, check that the check can be run straight away
      * Previously files were not cleaned up that caused exceptions.
      */
-    public function testIfPDOThrowsExceptionItCleansUp()
+    public function testIfPDOThrowsExceptionItCleansUp() : void
     {
         $eventDispatcher = new EventDispatcher(new ResultAggregator);
 
@@ -134,25 +127,25 @@ class DatabaseCheckTest extends PHPUnit_Framework_TestCase
         $this->exercise
             ->expects($this->once())
             ->method('getSolution')
-            ->will($this->returnValue($solution));
+            ->willReturn($solution);
 
         $this->exercise
             ->expects($this->once())
             ->method('getArgs')
-            ->will($this->returnValue([1, 2, 3]));
+            ->willReturn([1, 2, 3]);
 
         $this->exercise
             ->expects($this->once())
             ->method('configure')
-            ->will($this->returnCallback(function (ExerciseDispatcher $dispatcher) {
+            ->willReturnCallback(function (ExerciseDispatcher $dispatcher) {
                 $dispatcher->requireCheck(DatabaseCheck::class);
-            }));
+            });
 
         $this->exercise
             ->expects($this->once())
             ->method('verify')
             ->with($this->isInstanceOf(PDO::class))
-            ->will($this->returnValue(true));
+            ->willReturn(true);
 
         $this->checkRepository->registerCheck($this->check);
 
@@ -169,31 +162,31 @@ class DatabaseCheckTest extends PHPUnit_Framework_TestCase
         $this->assertTrue($results->isSuccessful());
     }
 
-    public function testSuccessIsReturnedIfDatabaseVerificationPassed()
+    public function testSuccessIsReturnedIfDatabaseVerificationPassed() : void
     {
         $solution = SingleFileSolution::fromFile(realpath(__DIR__ . '/../res/database/solution.php'));
         $this->exercise
             ->expects($this->once())
             ->method('getSolution')
-            ->will($this->returnValue($solution));
+            ->willReturn($solution);
 
         $this->exercise
             ->expects($this->once())
             ->method('getArgs')
-            ->will($this->returnValue([[1, 2, 3]]));
+            ->willReturn([[1, 2, 3]]);
 
         $this->exercise
             ->expects($this->once())
             ->method('configure')
-            ->will($this->returnCallback(function (ExerciseDispatcher $dispatcher) {
+            ->willReturnCallback(function (ExerciseDispatcher $dispatcher) {
                 $dispatcher->requireCheck(DatabaseCheck::class);
-            }));
+            });
 
         $this->exercise
             ->expects($this->once())
             ->method('verify')
             ->with($this->isInstanceOf(PDO::class))
-            ->will($this->returnValue(true));
+            ->willReturn(true);
 
         $this->checkRepository->registerCheck($this->check);
 
@@ -212,19 +205,19 @@ class DatabaseCheckTest extends PHPUnit_Framework_TestCase
         $this->assertTrue($results->isSuccessful());
     }
 
-    public function testRunExercise()
+    public function testRunExercise() : void
     {
         $this->exercise
             ->expects($this->once())
             ->method('getArgs')
-            ->will($this->returnValue([]));
+            ->willReturn([]);
 
         $this->exercise
             ->expects($this->once())
             ->method('configure')
-            ->will($this->returnCallback(function (ExerciseDispatcher $dispatcher) {
+            ->willReturnCallback(function (ExerciseDispatcher $dispatcher) {
                 $dispatcher->requireCheck(DatabaseCheck::class);
-            }));
+            });
 
         $this->checkRepository->registerCheck($this->check);
 
@@ -244,7 +237,7 @@ class DatabaseCheckTest extends PHPUnit_Framework_TestCase
         );
     }
 
-    public function testFailureIsReturnedIfDatabaseVerificationFails()
+    public function testFailureIsReturnedIfDatabaseVerificationFails() : void
     {
         $solution = SingleFileSolution::fromFile(realpath(__DIR__ . '/../res/database/solution.php'));
 
@@ -252,25 +245,25 @@ class DatabaseCheckTest extends PHPUnit_Framework_TestCase
         $this->exercise
             ->expects($this->once())
             ->method('getSolution')
-            ->will($this->returnValue($solution));
+            ->willReturn($solution);
 
         $this->exercise
             ->expects($this->once())
             ->method('getArgs')
-            ->will($this->returnValue([1, 2, 3]));
+            ->willReturn([1, 2, 3]);
 
         $this->exercise
             ->expects($this->once())
             ->method('configure')
-            ->will($this->returnCallback(function (ExerciseDispatcher $dispatcher) {
+            ->willReturnCallback(function (ExerciseDispatcher $dispatcher) {
                 $dispatcher->requireCheck(DatabaseCheck::class);
-            }));
+            });
 
         $this->exercise
             ->expects($this->once())
             ->method('verify')
             ->with($this->isInstanceOf(PDO::class))
-            ->will($this->returnValue(false));
+            ->willReturn(false);
 
         $this->checkRepository->registerCheck($this->check);
 
@@ -290,44 +283,43 @@ class DatabaseCheckTest extends PHPUnit_Framework_TestCase
         $this->assertSame('Database verification failed', $results[1]->getReason());
     }
 
-    public function testAlteringDatabaseInSolutionDoesNotEffectDatabaseInUserSolution()
+    public function testAlteringDatabaseInSolutionDoesNotEffectDatabaseInUserSolution() : void
     {
         $solution = SingleFileSolution::fromFile(realpath(__DIR__ . '/../res/database/solution-alter-db.php'));
 
         $this->exercise
             ->expects($this->once())
             ->method('getSolution')
-            ->will($this->returnValue($solution));
+            ->willReturn($solution);
 
         $this->exercise
-            ->expects($this->any())
             ->method('getArgs')
-            ->will($this->returnValue([]));
+            ->willReturn([]);
 
         $this->exercise
             ->expects($this->once())
             ->method('configure')
-            ->will($this->returnCallback(function (ExerciseDispatcher $dispatcher) {
+            ->willReturnCallback(function (ExerciseDispatcher $dispatcher) {
                 $dispatcher->requireCheck(DatabaseCheck::class);
-            }));
+            });
 
         $this->exercise
             ->expects($this->once())
             ->method('seed')
             ->with($this->isInstanceOf(PDO::class))
-            ->will($this->returnCallback(function (PDO $db) {
+            ->willReturnCallback(function (PDO $db) {
                 $db->exec(
                     'CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY, name TEXT, age INTEGER, gender TEXT)'
                 );
                 $stmt = $db->prepare('INSERT into users (name, age, gender) VALUES (:name, :age, :gender)');
                 $stmt->execute([':name' => 'Jimi Hendrix', ':age' => 27, ':gender' => 'Male']);
-            }));
+            });
 
         $this->exercise
             ->expects($this->once())
             ->method('verify')
             ->with($this->isInstanceOf(PDO::class))
-            ->will($this->returnCallback(function (PDO $db) {
+            ->willReturnCallback(function (PDO $db) {
                 $users = $db->query('SELECT * FROM users');
                 $users = $users->fetchAll(PDO::FETCH_ASSOC);
 
@@ -338,7 +330,7 @@ class DatabaseCheckTest extends PHPUnit_Framework_TestCase
                     ],
                     $users
                 );
-            }));
+            });
 
         $this->checkRepository->registerCheck($this->check);
 

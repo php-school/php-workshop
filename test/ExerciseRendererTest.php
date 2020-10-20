@@ -8,8 +8,8 @@ use League\CommonMark\DocParser;
 use League\CommonMark\Environment;
 use PhpSchool\CliMenu\CliMenu;
 use PhpSchool\CliMenu\MenuItem\MenuItemInterface;
-use PhpSchool\CliMenu\Terminal\TerminalInterface;
-use PHPUnit_Framework_TestCase;
+use PhpSchool\Terminal\Terminal;
+use PHPUnit\Framework\TestCase;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpSchool\PhpWorkshop\ExerciseRenderer;
 use PhpSchool\PhpWorkshop\ExerciseRepository;
@@ -23,21 +23,20 @@ use PhpSchool\PhpWorkshop\UserStateSerializer;
  * @package PhpSchool\PhpWorkshopTest
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
-class ExerciseRendererTest extends PHPUnit_Framework_TestCase
+class ExerciseRendererTest extends TestCase
 {
-    public function testExerciseRendererSetsCurrentExerciseAndRendersExercise()
+    public function testExerciseRendererSetsCurrentExerciseAndRendersExercise() : void
     {
         $menu = $this->createMock(CliMenu::class);
 
         $item = $this->createMock(MenuItemInterface::class);
         $item
-            ->expects($this->any())
             ->method('getText')
-            ->will($this->returnValue('Exercise 2'));
+            ->willReturn('Exercise 2');
         $menu
             ->expects($this->once())
             ->method('getSelectedItem')
-            ->will($this->returnValue($item));
+            ->willReturn($item);
 
         $menu
             ->expects($this->once())
@@ -54,12 +53,12 @@ class ExerciseRendererTest extends PHPUnit_Framework_TestCase
             ->expects($this->once())
             ->method('findByName')
             ->with('Exercise 2')
-            ->will($this->returnValue($exercise2));
+            ->willReturn($exercise2);
 
         $exerciseRepository
             ->expects($this->once())
             ->method('findAll')
-            ->will($this->returnValue($exercises));
+            ->willReturn($exercises);
 
         $userState
             ->expects($this->once())
@@ -74,7 +73,7 @@ class ExerciseRendererTest extends PHPUnit_Framework_TestCase
         $exercise2
             ->expects($this->once())
             ->method('getProblem')
-            ->will($this->returnValue($problemFile));
+            ->willReturn($problemFile);
 
         if (!is_dir(dirname($problemFile))) {
             mkdir(dirname($problemFile), 0775, true);
@@ -96,7 +95,7 @@ class ExerciseRendererTest extends PHPUnit_Framework_TestCase
             $userStateSerializer,
             $markdownRenderer,
             $color,
-            new StdOutput($color, $this->createMock(TerminalInterface::class))
+            new StdOutput($color, $this->createMock(Terminal::class))
         );
 
         $this->expectOutputString(file_get_contents(__DIR__ . '/res/exercise-help-expected.txt'));

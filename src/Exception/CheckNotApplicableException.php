@@ -9,9 +9,6 @@ use RuntimeException;
 /**
  * Represents the situation when a workshop developer tries to use a check in an exercise which has
  * a type not supported by the check.
- *
- * @package PhpSchool\PhpWorkshop\Exception
- * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
 class CheckNotApplicableException extends RuntimeException
 {

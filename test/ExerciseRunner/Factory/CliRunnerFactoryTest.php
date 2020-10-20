@@ -9,12 +9,12 @@ use PhpSchool\PhpWorkshop\Exercise\ExerciseType;
 use PhpSchool\PhpWorkshop\ExerciseRunner\CliRunner;
 use PhpSchool\PhpWorkshop\ExerciseRunner\Factory\CliRunnerFactory;
 use PhpSchool\PhpWorkshopTest\Asset\CliExerciseImpl;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 
 /**
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
-class CliRunnerFactoryTest extends PHPUnit_Framework_TestCase
+class CliRunnerFactoryTest extends TestCase
 {
     /**
      * @var EventDispatcher
@@ -32,7 +32,7 @@ class CliRunnerFactoryTest extends PHPUnit_Framework_TestCase
         $this->factory = new CliRunnerFactory($this->eventDispatcher);
     }
 
-    public function testSupports()
+    public function testSupports() : void
     {
         $exercise1 = $this->prophesize(ExerciseInterface::class);
         $exercise2 = $this->prophesize(ExerciseInterface::class);
@@ -44,7 +44,7 @@ class CliRunnerFactoryTest extends PHPUnit_Framework_TestCase
         $this->assertFalse($this->factory->supports($exercise2->reveal()));
     }
 
-    public function testConfigureInputAddsProgramArgument()
+    public function testConfigureInputAddsProgramArgument() : void
     {
         $command = new CommandDefinition('my-command', [], 'var_dump');
 
@@ -55,7 +55,7 @@ class CliRunnerFactoryTest extends PHPUnit_Framework_TestCase
         $this->assertTrue($command->getRequiredArgs()[0]->isRequired());
     }
 
-    public function testCreateReturnsRunner()
+    public function testCreateReturnsRunner() : void
     {
         $exercise = new CliExerciseImpl;
         $this->assertInstanceOf(CliRunner::class, $this->factory->create($exercise));

@@ -3,15 +3,15 @@
 namespace PhpSchool\PhpWorkshopTest\Result\Cgi;
 
 use PhpSchool\PhpWorkshop\Result\Cgi\Success;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\RequestInterface;
 
 /**
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
-class SuccessTest extends PHPUnit_Framework_TestCase
+class SuccessTest extends TestCase
 {
-    public function testSuccess()
+    public function testSuccess() : void
     {
         $request = $this->createMock(RequestInterface::class);
         $success = new Success($request);

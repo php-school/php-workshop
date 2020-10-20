@@ -8,11 +8,6 @@ use PhpSchool\PhpWorkshop\Event\ExerciseRunnerEvent;
 use PhpSchool\PhpWorkshop\Input\Input;
 use RuntimeException;
 
-/**
- * Class CodePatchListener
- * @package PhpSchool\PhpWorkshop\Listener
- * @author Aydin Hassan <aydin@hotmail.co.uk>
- */
 class CodePatchListener
 {
     /**
