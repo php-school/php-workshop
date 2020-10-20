@@ -50,7 +50,7 @@ class CodeParseCheckTest extends TestCase
         $this->assertInstanceOf(Failure::class, $result);
         
         $this->assertEquals('Code Parse Check', $result->getCheckName());
-        $this->assertRegExp(
+        $this->assertMatchesRegularExpression(
             sprintf('|^File: "%s" could not be parsed\. Error: "|', preg_quote($this->file)),
             $result->getReason()
         );

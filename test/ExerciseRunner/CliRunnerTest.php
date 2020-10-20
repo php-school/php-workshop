@@ -150,7 +150,7 @@ class CliRunnerTest extends TestCase
 
         $result = iterator_to_array($failure)[0];
         $this->assertInstanceOf(GenericFailure::class, $result);
-        $this->assertRegExp($failureMsg, $result->getReason());
+        $this->assertMatchesRegularExpression($failureMsg, $result->getReason());
     }
 
     public function testVerifyReturnsFailureIfSolutionOutputDoesNotMatchUserOutput() : void

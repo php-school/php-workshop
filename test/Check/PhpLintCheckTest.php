@@ -51,7 +51,7 @@ class PhpLintCheckTest extends TestCase
             new Input('app', ['program' => __DIR__ . '/../res/lint/fail.php'])
         );
         $this->assertInstanceOf(Failure::class, $failure);
-        $this->assertRegExp(
+        $this->assertMatchesRegularExpression(
             "/^Parse error: syntax error, unexpected end of file, expecting ',' or ';'/",
             $failure->getReason()
         );
