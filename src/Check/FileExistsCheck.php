@@ -17,7 +17,7 @@ class FileExistsCheck implements SimpleCheckInterface
     /**
      * Return the check's name.
      */
-    public function getName() : string
+    public function getName(): string
     {
         return 'File Exists Check';
     }
@@ -29,7 +29,7 @@ class FileExistsCheck implements SimpleCheckInterface
      * @param Input $input The command line arguments passed to the command.
      * @return ResultInterface The result of the check.
      */
-    public function check(ExerciseInterface $exercise, Input $input) : ResultInterface
+    public function check(ExerciseInterface $exercise, Input $input): ResultInterface
     {
         if (file_exists($input->getArgument('program'))) {
             return Success::fromCheck($this);
@@ -41,12 +41,12 @@ class FileExistsCheck implements SimpleCheckInterface
     /**
      * This check can run on any exercise type.
      */
-    public function canRun(ExerciseType $exerciseType) : bool
+    public function canRun(ExerciseType $exerciseType): bool
     {
         return in_array($exerciseType->getValue(), [ExerciseType::CGI, ExerciseType::CLI], true);
     }
 
-    public function getExerciseInterface() : string
+    public function getExerciseInterface(): string
     {
         return ExerciseInterface::class;
     }
@@ -54,7 +54,7 @@ class FileExistsCheck implements SimpleCheckInterface
     /**
      * This check must run before executing the solution becuase it may not exist.
      */
-    public function getPosition() : string
+    public function getPosition(): string
     {
         return SimpleCheckInterface::CHECK_BEFORE;
     }

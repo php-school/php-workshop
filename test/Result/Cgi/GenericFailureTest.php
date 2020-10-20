@@ -22,7 +22,7 @@ class GenericFailureTest extends TestCase
         $this->assertEquals('CGI Program Runner', $failure->getCheckName());
     }
 
-    public function testFailureWithRequestAndReason() : void
+    public function testFailureWithRequestAndReason(): void
     {
         $request = $this->createMock(RequestInterface::class);
         $failure = GenericFailure::fromRequestAndReason($request, 'Oops');
@@ -32,7 +32,7 @@ class GenericFailureTest extends TestCase
         $this->assertEquals('CGI Program Runner', $failure->getCheckName());
     }
 
-    public function testFailureFromCodeExecutionException() : void
+    public function testFailureFromCodeExecutionException(): void
     {
         $e = new CodeExecutionException('Something went wrong yo');
         $request = $this->createMock(RequestInterface::class);

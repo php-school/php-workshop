@@ -220,7 +220,7 @@ final class Application
      */
     private function getContainer()
     {
-        $containerBuilder = new ContainerBuilder;
+        $containerBuilder = new ContainerBuilder();
         $containerBuilder->addDefinitions(
             array_merge_recursive(
                 require $this->frameworkConfigLocation,

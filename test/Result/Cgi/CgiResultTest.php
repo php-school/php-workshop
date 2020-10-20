@@ -13,14 +13,14 @@ use Psr\Http\Message\RequestInterface;
  */
 class CgiResultTest extends TestCase
 {
-    public function testName() : void
+    public function testName(): void
     {
         $request = new RequestFailure($this->createMock(RequestInterface::class), '', '', [], []);
         $cgiResult = new CgiResult([$request]);
         $this->assertSame('CGI Program Runner', $cgiResult->getCheckName());
     }
 
-    public function testIsSuccessful() : void
+    public function testIsSuccessful(): void
     {
         $request = new RequestFailure($this->createMock(RequestInterface::class), '', '', [], []);
         $cgiResult = new CgiResult([$request]);

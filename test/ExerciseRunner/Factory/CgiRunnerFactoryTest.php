@@ -27,10 +27,10 @@ class CgiRunnerFactoryTest extends TestCase
     public function setUp(): void
     {
         $this->eventDispatcher = $this->createMock(EventDispatcher::class);
-        $this->factory = new CgiRunnerFactory($this->eventDispatcher, new RequestRenderer);
+        $this->factory = new CgiRunnerFactory($this->eventDispatcher, new RequestRenderer());
     }
 
-    public function testSupports() : void
+    public function testSupports(): void
     {
         $exercise1 = $this->prophesize(ExerciseInterface::class);
         $exercise2 = $this->prophesize(ExerciseInterface::class);
@@ -42,7 +42,7 @@ class CgiRunnerFactoryTest extends TestCase
         $this->assertFalse($this->factory->supports($exercise2->reveal()));
     }
 
-    public function testConfigureInputAddsProgramArgument() : void
+    public function testConfigureInputAddsProgramArgument(): void
     {
         $command = new CommandDefinition('my-command', [], 'var_dump');
 
@@ -53,9 +53,9 @@ class CgiRunnerFactoryTest extends TestCase
         $this->assertTrue($command->getRequiredArgs()[0]->isRequired());
     }
 
-    public function testCreateReturnsRunner() : void
+    public function testCreateReturnsRunner(): void
     {
-        $exercise = new CgiExerciseImpl;
+        $exercise = new CgiExerciseImpl();
         $this->assertInstanceOf(CgiRunner::class, $this->factory->create($exercise));
     }
 }

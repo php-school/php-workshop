@@ -11,7 +11,7 @@ use PHPUnit\Framework\TestCase;
  */
 class TestWorkshopType extends TestCase
 {
-    public function testIsTutorialMode() : void
+    public function testIsTutorialMode(): void
     {
         $tutorial = WorkshopType::TUTORIAL();
         $standard = WorkshopType::STANDARD();

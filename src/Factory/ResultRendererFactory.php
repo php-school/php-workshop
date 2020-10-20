@@ -26,11 +26,11 @@ class ResultRendererFactory
     public function registerRenderer($resultClass, $rendererClass, callable $factory = null)
     {
         if (!$this->isImplementationNameOfClass($resultClass, ResultInterface::class)) {
-            throw new InvalidArgumentException;
+            throw new InvalidArgumentException();
         }
 
         if (!$this->isImplementationNameOfClass($rendererClass, ResultRendererInterface::class)) {
-            throw new InvalidArgumentException;
+            throw new InvalidArgumentException();
         }
 
         $this->mappings[$resultClass] = $rendererClass;

@@ -14,15 +14,15 @@ use PhpSchool\PhpWorkshop\Utils\ArrayObject;
  */
 class CliResultRendererTest extends AbstractResultRendererTest
 {
-    public function testNothingIsOutputIfNoFailures() : void
+    public function testNothingIsOutputIfNoFailures(): void
     {
-        $result = new CliResult([new Success(new ArrayObject)]);
+        $result = new CliResult([new Success(new ArrayObject())]);
         $renderer = new CliResultRenderer($result);
 
         $this->assertEmpty($renderer->render($this->getRenderer()));
     }
 
-    public function testRenderWithFailedRequest() : void
+    public function testRenderWithFailedRequest(): void
     {
         $failureRenderer = $this->prophesize(RequestFailureRenderer::class);
         $failureRenderer->render($this->getRenderer())->willReturn("REQUEST FAILURE\n");
@@ -36,7 +36,7 @@ class CliResultRendererTest extends AbstractResultRendererTest
         );
 
         $failure = new RequestFailure(
-            new ArrayObject,
+            new ArrayObject(),
             'EXPECTED OUTPUT',
             'ACTUAL OUTPUT'
         );
@@ -52,7 +52,7 @@ class CliResultRendererTest extends AbstractResultRendererTest
         $this->assertSame($expected, $renderer->render($this->getRenderer()));
     }
 
-    public function testRenderWithFailedRequestWithMultipleArgs() : void
+    public function testRenderWithFailedRequestWithMultipleArgs(): void
     {
         $failureRenderer = $this->prophesize(RequestFailureRenderer::class);
         $failureRenderer->render($this->getRenderer())->willReturn("REQUEST FAILURE\n");

@@ -17,11 +17,11 @@ use PHPUnit\Framework\TestCase;
 class CreditsCommandTest extends TestCase
 {
 
-    public function testInvoke() : void
+    public function testInvoke(): void
     {
         $this->expectOutputString(file_get_contents(__DIR__ . '/../res/app-credits-expected.txt'));
 
-        $color = new Color;
+        $color = new Color();
         $color->setForceStyle(true);
 
         $command = new CreditsCommand(
@@ -42,11 +42,11 @@ class CreditsCommandTest extends TestCase
         $command->__invoke();
     }
 
-    public function testWithOnlyCoreContributors() : void
+    public function testWithOnlyCoreContributors(): void
     {
         $this->expectOutputString(file_get_contents(__DIR__ . '/../res/app-credits-core-expected.txt'));
 
-        $color = new Color;
+        $color = new Color();
         $color->setForceStyle(true);
 
         $command = new CreditsCommand(
@@ -64,11 +64,11 @@ class CreditsCommandTest extends TestCase
         $command->__invoke();
     }
 
-    public function testWithNoContributors() : void
+    public function testWithNoContributors(): void
     {
         $this->expectOutputString('');
         
-        $color = new Color;
+        $color = new Color();
         $color->setForceStyle(true);
         
         $command = new CreditsCommand(

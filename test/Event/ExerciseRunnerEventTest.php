@@ -12,9 +12,9 @@ use PHPUnit\Framework\TestCase;
  */
 class ExerciseRunnerEventTest extends TestCase
 {
-    public function testGetters() : void
+    public function testGetters(): void
     {
-        $exercise = new CliExerciseImpl;
+        $exercise = new CliExerciseImpl();
         $input = new Input('app');
 
         $event = new ExerciseRunnerEvent('Some Event', $exercise, $input, ['number' => 1]);

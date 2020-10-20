@@ -30,7 +30,7 @@ interface SimpleCheckInterface extends CheckInterface
     /**
      * Can this check run this exercise?
      */
-    public function canRun(ExerciseType $exerciseType) : bool;
+    public function canRun(ExerciseType $exerciseType): bool;
 
     /**
      * The check is ran against an exercise and a filename which
@@ -45,12 +45,12 @@ interface SimpleCheckInterface extends CheckInterface
      * @param Input $input The command line arguments passed to the command.
      * @return ResultInterface The result of the check.
      */
-    public function check(ExerciseInterface $exercise, Input $input) : ResultInterface;
+    public function check(ExerciseInterface $exercise, Input $input): ResultInterface;
 
     /**
      * Either `static::CHECK_BEFORE` | `static::CHECK_AFTER`.
      *
      * @return string
      */
-    public function getPosition() : string;
+    public function getPosition(): string;
 }

@@ -15,11 +15,11 @@ use PHPUnit\Framework\TestCase;
  */
 class HelpCommandTest extends TestCase
 {
-    public function testInvoke() : void
+    public function testInvoke(): void
     {
         $this->expectOutputString(file_get_contents(__DIR__ . '/../res/app-help-expected.txt'));
 
-        $color = new Color;
+        $color = new Color();
         $color->setForceStyle(true);
 
         $command = new HelpCommand(

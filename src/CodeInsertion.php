@@ -14,13 +14,13 @@ class CodeInsertion
      * Denotes that the block of code this insertion
      * represents, should be inserted at the top of the solution.
      */
-    const TYPE_BEFORE   = 'before';
+    public const TYPE_BEFORE   = 'before';
 
     /**
      * Denotes that the block of code this insertion
      * represents, should be inserted at the bottom of the solution.
      */
-    const TYPE_AFTER    = 'after';
+    public const TYPE_AFTER    = 'after';
 
     /**
      * @var array

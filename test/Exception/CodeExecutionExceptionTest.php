@@ -13,13 +13,13 @@ use Symfony\Component\Process\Process;
  */
 class CodeExecutionExceptionTest extends TestCase
 {
-    public function testException() : void
+    public function testException(): void
     {
         $e = new CodeExecutionException('nope');
         $this->assertEquals('nope', $e->getMessage());
     }
 
-    public function testFromProcessUsesErrorOutputIfNotEmpty() : void
+    public function testFromProcessUsesErrorOutputIfNotEmpty(): void
     {
         $process = $this->createMock(Process::class);
 
@@ -32,7 +32,7 @@ class CodeExecutionExceptionTest extends TestCase
         $this->assertEquals('PHP Code failed to execute. Error: "Error Output"', $e->getMessage());
     }
 
-    public function testFromProcessUsesStdOutputIfErrorOutputEmpty() : void
+    public function testFromProcessUsesStdOutputIfErrorOutputEmpty(): void
     {
         $process = $this->createMock(Process::class);
         $process

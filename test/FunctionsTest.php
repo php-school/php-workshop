@@ -12,12 +12,12 @@ class FunctionsTest extends TestCase
     /**
      * @dataProvider mbStrPadProvider
      */
-    public function testMbStrPad(string $string, int $pad, string $expected) : void
+    public function testMbStrPad(string $string, int $pad, string $expected): void
     {
         self::assertSame(mb_str_pad($string, $pad), $expected);
     }
 
-    public function mbStrPadProvider() : array
+    public function mbStrPadProvider(): array
     {
         return [
             ['hello', 10, 'hello     '],
@@ -28,12 +28,12 @@ class FunctionsTest extends TestCase
     /**
      * @dataProvider camelCaseToKebabCaseProvider
      */
-    public function testCamelCaseToKebabCase(string $string, string $expected) : void
+    public function testCamelCaseToKebabCase(string $string, string $expected): void
     {
         self::assertSame(camel_case_to_kebab_case($string), $expected);
     }
 
-    public function camelCaseToKebabCaseProvider() : array
+    public function camelCaseToKebabCaseProvider(): array
     {
         return [
             ['camelCase', 'camel-case'],

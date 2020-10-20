@@ -18,16 +18,16 @@ use PHPUnit\Framework\TestCase;
  */
 class RunCommandTest extends TestCase
 {
-    public function test() : void
+    public function test(): void
     {
         $input = new Input('appName', ['program' => 'solution.php']);
 
-        $exercise = new CliExerciseImpl;
+        $exercise = new CliExerciseImpl();
         $repo = new ExerciseRepository([$exercise]);
 
-        $state = new UserState;
+        $state = new UserState();
         $state->setCurrentExercise('my-exercise');
-        $color = new Color;
+        $color = new Color();
         $color->setForceStyle(true);
         $output = new StdOutput($color, $this->createMock(Terminal::class));
 

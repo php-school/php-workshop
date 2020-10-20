@@ -10,7 +10,7 @@ use PHPUnit\Framework\TestCase;
  */
 class ContainerListenerHelperTest extends TestCase
 {
-    public function testDefaultMethodIsInvoke() : void
+    public function testDefaultMethodIsInvoke(): void
     {
         $helper = new ContainerListenerHelper('Some\Object');
 
@@ -18,7 +18,7 @@ class ContainerListenerHelperTest extends TestCase
         $this->assertEquals('__invoke', $helper->getMethod());
     }
 
-    public function testWithCustomMethod() : void
+    public function testWithCustomMethod(): void
     {
         $helper = new ContainerListenerHelper('Some\Object', 'myMethod');
 

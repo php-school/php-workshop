@@ -14,14 +14,14 @@ use PhpSchool\PhpWorkshop\Result\Success;
  */
 class SuccessTest extends TestCase
 {
-    public function testSuccess() : void
+    public function testSuccess(): void
     {
         $success = new Success('Some Check');
         $this->assertInstanceOf(ResultInterface::class, $success);
         $this->assertEquals('Some Check', $success->getCheckName());
     }
 
-    public function testSuccessFromCheck() : void
+    public function testSuccessFromCheck(): void
     {
         $check = $this->createMock(CheckInterface::class);
         $check

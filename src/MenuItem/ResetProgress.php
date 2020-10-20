@@ -27,7 +27,7 @@ class ResetProgress
      */
     public function __invoke(CliMenu $menu)
     {
-        $this->userStateSerializer->serialize(new UserState);
+        $this->userStateSerializer->serialize(new UserState());
 
         $items = $menu
             ->getParent()

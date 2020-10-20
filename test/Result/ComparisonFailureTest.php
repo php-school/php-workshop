@@ -10,7 +10,7 @@ use PHPUnit\Framework\TestCase;
  */
 class ComparisonFailureTest extends TestCase
 {
-    public function testGetters() : void
+    public function testGetters(): void
     {
         $failure = new ComparisonFailure('Name', 'Expected Output', 'Actual Output');
         self::assertSame('Name', $failure->getCheckName());
@@ -18,7 +18,7 @@ class ComparisonFailureTest extends TestCase
         self::assertEquals('Actual Output', $failure->getActualValue());
     }
 
-    public function testFailureFromArgsAndOutput() : void
+    public function testFailureFromArgsAndOutput(): void
     {
         $failure = ComparisonFailure::fromNameAndValues('Name', 'Expected Output', 'Actual Output');
         self::assertSame('Name', $failure->getCheckName());

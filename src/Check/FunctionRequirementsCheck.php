@@ -39,7 +39,7 @@ class FunctionRequirementsCheck implements SimpleCheckInterface
     /**
      * Return the check's name.
      */
-    public function getName() : string
+    public function getName(): string
     {
         return 'Function Requirements Check';
     }
@@ -53,10 +53,10 @@ class FunctionRequirementsCheck implements SimpleCheckInterface
      * @param Input $input The command line arguments passed to the command.
      * @return ResultInterface The result of the check.
      */
-    public function check(ExerciseInterface $exercise, Input $input) : ResultInterface
+    public function check(ExerciseInterface $exercise, Input $input): ResultInterface
     {
         if (!$exercise instanceof FunctionRequirementsExerciseCheck) {
-            throw new \InvalidArgumentException;
+            throw new \InvalidArgumentException();
         }
 
         $requiredFunctions  = $exercise->getRequiredFunctions();
@@ -71,7 +71,7 @@ class FunctionRequirementsCheck implements SimpleCheckInterface
         }
 
         $visitor    = new FunctionVisitor($requiredFunctions, $bannedFunctions);
-        $traverser  = new NodeTraverser;
+        $traverser  = new NodeTraverser();
         $traverser->addVisitor($visitor);
 
         $traverser->traverse($ast);
@@ -98,12 +98,12 @@ class FunctionRequirementsCheck implements SimpleCheckInterface
     /**
      * This check can run on any exercise type.
      */
-    public function canRun(ExerciseType $exerciseType) : bool
+    public function canRun(ExerciseType $exerciseType): bool
     {
         return in_array($exerciseType->getValue(), [ExerciseType::CGI, ExerciseType::CLI], true);
     }
 
-    public function getExerciseInterface() : string
+    public function getExerciseInterface(): string
     {
         return FunctionRequirementsExerciseCheck::class;
     }
@@ -113,7 +113,7 @@ class FunctionRequirementsCheck implements SimpleCheckInterface
      * output, but do it in a way that was not correct for the task. This way the student can see the program works
      * but missed some requirements.
      */
-    public function getPosition() : string
+    public function getPosition(): string
     {
         return SimpleCheckInterface::CHECK_AFTER;
     }

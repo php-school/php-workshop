@@ -12,9 +12,9 @@ use PHPUnit\Framework\TestCase;
  */
 class GenericFailureTest extends TestCase
 {
-    public function testFailure() : void
+    public function testFailure(): void
     {
-        $args = new ArrayObject;
+        $args = new ArrayObject();
         $failure = new GenericFailure($args, 'Oops');
         $this->assertInstanceOf(GenericFailure::class, $failure);
         $this->assertEquals($args, $failure->getArgs());
@@ -22,9 +22,9 @@ class GenericFailureTest extends TestCase
         $this->assertEquals('CLI Program Runner', $failure->getCheckName());
     }
 
-    public function testFailureWithRequestAndReason() : void
+    public function testFailureWithRequestAndReason(): void
     {
-        $args = new ArrayObject;
+        $args = new ArrayObject();
         $failure = GenericFailure::fromArgsAndReason($args, 'Oops');
         $this->assertInstanceOf(GenericFailure::class, $failure);
         $this->assertEquals($args, $failure->getArgs());
@@ -32,9 +32,9 @@ class GenericFailureTest extends TestCase
         $this->assertEquals('CLI Program Runner', $failure->getCheckName());
     }
 
-    public function testFailureFromCodeExecutionException() : void
+    public function testFailureFromCodeExecutionException(): void
     {
-        $args = new ArrayObject;
+        $args = new ArrayObject();
         $e = new CodeExecutionException('Something went wrong yo');
         $failure = GenericFailure::fromArgsAndCodeExecutionFailure($args, $e);
         $this->assertInstanceOf(GenericFailure::class, $failure);

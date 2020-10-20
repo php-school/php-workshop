@@ -50,15 +50,15 @@ class DatabaseCheckTest extends TestCase
      */
     private $dbDir;
 
-    public function setUp() : void
+    public function setUp(): void
     {
-        $containerBuilder = new ContainerBuilder;
+        $containerBuilder = new ContainerBuilder();
         $containerBuilder->addDefinitions(__DIR__ . '/../../app/config.php');
         $container = $containerBuilder->build();
 
         $this->checkRepository = $container->get(CheckRepository::class);
 
-        $this->check = new DatabaseCheck;
+        $this->check = new DatabaseCheck();
         $this->exercise = $this->createMock(DatabaseExerciseInterface::class);
         $this->exercise->method('getType')->willReturn(ExerciseType::CLI());
         $this->dbDir = sprintf(
@@ -70,7 +70,7 @@ class DatabaseCheckTest extends TestCase
         $this->assertEquals(DatabaseExerciseCheck::class, $this->check->getExerciseInterface());
     }
 
-    private function getRunnerManager(ExerciseInterface $exercise, EventDispatcher $eventDispatcher) : MockObject
+    private function getRunnerManager(ExerciseInterface $exercise, EventDispatcher $eventDispatcher): MockObject
     {
         $runner = $this->getMockBuilder(CliRunner::class)
             ->setConstructorArgs([$exercise, $eventDispatcher])
@@ -90,9 +90,9 @@ class DatabaseCheckTest extends TestCase
         return $runnerManager;
     }
 
-    public function testIfDatabaseFolderExistsExceptionIsThrown() : void
+    public function testIfDatabaseFolderExistsExceptionIsThrown(): void
     {
-        $eventDispatcher = new EventDispatcher(new ResultAggregator);
+        $eventDispatcher = new EventDispatcher(new ResultAggregator());
         @mkdir($this->dbDir);
         try {
             $this->check->attach($eventDispatcher);
@@ -107,9 +107,9 @@ class DatabaseCheckTest extends TestCase
      * If an exception is thrown from PDO, check that the check can be run straight away
      * Previously files were not cleaned up that caused exceptions.
      */
-    public function testIfPDOThrowsExceptionItCleansUp() : void
+    public function testIfPDOThrowsExceptionItCleansUp(): void
     {
-        $eventDispatcher = new EventDispatcher(new ResultAggregator);
+        $eventDispatcher = new EventDispatcher(new ResultAggregator());
 
         $refProp = new ReflectionProperty(DatabaseCheck::class, 'userDsn');
         $refProp->setAccessible(true);
@@ -122,7 +122,7 @@ class DatabaseCheckTest extends TestCase
         }
 
         //try to run the check as usual
-        $this->check = new DatabaseCheck;
+        $this->check = new DatabaseCheck();
         $solution = SingleFileSolution::fromFile(realpath(__DIR__ . '/../res/database/solution.php'));
         $this->exercise
             ->expects($this->once())
@@ -149,7 +149,7 @@ class DatabaseCheckTest extends TestCase
 
         $this->checkRepository->registerCheck($this->check);
 
-        $results            = new ResultAggregator;
+        $results            = new ResultAggregator();
         $eventDispatcher    = new EventDispatcher($results);
         $dispatcher         = new ExerciseDispatcher(
             $this->getRunnerManager($this->exercise, $eventDispatcher),
@@ -162,7 +162,7 @@ class DatabaseCheckTest extends TestCase
         $this->assertTrue($results->isSuccessful());
     }
 
-    public function testSuccessIsReturnedIfDatabaseVerificationPassed() : void
+    public function testSuccessIsReturnedIfDatabaseVerificationPassed(): void
     {
         $solution = SingleFileSolution::fromFile(realpath(__DIR__ . '/../res/database/solution.php'));
         $this->exercise
@@ -190,7 +190,7 @@ class DatabaseCheckTest extends TestCase
 
         $this->checkRepository->registerCheck($this->check);
 
-        $results            = new ResultAggregator;
+        $results            = new ResultAggregator();
         $eventDispatcher    = new EventDispatcher($results);
         $dispatcher         = new ExerciseDispatcher(
             $this->getRunnerManager($this->exercise, $eventDispatcher),
@@ -205,7 +205,7 @@ class DatabaseCheckTest extends TestCase
         $this->assertTrue($results->isSuccessful());
     }
 
-    public function testRunExercise() : void
+    public function testRunExercise(): void
     {
         $this->exercise
             ->expects($this->once())
@@ -221,7 +221,7 @@ class DatabaseCheckTest extends TestCase
 
         $this->checkRepository->registerCheck($this->check);
 
-        $results            = new ResultAggregator;
+        $results            = new ResultAggregator();
         $eventDispatcher    = new EventDispatcher($results);
         $dispatcher         = new ExerciseDispatcher(
             $this->getRunnerManager($this->exercise, $eventDispatcher),
@@ -237,7 +237,7 @@ class DatabaseCheckTest extends TestCase
         );
     }
 
-    public function testFailureIsReturnedIfDatabaseVerificationFails() : void
+    public function testFailureIsReturnedIfDatabaseVerificationFails(): void
     {
         $solution = SingleFileSolution::fromFile(realpath(__DIR__ . '/../res/database/solution.php'));
 
@@ -267,7 +267,7 @@ class DatabaseCheckTest extends TestCase
 
         $this->checkRepository->registerCheck($this->check);
 
-        $results            = new ResultAggregator;
+        $results            = new ResultAggregator();
         $eventDispatcher    = new EventDispatcher($results);
         $dispatcher         = new ExerciseDispatcher(
             $this->getRunnerManager($this->exercise, $eventDispatcher),
@@ -283,7 +283,7 @@ class DatabaseCheckTest extends TestCase
         $this->assertSame('Database verification failed', $results[1]->getReason());
     }
 
-    public function testAlteringDatabaseInSolutionDoesNotEffectDatabaseInUserSolution() : void
+    public function testAlteringDatabaseInSolutionDoesNotEffectDatabaseInUserSolution(): void
     {
         $solution = SingleFileSolution::fromFile(realpath(__DIR__ . '/../res/database/solution-alter-db.php'));
 
@@ -334,7 +334,7 @@ class DatabaseCheckTest extends TestCase
 
         $this->checkRepository->registerCheck($this->check);
 
-        $results            = new ResultAggregator;
+        $results            = new ResultAggregator();
         $eventDispatcher    = new EventDispatcher($results);
         $dispatcher         = new ExerciseDispatcher(
             $this->getRunnerManager($this->exercise, $eventDispatcher),

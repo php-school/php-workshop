@@ -14,16 +14,16 @@ use PHPUnit\Framework\TestCase;
  */
 class CheckRepositoryTest extends TestCase
 {
-    public function testRegisterViaConstructor() : void
+    public function testRegisterViaConstructor(): void
     {
         $check = $this->createMock(CheckInterface::class);
         $repository = new CheckRepository([$check]);
         $this->assertEquals([$check], $repository->getAll());
     }
 
-    public function testRegisterCheck() : void
+    public function testRegisterCheck(): void
     {
-        $repository = new CheckRepository;
+        $repository = new CheckRepository();
         $this->assertEquals([], $repository->getAll());
 
         $check = $this->createMock(CheckInterface::class);
@@ -31,9 +31,9 @@ class CheckRepositoryTest extends TestCase
         $this->assertEquals([$check], $repository->getAll());
     }
 
-    public function testHas() : void
+    public function testHas(): void
     {
-        $repository = new CheckRepository;
+        $repository = new CheckRepository();
         $repository->registerCheck($this->createMock(CheckInterface::class));
 
         $check = $this->createMock(CheckInterface::class);
@@ -43,9 +43,9 @@ class CheckRepositoryTest extends TestCase
         $this->assertFalse($repository->has('SomeClassWhichDoesNotExist'));
     }
 
-    public function testGetByClassThrowsExceptionIfNotExist() : void
+    public function testGetByClassThrowsExceptionIfNotExist(): void
     {
-        $repository = new CheckRepository;
+        $repository = new CheckRepository();
         $repository->registerCheck($this->createMock(CheckInterface::class));
 
         $this->expectException(InvalidArgumentException::class);
@@ -54,9 +54,9 @@ class CheckRepositoryTest extends TestCase
         $repository->getByClass('SomeClassWhichDoesNotExist');
     }
 
-    public function testGetByClass() : void
+    public function testGetByClass(): void
     {
-        $repository = new CheckRepository;
+        $repository = new CheckRepository();
         $repository->registerCheck($this->createMock(CheckInterface::class));
 
         $check = $this->createMock(CheckInterface::class);

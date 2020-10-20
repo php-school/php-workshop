@@ -35,7 +35,7 @@ class CodeParseCheck implements SimpleCheckInterface
     /**
      * Return the check's name
      */
-    public function getName() : string
+    public function getName(): string
     {
         return 'Code Parse Check';
     }
@@ -49,7 +49,7 @@ class CodeParseCheck implements SimpleCheckInterface
      * @param Input $input The command line arguments passed to the command.
      * @return ResultInterface The result of the check.
      */
-    public function check(ExerciseInterface $exercise, Input $input) : ResultInterface
+    public function check(ExerciseInterface $exercise, Input $input): ResultInterface
     {
         
         $code = file_get_contents($input->getArgument('program'));
@@ -66,7 +66,7 @@ class CodeParseCheck implements SimpleCheckInterface
     /**
      * This check can run on any exercise type.
      */
-    public function canRun(ExerciseType $exerciseType) : bool
+    public function canRun(ExerciseType $exerciseType): bool
     {
         return in_array($exerciseType->getValue(), [ExerciseType::CGI, ExerciseType::CLI], true);
     }
@@ -74,7 +74,7 @@ class CodeParseCheck implements SimpleCheckInterface
     /**
      * @return string
      */
-    public function getExerciseInterface() : string
+    public function getExerciseInterface(): string
     {
         return ExerciseInterface::class;
     }
@@ -83,7 +83,7 @@ class CodeParseCheck implements SimpleCheckInterface
      * This check should be run before executing the student's solution, as, if it cannot be parsed
      * it probably cannot be executed.
      */
-    public function getPosition() : string
+    public function getPosition(): string
     {
         return SimpleCheckInterface::CHECK_BEFORE;
     }

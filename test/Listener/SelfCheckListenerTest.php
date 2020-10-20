@@ -18,7 +18,7 @@ use PHPUnit\Framework\TestCase;
  */
 class SelfCheckListenerTest extends TestCase
 {
-    public function testSelfCheck() : void
+    public function testSelfCheck(): void
     {
         $exercise = $this->createMock(SelfCheckExerciseInterface::class);
         $input    = new Input('app', ['program' => 'some-file.php']);
@@ -31,7 +31,7 @@ class SelfCheckListenerTest extends TestCase
             ->with($input)
             ->willReturn($success);
 
-        $results = new ResultAggregator;
+        $results = new ResultAggregator();
         $listener = new SelfCheckListener($results);
         $listener->__invoke($event);
 
@@ -39,13 +39,13 @@ class SelfCheckListenerTest extends TestCase
         $this->assertCount(1, $results);
     }
 
-    public function testExerciseWithOutSelfCheck() : void
+    public function testExerciseWithOutSelfCheck(): void
     {
         $exercise = $this->createMock(ExerciseInterface::class);
         $input    = new Input('app', ['program' => 'some-file.php']);
         $event    = new Event('event', compact('exercise', 'input'));
 
-        $results = new ResultAggregator;
+        $results = new ResultAggregator();
         $listener = new SelfCheckListener($results);
         $listener->__invoke($event);
 

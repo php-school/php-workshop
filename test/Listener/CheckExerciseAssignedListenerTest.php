@@ -17,9 +17,9 @@ class CheckExerciseAssignedListenerTest extends TestCase
     /**
      * @dataProvider commandsThatRequireAssignedExercise
      */
-    public function testExceptionIsThrownIfNoExerciseAssigned(CommandDefinition $command) : void
+    public function testExceptionIsThrownIfNoExerciseAssigned(CommandDefinition $command): void
     {
-        $state = new UserState;
+        $state = new UserState();
 
         $this->expectException(\RuntimeException::class);
         $this->expectExceptionMessage('No active exercise. Select one from the menu');
@@ -31,7 +31,7 @@ class CheckExerciseAssignedListenerTest extends TestCase
     /**
      * @dataProvider commandsThatRequireAssignedExercise
      */
-    public function testExceptionIsNotThrownIfExerciseAssigned(CommandDefinition $command) : void
+    public function testExceptionIsNotThrownIfExerciseAssigned(CommandDefinition $command): void
     {
         $state = new UserState(['exercise1'], 'exercise1');
         $listener = new CheckExerciseAssignedListener($state);
@@ -40,7 +40,7 @@ class CheckExerciseAssignedListenerTest extends TestCase
         $this->assertTrue($state->isAssignedExercise());
     }
 
-    public function commandsThatRequireAssignedExercise() : array
+    public function commandsThatRequireAssignedExercise(): array
     {
         return [
             [$this->command('verify')],
@@ -52,7 +52,7 @@ class CheckExerciseAssignedListenerTest extends TestCase
     /**
      * @dataProvider commandsThatDoNotRequireAssignedExercise
      */
-    public function testExceptionIsNotThrownIfCommandDoesNotRequireAssignedExercise(CommandDefinition $command) : void
+    public function testExceptionIsNotThrownIfCommandDoesNotRequireAssignedExercise(CommandDefinition $command): void
     {
         $state = new UserState(['exercise1'], 'exercise1');
         $listener = new CheckExerciseAssignedListener($state);
@@ -61,7 +61,7 @@ class CheckExerciseAssignedListenerTest extends TestCase
         $this->assertTrue($state->isAssignedExercise());
     }
 
-    public function commandsThatDoNotRequireAssignedExercise() : array
+    public function commandsThatDoNotRequireAssignedExercise(): array
     {
         return [
             [$this->command('help')],
@@ -73,7 +73,7 @@ class CheckExerciseAssignedListenerTest extends TestCase
     /**
      * @return MockObject|CommandDefinition
      */
-    private function command(string $commandName) : MockObject
+    private function command(string $commandName): MockObject
     {
         $command = $this->createMock(CommandDefinition::class);
         $command

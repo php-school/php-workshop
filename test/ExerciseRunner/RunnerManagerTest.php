@@ -14,10 +14,10 @@ use PHPUnit\Framework\TestCase;
  */
 class RunnerManagerTest extends TestCase
 {
-    public function testConfigureInputCallsCorrectFactory() : void
+    public function testConfigureInputCallsCorrectFactory(): void
     {
-        $exercise = new CliExerciseImpl;
-        $manager  = new RunnerManager;
+        $exercise = new CliExerciseImpl();
+        $manager  = new RunnerManager();
         $command  = new CommandDefinition('my-command', [], 'var_dump');
 
         $factory1 = $this->prophesize(ExerciseRunnerFactoryInterface::class);
@@ -33,10 +33,10 @@ class RunnerManagerTest extends TestCase
         $manager->configureInput($exercise, $command);
     }
 
-    public function testGetRunnerCallsCorrectFactory() : void
+    public function testGetRunnerCallsCorrectFactory(): void
     {
-        $exercise = new CliExerciseImpl;
-        $manager  = new RunnerManager;
+        $exercise = new CliExerciseImpl();
+        $manager  = new RunnerManager();
 
         $factory1 = $this->prophesize(ExerciseRunnerFactoryInterface::class);
         $factory1->supports($exercise)->willReturn(false);
@@ -51,10 +51,10 @@ class RunnerManagerTest extends TestCase
         $manager->getRunner($exercise);
     }
 
-    public function testExceptionIsThrownWhenConfiguringInputIfNoFactorySupportsExercise() : void
+    public function testExceptionIsThrownWhenConfiguringInputIfNoFactorySupportsExercise(): void
     {
-        $exercise = new CliExerciseImpl;
-        $manager = new RunnerManager;
+        $exercise = new CliExerciseImpl();
+        $manager = new RunnerManager();
 
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Exercise Type: "CLI" not supported');
@@ -62,10 +62,10 @@ class RunnerManagerTest extends TestCase
         $manager->configureInput($exercise, new CommandDefinition('my-command', [], 'var_dump'));
     }
 
-    public function testExceptionIsThrownWhenGettingRunnerIfNoFactorySupportsExercise() : void
+    public function testExceptionIsThrownWhenGettingRunnerIfNoFactorySupportsExercise(): void
     {
-        $exercise = new CliExerciseImpl;
-        $manager = new RunnerManager;
+        $exercise = new CliExerciseImpl();
+        $manager = new RunnerManager();
 
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Exercise Type: "CLI" not supported');

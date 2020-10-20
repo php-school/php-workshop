@@ -18,7 +18,7 @@ class CustomVerifyingExerciseImpl extends AbstractExercise implements ExerciseIn
     /**
      * Get the name of the exercise, like `Hello World!`.
      */
-    public function getName() : string
+    public function getName(): string
     {
         return 'Custom Verifying exercise';
     }
@@ -26,7 +26,7 @@ class CustomVerifyingExerciseImpl extends AbstractExercise implements ExerciseIn
     /**
      * A short description of the exercise.
      */
-    public function getDescription() : string
+    public function getDescription(): string
     {
         return 'Custom Verifying exercise';
     }
@@ -34,12 +34,12 @@ class CustomVerifyingExerciseImpl extends AbstractExercise implements ExerciseIn
     /**
      * Return the type of exercise. This is an ENUM. See `PhpSchool\PhpWorkshop\Exercise\ExerciseType`.
      */
-    public function getType() : ExerciseType
+    public function getType(): ExerciseType
     {
         return ExerciseType::CUSTOM();
     }
 
-    public function verify() : ResultInterface
+    public function verify(): ResultInterface
     {
         return new Success('success');
     }

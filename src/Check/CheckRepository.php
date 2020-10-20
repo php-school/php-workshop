@@ -28,7 +28,7 @@ class CheckRepository
     /**
      * Add a new check to the repository.
      */
-    public function registerCheck(CheckInterface $check) : void
+    public function registerCheck(CheckInterface $check): void
     {
         $this->checks[get_class($check)] = $check;
     }
@@ -38,7 +38,7 @@ class CheckRepository
      *
      * @return array
      */
-    public function getAll() : array
+    public function getAll(): array
     {
         return array_values($this->checks);
     }
@@ -50,7 +50,7 @@ class CheckRepository
      * @return CheckInterface The instance.
      * @throws InvalidArgumentException If an instance of the check does not exist.
      */
-    public function getByClass(string $class) : CheckInterface
+    public function getByClass(string $class): CheckInterface
     {
         if (!isset($this->checks[$class])) {
             throw new InvalidArgumentException(sprintf('Check: "%s" does not exist', $class));
@@ -62,7 +62,7 @@ class CheckRepository
     /**
      * Query whether a check instance exists in this repository via its class name.
      */
-    public function has(string $class) : bool
+    public function has(string $class): bool
     {
         try {
             $this->getByClass($class);

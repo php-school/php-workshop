@@ -61,12 +61,12 @@ class DatabaseCheck implements ListenableCheckInterface
     /**
      * Return the check's name
      */
-    public function getName() : string
+    public function getName(): string
     {
         return 'Database Verification Check';
     }
 
-    public function getExerciseInterface() : string
+    public function getExerciseInterface(): string
     {
         return DatabaseExerciseCheck::class;
     }
@@ -75,7 +75,7 @@ class DatabaseCheck implements ListenableCheckInterface
      * Here we attach to various events to seed, verify and inject the DSN's
      * to the student & reference solution programs's CLI arguments.
      */
-    public function attach(EventDispatcher $eventDispatcher) : void
+    public function attach(EventDispatcher $eventDispatcher): void
     {
         if (file_exists($this->databaseDirectory)) {
             throw new \RuntimeException(

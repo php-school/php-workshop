@@ -11,7 +11,7 @@ use Zend\Diactoros\Request;
  */
 class RequestRendererTest extends TestCase
 {
-    public function testWriteRequestWithHeaders() : void
+    public function testWriteRequestWithHeaders(): void
     {
         $request = (new Request('http://www.time.com/api/pt?iso=2016-01-21T18:14:33+0000'))
             ->withMethod('GET');
@@ -20,10 +20,10 @@ class RequestRendererTest extends TestCase
         $expected .= "METHOD:  GET\n";
         $expected .= "HEADERS: Host: www.time.com\n";
 
-        $this->assertEquals($expected, (new RequestRenderer)->renderRequest($request));
+        $this->assertEquals($expected, (new RequestRenderer())->renderRequest($request));
     }
 
-    public function testWriteRequestWithNoHeaders() : void
+    public function testWriteRequestWithNoHeaders(): void
     {
         $request = (new Request('/endpoint'))
             ->withMethod('GET');
@@ -31,10 +31,10 @@ class RequestRendererTest extends TestCase
         $expected  = "URL:     /endpoint\n";
         $expected .= "METHOD:  GET\n";
 
-        $this->assertEquals($expected, (new RequestRenderer)->renderRequest($request));
+        $this->assertEquals($expected, (new RequestRenderer())->renderRequest($request));
     }
 
-    public function testWriteRequestWithPostBodyJson() : void
+    public function testWriteRequestWithPostBodyJson(): void
     {
         $request = (new Request('/endpoint'))
             ->withMethod('POST')
@@ -52,10 +52,10 @@ class RequestRendererTest extends TestCase
         $expected .= "    \"other_data\": \"test2\"\n";
         $expected .= "}\n";
 
-        $this->assertEquals($expected, (new RequestRenderer)->renderRequest($request));
+        $this->assertEquals($expected, (new RequestRenderer())->renderRequest($request));
     }
 
-    public function testWriteRequestWithPostBodyUrlEncoded() : void
+    public function testWriteRequestWithPostBodyUrlEncoded(): void
     {
         $request = (new Request('/endpoint'))
             ->withMethod('POST')
@@ -70,6 +70,6 @@ class RequestRendererTest extends TestCase
         $expected .= "HEADERS: Content-Type: application/x-www-form-urlencoded\n";
         $expected .= "BODY:    data=test&other_data=test2\n";
 
-        $this->assertEquals($expected, (new RequestRenderer)->renderRequest($request));
+        $this->assertEquals($expected, (new RequestRenderer())->renderRequest($request));
     }
 }

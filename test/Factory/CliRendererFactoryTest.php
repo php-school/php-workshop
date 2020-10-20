@@ -15,7 +15,7 @@ use PHPUnit\Framework\TestCase;
  */
 class CliRendererFactoryTest extends TestCase
 {
-    public function testFactoryReturnsInstance() : void
+    public function testFactoryReturnsInstance(): void
     {
         $terminal = $this->createMock(Terminal::class);
         $terminal
@@ -25,7 +25,7 @@ class CliRendererFactoryTest extends TestCase
 
         $services = [
             Terminal::class => $terminal,
-            Color::class => new Color,
+            Color::class => new Color(),
         ];
 
         $c = $this->createMock(ContainerInterface::class);

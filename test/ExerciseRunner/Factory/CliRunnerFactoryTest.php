@@ -29,7 +29,7 @@ class CliRunnerFactoryTest extends TestCase
         $this->factory = new CliRunnerFactory($this->eventDispatcher);
     }
 
-    public function testSupports() : void
+    public function testSupports(): void
     {
         $exercise1 = $this->prophesize(ExerciseInterface::class);
         $exercise2 = $this->prophesize(ExerciseInterface::class);
@@ -41,7 +41,7 @@ class CliRunnerFactoryTest extends TestCase
         $this->assertFalse($this->factory->supports($exercise2->reveal()));
     }
 
-    public function testConfigureInputAddsProgramArgument() : void
+    public function testConfigureInputAddsProgramArgument(): void
     {
         $command = new CommandDefinition('my-command', [], 'var_dump');
 
@@ -52,9 +52,9 @@ class CliRunnerFactoryTest extends TestCase
         $this->assertTrue($command->getRequiredArgs()[0]->isRequired());
     }
 
-    public function testCreateReturnsRunner() : void
+    public function testCreateReturnsRunner(): void
     {
-        $exercise = new CliExerciseImpl;
+        $exercise = new CliExerciseImpl();
         $this->assertInstanceOf(CliRunner::class, $this->factory->create($exercise));
     }
 }

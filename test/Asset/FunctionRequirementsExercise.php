@@ -15,37 +15,37 @@ use PhpSchool\PhpWorkshop\ExerciseDispatcher;
  */
 class FunctionRequirementsExercise implements ExerciseInterface, FunctionRequirementsExerciseCheck
 {
-    public function getName() : string
+    public function getName(): string
     {
         // TODO: Implement getName() method.
     }
 
-    public function getDescription() : string
+    public function getDescription(): string
     {
         // TODO: Implement getDescription() method.
     }
 
-    public function getSolution() : string
+    public function getSolution(): string
     {
         // TODO: Implement getSolution() method.
     }
 
-    public function getProblem() : string
+    public function getProblem(): string
     {
         // TODO: Implement getProblem() method.
     }
 
-    public function tearDown() : void
+    public function tearDown(): void
     {
         // TODO: Implement tearDown() method.
     }
 
-    public function getArgs() : array
+    public function getArgs(): array
     {
         return []; // TODO: Implement getArgs() method.
     }
 
-    public function getRequiredPackages() : array
+    public function getRequiredPackages(): array
     {
         return [
             'klein/klein',
@@ -53,12 +53,12 @@ class FunctionRequirementsExercise implements ExerciseInterface, FunctionRequire
         ];
     }
 
-    public function getType() : ExerciseType
+    public function getType(): ExerciseType
     {
         return ExerciseType::CLI();
     }
 
-    public function configure(ExerciseDispatcher $dispatcher) : void
+    public function configure(ExerciseDispatcher $dispatcher): void
     {
         $dispatcher->requireCheck(ComposerCheck::class);
     }
@@ -66,7 +66,7 @@ class FunctionRequirementsExercise implements ExerciseInterface, FunctionRequire
     /**
      * @return string[]
      */
-    public function getRequiredFunctions() : array
+    public function getRequiredFunctions(): array
     {
         return [];
     }
@@ -74,7 +74,7 @@ class FunctionRequirementsExercise implements ExerciseInterface, FunctionRequire
     /**
      * @return string[]
      */
-    public function getBannedFunctions() : array
+    public function getBannedFunctions(): array
     {
         return ['file'];
     }

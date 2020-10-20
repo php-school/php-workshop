@@ -33,7 +33,7 @@ abstract class AbstractResultRendererTest extends TestCase
     public function getResultRendererFactory(): ResultRendererFactory
     {
         if (null === $this->resultRendererFactory) {
-            $this->resultRendererFactory = new ResultRendererFactory;
+            $this->resultRendererFactory = new ResultRendererFactory();
         }
 
         return $this->resultRendererFactory;
@@ -45,7 +45,7 @@ abstract class AbstractResultRendererTest extends TestCase
     protected function getRenderer(): ResultsRenderer
     {
         if (null === $this->renderer) {
-            $color = new Color;
+            $color = new Color();
             $color->setForceStyle(true);
 
             $terminal = $this->prophesize(Terminal::class);
@@ -57,7 +57,7 @@ abstract class AbstractResultRendererTest extends TestCase
                 $color,
                 $terminal->reveal(),
                 $exerciseRepo,
-                new KeyLighter,
+                new KeyLighter(),
                 $this->getResultRendererFactory()
             );
         }

@@ -17,15 +17,15 @@ use Zend\Diactoros\Request;
  */
 class CgiResultRendererTest extends AbstractResultRendererTest
 {
-    public function testNothingIsOutputIfNoFailures() : void
+    public function testNothingIsOutputIfNoFailures(): void
     {
         $result = new CgiResult([new Success($this->request())]);
-        $renderer = new CgiResultRenderer($result, new RequestRenderer);
+        $renderer = new CgiResultRenderer($result, new RequestRenderer());
 
         $this->assertEmpty($renderer->render($this->getRenderer()));
     }
 
-    public function testRenderWithFailedRequest() : void
+    public function testRenderWithFailedRequest(): void
     {
         $failureRenderer = $this->prophesize(RequestFailureRenderer::class);
         $failureRenderer->render($this->getRenderer())->willReturn("REQUEST FAILURE\n");
@@ -46,7 +46,7 @@ class CgiResultRendererTest extends AbstractResultRendererTest
             ['header1' => 'val']
         );
         $result = new CgiResult([$failure]);
-        $renderer = new CgiResultRenderer($result, new RequestRenderer);
+        $renderer = new CgiResultRenderer($result, new RequestRenderer());
 
         $expected  = "Some requests to your solution produced incorrect output!\n";
         $expected .= "\e[33m──────────────────────────────────────────────────\e[0m\n";
@@ -63,7 +63,7 @@ class CgiResultRendererTest extends AbstractResultRendererTest
         $this->assertSame($expected, $renderer->render($this->getRenderer()));
     }
 
-    public function testMultipleFailedRequests() : void
+    public function testMultipleFailedRequests(): void
     {
         $failureRenderer = $this->prophesize(RequestFailureRenderer::class);
         $failureRenderer->render($this->getRenderer())->willReturn("REQUEST FAILURE\n");
@@ -92,7 +92,7 @@ class CgiResultRendererTest extends AbstractResultRendererTest
             ['header1' => 'val']
         );
         $result = new CgiResult([$failure1, $failure2]);
-        $renderer = new CgiResultRenderer($result, new RequestRenderer);
+        $renderer = new CgiResultRenderer($result, new RequestRenderer());
 
         $expected  = "Some requests to your solution produced incorrect output!\n";
         $expected .= "\e[33m──────────────────────────────────────────────────\e[0m\n";
@@ -121,7 +121,7 @@ class CgiResultRendererTest extends AbstractResultRendererTest
         $this->assertSame($expected, $renderer->render($this->getRenderer()));
     }
 
-    public function testRenderWithFailedRequestAndSuccess() : void
+    public function testRenderWithFailedRequestAndSuccess(): void
     {
         $failureRenderer = $this->prophesize(RequestFailureRenderer::class);
         $failureRenderer->render($this->getRenderer())->willReturn("REQUEST FAILURE\n");
@@ -142,7 +142,7 @@ class CgiResultRendererTest extends AbstractResultRendererTest
             ['header1' => 'val']
         );
         $result = new CgiResult([$failure, new Success($this->request())]);
-        $renderer = new CgiResultRenderer($result, new RequestRenderer);
+        $renderer = new CgiResultRenderer($result, new RequestRenderer());
 
         $expected  = "Some requests to your solution produced incorrect output!\n";
         $expected .= "\e[33m──────────────────────────────────────────────────\e[0m\n";
@@ -159,7 +159,7 @@ class CgiResultRendererTest extends AbstractResultRendererTest
         $this->assertSame($expected, $renderer->render($this->getRenderer()));
     }
 
-    public function testRenderWithFailedRequestAndGenericFailure() : void
+    public function testRenderWithFailedRequestAndGenericFailure(): void
     {
 
         $requestFailureRenderer = $this->prophesize(RequestFailureRenderer::class);
@@ -194,7 +194,7 @@ class CgiResultRendererTest extends AbstractResultRendererTest
 
         $codeExecutionFailure = new GenericFailure($this->request(), 'Code Execution Failure');
         $result = new CgiResult([$failure, $codeExecutionFailure]);
-        $renderer = new CgiResultRenderer($result, new RequestRenderer);
+        $renderer = new CgiResultRenderer($result, new RequestRenderer());
 
         $expected  = "Some requests to your solution produced incorrect output!\n";
         $expected .= "\e[33m──────────────────────────────────────────────────\e[0m\n";
@@ -223,7 +223,7 @@ class CgiResultRendererTest extends AbstractResultRendererTest
         $this->assertSame($expected, $renderer->render($this->getRenderer()));
     }
 
-    private function request() : Request
+    private function request(): Request
     {
         return (new Request('http://www.test.com'))
             ->withMethod('POST')

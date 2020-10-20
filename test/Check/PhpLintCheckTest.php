@@ -25,7 +25,7 @@ class PhpLintCheckTest extends TestCase
 
     public function setUp(): void
     {
-        $this->check = new PhpLintCheck;
+        $this->check = new PhpLintCheck();
         $this->exercise = $this->createMock(ExerciseInterface::class);
         $this->assertEquals('PHP Code Check', $this->check->getName());
         $this->assertEquals(ExerciseInterface::class, $this->check->getExerciseInterface());
@@ -35,7 +35,7 @@ class PhpLintCheckTest extends TestCase
         $this->assertTrue($this->check->canRun(ExerciseType::CLI()));
     }
 
-    public function testSuccess() : void
+    public function testSuccess(): void
     {
         $this->assertInstanceOf(
             Success::class,
@@ -43,7 +43,7 @@ class PhpLintCheckTest extends TestCase
         );
     }
 
-    public function testFailure() : void
+    public function testFailure(): void
     {
         $failure = $this->check->check(
             $this->exercise,

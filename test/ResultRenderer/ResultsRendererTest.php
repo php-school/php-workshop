@@ -29,12 +29,12 @@ use Prophecy\Argument;
  */
 class ResultsRendererTest extends TestCase
 {
-    public function testRenderIndividualResult() : void
+    public function testRenderIndividualResult(): void
     {
-        $color = new Color;
+        $color = new Color();
         $color->setForceStyle(true);
 
-        $resultRendererFactory = new ResultRendererFactory;
+        $resultRendererFactory = new ResultRendererFactory();
         $resultRendererFactory->registerRenderer(Failure::class, FailureRenderer::class);
 
         $terminal = $this->prophesize(Terminal::class);
@@ -45,7 +45,7 @@ class ResultsRendererTest extends TestCase
             $color,
             $terminal->reveal(),
             new ExerciseRepository([]),
-            new KeyLighter,
+            new KeyLighter(),
             $resultRendererFactory
         );
 
@@ -54,9 +54,9 @@ class ResultsRendererTest extends TestCase
         $this->assertSame("         Some Failure\n", $renderer->renderResult($result));
     }
 
-    public function testLineBreak() : void
+    public function testLineBreak(): void
     {
-        $color = new Color;
+        $color = new Color();
         $color->setForceStyle(true);
 
         $terminal = $this->prophesize(Terminal::class);
@@ -67,19 +67,19 @@ class ResultsRendererTest extends TestCase
             $color,
             $terminal->reveal(),
             new ExerciseRepository([]),
-            new KeyLighter,
-            new ResultRendererFactory
+            new KeyLighter(),
+            new ResultRendererFactory()
         );
 
         $this->assertSame("\e[33m──────────\e[0m", $renderer->lineBreak());
     }
 
-    public function testRenderSuccess() : void
+    public function testRenderSuccess(): void
     {
-        $color = new Color;
+        $color = new Color();
         $color->setForceStyle(true);
 
-        $resultRendererFactory = new ResultRendererFactory;
+        $resultRendererFactory = new ResultRendererFactory();
 
         $terminal = $this->prophesize(Terminal::class);
         $terminal->getWidth()->willReturn(100);
@@ -93,11 +93,11 @@ class ResultsRendererTest extends TestCase
             $color,
             $terminal,
             $exerciseRepo->reveal(),
-            new KeyLighter,
+            new KeyLighter(),
             $resultRendererFactory
         );
 
-        $resultSet = new ResultAggregator;
+        $resultSet = new ResultAggregator();
         $resultSet->add(new Success('Success 1!'));
         $resultSet->add(new Success('Success 2!'));
 
@@ -111,12 +111,12 @@ class ResultsRendererTest extends TestCase
         );
     }
 
-    public function testRenderSuccessWithSolution() : void
+    public function testRenderSuccessWithSolution(): void
     {
-        $color = new Color;
+        $color = new Color();
         $color->setForceStyle(true);
 
-        $resultRendererFactory = new ResultRendererFactory;
+        $resultRendererFactory = new ResultRendererFactory();
 
         $terminal = $this->prophesize(Terminal::class);
         $terminal->getWidth()->willReturn(100);
@@ -140,11 +140,11 @@ class ResultsRendererTest extends TestCase
             $color,
             $terminal,
             $exerciseRepo->reveal(),
-            new KeyLighter,
+            new KeyLighter(),
             $resultRendererFactory
         );
 
-        $resultSet = new ResultAggregator;
+        $resultSet = new ResultAggregator();
         $resultSet->add(new Success('Success 1!'));
         $resultSet->add(new Success('Success 2!'));
 
@@ -161,12 +161,12 @@ class ResultsRendererTest extends TestCase
         rmdir(dirname($tmpFile));
     }
 
-    public function testRenderSuccessWithPhpSolutionFileIsSyntaxHighlighted() : void
+    public function testRenderSuccessWithPhpSolutionFileIsSyntaxHighlighted(): void
     {
-        $color = new Color;
+        $color = new Color();
         $color->setForceStyle(true);
 
-        $resultRendererFactory = new ResultRendererFactory;
+        $resultRendererFactory = new ResultRendererFactory();
 
         $terminal = $this->prophesize(Terminal::class);
         $terminal->getWidth()->willReturn(100);
@@ -186,7 +186,7 @@ class ResultsRendererTest extends TestCase
         $exercise->getSolution()->willReturn($solution);
 
         $syntaxHighlighter = $this->prophesize(KeyLighter::class);
-        $php = new Php;
+        $php = new Php();
         $syntaxHighlighter->languageByExt('.php')->willReturn($php);
         $syntaxHighlighter
             ->highlight('FILE CONTENTS', $php, Argument::type(CliFormatter::class))
@@ -201,7 +201,7 @@ class ResultsRendererTest extends TestCase
             $resultRendererFactory
         );
 
-        $resultSet = new ResultAggregator;
+        $resultSet = new ResultAggregator();
         $resultSet->add(new Success('Success 1!'));
         $resultSet->add(new Success('Success 2!'));
 
@@ -218,12 +218,12 @@ class ResultsRendererTest extends TestCase
         rmdir(dirname($tmpFile));
     }
 
-    public function testRenderSuccessAndFailure() : void
+    public function testRenderSuccessAndFailure(): void
     {
-        $color = new Color;
+        $color = new Color();
         $color->setForceStyle(true);
 
-        $resultRendererFactory = new ResultRendererFactory;
+        $resultRendererFactory = new ResultRendererFactory();
         $resultRendererFactory->registerRenderer(Failure::class, FailureRenderer::class, function (Failure $failure) {
              $renderer = $this->prophesize(FailureRenderer::class);
              $renderer->render(Argument::type(ResultsRenderer::class))->willReturn($failure->getReason() . "\n");
@@ -242,11 +242,11 @@ class ResultsRendererTest extends TestCase
             $color,
             $terminal,
             $exerciseRepo->reveal(),
-            new KeyLighter,
+            new KeyLighter(),
             $resultRendererFactory
         );
 
-        $resultSet = new ResultAggregator;
+        $resultSet = new ResultAggregator();
         $resultSet->add(new Success('Success 1!'));
         $resultSet->add(new Failure('Check 1', 'Failure'));
         $resultSet->add(new Failure('Check 2', 'Failure'));
@@ -256,17 +256,17 @@ class ResultsRendererTest extends TestCase
         $renderer->render(
             $resultSet,
             $this->createMock(ExerciseInterface::class),
-            new UserState,
+            new UserState(),
             new StdOutput($color, $terminal)
         );
     }
 
-    public function testAllSuccessResultsAreHoistedToTheTop() : void
+    public function testAllSuccessResultsAreHoistedToTheTop(): void
     {
-        $color = new Color;
+        $color = new Color();
         $color->setForceStyle(true);
 
-        $resultRendererFactory = new ResultRendererFactory;
+        $resultRendererFactory = new ResultRendererFactory();
         $resultRendererFactory->registerRenderer(Failure::class, FailureRenderer::class, function (Failure $failure) {
             $renderer = $this->prophesize(FailureRenderer::class);
             $renderer->render(Argument::type(ResultsRenderer::class))->willReturn($failure->getReason() . "\n");
@@ -285,11 +285,11 @@ class ResultsRendererTest extends TestCase
             $color,
             $terminal,
             $exerciseRepo->reveal(),
-            new KeyLighter,
+            new KeyLighter(),
             $resultRendererFactory
         );
 
-        $resultSet = new ResultAggregator;
+        $resultSet = new ResultAggregator();
         $resultSet->add(new Failure('Failure 1', 'Failure 1'));
         $resultSet->add(new Success('Success 1!'));
         $resultSet->add(new Failure('Failure 2', 'Failure 2'));
@@ -300,17 +300,17 @@ class ResultsRendererTest extends TestCase
         $renderer->render(
             $resultSet,
             $this->createMock(ExerciseInterface::class),
-            new UserState,
+            new UserState(),
             new StdOutput($color, $terminal)
         );
     }
 
-    public function testRenderAllFailures() : void
+    public function testRenderAllFailures(): void
     {
-        $color = new Color;
+        $color = new Color();
         $color->setForceStyle(true);
 
-        $resultRendererFactory = new ResultRendererFactory;
+        $resultRendererFactory = new ResultRendererFactory();
         $resultRendererFactory->registerRenderer(Failure::class, FailureRenderer::class, function (Failure $failure) {
             $renderer = $this->prophesize(FailureRenderer::class);
             $renderer->render(Argument::type(ResultsRenderer::class))->willReturn($failure->getReason() . "\n");
@@ -329,11 +329,11 @@ class ResultsRendererTest extends TestCase
             $color,
             $terminal,
             $exerciseRepo->reveal(),
-            new KeyLighter,
+            new KeyLighter(),
             $resultRendererFactory
         );
 
-        $resultSet = new ResultAggregator;
+        $resultSet = new ResultAggregator();
         $resultSet->add(new Failure('Failure 1', 'Failure 1'));
         $resultSet->add(new Failure('Failure 2', 'Failure 2'));
 
@@ -342,12 +342,12 @@ class ResultsRendererTest extends TestCase
         $renderer->render(
             $resultSet,
             $this->createMock(ExerciseInterface::class),
-            new UserState,
+            new UserState(),
             new StdOutput($color, $terminal)
         );
     }
 
-    private function getExpectedOutput() : string
+    private function getExpectedOutput(): string
     {
         $name = camel_case_to_kebab_case($this->getName());
         return file_get_contents(sprintf('%s/../res/exercise-renderer/%s.txt', __DIR__, $name));

@@ -13,7 +13,7 @@ use PHPUnit\Framework\TestCase;
  */
 class SolutionFileTest extends TestCase
 {
-    public function testExceptionIsThrowIfFileNotExists() : void
+    public function testExceptionIsThrowIfFileNotExists(): void
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('File: "file/that/does/not/exist.php" does not exist');
@@ -21,7 +21,7 @@ class SolutionFileTest extends TestCase
         SolutionFile::fromFile('file/that/does/not/exist.php');
     }
 
-    public function testPaths() : void
+    public function testPaths(): void
     {
         $tempPath   = sprintf('%s/%s', sys_get_temp_dir(), $this->getName());
         $filePath   = sprintf('%s/test.file', $tempPath);
@@ -39,7 +39,7 @@ class SolutionFileTest extends TestCase
         rmdir($tempPath);
     }
 
-    public function testEmptyContents() : void
+    public function testEmptyContents(): void
     {
         $tempPath   = sprintf('%s/%s', sys_get_temp_dir(), $this->getName());
         $filePath   = sprintf('%s/test.file', $tempPath);
@@ -57,7 +57,7 @@ class SolutionFileTest extends TestCase
         rmdir($tempPath);
     }
 
-    public function testGetContents() : void
+    public function testGetContents(): void
     {
         $tempPath   = sprintf('%s/%s', sys_get_temp_dir(), $this->getName());
         $filePath   = sprintf('%s/test.file', $tempPath);
@@ -75,7 +75,7 @@ class SolutionFileTest extends TestCase
         rmdir($tempPath);
     }
 
-    public function testConstructionWithManualBaseDirectory() : void
+    public function testConstructionWithManualBaseDirectory(): void
     {
         $tempPath   = sprintf('%s/%s/sub-dir', sys_get_temp_dir(), $this->getName());
         $filePath   = sprintf('%s/test.file', $tempPath);
@@ -93,7 +93,7 @@ class SolutionFileTest extends TestCase
         rmdir($tempPath);
     }
 
-    public function testGetExtension() : void
+    public function testGetExtension(): void
     {
         $tempPath   = sprintf('%s/%s/sub-dir', sys_get_temp_dir(), $this->getName());
         $filePath   = sprintf('%s/test.php', $tempPath);

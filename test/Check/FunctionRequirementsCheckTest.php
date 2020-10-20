@@ -39,12 +39,12 @@ class FunctionRequirementsCheckTest extends TestCase
      */
     private $parser;
 
-    public function setUp() : void
+    public function setUp(): void
     {
-        $parserFactory = new ParserFactory;
+        $parserFactory = new ParserFactory();
         $this->parser = $parserFactory->create(ParserFactory::PREFER_PHP7);
         $this->check = new FunctionRequirementsCheck($this->parser);
-        $this->exercise = new FunctionRequirementsExercise;
+        $this->exercise = new FunctionRequirementsExercise();
         $this->assertEquals('Function Requirements Check', $this->check->getName());
         $this->assertEquals(FunctionRequirementsExerciseCheck::class, $this->check->getExerciseInterface());
         $this->assertEquals(SimpleCheckInterface::CHECK_AFTER, $this->check->getPosition());
@@ -53,7 +53,7 @@ class FunctionRequirementsCheckTest extends TestCase
         $this->assertTrue($this->check->canRun(ExerciseType::CLI()));
     }
 
-    public function testExceptionIsThrownIfNotValidExercise() : void
+    public function testExceptionIsThrownIfNotValidExercise(): void
     {
         $exercise = $this->createMock(ExerciseInterface::class);
         $this->expectException(InvalidArgumentException::class);
@@ -61,7 +61,7 @@ class FunctionRequirementsCheckTest extends TestCase
         $this->check->check($exercise, new Input('app'));
     }
 
-    public function testFailureIsReturnedIfCodeCouldNotBeParsed() : void
+    public function testFailureIsReturnedIfCodeCouldNotBeParsed(): void
     {
         $file = __DIR__ . '/../res/function-requirements/fail-invalid-code.php';
         $failure = $this->check->check($this->exercise, new Input('app', ['program' => $file]));
@@ -71,7 +71,7 @@ class FunctionRequirementsCheckTest extends TestCase
         $this->assertEquals($message, $failure->getReason());
     }
 
-    public function testFailureIsReturnedIfBannedFunctionsAreUsed() : void
+    public function testFailureIsReturnedIfBannedFunctionsAreUsed(): void
     {
         $failure = $this->check->check(
             $this->exercise,
@@ -82,7 +82,7 @@ class FunctionRequirementsCheckTest extends TestCase
         $this->assertEquals([], $failure->getMissingFunctions());
     }
 
-    public function testFailureIsReturnedIfNotAllRequiredFunctionsHaveBeenUsed() : void
+    public function testFailureIsReturnedIfNotAllRequiredFunctionsHaveBeenUsed(): void
     {
         $exercise = $this->createMock(FunctionRequirementsExercise::class);
         $exercise
@@ -105,7 +105,7 @@ class FunctionRequirementsCheckTest extends TestCase
         $this->assertEquals([], $failure->getBannedFunctions());
     }
 
-    public function testSuccess() : void
+    public function testSuccess(): void
     {
         $exercise = $this->createMock(FunctionRequirementsExercise::class);
         $exercise

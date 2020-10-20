@@ -25,22 +25,22 @@ class CustomVerifyingRunnerTest extends TestCase
      */
     private $exercise;
 
-    public function setUp() : void
+    public function setUp(): void
     {
-        $this->exercise = new CustomVerifyingExerciseImpl;
+        $this->exercise = new CustomVerifyingExerciseImpl();
         $this->runner = new CustomVerifyingRunner($this->exercise);
 
         $this->assertEquals('Custom Verifying Runner', $this->runner->getName());
     }
 
-    public function testRequiredChecks() : void
+    public function testRequiredChecks(): void
     {
         $this->assertEquals([], $this->runner->getRequiredChecks());
     }
 
-    public function testRunOutputsErrorMessage() : void
+    public function testRunOutputsErrorMessage(): void
     {
-        $color = new Color;
+        $color = new Color();
         $color->setForceStyle(true);
         $output = new StdOutput($color, $this->createMock(Terminal::class));
 
@@ -52,7 +52,7 @@ class CustomVerifyingRunnerTest extends TestCase
         $this->runner->run(new Input('app'), $output);
     }
 
-    public function testVerifyProxiesToExercise() : void
+    public function testVerifyProxiesToExercise(): void
     {
         self::assertEquals($this->exercise->verify(), $this->runner->verify(new Input('app')));
     }

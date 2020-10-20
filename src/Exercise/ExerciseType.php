@@ -15,9 +15,9 @@ use MyCLabs\Enum\Enum;
  */
 class ExerciseType extends Enum
 {
-    const CLI    = 'CLI';
-    const CGI    = 'CGI';
-    const CUSTOM = 'CUSTOM';
+    public const CLI    = 'CLI';
+    public const CGI    = 'CGI';
+    public const CUSTOM = 'CUSTOM';
 
 
     /**

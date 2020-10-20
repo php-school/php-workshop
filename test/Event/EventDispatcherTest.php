@@ -26,13 +26,13 @@ class EventDispatcherTest extends TestCase
      */
     private $eventDispatcher;
 
-    public function setUp() : void
+    public function setUp(): void
     {
-        $this->results = new ResultAggregator;
+        $this->results = new ResultAggregator();
         $this->eventDispatcher = new EventDispatcher($this->results);
     }
 
-    public function testOnlyAppropriateListenersAreCalledForEvent() : void
+    public function testOnlyAppropriateListenersAreCalledForEvent(): void
     {
         $e = new Event('some-event', ['arg1' => 1, 'arg2' => 2]);
         $mockCallback1 = $this->getMockBuilder('stdClass')
@@ -63,7 +63,7 @@ class EventDispatcherTest extends TestCase
         $this->eventDispatcher->dispatch($e);
     }
 
-    public function testOnlyAppropriateVerifiersAreCalledForEvent() : void
+    public function testOnlyAppropriateVerifiersAreCalledForEvent(): void
     {
         $e = new Event('some-event', ['arg1' => 1, 'arg2' => 2]);
         $result = $this->createMock(ResultInterface::class);
@@ -88,7 +88,7 @@ class EventDispatcherTest extends TestCase
         $this->assertEquals([$result, $result], iterator_to_array($this->results));
     }
 
-    public function testVerifyReturnIsSkippedIfNotInstanceOfResult() : void
+    public function testVerifyReturnIsSkippedIfNotInstanceOfResult(): void
     {
         $e = new Event('some-event', ['arg1' => 1, 'arg2' => 2]);
         $mockCallback1 = $this->getMockBuilder('stdClass')
@@ -108,7 +108,7 @@ class EventDispatcherTest extends TestCase
         $this->assertEquals([], iterator_to_array($this->results));
     }
 
-    public function testListenWithMultipleEvents() : void
+    public function testListenWithMultipleEvents(): void
     {
         $e1 = new Event('some-event', ['arg1' => 1, 'arg2' => 2]);
         $e2 = new Event('some-event', ['arg1' => 1, 'arg2' => 2]);
@@ -126,7 +126,7 @@ class EventDispatcherTest extends TestCase
         $this->eventDispatcher->dispatch($e2);
     }
 
-    public function testListenersAndVerifiersAreCalledInOrderOfAttachment() : void
+    public function testListenersAndVerifiersAreCalledInOrderOfAttachment(): void
     {
         $e1 = new Event('first-event', ['arg1' => 1, 'arg2' => 2]);
 

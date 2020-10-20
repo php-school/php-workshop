@@ -13,7 +13,7 @@ use PHPUnit\Framework\TestCase;
  */
 class MenuCommandInvokerTest extends TestCase
 {
-    public function testInvoker() : void
+    public function testInvoker(): void
     {
         $menu = $this->createMock(CliMenu::class);
         $menu
