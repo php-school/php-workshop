@@ -6,11 +6,6 @@ use Countable;
 use PhpSchool\PhpWorkshop\Exception\InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 
-/**
- * Class InvalidArgumentExceptionTest
- * @package PhpSchool\PhpWorkshopTest\Exception
- * @author Aydin Hassan <aydin@hotmail.co.uk>
- */
 class InvalidArgumentExceptionTest extends TestCase
 {
     public function testException(): void

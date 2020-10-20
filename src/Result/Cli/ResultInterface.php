@@ -5,7 +5,7 @@ namespace PhpSchool\PhpWorkshop\Result\Cli;
 use PhpSchool\PhpWorkshop\Utils\ArrayObject;
 
 /**
- * @author Aydin Hassan <aydin@hotmail.co.uk>
+ * Base CLI result interface
  */
 interface ResultInterface extends \PhpSchool\PhpWorkshop\Result\ResultInterface
 {

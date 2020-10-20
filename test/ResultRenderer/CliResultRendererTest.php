@@ -9,9 +9,6 @@ use PhpSchool\PhpWorkshop\ResultRenderer\Cli\RequestFailureRenderer;
 use PhpSchool\PhpWorkshop\ResultRenderer\CliResultRenderer;
 use PhpSchool\PhpWorkshop\Utils\ArrayObject;
 
-/**
- * @author Aydin Hassan <aydin@hotmail.co.uk>
- */
 class CliResultRendererTest extends AbstractResultRendererTest
 {
     public function testNothingIsOutputIfNoFailures(): void

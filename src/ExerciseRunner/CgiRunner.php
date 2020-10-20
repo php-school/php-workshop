@@ -29,8 +29,6 @@ use Zend\Diactoros\Response\Serializer as ResponseSerializer;
 /**
  * The `CGI` runner. This runner executes solutions as if they were behind a web-server. They populate the `$_SERVER`,
  * `$_GET` & `$_POST` super globals with information based of the request objects returned from the exercise.
- *
- * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
 class CgiRunner implements ExerciseRunnerInterface
 {

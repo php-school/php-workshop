@@ -6,9 +6,6 @@ use PhpSchool\PhpWorkshop\Utils\RequestRenderer;
 use PHPUnit\Framework\TestCase;
 use Zend\Diactoros\Request;
 
-/**
- * @author Aydin Hassan <aydin@hotmail.co.uk>
- */
 class RequestRendererTest extends TestCase
 {
     public function testWriteRequestWithHeaders(): void

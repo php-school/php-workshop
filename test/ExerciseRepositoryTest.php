@@ -11,11 +11,6 @@ use PHPUnit\Framework\TestCase;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpSchool\PhpWorkshop\ExerciseRepository;
 
-/**
- * Class ExerciseRepositoryTest
- * @package PhpSchool\PhpWorkshopTest
- * @author  Aydin Hassan <aydin@hotmail.co.uk>
- */
 class ExerciseRepositoryTest extends TestCase
 {
     public function testFindAll(): void

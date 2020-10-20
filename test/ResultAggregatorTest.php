@@ -12,11 +12,6 @@ use PhpSchool\PhpWorkshop\Result\Cli\Success as CliSuccess;
 use PhpSchool\PhpWorkshop\Result\Cli\GenericFailure as CliGenericFailure;
 use PhpSchool\PhpWorkshop\ResultAggregator;
 
-/**
- * Class ResultAggregatorTest
- * @package PhpSchool\PhpWorkshopTest
- * @author Aydin Hassan <aydin@hotmail.co.uk>
- */
 class ResultAggregatorTest extends TestCase
 {
     /**

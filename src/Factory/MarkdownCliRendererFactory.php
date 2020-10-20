@@ -36,8 +36,7 @@ use AydinHassan\CliMdRenderer\Renderer\ParagraphRenderer;
 use AydinHassan\CliMdRenderer\CliRenderer;
 
 /**
- * Class MarkdownCliRendererFactory
- * @author Aydin Hassan <aydin@hotmail.co.uk>
+ * Factory for CliRenderer
  */
 class MarkdownCliRendererFactory
 {

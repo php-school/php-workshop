@@ -3,10 +3,12 @@
 namespace PhpSchool\PhpWorkshop\MenuItem;
 
 use PhpSchool\CliMenu\CliMenu;
-use PhpSchool\PhpWorkshop\Output\OutputInterface;
 use PhpSchool\PhpWorkshop\UserState;
 use PhpSchool\PhpWorkshop\UserStateSerializer;
 
+/**
+ * Menu action to reset the workshop progress
+ */
 class ResetProgress
 {
     /**

@@ -9,8 +9,6 @@ use PhpSchool\PhpWorkshop\Result\ResultGroupInterface;
 /**
  * A result which encompasses all the results for each individual request made during
  * the CGI verification process.
- *
- * @author  Aydin Hassan <aydin@hotmail.co.uk>
  */
 class CgiResult implements ResultGroupInterface, IteratorAggregate
 {

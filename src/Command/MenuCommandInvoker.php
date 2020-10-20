@@ -4,9 +4,11 @@ namespace PhpSchool\PhpWorkshop\Command;
 
 use PhpSchool\CliMenu\CliMenu;
 
+/**
+ * A helper to expose commands as callables for menu items
+ */
 class MenuCommandInvoker
 {
-
     /**
      * @var callable
      */

@@ -3,7 +3,7 @@
 namespace PhpSchool\PhpWorkshop\Result;
 
 /**
- * @author Aydin Hassan <aydin@hotmail.co.uk>
+ * Result to represent a failed comparison
  */
 class ComparisonFailure implements FailureInterface
 {

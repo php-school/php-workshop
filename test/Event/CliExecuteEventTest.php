@@ -6,11 +6,6 @@ use PhpSchool\PhpWorkshop\Event\CliExecuteEvent;
 use PhpSchool\PhpWorkshop\Utils\ArrayObject;
 use PHPUnit\Framework\TestCase;
 
-/**
- * Class CliExecuteEventTest
- * @package PhpSchool\PhpWorkshopTest\Event
- * @author Aydin Hassan <aydin@hotmail.co.uk>
- */
 class CliExecuteEventTest extends TestCase
 {
     public function testAppendArg(): void

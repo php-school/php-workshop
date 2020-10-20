@@ -7,11 +7,6 @@ use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\RequestInterface;
 use Zend\Diactoros\Request;
 
-/**
- * Class CgiExecuteEventTest
- * @package PhpSchool\PhpWorkshopTest\Event
- * @author Aydin Hassan <aydin@hotmail.co.uk>
- */
 class CgiExecuteEventTest extends TestCase
 {
     public function testAddHeader(): void

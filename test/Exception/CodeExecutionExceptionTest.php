@@ -6,11 +6,6 @@ use PhpSchool\PhpWorkshop\Exception\CodeExecutionException;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Process\Process;
 
-/**
- * Class CodeExecutionExceptionTest
- * @package PhpSchool\PhpWorkshopTest\Exception
- * @author Aydin Hassan <aydin@hotmail.co.uk>
- */
 class CodeExecutionExceptionTest extends TestCase
 {
     public function testException(): void

@@ -7,7 +7,7 @@ use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpSchool\PhpWorkshop\ExerciseRunner\ExerciseRunnerInterface;
 
 /**
- * @author Aydin Hassan <aydin@hotmail.co.uk>
+ * Exercise runner factory interface
  */
 interface ExerciseRunnerFactoryInterface
 {

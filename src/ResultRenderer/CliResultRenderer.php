@@ -2,19 +2,15 @@
 
 namespace PhpSchool\PhpWorkshop\ResultRenderer;
 
-use PhpSchool\PhpWorkshop\Result\Cli\RequestFailure;
-use PhpSchool\PhpWorkshop\Result\CgiOutRequestFailure;
 use PhpSchool\PhpWorkshop\Result\Cli\CliResult;
 use PhpSchool\PhpWorkshop\Result\Cli\FailureInterface;
 use PhpSchool\PhpWorkshop\Result\Cli\ResultInterface;
-use PhpSchool\PhpWorkshop\Utils\RequestRenderer;
 
 /**
  * Renderer for `PhpSchool\PhpWorkshop\Result\Cli\CliResult`.
  */
 class CliResultRenderer implements ResultRendererInterface
 {
-
     /**
      * @var CliResult
      */

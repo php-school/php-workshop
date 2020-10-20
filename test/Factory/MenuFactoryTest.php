@@ -18,11 +18,6 @@ use PhpSchool\PhpWorkshop\WorkshopType;
 use PhpSchool\Terminal\Terminal;
 use PHPUnit\Framework\TestCase;
 
-/**
- * Class MenuFactoryTest
- * @package PhpSchool\PhpWorkshopTest\Factory
- * @author Aydin Hassan <aydin@hotmail.co.uk>
- */
 class MenuFactoryTest extends TestCase
 {
     public function testFactoryReturnsInstance(): void

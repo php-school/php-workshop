@@ -14,11 +14,6 @@ use ReflectionProperty;
 use RuntimeException;
 use Symfony\Component\Filesystem\Filesystem;
 
-/**
- * Class PrepareSolutionListenerTest
- * @package PhpSchool\PhpWorkshopTest\Listener
- * @author Aydin Hassan <aydin@hotmail.co.uk>
- */
 class PrepareSolutionListenerTest extends TestCase
 {
     /**

@@ -9,11 +9,6 @@ use PhpSchool\PhpWorkshopTest\Asset\AbstractExerciseImpl;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
 
-/**
- * Class AbstractExerciseTest
- * @package PhpSchool\PhpWorkshopTest\Exercise
- * @author Aydin Hassan <aydin@hotmail.co.uk>
- */
 class AbstractExerciseTest extends TestCase
 {
     public function testTearDownReturnsVoid(): void

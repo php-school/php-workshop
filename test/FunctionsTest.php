@@ -4,9 +4,6 @@ namespace PhpSchool\PhpWorkshopTest;
 
 use PHPUnit\Framework\TestCase;
 
-/**
- * @author Aydin Hassan <aydin@hotmail.co.uk>
- */
 class FunctionsTest extends TestCase
 {
     /**

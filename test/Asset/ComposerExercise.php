@@ -8,11 +8,6 @@ use PhpSchool\PhpWorkshop\Exercise\ExerciseType;
 use PhpSchool\PhpWorkshop\ExerciseCheck\ComposerExerciseCheck;
 use PhpSchool\PhpWorkshop\ExerciseDispatcher;
 
-/**
- * Class ComposerExercise
- * @package PhpSchool\PhpWorkshopTest\Asset
- * @author Aydin Hassan <aydin@hotmail.co.uk>
- */
 class ComposerExercise implements ExerciseInterface, ComposerExerciseCheck
 {
     public function getName(): string

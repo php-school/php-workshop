@@ -3,7 +3,7 @@
 namespace PhpSchool\PhpWorkshop;
 
 /**
- * @author Aydin Hassan <aydin@hotmail.co.uk>
+ * Command argument definition
  */
 class CommandArgument
 {

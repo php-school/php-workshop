@@ -6,8 +6,6 @@ use PhpSchool\PhpWorkshop\Utils\ArrayObject;
 
 /**
  * Default implementation of `PhpSchool\PhpWorkshop\Result\Cli\SuccessInterface`.
- *
- * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
 class Success implements SuccessInterface
 {

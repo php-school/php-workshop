@@ -2,16 +2,10 @@
 
 namespace PhpSchool\PhpWorkshopTest\ResultRenderer;
 
-use InvalidArgumentException;
 use PhpSchool\PhpWorkshop\Check\CheckInterface;
 use PhpSchool\PhpWorkshop\Result\FunctionRequirementsFailure;
-use PhpSchool\PhpWorkshop\Result\ResultInterface;
 use PhpSchool\PhpWorkshop\ResultRenderer\FunctionRequirementsFailureRenderer;
 
-/**
- * Class FunctionRequirementsFailureRendererTest
- * @author Aydin Hassan <aydin@hotmail.co.uk>
- */
 class FunctionRequirementsFailureRendererTest extends AbstractResultRendererTest
 {
     public function testRenderer(): void

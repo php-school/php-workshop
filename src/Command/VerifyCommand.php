@@ -11,6 +11,9 @@ use PhpSchool\PhpWorkshop\ResultRenderer\ResultsRenderer;
 use PhpSchool\PhpWorkshop\UserState;
 use PhpSchool\PhpWorkshop\UserStateSerializer;
 
+/**
+ * A command to verify the users solution
+ */
 class VerifyCommand
 {
     /**

@@ -5,7 +5,7 @@ namespace PhpSchool\PhpWorkshop\Exercise;
 use PhpSchool\PhpWorkshop\Solution\SolutionInterface;
 
 /**
- * @author Aydin Hassan <aydin@hotmail.co.uk>
+ * Exercises can implement this method if they provide solutions
  */
 interface ProvidesSolution
 {

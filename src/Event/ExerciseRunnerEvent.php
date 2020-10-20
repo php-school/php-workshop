@@ -6,7 +6,7 @@ use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpSchool\PhpWorkshop\Input\Input;
 
 /**
- * @author Aydin Hassan <aydin@hotmail.co.uk>
+ * An event which is dispatched during exercise running
  */
 class ExerciseRunnerEvent extends Event
 {

@@ -5,11 +5,6 @@ namespace PhpSchool\PhpWorkshopTest\Exercise;
 use PhpSchool\PhpWorkshopTest\Asset\TemporaryDirectoryTraitImpl;
 use PHPUnit\Framework\TestCase;
 
-/**
- * Class TemporaryDirectoryTraitTest
- * @package PhpSchool\PhpWorkshopTest\Exercise
- * @author Aydin Hassan <aydin@hotmail.co.uk>
- */
 class TemporaryDirectoryTraitTest extends TestCase
 {
     public function testGetTemporaryPath(): void

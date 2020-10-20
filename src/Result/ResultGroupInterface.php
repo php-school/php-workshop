@@ -3,7 +3,7 @@
 namespace PhpSchool\PhpWorkshop\Result;
 
 /**
- * @author Aydin Hassan <aydin@hotmail.co.uk>
+ * A result to wrap multiple results
  */
 interface ResultGroupInterface extends ResultInterface
 {

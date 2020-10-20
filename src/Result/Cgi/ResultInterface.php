@@ -5,7 +5,7 @@ namespace PhpSchool\PhpWorkshop\Result\Cgi;
 use Psr\Http\Message\RequestInterface;
 
 /**
- * @author Aydin Hassan <aydin@hotmail.co.uk>
+ * Base CGI result interface
  */
 interface ResultInterface extends \PhpSchool\PhpWorkshop\Result\ResultInterface
 {

@@ -7,7 +7,7 @@ use PhpSchool\PhpWorkshop\Result\Failure;
 use Psr\Http\Message\RequestInterface;
 
 /**
- * @author Aydin Hassan <aydin@hotmail.co.uk>
+ * Generic CGI failure.
  */
 class GenericFailure extends Failure implements FailureInterface
 {

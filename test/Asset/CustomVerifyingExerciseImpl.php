@@ -9,9 +9,6 @@ use PhpSchool\PhpWorkshop\Exercise\CustomVerifyingExercise;
 use PhpSchool\PhpWorkshop\Result\ResultInterface;
 use PhpSchool\PhpWorkshop\Result\Success;
 
-/**
- * @author Aydin Hassan <aydin@hotmail.co.uk>
- */
 class CustomVerifyingExerciseImpl extends AbstractExercise implements ExerciseInterface, CustomVerifyingExercise
 {
 

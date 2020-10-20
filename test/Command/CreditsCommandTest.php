@@ -8,15 +8,8 @@ use PhpSchool\PhpWorkshop\Command\CreditsCommand;
 use PhpSchool\PhpWorkshop\Output\StdOutput;
 use PHPUnit\Framework\TestCase;
 
-/**
- * Class CreditsCommandTest
- * @package PhpSchool\PhpWorkshop\Command
- * @author Aydin Hassan <aydin@hotmail.co.uk>
- * @author Michael Woodward <mikeymike.mw@gmail.com>
- */
 class CreditsCommandTest extends TestCase
 {
-
     public function testInvoke(): void
     {
         $this->expectOutputString(file_get_contents(__DIR__ . '/../res/app-credits-expected.txt'));

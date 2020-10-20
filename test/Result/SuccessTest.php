@@ -7,11 +7,6 @@ use PHPUnit\Framework\TestCase;
 use PhpSchool\PhpWorkshop\Result\ResultInterface;
 use PhpSchool\PhpWorkshop\Result\Success;
 
-/**
- * Class SuccessTest
- * @package PhpSchool\PhpWorkshopTest\Result
- * @author Aydin Hassan <aydin@hotmail.co.uk>
- */
 class SuccessTest extends TestCase
 {
     public function testSuccess(): void

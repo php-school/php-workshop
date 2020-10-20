@@ -8,11 +8,6 @@ use PhpSchool\PhpWorkshop\Command\HelpCommand;
 use PhpSchool\PhpWorkshop\Output\StdOutput;
 use PHPUnit\Framework\TestCase;
 
-/**
- * Class HelpCommandTest
- * @package PhpSchool\PhpWorkshop\Command
- * @author Michael Woodward <aydin@hotmail.co.uk>
- */
 class HelpCommandTest extends TestCase
 {
     public function testInvoke(): void

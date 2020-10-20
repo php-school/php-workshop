@@ -6,9 +6,6 @@ use PhpSchool\PhpWorkshop\CommandDefinition;
 use PhpSchool\PhpWorkshop\Event\Event;
 use PhpSchool\PhpWorkshop\UserState;
 
-/**
- * @author Aydin Hassan <aydin@hotmail.co.uk>
- */
 class CheckExerciseAssignedListener
 {
     /**

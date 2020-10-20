@@ -9,11 +9,6 @@ use PhpSchool\PhpWorkshop\UserStateSerializer;
 use PhpSchool\PhpWorkshopTest\Asset\CliExerciseInterface;
 use PHPUnit\Framework\TestCase;
 
-/**
- * Class UserStateSerializerTest
- * @package PhpSchool\PhpWorkshopTest
- * @author  Aydin Hassan <aydin@hotmail.co.uk>
- */
 class UserStateSerializerTest extends TestCase
 {
     /**

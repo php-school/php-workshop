@@ -7,9 +7,6 @@ use PhpSchool\PhpWorkshop\ResultRenderer\Cgi\RequestFailureRenderer;
 use PhpSchool\PhpWorkshopTest\ResultRenderer\AbstractResultRendererTest;
 use Zend\Diactoros\Request;
 
-/**
- * @author Aydin Hassan <aydin@hotmail.co.uk>
- */
 class RequestFailureRendererTest extends AbstractResultRendererTest
 {
     public function testRenderWhenOnlyHeadersDifferent(): void

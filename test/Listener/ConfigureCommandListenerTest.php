@@ -11,9 +11,6 @@ use PhpSchool\PhpWorkshop\UserState;
 use PhpSchool\PhpWorkshopTest\Asset\CliExerciseImpl;
 use PHPUnit\Framework\TestCase;
 
-/**
- * @author Aydin Hassan <aydin@hotmail.co.uk>
- */
 class ConfigureCommandListenerTest extends TestCase
 {
     /**

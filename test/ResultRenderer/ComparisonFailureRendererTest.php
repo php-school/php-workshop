@@ -5,9 +5,6 @@ namespace PhpSchool\PhpWorkshopTest\ResultRenderer;
 use PhpSchool\PhpWorkshop\Result\ComparisonFailure;
 use PhpSchool\PhpWorkshop\ResultRenderer\ComparisonFailureRenderer;
 
-/**
- * @author Aydin Hassan <aydin@hotmail.co.uk>
- */
 class ComparisonFailureRendererTest extends AbstractResultRendererTest
 {
     public function testRender(): void

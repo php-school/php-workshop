@@ -9,9 +9,6 @@ use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use PhpSchool\PhpWorkshop\UserState;
 
-/**
- * @author Aydin Hassan <aydin@hotmail.co.uk>
- */
 class CheckExerciseAssignedListenerTest extends TestCase
 {
     /**

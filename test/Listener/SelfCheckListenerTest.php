@@ -11,11 +11,6 @@ use PhpSchool\PhpWorkshop\ResultAggregator;
 use PhpSchool\PhpWorkshopTest\Asset\SelfCheckExerciseInterface;
 use PHPUnit\Framework\TestCase;
 
-/**
- * Class SelfCheckListenerTest
- * @package PhpSchool\PhpWorkshopTest\Listener
- * @author Aydin Hassan <aydin@hotmail.co.uk>
- */
 class SelfCheckListenerTest extends TestCase
 {
     public function testSelfCheck(): void

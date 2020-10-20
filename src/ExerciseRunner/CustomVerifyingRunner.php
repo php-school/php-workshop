@@ -8,7 +8,7 @@ use PhpSchool\PhpWorkshop\Output\OutputInterface;
 use PhpSchool\PhpWorkshop\Result\ResultInterface;
 
 /**
- * @author Aydin Hassan <aydin@hotmail.co.uk>
+ * The `CUSTOM` runner. This runner delegates to the exercise for verifying.
  */
 class CustomVerifyingRunner implements ExerciseRunnerInterface
 {

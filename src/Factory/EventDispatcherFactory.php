@@ -9,6 +9,9 @@ use PhpSchool\PhpWorkshop\Exception\InvalidArgumentException;
 use PhpSchool\PhpWorkshop\ResultAggregator;
 use PhpSchool\PhpWorkshop\Utils\Collection;
 
+/**
+ * Create an EventDispatcher populating with listeners from the config
+ */
 class EventDispatcherFactory
 {
 

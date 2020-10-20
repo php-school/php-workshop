@@ -8,11 +8,6 @@ use PhpSchool\PhpWorkshop\Exercise\SubmissionPatchable;
 use PhpSchool\PhpWorkshop\ExerciseDispatcher;
 use PhpSchool\PhpWorkshop\Patch;
 
-/**
- * Class PatchableExercise
- * @package PhpSchool\PhpWorkshopTest\Asset
- * @author Aydin Hassan <aydin@hotmail.co.uk>
- */
 class PatchableExercise implements ExerciseInterface, SubmissionPatchable
 {
     public function getName(): string

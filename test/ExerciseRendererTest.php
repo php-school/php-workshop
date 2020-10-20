@@ -18,11 +18,6 @@ use PhpSchool\PhpWorkshop\Output\StdOutput;
 use PhpSchool\PhpWorkshop\UserState;
 use PhpSchool\PhpWorkshop\UserStateSerializer;
 
-/**
- * Class ExerciseRendererTest
- * @package PhpSchool\PhpWorkshopTest
- * @author Aydin Hassan <aydin@hotmail.co.uk>
- */
 class ExerciseRendererTest extends TestCase
 {
     public function testExerciseRendererSetsCurrentExerciseAndRendersExercise(): void

@@ -22,10 +22,6 @@ use PhpSchool\PhpWorkshop\Solution\SingleFileSolution;
 use PhpSchool\PhpWorkshopTest\Asset\CliExerciseInterface;
 use PHPUnit\Framework\TestCase;
 
-/**
- * @package PhpSchool\PhpWorkshop\ExerciseRunner
- * @author Aydin Hassan <aydin@hotmail.co.uk>
- */
 class CliRunnerTest extends TestCase
 {
     /** @var  CliRunner */

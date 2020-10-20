@@ -13,11 +13,6 @@ use PHPUnit\Framework\TestCase;
 
 use function PhpSchool\PhpWorkshop\Event\containerListener;
 
-/**
- * Class EventDispatcherFactoryTest
- * @package PhpSchool\PhpWorkshopTest\Event
- * @author Aydin Hassan <aydin@hotmail.co.uk>
- */
 class EventDispatcherFactoryTest extends TestCase
 {
     public function testCreateWithNoConfig(): void

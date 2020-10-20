@@ -12,7 +12,7 @@ use PhpSchool\PhpWorkshop\ExerciseRunner\ExerciseRunnerInterface;
 use PhpSchool\PhpWorkshop\Utils\RequestRenderer;
 
 /**
- * @author Aydin Hassan <aydin@hotmail.co.uk>
+ * Factory class for `CgiRunner`
  */
 class CgiRunnerFactory implements ExerciseRunnerFactoryInterface
 {

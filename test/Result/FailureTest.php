@@ -9,11 +9,6 @@ use PHPUnit\Framework\TestCase;
 use PhpSchool\PhpWorkshop\Result\ResultInterface;
 use PhpSchool\PhpWorkshop\Result\Failure;
 
-/**
- * Class FailureTest
- * @package PhpSchool\PhpWorkshopTest\Result
- * @author Aydin Hassan <aydin@hotmail.co.uk>
- */
 class FailureTest extends TestCase
 {
     /**

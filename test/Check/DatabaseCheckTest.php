@@ -23,10 +23,6 @@ use PHPUnit\Framework\TestCase;
 use ReflectionProperty;
 use RuntimeException;
 
-/**
- * @package PhpSchool\PhpWorkshopTest\Check
- * @author Aydin Hassan <aydin@hotmail.co.uk>
- */
 class DatabaseCheckTest extends TestCase
 {
 

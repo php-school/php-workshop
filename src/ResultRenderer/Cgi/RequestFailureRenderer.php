@@ -11,7 +11,6 @@ use PhpSchool\PhpWorkshop\ResultRenderer\ResultsRenderer;
  */
 class RequestFailureRenderer implements ResultRendererInterface
 {
-
     /**
      * @var RequestFailure
      */

@@ -6,9 +6,6 @@ use PhpSchool\PhpWorkshop\Exercise\AbstractExercise;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseType;
 
-/**
- * @author Aydin Hassan <aydin@hotmail.co.uk>
- */
 class CliExerciseMissingInterface extends AbstractExercise implements ExerciseInterface
 {
 

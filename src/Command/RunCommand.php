@@ -7,8 +7,10 @@ use PhpSchool\PhpWorkshop\ExerciseRepository;
 use PhpSchool\PhpWorkshop\Input\Input;
 use PhpSchool\PhpWorkshop\Output\OutputInterface;
 use PhpSchool\PhpWorkshop\UserState;
-use PhpSchool\PhpWorkshop\UserStateSerializer;
 
+/**
+ * A command to run the users solution
+ */
 class RunCommand
 {
     /**

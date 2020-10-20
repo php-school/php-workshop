@@ -3,7 +3,7 @@
 namespace PhpSchool\PhpWorkshop\Utils;
 
 /**
- * @author Aydin Hassan <aydin@hotmail.co.uk>
+ * ArrayObject is not a good name...
  */
 class Collection extends ArrayObject
 {

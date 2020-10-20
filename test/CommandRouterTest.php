@@ -14,11 +14,6 @@ use PhpSchool\PhpWorkshop\Exception\CliRouteNotExistsException;
 use PhpSchool\PhpWorkshop\Exception\MissingArgumentException;
 use RuntimeException;
 
-/**
- * Class CommandRouterTest
- * @package PhpSchool\PhpWorkshopTest
- * @author  Aydin Hassan <aydin@hotmail.co.uk>
- */
 class CommandRouterTest extends TestCase
 {
     public function testInvalidDefaultThrowsException(): void

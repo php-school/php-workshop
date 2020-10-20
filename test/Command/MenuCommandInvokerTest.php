@@ -6,11 +6,6 @@ use PhpSchool\CliMenu\CliMenu;
 use PhpSchool\PhpWorkshop\Command\MenuCommandInvoker;
 use PHPUnit\Framework\TestCase;
 
-/**
- * Class MenuCommandInvokerTest
- * @package PhpSchool\PhpWorkshopTest\Command
- * @author Aydin Hassan <aydin@hotmail.co.uk>
- */
 class MenuCommandInvokerTest extends TestCase
 {
     public function testInvoker(): void

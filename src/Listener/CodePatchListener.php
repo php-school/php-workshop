@@ -8,6 +8,9 @@ use PhpSchool\PhpWorkshop\Event\ExerciseRunnerEvent;
 use PhpSchool\PhpWorkshop\Input\Input;
 use RuntimeException;
 
+/**
+ * Listener which patches student's solutions
+ */
 class CodePatchListener
 {
     /**
@@ -21,7 +24,6 @@ class CodePatchListener
     private $originalCode;
 
     /**
-     * CodePatchListener constructor.
      * @param CodePatcher $codePatcher
      */
     public function __construct(CodePatcher $codePatcher)

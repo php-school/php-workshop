@@ -9,8 +9,6 @@ use PhpSchool\PhpWorkshop\Result\ResultGroupInterface;
 /**
  * A result which encompasses all the results for each individual execution made during
  * the CLI verification process.
- *
- * @author  Aydin Hassan <aydin@hotmail.co.uk>
  */
 class CliResult implements ResultGroupInterface, IteratorAggregate
 {

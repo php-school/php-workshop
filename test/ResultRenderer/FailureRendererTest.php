@@ -6,11 +6,6 @@ use PhpSchool\PhpWorkshop\Check\CheckInterface;
 use PhpSchool\PhpWorkshop\Result\Failure;
 use PhpSchool\PhpWorkshop\ResultRenderer\FailureRenderer;
 
-/**
- * Class FailureRendererTest
- * @package PhpSchool\PhpWorkshopTest\ResultRenderer
- * @author Aydin Hassan <aydin@hotmail.co.uk>
- */
 class FailureRendererTest extends AbstractResultRendererTest
 {
     public function testRender(): void

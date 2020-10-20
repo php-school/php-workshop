@@ -13,11 +13,6 @@ use PhpSchool\PhpWorkshop\UserState;
 use PhpSchool\PhpWorkshop\UserStateSerializer;
 use PHPUnit\Framework\TestCase;
 
-/**
- * Class ResetProgressTest
- * @package PhpSchool\PhpWorkshopTest\MenuItem
- * @author Aydin Hassan <aydin@hotmail.co.uk>
- */
 class ResetProgressTest extends TestCase
 {
     public function testResetProgressDisablesParentMenuItems(): void

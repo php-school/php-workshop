@@ -2,14 +2,12 @@
 
 namespace PhpSchool\PhpWorkshop\Listener;
 
-use PhpSchool\PhpWorkshop\Event\Event;
 use PhpSchool\PhpWorkshop\Event\ExerciseRunnerEvent;
 use RuntimeException;
 use Symfony\Component\Process\Process;
 
 /**
- * Class PrepareSolutionListener
- * @author Aydin Hassan <aydin@hotmail.co.uk>
+ * Listener to install composer deps for an exercise solution
  */
 class PrepareSolutionListener
 {

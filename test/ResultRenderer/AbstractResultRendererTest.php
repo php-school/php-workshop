@@ -10,11 +10,6 @@ use PHPUnit\Framework\TestCase;
 use PhpSchool\PhpWorkshop\ExerciseRepository;
 use PhpSchool\PhpWorkshop\ResultRenderer\ResultsRenderer;
 
-/**
- * Class AbstractResultRendererTest
- * @package PhpSchool\PhpWorkshopTest\ResultRenderer
- * @author Aydin Hassan <aydin@hotmail.co.uk>
- */
 abstract class AbstractResultRendererTest extends TestCase
 {
     /**

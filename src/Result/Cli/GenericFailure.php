@@ -7,11 +7,10 @@ use PhpSchool\PhpWorkshop\Result\Failure;
 use PhpSchool\PhpWorkshop\Utils\ArrayObject;
 
 /**
- * @author Aydin Hassan <aydin@hotmail.co.uk>
+ * Generic CLI failure.
  */
 class GenericFailure extends Failure implements FailureInterface
 {
-
     /**
      * @var ArrayObject
      */

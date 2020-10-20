@@ -23,8 +23,7 @@ use PhpSchool\PhpWorkshop\UserStateSerializer;
 use PhpSchool\PhpWorkshop\WorkshopType;
 
 /**
- * Class MenuFactory
- * @author Aydin Hassan <aydin@hotmail.co.uk>
+ * Configure the menu
  */
 class MenuFactory
 {

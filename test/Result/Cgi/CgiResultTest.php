@@ -8,9 +8,6 @@ use PhpSchool\PhpWorkshop\Result\Cgi\Success;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\RequestInterface;
 
-/**
- * @author Aydin Hassan <aydin@hotmail.co.uk>
- */
 class CgiResultTest extends TestCase
 {
     public function testName(): void
