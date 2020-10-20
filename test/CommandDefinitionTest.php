@@ -7,12 +7,8 @@ use PhpSchool\PhpWorkshop\Exception\InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 use PhpSchool\PhpWorkshop\CommandDefinition;
 
-/**
- * @author  Aydin Hassan <aydin@hotmail.co.uk>
- */
 class CommandDefinitionTest extends TestCase
 {
-
     public function testGettersSettersWithStringArgs(): void
     {
         $callable = function () {

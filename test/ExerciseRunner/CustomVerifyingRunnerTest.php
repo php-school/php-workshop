@@ -10,9 +10,6 @@ use PhpSchool\PhpWorkshop\Output\StdOutput;
 use PhpSchool\PhpWorkshopTest\Asset\CustomVerifyingExerciseImpl;
 use PHPUnit\Framework\TestCase;
 
-/**
- * @author Aydin Hassan <aydin@hotmail.co.uk>
- */
 class CustomVerifyingRunnerTest extends TestCase
 {
     /**

@@ -7,11 +7,6 @@ use PhpParser\Node\Name;
 use PHPUnit\Framework\TestCase;
 use PhpSchool\PhpWorkshop\NodeVisitor\FunctionVisitor;
 
-/**
- * Class FunctionVisitorTest
- * @package PhpSchool\PhpWorkshopTest\NodeVisitor
- * @author  Aydin Hassan <aydin@hotmail.co.uk>
- */
 class FunctionVisitorTest extends TestCase
 {
     public function testLeaveNodeWithARequiredFunctionIsRecorded(): void

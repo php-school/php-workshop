@@ -7,9 +7,6 @@ use PhpSchool\PhpWorkshop\Result\Cli\GenericFailure;
 use PhpSchool\PhpWorkshop\Utils\ArrayObject;
 use PHPUnit\Framework\TestCase;
 
-/**
- * @author Aydin Hassan <aydin@hotmail.co.uk>
- */
 class GenericFailureTest extends TestCase
 {
     public function testFailure(): void

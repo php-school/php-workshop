@@ -6,12 +6,6 @@ use InvalidArgumentException;
 use PhpSchool\PhpWorkshop\Solution\DirectorySolution;
 use PHPUnit\Framework\TestCase;
 
-/**
- * Class DirectorySolutionTest
- * @package PhpSchool\PhpWorkshopTest\Solution
- * @author Aydin Hassan <aydin@hotmail.co.uk>
- * @author Michael Woodward <mikeymike.mw@gmail.com>
- */
 class DirectorySolutionTest extends TestCase
 {
     public function testExceptionIsThrownIfEntryPointDoesNotExist(): void

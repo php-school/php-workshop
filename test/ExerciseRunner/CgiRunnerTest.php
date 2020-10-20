@@ -24,10 +24,6 @@ use PHPUnit\Framework\TestCase;
 use Zend\Diactoros\Request;
 use Zend\Diactoros\Uri;
 
-/**
- * @package PhpSchool\PhpWorkshop\ExerciseRunner
- * @author Aydin Hassan <aydin@hotmail.co.uk>
- */
 class CgiRunnerTest extends TestCase
 {
     /** @var  CgiRunner */

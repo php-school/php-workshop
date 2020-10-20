@@ -9,11 +9,6 @@ use PhpSchool\PhpWorkshop\Result\ResultInterface;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
 
-/**
- * Class ResultsRendererFactoryTest
- * @package PhpSchool\PhpWorkshopTest\Factory
- * @author Aydin Hassan <aydin@hotmail.co.uk>
- */
 class ResultRendererFactoryTest extends TestCase
 {
     public function testRegisterRendererRequiresResultInterface(): void

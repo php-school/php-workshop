@@ -7,9 +7,6 @@ use PhpSchool\PhpWorkshop\Result\Cgi\GenericFailure;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\RequestInterface;
 
-/**
- * @author Aydin Hassan <aydin@hotmail.co.uk>
- */
 class GenericFailureTest extends TestCase
 {
     public function testFailure(): void

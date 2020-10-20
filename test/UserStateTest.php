@@ -5,11 +5,6 @@ namespace PhpSchool\PhpWorkshopTest;
 use PHPUnit\Framework\TestCase;
 use PhpSchool\PhpWorkshop\UserState;
 
-/**
- * Class UserStateTest
- * @package PhpSchool\PhpWorkshopTest
- * @author  Aydin Hassan <aydin@hotmail.co.uk>
- */
 class UserStateTest extends TestCase
 {
     public function testWithNoCurrentExercisesOrCompleted(): void

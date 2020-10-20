@@ -11,11 +11,6 @@ use PHPUnit\Framework\TestCase;
 use RuntimeException;
 use Symfony\Component\Filesystem\Filesystem;
 
-/**
- * Class CodePatchListenerTest
- * @package PhpSchool\PhpWorkshopTest\Listener
- * @author Aydin Hassan <aydin@hotmail.co.uk>
- */
 class CodePatchListenerTest extends TestCase
 {
     /**

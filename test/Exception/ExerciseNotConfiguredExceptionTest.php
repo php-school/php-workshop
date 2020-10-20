@@ -6,11 +6,6 @@ use PhpSchool\PhpWorkshop\Exception\ExerciseNotConfiguredException;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use PHPUnit\Framework\TestCase;
 
-/**
- * Class ExerciseNotConfiguredExceptionTest
- * @package PhpSchool\PhpWorkshopTest\Exception
- * @author Aydin Hassan <aydin@hotmail.co.uk>
- */
 class ExerciseNotConfiguredExceptionTest extends TestCase
 {
     public function testException(): void

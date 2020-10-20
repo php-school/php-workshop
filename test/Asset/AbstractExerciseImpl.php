@@ -4,11 +4,6 @@ namespace PhpSchool\PhpWorkshopTest\Asset;
 
 use PhpSchool\PhpWorkshop\Exercise\AbstractExercise;
 
-/**
- * Class AbstractExerciseImpl
- * @package PhpSchool\PhpWorkshopTest\Asset
- * @author Aydin Hassan <aydin@hotmail.co.uk>
- */
 class AbstractExerciseImpl extends AbstractExercise
 {
 

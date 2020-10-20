@@ -7,9 +7,6 @@ use PhpSchool\PhpWorkshop\Input\Input;
 use PhpSchool\PhpWorkshopTest\Asset\CliExerciseImpl;
 use PHPUnit\Framework\TestCase;
 
-/**
- * @author Aydin Hassan <aydin@hotmail.co.uk>
- */
 class ExerciseRunnerEventTest extends TestCase
 {
     public function testGetters(): void

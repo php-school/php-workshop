@@ -5,9 +5,6 @@ namespace PhpSchool\PhpWorkshopTest;
 use PhpSchool\PhpWorkshop\CommandArgument;
 use PHPUnit\Framework\TestCase;
 
-/**
- * @author Aydin Hassan <aydin@hotmail.co.uk>
- */
 class CommandArgumentTest extends TestCase
 {
     public function testRequiredArgument(): void

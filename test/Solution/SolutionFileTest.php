@@ -6,11 +6,6 @@ use InvalidArgumentException;
 use PhpSchool\PhpWorkshop\Solution\SolutionFile;
 use PHPUnit\Framework\TestCase;
 
-/**
- * Class SolutionFileTest
- * @package PhpSchool\PhpWorkshop\Solution
- * @author Aydin Hassan <aydin@hotmail.co.uk>
- */
 class SolutionFileTest extends TestCase
 {
     public function testExceptionIsThrowIfFileNotExists(): void

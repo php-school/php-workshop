@@ -7,9 +7,6 @@ use PhpSchool\PhpWorkshop\ResultRenderer\Cli\RequestFailureRenderer;
 use PhpSchool\PhpWorkshop\Utils\ArrayObject;
 use PhpSchool\PhpWorkshopTest\ResultRenderer\AbstractResultRendererTest;
 
-/**
- * @author Aydin Hassan <aydin@hotmail.co.uk>
- */
 class RequestFailureRendererTest extends AbstractResultRendererTest
 {
     public function testRender(): void

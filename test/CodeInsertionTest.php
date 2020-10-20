@@ -6,11 +6,6 @@ use Assert\InvalidArgumentException;
 use PhpSchool\PhpWorkshop\CodeInsertion;
 use PHPUnit\Framework\TestCase;
 
-/**
- * Class CodeInsertionTest
- * @package PhpSchool\PhpWorkshopTest
- * @author Aydin Hassan <aydin@hotmail.co.uk>
- */
 class CodeInsertionTest extends TestCase
 {
     public function testInvalidType(): void

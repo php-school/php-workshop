@@ -19,14 +19,8 @@ use PhpSchool\PhpWorkshop\ResultRenderer\ResultsRenderer;
 use PhpSchool\PhpWorkshop\UserState;
 use PhpSchool\PhpWorkshop\UserStateSerializer;
 
-/**
- * Class VerifyCommandTest
- * @package PhpSchool\PhpWorkshop\Command
- * @author Aydin Hassan <aydin@hotmail.co.uk>
- */
 class VerifyCommandTest extends TestCase
 {
-
     /**
      * @var CheckInterface
      */

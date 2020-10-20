@@ -8,10 +8,6 @@ use PhpSchool\PhpWorkshop\Exercise\ExerciseType;
 use PhpSchool\PhpWorkshop\ExerciseDispatcher;
 use Psr\Http\Message\RequestInterface;
 
-/**
- * @package PhpSchool\PhpWorkshopTest\Asset
- * @author Aydin Hassan <aydin@hotmail.co.uk>
- */
 class CgiExerciseImpl implements ExerciseInterface, CgiExercise
 {
 

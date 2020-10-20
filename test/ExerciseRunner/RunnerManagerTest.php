@@ -9,9 +9,6 @@ use PhpSchool\PhpWorkshop\ExerciseRunner\RunnerManager;
 use PhpSchool\PhpWorkshopTest\Asset\CliExerciseImpl;
 use PHPUnit\Framework\TestCase;
 
-/**
- * @author Aydin Hassan <aydin@hotmail.co.uk>
- */
 class RunnerManagerTest extends TestCase
 {
     public function testConfigureInputCallsCorrectFactory(): void

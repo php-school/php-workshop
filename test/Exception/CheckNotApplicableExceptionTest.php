@@ -8,11 +8,6 @@ use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseType;
 use PHPUnit\Framework\TestCase;
 
-/**
- * Class CheckNotApplicableExceptionTest
- * @package PhpSchool\PhpWorkshopTest\Exception
- * @author Aydin Hassan <aydin@hotmail.co.uk>
- */
 class CheckNotApplicableExceptionTest extends TestCase
 {
     public function testException(): void

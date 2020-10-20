@@ -5,11 +5,6 @@ namespace PhpSchool\PhpWorkshopTest\Solution;
 use PhpSchool\PhpWorkshop\Solution\SingleFileSolution;
 use PHPUnit\Framework\TestCase;
 
-/**
- * Class SingleFileSolutionTest
- * @package PhpSchool\PhpWorkshop\Solution
- * @author Aydin Hassan <aydin@hotmail.co.uk>
- */
 class SingleFileSolutionTest extends TestCase
 {
     public function testGetters(): void

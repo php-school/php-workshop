@@ -6,11 +6,6 @@ use PhpSchool\PhpWorkshop\CodeInsertion;
 use PhpSchool\PhpWorkshop\Patch;
 use PHPUnit\Framework\TestCase;
 
-/**
- * Class PatchTest
- * @package PhpSchool\PhpWorkshopTest
- * @author Aydin Hassan <aydin@hotmail.co.uk>
- */
 class PatchTest extends TestCase
 {
     public function testWithInsertion(): void

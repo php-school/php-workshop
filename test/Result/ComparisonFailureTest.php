@@ -5,9 +5,6 @@ namespace PhpSchool\PhpWorkshopTest\Result;
 use PhpSchool\PhpWorkshop\Result\ComparisonFailure;
 use PHPUnit\Framework\TestCase;
 
-/**
- * @author Aydin Hassan <aydin@hotmail.co.uk>
- */
 class ComparisonFailureTest extends TestCase
 {
     public function testGetters(): void

@@ -11,11 +11,6 @@ use PhpSchool\PhpWorkshop\MarkdownRenderer;
 use PhpSchool\PhpWorkshop\Output\OutputInterface;
 use PhpSchool\PhpWorkshop\UserState;
 
-/**
- * Class PrintCommandTest
- * @package PhpSchool\PhpWorkshop\Command
- * @author Aydin Hassan <aydin@hotmail.co.uk>
- */
 class PrintCommandTest extends TestCase
 {
     public function testExerciseIsPrintedIfAssigned(): void

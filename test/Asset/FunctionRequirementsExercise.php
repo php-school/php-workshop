@@ -8,11 +8,6 @@ use PhpSchool\PhpWorkshop\Exercise\ExerciseType;
 use PhpSchool\PhpWorkshop\ExerciseCheck\FunctionRequirementsExerciseCheck;
 use PhpSchool\PhpWorkshop\ExerciseDispatcher;
 
-/**
- * Class FunctionRequirementsExercise
- * @package PhpSchool\PhpWorkshopTest\Asset
- * @author Aydin Hassan <aydin@hotmail.co.uk>
- */
 class FunctionRequirementsExercise implements ExerciseInterface, FunctionRequirementsExerciseCheck
 {
     public function getName(): string

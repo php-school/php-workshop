@@ -17,11 +17,6 @@ use PhpSchool\PhpWorkshop\Result\Failure;
 use PhpSchool\PhpWorkshop\Result\FunctionRequirementsFailure;
 use PhpSchool\PhpWorkshop\Result\Success;
 
-/**
- * Class FunctionRequirementsCheckTest
- * @package PhpSchool\PhpWorkshopTest\Check
- * @author  Aydin Hassan <aydin@hotmail.co.uk>
- */
 class FunctionRequirementsCheckTest extends TestCase
 {
     /**

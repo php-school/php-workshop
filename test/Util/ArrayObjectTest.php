@@ -5,11 +5,6 @@ namespace PhpSchool\PhpWorkshopTest\Util;
 use PhpSchool\PhpWorkshop\Utils\ArrayObject;
 use PHPUnit\Framework\TestCase;
 
-/**
- * Class ArrayObjectTest
- * @package PhpSchool\PhpWorkshopTest\Util
- * @author Aydin Hassan <aydin@hotmail.co.uk>
- */
 class ArrayObjectTest extends TestCase
 {
     public function testMap(): void

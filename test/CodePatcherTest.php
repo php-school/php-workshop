@@ -15,11 +15,6 @@ use PhpSchool\PhpWorkshopTest\Asset\PatchableExercise;
 use PHPUnit\Framework\TestCase;
 use PhpSchool\PhpWorkshop\CodeInsertion as Insertion;
 
-/**
- * Class CodePatcherTest
- * @package PhpSchool\PhpWorkshopTest
- * @author Aydin Hassan <aydin@hotmail.co.uk>
- */
 class CodePatcherTest extends TestCase
 {
     public function testDefaultPatchIsAppliedIfAvailable(): void

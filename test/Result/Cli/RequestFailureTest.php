@@ -6,9 +6,6 @@ use PhpSchool\PhpWorkshop\Result\Cli\RequestFailure;
 use PhpSchool\PhpWorkshop\Utils\ArrayObject;
 use PHPUnit\Framework\TestCase;
 
-/**
- * @author Aydin Hassan <aydin@hotmail.co.uk>
- */
 class RequestFailureTest extends TestCase
 {
     public function setUp(): void

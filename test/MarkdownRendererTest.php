@@ -9,11 +9,6 @@ use League\CommonMark\Environment;
 use PHPUnit\Framework\TestCase;
 use PhpSchool\PhpWorkshop\MarkdownRenderer;
 
-/**
- * Class MarkdownRendererTest
- * @package PhpSchool\PhpWorkshopTest
- * @author  Aydin Hassan <aydin@hotmail.co.uk>
- */
 class MarkdownRendererTest extends TestCase
 {
     public function testRender(): void

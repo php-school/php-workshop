@@ -22,11 +22,6 @@ use PhpSchool\PhpWorkshop\UserState;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 
-/**
- * Class ResultsRendererTest
- * @package PhpSchool\PhpWorkshopTest\ResultRenderer
- * @author Aydin Hassan <aydin@hotmail.co.uk>
- */
 class ResultsRendererTest extends TestCase
 {
     public function testRenderIndividualResult(): void

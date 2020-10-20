@@ -6,9 +6,6 @@ use PhpSchool\PhpWorkshop\Result\Cgi\RequestFailure;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\RequestInterface;
 
-/**
- * @author Aydin Hassan <aydin@hotmail.co.uk>
- */
 class RequestFailureTest extends TestCase
 {
     public function setUp(): void

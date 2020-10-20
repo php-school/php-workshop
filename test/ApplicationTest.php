@@ -7,9 +7,6 @@ namespace PhpSchool\PhpWorkshopTest;
 use PhpSchool\PhpWorkshop\Application;
 use PHPUnit\Framework\TestCase;
 
-/**
- * @author Aydin Hassan <aydin@hotmail.co.uk>
- */
 class ApplicationTest extends TestCase
 {
     public function testEventListenersFromLocalAndWorkshopConfigAreMerged(): void

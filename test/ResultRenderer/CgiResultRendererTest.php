@@ -12,9 +12,6 @@ use PhpSchool\PhpWorkshop\ResultRenderer\FailureRenderer;
 use PhpSchool\PhpWorkshop\Utils\RequestRenderer;
 use Zend\Diactoros\Request;
 
-/**
- * @author Aydin Hassan <aydin@hotmail.co.uk>
- */
 class CgiResultRendererTest extends AbstractResultRendererTest
 {
     public function testNothingIsOutputIfNoFailures(): void

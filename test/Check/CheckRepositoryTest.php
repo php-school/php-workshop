@@ -7,11 +7,6 @@ use PhpSchool\PhpWorkshop\Check\CheckRepository;
 use PhpSchool\PhpWorkshop\Exception\InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 
-/**
- * Class CheckRepositoryTest
- * @package PhpSchool\PhpWorkshopTest\Check
- * @author Aydin Hassan <aydin@hotmail.co.uk>
- */
 class CheckRepositoryTest extends TestCase
 {
     public function testRegisterViaConstructor(): void

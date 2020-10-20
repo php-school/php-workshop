@@ -9,10 +9,6 @@ use Interop\Container\ContainerInterface;
 use PhpSchool\Terminal\Terminal;
 use PHPUnit\Framework\TestCase;
 
-/**
- * Class CliRendererFactoryTest
- * @author Aydin Hassan <aydin@hotmail.co.uk>
- */
 class CliRendererFactoryTest extends TestCase
 {
     public function testFactoryReturnsInstance(): void

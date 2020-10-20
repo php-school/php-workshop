@@ -14,11 +14,6 @@ use PhpSchool\PhpWorkshop\Result\Success;
 use PhpSchool\PhpWorkshopTest\Asset\ComposerExercise;
 use PHPUnit\Framework\TestCase;
 
-/**
- * Class ComposerCheckTest
- * @package PhpSchool\PhpWorkshopTest\Check
- * @author Aydin Hassan <aydin@hotmail.co.uk>
- */
 class ComposerCheckTest extends TestCase
 {
     /**

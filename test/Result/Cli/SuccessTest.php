@@ -6,9 +6,6 @@ use PhpSchool\PhpWorkshop\Result\Cli\Success;
 use PhpSchool\PhpWorkshop\Utils\ArrayObject;
 use PHPUnit\Framework\TestCase;
 
-/**
- * @author Aydin Hassan <aydin@hotmail.co.uk>
- */
 class SuccessTest extends TestCase
 {
     public function testSuccess(): void
