@@ -8,6 +8,7 @@ use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpSchool\PhpWorkshop\Input\Input;
 use PhpSchool\PhpWorkshop\Listener\PrepareSolutionListener;
 use PhpSchool\PhpWorkshop\Solution\SolutionInterface;
+use PhpSchool\PhpWorkshopTest\Asset\CliExerciseInterface;
 use PHPUnit\Framework\TestCase;
 use ReflectionProperty;
 use RuntimeException;
@@ -52,7 +53,7 @@ class PrepareSolutionListenerTest extends TestCase
         $refProp->setValue($this->listener, []);
 
         $solution = $this->createMock(SolutionInterface::class);
-        $exercise = $this->createMock([ExerciseInterface::class, CliExercise::class]);
+        $exercise = $this->createMock(CliExerciseInterface::class);
         $exercise
             ->method('getSolution')
             ->willReturn($solution);
@@ -74,7 +75,7 @@ class PrepareSolutionListenerTest extends TestCase
         $this->assertFileExists(sprintf('%s/vendor', dirname($this->file)));
 
         $solution = $this->createMock(SolutionInterface::class);
-        $exercise = $this->createMock([ExerciseInterface::class, CliExercise::class]);
+        $exercise = $this->createMock(CliExerciseInterface::class);
         $exercise
             ->method('getSolution')
             ->willReturn($solution);
@@ -106,7 +107,7 @@ class PrepareSolutionListenerTest extends TestCase
         ]));
 
         $solution = $this->createMock(SolutionInterface::class);
-        $exercise = $this->createMock([ExerciseInterface::class, CliExercise::class]);
+        $exercise = $this->createMock(CliExerciseInterface::class);
         $exercise
             ->method('getSolution')
             ->willReturn($solution);
@@ -131,3 +132,4 @@ class PrepareSolutionListenerTest extends TestCase
         $this->filesystem->remove(dirname($this->file));
     }
 }
+
