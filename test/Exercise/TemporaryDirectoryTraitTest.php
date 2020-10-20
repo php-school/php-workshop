@@ -16,8 +16,7 @@ class TemporaryDirectoryTraitTest extends TestCase
     {
         $impl = new TemporaryDirectoryTraitImpl;
         $path = $impl->getTemporaryPath();
-        $this->assertInternalType('string', $path);
-        
+
         mkdir($path, 0775, true);
         $this->assertFileExists($path);
         rmdir($path);

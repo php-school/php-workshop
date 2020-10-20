@@ -12,9 +12,6 @@ use PhpSchool\PhpWorkshop\Utils\RequestRenderer;
 use PhpSchool\PhpWorkshopTest\Asset\CgiExerciseImpl;
 use PHPUnit\Framework\TestCase;
 
-/**
- * @author Aydin Hassan <aydin@hotmail.co.uk>
- */
 class CgiRunnerFactoryTest extends TestCase
 {
     /**
@@ -27,7 +24,7 @@ class CgiRunnerFactoryTest extends TestCase
      */
     private $factory;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->eventDispatcher = $this->createMock(EventDispatcher::class);
         $this->factory = new CgiRunnerFactory($this->eventDispatcher, new RequestRenderer);

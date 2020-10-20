@@ -54,7 +54,7 @@ class SingleFileSolution implements SolutionInterface
      *
      * @return SolutionFile[]
      */
-    public function getFiles()
+    public function getFiles(): array
     {
         return [$this->file];
     }

@@ -3,6 +3,7 @@
 namespace PhpSchool\PhpWorkshop\Factory;
 
 use PhpSchool\CliMenu\Style\SelectableStyle;
+use PhpSchool\Terminal\Terminal;
 use Psr\Container\ContainerInterface;
 use PhpSchool\CliMenu\CliMenu;
 use PhpSchool\CliMenu\Builder\CliMenuBuilder;
@@ -40,7 +41,7 @@ class MenuFactory
         $workshopType           = $c->get(WorkshopType::class);
         $eventDispatcher        = $c->get(EventDispatcher::class);
 
-        $builder = (new CliMenuBuilder)
+        $builder = (new CliMenuBuilder($c->get(Terminal::class)))
             ->addLineBreak();
 
         if (null !== $c->get('workshopLogo')) {

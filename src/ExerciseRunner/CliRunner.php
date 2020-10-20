@@ -112,8 +112,13 @@ class CliRunner implements ExerciseRunnerInterface
      */
     private function getPhpProcess($fileName, ArrayObject $args)
     {
-        $cmd = sprintf('%s %s %s', PHP_BINARY, $fileName, $args->map('escapeshellarg')->implode(' '));
-        return new Process($cmd, dirname($fileName), null, null, 10);
+        return new Process(
+            $args->prepend($fileName)->prepend(PHP_BINARY)->getArrayCopy(),
+            dirname($fileName),
+            null,
+            null,
+            10
+        );
     }
 
     /**

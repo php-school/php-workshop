@@ -338,22 +338,32 @@ class CommandRouterTest extends TestCase
             ->setMethods(['__invoke'])
             ->getMock();
 
-        $mock->expects($this->at(0))
+        $mock->expects($this->exactly(3))
             ->method('__invoke')
-            ->with($this->callback(function (Input $input) {
-                return $input->getAppName() === 'app'
-                && $input->getArgument('exercise') === 'some-exercise';
-            }))
-            ->willReturn(true);
-
-        $mock->expects($this->at(1))
-            ->method('__invoke')
-            ->with($this->callback(function (Input $input) {
-                return $input->getAppName() === 'app'
-                && $input->getArgument('exercise') === 'some-exercise'
-                && $input->getArgument('program') === 'program.php';
-            }))
-            ->willReturn(true);
+            ->withConsecutive(
+                [
+                    $this->callback(function (Input $input) {
+                        return $input->getAppName() === 'app'
+                            && $input->getArgument('exercise') === 'some-exercise';
+                    })
+                ],
+                [
+                    $this->callback(function (Input $input) {
+                        return $input->getAppName() === 'app'
+                            && $input->getArgument('exercise') === 'some-exercise'
+                            && $input->getArgument('program') === 'program.php';
+                    })
+                ],
+                [
+                    $this->callback(function (Input $input) {
+                        return $input->getAppName() === 'app'
+                            && $input->getArgument('exercise') === 'some-exercise'
+                            && $input->getArgument('program') === 'program.php'
+                            && $input->getArgument('some-other-arg') === 'some-other-arg-value';
+                    })
+                ]
+            )
+            ->willReturnOnConsecutiveCalls(true, true);
 
         $c = $this->createMock(ContainerInterface::class);
         $eventDispatcher = $this->createMock(EventDispatcher::class);

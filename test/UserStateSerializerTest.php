@@ -45,7 +45,7 @@ class UserStateSerializerTest extends TestCase
 
     public function testIfDirNotExistsItIsCreated() : void
     {
-        $this->assertFileNotExists($this->tmpDir);
+        $this->assertFileDoesNotExist($this->tmpDir);
         new UserStateSerializer($this->tmpDir, $this->workshopName, $this->exerciseRepository);
         $this->assertFileExists($this->tmpDir);
     }
@@ -226,7 +226,7 @@ class UserStateSerializerTest extends TestCase
             ],
         ];
 
-        $this->assertFileNotExists($oldSave);
+        $this->assertFileDoesNotExist($oldSave);
         $this->assertFileExists($newSave);
         $this->assertEquals($expected, json_decode(file_get_contents($newSave), true));
     }
@@ -265,7 +265,7 @@ class UserStateSerializerTest extends TestCase
 
         $this->assertFileExists($oldSave);
         $this->assertEquals($oldData, json_decode(file_get_contents($oldSave), true));
-        $this->assertFileNotExists($newSave);
+        $this->assertFileDoesNotExist($newSave);
 
         unlink($oldSave);
     }

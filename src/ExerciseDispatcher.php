@@ -221,4 +221,20 @@ class ExerciseDispatcher
     {
         return $this->eventDispatcher;
     }
+
+    /**
+     * @return SimpleCheckInterface[]
+     */
+    public function getChecksToRunBefore(): array
+    {
+        return $this->checksToRunBefore;
+    }
+
+    /**
+     * @return SimpleCheckInterface[]
+     */
+    public function getChecksToRunAfter(): array
+    {
+        return $this->checksToRunAfter;
+    }
 }

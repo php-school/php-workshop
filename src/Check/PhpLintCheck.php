@@ -34,14 +34,14 @@ class PhpLintCheck implements SimpleCheckInterface
      */
     public function check(ExerciseInterface $exercise, Input $input) : ResultInterface
     {
-        $process = new Process(sprintf('%s -l %s', PHP_BINARY, $input->getArgument('program')));
+        $process = new Process([PHP_BINARY, '-l', $input->getArgument('program')]);
         $process->run();
 
         if ($process->isSuccessful()) {
             return Success::fromCheck($this);
         }
 
-        return Failure::fromCheckAndReason($this, trim($process->getOutput()));
+        return Failure::fromCheckAndReason($this, trim($process->getErrorOutput()));
     }
 
     /**

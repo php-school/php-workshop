@@ -11,14 +11,8 @@ use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpSchool\PhpWorkshop\Result\Failure;
 use PhpSchool\PhpWorkshop\Result\Success;
 
-/**
- * Class PhpLintCheckTest
- * @package PhpSchool\PhpWorkshopTest
- * @author Aydin Hassan <aydin@hotmail.co.uk>
- */
 class PhpLintCheckTest extends TestCase
 {
-
     /**
      * @var PhpLintCheck
      */
@@ -29,7 +23,7 @@ class PhpLintCheckTest extends TestCase
      */
     private $exercise;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->check = new PhpLintCheck;
         $this->exercise = $this->createMock(ExerciseInterface::class);
@@ -56,8 +50,8 @@ class PhpLintCheckTest extends TestCase
             new Input('app', ['program' => __DIR__ . '/../res/lint/fail.php'])
         );
         $this->assertInstanceOf(Failure::class, $failure);
-        $this->assertRegExp(
-            "/^Parse error: syntax error, unexpected end of file, expecting ',' or ';'/",
+        $this->assertMatchesRegularExpression(
+            "/(PHP )?Parse error:\W+syntax error, unexpected end of file, expecting '[,;]' or '[;,]'/",
             $failure->getReason()
         );
     }

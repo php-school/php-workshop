@@ -2,11 +2,8 @@
 
 namespace PhpSchool\PhpWorkshopTest\ResultRenderer;
 
-use Colors\Color;
-use InvalidArgumentException;
 use PhpSchool\PhpWorkshop\Check\CheckInterface;
 use PhpSchool\PhpWorkshop\Result\Failure;
-use PhpSchool\PhpWorkshop\Result\ResultInterface;
 use PhpSchool\PhpWorkshop\ResultRenderer\FailureRenderer;
 
 /**

@@ -8,6 +8,7 @@ use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpSchool\PhpWorkshop\Input\Input;
 use PhpSchool\PhpWorkshop\Listener\PrepareSolutionListener;
 use PhpSchool\PhpWorkshop\Solution\SolutionInterface;
+use PhpSchool\PhpWorkshopTest\Asset\CliExerciseInterface;
 use PHPUnit\Framework\TestCase;
 use ReflectionProperty;
 use RuntimeException;
@@ -52,7 +53,7 @@ class PrepareSolutionListenerTest extends TestCase
         $refProp->setValue($this->listener, []);
 
         $solution = $this->createMock(SolutionInterface::class);
-        $exercise = $this->createMock([ExerciseInterface::class, CliExercise::class]);
+        $exercise = $this->createMock(CliExerciseInterface::class);
         $exercise
             ->method('getSolution')
             ->willReturn($solution);
@@ -74,7 +75,7 @@ class PrepareSolutionListenerTest extends TestCase
         $this->assertFileExists(sprintf('%s/vendor', dirname($this->file)));
 
         $solution = $this->createMock(SolutionInterface::class);
-        $exercise = $this->createMock([ExerciseInterface::class, CliExercise::class]);
+        $exercise = $this->createMock(CliExerciseInterface::class);
         $exercise
             ->method('getSolution')
             ->willReturn($solution);
@@ -93,12 +94,12 @@ class PrepareSolutionListenerTest extends TestCase
 
         $this->assertFileExists(sprintf('%s/vendor', dirname($this->file)));
         //check for non existence of lock file, composer generates this when updating if it doesn't exist
-        $this->assertFileNotExists(sprintf('%s/composer.lock', dirname($this->file)));
+        $this->assertFileDoesNotExist(sprintf('%s/composer.lock', dirname($this->file)));
     }
 
     public function testIfSolutionRequiresComposerComposerInstallIsExecuted() : void
     {
-        $this->assertFileNotExists(sprintf('%s/vendor', dirname($this->file)));
+        $this->assertFileDoesNotExist(sprintf('%s/vendor', dirname($this->file)));
         file_put_contents(sprintf('%s/composer.json', dirname($this->file)), json_encode([
             'requires' => [
                 'phpunit/phpunit' => '~5.0'
@@ -106,7 +107,7 @@ class PrepareSolutionListenerTest extends TestCase
         ]));
 
         $solution = $this->createMock(SolutionInterface::class);
-        $exercise = $this->createMock([ExerciseInterface::class, CliExercise::class]);
+        $exercise = $this->createMock(CliExerciseInterface::class);
         $exercise
             ->method('getSolution')
             ->willReturn($solution);

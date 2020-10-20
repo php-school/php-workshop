@@ -80,7 +80,7 @@ class CgiRunnerTest extends TestCase
 
         $regex  = "/^PHP Code failed to execute\. Error: \"PHP Parse error:  syntax error, unexpected end of file in/";
         $this->expectException(SolutionExecutionException::class);
-        $this->expectExceptionMessageRegExp($regex);
+        $this->expectExceptionMessageMatches($regex);
         $this->runner->verify(new Input('app', ['program' => '']));
     }
 
@@ -193,7 +193,7 @@ class CgiRunnerTest extends TestCase
 
         $failureMsg  = '/^PHP Code failed to execute. Error: "PHP Parse error:  syntax error, unexpected end of file';
         $failureMsg .= ' in/';
-        $this->assertRegExp($failureMsg, $result->getReason());
+        $this->assertMatchesRegularExpression($failureMsg, $result->getReason());
     }
 
     public function testVerifyReturnsFailureIfSolutionOutputDoesNotMatchUserOutput() : void

@@ -29,7 +29,6 @@ use Prophecy\Argument;
  */
 class ResultsRendererTest extends TestCase
 {
-
     public function testRenderIndividualResult() : void
     {
         $color = new Color;
