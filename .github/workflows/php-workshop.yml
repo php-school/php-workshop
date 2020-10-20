@@ -29,7 +29,7 @@ jobs:
         if: matrix.php == '7.2'
         run: |
           composer install --ignore-platform-reqs
-          composer remove --dev phpspec/prophecy-phpunit --no-update-with-dependencies
+          composer remove --dev phpspec/prophecy-phpunit
           composer update
 
       - name: Install Dependencies
