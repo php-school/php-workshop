@@ -29,8 +29,6 @@ use Symfony\Component\Process\Process;
  * ```bash
  * php my-solution.php arg1 arg2 arg3
  * ```
- *
- * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
 class CliRunner implements ExerciseRunnerInterface
 {

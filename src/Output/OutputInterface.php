@@ -4,6 +4,9 @@ namespace PhpSchool\PhpWorkshop\Output;
 
 use Psr\Http\Message\RequestInterface;
 
+/**
+ * Output interface
+ */
 interface OutputInterface
 {
     /**

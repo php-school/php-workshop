@@ -8,7 +8,7 @@ use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpSchool\PhpWorkshop\ExerciseRunner\Factory\ExerciseRunnerFactoryInterface;
 
 /**
- * @author Aydin Hassan <aydin@hotmail.co.uk>
+ * Allow factories to configure input and fetch the correct runner for the exercise
  */
 class RunnerManager
 {

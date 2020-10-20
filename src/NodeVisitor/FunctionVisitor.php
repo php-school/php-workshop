@@ -6,6 +6,9 @@ use PhpParser\Node;
 use PhpParser\Node\Expr\FuncCall;
 use PhpParser\NodeVisitorAbstract;
 
+/**
+ * AST visitor to look for required and missing function requirements
+ */
 class FunctionVisitor extends NodeVisitorAbstract
 {
     /**

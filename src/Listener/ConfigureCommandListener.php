@@ -9,7 +9,7 @@ use PhpSchool\PhpWorkshop\ExerciseRunner\RunnerManager;
 use PhpSchool\PhpWorkshop\UserState;
 
 /**
- * @author Aydin Hassan <aydin@hotmail.co.uk>
+ * Listener to allow runners to modify command arguments
  */
 class ConfigureCommandListener
 {

@@ -4,6 +4,9 @@ namespace PhpSchool\PhpWorkshop\Command;
 
 use PhpSchool\CliMenu\CliMenu;
 
+/**
+ * A command to open the app menu
+ */
 class MenuCommand
 {
     /**

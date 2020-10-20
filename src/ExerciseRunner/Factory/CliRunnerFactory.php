@@ -11,7 +11,7 @@ use PhpSchool\PhpWorkshop\ExerciseRunner\CliRunner;
 use PhpSchool\PhpWorkshop\ExerciseRunner\ExerciseRunnerInterface;
 
 /**
- * @author Aydin Hassan <aydin@hotmail.co.uk>
+ * Factory class for `CliRunner`
  */
 class CliRunnerFactory implements ExerciseRunnerFactoryInterface
 {

@@ -4,8 +4,6 @@ namespace PhpSchool\PhpWorkshop\Solution;
 
 /**
  * Interface for reference solution representations.
- *
- * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
 interface SolutionInterface
 {

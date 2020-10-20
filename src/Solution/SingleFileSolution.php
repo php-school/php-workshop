@@ -6,8 +6,6 @@ use InvalidArgumentException;
 
 /**
  * Solution to use when the solution only consists of one file.
- *
- * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
 class SingleFileSolution implements SolutionInterface
 {

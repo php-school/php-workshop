@@ -9,7 +9,7 @@ use PhpSchool\PhpWorkshop\Input\Input;
 use PhpSchool\PhpWorkshop\UserState;
 
 /**
- * @author Aydin Hassan <aydin@hotmail.co.uk>
+ * Replace program arg with absolute path
  */
 class RealPathListener
 {

@@ -5,7 +5,7 @@ namespace PhpSchool\PhpWorkshop\Exercise;
 use PhpSchool\PhpWorkshop\Result\ResultInterface;
 
 /**
- * @author Aydin Hassan <aydin@hotmail.co.uk>
+ * This interface describes the methods for a CUSTOM type exercise.
  */
 interface CustomVerifyingExercise
 {

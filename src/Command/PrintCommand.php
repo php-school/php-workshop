@@ -8,8 +8,7 @@ use PhpSchool\PhpWorkshop\Output\OutputInterface;
 use PhpSchool\PhpWorkshop\UserState;
 
 /**
- * Class PrintCommand
- * @author Aydin Hassan <aydin@hotmail.co.uk>
+ * A command to print the exercise's readme
  */
 class PrintCommand
 {

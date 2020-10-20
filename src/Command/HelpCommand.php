@@ -6,8 +6,7 @@ use Colors\Color;
 use PhpSchool\PhpWorkshop\Output\OutputInterface;
 
 /**
- * Class HelpCommand
- * @author Aydin Hassan <aydin@hotmail.co.uk>
+ * A command to display help on running the workshop.
  */
 class HelpCommand
 {

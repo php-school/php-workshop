@@ -6,6 +6,9 @@ use PhpSchool\PhpWorkshop\Exception\InvalidArgumentException;
 use PhpSchool\PhpWorkshop\Result\ResultInterface;
 use PhpSchool\PhpWorkshop\ResultRenderer\ResultRendererInterface;
 
+/**
+ * Manages and creates renderers for results
+ */
 class ResultRendererFactory
 {
     /**

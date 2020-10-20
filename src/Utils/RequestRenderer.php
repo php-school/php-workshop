@@ -5,7 +5,7 @@ namespace PhpSchool\PhpWorkshop\Utils;
 use Psr\Http\Message\RequestInterface;
 
 /**
- * @author Aydin Hassan <aydin@hotmail.co.uk>
+ * Utility to render a PSR-7 request
  */
 class RequestRenderer
 {

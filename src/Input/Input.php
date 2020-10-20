@@ -6,7 +6,7 @@ use PhpSchool\PhpWorkshop\CommandDefinition;
 use PhpSchool\PhpWorkshop\Exception\InvalidArgumentException;
 
 /**
- * @author Aydin Hassan <aydin@hotmail.co.uk>
+ * Container for command arguments
  */
 class Input
 {

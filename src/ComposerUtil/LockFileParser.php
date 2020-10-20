@@ -6,8 +6,6 @@ use PhpSchool\PhpWorkshop\Exception\InvalidArgumentException;
 
 /**
  * Utility for reading installed package versions from a `composer.lock` file.
- *
- * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
 class LockFileParser
 {

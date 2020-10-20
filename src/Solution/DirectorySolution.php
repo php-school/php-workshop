@@ -9,9 +9,6 @@ use RecursiveIteratorIterator;
 
 /**
  * Solution which can contain multiple files, the file to execute is defined as the entry point.
- *
- * @author Aydin Hassan <aydin@hotmail.co.uk>
- * @author Michael Woodward <mikeymike.mw@gmail.com>
  */
 class DirectorySolution implements SolutionInterface
 {

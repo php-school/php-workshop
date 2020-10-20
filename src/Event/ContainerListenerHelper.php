@@ -3,7 +3,7 @@
 namespace PhpSchool\PhpWorkshop\Event;
 
 /**
- * @author Aydin Hassan <aydin@hotmail.co.uk>
+ * A utility to reference listeners in the container
  */
 class ContainerListenerHelper
 {

@@ -7,8 +7,6 @@ use Psr\Http\Message\RequestInterface;
 
 /**
  * Default implementation of `PhpSchool\PhpWorkshop\Result\Cgi\SuccessInterface`.
- *
- * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
 class Success implements SuccessInterface
 {

@@ -3,7 +3,6 @@
 namespace PhpSchool\PhpWorkshop\ResultRenderer;
 
 use PhpSchool\PhpWorkshop\Result\Failure;
-use PhpSchool\PhpWorkshop\Result\ResultInterface;
 
 /**
  * Renderer for `PhpSchool\PhpWorkshop\Result\Failure`.

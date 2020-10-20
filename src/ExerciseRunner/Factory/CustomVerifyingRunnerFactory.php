@@ -9,7 +9,7 @@ use PhpSchool\PhpWorkshop\ExerciseRunner\CustomVerifyingRunner;
 use PhpSchool\PhpWorkshop\ExerciseRunner\ExerciseRunnerInterface;
 
 /**
- * @author Aydin Hassan <aydin@hotmail.co.uk>
+ * Factory class for `CustomVerifyingRunner`
  */
 class CustomVerifyingRunnerFactory implements ExerciseRunnerFactoryInterface
 {

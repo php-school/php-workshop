@@ -19,7 +19,7 @@ use PhpSchool\PhpWorkshop\ResultAggregator;
 use PhpSchool\PhpWorkshop\UserState;
 
 /**
- * Renderer which renders a `PhpSchool\PhpWorkshop\ResultAggregator` and writes it the output.
+ * Renderer which renders a `PhpSchool\PhpWorkshop\ResultAggregator` and writes it to x§the output.
  */
 class ResultsRenderer
 {

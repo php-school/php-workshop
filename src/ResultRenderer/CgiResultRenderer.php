@@ -12,7 +12,6 @@ use PhpSchool\PhpWorkshop\Utils\RequestRenderer;
  */
 class CgiResultRenderer implements ResultRendererInterface
 {
-
     /**
      * @var CgiResult
      */

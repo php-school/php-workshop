@@ -6,6 +6,9 @@ use PhpSchool\PhpWorkshop\Event\Event;
 use PhpSchool\PhpWorkshop\ExerciseCheck\SelfCheck;
 use PhpSchool\PhpWorkshop\ResultAggregator;
 
+/**
+ * Listener to handle exercises which inject their own checks
+ */
 class SelfCheckListener
 {
     /**
