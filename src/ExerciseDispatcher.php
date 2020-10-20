@@ -235,6 +235,6 @@ class ExerciseDispatcher
      */
     public function getChecksToRunAfter(): array
     {
-        return $this->checksToRunBefore;
+        return $this->checksToRunAfter;
     }
 }
