@@ -26,7 +26,7 @@ jobs:
           tools: composer:v2
 
       - name: Install PHP 7.2 deps
-        if: matrix.php == '7.4'
+        if: matrix.php == '7.2'
         run: |
           composer install --ignore-platform-reqs
           composer remove --dev phpspec/prophecy-phpunit --no-update-with-dependencies
