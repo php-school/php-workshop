@@ -271,28 +271,59 @@ class ExerciseDispatcherTest extends TestCase
         $input = new Input('app', ['program' => $this->file]);
         $exercise = new CliExerciseImpl('Some Exercise');
 
-        $checkProphecy1 = $this->prophesize(SimpleCheckInterface::class);
-        $checkProphecy1->canRun($exercise->getType())->willReturn(true);
-        $checkProphecy1->getPosition()->willReturn(SimpleCheckInterface::CHECK_BEFORE);
-        $checkProphecy1->getExerciseInterface()->willReturn(ExerciseInterface::class);
-        $checkProphecy1->check($exercise, $input)->willReturn(new Success('Success!'));
+        $check1 = $this
+            ->getMockBuilder(SimpleCheckInterface::class)
+            ->setMockClassName('SimpleCheckMock1')
+            ->getMock();
 
-        $checkProphecy2 = $this->prophesize(SimpleCheckInterface::class);
-        $checkProphecy2->check($exercise, $input)->shouldNotBeCalled();
+        $check1
+            ->method('canRun')
+            ->willReturn(true);
 
-        $check1 = $checkProphecy1->reveal();
-        $check2 = $checkProphecy2->reveal();
+        $check1
+            ->method('getPosition')
+            ->willReturn(SimpleCheckInterface::CHECK_BEFORE);
 
-        $runner = $this->prophesize(ExerciseRunnerInterface::class);
-        $runner->getRequiredChecks()->willReturn([get_class($check1)]);
-        $runner->verify($input)->willReturn(new Success('Success!'));
-        $runnerManager = $this->prophesize(RunnerManager::class);
-        $runnerManager->getRunner($exercise)->willReturn($runner->reveal());
+        $check1
+            ->method('getExerciseInterface')
+            ->willReturn(ExerciseInterface::class);
+
+        $check1
+            ->method('check')
+            ->with($exercise, $input)
+            ->willReturn(new Success('Success!'));
+
+        $check2 = $this
+            ->getMockBuilder(SimpleCheckInterface::class)
+            ->setMockClassName('SimpleCheckMock2')
+            ->getMock();
+
+        $check2
+            ->expects($this->never())
+            ->method('check')
+            ->with($exercise, $input);
+
+        $runner = $this->createMock(ExerciseRunnerInterface::class);
+        $runner
+            ->expects($this->once())
+            ->method('getRequiredChecks')
+            ->willReturn([get_class($check1)]);
+
+        $runner
+            ->method('verify')
+            ->with($input)
+            ->willReturn(new Success('Success!'));
+
+        $runnerManager = $this->createMock(RunnerManager::class);
+        $runnerManager
+            ->method('getRunner')
+            ->with($exercise)
+            ->willReturn($runner);
 
         $exerciseDispatcher = new ExerciseDispatcher(
-            $runnerManager->reveal(),
+            $runnerManager,
             new ResultAggregator,
-            $this->prophesize(EventDispatcher::class)->reveal(),
+            new EventDispatcher(new ResultAggregator()),
             new CheckRepository([$check1, $check2])
         );
 
@@ -346,31 +377,71 @@ class ExerciseDispatcherTest extends TestCase
         $input = new Input('app', ['program' => $this->file]);
         $exercise = new CliExerciseImpl('Some Exercise');
 
-        $checkProphecy1 = $this->prophesize(SimpleCheckInterface::class);
-        $checkProphecy1->canRun($exercise->getType())->willReturn(true);
-        $checkProphecy1->getPosition()->willReturn(SimpleCheckInterface::CHECK_BEFORE);
-        $checkProphecy1->getExerciseInterface()->willReturn(ExerciseInterface::class);
-        $checkProphecy1->check($exercise, $input)->willReturn(new Failure('Failure', 'nope'));
+        $check1 = $this
+            ->getMockBuilder(SimpleCheckInterface::class)
+            ->setMockClassName('SimpleCheckMock1')
+            ->getMock();
 
-        $checkProphecy2 = $this->prophesize(SimpleCheckInterface::class);
-        $checkProphecy2->canRun($exercise->getType())->willReturn(true);
-        $checkProphecy2->getPosition()->willReturn(SimpleCheckInterface::CHECK_BEFORE);
-        $checkProphecy2->getExerciseInterface()->willReturn(ExerciseInterface::class);
-        $checkProphecy2->check($exercise, $input)->shouldNotBeCalled();
+        $check1
+            ->method('canRun')
+            ->willReturn(true);
 
-        $check1 = $checkProphecy1->reveal();
-        $check2 = $checkProphecy2->reveal();
+        $check1
+            ->method('getPosition')
+            ->willReturn(SimpleCheckInterface::CHECK_BEFORE);
 
-        $runner = $this->prophesize(ExerciseRunnerInterface::class);
-        $runner->getRequiredChecks()->willReturn([get_class($check1), get_class($check2)]);
-        $runner->verify($input)->shouldNotBeCalled();
-        $runnerManager = $this->prophesize(RunnerManager::class);
-        $runnerManager->getRunner($exercise)->willReturn($runner->reveal());
+        $check1
+            ->method('getExerciseInterface')
+            ->willReturn(ExerciseInterface::class);
+
+        $check1
+            ->method('check')
+            ->with($exercise, $input)
+            ->willReturn(new Failure('Failure', 'nope'));
+
+        $check2 = $this
+            ->getMockBuilder(SimpleCheckInterface::class)
+            ->setMockClassName('SimpleCheckMock2')
+            ->getMock();
+
+        $check2
+            ->method('canRun')
+            ->willReturn(true);
+
+        $check2
+            ->method('getPosition')
+            ->willReturn(SimpleCheckInterface::CHECK_BEFORE);
+
+        $check2
+            ->method('getExerciseInterface')
+            ->willReturn(ExerciseInterface::class);
+
+        $check2
+            ->expects($this->never())
+            ->method('check')
+            ->with($exercise, $input);
+
+        $runner = $this->createMock(ExerciseRunnerInterface::class);
+        $runner
+            ->expects($this->once())
+            ->method('getRequiredChecks')
+            ->willReturn([get_class($check1), get_class($check2)]);
+
+        $runner
+            ->expects($this->never())
+            ->method('verify')
+            ->with($input);
+
+        $runnerManager = $this->createMock(RunnerManager::class);
+        $runnerManager
+            ->method('getRunner')
+            ->with($exercise)
+            ->willReturn($runner);
 
         $exerciseDispatcher = new ExerciseDispatcher(
-            $runnerManager->reveal(),
+            $runnerManager,
             new ResultAggregator,
-            $this->prophesize(EventDispatcher::class)->reveal(),
+            new EventDispatcher(new ResultAggregator()),
             new CheckRepository([$check1, $check2])
         );
 

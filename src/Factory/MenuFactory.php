@@ -2,6 +2,7 @@
 
 namespace PhpSchool\PhpWorkshop\Factory;
 
+use PhpSchool\CliMenu\Style\SelectableStyle;
 use Psr\Container\ContainerInterface;
 use PhpSchool\CliMenu\CliMenu;
 use PhpSchool\CliMenu\Builder\CliMenuBuilder;
@@ -74,8 +75,11 @@ class MenuFactory
             ->setBackgroundColour($c->get('bgColour'))
             ->setForegroundColour($c->get('fgColour'))
             ->setWidth(70)
-            ->setUnselectedMarker(' ')
-            ->setSelectedMarker('↳')
+            ->modifySelectableStyle(function (SelectableStyle $style) {
+                $style
+                    ->setUnselectedMarker('  ')
+                    ->setSelectedMarker('↳');
+            })
             ->setItemExtra('[COMPLETED]');
 
         $builder

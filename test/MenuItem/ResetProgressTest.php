@@ -34,6 +34,9 @@ class ResetProgressTest extends TestCase
             ->method('hideItemExtra');
 
         $terminal = $this->createMock(Terminal::class);
+        $terminal
+            ->method('getWidth')
+            ->willReturn(100);
 
         $menu = new CliMenu('Menu', [$item1, $item2], $terminal);
 
