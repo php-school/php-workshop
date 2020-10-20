@@ -1,0 +1,52 @@
+name: PhpWorkshop
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: true
+      matrix:
+        php: [7.2, 7.3, 7.4]
+
+    name: PHP ${{ matrix.php-versions }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          tools: composer:v2
+
+      - name: Install PHP 7.2 deps
+        if: matrix.php == '7.4'
+        run: |
+          composer install --ignore-platform-reqs
+          composer remove --dev phpspec/prophecy-phpunit --no-update-with-dependencies
+          composer update
+
+      - name: Install Dependencies
+        run: composer install --prefer-dist
+
+      - name: Run phpunit tests
+        run: |
+          mkdir -p build/logs
+          vendor/bin/phpunit --coverage-clover ./build/logs/clover.xml
+
+      - name: Run phpcs
+        run: composer cs
+
+#      - name: Run phpstan
+#        run: composer static
+
+      - name: Coverage upload
+        if: matrix.php == '7.4'
+        run: bash <(curl -s https://codecov.io/bash)
+
