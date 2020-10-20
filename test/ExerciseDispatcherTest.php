@@ -113,8 +113,7 @@ class ExerciseDispatcherTest extends TestCase
         );
 
         $exerciseDispatcher->requireCheck(get_class($check));
-        $checksToRunBefore = $this->readAttribute($exerciseDispatcher, 'checksToRunBefore');
-        $this->assertEquals([$check], $checksToRunBefore);
+        $this->assertEquals([$check], $exerciseDispatcher->getChecksToRunBefore());
     }
 
     public function testRequireAfterCheckIsCorrectlyRegistered() : void
@@ -133,8 +132,7 @@ class ExerciseDispatcherTest extends TestCase
         );
 
         $exerciseDispatcher->requireCheck(get_class($check));
-        $checksToRunBefore = $this->readAttribute($exerciseDispatcher, 'checksToRunAfter');
-        $this->assertEquals([$check], $checksToRunBefore);
+        $this->assertEquals([$check], $exerciseDispatcher->getChecksToRunAfter());
     }
 
     public function testRequireCheckThrowsExceptionIfCheckIsNotSimpleOrListenable() : void

@@ -30,7 +30,7 @@ class EventDispatcherFactoryTest extends TestCase
 
         $dispatcher = (new EventDispatcherFactory)->__invoke($c->reveal());
         $this->assertInstanceOf(EventDispatcher::class, $dispatcher);
-        $this->assertSame([], $this->readAttribute($dispatcher, 'listeners'));
+        $this->assertSame([], $dispatcher->getListeners());
     }
 
     public function testExceptionIsThrownIfEventListenerGroupsNotArray() : void
@@ -142,7 +142,7 @@ class EventDispatcherFactoryTest extends TestCase
                     $callback
                 ]
             ],
-            $this->readAttribute($dispatcher, 'listeners')
+            $dispatcher->getListeners()
         );
     }
 
@@ -164,7 +164,7 @@ class EventDispatcherFactoryTest extends TestCase
 
         $dispatcher = (new EventDispatcherFactory)->__invoke($c->reveal());
         $this->assertInstanceOf(EventDispatcher::class, $dispatcher);
-        $this->assertArrayHasKey('someEvent', $this->readAttribute($dispatcher, 'listeners'));
+        $this->assertArrayHasKey('someEvent', $dispatcher->getListeners());
 
         $c->get('containerEntry')->shouldNotHaveBeenCalled();
     }
@@ -188,7 +188,7 @@ class EventDispatcherFactoryTest extends TestCase
 
         $dispatcher = (new EventDispatcherFactory)->__invoke($c->reveal());
         $this->assertInstanceOf(EventDispatcher::class, $dispatcher);
-        $this->assertArrayHasKey('someEvent', $this->readAttribute($dispatcher, 'listeners'));
+        $this->assertArrayHasKey('someEvent', $dispatcher->getListeners());
 
         $dispatcher->dispatch(new Event('someEvent'));
     }
@@ -227,7 +227,7 @@ class EventDispatcherFactoryTest extends TestCase
 
         $dispatcher = (new EventDispatcherFactory)->__invoke($container);
 
-        $listeners = $this->readAttribute($dispatcher, 'listeners');
+        $listeners = $dispatcher->getListeners();
 
         $this->assertArrayHasKey('cli.verify.start', $listeners);
         $this->assertArrayHasKey('cli.run.start', $listeners);

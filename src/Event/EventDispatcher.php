@@ -34,7 +34,7 @@ class EventDispatcher
      * @param EventInterface $event
      * @return EventInterface
      */
-    public function dispatch(EventInterface $event)
+    public function dispatch(EventInterface $event): EventInterface
     {
         if (array_key_exists($event->getName(), $this->listeners)) {
             foreach ($this->listeners[$event->getName()] as $listener) {
@@ -52,7 +52,7 @@ class EventDispatcher
      * @param string|array $eventNames
      * @param callable $callback
      */
-    public function listen($eventNames, callable $callback)
+    public function listen($eventNames, callable $callback): void
     {
         if (!is_array($eventNames)) {
             $eventNames = [$eventNames];
@@ -67,7 +67,7 @@ class EventDispatcher
      * @param string|array $eventName
      * @param callable $callback
      */
-    private function attachListener($eventName, callable $callback)
+    private function attachListener($eventName, callable $callback): void
     {
         if (!array_key_exists($eventName, $this->listeners)) {
             $this->listeners[$eventName] = [$callback];
@@ -84,7 +84,7 @@ class EventDispatcher
      * @param string|array $eventName
      * @param callable $verifier
      */
-    public function insertVerifier($eventName, callable $verifier)
+    public function insertVerifier($eventName, callable $verifier): void
     {
         $this->attachListener($eventName, function (EventInterface $event) use ($verifier) {
             $result = $verifier($event);
@@ -96,5 +96,13 @@ class EventDispatcher
                 //??!!
             }
         });
+    }
+
+    /**
+     * @return array
+     */
+    public function getListeners(): array
+    {
+        return $this->listeners;
     }
 }
