@@ -42,6 +42,7 @@ class FunctionVisitor extends NodeVisitorAbstract
 
     /**
      * @param Node $node
+     * @return null
      */
     public function leaveNode(Node $node)
     {
@@ -55,6 +56,8 @@ class FunctionVisitor extends NodeVisitorAbstract
                 $this->bannedUsages[] = $node;
             }
         }
+
+        return null;
     }
 
     /**

@@ -14,7 +14,6 @@ use PhpSchool\PhpWorkshop\Utils\Collection;
  */
 class EventDispatcherFactory
 {
-
     /**
      * @param ContainerInterface $container
      * @return EventDispatcher
@@ -98,7 +97,7 @@ class EventDispatcherFactory
                     );
                 }
 
-                return $dispatcher->listen($eventName, function (...$args) use ($container, $listener) {
+                $dispatcher->listen($eventName, function (...$args) use ($container, $listener) {
                     $service = $container->get($listener->getService());
 
                     if (!method_exists($service, $listener->getMethod())) {
@@ -109,6 +108,7 @@ class EventDispatcherFactory
 
                     $service->{$listener->getMethod()}(...$args);
                 });
+                return;
             }
 
             if (!is_callable($listener)) {
@@ -116,8 +116,8 @@ class EventDispatcherFactory
                     sprintf('Listener must be a callable or a container entry for a callable service.')
                 );
             }
-
-            return $dispatcher->listen($eventName, $listener);
+            $dispatcher->listen($eventName, $listener);
+            return;
         });
     }
 }

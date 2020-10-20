@@ -228,7 +228,7 @@ class ResultsRenderer
 
     /**
      * @param OutputInterface $output
-     * @param $string
+     * @param string $string
      * @param array $style
      */
     private function fullWidthBlock(OutputInterface $output, $string, array $style)

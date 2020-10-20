@@ -18,7 +18,7 @@ class ContainerListenerHelper
     private $method;
 
     /**
-     * @param $service
+     * @param string $service
      * @param string $method
      */
     public function __construct($service, $method = '__invoke')

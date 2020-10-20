@@ -124,6 +124,7 @@ class CgiRunner implements ExerciseRunnerInterface
     private function checkRequest(RequestInterface $request, $fileName)
     {
         try {
+            /** @var CgiExecuteEvent $event */
             $event = $this->eventDispatcher->dispatch(
                 new CgiExecuteEvent('cgi.verify.reference-execute.pre', $request)
             );
@@ -138,6 +139,7 @@ class CgiRunner implements ExerciseRunnerInterface
         }
 
         try {
+            /** @var CgiExecuteEvent $event */
             $event = $this->eventDispatcher->dispatch(new CgiExecuteEvent('cgi.verify.student-execute.pre', $request));
             $userResponse = $this->executePhpFile($fileName, $event->getRequest(), 'student');
         } catch (CodeExecutionException $e) {
@@ -284,6 +286,7 @@ class CgiRunner implements ExerciseRunnerInterface
         $this->eventDispatcher->dispatch(new ExerciseRunnerEvent('cgi.run.start', $this->exercise, $input));
         $success = true;
         foreach ($this->exercise->getRequests() as $i => $request) {
+            /** @var CgiExecuteEvent $event */
             $event = $this->eventDispatcher->dispatch(
                 new CgiExecuteEvent('cgi.run.student-execute.pre', $request)
             );

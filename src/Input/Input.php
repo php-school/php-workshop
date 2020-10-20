@@ -21,8 +21,7 @@ class Input
     private $arguments = [];
 
     /**
-     * Input constructor.
-     * @param $appName
+     * @param string $appName
      * @param array $arguments
      */
     public function __construct($appName, array $arguments = [])

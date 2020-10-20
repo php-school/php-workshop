@@ -193,7 +193,7 @@ class ExerciseDispatcher
     }
 
     /**
-     * @param CheckInterface[] $checks
+     * @param SimpleCheckInterface[] $checks
      * @param ExerciseInterface $exercise
      * @throws CheckNotApplicableException
      * @throws ExerciseNotConfiguredException

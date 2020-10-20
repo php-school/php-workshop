@@ -2,6 +2,8 @@
 
 namespace PhpSchool\PhpWorkshop\Event;
 
+use PhpSchool\PhpWorkshop\Exception\InvalidArgumentException;
+
 /**
  * An event representation.
  */

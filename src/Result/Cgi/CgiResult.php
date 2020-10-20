@@ -18,7 +18,7 @@ class CgiResult implements ResultGroupInterface, IteratorAggregate
     private $name = 'CGI Program Runner';
 
     /**
-     * @var array
+     * @var ResultInterface[]
      */
     private $results = [];
 
@@ -65,7 +65,7 @@ class CgiResult implements ResultGroupInterface, IteratorAggregate
     }
 
     /**
-     * @return ResultInterface
+     * @return ResultInterface[]
      */
     public function getResults()
     {

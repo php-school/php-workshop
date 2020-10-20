@@ -92,8 +92,6 @@ class StdOutput implements OutputInterface
 
     /**
      * Write a line break.
-     *
-     * @return string
      */
     public function lineBreak()
     {

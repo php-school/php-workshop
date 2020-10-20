@@ -178,6 +178,7 @@ class CliRunner implements ExerciseRunnerInterface
         $args = new ArrayObject($args);
 
         try {
+            /** @var CliExecuteEvent $event */
             $event = $this->eventDispatcher->dispatch(new CliExecuteEvent('cli.verify.reference-execute.pre', $args));
             $solutionOutput = $this->executePhpFile(
                 $this->exercise->getSolution()->getEntryPoint(),
@@ -190,6 +191,7 @@ class CliRunner implements ExerciseRunnerInterface
         }
 
         try {
+            /** @var CliExecuteEvent $event */
             $event = $this->eventDispatcher->dispatch(new CliExecuteEvent('cli.verify.student-execute.pre', $args));
             $userOutput = $this->executePhpFile($input->getArgument('program'), $event->getArgs(), 'student');
         } catch (CodeExecutionException $e) {

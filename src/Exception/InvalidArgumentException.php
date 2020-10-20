@@ -62,7 +62,7 @@ class InvalidArgumentException extends \InvalidArgumentException
     }
 
     /**
-     * @param $value
+     * @param mixed $value
      * @return string
      */
     private static function stringify($value)

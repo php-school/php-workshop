@@ -11,7 +11,7 @@ use PhpSchool\PhpWorkshop\Result\ComparisonFailure;
 class ComparisonFailureRenderer implements ResultRendererInterface
 {
     /**
-     * @var RequestFailure
+     * @var ComparisonFailure
      */
     private $result;
 

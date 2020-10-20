@@ -27,7 +27,7 @@ final class Application
     private $checks = [];
 
     /**
-     * @var ExerciseInterface[]
+     * @var class-string[]
      */
     private $exercises = [];
 
@@ -92,7 +92,7 @@ final class Application
      * Register an exercise with the application. Only exercises registered here will
      * be displayed in the exercise menu.
      *
-     * @param string $exercise The FQCN of the check
+     * @param class-string $exercise The FQCN of the check
      */
     public function addExercise($exercise)
     {

@@ -37,7 +37,7 @@ class DatabaseCheck implements ListenableCheckInterface
     private $solutionDatabasePath;
 
     /**
-     * @var
+     * @var string
      */
     private $userDsn;
 

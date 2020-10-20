@@ -10,7 +10,7 @@ use PhpSchool\PhpWorkshop\Exception\InvalidArgumentException;
 class LockFileParser
 {
     /**
-     * @var string
+     * @var array
      */
     private $contents;
 
@@ -25,6 +25,10 @@ class LockFileParser
         }
         
         $this->contents = json_decode(file_get_contents($lockFilePath), true);
+
+        if (!isset($this->contents['packages'])) {
+            throw new InvalidArgumentException(sprintf('Lock File: "%s" does not contain packages key', $lockFilePath));
+        }
     }
 
     /**
