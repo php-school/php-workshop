@@ -32,11 +32,11 @@ class ArrayObject implements IteratorAggregate, Countable
      * to construct a new instance of `ArrayObject`.
      *
      * @param callable $callback
-     * @return static
+     * @return self
      */
     public function map(callable $callback)
     {
-        return new static(array_map($callback, $this->array));
+        return new self(array_map($callback, $this->array));
     }
 
     /**
@@ -44,7 +44,7 @@ class ArrayObject implements IteratorAggregate, Countable
      * `ArrayObject` with the flattened items.
      *
      * @param callable $callback
-     * @return static
+     * @return self
      */
     public function flatMap(callable $callback)
     {
@@ -55,7 +55,7 @@ class ArrayObject implements IteratorAggregate, Countable
      * Collapse an array of arrays into a single array returning a new instance of `ArrayObject`
      * with the collapsed items.
      *
-     * @return static
+     * @return self
      */
     public function collapse()
     {
@@ -69,7 +69,7 @@ class ArrayObject implements IteratorAggregate, Countable
             $results = array_merge($results, $item);
         }
 
-        return new static($results);
+        return new self($results);
     }
 
     /**
@@ -85,11 +85,11 @@ class ArrayObject implements IteratorAggregate, Countable
     }
 
     /**
-     * @return static
+     * @return self
      */
     public function keys()
     {
-        return new static(array_keys($this->array));
+        return new self(array_keys($this->array));
     }
 
     /**
@@ -107,22 +107,22 @@ class ArrayObject implements IteratorAggregate, Countable
      * Add a new item on to the beginning of the collection. A new instance is returned.
      *
      * @param mixed $value
-     * @return static
+     * @return self
      */
     public function prepend($value)
     {
-        return new static(array_merge([$value], $this->array));
+        return new self(array_merge([$value], $this->array));
     }
 
     /**
      * Add a new item to the end of the collection. A new instance is returned.
      *
      * @param mixed $value
-     * @return static
+     * @return self
      */
     public function append($value)
     {
-        return new static(array_merge($this->array, [$value]));
+        return new self(array_merge($this->array, [$value]));
     }
 
     /**
@@ -146,13 +146,13 @@ class ArrayObject implements IteratorAggregate, Countable
      *
      * @param mixed $key
      * @param mixed $value
-     * @return static
+     * @return self
      */
     public function set($key, $value)
     {
         $items = $this->array;
         $items[$key] = $value;
-        return new static($items);
+        return new self($items);
     }
 
     /**

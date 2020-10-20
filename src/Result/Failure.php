@@ -39,11 +39,11 @@ class Failure implements FailureInterface
      *
      * @param string $name The name of the check that produced this result.
      * @param string|null $reason The reason (if any) of the failure.
-     * @return static The result.
+     * @return self The result.
      */
     public static function fromNameAndReason($name, $reason)
     {
-        return new static($name, $reason);
+        return new self($name, $reason);
     }
     
     /**
@@ -51,11 +51,11 @@ class Failure implements FailureInterface
      *
      * @param CheckInterface $check The check instance.
      * @param string $reason The reason (if any) of the failure.
-     * @return static The result.
+     * @return self The result.
      */
     public static function fromCheckAndReason(CheckInterface $check, $reason)
     {
-        return new static($check->getName(), $reason);
+        return new self($check->getName(), $reason);
     }
 
     /**
@@ -63,11 +63,11 @@ class Failure implements FailureInterface
      *
      * @param string $name The name of the check that produced this result.
      * @param CodeExecutionException $e The exception.
-     * @return static The result.
+     * @return self The result.
      */
     public static function fromNameAndCodeExecutionFailure($name, CodeExecutionException $e)
     {
-        return new static($name, $e->getMessage());
+        return new self($name, $e->getMessage());
     }
 
     /**
@@ -77,11 +77,11 @@ class Failure implements FailureInterface
      * @param CheckInterface $check The check that attempted to parse the solution.
      * @param ParseErrorException $e The parse exception.
      * @param string $file The absolute path to the solution.
-     * @return static The result.
+     * @return self The result.
      */
     public static function fromCheckAndCodeParseFailure(CheckInterface $check, ParseErrorException $e, $file)
     {
-        return new static(
+        return new self(
             $check->getName(),
             sprintf('File: "%s" could not be parsed. Error: "%s"', $file, $e->getMessage())
         );

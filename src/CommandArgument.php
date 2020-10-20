@@ -29,20 +29,20 @@ class CommandArgument
 
     /**
      * @param string $name
-     * @return static
+     * @return self
      */
     public static function optional($name)
     {
-        return new static($name, true);
+        return new self($name, true);
     }
 
     /**
      * @param string $name
-     * @return static
+     * @return self
      */
     public static function required($name)
     {
-        return new static($name);
+        return new self($name);
     }
 
     /**

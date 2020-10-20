@@ -36,11 +36,11 @@ class GenericFailure extends Failure implements FailureInterface
      *
      * @param ArrayObject $args The arguments that caused the failure.
      * @param string|null $reason The reason (if any) of the failure.
-     * @return static The result.
+     * @return self The result.
      */
     public static function fromArgsAndReason(ArrayObject $args, $reason)
     {
-        return new static($args, $reason);
+        return new self($args, $reason);
     }
 
     /**
@@ -48,11 +48,11 @@ class GenericFailure extends Failure implements FailureInterface
      *
      * @param ArrayObject $args The arguments that caused the failure.
      * @param CodeExecutionException $e The exception.
-     * @return static The result.
+     * @return self The result.
      */
     public static function fromArgsAndCodeExecutionFailure(ArrayObject $args, CodeExecutionException $e)
     {
-        return new static($args, $e->getMessage());
+        return new self($args, $e->getMessage());
     }
 
     /**

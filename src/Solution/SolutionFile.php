@@ -39,11 +39,11 @@ class SolutionFile
      * Will assume the base directory should be the immediate parent of the file.
      *
      * @param string $file
-     * @return static
+     * @return self
      */
     public static function fromFile($file)
     {
-        return new static(basename($file), dirname($file));
+        return new self(basename($file), dirname($file));
     }
 
     /**

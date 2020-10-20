@@ -28,12 +28,12 @@ class SingleFileSolution implements SolutionInterface
      * Static constructor to build an instance from an absolute file path.
      *
      * @param string $file The absolute path of the reference solution.
-     * @return static
+     * @return self
      * @throws InvalidArgumentException If the file does not exist.
      */
     public static function fromFile($file)
     {
-        return new static($file);
+        return new self($file);
     }
 
     /**

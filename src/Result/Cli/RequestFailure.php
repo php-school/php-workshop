@@ -43,11 +43,11 @@ class RequestFailure implements FailureInterface
      * @param ArrayObject $args The arguments that caused the failure.
      * @param string $expectedOutput The expected result.
      * @param string $actualOutput The actual output.
-     * @return static The result.
+     * @return self The result.
      */
     public static function fromArgsAndOutput(ArrayObject $args, $expectedOutput, $actualOutput)
     {
-        return new static($args, $expectedOutput, $actualOutput);
+        return new self($args, $expectedOutput, $actualOutput);
     }
 
     /**
