@@ -18,7 +18,7 @@ use PhpSchool\PhpWorkshop\UserState;
  */
 class PrintCommandTest extends TestCase
 {
-    public function testExerciseIsPrintedIfAssigned() : void
+    public function testExerciseIsPrintedIfAssigned(): void
     {
         $file = tempnam(sys_get_temp_dir(), 'pws');
         file_put_contents($file, '### Exercise 1');
@@ -30,7 +30,7 @@ class PrintCommandTest extends TestCase
 
         $repo = new ExerciseRepository([$exercise->reveal()]);
 
-        $state = new UserState;
+        $state = new UserState();
         $state->setCurrentExercise('some-exercise');
 
         $output = $this->createMock(OutputInterface::class);

@@ -12,7 +12,7 @@ use PHPUnit\Framework\TestCase;
  */
 class SingleFileSolutionTest extends TestCase
 {
-    public function testGetters() : void
+    public function testGetters(): void
     {
         $tempPath   = sprintf('%s/%s', realpath(sys_get_temp_dir()), $this->getName());
         $filePath   = sprintf('%s/test.file', $tempPath);

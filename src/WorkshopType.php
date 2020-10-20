@@ -11,8 +11,8 @@ use MyCLabs\Enum\Enum;
  */
 class WorkshopType extends Enum
 {
-    const STANDARD = 1;
-    const TUTORIAL = 2;
+    public const STANDARD = 1;
+    public const TUTORIAL = 2;
 
     /**
      * @return bool

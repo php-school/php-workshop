@@ -33,9 +33,9 @@ class CodePatchListenerTest extends TestCase
      */
     private $codePatcher;
 
-    public function setUp() : void
+    public function setUp(): void
     {
-        $this->filesystem = new Filesystem;
+        $this->filesystem = new Filesystem();
         $this->codePatcher = $this->createMock(CodePatcher::class);
 
         $this->file = sprintf('%s/%s/submission.php', str_replace('\\', '/', sys_get_temp_dir()), $this->getName());
@@ -43,7 +43,7 @@ class CodePatchListenerTest extends TestCase
         touch($this->file);
     }
 
-    public function testRevertThrowsExceptionIfPatchNotPreviouslyCalled() : void
+    public function testRevertThrowsExceptionIfPatchNotPreviouslyCalled(): void
     {
         $input    = new Input('app', ['program' => $this->file]);
         $exercise = $this->createMock(ExerciseInterface::class);
@@ -56,7 +56,7 @@ class CodePatchListenerTest extends TestCase
         $listener->revert($event);
     }
 
-    public function testPatchUpdatesCode() : void
+    public function testPatchUpdatesCode(): void
     {
         file_put_contents($this->file, 'ORIGINAL CONTENT');
 
@@ -76,7 +76,7 @@ class CodePatchListenerTest extends TestCase
         $this->assertStringEqualsFile($this->file, 'MODIFIED CONTENT');
     }
 
-    public function testRevertAfterPatch() : void
+    public function testRevertAfterPatch(): void
     {
         file_put_contents($this->file, 'ORIGINAL CONTENT');
 
@@ -97,7 +97,7 @@ class CodePatchListenerTest extends TestCase
         $this->assertStringEqualsFile($this->file, 'ORIGINAL CONTENT');
     }
 
-    public function tearDown() : void
+    public function tearDown(): void
     {
         $this->filesystem->remove(dirname($this->file));
     }

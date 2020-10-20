@@ -1,6 +1,5 @@
 <?php
 
-
 namespace PhpSchool\PhpWorkshopTest;
 
 use PhpSchool\PhpWorkshop\Check\CheckInterface;
@@ -25,7 +24,7 @@ class ResultAggregatorTest extends TestCase
      */
     private $check;
 
-    public function setUp() : void
+    public function setUp(): void
     {
         $this->check = $this->createMock(CheckInterface::class);
         $this->check
@@ -33,9 +32,9 @@ class ResultAggregatorTest extends TestCase
             ->willReturn('Some Check');
     }
     
-    public function testIsSuccessful() : void
+    public function testIsSuccessful(): void
     {
-        $resultAggregator = new ResultAggregator;
+        $resultAggregator = new ResultAggregator();
         $this->assertTrue($resultAggregator->isSuccessful());
 
         $resultAggregator->add(new Success($this->check));
@@ -45,30 +44,30 @@ class ResultAggregatorTest extends TestCase
         $this->assertFalse($resultAggregator->isSuccessful());
     }
 
-    public function testIsSuccessfulWithResultGroups() : void
+    public function testIsSuccessfulWithResultGroups(): void
     {
-        $resultAggregator = new ResultAggregator;
+        $resultAggregator = new ResultAggregator();
         $this->assertTrue($resultAggregator->isSuccessful());
         
-        $resultGroup = new CliResult;
-        $resultGroup->add(new CliSuccess(new ArrayObject));
+        $resultGroup = new CliResult();
+        $resultGroup->add(new CliSuccess(new ArrayObject()));
 
         $resultAggregator->add($resultGroup);
         $this->assertTrue($resultAggregator->isSuccessful());
 
-        $resultGroup->add(new CliGenericFailure(new ArrayObject, 'nop'));
+        $resultGroup->add(new CliGenericFailure(new ArrayObject(), 'nop'));
 
         $this->assertFalse($resultAggregator->isSuccessful());
     }
 
-    public function testIterator() : void
+    public function testIterator(): void
     {
         $results = [
             new Success($this->check),
             new Failure($this->check, 'nope')
         ];
         
-        $resultAggregator = new ResultAggregator;
+        $resultAggregator = new ResultAggregator();
         $resultAggregator->add($results[0]);
         $resultAggregator->add($results[1]);
         

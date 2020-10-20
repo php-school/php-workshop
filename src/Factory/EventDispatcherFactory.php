@@ -70,7 +70,7 @@ class EventDispatcherFactory
                             array_merge($carry->get($event, []), $listeners)
                         );
                     }, $carry);
-            }, new Collection)
+            }, new Collection())
             ->getArrayCopy();
     }
 

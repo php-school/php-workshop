@@ -41,10 +41,10 @@ class CliRunnerTest extends TestCase
      */
     private $eventDispatcher;
 
-    public function setUp() : void
+    public function setUp(): void
     {
         $this->exercise = $this->createMock(CliExerciseInterface::class);
-        $this->eventDispatcher = new EventDispatcher(new ResultAggregator);
+        $this->eventDispatcher = new EventDispatcher(new ResultAggregator());
         $this->runner = new CliRunner($this->exercise, $this->eventDispatcher);
 
         $this->exercise
@@ -54,7 +54,7 @@ class CliRunnerTest extends TestCase
         $this->assertEquals('CLI Program Runner', $this->runner->getName());
     }
 
-    public function testRequiredChecks() : void
+    public function testRequiredChecks(): void
     {
         $requiredChecks = [
             FileExistsCheck::class,
@@ -65,7 +65,7 @@ class CliRunnerTest extends TestCase
         $this->assertEquals($requiredChecks, $this->runner->getRequiredChecks());
     }
 
-    public function testVerifyThrowsExceptionIfSolutionFailsExecution() : void
+    public function testVerifyThrowsExceptionIfSolutionFailsExecution(): void
     {
         $solution = SingleFileSolution::fromFile(realpath(__DIR__ . '/../res/cli/solution-error.php'));
         $this->exercise
@@ -85,7 +85,7 @@ class CliRunnerTest extends TestCase
         $this->runner->verify(new Input('app', ['program' => '']));
     }
 
-    public function testVerifyReturnsSuccessIfSolutionOutputMatchesUserOutput() : void
+    public function testVerifyReturnsSuccessIfSolutionOutputMatchesUserOutput(): void
     {
         $solution = SingleFileSolution::fromFile(realpath(__DIR__ . '/../res/cli/solution.php'));
         $this->exercise
@@ -106,7 +106,7 @@ class CliRunnerTest extends TestCase
         $this->assertTrue($res->isSuccessful());
     }
 
-    public function testSuccessWithSingleSetOfArgsForBC() : void
+    public function testSuccessWithSingleSetOfArgsForBC(): void
     {
         $solution = SingleFileSolution::fromFile(realpath(__DIR__ . '/../res/cli/solution.php'));
         $this->exercise
@@ -127,7 +127,7 @@ class CliRunnerTest extends TestCase
         $this->assertTrue($res->isSuccessful());
     }
 
-    public function testVerifyReturnsFailureIfUserSolutionFailsToExecute() : void
+    public function testVerifyReturnsFailureIfUserSolutionFailsToExecute(): void
     {
         $solution = SingleFileSolution::fromFile(realpath(__DIR__ . '/../res/cli/solution.php'));
         $this->exercise
@@ -153,7 +153,7 @@ class CliRunnerTest extends TestCase
         $this->assertMatchesRegularExpression($failureMsg, $result->getReason());
     }
 
-    public function testVerifyReturnsFailureIfSolutionOutputDoesNotMatchUserOutput() : void
+    public function testVerifyReturnsFailureIfSolutionOutputDoesNotMatchUserOutput(): void
     {
         $solution = SingleFileSolution::fromFile(realpath(__DIR__ . '/../res/cli/solution.php'));
         $this->exercise
@@ -178,9 +178,9 @@ class CliRunnerTest extends TestCase
         $this->assertEquals('10', $result->getActualOutput());
     }
 
-    public function testRunPassesOutputAndReturnsSuccessIfScriptIsSuccessful() : void
+    public function testRunPassesOutputAndReturnsSuccessIfScriptIsSuccessful(): void
     {
-        $color = new Color;
+        $color = new Color();
         $color->setForceStyle(true);
         $output = new StdOutput($color, $this->createMock(Terminal::class));
 
@@ -206,9 +206,9 @@ class CliRunnerTest extends TestCase
         $this->assertTrue($success);
     }
 
-    public function testRunPassesOutputAndReturnsFailureIfScriptFails() : void
+    public function testRunPassesOutputAndReturnsFailureIfScriptFails(): void
     {
-        $output = new StdOutput(new Color, $this->createMock(Terminal::class));
+        $output = new StdOutput(new Color(), $this->createMock(Terminal::class));
 
         $this->exercise
             ->expects($this->once())
@@ -223,7 +223,7 @@ class CliRunnerTest extends TestCase
         $this->assertFalse($success);
     }
 
-    public function testsArgsAppendedByEventsArePassedToResults() : void
+    public function testsArgsAppendedByEventsArePassedToResults(): void
     {
         $this->eventDispatcher->listen(
             ['cli.verify.student-execute.pre', 'cli.verify.reference-execute.pre'],

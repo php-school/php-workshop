@@ -22,12 +22,12 @@ use PhpSchool\PhpWorkshop\CodeInsertion as Insertion;
  */
 class CodePatcherTest extends TestCase
 {
-    public function testDefaultPatchIsAppliedIfAvailable() : void
+    public function testDefaultPatchIsAppliedIfAvailable(): void
     {
-        $patch = (new Patch)
+        $patch = (new Patch())
             ->withInsertion(new Insertion(Insertion::TYPE_BEFORE, 'ini_set("display_errors", 1);'));
 
-        $patcher = new CodePatcher((new ParserFactory)->create(ParserFactory::PREFER_PHP7), new Standard, $patch);
+        $patcher = new CodePatcher((new ParserFactory())->create(ParserFactory::PREFER_PHP7), new Standard(), $patch);
         $exercise = $this->createMock(ExerciseInterface::class);
 
         $expected = "<?php\n\nini_set(\"display_errors\", 1);\n\$original = true;";
@@ -35,9 +35,9 @@ class CodePatcherTest extends TestCase
     }
     
     
-    public function testPatcherDoesNotApplyPatchIfNotPatchableExercise() : void
+    public function testPatcherDoesNotApplyPatchIfNotPatchableExercise(): void
     {
-        $patcher = new CodePatcher((new ParserFactory)->create(ParserFactory::PREFER_PHP7), new Standard);
+        $patcher = new CodePatcher((new ParserFactory())->create(ParserFactory::PREFER_PHP7), new Standard());
         $exercise = $this->createMock(ExerciseInterface::class);
 
         $code = '<?php $original = true;';
@@ -47,9 +47,9 @@ class CodePatcherTest extends TestCase
     /**
      * @dataProvider codeProvider
      */
-    public function testPatcher(string $code, Patch $patch, string $expectedResult) : void
+    public function testPatcher(string $code, Patch $patch, string $expectedResult): void
     {
-        $patcher = new CodePatcher((new ParserFactory)->create(ParserFactory::PREFER_PHP7), new Standard);
+        $patcher = new CodePatcher((new ParserFactory())->create(ParserFactory::PREFER_PHP7), new Standard());
         
         $exercise = $this->createMock(PatchableExercise::class);
         
@@ -62,45 +62,45 @@ class CodePatcherTest extends TestCase
         $this->assertEquals($expectedResult, $result);
     }
 
-    public function codeProvider() : array
+    public function codeProvider(): array
     {
         return [
             'only-before-insertion' => [
                 '<?php $original = true;',
-                (new Patch)->withInsertion(new Insertion(Insertion::TYPE_BEFORE, '$before = "here";')),
+                (new Patch())->withInsertion(new Insertion(Insertion::TYPE_BEFORE, '$before = "here";')),
                 "<?php\n\n\$before = \"here\";\n\$original = true;"
             ],
             'only-after-insertion' => [
                 '<?php $original = true;',
-                (new Patch)->withInsertion(new Insertion(Insertion::TYPE_AFTER, '$after = "here";')),
+                (new Patch())->withInsertion(new Insertion(Insertion::TYPE_AFTER, '$after = "here";')),
                 "<?php\n\n\$original = true;\n\$after = \"here\";"
             ],
             'before-and-after-insertion' => [
                 '<?php $original = true;',
-                (new Patch)
+                (new Patch())
                     ->withInsertion(new Insertion(Insertion::TYPE_BEFORE, '$before = "here";'))
                     ->withInsertion(new Insertion(Insertion::TYPE_AFTER, '$after = "here";')),
                 "<?php\n\n\$before = \"here\";\n\$original = true;\n\$after = \"here\";"
             ],
             'not-parseable-before-insertion' => [
                 '<?php $original = true;',
-                (new Patch)->withInsertion(new Insertion(Insertion::TYPE_BEFORE, '$before = "here"')),
+                (new Patch())->withInsertion(new Insertion(Insertion::TYPE_BEFORE, '$before = "here"')),
                 //no semicolon at the end
                 "<?php\n\n\$original = true;"
             ],
             'include-open-php-tag-before-insertion' => [
                 '<?php $original = true;',
-                (new Patch)->withInsertion(new Insertion(Insertion::TYPE_BEFORE, '<?php $before = "here";')),
+                (new Patch())->withInsertion(new Insertion(Insertion::TYPE_BEFORE, '<?php $before = "here";')),
                 "<?php\n\n\$before = \"here\";\n\$original = true;"
             ],
             'include-open-php-tag-before-insertion2' => [
                 '<?php $original = true;',
-                (new Patch)->withInsertion(new Insertion(Insertion::TYPE_BEFORE, '    <?php $before = "here";')),
+                (new Patch())->withInsertion(new Insertion(Insertion::TYPE_BEFORE, '    <?php $before = "here";')),
                 "<?php\n\n\$before = \"here\";\n\$original = true;"
             ],
             'transformer' => [
                 '<?php $original = true;',
-                (new Patch)
+                (new Patch())
                     ->withTransformer(function (array $statements) {
                         return [
                             new TryCatch(
@@ -113,7 +113,7 @@ class CodePatcherTest extends TestCase
             ],
             'transformer-with-before-insertion' => [
                 '<?php $original = true;',
-                (new Patch)
+                (new Patch())
                     ->withInsertion(new Insertion(Insertion::TYPE_BEFORE, '$before = "here";'))
                     ->withTransformer(function (array $statements) {
                         return [

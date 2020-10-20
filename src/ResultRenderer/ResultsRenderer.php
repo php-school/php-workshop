@@ -95,7 +95,8 @@ class ResultsRenderer
         $successes  = [];
         $failures   = [];
         foreach ($results as $result) {
-            if ($result instanceof SuccessInterface
+            if (
+                $result instanceof SuccessInterface
                 || ($result instanceof ResultGroupInterface && $result->isSuccessful())
             ) {
                 $successes[] = sprintf(' ✔ Check: %s', $result->getCheckName());
@@ -188,7 +189,7 @@ class ResultsRenderer
                 $code = $this->keyLighter->highlight(
                     $file->getContents(),
                     $this->keyLighter->languageByExt('.' . $file->getExtension()),
-                    new CliFormatter
+                    new CliFormatter()
                 );
 
                 //make sure there is a new line at the end

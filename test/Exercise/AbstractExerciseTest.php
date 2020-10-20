@@ -16,7 +16,7 @@ use ReflectionClass;
  */
 class AbstractExerciseTest extends TestCase
 {
-    public function testTearDownReturnsVoid() : void
+    public function testTearDownReturnsVoid(): void
     {
         $exercise = new AbstractExerciseImpl('name');
         $this->assertNull($exercise->tearDown());
@@ -25,7 +25,7 @@ class AbstractExerciseTest extends TestCase
     /**
      * @dataProvider solutionProvider
      */
-    public function testGetSolution(string $name) : void
+    public function testGetSolution(string $name): void
     {
         $exercise   = new AbstractExerciseImpl($name);
         $path       = __DIR__ . '/../../exercises/array-we-go/solution/solution.php';
@@ -43,7 +43,7 @@ class AbstractExerciseTest extends TestCase
         rmdir(__DIR__ . '/../../exercises');
     }
 
-    public function solutionProvider() : array
+    public function solutionProvider(): array
     {
         return [
             ['Array We Go!'],
@@ -55,13 +55,13 @@ class AbstractExerciseTest extends TestCase
     /**
      * @dataProvider problemProvider
      */
-    public function testGetProblem(string $name, string $path) : void
+    public function testGetProblem(string $name, string $path): void
     {
         $exercise = new AbstractExerciseImpl($name);
         $this->assertSame($path, $exercise->getProblem());
     }
 
-    public function problemProvider() : array
+    public function problemProvider(): array
     {
         $reflector  = new ReflectionClass(AbstractExerciseImpl::class);
         $dir        = dirname($reflector->getFileName());
@@ -72,7 +72,7 @@ class AbstractExerciseTest extends TestCase
         ];
     }
 
-    public function testConfigureDoesNothing() : void
+    public function testConfigureDoesNothing(): void
     {
         $dispatcher = $this->createMock(ExerciseDispatcher::class);
 

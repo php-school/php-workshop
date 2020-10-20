@@ -25,14 +25,14 @@ use PHPUnit\Framework\TestCase;
  */
 class MenuFactoryTest extends TestCase
 {
-    public function testFactoryReturnsInstance() : void
+    public function testFactoryReturnsInstance(): void
     {
         $container = $this->createMock(ContainerInterface::class);
         $userStateSerializer = $this->createMock(UserStateSerializer::class);
         $userStateSerializer
             ->expects($this->once())
             ->method('deSerialize')
-            ->willReturn(new UserState);
+            ->willReturn(new UserState());
 
         $exerciseRepository = $this->createMock(ExerciseRepository::class);
         $exercise = $this->createMock(ExerciseInterface::class);
@@ -72,7 +72,7 @@ class MenuFactoryTest extends TestCase
             });
         
         
-        $factory = new MenuFactory;
+        $factory = new MenuFactory();
         $this->assertInstanceOf(CliMenu::class, $factory($container));
     }
 }

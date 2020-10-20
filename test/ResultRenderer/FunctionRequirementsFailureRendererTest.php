@@ -14,7 +14,7 @@ use PhpSchool\PhpWorkshop\ResultRenderer\FunctionRequirementsFailureRenderer;
  */
 class FunctionRequirementsFailureRendererTest extends AbstractResultRendererTest
 {
-    public function testRenderer() : void
+    public function testRenderer(): void
     {
         $failure = new FunctionRequirementsFailure(
             $this->createMock(CheckInterface::class),

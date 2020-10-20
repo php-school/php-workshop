@@ -32,7 +32,7 @@ class VerifyCommandTest extends TestCase
      */
     private $check;
     
-    public function setUp() : void
+    public function setUp(): void
     {
         $this->check = $this->createMock(CheckInterface::class);
         $this->check
@@ -40,19 +40,19 @@ class VerifyCommandTest extends TestCase
             ->willReturn('Some Check');
     }
 
-    public function testVerifyAddsCompletedExerciseAndReturnsCorrectCodeOnSuccess() : void
+    public function testVerifyAddsCompletedExerciseAndReturnsCorrectCodeOnSuccess(): void
     {
         $file = tempnam(sys_get_temp_dir(), 'pws');
         touch($file);
 
         $input = new Input('appName', ['program' => $file]);
 
-        $exercise = new CliExerciseImpl;
+        $exercise = new CliExerciseImpl();
         $repo = new ExerciseRepository([$exercise]);
 
-        $state = new UserState;
+        $state = new UserState();
         $state->setCurrentExercise('my-exercise');
-        $color = new Color;
+        $color = new Color();
         $color->setForceStyle(true);
         $output = new StdOutput($color, $this->createMock(Terminal::class));
         
@@ -64,7 +64,7 @@ class VerifyCommandTest extends TestCase
 
         $renderer = $this->createMock(ResultsRenderer::class);
 
-        $results = new ResultAggregator;
+        $results = new ResultAggregator();
         $results->add(new Success($this->check));
 
         $dispatcher = $this->createMock(ExerciseDispatcher::class);
@@ -87,18 +87,18 @@ class VerifyCommandTest extends TestCase
         unlink($file);
     }
 
-    public function testVerifyDoesNotAddCompletedExerciseAndReturnsCorrectCodeOnFailure() : void
+    public function testVerifyDoesNotAddCompletedExerciseAndReturnsCorrectCodeOnFailure(): void
     {
         $file = tempnam(sys_get_temp_dir(), 'pws');
         touch($file);
 
         $input = new Input('appName', ['program' => $file]);
 
-        $exercise = new CliExerciseImpl;
+        $exercise = new CliExerciseImpl();
         $repo = new ExerciseRepository([$exercise]);
-        $state = new UserState;
+        $state = new UserState();
         $state->setCurrentExercise('my-exercise');
-        $color = new Color;
+        $color = new Color();
         $color->setForceStyle(true);
         $output = new StdOutput($color, $this->createMock(Terminal::class));
 
@@ -111,7 +111,7 @@ class VerifyCommandTest extends TestCase
 
         $renderer = $this->createMock(ResultsRenderer::class);
 
-        $results = new ResultAggregator;
+        $results = new ResultAggregator();
         $results->add(new Failure($this->check, 'cba'));
 
         $dispatcher = $this->createMock(ExerciseDispatcher::class);

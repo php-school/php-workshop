@@ -20,12 +20,12 @@ class UserStateSerializer
     /**
      * @var string
      */
-    const LEGACY_SAVE_FILE = '.phpschool.json';
+    private const LEGACY_SAVE_FILE = '.phpschool.json';
 
     /**
      * @var string
      */
-    const SAVE_FILE = '.phpschool-save.json';
+    private const SAVE_FILE = '.phpschool-save.json';
 
     /**
      * @var ExerciseRepository

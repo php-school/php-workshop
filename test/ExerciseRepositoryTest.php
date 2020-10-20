@@ -30,7 +30,7 @@ class ExerciseRepositoryTest extends TestCase
         $this->assertSame($exercises, $repo->findAll());
     }
 
-    public function testFindByName() : void
+    public function testFindByName(): void
     {
         $exercises = [
             new CliExerciseImpl('Exercise 1'),
@@ -41,7 +41,7 @@ class ExerciseRepositoryTest extends TestCase
         $this->assertSame($exercises[1], $repo->findByName('Exercise 2'));
     }
 
-    public function testFindByNameThrowsExceptionIfNotFound() : void
+    public function testFindByNameThrowsExceptionIfNotFound(): void
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Exercise with name: "exercise1" does not exist');
@@ -50,7 +50,7 @@ class ExerciseRepositoryTest extends TestCase
         $repo->findByName('exercise1');
     }
 
-    public function testGetAllNames() : void
+    public function testGetAllNames(): void
     {
         $exercises = [
             new CliExerciseImpl('Exercise 1'),
@@ -61,7 +61,7 @@ class ExerciseRepositoryTest extends TestCase
         $this->assertSame(['Exercise 1', 'Exercise 2'], $repo->getAllNames());
     }
 
-    public function testCount() : void
+    public function testCount(): void
     {
         $exercises = [
             new CliExerciseImpl('Exercise 1'),
@@ -72,7 +72,7 @@ class ExerciseRepositoryTest extends TestCase
         $this->assertCount(2, $repo);
     }
 
-    public function testIterator() : void
+    public function testIterator(): void
     {
         $exercises = [
             new CliExerciseImpl('Exercise 1'),
@@ -83,14 +83,14 @@ class ExerciseRepositoryTest extends TestCase
         $this->assertEquals($exercises, iterator_to_array($repo));
     }
 
-    public function testExceptionIsThrownWhenTryingToAddExerciseWhichDoesNotImplementCorrectInterface() : void
+    public function testExceptionIsThrownWhenTryingToAddExerciseWhichDoesNotImplementCorrectInterface(): void
     {
         $this->expectException(InvalidArgumentException::class);
         $message  = '"PhpSchool\PhpWorkshopTest\Asset\CliExerciseMissingInterface" is required to implement ';
         $message .= '"PhpSchool\PhpWorkshop\Exercise\CliExercise", but it does not';
         $this->expectExceptionMessage($message);
 
-        $exercise = new CliExerciseMissingInterface;
+        $exercise = new CliExerciseMissingInterface();
         new ExerciseRepository([$exercise]);
     }
 }

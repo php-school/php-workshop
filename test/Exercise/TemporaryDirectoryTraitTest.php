@@ -12,9 +12,9 @@ use PHPUnit\Framework\TestCase;
  */
 class TemporaryDirectoryTraitTest extends TestCase
 {
-    public function testGetTemporaryPath() : void
+    public function testGetTemporaryPath(): void
     {
-        $impl = new TemporaryDirectoryTraitImpl;
+        $impl = new TemporaryDirectoryTraitImpl();
         $path = $impl->getTemporaryPath();
 
         mkdir($path, 0775, true);

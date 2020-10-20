@@ -11,9 +11,9 @@ use PHPUnit\Framework\TestCase;
  */
 class SuccessTest extends TestCase
 {
-    public function testSuccess() : void
+    public function testSuccess(): void
     {
-        $args = new ArrayObject;
+        $args = new ArrayObject();
         $success = new Success($args);
         $this->assertInstanceOf(Success::class, $success);
         $this->assertSame($args, $success->getArgs());

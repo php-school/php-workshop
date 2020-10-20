@@ -12,9 +12,9 @@ use PhpSchool\PhpWorkshopTest\ResultRenderer\AbstractResultRendererTest;
  */
 class RequestFailureRendererTest extends AbstractResultRendererTest
 {
-    public function testRender() : void
+    public function testRender(): void
     {
-        $failure  = new RequestFailure(new ArrayObject, 'EXPECTED OUTPUT', 'ACTUAL OUTPUT');
+        $failure  = new RequestFailure(new ArrayObject(), 'EXPECTED OUTPUT', 'ACTUAL OUTPUT');
         $renderer = new RequestFailureRenderer($failure);
 
         $expected  = "  \e[33m\e[1mYOUR OUTPUT:\e[0m\e[0m\n";

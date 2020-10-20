@@ -10,7 +10,7 @@ use PhpSchool\PhpWorkshop\ResultRenderer\ComparisonFailureRenderer;
  */
 class ComparisonFailureRendererTest extends AbstractResultRendererTest
 {
-    public function testRender() : void
+    public function testRender(): void
     {
         $failure  = new ComparisonFailure('Name', 'EXPECTED OUTPUT', 'ACTUAL OUTPUT');
         $renderer = new ComparisonFailureRenderer($failure);

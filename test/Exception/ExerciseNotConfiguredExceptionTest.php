@@ -13,13 +13,13 @@ use PHPUnit\Framework\TestCase;
  */
 class ExerciseNotConfiguredExceptionTest extends TestCase
 {
-    public function testException() : void
+    public function testException(): void
     {
         $e = new ExerciseNotConfiguredException('nope');
         $this->assertEquals('nope', $e->getMessage());
     }
 
-    public function testMissingImplementsConstructor() : void
+    public function testMissingImplementsConstructor(): void
     {
         $exercise = $this->createMock(ExerciseInterface::class);
         $exercise

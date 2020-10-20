@@ -12,15 +12,15 @@ use PhpSchool\PhpWorkshop\UserState;
  */
 class UserStateTest extends TestCase
 {
-    public function testWithNoCurrentExercisesOrCompleted() : void
+    public function testWithNoCurrentExercisesOrCompleted(): void
     {
-        $state = new UserState;
+        $state = new UserState();
         $this->assertFalse($state->isAssignedExercise());
         $this->assertEmpty($state->getCompletedExercises());
         $this->assertNull($state->getCurrentExercise());
     }
 
-    public function testWithCurrentExerciseButNoCompleted() : void
+    public function testWithCurrentExerciseButNoCompleted(): void
     {
         $state = new UserState([], 'exercise1');
         $this->assertTrue($state->isAssignedExercise());
@@ -28,7 +28,7 @@ class UserStateTest extends TestCase
         $this->assertSame('exercise1', $state->getCurrentExercise());
     }
 
-    public function testWithCurrentExerciseAndCompleted() : void
+    public function testWithCurrentExerciseAndCompleted(): void
     {
         $state = new UserState(['exercise1'], 'exercise2');
         $this->assertTrue($state->isAssignedExercise());
@@ -36,7 +36,7 @@ class UserStateTest extends TestCase
         $this->assertSame('exercise2', $state->getCurrentExercise());
     }
 
-    public function testWithCompletedExerciseButNoCurrent() : void
+    public function testWithCompletedExerciseButNoCurrent(): void
     {
         $state = new UserState(['exercise1']);
         $this->assertFalse($state->isAssignedExercise());
@@ -44,7 +44,7 @@ class UserStateTest extends TestCase
         $this->assertNull($state->getCurrentExercise());
     }
 
-    public function testAddCompletedExercise() : void
+    public function testAddCompletedExercise(): void
     {
         $state = new UserState([], 'exercise1');
         $this->assertTrue($state->isAssignedExercise());
@@ -57,7 +57,7 @@ class UserStateTest extends TestCase
         $this->assertSame('exercise1', $state->getCurrentExercise());
     }
 
-    public function testSetCompletedExercise() : void
+    public function testSetCompletedExercise(): void
     {
         $state = new UserState(['exercise1']);
         $this->assertFalse($state->isAssignedExercise());
@@ -70,7 +70,7 @@ class UserStateTest extends TestCase
         $this->assertSame(['exercise1'], $state->getCompletedExercises());
     }
 
-    public function testCompletedExercise() : void
+    public function testCompletedExercise(): void
     {
         $state = new UserState(['exercise1']);
         $this->assertTrue($state->completedExercise('exercise1'));

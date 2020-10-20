@@ -13,21 +13,21 @@ use PHPUnit\Framework\TestCase;
  */
 class CliResultTest extends TestCase
 {
-    public function testName() : void
+    public function testName(): void
     {
-        $request = new RequestFailure(new ArrayObject, 'EXPECTED', 'ACTUAL');
+        $request = new RequestFailure(new ArrayObject(), 'EXPECTED', 'ACTUAL');
         $cliResult = new CliResult([$request]);
         $this->assertSame('CLI Program Runner', $cliResult->getCheckName());
     }
 
-    public function testIsSuccessful() : void
+    public function testIsSuccessful(): void
     {
-        $request = new RequestFailure(new ArrayObject, 'EXPECTED', 'ACTUAL');
+        $request = new RequestFailure(new ArrayObject(), 'EXPECTED', 'ACTUAL');
         $cliResult = new CliResult([$request]);
         
         $this->assertFalse($cliResult->isSuccessful());
 
-        $cliResult = new CliResult([new Success(new ArrayObject)]);
+        $cliResult = new CliResult([new Success(new ArrayObject())]);
         $this->assertTrue($cliResult->isSuccessful());
 
         $cliResult->add($request);

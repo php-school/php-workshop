@@ -38,10 +38,14 @@ class CgiRunnerTest extends TestCase
      */
     private $exercise;
 
-    public function setUp() : void
+    public function setUp(): void
     {
         $this->exercise = $this->createMock(CgiExerciseInterface::class);
-        $this->runner = new CgiRunner($this->exercise, new EventDispatcher(new ResultAggregator), new RequestRenderer);
+        $this->runner = new CgiRunner(
+            $this->exercise,
+            new EventDispatcher(new ResultAggregator()),
+            new RequestRenderer()
+        );
 
         $this->exercise
             ->method('getType')
@@ -50,7 +54,7 @@ class CgiRunnerTest extends TestCase
         $this->assertEquals('CGI Program Runner', $this->runner->getName());
     }
 
-    public function testRequiredChecks() : void
+    public function testRequiredChecks(): void
     {
         $requiredChecks = [
             FileExistsCheck::class,
@@ -61,7 +65,7 @@ class CgiRunnerTest extends TestCase
         $this->assertEquals($requiredChecks, $this->runner->getRequiredChecks());
     }
 
-    public function testVerifyThrowsExceptionIfSolutionFailsExecution() : void
+    public function testVerifyThrowsExceptionIfSolutionFailsExecution(): void
     {
         $solution = SingleFileSolution::fromFile(__DIR__ . '/../res/cgi/solution-error.php');
         $this->exercise
@@ -69,7 +73,7 @@ class CgiRunnerTest extends TestCase
             ->method('getSolution')
             ->willReturn($solution);
 
-        $request = (new Request)
+        $request = (new Request())
             ->withMethod('GET')
             ->withUri(new Uri('http://some.site?number=5'));
 
@@ -84,7 +88,7 @@ class CgiRunnerTest extends TestCase
         $this->runner->verify(new Input('app', ['program' => '']));
     }
 
-    public function testVerifyReturnsSuccessIfGetSolutionOutputMatchesUserOutput() : void
+    public function testVerifyReturnsSuccessIfGetSolutionOutputMatchesUserOutput(): void
     {
         $solution = SingleFileSolution::fromFile(__DIR__ . '/../res/cgi/get-solution.php');
         $this->exercise
@@ -92,7 +96,7 @@ class CgiRunnerTest extends TestCase
             ->method('getSolution')
             ->willReturn($solution);
 
-        $request = (new Request)
+        $request = (new Request())
             ->withMethod('GET')
             ->withUri(new Uri('http://some.site?number=5'));
 
@@ -107,7 +111,7 @@ class CgiRunnerTest extends TestCase
         );
     }
 
-    public function testVerifyReturnsSuccessIfPostSolutionOutputMatchesUserOutput() : void
+    public function testVerifyReturnsSuccessIfPostSolutionOutputMatchesUserOutput(): void
     {
         $solution = SingleFileSolution::fromFile(__DIR__ . '/../res/cgi/post-solution.php');
         $this->exercise
@@ -115,7 +119,7 @@ class CgiRunnerTest extends TestCase
             ->method('getSolution')
             ->willReturn($solution);
 
-        $request = (new Request)
+        $request = (new Request())
             ->withMethod('POST')
             ->withUri(new Uri('http://some.site'))
             ->withHeader('Content-Type', 'application/x-www-form-urlencoded');
@@ -137,7 +141,7 @@ class CgiRunnerTest extends TestCase
         $this->assertTrue($res->isSuccessful());
     }
 
-    public function testVerifyReturnsSuccessIfPostSolutionOutputMatchesUserOutputWithMultipleParams() : void
+    public function testVerifyReturnsSuccessIfPostSolutionOutputMatchesUserOutputWithMultipleParams(): void
     {
         $solution = SingleFileSolution::fromFile(__DIR__ . '/../res/cgi/post-multiple-solution.php');
         $this->exercise
@@ -145,7 +149,7 @@ class CgiRunnerTest extends TestCase
             ->method('getSolution')
             ->willReturn($solution);
 
-        $request = (new Request)
+        $request = (new Request())
             ->withMethod('POST')
             ->withUri(new Uri('http://some.site'))
             ->withHeader('Content-Type', 'application/x-www-form-urlencoded');
@@ -164,7 +168,7 @@ class CgiRunnerTest extends TestCase
         $this->assertInstanceOf(CgiResult::class, $result);
     }
 
-    public function testVerifyReturnsFailureIfUserSolutionFailsToExecute() : void
+    public function testVerifyReturnsFailureIfUserSolutionFailsToExecute(): void
     {
         $solution = SingleFileSolution::fromFile(__DIR__ . '/../res/cgi/get-solution.php');
         $this->exercise
@@ -172,7 +176,7 @@ class CgiRunnerTest extends TestCase
             ->method('getSolution')
             ->willReturn($solution);
 
-        $request = (new Request)
+        $request = (new Request())
             ->withMethod('GET')
             ->withUri(new Uri('http://some.site?number=5'));
 
@@ -196,7 +200,7 @@ class CgiRunnerTest extends TestCase
         $this->assertMatchesRegularExpression($failureMsg, $result->getReason());
     }
 
-    public function testVerifyReturnsFailureIfSolutionOutputDoesNotMatchUserOutput() : void
+    public function testVerifyReturnsFailureIfSolutionOutputDoesNotMatchUserOutput(): void
     {
         $solution = SingleFileSolution::fromFile(__DIR__ . '/../res/cgi/get-solution.php');
         $this->exercise
@@ -204,7 +208,7 @@ class CgiRunnerTest extends TestCase
             ->method('getSolution')
             ->willReturn($solution);
 
-        $request = (new Request)
+        $request = (new Request())
             ->withMethod('GET')
             ->withUri(new Uri('http://some.site?number=5'));
 
@@ -228,7 +232,7 @@ class CgiRunnerTest extends TestCase
         $this->assertEquals(['Content-type' => 'text/html; charset=UTF-8'], $result->getActualHeaders());
     }
 
-    public function testVerifyReturnsFailureIfSolutionOutputHeadersDoesNotMatchUserOutputHeaders() : void
+    public function testVerifyReturnsFailureIfSolutionOutputHeadersDoesNotMatchUserOutputHeaders(): void
     {
         $solution = SingleFileSolution::fromFile(__DIR__ . '/../res/cgi/get-solution-header.php');
         $this->exercise
@@ -236,7 +240,7 @@ class CgiRunnerTest extends TestCase
             ->method('getSolution')
             ->willReturn($solution);
 
-        $request = (new Request)
+        $request = (new Request())
             ->withMethod('GET')
             ->withUri(new Uri('http://some.site?number=5'));
 
@@ -272,16 +276,16 @@ class CgiRunnerTest extends TestCase
         );
     }
 
-    public function testRunPassesOutputAndReturnsSuccessIfAllRequestsAreSuccessful() : void
+    public function testRunPassesOutputAndReturnsSuccessIfAllRequestsAreSuccessful(): void
     {
-        $color = new Color;
+        $color = new Color();
         $color->setForceStyle(true);
         $output = new StdOutput($color, $this->createMock(Terminal::class));
-        $request1 = (new Request)
+        $request1 = (new Request())
             ->withMethod('GET')
             ->withUri(new Uri('http://some.site?number=5'));
 
-        $request2 = (new Request)
+        $request2 = (new Request())
             ->withMethod('GET')
             ->withUri(new Uri('http://some.site?number=6'));
 
@@ -321,12 +325,12 @@ class CgiRunnerTest extends TestCase
         $this->assertTrue($success);
     }
 
-    public function testRunPassesOutputAndReturnsFailureIfARequestFails() : void
+    public function testRunPassesOutputAndReturnsFailureIfARequestFails(): void
     {
-        $color = new Color;
+        $color = new Color();
         $color->setForceStyle(true);
         $output = new StdOutput($color, $this->createMock(Terminal::class));
-        $request1 = (new Request)
+        $request1 = (new Request())
             ->withMethod('GET')
             ->withUri(new Uri('http://some.site?number=5'));
 

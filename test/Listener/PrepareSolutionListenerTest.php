@@ -36,17 +36,17 @@ class PrepareSolutionListenerTest extends TestCase
      */
     private $filesystem;
 
-    public function setUp() : void
+    public function setUp(): void
     {
-        $this->filesystem = new Filesystem;
-        $this->listener = new PrepareSolutionListener;
+        $this->filesystem = new Filesystem();
+        $this->listener = new PrepareSolutionListener();
         $this->file = sprintf('%s/%s/submission.php', str_replace('\\', '/', sys_get_temp_dir()), $this->getName());
 
         mkdir(dirname($this->file), 0775, true);
         touch($this->file);
     }
 
-    public function testIfSolutionRequiresComposerButComposerCannotBeLocatedExceptionIsThrown() : void
+    public function testIfSolutionRequiresComposerButComposerCannotBeLocatedExceptionIsThrown(): void
     {
         $refProp = new ReflectionProperty(PrepareSolutionListener::class, 'composerLocations');
         $refProp->setAccessible(true);
@@ -69,7 +69,7 @@ class PrepareSolutionListenerTest extends TestCase
         $this->listener->__invoke($event);
     }
 
-    public function testIfSolutionRequiresComposerButVendorDirExistsNothingIsDone() : void
+    public function testIfSolutionRequiresComposerButVendorDirExistsNothingIsDone(): void
     {
         mkdir(sprintf('%s/vendor', dirname($this->file)));
         $this->assertFileExists(sprintf('%s/vendor', dirname($this->file)));
@@ -97,7 +97,7 @@ class PrepareSolutionListenerTest extends TestCase
         $this->assertFileDoesNotExist(sprintf('%s/composer.lock', dirname($this->file)));
     }
 
-    public function testIfSolutionRequiresComposerComposerInstallIsExecuted() : void
+    public function testIfSolutionRequiresComposerComposerInstallIsExecuted(): void
     {
         $this->assertFileDoesNotExist(sprintf('%s/vendor', dirname($this->file)));
         file_put_contents(sprintf('%s/composer.json', dirname($this->file)), json_encode([
@@ -127,7 +127,7 @@ class PrepareSolutionListenerTest extends TestCase
         $this->assertFileExists(sprintf('%s/vendor', dirname($this->file)));
     }
 
-    public function tearDown() : void
+    public function tearDown(): void
     {
         $this->filesystem->remove(dirname($this->file));
     }

@@ -11,6 +11,7 @@ use PhpSchool\PhpWorkshop\Exercise\TemporaryDirectoryTrait;
  */
 class TemporaryDirectoryTraitImpl
 {
-    use TemporaryDirectoryTrait { getTemporaryPath as public;
+    use TemporaryDirectoryTrait {
+        getTemporaryPath as public;
     }
 }

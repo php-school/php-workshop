@@ -38,43 +38,43 @@ class ExerciseDispatcherTest extends TestCase
      */
     private $file;
 
-    public function setUp() : void
+    public function setUp(): void
     {
-        $this->filesystem = new Filesystem;
+        $this->filesystem = new Filesystem();
         $this->file = sprintf('%s/%s/submission.php', str_replace('\\', '/', sys_get_temp_dir()), $this->getName());
         mkdir(dirname($this->file), 0775, true);
         touch($this->file);
     }
 
-    public function testGetEventDispatcher() : void
+    public function testGetEventDispatcher(): void
     {
-        $eventDispatcher = new EventDispatcher($results = new ResultAggregator);
+        $eventDispatcher = new EventDispatcher($results = new ResultAggregator());
 
         $exerciseDispatcher = new ExerciseDispatcher(
             $this->prophesize(RunnerManager::class)->reveal(),
             $results,
             $eventDispatcher,
-            new CheckRepository
+            new CheckRepository()
         );
 
         $this->assertSame($eventDispatcher, $exerciseDispatcher->getEventDispatcher());
     }
 
-    public function testRequireCheckThrowsExceptionIfCheckDoesNotExist() : void
+    public function testRequireCheckThrowsExceptionIfCheckDoesNotExist(): void
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Check: "NotACheck" does not exist');
 
         $exerciseDispatcher = new ExerciseDispatcher(
             $this->prophesize(RunnerManager::class)->reveal(),
-            new ResultAggregator,
+            new ResultAggregator(),
             new EventDispatcher(new ResultAggregator()),
-            new CheckRepository
+            new CheckRepository()
         );
         $exerciseDispatcher->requireCheck('NotACheck');
     }
 
-    public function testRequireCheckThrowsExceptionIfPositionNotValid() : void
+    public function testRequireCheckThrowsExceptionIfPositionNotValid(): void
     {
         $checkProphecy = $this->prophesize(SimpleCheckInterface::class);
         $checkProphecy->getName()->willReturn('Some Check');
@@ -84,7 +84,7 @@ class ExerciseDispatcherTest extends TestCase
 
         $exerciseDispatcher = new ExerciseDispatcher(
             $this->prophesize(RunnerManager::class)->reveal(),
-            new ResultAggregator,
+            new ResultAggregator(),
             new EventDispatcher(new ResultAggregator()),
             new CheckRepository([$check])
         );
@@ -94,7 +94,7 @@ class ExerciseDispatcherTest extends TestCase
         $exerciseDispatcher->requireCheck(get_class($check));
     }
 
-    public function testRequireBeforeCheckIsCorrectlyRegistered() : void
+    public function testRequireBeforeCheckIsCorrectlyRegistered(): void
     {
         $checkProphecy = $this->prophesize(SimpleCheckInterface::class);
         $checkProphecy->getName()->willReturn('Some Check');
@@ -104,7 +104,7 @@ class ExerciseDispatcherTest extends TestCase
 
         $exerciseDispatcher = new ExerciseDispatcher(
             $this->prophesize(RunnerManager::class)->reveal(),
-            new ResultAggregator,
+            new ResultAggregator(),
             new EventDispatcher(new ResultAggregator()),
             new CheckRepository([$check])
         );
@@ -113,7 +113,7 @@ class ExerciseDispatcherTest extends TestCase
         $this->assertEquals([$check], $exerciseDispatcher->getChecksToRunBefore());
     }
 
-    public function testRequireAfterCheckIsCorrectlyRegistered() : void
+    public function testRequireAfterCheckIsCorrectlyRegistered(): void
     {
         $checkProphecy = $this->prophesize(SimpleCheckInterface::class);
         $checkProphecy->getName()->willReturn('Some Check');
@@ -123,7 +123,7 @@ class ExerciseDispatcherTest extends TestCase
 
         $exerciseDispatcher = new ExerciseDispatcher(
             $this->prophesize(RunnerManager::class)->reveal(),
-            new ResultAggregator,
+            new ResultAggregator(),
             new EventDispatcher(new ResultAggregator()),
             new CheckRepository([$check])
         );
@@ -132,7 +132,7 @@ class ExerciseDispatcherTest extends TestCase
         $this->assertEquals([$check], $exerciseDispatcher->getChecksToRunAfter());
     }
 
-    public function testRequireCheckThrowsExceptionIfCheckIsNotSimpleOrListenable() : void
+    public function testRequireCheckThrowsExceptionIfCheckIsNotSimpleOrListenable(): void
     {
         $checkProphecy = $this->prophesize(CheckInterface::class);
         $checkProphecy->getName()->willReturn('Some Check');
@@ -141,7 +141,7 @@ class ExerciseDispatcherTest extends TestCase
 
         $exerciseDispatcher = new ExerciseDispatcher(
             $this->prophesize(RunnerManager::class)->reveal(),
-            new ResultAggregator,
+            new ResultAggregator(),
             new EventDispatcher(new ResultAggregator()),
             new CheckRepository([$check])
         );
@@ -151,7 +151,7 @@ class ExerciseDispatcherTest extends TestCase
         $exerciseDispatcher->requireCheck(get_class($check));
     }
 
-    public function testRequireListenableCheckAttachesToDispatcher() : void
+    public function testRequireListenableCheckAttachesToDispatcher(): void
     {
         $eventDispatcher = $this->prophesize(EventDispatcher::class)->reveal();
         $checkProphecy = $this->prophesize(ListenableCheckInterface::class);
@@ -160,7 +160,7 @@ class ExerciseDispatcherTest extends TestCase
 
         $exerciseDispatcher = new ExerciseDispatcher(
             $this->prophesize(RunnerManager::class)->reveal(),
-            new ResultAggregator,
+            new ResultAggregator(),
             $eventDispatcher,
             new CheckRepository([$check])
         );
@@ -168,7 +168,7 @@ class ExerciseDispatcherTest extends TestCase
         $exerciseDispatcher->requireCheck(get_class($check));
     }
 
-    public function testVerifyThrowsExceptionIfCheckDoesNotSupportExerciseType() : void
+    public function testVerifyThrowsExceptionIfCheckDoesNotSupportExerciseType(): void
     {
         $exercise = new CliExerciseImpl('Some Exercise');
 
@@ -186,7 +186,7 @@ class ExerciseDispatcherTest extends TestCase
 
         $exerciseDispatcher = new ExerciseDispatcher(
             $runnerManager->reveal(),
-            new ResultAggregator,
+            new ResultAggregator(),
             new EventDispatcher(new ResultAggregator()),
             new CheckRepository([$check])
         );
@@ -198,7 +198,7 @@ class ExerciseDispatcherTest extends TestCase
         $exerciseDispatcher->verify($exercise, new Input('app'));
     }
 
-    public function testVerifyThrowsExceptionIfExerciseDoesNotImplementCorrectInterface() : void
+    public function testVerifyThrowsExceptionIfExerciseDoesNotImplementCorrectInterface(): void
     {
         $exercise = new CliExerciseImpl('Some Exercise');
 
@@ -216,7 +216,7 @@ class ExerciseDispatcherTest extends TestCase
 
         $exerciseDispatcher = new ExerciseDispatcher(
             $runnerManager->reveal(),
-            new ResultAggregator,
+            new ResultAggregator(),
             new EventDispatcher(new ResultAggregator()),
             new CheckRepository([$check])
         );
@@ -228,7 +228,7 @@ class ExerciseDispatcherTest extends TestCase
         $exerciseDispatcher->verify($exercise, new Input('app'));
     }
 
-    public function testVerify() : void
+    public function testVerify(): void
     {
         $input = new Input('app', ['program' => $this->file]);
         $exercise = new CliExerciseImpl('Some Exercise');
@@ -249,7 +249,7 @@ class ExerciseDispatcherTest extends TestCase
 
         $exerciseDispatcher = new ExerciseDispatcher(
             $runnerManager->reveal(),
-            new ResultAggregator,
+            new ResultAggregator(),
             new EventDispatcher(new ResultAggregator()),
             new CheckRepository([$check])
         );
@@ -259,7 +259,7 @@ class ExerciseDispatcherTest extends TestCase
         $this->assertTrue($result->isSuccessful());
     }
 
-    public function testVerifyOnlyRunsRequiredChecks() : void
+    public function testVerifyOnlyRunsRequiredChecks(): void
     {
         $input = new Input('app', ['program' => $this->file]);
         $exercise = new CliExerciseImpl('Some Exercise');
@@ -315,7 +315,7 @@ class ExerciseDispatcherTest extends TestCase
 
         $exerciseDispatcher = new ExerciseDispatcher(
             $runnerManager,
-            new ResultAggregator,
+            new ResultAggregator(),
             new EventDispatcher(new ResultAggregator()),
             new CheckRepository([$check1, $check2])
         );
@@ -325,7 +325,7 @@ class ExerciseDispatcherTest extends TestCase
         $this->assertTrue($result->isSuccessful());
     }
 
-    public function testVerifyWithBeforeAndAfterRequiredChecks() : void
+    public function testVerifyWithBeforeAndAfterRequiredChecks(): void
     {
         $input = new Input('app', ['program' => $this->file]);
         $exercise = new CliExerciseImpl('Some Exercise');
@@ -353,7 +353,7 @@ class ExerciseDispatcherTest extends TestCase
 
         $exerciseDispatcher = new ExerciseDispatcher(
             $runnerManager->reveal(),
-            new ResultAggregator,
+            new ResultAggregator(),
             new EventDispatcher(new ResultAggregator()),
             new CheckRepository([$check1, $check2])
         );
@@ -365,7 +365,7 @@ class ExerciseDispatcherTest extends TestCase
     }
 
 
-    public function testWhenBeforeChecksFailTheyReturnImmediately() : void
+    public function testWhenBeforeChecksFailTheyReturnImmediately(): void
     {
         $input = new Input('app', ['program' => $this->file]);
         $exercise = new CliExerciseImpl('Some Exercise');
@@ -433,7 +433,7 @@ class ExerciseDispatcherTest extends TestCase
 
         $exerciseDispatcher = new ExerciseDispatcher(
             $runnerManager,
-            new ResultAggregator,
+            new ResultAggregator(),
             new EventDispatcher(new ResultAggregator()),
             new CheckRepository([$check1, $check2])
         );
@@ -443,7 +443,7 @@ class ExerciseDispatcherTest extends TestCase
         $this->assertFalse($result->isSuccessful());
     }
 
-    public function testAllEventsAreDispatched() : void
+    public function testAllEventsAreDispatched(): void
     {
         $input = new Input('app', ['program' => $this->file]);
         $exercise = new CliExerciseImpl('Some Exercise');
@@ -485,7 +485,7 @@ class ExerciseDispatcherTest extends TestCase
 
         $exerciseDispatcher = new ExerciseDispatcher(
             $runnerManager->reveal(),
-            new ResultAggregator,
+            new ResultAggregator(),
             $eventDispatcher->reveal(),
             new CheckRepository()
         );
@@ -493,7 +493,7 @@ class ExerciseDispatcherTest extends TestCase
         $exerciseDispatcher->verify($exercise, $input);
     }
 
-    public function testVerifyPostExecuteIsStillDispatchedEvenIfRunnerThrowsException() : void
+    public function testVerifyPostExecuteIsStillDispatchedEvenIfRunnerThrowsException(): void
     {
         $input = new Input('app', ['program' => $this->file]);
         $exercise = new CliExerciseImpl('Some Exercise');
@@ -518,13 +518,13 @@ class ExerciseDispatcherTest extends TestCase
 
         $runner = $this->prophesize(ExerciseRunnerInterface::class);
         $runner->getRequiredChecks()->willReturn([]);
-        $runner->verify($input)->willThrow(new RuntimeException);
+        $runner->verify($input)->willThrow(new RuntimeException());
         $runnerManager = $this->prophesize(RunnerManager::class);
         $runnerManager->getRunner($exercise)->willReturn($runner->reveal());
 
         $exerciseDispatcher = new ExerciseDispatcher(
             $runnerManager->reveal(),
-            new ResultAggregator,
+            new ResultAggregator(),
             $eventDispatcher->reveal(),
             new CheckRepository()
         );
@@ -533,7 +533,7 @@ class ExerciseDispatcherTest extends TestCase
         $exerciseDispatcher->verify($exercise, $input);
     }
 
-    public function testRun() : void
+    public function testRun(): void
     {
         $input    = new Input('app', ['program' => $this->file]);
         $output   = $this->prophesize(OutputInterface::class)->reveal();
@@ -547,7 +547,7 @@ class ExerciseDispatcherTest extends TestCase
 
         $exerciseDispatcher = new ExerciseDispatcher(
             $runnerManager->reveal(),
-            new ResultAggregator,
+            new ResultAggregator(),
             new EventDispatcher(new ResultAggregator()),
             new CheckRepository()
         );

@@ -16,7 +16,7 @@ use RuntimeException;
  */
 class ResultRendererFactoryTest extends TestCase
 {
-    public function testRegisterRendererRequiresResultInterface() : void
+    public function testRegisterRendererRequiresResultInterface(): void
     {
         $this->expectException(InvalidArgumentException::class);
 
@@ -27,7 +27,7 @@ class ResultRendererFactoryTest extends TestCase
         $factory->registerRenderer($resultClass, $rendererClass);
     }
 
-    public function testRegisterRendererRequiresResultRendererInterface() : void
+    public function testRegisterRendererRequiresResultRendererInterface(): void
     {
         $this->expectException(InvalidArgumentException::class);
 
@@ -38,7 +38,7 @@ class ResultRendererFactoryTest extends TestCase
         $factory->registerRenderer($resultClass, $rendererClass);
     }
 
-    public function testRegisterRendererRequiresResultClassToBeString() : void
+    public function testRegisterRendererRequiresResultClassToBeString(): void
     {
         $this->expectException(InvalidArgumentException::class);
 
@@ -49,7 +49,7 @@ class ResultRendererFactoryTest extends TestCase
         $factory->registerRenderer($resultClass, $rendererClass);
     }
 
-    public function testRegisterRendererRequiresRendererClassToBeString() : void
+    public function testRegisterRendererRequiresRendererClassToBeString(): void
     {
         $this->expectException(InvalidArgumentException::class);
 
@@ -60,7 +60,7 @@ class ResultRendererFactoryTest extends TestCase
         $factory->registerRenderer($resultClass, $rendererClass);
     }
 
-    public function testCreateRequiresMappingToClassName() : void
+    public function testCreateRequiresMappingToClassName(): void
     {
         $this->expectException(RuntimeException::class);
 
@@ -70,7 +70,7 @@ class ResultRendererFactoryTest extends TestCase
         $factory->create($resultClass);
     }
 
-    public function testCreateReturnsMappedRendererInterface() : void
+    public function testCreateReturnsMappedRendererInterface(): void
     {
         $resultClass = $this->createMock(ResultInterface::class);
         $resultClassName = get_class($resultClass);
@@ -83,14 +83,14 @@ class ResultRendererFactoryTest extends TestCase
         $this->assertInstanceOf($rendererClassName, $returnedRenderer);
     }
 
-    public function testExceptionIsThrownIfFactoryReturnsInCorrectRenderer() : void
+    public function testExceptionIsThrownIfFactoryReturnsInCorrectRenderer(): void
     {
         $resultClass = $this->createMock(ResultInterface::class);
         $resultClassName = get_class($resultClass);
         $rendererClassName = get_class($this->createMock(ResultRendererInterface::class));
         $factory = new ResultRendererFactory();
         $factory->registerRenderer($resultClassName, $rendererClassName, function () {
-            return new \stdClass;
+            return new \stdClass();
         });
 
         $this->expectException(RuntimeException::class);

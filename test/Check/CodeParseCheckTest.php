@@ -24,9 +24,9 @@ class CodeParseCheckTest extends TestCase
      */
     private $file;
     
-    public function setUp() : void
+    public function setUp(): void
     {
-        $this->check = new CodeParseCheck((new ParserFactory)->create(ParserFactory::PREFER_PHP7));
+        $this->check = new CodeParseCheck((new ParserFactory())->create(ParserFactory::PREFER_PHP7));
         $this->assertEquals('Code Parse Check', $this->check->getName());
         $this->assertEquals(ExerciseInterface::class, $this->check->getExerciseInterface());
         $this->assertEquals(SimpleCheckInterface::CHECK_BEFORE, $this->check->getPosition());
@@ -39,7 +39,7 @@ class CodeParseCheckTest extends TestCase
         touch($this->file);
     }
 
-    public function testUnParseableCodeReturnsFailure() : void
+    public function testUnParseableCodeReturnsFailure(): void
     {
         file_put_contents($this->file, '<?php $lol');
         
@@ -56,7 +56,7 @@ class CodeParseCheckTest extends TestCase
         );
     }
 
-    public function testParseableCodeReturnsSuccess() : void
+    public function testParseableCodeReturnsSuccess(): void
     {
         file_put_contents($this->file, '<?php $lol = "lol";');
 

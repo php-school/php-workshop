@@ -20,7 +20,7 @@ class PhpLintCheck implements SimpleCheckInterface
     /**
      * Return the check's name
      */
-    public function getName() : string
+    public function getName(): string
     {
         return 'PHP Code Check';
     }
@@ -32,7 +32,7 @@ class PhpLintCheck implements SimpleCheckInterface
      * @param Input $input The command line arguments passed to the command.
      * @return ResultInterface The result of the check.
      */
-    public function check(ExerciseInterface $exercise, Input $input) : ResultInterface
+    public function check(ExerciseInterface $exercise, Input $input): ResultInterface
     {
         $process = new Process([PHP_BINARY, '-l', $input->getArgument('program')]);
         $process->run();
@@ -47,12 +47,12 @@ class PhpLintCheck implements SimpleCheckInterface
     /**
      * This check can run on any exercise type.
      */
-    public function canRun(ExerciseType $exerciseType) : bool
+    public function canRun(ExerciseType $exerciseType): bool
     {
         return in_array($exerciseType->getValue(), [ExerciseType::CGI, ExerciseType::CLI], true);
     }
 
-    public function getExerciseInterface() : string
+    public function getExerciseInterface(): string
     {
         return ExerciseInterface::class;
     }
@@ -61,7 +61,7 @@ class PhpLintCheck implements SimpleCheckInterface
      * This check should be run before executing the student's solution, as, if it cannot be linted
      * it probably cannot be executed.
      */
-    public function getPosition() : string
+    public function getPosition(): string
     {
         return SimpleCheckInterface::CHECK_BEFORE;
     }

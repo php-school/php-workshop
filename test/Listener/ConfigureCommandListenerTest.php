@@ -19,7 +19,7 @@ class ConfigureCommandListenerTest extends TestCase
     /**
      * @dataProvider configurableCommands
      */
-    public function testInputIsConfiguredForCorrectCommands(string $commandName) : void
+    public function testInputIsConfiguredForCorrectCommands(string $commandName): void
     {
         $command = new CommandDefinition($commandName, [], function () {
         });
@@ -35,7 +35,7 @@ class ConfigureCommandListenerTest extends TestCase
         (new ConfigureCommandListener($state, $repo, $runnerManager->reveal()))->__invoke($event);
     }
 
-    public function configurableCommands() : array
+    public function configurableCommands(): array
     {
         return [
             ['verify'],
@@ -46,7 +46,7 @@ class ConfigureCommandListenerTest extends TestCase
     /**
      * @dataProvider nonConfigurableCommands
      */
-    public function testInputIsNotConfiguredForCorrectCommands(string $commandName) : void
+    public function testInputIsNotConfiguredForCorrectCommands(string $commandName): void
     {
         $command = new CommandDefinition($commandName, [], function () {
         });
@@ -63,7 +63,7 @@ class ConfigureCommandListenerTest extends TestCase
         $runnerManager->configureInput($exercise, $command)->shouldNotHaveBeenCalled();
     }
 
-    public function nonConfigurableCommands() : array
+    public function nonConfigurableCommands(): array
     {
         return [
             ['print'],

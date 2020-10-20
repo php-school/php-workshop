@@ -25,27 +25,27 @@ class CgiExerciseImpl implements ExerciseInterface, CgiExercise
         $this->name = $name;
     }
 
-    public function getName() : string
+    public function getName(): string
     {
         return $this->name;
     }
 
-    public function getDescription() : string
+    public function getDescription(): string
     {
         return $this->name;
     }
 
-    public function getSolution() : string
+    public function getSolution(): string
     {
         // TODO: Implement getSolution() method.
     }
 
-    public function getProblem() : string
+    public function getProblem(): string
     {
         // TODO: Implement getProblem() method.
     }
 
-    public function tearDown() : void
+    public function tearDown(): void
     {
         // TODO: Implement tearDown() method.
     }
@@ -56,17 +56,17 @@ class CgiExerciseImpl implements ExerciseInterface, CgiExercise
      *
      * @return RequestInterface[] An array of PSR-7 requests.
      */
-    public function getRequests() : array
+    public function getRequests(): array
     {
         return []; // TODO: Implement getRequests() method.
     }
 
-    public function getType() : ExerciseType
+    public function getType(): ExerciseType
     {
         return ExerciseType::CGI();
     }
 
-    public function configure(ExerciseDispatcher $dispatcher) : void
+    public function configure(ExerciseDispatcher $dispatcher): void
     {
     }
 }

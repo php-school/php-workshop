@@ -25,7 +25,7 @@ use PhpSchool\PhpWorkshop\UserStateSerializer;
  */
 class ExerciseRendererTest extends TestCase
 {
-    public function testExerciseRendererSetsCurrentExerciseAndRendersExercise() : void
+    public function testExerciseRendererSetsCurrentExerciseAndRendersExercise(): void
     {
         $menu = $this->createMock(CliMenu::class);
 
@@ -82,10 +82,10 @@ class ExerciseRendererTest extends TestCase
 
         $markdownRenderer = new MarkdownRenderer(
             new DocParser(Environment::createCommonMarkEnvironment()),
-            (new CliRendererFactory)->__invoke()
+            (new CliRendererFactory())->__invoke()
         );
 
-        $color = new Color;
+        $color = new Color();
         $color->setForceStyle(true);
 
         $exerciseRenderer = new ExerciseRenderer(

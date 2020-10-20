@@ -21,7 +21,7 @@ class ComposerCheck implements SimpleCheckInterface
     /**
      * Return the check's name
      */
-    public function getName() : string
+    public function getName(): string
     {
         return 'Composer Dependency Check';
     }
@@ -35,10 +35,10 @@ class ComposerCheck implements SimpleCheckInterface
      * @param Input $input The command line arguments passed to the command.
      * @return ResultInterface The result of the check.
      */
-    public function check(ExerciseInterface $exercise, Input $input) : ResultInterface
+    public function check(ExerciseInterface $exercise, Input $input): ResultInterface
     {
         if (!$exercise instanceof ComposerExerciseCheck) {
-            throw new \InvalidArgumentException;
+            throw new \InvalidArgumentException();
         }
         
         if (!file_exists(sprintf('%s/composer.json', dirname($input->getArgument('program'))))) {
@@ -74,12 +74,12 @@ class ComposerCheck implements SimpleCheckInterface
     /**
      * This check can run on any exercise type.
      */
-    public function canRun(ExerciseType $exerciseType) : bool
+    public function canRun(ExerciseType $exerciseType): bool
     {
         return in_array($exerciseType->getValue(), [ExerciseType::CGI, ExerciseType::CLI], true);
     }
 
-    public function getExerciseInterface() : string
+    public function getExerciseInterface(): string
     {
         return ComposerExerciseCheck::class;
     }
@@ -87,7 +87,7 @@ class ComposerCheck implements SimpleCheckInterface
     /**
      * This check can run before because if it fails, there is no point executing the solution.
      */
-    public function getPosition() : string
+    public function getPosition(): string
     {
         return SimpleCheckInterface::CHECK_BEFORE;
     }

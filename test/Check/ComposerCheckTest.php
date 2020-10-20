@@ -31,10 +31,10 @@ class ComposerCheckTest extends TestCase
      */
     private $exercise;
 
-    public function setUp() : void
+    public function setUp(): void
     {
-        $this->check = new ComposerCheck;
-        $this->exercise = new ComposerExercise;
+        $this->check = new ComposerCheck();
+        $this->exercise = new ComposerExercise();
         $this->assertEquals('Composer Dependency Check', $this->check->getName());
         $this->assertEquals(ComposerExerciseCheck::class, $this->check->getExerciseInterface());
         $this->assertEquals(SimpleCheckInterface::CHECK_BEFORE, $this->check->getPosition());
@@ -43,7 +43,7 @@ class ComposerCheckTest extends TestCase
         $this->assertTrue($this->check->canRun(ExerciseType::CLI()));
     }
     
-    public function testExceptionIsThrownIfNotValidExercise() : void
+    public function testExceptionIsThrownIfNotValidExercise(): void
     {
         $exercise = $this->createMock(ExerciseInterface::class);
         $this->expectException(InvalidArgumentException::class);
@@ -51,7 +51,7 @@ class ComposerCheckTest extends TestCase
         $this->check->check($exercise, new Input('app'));
     }
 
-    public function testCheckReturnsFailureIfNoComposerFile() : void
+    public function testCheckReturnsFailureIfNoComposerFile(): void
     {
         $result = $this->check->check(
             $this->exercise,
@@ -63,7 +63,7 @@ class ComposerCheckTest extends TestCase
         $this->assertSame('No composer.json file found', $result->getReason());
     }
 
-    public function testCheckReturnsFailureIfNoComposerLockFile() : void
+    public function testCheckReturnsFailureIfNoComposerLockFile(): void
     {
         $result = $this->check->check(
             $this->exercise,
@@ -75,7 +75,7 @@ class ComposerCheckTest extends TestCase
         $this->assertSame('No composer.lock file found', $result->getReason());
     }
 
-    public function testCheckReturnsFailureIfNoVendorFolder() : void
+    public function testCheckReturnsFailureIfNoVendorFolder(): void
     {
         $result = $this->check->check(
             $this->exercise,
@@ -93,7 +93,7 @@ class ComposerCheckTest extends TestCase
      * @param string $dependency
      * @param string $solutionFile
      */
-    public function testCheckReturnsFailureIfDependencyNotRequired($dependency, $solutionFile) : void
+    public function testCheckReturnsFailureIfDependencyNotRequired($dependency, $solutionFile): void
     {
         $exercise = $this->createMock(ComposerExercise::class);
         $exercise->expects($this->once())
@@ -113,7 +113,7 @@ class ComposerCheckTest extends TestCase
     /**
      * @return array
      */
-    public function dependencyProvider() : array
+    public function dependencyProvider(): array
     {
         return [
             ['klein/klein',           __DIR__ . '/../res/composer/no-klein/solution.php'],
@@ -121,7 +121,7 @@ class ComposerCheckTest extends TestCase
         ];
     }
 
-    public function testCheckReturnsSuccessIfCorrectLockFile() : void
+    public function testCheckReturnsSuccessIfCorrectLockFile(): void
     {
         $result = $this->check->check(
             $this->exercise,

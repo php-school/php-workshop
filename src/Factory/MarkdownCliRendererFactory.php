@@ -50,25 +50,25 @@ class MarkdownCliRendererFactory
         $terminal = $c->get(Terminal::class);
 
         $codeRender = new FencedCodeRenderer();
-        $codeRender->addSyntaxHighlighter('php', new PhpHighlighter(new KeyLighter));
+        $codeRender->addSyntaxHighlighter('php', new PhpHighlighter(new KeyLighter()));
 
         $blockRenderers = [
-            Document::class => new DocumentRenderer,
-            Heading::class => new HeaderRenderer,
+            Document::class => new DocumentRenderer(),
+            Heading::class => new HeaderRenderer(),
             ThematicBreak::class => new HorizontalRuleRenderer($terminal->getWidth()),
-            Paragraph::class => new ParagraphRenderer,
+            Paragraph::class => new ParagraphRenderer(),
             FencedCode::class => $codeRender,
-            ListBlock::class        => new ListBlockRenderer,
-            ListItem::class         => new ListItemRenderer,
+            ListBlock::class        => new ListBlockRenderer(),
+            ListItem::class         => new ListItemRenderer(),
         ];
 
         $inlineBlockRenderers = [
-            Text::class => new TextRenderer,
-            Code::class => new CodeRenderer,
-            Emphasis::class => new EmphasisRenderer,
-            Strong::class => new StrongRenderer,
-            Newline::class => new NewlineRenderer,
-            Link::class => new LinkRenderer,
+            Text::class => new TextRenderer(),
+            Code::class => new CodeRenderer(),
+            Emphasis::class => new EmphasisRenderer(),
+            Strong::class => new StrongRenderer(),
+            Newline::class => new NewlineRenderer(),
+            Link::class => new LinkRenderer(),
         ];
 
         return new CliRenderer(

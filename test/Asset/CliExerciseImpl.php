@@ -24,42 +24,42 @@ class CliExerciseImpl implements ExerciseInterface, CliExercise
         $this->name = $name;
     }
 
-    public function getName() : string
+    public function getName(): string
     {
         return $this->name;
     }
 
-    public function getDescription() : string
+    public function getDescription(): string
     {
         return $this->name;
     }
 
-    public function getSolution() : string
+    public function getSolution(): string
     {
         // TODO: Implement getSolution() method.
     }
 
-    public function getProblem() : string
+    public function getProblem(): string
     {
         // TODO: Implement getProblem() method.
     }
 
-    public function tearDown() : void
+    public function tearDown(): void
     {
         // TODO: Implement tearDown() method.
     }
 
-    public function getArgs() : array
+    public function getArgs(): array
     {
         return []; // TODO: Implement getArgs() method.
     }
 
-    public function getType() : ExerciseType
+    public function getType(): ExerciseType
     {
         return ExerciseType::CLI();
     }
 
-    public function configure(ExerciseDispatcher $dispatcher) : void
+    public function configure(ExerciseDispatcher $dispatcher): void
     {
     }
 }

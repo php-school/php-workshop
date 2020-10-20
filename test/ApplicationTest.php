@@ -1,4 +1,6 @@
-<?php /** @noinspection PhpFullyQualifiedNameUsageInspection */
+<?php
+
+/** @noinspection PhpFullyQualifiedNameUsageInspection */
 
 namespace PhpSchool\PhpWorkshopTest;
 
@@ -10,7 +12,7 @@ use PHPUnit\Framework\TestCase;
  */
 class ApplicationTest extends TestCase
 {
-    public function testEventListenersFromLocalAndWorkshopConfigAreMerged() : void
+    public function testEventListenersFromLocalAndWorkshopConfigAreMerged(): void
     {
 
         $frameworkFileContent  = '<?php return [';
