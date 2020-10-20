@@ -10,6 +10,7 @@ use PhpSchool\PhpWorkshop\ResultRenderer\Cgi\RequestFailureRenderer;
 use PhpSchool\PhpWorkshop\ResultRenderer\CgiResultRenderer;
 use PhpSchool\PhpWorkshop\ResultRenderer\FailureRenderer;
 use PhpSchool\PhpWorkshop\Utils\RequestRenderer;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Zend\Diactoros\Request;
 
 /**
@@ -17,6 +18,8 @@ use Zend\Diactoros\Request;
  */
 class CgiResultRendererTest extends AbstractResultRendererTest
 {
+    use ProphecyTrait;
+
     public function testNothingIsOutputIfNoFailures() : void
     {
         $result = new CgiResult([new Success($this->request())]);

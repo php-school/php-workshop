@@ -4,12 +4,15 @@ namespace PhpSchool\PhpWorkshopTest\ResultRenderer;
 
 use PhpSchool\PhpWorkshop\Result\ComparisonFailure;
 use PhpSchool\PhpWorkshop\ResultRenderer\ComparisonFailureRenderer;
+use Prophecy\PhpUnit\ProphecyTrait;
 
 /**
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
 class ComparisonFailureRendererTest extends AbstractResultRendererTest
 {
+    use ProphecyTrait;
+
     public function testRender() : void
     {
         $failure  = new ComparisonFailure('Name', 'EXPECTED OUTPUT', 'ACTUAL OUTPUT');

@@ -8,6 +8,7 @@ use PhpSchool\PhpWorkshop\Check\CheckInterface;
 use PhpSchool\PhpWorkshop\Result\Failure;
 use PhpSchool\PhpWorkshop\Result\ResultInterface;
 use PhpSchool\PhpWorkshop\ResultRenderer\FailureRenderer;
+use Prophecy\PhpUnit\ProphecyTrait;
 
 /**
  * Class FailureRendererTest
@@ -16,6 +17,8 @@ use PhpSchool\PhpWorkshop\ResultRenderer\FailureRenderer;
  */
 class FailureRendererTest extends AbstractResultRendererTest
 {
+    use ProphecyTrait;
+
     public function testRender() : void
     {
         $failure = new Failure($this->createMock(CheckInterface::class), 'Something went wrong');

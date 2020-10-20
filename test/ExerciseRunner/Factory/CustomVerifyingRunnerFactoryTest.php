@@ -9,9 +9,12 @@ use PhpSchool\PhpWorkshop\ExerciseRunner\CustomVerifyingRunner;
 use PhpSchool\PhpWorkshop\ExerciseRunner\Factory\CustomVerifyingRunnerFactory;
 use PhpSchool\PhpWorkshopTest\Asset\CustomVerifyingExerciseImpl;
 use PHPUnit\Framework\TestCase;
+use Prophecy\PhpUnit\ProphecyTrait;
 
 class CustomVerifyingRunnerFactoryTest extends TestCase
 {
+    use ProphecyTrait;
+
     /**
      * @var CustomVerifyingRunnerFactory
      */

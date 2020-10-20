@@ -12,6 +12,7 @@ use PhpSchool\PhpWorkshop\CommandDefinition;
 use PhpSchool\PhpWorkshop\CommandRouter;
 use PhpSchool\PhpWorkshop\Exception\CliRouteNotExistsException;
 use PhpSchool\PhpWorkshop\Exception\MissingArgumentException;
+use Prophecy\PhpUnit\ProphecyTrait;
 use RuntimeException;
 
 /**
@@ -21,6 +22,8 @@ use RuntimeException;
  */
 class CommandRouterTest extends TestCase
 {
+    use ProphecyTrait;
+
     public function testInvalidDefaultThrowsException() : void
     {
         $this->expectException(InvalidArgumentException::class);

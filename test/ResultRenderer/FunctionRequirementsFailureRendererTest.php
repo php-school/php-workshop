@@ -7,6 +7,7 @@ use PhpSchool\PhpWorkshop\Check\CheckInterface;
 use PhpSchool\PhpWorkshop\Result\FunctionRequirementsFailure;
 use PhpSchool\PhpWorkshop\Result\ResultInterface;
 use PhpSchool\PhpWorkshop\ResultRenderer\FunctionRequirementsFailureRenderer;
+use Prophecy\PhpUnit\ProphecyTrait;
 
 /**
  * Class FunctionRequirementsFailureRendererTest
@@ -14,6 +15,8 @@ use PhpSchool\PhpWorkshop\ResultRenderer\FunctionRequirementsFailureRenderer;
  */
 class FunctionRequirementsFailureRendererTest extends AbstractResultRendererTest
 {
+    use ProphecyTrait;
+
     public function testRenderer() : void
     {
         $failure = new FunctionRequirementsFailure(

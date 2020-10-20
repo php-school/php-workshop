@@ -4,6 +4,7 @@ namespace PhpSchool\PhpWorkshopTest\Factory;
 
 use DI\ContainerBuilder;
 use PhpSchool\PhpWorkshop\Event\Event;
+use Prophecy\PhpUnit\ProphecyTrait;
 use function PhpSchool\PhpWorkshop\Event\containerListener;
 use Interop\Container\ContainerInterface;
 use PhpSchool\PhpWorkshop\Event\EventDispatcher;
@@ -19,6 +20,7 @@ use PHPUnit\Framework\TestCase;
  */
 class EventDispatcherFactoryTest extends TestCase
 {
+    use ProphecyTrait;
 
     public function testCreateWithNoConfig() : void
     {

@@ -10,9 +10,12 @@ use PhpSchool\PhpWorkshop\ExerciseRunner\CliRunner;
 use PhpSchool\PhpWorkshop\ExerciseRunner\Factory\CliRunnerFactory;
 use PhpSchool\PhpWorkshopTest\Asset\CliExerciseImpl;
 use PHPUnit\Framework\TestCase;
+use Prophecy\PhpUnit\ProphecyTrait;
 
 class CliRunnerFactoryTest extends TestCase
 {
+    use ProphecyTrait;
+
     /**
      * @var EventDispatcher
      */

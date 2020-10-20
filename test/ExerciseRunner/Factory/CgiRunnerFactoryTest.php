@@ -11,9 +11,12 @@ use PhpSchool\PhpWorkshop\ExerciseRunner\Factory\CgiRunnerFactory;
 use PhpSchool\PhpWorkshop\Utils\RequestRenderer;
 use PhpSchool\PhpWorkshopTest\Asset\CgiExerciseImpl;
 use PHPUnit\Framework\TestCase;
+use Prophecy\PhpUnit\ProphecyTrait;
 
 class CgiRunnerFactoryTest extends TestCase
 {
+    use ProphecyTrait;
+
     /**
      * @var EventDispatcher
      */
