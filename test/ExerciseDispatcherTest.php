@@ -71,7 +71,7 @@ class ExerciseDispatcherTest extends TestCase
         $exerciseDispatcher = new ExerciseDispatcher(
             $this->prophesize(RunnerManager::class)->reveal(),
             new ResultAggregator,
-            $this->prophesize(EventDispatcher::class)->reveal(),
+            new EventDispatcher(new ResultAggregator()),
             new CheckRepository
         );
         $exerciseDispatcher->requireCheck('NotACheck');
@@ -88,7 +88,7 @@ class ExerciseDispatcherTest extends TestCase
         $exerciseDispatcher = new ExerciseDispatcher(
             $this->prophesize(RunnerManager::class)->reveal(),
             new ResultAggregator,
-            $this->prophesize(EventDispatcher::class)->reveal(),
+            new EventDispatcher(new ResultAggregator()),
             new CheckRepository([$check])
         );
 
@@ -108,7 +108,7 @@ class ExerciseDispatcherTest extends TestCase
         $exerciseDispatcher = new ExerciseDispatcher(
             $this->prophesize(RunnerManager::class)->reveal(),
             new ResultAggregator,
-            $this->prophesize(EventDispatcher::class)->reveal(),
+            new EventDispatcher(new ResultAggregator()),
             new CheckRepository([$check])
         );
 
@@ -127,7 +127,7 @@ class ExerciseDispatcherTest extends TestCase
         $exerciseDispatcher = new ExerciseDispatcher(
             $this->prophesize(RunnerManager::class)->reveal(),
             new ResultAggregator,
-            $this->prophesize(EventDispatcher::class)->reveal(),
+            new EventDispatcher(new ResultAggregator()),
             new CheckRepository([$check])
         );
 
@@ -145,7 +145,7 @@ class ExerciseDispatcherTest extends TestCase
         $exerciseDispatcher = new ExerciseDispatcher(
             $this->prophesize(RunnerManager::class)->reveal(),
             new ResultAggregator,
-            $this->prophesize(EventDispatcher::class)->reveal(),
+            new EventDispatcher(new ResultAggregator()),
             new CheckRepository([$check])
         );
 
@@ -190,7 +190,7 @@ class ExerciseDispatcherTest extends TestCase
         $exerciseDispatcher = new ExerciseDispatcher(
             $runnerManager->reveal(),
             new ResultAggregator,
-            $this->prophesize(EventDispatcher::class)->reveal(),
+            new EventDispatcher(new ResultAggregator()),
             new CheckRepository([$check])
         );
 
@@ -220,7 +220,7 @@ class ExerciseDispatcherTest extends TestCase
         $exerciseDispatcher = new ExerciseDispatcher(
             $runnerManager->reveal(),
             new ResultAggregator,
-            $this->prophesize(EventDispatcher::class)->reveal(),
+            new EventDispatcher(new ResultAggregator()),
             new CheckRepository([$check])
         );
 
@@ -253,7 +253,7 @@ class ExerciseDispatcherTest extends TestCase
         $exerciseDispatcher = new ExerciseDispatcher(
             $runnerManager->reveal(),
             new ResultAggregator,
-            $this->prophesize(EventDispatcher::class)->reveal(),
+            new EventDispatcher(new ResultAggregator()),
             new CheckRepository([$check])
         );
 
@@ -357,7 +357,7 @@ class ExerciseDispatcherTest extends TestCase
         $exerciseDispatcher = new ExerciseDispatcher(
             $runnerManager->reveal(),
             new ResultAggregator,
-            $this->prophesize(EventDispatcher::class)->reveal(),
+            new EventDispatcher(new ResultAggregator()),
             new CheckRepository([$check1, $check2])
         );
 
@@ -551,7 +551,7 @@ class ExerciseDispatcherTest extends TestCase
         $exerciseDispatcher = new ExerciseDispatcher(
             $runnerManager->reveal(),
             new ResultAggregator,
-            $this->prophesize(EventDispatcher::class)->reveal(),
+            new EventDispatcher(new ResultAggregator()),
             new CheckRepository()
         );
 
