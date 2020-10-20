@@ -25,7 +25,6 @@ class SingleFileSolutionTest extends TestCase
         $this->assertSame($filePath, $solution->getEntryPoint());
         $this->assertSame($tempPath, $solution->getBaseDirectory());
         $this->assertFalse($solution->hasComposerFile());
-        $this->assertInternalType('array', $solution->getFiles());
         $this->assertCount(1, $solution->getFiles());
         $this->assertSame($filePath, $solution->getFiles()[0]->__toString());
         unlink($filePath);

@@ -14,7 +14,7 @@ trait TemporaryDirectoryTrait
      *
      * @return string The absolute path to the temporary directory.
      */
-    public function getTemporaryPath()
+    public function getTemporaryPath(): string
     {
         return sprintf(
             '%s/%s',
