@@ -5,11 +5,8 @@ The core of PHP School, the workshop application. This is the library which runs
 </p>
 
 <p align="center">
-<a href="https://travis-ci.org/php-school/php-workshop">
-    <img src="https://img.shields.io/travis/php-school/php-workshop/master.svg?style=flat-square&label=Linux">
-</a>
-<a href="https://ci.appveyor.com/project/AydinHassan/php-workshop">
-    <img src="https://img.shields.io/appveyor/ci/AydinHassan/php-workshop/master.svg?style=flat-square&label=Windows">
+<a href="https://github.com/php-school/php-workshop/actions">
+    <img src="https://github.com/php-school/php-workshop/workflows/PhpWorkshop/badge.svg">
 </a>
 <a href="https://codecov.io/github/php-school/php-workshop">
     <img src="https://img.shields.io/codecov/c/github/php-school/php-workshop/master.svg?style=flat-square">
