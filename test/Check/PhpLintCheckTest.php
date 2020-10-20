@@ -46,14 +46,13 @@ class PhpLintCheckTest extends TestCase
 
     public function testFailure() : void
     {
-        $this->markTestSkipped();
         $failure = $this->check->check(
             $this->exercise,
             new Input('app', ['program' => __DIR__ . '/../res/lint/fail.php'])
         );
         $this->assertInstanceOf(Failure::class, $failure);
         $this->assertMatchesRegularExpression(
-            "/^Parse error: syntax error, unexpected end of file, expecting ',' or ';'/",
+            "/^Parse error: syntax error, unexpected end of file, expecting '[,;]' or '[;,]'/",
             $failure->getReason()
         );
     }
