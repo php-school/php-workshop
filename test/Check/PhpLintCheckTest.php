@@ -13,7 +13,6 @@ use PhpSchool\PhpWorkshop\Result\Success;
 
 class PhpLintCheckTest extends TestCase
 {
-
     /**
      * @var PhpLintCheck
      */
@@ -52,7 +51,7 @@ class PhpLintCheckTest extends TestCase
         );
         $this->assertInstanceOf(Failure::class, $failure);
         $this->assertMatchesRegularExpression(
-            "/^Parse error: syntax error, unexpected end of file, expecting '[,;]' or '[;,]'/",
+            "/(PHP )?Parse error:\W+syntax error, unexpected end of file, expecting '[,;]' or '[;,]'/",
             $failure->getReason()
         );
     }
