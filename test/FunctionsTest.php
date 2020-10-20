@@ -12,7 +12,7 @@ class FunctionsTest extends TestCase
     /**
      * @dataProvider mbStrPadProvider
      */
-    public function testMbStrPad(string $string, string $pad, string $expected) : void
+    public function testMbStrPad(string $string, int $pad, string $expected) : void
     {
         self::assertSame(mb_str_pad($string, $pad), $expected);
     }
