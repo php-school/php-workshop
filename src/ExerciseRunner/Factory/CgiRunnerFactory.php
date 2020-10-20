@@ -5,6 +5,7 @@ namespace PhpSchool\PhpWorkshop\ExerciseRunner\Factory;
 use PhpSchool\PhpWorkshop\CommandArgument;
 use PhpSchool\PhpWorkshop\CommandDefinition;
 use PhpSchool\PhpWorkshop\Event\EventDispatcher;
+use PhpSchool\PhpWorkshop\Exercise\CgiExercise;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseType;
 use PhpSchool\PhpWorkshop\ExerciseRunner\CgiRunner;
@@ -64,7 +65,7 @@ class CgiRunnerFactory implements ExerciseRunnerFactoryInterface
     /**
      * Create and return an instance of the runner.
      *
-     * @param ExerciseInterface $exercise
+     * @param ExerciseInterface&CgiExercise $exercise
      * @return ExerciseRunnerInterface
      */
     public function create(ExerciseInterface $exercise)

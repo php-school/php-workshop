@@ -12,6 +12,7 @@ use PhpSchool\PhpWorkshop\Event\ExerciseRunnerEvent;
 use PhpSchool\PhpWorkshop\Exception\CodeExecutionException;
 use PhpSchool\PhpWorkshop\Exception\SolutionExecutionException;
 use PhpSchool\PhpWorkshop\Exercise\CgiExercise;
+use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpSchool\PhpWorkshop\Input\Input;
 use PhpSchool\PhpWorkshop\Output\OutputInterface;
 use PhpSchool\PhpWorkshop\Result\Cgi\CgiResult;
@@ -32,9 +33,8 @@ use Zend\Diactoros\Response\Serializer as ResponseSerializer;
  */
 class CgiRunner implements ExerciseRunnerInterface
 {
-
     /**
-     * @var CgiExercise
+     * @var CgiExercise&ExerciseInterface
      */
     private $exercise;
 
@@ -93,6 +93,7 @@ class CgiRunner implements ExerciseRunnerInterface
                 );
             }
         }
+        /** @var CgiExercise&ExerciseInterface $exercise */
         $this->eventDispatcher = $eventDispatcher;
         $this->exercise = $exercise;
         $this->requestRenderer = $requestRenderer;

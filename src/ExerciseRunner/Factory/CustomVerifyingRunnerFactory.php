@@ -3,6 +3,7 @@
 namespace PhpSchool\PhpWorkshop\ExerciseRunner\Factory;
 
 use PhpSchool\PhpWorkshop\CommandDefinition;
+use PhpSchool\PhpWorkshop\Exercise\CustomVerifyingExercise;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseType;
 use PhpSchool\PhpWorkshop\ExerciseRunner\CustomVerifyingRunner;
@@ -41,7 +42,7 @@ class CustomVerifyingRunnerFactory implements ExerciseRunnerFactoryInterface
     /**
      * Create and return an instance of the runner.
      *
-     * @param ExerciseInterface $exercise
+     * @param ExerciseInterface&CustomVerifyingExercise $exercise
      * @return ExerciseRunnerInterface
      */
     public function create(ExerciseInterface $exercise)

@@ -219,7 +219,7 @@ class CommandRouter
      * @param CommandDefinition $command
      * @param callable $callable
      * @param Input $input
-     * @return int
+     * @return ?int
      */
     private function callCommand(CommandDefinition $command, callable $callable, Input $input)
     {

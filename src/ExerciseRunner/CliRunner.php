@@ -12,6 +12,7 @@ use PhpSchool\PhpWorkshop\Event\ExerciseRunnerEvent;
 use PhpSchool\PhpWorkshop\Exception\CodeExecutionException;
 use PhpSchool\PhpWorkshop\Exception\SolutionExecutionException;
 use PhpSchool\PhpWorkshop\Exercise\CliExercise;
+use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpSchool\PhpWorkshop\Input\Input;
 use PhpSchool\PhpWorkshop\Output\OutputInterface;
 use PhpSchool\PhpWorkshop\Result\Cli\RequestFailure;
@@ -33,7 +34,7 @@ use Symfony\Component\Process\Process;
 class CliRunner implements ExerciseRunnerInterface
 {
     /**
-     * @var CliExercise
+     * @var CliExercise&ExerciseInterface
      */
     private $exercise;
 
@@ -59,6 +60,7 @@ class CliRunner implements ExerciseRunnerInterface
      */
     public function __construct(CliExercise $exercise, EventDispatcher $eventDispatcher)
     {
+        /** @var CliExercise&ExerciseInterface $exercise */
         $this->eventDispatcher = $eventDispatcher;
         $this->exercise = $exercise;
     }
