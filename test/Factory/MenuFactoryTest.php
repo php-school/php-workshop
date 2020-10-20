@@ -15,6 +15,7 @@ use PhpSchool\PhpWorkshop\MenuItem\ResetProgress;
 use PhpSchool\PhpWorkshop\UserState;
 use PhpSchool\PhpWorkshop\UserStateSerializer;
 use PhpSchool\PhpWorkshop\WorkshopType;
+use PhpSchool\Terminal\Terminal;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -42,6 +43,11 @@ class MenuFactoryTest extends TestCase
             ->expects($this->once())
             ->method('findAll')
             ->willReturn([$exercise]);
+
+        $terminal = $this->createMock(Terminal::class);
+        $terminal
+            ->method('getWidth')
+            ->willReturn(70);
             
         $services = [
             UserStateSerializer::class => $userStateSerializer,
@@ -56,6 +62,7 @@ class MenuFactoryTest extends TestCase
             'workshopTitle' => 'TITLE',
             WorkshopType::class => WorkshopType::STANDARD(),
             EventDispatcher::class => $this->createMock(EventDispatcher::class),
+            Terminal::class => $terminal
         ];
         
         $container
