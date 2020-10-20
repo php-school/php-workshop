@@ -6,15 +6,12 @@ use PhpSchool\PhpWorkshop\Result\Cli\RequestFailure;
 use PhpSchool\PhpWorkshop\ResultRenderer\Cli\RequestFailureRenderer;
 use PhpSchool\PhpWorkshop\Utils\ArrayObject;
 use PhpSchool\PhpWorkshopTest\ResultRenderer\AbstractResultRendererTest;
-use Prophecy\PhpUnit\ProphecyTrait;
 
 /**
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
 class RequestFailureRendererTest extends AbstractResultRendererTest
 {
-    use ProphecyTrait;
-
     public function testRender() : void
     {
         $failure  = new RequestFailure(new ArrayObject, 'EXPECTED OUTPUT', 'ACTUAL OUTPUT');

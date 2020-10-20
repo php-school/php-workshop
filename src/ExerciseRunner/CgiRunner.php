@@ -215,7 +215,7 @@ class CgiRunner implements ExerciseRunnerInterface
         ];
 
         $cgi = sprintf('php-cgi%s', DIRECTORY_SEPARATOR === '\\' ? '.exe' : '');
-        $cgiBinary  = sprintf(
+        $cgiBinary = sprintf(
             '%s -dalways_populate_raw_post_data=-1 -dhtml_errors=0 -dexpose_php=0',
             realpath(sprintf('%s/%s', str_replace('\\', '/', dirname(PHP_BINARY)), $cgi))
         );
@@ -229,7 +229,7 @@ class CgiRunner implements ExerciseRunnerInterface
             $env[sprintf('HTTP_%s', strtoupper($name))] = implode(", ", $values);
         }
 
-        return new Process($cmd, null, $env, null, 10);
+        return Process::fromShellCommandline($cmd, null, $env, null, 10);
     }
 
     /**

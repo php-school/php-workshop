@@ -38,7 +38,7 @@ class PrepareSolutionListener
 
             if (!file_exists(sprintf('%s/vendor', $solution->getBaseDirectory()))) {
                 $process = new Process(
-                    sprintf('%s install --no-interaction', $this->locateComposer()),
+                    [$this->locateComposer(), 'install', '--no-interaction'],
                     $solution->getBaseDirectory()
                 );
                 $process->run();

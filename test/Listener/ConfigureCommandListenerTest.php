@@ -10,15 +10,12 @@ use PhpSchool\PhpWorkshop\Listener\ConfigureCommandListener;
 use PhpSchool\PhpWorkshop\UserState;
 use PhpSchool\PhpWorkshopTest\Asset\CliExerciseImpl;
 use PHPUnit\Framework\TestCase;
-use Prophecy\PhpUnit\ProphecyTrait;
 
 /**
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
 class ConfigureCommandListenerTest extends TestCase
 {
-    use ProphecyTrait;
-
     /**
      * @dataProvider configurableCommands
      */

@@ -5,7 +5,6 @@ namespace PhpSchool\PhpWorkshopTest\ResultRenderer\Cgi;
 use PhpSchool\PhpWorkshop\Result\Cgi\RequestFailure;
 use PhpSchool\PhpWorkshop\ResultRenderer\Cgi\RequestFailureRenderer;
 use PhpSchool\PhpWorkshopTest\ResultRenderer\AbstractResultRendererTest;
-use Prophecy\PhpUnit\ProphecyTrait;
 use Zend\Diactoros\Request;
 
 /**
@@ -13,8 +12,6 @@ use Zend\Diactoros\Request;
  */
 class RequestFailureRendererTest extends AbstractResultRendererTest
 {
-    use ProphecyTrait;
-
     public function testRenderWhenOnlyHeadersDifferent() : void
     {
         $failure = new RequestFailure(

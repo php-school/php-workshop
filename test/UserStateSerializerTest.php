@@ -8,7 +8,6 @@ use PhpSchool\PhpWorkshop\UserState;
 use PhpSchool\PhpWorkshop\UserStateSerializer;
 use PhpSchool\PhpWorkshopTest\Asset\CliExerciseInterface;
 use PHPUnit\Framework\TestCase;
-use Prophecy\PhpUnit\ProphecyTrait;
 
 /**
  * Class UserStateSerializerTest
@@ -17,8 +16,6 @@ use Prophecy\PhpUnit\ProphecyTrait;
  */
 class UserStateSerializerTest extends TestCase
 {
-    use ProphecyTrait;
-
     /**
      * @var string
      */

@@ -12,15 +12,12 @@ use PhpSchool\PhpWorkshop\Output\StdOutput;
 use PhpSchool\PhpWorkshop\UserState;
 use PhpSchool\PhpWorkshopTest\Asset\CliExerciseImpl;
 use PHPUnit\Framework\TestCase;
-use Prophecy\PhpUnit\ProphecyTrait;
 
 /**
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
 class RunCommandTest extends TestCase
 {
-    use ProphecyTrait;
-
     public function test() : void
     {
         $input = new Input('appName', ['program' => 'solution.php']);

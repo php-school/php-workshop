@@ -25,21 +25,13 @@ jobs:
           php-version: ${{ matrix.php }}
           tools: composer:v2
 
-      - name: Install on PHP 7.2
-        if: matrix.php == '7.2'
-        run: |
-          composer install --ignore-platform-reqs
-          composer remove --dev phpspec/prophecy-phpunit --no-update
-          composer update
-          find test -name "*.php" -exec sed -i 's/use ProphecyTrait;//g' {} \;
-
       - name: Install Dependencies
         run: composer install --prefer-dist
 
       - name: Run phpunit tests
         run: |
           mkdir -p build/logs
-          vendor/bin/phpunit --coverage-clover ./build/logs/clover.xml
+          vendor/bin/phpunit-simple --coverage-clover ./build/logs/clover.xml
 
       - name: Run phpcs
         run: composer cs

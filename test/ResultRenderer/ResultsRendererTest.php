@@ -21,7 +21,6 @@ use PhpSchool\PhpWorkshop\Solution\SingleFileSolution;
 use PhpSchool\PhpWorkshop\UserState;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
-use Prophecy\PhpUnit\ProphecyTrait;
 
 /**
  * Class ResultsRendererTest
@@ -30,8 +29,6 @@ use Prophecy\PhpUnit\ProphecyTrait;
  */
 class ResultsRendererTest extends TestCase
 {
-    use ProphecyTrait;
-
     public function testRenderIndividualResult() : void
     {
         $color = new Color;

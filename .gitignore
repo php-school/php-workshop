@@ -2,3 +2,4 @@
 /.idea
 program.php
 .phpunit.result.cache
+/build

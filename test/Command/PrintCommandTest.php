@@ -10,7 +10,6 @@ use PhpSchool\PhpWorkshop\ExerciseRepository;
 use PhpSchool\PhpWorkshop\MarkdownRenderer;
 use PhpSchool\PhpWorkshop\Output\OutputInterface;
 use PhpSchool\PhpWorkshop\UserState;
-use Prophecy\PhpUnit\ProphecyTrait;
 
 /**
  * Class PrintCommandTest
@@ -19,8 +18,6 @@ use Prophecy\PhpUnit\ProphecyTrait;
  */
 class PrintCommandTest extends TestCase
 {
-    use ProphecyTrait;
-
     public function testExerciseIsPrintedIfAssigned() : void
     {
         $file = tempnam(sys_get_temp_dir(), 'pws');

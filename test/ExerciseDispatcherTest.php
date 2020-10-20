@@ -23,14 +23,11 @@ use PhpSchool\PhpWorkshop\ResultAggregator;
 use PhpSchool\PhpWorkshopTest\Asset\CliExerciseImpl;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
-use Prophecy\PhpUnit\ProphecyTrait;
 use RuntimeException;
 use Symfony\Component\Filesystem\Filesystem;
 
 class ExerciseDispatcherTest extends TestCase
 {
-    use ProphecyTrait;
-
     /**
      * @var Filesystem
      */

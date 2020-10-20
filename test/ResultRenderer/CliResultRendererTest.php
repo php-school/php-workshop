@@ -8,15 +8,12 @@ use PhpSchool\PhpWorkshop\Result\Cli\CliResult;
 use PhpSchool\PhpWorkshop\ResultRenderer\Cli\RequestFailureRenderer;
 use PhpSchool\PhpWorkshop\ResultRenderer\CliResultRenderer;
 use PhpSchool\PhpWorkshop\Utils\ArrayObject;
-use Prophecy\PhpUnit\ProphecyTrait;
 
 /**
  * @author Aydin Hassan <aydin@hotmail.co.uk>
  */
 class CliResultRendererTest extends AbstractResultRendererTest
 {
-    use ProphecyTrait;
-
     public function testNothingIsOutputIfNoFailures() : void
     {
         $result = new CliResult([new Success(new ArrayObject)]);
