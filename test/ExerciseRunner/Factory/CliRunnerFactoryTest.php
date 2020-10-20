@@ -11,9 +11,6 @@ use PhpSchool\PhpWorkshop\ExerciseRunner\Factory\CliRunnerFactory;
 use PhpSchool\PhpWorkshopTest\Asset\CliExerciseImpl;
 use PHPUnit\Framework\TestCase;
 
-/**
- * @author Aydin Hassan <aydin@hotmail.co.uk>
- */
 class CliRunnerFactoryTest extends TestCase
 {
     /**
@@ -26,7 +23,7 @@ class CliRunnerFactoryTest extends TestCase
      */
     private $factory;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->eventDispatcher = $this->createMock(EventDispatcher::class);
         $this->factory = new CliRunnerFactory($this->eventDispatcher);

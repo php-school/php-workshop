@@ -26,11 +26,6 @@ use Prophecy\Argument;
 use RuntimeException;
 use Symfony\Component\Filesystem\Filesystem;
 
-/**
- * Class ExerciseDispatcherTest
- * @package PhpSchool\PhpWorkshopTest
- * @author Aydin Hassan <aydin@hotmail.co.uk>
- */
 class ExerciseDispatcherTest extends TestCase
 {
     /**
@@ -562,7 +557,7 @@ class ExerciseDispatcherTest extends TestCase
         $this->assertTrue($exerciseDispatcher->run($exercise, $input, $output));
     }
 
-    public function tearDown()
+    public function tearDown(): void
     {
         $this->filesystem->remove(dirname($this->file));
     }

@@ -11,11 +11,6 @@ use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpSchool\PhpWorkshop\Result\Failure;
 use PhpSchool\PhpWorkshop\Result\Success;
 
-/**
- * Class PhpLintCheckTest
- * @package PhpSchool\PhpWorkshopTest
- * @author Aydin Hassan <aydin@hotmail.co.uk>
- */
 class PhpLintCheckTest extends TestCase
 {
 
@@ -29,7 +24,7 @@ class PhpLintCheckTest extends TestCase
      */
     private $exercise;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->check = new PhpLintCheck;
         $this->exercise = $this->createMock(ExerciseInterface::class);

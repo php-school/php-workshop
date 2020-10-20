@@ -3,7 +3,6 @@
 namespace PhpSchool\PhpWorkshopTest\Check;
 
 use PhpParser\ParserFactory;
-use PhpSchool\PhpWorkshop\Check\CheckInterface;
 use PhpSchool\PhpWorkshop\Check\CodeParseCheck;
 use PhpSchool\PhpWorkshop\Check\SimpleCheckInterface;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
@@ -13,11 +12,6 @@ use PhpSchool\PhpWorkshop\Result\Failure;
 use PhpSchool\PhpWorkshop\Result\Success;
 use PHPUnit\Framework\TestCase;
 
-/**
- * Class CodeParseCheckTest
- * @package PhpSchool\PhpWorkshopTest\Check
- * @author Aydin Hassan <aydin@hotmail.co.uk>
- */
 class CodeParseCheckTest extends TestCase
 {
     /**
@@ -75,7 +69,7 @@ class CodeParseCheckTest extends TestCase
         $this->assertEquals('Code Parse Check', $result->getCheckName());
     }
 
-    public function tearDown()
+    public function tearDown(): void
     {
         unlink($this->file);
         rmdir(dirname($this->file));

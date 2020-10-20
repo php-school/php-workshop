@@ -7,11 +7,6 @@ use PhpSchool\Terminal\Terminal;
 use PHPUnit\Framework\TestCase;
 use PhpSchool\PhpWorkshop\Output\StdOutput;
 
-/**
- * Class StdOutputTest
- * @package PhpSchool\PhpWorkshopTest
- * @author Aydin Hassan <aydin@hotmail.co.uk>
- */
 class StdOutputTest extends TestCase
 {
     /**
@@ -24,7 +19,7 @@ class StdOutputTest extends TestCase
      */
     private $output;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->color = new Color();
         $this->color->setForceStyle(true);
