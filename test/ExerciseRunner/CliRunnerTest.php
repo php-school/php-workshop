@@ -215,7 +215,9 @@ class CliRunnerTest extends TestCase
             ->method('getArgs')
             ->willReturn([[1, 2, 3]]);
 
-        $this->expectOutputRegex('/(PHP )?Parse error: syntax error, unexpected end of file, expecting \'[,;]\' or \'[;,]\' /');
+        $this->expectOutputRegex(
+            '/(PHP )?Parse error: syntax error, unexpected end of file, expecting \'[,;]\' or \'[;,]\' /'
+        );
 
         $success = $this->runner->run(new Input('app', ['program' => __DIR__ . '/../res/cli/user-error.php']), $output);
         $this->assertFalse($success);

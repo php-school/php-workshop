@@ -132,4 +132,3 @@ class PrepareSolutionListenerTest extends TestCase
         $this->filesystem->remove(dirname($this->file));
     }
 }
-
