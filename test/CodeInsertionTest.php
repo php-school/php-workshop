@@ -2,8 +2,8 @@
 
 namespace PhpSchool\PhpWorkshopTest;
 
-use Assert\InvalidArgumentException;
 use PhpSchool\PhpWorkshop\CodeInsertion;
+use PhpSchool\PhpWorkshop\Exception\InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 
 class CodeInsertionTest extends TestCase
