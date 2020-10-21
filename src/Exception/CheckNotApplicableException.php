@@ -17,11 +17,11 @@ class CheckNotApplicableException extends RuntimeException
      *
      * @param CheckInterface $check The check Instance.
      * @param ExerciseInterface $exercise The exercise Instance.
-     * @return static
+     * @return self
      */
     public static function fromCheckAndExercise(CheckInterface $check, ExerciseInterface $exercise)
     {
-        return new static(
+        return new self(
             sprintf(
                 'Check: "%s" cannot process exercise: "%s" with type: "%s"',
                 $check->getName(),

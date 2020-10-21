@@ -59,7 +59,7 @@ class VerifyCommandTest extends TestCase
         $renderer = $this->createMock(ResultsRenderer::class);
 
         $results = new ResultAggregator();
-        $results->add(new Success($this->check));
+        $results->add(Success::fromCheck($this->check));
 
         $dispatcher = $this->createMock(ExerciseDispatcher::class);
 
@@ -106,7 +106,7 @@ class VerifyCommandTest extends TestCase
         $renderer = $this->createMock(ResultsRenderer::class);
 
         $results = new ResultAggregator();
-        $results->add(new Failure($this->check, 'cba'));
+        $results->add(Failure::fromCheckAndReason($this->check, 'cba'));
 
         $dispatcher = $this->createMock(ExerciseDispatcher::class);
 

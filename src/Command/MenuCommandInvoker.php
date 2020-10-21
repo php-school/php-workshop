@@ -25,7 +25,7 @@ class MenuCommandInvoker
     /**
      * @param CliMenu $menu
      */
-    public function __invoke(CliMenu $menu)
+    public function __invoke(CliMenu $menu): void
     {
         $menu->close();
         $command = $this->command;

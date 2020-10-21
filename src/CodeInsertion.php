@@ -23,7 +23,7 @@ class CodeInsertion
     public const TYPE_AFTER    = 'after';
 
     /**
-     * @var array
+     * @var array<string>
      */
     private $types = [
         self::TYPE_BEFORE,
@@ -47,11 +47,10 @@ class CodeInsertion
      * @param string $type
      * @param string $code
      */
-    public function __construct($type, $code)
+    public function __construct(string $type, string $code)
     {
         Assertion::inArray($type, $this->types);
-        Assertion::string($code);
-        
+
         $this->type = $type;
         $this->code = $code;
     }
@@ -61,7 +60,7 @@ class CodeInsertion
      *
      * @return string
      */
-    public function getType()
+    public function getType(): string
     {
         return $this->type;
     }
@@ -71,7 +70,7 @@ class CodeInsertion
      *
      * @return string
      */
-    public function getCode()
+    public function getCode(): string
     {
         return $this->code;
     }

@@ -12,6 +12,8 @@ use PhpSchool\PhpWorkshop\Result\ResultInterface;
 /**
  * This class is a container to hold all the results produced
  * throughout the verification of a students solution.
+ *
+ * @implements IteratorAggregate<int, ResultInterface>
  */
 class ResultAggregator implements IteratorAggregate
 {
@@ -25,7 +27,7 @@ class ResultAggregator implements IteratorAggregate
      *
      * @param ResultInterface $result
      */
-    public function add(ResultInterface $result)
+    public function add(ResultInterface $result): void
     {
         $this->results[] = $result;
     }
@@ -36,7 +38,7 @@ class ResultAggregator implements IteratorAggregate
      *
      * @return bool
      */
-    public function isSuccessful()
+    public function isSuccessful(): bool
     {
         return count(
             array_filter($this->results, function ($result) {
@@ -51,9 +53,9 @@ class ResultAggregator implements IteratorAggregate
     /**
      * Get an iterator in order to `foreach` the results.
      *
-     * @return ArrayIterator
+     * @return ArrayIterator<int, ResultInterface>
      */
-    public function getIterator()
+    public function getIterator(): ArrayIterator
     {
         return new ArrayIterator($this->results);
     }

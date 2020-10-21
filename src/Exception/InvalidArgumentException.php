@@ -12,11 +12,11 @@ class InvalidArgumentException extends \InvalidArgumentException
      *
      * @param string $expected
      * @param mixed $actual
-     * @return static
+     * @return self
      */
-    public static function typeMisMatch($expected, $actual)
+    public static function typeMisMatch(string $expected, $actual): self
     {
-        return new static(
+        return new self(
             sprintf(
                 'Expected: "%s" Received: "%s"',
                 $expected,
@@ -31,11 +31,11 @@ class InvalidArgumentException extends \InvalidArgumentException
      * @param string $parameterName
      * @param mixed[] $allowedValues
      * @param mixed $actualValue
-     * @return static
+     * @return self
      */
-    public static function notValidParameter($parameterName, array $allowedValues, $actualValue)
+    public static function notValidParameter(string $parameterName, array $allowedValues, $actualValue): self
     {
-        return new static(
+        return new self(
             sprintf(
                 'Parameter: "%s" can only be one of: "%s" Received: "%s"',
                 $parameterName,
@@ -47,12 +47,12 @@ class InvalidArgumentException extends \InvalidArgumentException
 
     /**
      * @param object $object
-     * @param string $requiredInterface
-     * @return static
+     * @param class-string $requiredInterface
+     * @return self
      */
-    public static function missingImplements($object, $requiredInterface)
+    public static function missingImplements($object, string $requiredInterface): self
     {
-        return new static(
+        return new self(
             sprintf(
                 '"%s" is required to implement "%s", but it does not',
                 get_class($object),
@@ -62,17 +62,17 @@ class InvalidArgumentException extends \InvalidArgumentException
     }
 
     /**
-     * @param $value
+     * @param mixed $value
      * @return string
      */
-    private static function stringify($value)
+    private static function stringify($value): string
     {
         if (is_object($value)) {
             return get_class($value);
         }
 
         if (is_array($value)) {
-            return implode('", "', array_map([static::class, 'stringify'], $value));
+            return implode('", "', array_map([self::class, 'stringify'], $value));
         }
 
         if (is_bool($value)) {
@@ -82,7 +82,6 @@ class InvalidArgumentException extends \InvalidArgumentException
         if (is_scalar($value)) {
             return (string) $value;
         }
-
 
         return 'unknown';
     }

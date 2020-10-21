@@ -21,7 +21,7 @@ class CommandArgument
      * @param string $name The name of the argument
      * @param bool $optional Whether it is required or not
      */
-    public function __construct($name, $optional = false)
+    public function __construct(string $name, bool $optional = false)
     {
         $this->name = $name;
         $this->optional = $optional;
@@ -29,20 +29,20 @@ class CommandArgument
 
     /**
      * @param string $name
-     * @return static
+     * @return self
      */
     public static function optional($name)
     {
-        return new static($name, true);
+        return new self($name, true);
     }
 
     /**
      * @param string $name
-     * @return static
+     * @return self
      */
     public static function required($name)
     {
-        return new static($name);
+        return new self($name);
     }
 
     /**

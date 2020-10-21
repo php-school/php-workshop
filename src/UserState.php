@@ -2,20 +2,21 @@
 
 namespace PhpSchool\PhpWorkshop;
 
+use PhpSchool\PhpWorkshop\Exception\ExerciseNotAssignedException;
+
 /**
  * This class represents the current state of the user. Which exercises she/he has completed and
  * which is the current exercise being attempted.
  */
 class UserState
 {
-
     /**
-     * @var string
+     * @var string|null
      */
     private $currentExercise;
 
     /**
-     * @var array
+     * @var array<string>
      */
     private $completedExercises;
 
@@ -23,10 +24,10 @@ class UserState
      * Take an array of completed exercises (the exercise names) and a string containing the current
      * exercise.
      *
-     * @param array $completedExercises An array of exercise names.
-     * @param string $currentExercise Can be null in-case the student did not start an exercise yet.
+     * @param array<string> $completedExercises An array of exercise names.
+     * @param string|null $currentExercise Can be null in-case the student did not start an exercise yet.
      */
-    public function __construct(array $completedExercises = [], $currentExercise = null)
+    public function __construct(array $completedExercises = [], string $currentExercise = null)
     {
         $this->currentExercise = $currentExercise;
         $this->completedExercises = $completedExercises;
@@ -37,9 +38,9 @@ class UserState
      *
      * @param string $exercise
      */
-    public function addCompletedExercise($exercise)
+    public function addCompletedExercise(string $exercise): void
     {
-        if (!in_array($exercise, $this->completedExercises)) {
+        if (!in_array($exercise, $this->completedExercises, true)) {
             $this->completedExercises[] = $exercise;
         }
     }
@@ -49,7 +50,7 @@ class UserState
      *
      * @param string $exercise
      */
-    public function setCurrentExercise($exercise)
+    public function setCurrentExercise(string $exercise): void
     {
         $this->currentExercise = $exercise;
     }
@@ -59,17 +60,21 @@ class UserState
      *
      * @return string
      */
-    public function getCurrentExercise()
+    public function getCurrentExercise(): string
     {
+        if (null === $this->currentExercise) {
+            throw ExerciseNotAssignedException::notAssigned();
+        }
+
         return $this->currentExercise;
     }
 
     /**
      * Get an array of the completed exercises (the exercise names).
      *
-     * @return array
+     * @return array<string>
      */
-    public function getCompletedExercises()
+    public function getCompletedExercises(): array
     {
         return $this->completedExercises;
     }
@@ -79,7 +84,7 @@ class UserState
      *
      * @return bool
      */
-    public function isAssignedExercise()
+    public function isAssignedExercise(): bool
     {
         return null !== $this->currentExercise;
     }
@@ -90,8 +95,8 @@ class UserState
      * @param string $exercise
      * @return bool
      */
-    public function completedExercise($exercise)
+    public function completedExercise(string $exercise): bool
     {
-        return in_array($exercise, $this->completedExercises);
+        return in_array($exercise, $this->completedExercises, true);
     }
 }

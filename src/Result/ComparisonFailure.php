@@ -38,11 +38,11 @@ class ComparisonFailure implements FailureInterface
      * @param string $name
      * @param string $expectedValue
      * @param string $actualValue
-     * @return static
+     * @return self
      */
     public static function fromNameAndValues($name, $expectedValue, $actualValue)
     {
-        return new static($name, $expectedValue, $actualValue);
+        return new self($name, $expectedValue, $actualValue);
     }
 
     /**

@@ -10,7 +10,6 @@ use Psr\Http\Message\RequestInterface;
  */
 class CgiExecuteEvent extends Event
 {
-
     /**
      * @var RequestInterface
      */
@@ -19,9 +18,9 @@ class CgiExecuteEvent extends Event
     /**
      * @param string $name The event name.
      * @param RequestInterface $request The request that will be performed.
-     * @param array $parameters The event parameters.
+     * @param array<mixed> $parameters The event parameters.
      */
-    public function __construct($name, RequestInterface $request, array $parameters = [])
+    public function __construct(string $name, RequestInterface $request, array $parameters = [])
     {
         $parameters['request'] = $request;
         parent::__construct($name, $parameters);
@@ -32,9 +31,9 @@ class CgiExecuteEvent extends Event
      * Add a header to the request.
      *
      * @param string $header
-     * @param string|string[] $value
+     * @param string|array<string> $value
      */
-    public function addHeaderToRequest($header, $value)
+    public function addHeaderToRequest(string $header, $value): void
     {
         $this->request = $this->request->withHeader($header, $value);
     }
@@ -44,7 +43,7 @@ class CgiExecuteEvent extends Event
      *
      * @param callable $callback
      */
-    public function modifyRequest(callable $callback)
+    public function modifyRequest(callable $callback): void
     {
         $this->request = $callback($this->request);
     }
@@ -54,7 +53,7 @@ class CgiExecuteEvent extends Event
      *
      * @return RequestInterface
      */
-    public function getRequest()
+    public function getRequest(): RequestInterface
     {
         return $this->request;
     }

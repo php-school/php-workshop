@@ -31,11 +31,14 @@ class FileExistsCheck implements SimpleCheckInterface
      */
     public function check(ExerciseInterface $exercise, Input $input): ResultInterface
     {
-        if (file_exists($input->getArgument('program'))) {
+        if (file_exists($input->getRequiredArgument('program'))) {
             return Success::fromCheck($this);
         }
 
-        return Failure::fromCheckAndReason($this, sprintf('File: "%s" does not exist', $input->getArgument('program')));
+        return Failure::fromCheckAndReason(
+            $this,
+            sprintf('File: "%s" does not exist', $input->getRequiredArgument('program'))
+        );
     }
 
     /**

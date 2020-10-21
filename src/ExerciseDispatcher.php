@@ -65,10 +65,10 @@ class ExerciseDispatcher
         EventDispatcher $eventDispatcher,
         CheckRepository $checkRepository
     ) {
-        $this->runnerManager    = $runnerManager;
-        $this->results          = $resultAggregator;
-        $this->eventDispatcher  = $eventDispatcher;
-        $this->checkRepository  = $checkRepository;
+        $this->runnerManager = $runnerManager;
+        $this->results = $resultAggregator;
+        $this->eventDispatcher = $eventDispatcher;
+        $this->checkRepository = $checkRepository;
     }
 
     /**
@@ -76,10 +76,10 @@ class ExerciseDispatcher
      * the check specified as the first argument will also be executed. Throws an `InvalidArgumentException`
      * if the check does not exist in the `CheckRepository`.
      *
-     * @param string $requiredCheck The name of the required check.
+     * @param class-string $requiredCheck The name of the required check.
      * @throws InvalidArgumentException If the check does not exist.
      */
-    public function requireCheck($requiredCheck)
+    public function requireCheck(string $requiredCheck): void
     {
         if (!$this->checkRepository->has($requiredCheck)) {
             throw new InvalidArgumentException(sprintf('Check: "%s" does not exist', $requiredCheck));
@@ -124,7 +124,7 @@ class ExerciseDispatcher
      * @throws ExerciseNotConfiguredException If the exercise does not implement the correct interface based on
      * the checks required.
      */
-    public function verify(ExerciseInterface $exercise, Input $input)
+    public function verify(ExerciseInterface $exercise, Input $input): ResultAggregator
     {
         $exercise->configure($this);
 
@@ -176,7 +176,7 @@ class ExerciseDispatcher
      * @param OutputInterface $output An output instance capable of writing to stdout.
      * @return bool Whether the solution ran successfully or not.
      */
-    public function run(ExerciseInterface $exercise, Input $input, OutputInterface $output)
+    public function run(ExerciseInterface $exercise, Input $input, OutputInterface $output): bool
     {
         $exercise->configure($this);
         $this->eventDispatcher->dispatch(new ExerciseRunnerEvent('run.start', $exercise, $input));
@@ -193,12 +193,12 @@ class ExerciseDispatcher
     }
 
     /**
-     * @param CheckInterface[] $checks
+     * @param SimpleCheckInterface[] $checks
      * @param ExerciseInterface $exercise
      * @throws CheckNotApplicableException
      * @throws ExerciseNotConfiguredException
      */
-    private function validateChecks(array $checks, ExerciseInterface $exercise)
+    private function validateChecks(array $checks, ExerciseInterface $exercise): void
     {
         foreach ($checks as $check) {
             if (!$check->canRun($exercise->getType())) {
@@ -217,7 +217,7 @@ class ExerciseDispatcher
      *
      * @return EventDispatcher
      */
-    public function getEventDispatcher()
+    public function getEventDispatcher(): EventDispatcher
     {
         return $this->eventDispatcher;
     }

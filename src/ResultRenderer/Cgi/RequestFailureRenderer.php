@@ -30,7 +30,7 @@ class RequestFailureRenderer implements ResultRendererInterface
      * @param ResultsRenderer $renderer
      * @return string
      */
-    public function render(ResultsRenderer $renderer)
+    public function render(ResultsRenderer $renderer): string
     {
         $output = '';
         if ($this->result->headersDifferent()) {
@@ -61,12 +61,12 @@ class RequestFailureRenderer implements ResultRendererInterface
     }
 
     /**
-     * @param array $headers
+     * @param array<string, string> $headers
      * @param ResultsRenderer $renderer
      * @param bool $actual
      * @return string
      */
-    private function headers(array $headers, ResultsRenderer $renderer, $actual = true)
+    private function headers(array $headers, ResultsRenderer $renderer, $actual = true): string
     {
         $indent = false;
         $output = '';

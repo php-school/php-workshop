@@ -24,7 +24,7 @@ class CheckExerciseAssignedListener
     /**
      * @param Event $event
      */
-    public function __invoke(Event $event)
+    public function __invoke(Event $event): void
     {
         /** @var CommandDefinition $command */
         $command = $event->getParameter('command');

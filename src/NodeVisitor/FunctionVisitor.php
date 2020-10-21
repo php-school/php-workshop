@@ -12,27 +12,27 @@ use PhpParser\NodeVisitorAbstract;
 class FunctionVisitor extends NodeVisitorAbstract
 {
     /**
-     * @var array
+     * @var array<string>
      */
     private $requiredFunctions;
     /**
-     * @var array
+     * @var array<string>
      */
     private $bannedFunctions;
 
     /**
-     * @var array
+     * @var array<FuncCall>
      */
     private $requiredUsages = [];
 
     /**
-     * @var array
+     * @var array<FuncCall>
      */
     private $bannedUsages = [];
 
     /**
-     * @param array $requiredFunctions
-     * @param array $bannedFunctions
+     * @param array<string> $requiredFunctions
+     * @param array<string> $bannedFunctions
      */
     public function __construct(array $requiredFunctions, array $bannedFunctions)
     {
@@ -42,41 +42,44 @@ class FunctionVisitor extends NodeVisitorAbstract
 
     /**
      * @param Node $node
+     * @return null
      */
     public function leaveNode(Node $node)
     {
-        if ($node instanceof FuncCall) {
+        if ($node instanceof FuncCall && $node->name instanceof Node\Name) {
             $name = $node->name->__toString();
-            if (in_array($name, $this->requiredFunctions)) {
+            if (in_array($name, $this->requiredFunctions, true)) {
                 $this->requiredUsages[] = $node;
             }
 
-            if (in_array($name, $this->bannedFunctions)) {
+            if (in_array($name, $this->bannedFunctions, true)) {
                 $this->bannedUsages[] = $node;
             }
         }
+
+        return null;
     }
 
     /**
      * @return bool
      */
-    public function hasUsedBannedFunctions()
+    public function hasUsedBannedFunctions(): bool
     {
         return count($this->bannedUsages) > 0;
     }
 
     /**
-     * @return array
+     * @return array<FuncCall>
      */
-    public function getBannedUsages()
+    public function getBannedUsages(): array
     {
         return $this->bannedUsages;
     }
 
     /**
-     * @return array
+     * @return array<FuncCall>
      */
-    public function getRequiredUsages()
+    public function getRequiredUsages(): array
     {
         return $this->requiredUsages;
     }
@@ -84,10 +87,14 @@ class FunctionVisitor extends NodeVisitorAbstract
     /**
      * @return bool
      */
-    public function hasMetFunctionRequirements()
+    public function hasMetFunctionRequirements(): bool
     {
         $metRequires = array_filter($this->requiredFunctions, function ($function) {
             foreach ($this->getRequiredUsages() as $usage) {
+                if (!$usage->name instanceof Node\Name) {
+                    continue;
+                }
+
                 if ($usage->name->__toString() === $function) {
                     return true;
                 }
@@ -99,12 +106,16 @@ class FunctionVisitor extends NodeVisitorAbstract
     }
 
     /**
-     * @return array
+     * @return array<string>
      */
-    public function getMissingRequirements()
+    public function getMissingRequirements(): array
     {
         return array_filter($this->requiredFunctions, function ($function) {
             foreach ($this->getRequiredUsages() as $usage) {
+                if (!$usage->name instanceof Node\Name) {
+                    continue;
+                }
+
                 if ($usage->name->__toString() === $function) {
                     return false;
                 }

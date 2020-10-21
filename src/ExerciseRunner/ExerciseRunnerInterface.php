@@ -19,14 +19,14 @@ interface ExerciseRunnerInterface
      *
      * @return string
      */
-    public function getName();
+    public function getName(): string;
 
     /**
      * Get an array of the class names of the required checks this runner needs.
      *
-     * @return array
+     * @return array<class-string>
      */
-    public function getRequiredChecks();
+    public function getRequiredChecks(): array;
 
     /**
      * Verify a solution to an exercise. Verification involves executing the reference solution
@@ -41,7 +41,7 @@ interface ExerciseRunnerInterface
      * @param Input $input The command line arguments passed to the command.
      * @return ResultInterface The result of the check.
      */
-    public function verify(Input $input);
+    public function verify(Input $input): ResultInterface;
 
     /**
      * Run a solution to an exercise. This simply run's the student's solution with the correct input from the exercise
@@ -52,5 +52,5 @@ interface ExerciseRunnerInterface
      * @param OutputInterface $output A wrapper around STDOUT.
      * @return bool If the solution was successfully executed, eg. exit code was 0.
      */
-    public function run(Input $input, OutputInterface $output);
+    public function run(Input $input, OutputInterface $output): bool;
 }

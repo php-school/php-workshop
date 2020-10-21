@@ -37,11 +37,11 @@ class GenericFailure extends Failure implements FailureInterface
      *
      * @param RequestInterface $request The request that caused the failure.
      * @param string|null $reason The reason (if any) of the failure.
-     * @return static The result.
+     * @return self The result.
      */
     public static function fromRequestAndReason(RequestInterface $request, $reason)
     {
-        return new static($request, $reason);
+        return new self($request, $reason);
     }
 
     /**
@@ -49,11 +49,11 @@ class GenericFailure extends Failure implements FailureInterface
      *
      * @param RequestInterface $request The request that caused the failure.
      * @param CodeExecutionException $e The exception.
-     * @return static The result.
+     * @return self The result.
      */
     public static function fromRequestAndCodeExecutionFailure(RequestInterface $request, CodeExecutionException $e)
     {
-        return new static($request, $e->getMessage());
+        return new self($request, $e->getMessage());
     }
 
     /**

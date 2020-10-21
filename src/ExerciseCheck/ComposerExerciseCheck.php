@@ -12,7 +12,7 @@ interface ComposerExerciseCheck
      * Returns an array of composer package names that student's solution should
      * have required via composer.
      *
-     * @return array An array of composer package names.
+     * @return array<string> An array of composer package names.
      */
-    public function getRequiredPackages();
+    public function getRequiredPackages(): array;
 }

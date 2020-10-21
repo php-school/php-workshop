@@ -27,13 +27,17 @@ class ResetProgress
     /**
      * @param CliMenu $menu
      */
-    public function __invoke(CliMenu $menu)
+    public function __invoke(CliMenu $menu): void
     {
         $this->userStateSerializer->serialize(new UserState());
 
-        $items = $menu
-            ->getParent()
-            ->getItems();
+        $parent = $menu->getParent();
+
+        if (!$parent) {
+            return;
+        }
+
+        $items = $parent->getItems();
 
         foreach ($items as $item) {
             $item->hideItemExtra();

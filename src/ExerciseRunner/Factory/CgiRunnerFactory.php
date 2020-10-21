@@ -5,6 +5,7 @@ namespace PhpSchool\PhpWorkshop\ExerciseRunner\Factory;
 use PhpSchool\PhpWorkshop\CommandArgument;
 use PhpSchool\PhpWorkshop\CommandDefinition;
 use PhpSchool\PhpWorkshop\Event\EventDispatcher;
+use PhpSchool\PhpWorkshop\Exercise\CgiExercise;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseType;
 use PhpSchool\PhpWorkshop\ExerciseRunner\CgiRunner;
@@ -46,7 +47,7 @@ class CgiRunnerFactory implements ExerciseRunnerFactoryInterface
      * @param ExerciseInterface $exercise
      * @return bool
      */
-    public function supports(ExerciseInterface $exercise)
+    public function supports(ExerciseInterface $exercise): bool
     {
         return $exercise->getType()->getValue() === self::$type;
     }
@@ -56,7 +57,7 @@ class CgiRunnerFactory implements ExerciseRunnerFactoryInterface
      *
      * @param CommandDefinition $commandDefinition
      */
-    public function configureInput(CommandDefinition $commandDefinition)
+    public function configureInput(CommandDefinition $commandDefinition): void
     {
         $commandDefinition->addArgument(CommandArgument::required('program'));
     }
@@ -64,10 +65,10 @@ class CgiRunnerFactory implements ExerciseRunnerFactoryInterface
     /**
      * Create and return an instance of the runner.
      *
-     * @param ExerciseInterface $exercise
+     * @param ExerciseInterface&CgiExercise $exercise
      * @return ExerciseRunnerInterface
      */
-    public function create(ExerciseInterface $exercise)
+    public function create(ExerciseInterface $exercise): ExerciseRunnerInterface
     {
         return new CgiRunner($exercise, $this->eventDispatcher, $this->requestRenderer);
     }

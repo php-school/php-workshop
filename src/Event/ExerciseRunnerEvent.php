@@ -10,7 +10,6 @@ use PhpSchool\PhpWorkshop\Input\Input;
  */
 class ExerciseRunnerEvent extends Event
 {
-
     /**
      * @var ExerciseInterface
      */
@@ -25,9 +24,9 @@ class ExerciseRunnerEvent extends Event
      * @param string $name
      * @param ExerciseInterface $exercise
      * @param Input $input
-     * @param array $parameters
+     * @param array<mixed> $parameters
      */
-    public function __construct($name, ExerciseInterface $exercise, Input $input, array $parameters = [])
+    public function __construct(string $name, ExerciseInterface $exercise, Input $input, array $parameters = [])
     {
         $parameters['input'] = $input;
         $parameters['exercise'] = $exercise;
@@ -40,7 +39,7 @@ class ExerciseRunnerEvent extends Event
     /**
      * @return Input
      */
-    public function getInput()
+    public function getInput(): Input
     {
         return $this->input;
     }
@@ -48,7 +47,7 @@ class ExerciseRunnerEvent extends Event
     /**
      * @return ExerciseInterface
      */
-    public function getExercise()
+    public function getExercise(): ExerciseInterface
     {
         return $this->exercise;
     }

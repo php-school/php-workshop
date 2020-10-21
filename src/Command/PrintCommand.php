@@ -2,6 +2,7 @@
 
 namespace PhpSchool\PhpWorkshop\Command;
 
+use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpSchool\PhpWorkshop\ExerciseRepository;
 use PhpSchool\PhpWorkshop\MarkdownRenderer;
 use PhpSchool\PhpWorkshop\Output\OutputInterface;
@@ -66,7 +67,7 @@ class PrintCommand
         $currentExercise = $this->userState->getCurrentExercise();
         $exercise = $this->exerciseRepository->findByName($currentExercise);
 
-        $markDown = file_get_contents($exercise->getProblem());
+        $markDown = (string) file_get_contents($exercise->getProblem());
         $doc = $this->markdownRenderer->render($markDown);
         $doc = str_replace('{appname}', $this->appName, $doc);
         $this->output->write($doc);

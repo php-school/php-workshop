@@ -20,7 +20,7 @@ class RunnerManager
     /**
      * @param ExerciseRunnerFactoryInterface $factory
      */
-    public function addFactory(ExerciseRunnerFactoryInterface $factory)
+    public function addFactory(ExerciseRunnerFactoryInterface $factory): void
     {
         $this->factories[] = $factory;
     }
@@ -29,7 +29,7 @@ class RunnerManager
      * @param ExerciseInterface $exercise
      * @param CommandDefinition $commandDefinition
      */
-    public function configureInput(ExerciseInterface $exercise, CommandDefinition $commandDefinition)
+    public function configureInput(ExerciseInterface $exercise, CommandDefinition $commandDefinition): void
     {
         $this->getFactory($exercise)->configureInput($commandDefinition);
     }
@@ -38,7 +38,7 @@ class RunnerManager
      * @param ExerciseInterface $exercise
      * @return ExerciseRunnerInterface
      */
-    public function getRunner(ExerciseInterface $exercise)
+    public function getRunner(ExerciseInterface $exercise): ExerciseRunnerInterface
     {
         return $this->getFactory($exercise)->create($exercise);
     }
@@ -48,7 +48,7 @@ class RunnerManager
      * @return ExerciseRunnerFactoryInterface
      * @throws InvalidArgumentException
      */
-    private function getFactory(ExerciseInterface $exercise)
+    private function getFactory(ExerciseInterface $exercise): ExerciseRunnerFactoryInterface
     {
         foreach ($this->factories as $factory) {
             if ($factory->supports($exercise)) {

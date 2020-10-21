@@ -15,15 +15,15 @@ class Event implements EventInterface
     private $name;
 
     /**
-     * @var array
+     * @var array<mixed>
      */
     protected $parameters;
 
     /**
      * @param string $name The event name.
-     * @param array $parameters The event parameters.
+     * @param array<mixed> $parameters The event parameters.
      */
-    public function __construct($name, array $parameters = [])
+    public function __construct(string $name, array $parameters = [])
     {
         $this->name = $name;
         $this->parameters = $parameters;
@@ -34,7 +34,7 @@ class Event implements EventInterface
      *
      * @return string
      */
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }
@@ -42,9 +42,9 @@ class Event implements EventInterface
     /**
      * Get an array of parameters that were triggered with this event.
      *
-     * @return mixed[]
+     * @return array<mixed>
      */
-    public function getParameters()
+    public function getParameters(): array
     {
         return $this->parameters;
     }
@@ -56,7 +56,7 @@ class Event implements EventInterface
      * @return mixed The value.
      * @throws InvalidArgumentException If the parameter by name does not exist.
      */
-    public function getParameter($name)
+    public function getParameter(string $name)
     {
         if (!array_key_exists($name, $this->parameters)) {
             throw new InvalidArgumentException(sprintf('Parameter: "%s" does not exist', $name));

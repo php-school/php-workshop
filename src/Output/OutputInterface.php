@@ -15,40 +15,38 @@ interface OutputInterface
      *
      * @param string $error
      */
-    public function printError($error);
+    public function printError(string $error): void;
 
     /**
      * Write a string to the output.
      *
      * @param string $content
      */
-    public function write($content);
+    public function write(string $content): void;
 
     /**
      * Write an array of strings, each on a new line.
      *
-     * @param array $lines
+     * @param array<string> $lines
      */
-    public function writeLines(array $lines);
+    public function writeLines(array $lines): void;
 
     /**
      * Write a string terminated with a newline.
      *
      * @param string $line
      */
-    public function writeLine($line);
+    public function writeLine(string $line): void;
 
     /**
      * Write an empty line.
      */
-    public function emptyLine();
+    public function emptyLine(): void;
 
     /**
      * Write a line break.
-     *
-     * @return string
      */
-    public function lineBreak();
+    public function lineBreak(): void;
 
     /**
      * Write a title section. Should be decorated in a way which makes
@@ -56,5 +54,5 @@ interface OutputInterface
      *
      * @param string $title
      */
-    public function writeTitle($title);
+    public function writeTitle(string $title): void;
 }

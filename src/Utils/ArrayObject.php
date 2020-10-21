@@ -7,22 +7,26 @@ use Countable;
 use IteratorAggregate;
 
 /**
+ *
  * Utility collection class.
+ *
+ * @template T
+ * @implements IteratorAggregate<int, T>
  */
 class ArrayObject implements IteratorAggregate, Countable
 {
 
     /**
-     * @var array
+     * @var array<T>
      */
     private $array;
 
     /**
      * Accepts an array of items.
      *
-     * @param array $array
+     * @param array<T> $array
      */
-    public function __construct(array $array = [])
+    final public function __construct(array $array = [])
     {
         $this->array = $array;
     }
@@ -34,9 +38,18 @@ class ArrayObject implements IteratorAggregate, Countable
      * @param callable $callback
      * @return static
      */
-    public function map(callable $callback)
+    public function map(callable $callback): self
     {
         return new static(array_map($callback, $this->array));
+    }
+
+    /**
+     * @param callable $callback
+     * @return static
+     */
+    public function filter(callable $callback): self
+    {
+        return new static(array_filter($this->array, $callback));
     }
 
     /**
@@ -46,7 +59,7 @@ class ArrayObject implements IteratorAggregate, Countable
      * @param callable $callback
      * @return static
      */
-    public function flatMap(callable $callback)
+    public function flatMap(callable $callback): self
     {
         return $this->map($callback)->collapse();
     }
@@ -57,7 +70,7 @@ class ArrayObject implements IteratorAggregate, Countable
      *
      * @return static
      */
-    public function collapse()
+    public function collapse(): self
     {
         $results = [];
 
@@ -75,8 +88,8 @@ class ArrayObject implements IteratorAggregate, Countable
     /**
      * Reduce the items to a single value.
      *
-     * @param  callable  $callback
-     * @param  mixed     $initial
+     * @param callable $callback
+     * @param mixed $initial
      * @return mixed
      */
     public function reduce(callable $callback, $initial = null)
@@ -87,7 +100,7 @@ class ArrayObject implements IteratorAggregate, Countable
     /**
      * @return static
      */
-    public function keys()
+    public function keys(): self
     {
         return new static(array_keys($this->array));
     }
@@ -98,7 +111,7 @@ class ArrayObject implements IteratorAggregate, Countable
      * @param string $glue
      * @return string
      */
-    public function implode($glue)
+    public function implode(string $glue): string
     {
         return implode($glue, $this->array);
     }
@@ -106,10 +119,10 @@ class ArrayObject implements IteratorAggregate, Countable
     /**
      * Add a new item on to the beginning of the collection. A new instance is returned.
      *
-     * @param mixed $value
+     * @param T $value
      * @return static
      */
-    public function prepend($value)
+    public function prepend($value): self
     {
         return new static(array_merge([$value], $this->array));
     }
@@ -117,10 +130,10 @@ class ArrayObject implements IteratorAggregate, Countable
     /**
      * Add a new item to the end of the collection. A new instance is returned.
      *
-     * @param mixed $value
+     * @param T $value
      * @return static
      */
-    public function append($value)
+    public function append($value): self
     {
         return new static(array_merge($this->array, [$value]));
     }
@@ -128,11 +141,11 @@ class ArrayObject implements IteratorAggregate, Countable
     /**
      * Get an item at the given key.
      *
-     * @param mixed $key
+     * @param string $key
      * @param mixed $default
-     * @return mixed
+     * @return T|mixed
      */
-    public function get($key, $default = null)
+    public function get(string $key, $default = null)
     {
         if (isset($this->array[$key])) {
             return $this->array[$key];
@@ -144,11 +157,11 @@ class ArrayObject implements IteratorAggregate, Countable
     /**
      * Set the item at a given offset and return a new instance.
      *
-     * @param mixed $key
-     * @param mixed $value
+     * @param string $key
+     * @param T $value
      * @return static
      */
-    public function set($key, $value)
+    public function set(string $key, $value): self
     {
         $items = $this->array;
         $items[$key] = $value;
@@ -158,9 +171,9 @@ class ArrayObject implements IteratorAggregate, Countable
     /**
      * Return an iterator containing all the items. Allows to `foreach` over.
      *
-     * @return ArrayIterator
+     * @return ArrayIterator<int, T>
      */
-    public function getIterator()
+    public function getIterator(): ArrayIterator
     {
         return new ArrayIterator($this->array);
     }
@@ -168,9 +181,9 @@ class ArrayObject implements IteratorAggregate, Countable
     /**
      * Get all the items in the array.
      *
-     * @return array
+     * @return array<T>
      */
-    public function getArrayCopy()
+    public function getArrayCopy(): array
     {
         return $this->array;
     }
@@ -180,7 +193,7 @@ class ArrayObject implements IteratorAggregate, Countable
      *
      * @return int
      */
-    public function count()
+    public function count(): int
     {
         return count($this->array);
     }
@@ -188,7 +201,7 @@ class ArrayObject implements IteratorAggregate, Countable
     /**
      * @return bool
      */
-    public function isEmpty()
+    public function isEmpty(): bool
     {
         return $this->array === [];
     }

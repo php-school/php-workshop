@@ -17,7 +17,7 @@ class Success implements SuccessInterface
     /**
      * @param string $name The name of the check that produced this result.
      */
-    public function __construct($name)
+    public function __construct(string $name)
     {
         $this->name = $name;
     }
@@ -26,11 +26,11 @@ class Success implements SuccessInterface
      * Static constructor to create from an instance of `PhpSchool\PhpWorkshop\Check\CheckInterface`.
      *
      * @param CheckInterface $check The check instance.
-     * @return static The result.
+     * @return self The result.
      */
     public static function fromCheck(CheckInterface $check)
     {
-        return new static($check->getName());
+        return new self($check->getName());
     }
 
     /**
@@ -38,7 +38,7 @@ class Success implements SuccessInterface
      *
      * @return string
      */
-    public function getCheckName()
+    public function getCheckName(): string
     {
         return $this->name;
     }

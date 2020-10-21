@@ -5,6 +5,7 @@ namespace PhpSchool\PhpWorkshop\ResultRenderer;
 use Colors\Color;
 use Kadet\Highlighter\Formatter\CliFormatter;
 use Kadet\Highlighter\KeyLighter;
+use PhpSchool\PhpWorkshop\Result\FailureInterface;
 use PhpSchool\Terminal\Terminal;
 use PhpSchool\CliMenu\Util\StringUtil;
 use PhpSchool\PhpWorkshop\Exercise\ProvidesSolution;
@@ -91,7 +92,7 @@ class ResultsRenderer
         ExerciseInterface $exercise,
         UserState $userState,
         OutputInterface $output
-    ) {
+    ): void {
         $successes  = [];
         $failures   = [];
         foreach ($results as $result) {
@@ -104,7 +105,7 @@ class ResultsRenderer
                 $failures[] = [$result, sprintf(' ✗ Check: %s', $result->getCheckName())];
             }
         }
-
+        /** @var array<int, array{0: FailureInterface, 1: string}> $failures */
         $output->emptyLine();
         $output->writeLine($this->center($this->style('*** RESULTS ***', ['magenta', 'bold'])));
         $output->emptyLine();
@@ -122,13 +123,14 @@ class ResultsRenderer
         }
 
         if ($results->isSuccessful()) {
-            return $this->renderSuccessInformation($exercise, $userState, $output);
+            $this->renderSuccessInformation($exercise, $userState, $output);
+            return;
         }
         $this->renderErrorInformation($failures, $longest, $exercise, $output);
     }
 
     /**
-     * @param array $failures
+     * @param array<int, array{0: FailureInterface, 1: string}> $failures
      * @param int $padLength
      * @param ExerciseInterface $exercise
      * @param OutputInterface $output
@@ -138,8 +140,8 @@ class ResultsRenderer
         $padLength,
         ExerciseInterface $exercise,
         OutputInterface $output
-    ) {
-        foreach ($failures as list ($failure, $message)) {
+    ): void {
+        foreach ($failures as [$failure, $message]) {
             $output->writeLine($this->center($this->style(str_repeat(' ', $padLength), ['bg_red'])));
             $output->writeLine($this->center($this->style(\mb_str_pad($message, $padLength), ['bg_red'])));
             $output->writeLine($this->center($this->style(str_repeat(' ', $padLength), ['bg_red'])));
@@ -170,7 +172,7 @@ class ResultsRenderer
         ExerciseInterface $exercise,
         UserState $userState,
         OutputInterface $output
-    ) {
+    ): void {
         $output->lineBreak();
         $output->emptyLine();
         $output->emptyLine();
@@ -213,7 +215,7 @@ class ResultsRenderer
      * @param string $string
      * @return string string
      */
-    public function center($string)
+    public function center(string $string): string
     {
         $stringHalfLength = mb_strlen(StringUtil::stripAnsiEscapeSequence($string)) / 2;
         $widthHalfLength  = ceil($this->terminal->getWidth() / 2);
@@ -223,15 +225,15 @@ class ResultsRenderer
             $start = 0;
         }
 
-        return str_repeat(' ', $start) . $string;
+        return str_repeat(' ', (int) $start) . $string;
     }
 
     /**
      * @param OutputInterface $output
-     * @param $string
-     * @param array $style
+     * @param string $string
+     * @param array<string> $style
      */
-    private function fullWidthBlock(OutputInterface $output, $string, array $style)
+    private function fullWidthBlock(OutputInterface $output, string $string, array $style): void
     {
         $stringLength     = mb_strlen(StringUtil::stripAnsiEscapeSequence($string));
         $stringHalfLength = $stringLength / 2;
@@ -243,9 +245,9 @@ class ResultsRenderer
             $this->style(
                 sprintf(
                     '%s%s%s',
-                    str_repeat(' ', $start),
+                    str_repeat(' ', (int) $start),
                     $string,
-                    str_repeat(' ', $this->terminal->getWidth() - $stringLength - $start)
+                    str_repeat(' ', (int) ($this->terminal->getWidth() - $stringLength - $start))
                 ),
                 $style
             )
@@ -258,12 +260,12 @@ class ResultsRenderer
      * Can be any of: black, red, green, yellow, blue, magenta, cyan, white, bold, italic, underline.
      *
      * @param string $string
-     * @param array|string $colourOrStyle A single style as a string or multiple styles as an array.
+     * @param array<string>|string $colourOrStyle A single style as a string or multiple styles as an array.
      *
      * @return string
      *
      */
-    public function style($string, $colourOrStyle)
+    public function style(string $string, $colourOrStyle): string
     {
         if (is_array($colourOrStyle)) {
             $this->color->__invoke($string);
@@ -283,7 +285,7 @@ class ResultsRenderer
      * @param ResultInterface $result The result.
      * @return string The string representation of the result.
      */
-    public function renderResult(ResultInterface $result)
+    public function renderResult(ResultInterface $result): string
     {
         return $this->resultRendererFactory->create($result)->render($this);
     }
@@ -293,7 +295,7 @@ class ResultsRenderer
      *
      * @return string
      */
-    public function lineBreak()
+    public function lineBreak(): string
     {
         return $this->style(str_repeat('─', $this->terminal->getWidth()), 'yellow');
     }

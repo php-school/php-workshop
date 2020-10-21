@@ -34,11 +34,15 @@ class CodePatchListener
     /**
      * @param ExerciseRunnerEvent $event
      */
-    public function patch(ExerciseRunnerEvent $event)
+    public function patch(ExerciseRunnerEvent $event): void
     {
         $fileName = $event->getInput()->getArgument('program');
 
-        $this->originalCode = file_get_contents($fileName);
+        if (null === $fileName) {
+            return;
+        }
+
+        $this->originalCode = (string) file_get_contents($fileName);
         file_put_contents(
             $fileName,
             $this->codePatcher->patch($event->getExercise(), $this->originalCode)
@@ -48,12 +52,18 @@ class CodePatchListener
     /**
      * @param ExerciseRunnerEvent $event
      */
-    public function revert(ExerciseRunnerEvent $event)
+    public function revert(ExerciseRunnerEvent $event): void
     {
         if (null === $this->originalCode) {
             throw new RuntimeException('Can only revert previously patched code');
         }
 
-        file_put_contents($event->getInput()->getArgument('program'), $this->originalCode);
+        $fileName = $event->getInput()->getArgument('program');
+
+        if (null === $fileName) {
+            return;
+        }
+
+        file_put_contents($fileName, $this->originalCode);
     }
 }

@@ -21,52 +21,52 @@ class CreditsCommand
     private $color;
 
     /**
-     * @var array
+     * @var array<string>
      */
     private $coreContributors;
 
     /**
-     * @var array
+     * @var array<string>
      */
     private $appContributors;
 
     /**
-     * @param array $coreContributors
-     * @param array $appContributors
+     * @param array<string> $coreContributors
+     * @param array<string> $appContributors
      * @param OutputInterface $output
      * @param Color $color
      */
     public function __construct(array $coreContributors, array $appContributors, OutputInterface $output, Color $color)
     {
         $this->coreContributors = $coreContributors;
-        $this->appContributors  = $appContributors;
-        $this->output           = $output;
-        $this->color            = $color;
+        $this->appContributors = $appContributors;
+        $this->output = $output;
+        $this->color = $color;
     }
 
     /**
      * Output contributors in columns
      *
-     * @param array $contributors
+     * @param array<string> $contributors
      */
-    private function writeContributors(array $contributors)
+    private function writeContributors(array $contributors): void
     {
         $nameColumnSize = max(array_map('strlen', array_values($contributors)));
-        $columns        = sprintf('%s  GitHub Username', str_pad('Name', $nameColumnSize));
+        $columns        = sprintf('%s  GitHub Username', str_pad('Name', (int) $nameColumnSize));
 
         $this->output->writeLine($columns);
         $this->output->writeLine(str_repeat('-', strlen($columns)));
 
         foreach ($contributors as $gitHubUser => $name) {
-            $this->output->writeLine(sprintf("%s  %s", str_pad($name, $nameColumnSize), $gitHubUser));
+            $this->output->writeLine(sprintf("%s  %s", str_pad($name, (int) $nameColumnSize), $gitHubUser));
         }
     }
     
     /**
      *
-     * @return int|void
+     * @return void
      */
-    public function __invoke()
+    public function __invoke(): void
     {
         if (empty($this->coreContributors)) {
             return;

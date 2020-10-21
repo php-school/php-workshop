@@ -5,6 +5,7 @@ namespace PhpSchool\PhpWorkshop\ExerciseRunner\Factory;
 use PhpSchool\PhpWorkshop\CommandArgument;
 use PhpSchool\PhpWorkshop\CommandDefinition;
 use PhpSchool\PhpWorkshop\Event\EventDispatcher;
+use PhpSchool\PhpWorkshop\Exercise\CliExercise;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseType;
 use PhpSchool\PhpWorkshop\ExerciseRunner\CliRunner;
@@ -39,7 +40,7 @@ class CliRunnerFactory implements ExerciseRunnerFactoryInterface
      * @param ExerciseInterface $exercise
      * @return bool
      */
-    public function supports(ExerciseInterface $exercise)
+    public function supports(ExerciseInterface $exercise): bool
     {
         return $exercise->getType()->getValue() === self::$type;
     }
@@ -49,7 +50,7 @@ class CliRunnerFactory implements ExerciseRunnerFactoryInterface
      *
      * @param CommandDefinition $commandDefinition
      */
-    public function configureInput(CommandDefinition $commandDefinition)
+    public function configureInput(CommandDefinition $commandDefinition): void
     {
         $commandDefinition->addArgument(CommandArgument::required('program'));
     }
@@ -57,10 +58,10 @@ class CliRunnerFactory implements ExerciseRunnerFactoryInterface
     /**
      * Create and return an instance of the runner.
      *
-     * @param ExerciseInterface $exercise
+     * @param ExerciseInterface&CliExercise $exercise
      * @return ExerciseRunnerInterface
      */
-    public function create(ExerciseInterface $exercise)
+    public function create(ExerciseInterface $exercise): ExerciseRunnerInterface
     {
         return new CliRunner($exercise, $this->eventDispatcher);
     }

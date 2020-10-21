@@ -30,7 +30,7 @@ class CliResultRenderer implements ResultRendererInterface
      * @param ResultsRenderer $renderer
      * @return string
      */
-    public function render(ResultsRenderer $renderer)
+    public function render(ResultsRenderer $renderer): string
     {
         $results = array_filter($this->result->getResults(), function (ResultInterface $result) {
             return $result instanceof FailureInterface;

@@ -51,13 +51,12 @@ class CodeParseCheck implements SimpleCheckInterface
      */
     public function check(ExerciseInterface $exercise, Input $input): ResultInterface
     {
-        
-        $code = file_get_contents($input->getArgument('program'));
+        $code = (string) file_get_contents($input->getRequiredArgument('program'));
 
         try {
             $this->parser->parse($code);
         } catch (Error $e) {
-            return Failure::fromCheckAndCodeParseFailure($this, $e, $input->getArgument('program'));
+            return Failure::fromCheckAndCodeParseFailure($this, $e, $input->getRequiredArgument('program'));
         }
         
         return Success::fromCheck($this);

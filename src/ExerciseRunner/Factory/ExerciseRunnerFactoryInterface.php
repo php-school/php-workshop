@@ -17,14 +17,14 @@ interface ExerciseRunnerFactoryInterface
      * @param ExerciseInterface $exercise
      * @return bool
      */
-    public function supports(ExerciseInterface $exercise);
+    public function supports(ExerciseInterface $exercise): bool;
 
     /**
      * Add any extra required arguments to the command.
      *
      * @param CommandDefinition $commandDefinition
      */
-    public function configureInput(CommandDefinition $commandDefinition);
+    public function configureInput(CommandDefinition $commandDefinition): void;
 
     /**
      * Create and return an instance of the runner.
@@ -32,5 +32,5 @@ interface ExerciseRunnerFactoryInterface
      * @param ExerciseInterface $exercise
      * @return ExerciseRunnerInterface
      */
-    public function create(ExerciseInterface $exercise);
+    public function create(ExerciseInterface $exercise): ExerciseRunnerInterface;
 }

@@ -13,26 +13,26 @@ interface SolutionInterface
      *
      * @return string
      */
-    public function getEntryPoint();
+    public function getEntryPoint(): string;
 
     /**
      * Get all the files which are contained with the solution.
      *
-     * @return SolutionFile[]
+     * @return array<SolutionFile>
      */
-    public function getFiles();
+    public function getFiles(): array;
 
     /**
      * Get the absolute path to the directory containing the solution.
      *
      * @return string
      */
-    public function getBaseDirectory();
+    public function getBaseDirectory(): string;
 
     /**
      * Whether or not the solution has a `composer.json` & `composer.lock` file.
      *
      * @return bool
      */
-    public function hasComposerFile();
+    public function hasComposerFile(): bool;
 }

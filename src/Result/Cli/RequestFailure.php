@@ -11,7 +11,7 @@ use PhpSchool\PhpWorkshop\Utils\ArrayObject;
 class RequestFailure implements FailureInterface
 {
     /**
-     * @var ArrayObject
+     * @var ArrayObject<string>
      */
     private $args;
 
@@ -26,36 +26,36 @@ class RequestFailure implements FailureInterface
     private $actualOutput;
 
     /**
-     * @param ArrayObject $args The arguments that caused the failure.
+     * @param ArrayObject<string> $args The arguments that caused the failure.
      * @param string $expectedOutput The expected output.
      * @param string $actualOutput The actual output.
      */
-    public function __construct(ArrayObject $args, $expectedOutput, $actualOutput)
+    public function __construct(ArrayObject $args, string $expectedOutput, string $actualOutput)
     {
-        $this->args             = $args;
-        $this->expectedOutput   = $expectedOutput;
-        $this->actualOutput     = $actualOutput;
+        $this->args = $args;
+        $this->expectedOutput = $expectedOutput;
+        $this->actualOutput = $actualOutput;
     }
 
     /**
      * Named constructor, for added code legibility.
      *
-     * @param ArrayObject $args The arguments that caused the failure.
+     * @param ArrayObject<string> $args The arguments that caused the failure.
      * @param string $expectedOutput The expected result.
      * @param string $actualOutput The actual output.
-     * @return static The result.
+     * @return self The result.
      */
-    public static function fromArgsAndOutput(ArrayObject $args, $expectedOutput, $actualOutput)
+    public static function fromArgsAndOutput(ArrayObject $args, string $expectedOutput, string $actualOutput): self
     {
-        return new static($args, $expectedOutput, $actualOutput);
+        return new self($args, $expectedOutput, $actualOutput);
     }
 
     /**
      * Get the arguments that caused the failure.
      *
-     * @return ArrayObject
+     * @return ArrayObject<string>
      */
-    public function getArgs()
+    public function getArgs(): ArrayObject
     {
         return $this->args;
     }
@@ -65,7 +65,7 @@ class RequestFailure implements FailureInterface
      *
      * @return string
      */
-    public function getExpectedOutput()
+    public function getExpectedOutput(): string
     {
         return $this->expectedOutput;
     }
@@ -75,7 +75,7 @@ class RequestFailure implements FailureInterface
      *
      * @return string
      */
-    public function getActualOutput()
+    public function getActualOutput(): string
     {
         return $this->actualOutput;
     }
@@ -85,7 +85,7 @@ class RequestFailure implements FailureInterface
      *
      * @return string
      */
-    public function getCheckName()
+    public function getCheckName(): string
     {
         return 'Request Failure';
     }

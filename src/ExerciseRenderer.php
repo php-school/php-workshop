@@ -77,7 +77,7 @@ class ExerciseRenderer
     /**
      * @param CliMenu $menu
      */
-    public function __invoke(CliMenu $menu)
+    public function __invoke(CliMenu $menu): void
     {
         $menu->close();
 
@@ -89,7 +89,7 @@ class ExerciseRenderer
         $this->userStateSerializer->serialize($this->userState);
 
         $numExercises   = count($exercises);
-        $exerciseIndex  = array_search($exercise, $exercises) + 1;
+        $exerciseIndex  = ((int) array_search($exercise, $exercises)) + 1;
 
         $output  = "\n";
         $output .= $this->color->__invoke(' LEARN YOU THE PHP FOR MUCH WIN! ')->magenta()->bold() . "\n";
@@ -98,7 +98,7 @@ class ExerciseRenderer
         $output .= $this->color->__invoke(" " . $exercise->getName())->yellow()->bold() . "\n";
         $output .= $this->color->__invoke(sprintf(" Exercise %d of %d\n\n", $exerciseIndex, $numExercises))->yellow();
 
-        $content = file_get_contents($exercise->getProblem());
+        $content = (string) file_get_contents($exercise->getProblem());
         $doc     = $this->markdownRenderer->render($content);
         $doc     = str_replace('{appname}', $this->appName, $doc);
         $output .= $doc;
@@ -118,7 +118,7 @@ class ExerciseRenderer
      * @param string $cmd
      * @return string
      */
-    private function helpLine($text, $cmd)
+    private function helpLine(string $text, string $cmd): string
     {
         $cmd = $this->color->__invoke(sprintf('%s %s', $this->appName, $cmd))->yellow()->__toString();
         return sprintf(

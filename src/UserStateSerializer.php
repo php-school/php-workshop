@@ -52,9 +52,9 @@ class UserStateSerializer
      * Save the students state for this workshop to disk.
      *
      * @param UserState $state
-     * @return int
+     * @return void
      */
-    public function serialize(UserState $state)
+    public function serialize(UserState $state): void
     {
         $saveFile = sprintf('%s/%s', $this->path, static::SAVE_FILE);
 
@@ -64,10 +64,10 @@ class UserStateSerializer
 
         $data[$this->workshopName] = [
             'completed_exercises'   => $state->getCompletedExercises(),
-            'current_exercise'      => $state->getCurrentExercise(),
+            'current_exercise'      => $state->isAssignedExercise() ? $state->getCurrentExercise() : null,
         ];
 
-        return file_put_contents($saveFile, json_encode($data));
+        file_put_contents($saveFile, json_encode($data));
     }
 
     /**
@@ -75,7 +75,7 @@ class UserStateSerializer
      *
      * @return UserState
      */
-    public function deSerialize()
+    public function deSerialize(): UserState
     {
         $legacySaveFile = sprintf('%s/%s', $this->path, static::LEGACY_SAVE_FILE);
         if (file_exists($legacySaveFile)) {
@@ -136,7 +136,7 @@ class UserStateSerializer
      * @param string $legacySaveFile
      * @return null|UserState
      */
-    private function migrateData($legacySaveFile)
+    private function migrateData(string $legacySaveFile): ?UserState
     {
         $data = $this->readJson($legacySaveFile);
 
@@ -171,15 +171,15 @@ class UserStateSerializer
 
     /**
      * @param string $filePath
-     * @return array|null
+     * @return array<mixed>|null
      */
-    private function readJson($filePath)
+    private function readJson($filePath): ?array
     {
         if (!file_exists($filePath)) {
             return null;
         }
 
-        $data = file_get_contents($filePath);
+        $data = (string) file_get_contents($filePath);
 
         if (trim($data) === "") {
             return null;
@@ -197,7 +197,7 @@ class UserStateSerializer
     /**
      * Remove the file
      */
-    private function wipeFile()
+    private function wipeFile(): void
     {
         @unlink($this->path);
     }

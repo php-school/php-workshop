@@ -17,16 +17,16 @@ class RealPathListener
     /**
      * @param ExerciseRunnerEvent $event
      */
-    public function __invoke(ExerciseRunnerEvent $event)
+    public function __invoke(ExerciseRunnerEvent $event): void
     {
         if (!$event->getInput()->hasArgument('program')) {
             return;
         }
 
-        $program = $event->getInput()->getArgument('program');
+        $program = $event->getInput()->getRequiredArgument('program');
 
         if (file_exists($program)) {
-            $event->getInput()->setArgument('program', realpath($program));
+            $event->getInput()->setArgument('program', (string) realpath($program));
         }
     }
 }

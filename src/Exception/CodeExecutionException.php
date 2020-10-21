@@ -14,11 +14,11 @@ class CodeExecutionException extends RuntimeException
      * Static constructor to create an instance from a failed `Symfony\Component\Process\Process` instance.
      *
      * @param Process $process The `Symfony\Component\Process\Process` instance which failed.
-     * @return static
+     * @return self
      */
     public static function fromProcess(Process $process)
     {
-        return new static(
+        return new self(
             sprintf(
                 'PHP Code failed to execute. Error: "%s"',
                 trim($process->getErrorOutput() ?: $process->getOutput())

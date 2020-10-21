@@ -2,6 +2,8 @@
 
 namespace PhpSchool\PhpWorkshop\Event;
 
+use PhpSchool\PhpWorkshop\Exception\InvalidArgumentException;
+
 /**
  * An event representation.
  */
@@ -12,14 +14,14 @@ interface EventInterface
      *
      * @return string
      */
-    public function getName();
+    public function getName(): string;
 
     /**
      * Get an array of parameters that were triggered with this event.
      *
-     * @return mixed[]
+     * @return array<mixed>
      */
-    public function getParameters();
+    public function getParameters(): array;
 
     /**
      * Get a parameter by it's name.
@@ -28,5 +30,5 @@ interface EventInterface
      * @return mixed The value.
      * @throws InvalidArgumentException If the parameter by name does not exist.
      */
-    public function getParameter($name);
+    public function getParameter(string $name);
 }

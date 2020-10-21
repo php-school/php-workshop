@@ -9,6 +9,8 @@ use PhpSchool\PhpWorkshop\Result\ResultGroupInterface;
 /**
  * A result which encompasses all the results for each individual execution made during
  * the CLI verification process.
+ *
+ * @implements IteratorAggregate<int, ResultInterface>
  */
 class CliResult implements ResultGroupInterface, IteratorAggregate
 {
@@ -18,12 +20,12 @@ class CliResult implements ResultGroupInterface, IteratorAggregate
     private $name = 'CLI Program Runner';
 
     /**
-     * @var array
+     * @var ResultInterface[]
      */
     private $results = [];
 
     /**
-     * @param array $requestResults An array of results representing each request.
+     * @param array<ResultInterface> $requestResults An array of results representing each request.
      */
     public function __construct(array $requestResults = [])
     {
@@ -37,7 +39,7 @@ class CliResult implements ResultGroupInterface, IteratorAggregate
      *
      * @param ResultInterface $result
      */
-    public function add(ResultInterface $result)
+    public function add(ResultInterface $result): void
     {
         $this->results[] = $result;
     }
@@ -47,7 +49,7 @@ class CliResult implements ResultGroupInterface, IteratorAggregate
      *
      * @return string
      */
-    public function getCheckName()
+    public function getCheckName(): string
     {
         return $this->name;
     }
@@ -55,7 +57,7 @@ class CliResult implements ResultGroupInterface, IteratorAggregate
     /**
      * @return bool
      */
-    public function isSuccessful()
+    public function isSuccessful(): bool
     {
         return count(
             array_filter($this->results, function ($result) {
@@ -65,9 +67,9 @@ class CliResult implements ResultGroupInterface, IteratorAggregate
     }
 
     /**
-     * @return ResultInterface
+     * @return ResultInterface[]
      */
-    public function getResults()
+    public function getResults(): array
     {
         return $this->results;
     }
@@ -75,9 +77,9 @@ class CliResult implements ResultGroupInterface, IteratorAggregate
     /**
      * Get an iterator in order to `foreach` the results.
      *
-     * @return ArrayIterator
+     * @return ArrayIterator<int, ResultInterface>
      */
-    public function getIterator()
+    public function getIterator(): ArrayIterator
     {
         return new ArrayIterator($this->results);
     }
