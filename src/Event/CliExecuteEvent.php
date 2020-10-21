@@ -2,7 +2,6 @@
 
 namespace PhpSchool\PhpWorkshop\Event;
 
-use Assert\Assertion;
 use PhpSchool\PhpWorkshop\Utils\ArrayObject;
 
 /**
