@@ -2,6 +2,7 @@
 
 namespace PhpSchool\PhpWorkshopTest\ResultRenderer;
 
+use GuzzleHttp\Psr7\Request;
 use PhpSchool\PhpWorkshop\Result\Cgi\CgiResult;
 use PhpSchool\PhpWorkshop\Result\Cgi\RequestFailure;
 use PhpSchool\PhpWorkshop\Result\Cgi\GenericFailure;
@@ -10,7 +11,6 @@ use PhpSchool\PhpWorkshop\ResultRenderer\Cgi\RequestFailureRenderer;
 use PhpSchool\PhpWorkshop\ResultRenderer\CgiResultRenderer;
 use PhpSchool\PhpWorkshop\ResultRenderer\FailureRenderer;
 use PhpSchool\PhpWorkshop\Utils\RequestRenderer;
-use Zend\Diactoros\Request;
 
 class CgiResultRendererTest extends AbstractResultRendererTest
 {
@@ -222,8 +222,7 @@ class CgiResultRendererTest extends AbstractResultRendererTest
 
     private function request(): Request
     {
-        return (new Request('http://www.test.com'))
-            ->withMethod('POST')
+        return (new Request('POST', 'http://www.test.com'))
             ->withHeader('Content-Type', 'application/json');
     }
 }

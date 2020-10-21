@@ -25,10 +25,10 @@
         "aydin-hassan/cli-md-renderer": "^2.3",
         "php-school/cli-menu": "dev-master",
         "psr/http-message": "^1.0",
-        "zendframework/zend-diactoros": "^2.1",
         "myclabs/php-enum": "^1.4",
         "kadet/keylighter": "^0.8.3",
-        "nikic/php-parser": "^4.0"
+        "nikic/php-parser": "^4.0",
+        "guzzlehttp/guzzle": "^7.2"
     },
     "require-dev": {
         "composer/composer": "^1.2",

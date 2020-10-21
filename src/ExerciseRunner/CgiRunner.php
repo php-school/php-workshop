@@ -2,6 +2,7 @@
 
 namespace PhpSchool\PhpWorkshop\ExerciseRunner;
 
+use GuzzleHttp\Psr7\Message;
 use PhpSchool\PhpWorkshop\Check\CodeParseCheck;
 use PhpSchool\PhpWorkshop\Check\FileExistsCheck;
 use PhpSchool\PhpWorkshop\Check\PhpLintCheck;
@@ -197,7 +198,7 @@ class CgiRunner implements ExerciseRunnerInterface
             $output = "HTTP/1.0 200 OK\r\n" . $output;
         }
 
-        return ResponseSerializer::fromString($output);
+        return Message::parseResponse($output);
     }
 
     /**

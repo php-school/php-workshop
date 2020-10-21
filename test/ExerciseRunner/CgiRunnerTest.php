@@ -3,6 +3,7 @@
 namespace PhpSchool\PhpWorkshopTest\ExerciseRunner;
 
 use Colors\Color;
+use GuzzleHttp\Psr7\Request;
 use PhpSchool\Terminal\Terminal;
 use PhpSchool\PhpWorkshop\Check\CodeParseCheck;
 use PhpSchool\PhpWorkshop\Check\FileExistsCheck;
@@ -21,8 +22,6 @@ use PhpSchool\PhpWorkshop\Solution\SingleFileSolution;
 use PhpSchool\PhpWorkshop\Utils\RequestRenderer;
 use PhpSchool\PhpWorkshopTest\Asset\CgiExerciseInterface;
 use PHPUnit\Framework\TestCase;
-use Zend\Diactoros\Request;
-use Zend\Diactoros\Uri;
 
 class CgiRunnerTest extends TestCase
 {
@@ -69,9 +68,7 @@ class CgiRunnerTest extends TestCase
             ->method('getSolution')
             ->willReturn($solution);
 
-        $request = (new Request())
-            ->withMethod('GET')
-            ->withUri(new Uri('http://some.site?number=5'));
+        $request = (new Request('GET', 'http://some.site?number=5'));
 
         $this->exercise
             ->expects($this->once())
@@ -92,9 +89,7 @@ class CgiRunnerTest extends TestCase
             ->method('getSolution')
             ->willReturn($solution);
 
-        $request = (new Request())
-            ->withMethod('GET')
-            ->withUri(new Uri('http://some.site?number=5'));
+        $request = (new Request('GET', 'http://some.site?number=5'));
 
         $this->exercise
             ->expects($this->once())
@@ -115,9 +110,7 @@ class CgiRunnerTest extends TestCase
             ->method('getSolution')
             ->willReturn($solution);
 
-        $request = (new Request())
-            ->withMethod('POST')
-            ->withUri(new Uri('http://some.site'))
+        $request = (new Request('POST', 'http://some.site'))
             ->withHeader('Content-Type', 'application/x-www-form-urlencoded');
 
         $request->getBody()->write('number=5');
@@ -145,9 +138,7 @@ class CgiRunnerTest extends TestCase
             ->method('getSolution')
             ->willReturn($solution);
 
-        $request = (new Request())
-            ->withMethod('POST')
-            ->withUri(new Uri('http://some.site'))
+        $request = (new Request('POST', 'http://some.site'))
             ->withHeader('Content-Type', 'application/x-www-form-urlencoded');
 
         $request->getBody()->write('number=5&start=4');
@@ -172,9 +163,7 @@ class CgiRunnerTest extends TestCase
             ->method('getSolution')
             ->willReturn($solution);
 
-        $request = (new Request())
-            ->withMethod('GET')
-            ->withUri(new Uri('http://some.site?number=5'));
+        $request = (new Request('GET', 'http://some.site?number=5'));
 
         $this->exercise
             ->expects($this->once())
@@ -204,9 +193,7 @@ class CgiRunnerTest extends TestCase
             ->method('getSolution')
             ->willReturn($solution);
 
-        $request = (new Request())
-            ->withMethod('GET')
-            ->withUri(new Uri('http://some.site?number=5'));
+        $request = (new Request('GET', 'http://some.site?number=5'));
 
         $this->exercise
             ->expects($this->once())
@@ -236,9 +223,7 @@ class CgiRunnerTest extends TestCase
             ->method('getSolution')
             ->willReturn($solution);
 
-        $request = (new Request())
-            ->withMethod('GET')
-            ->withUri(new Uri('http://some.site?number=5'));
+        $request = (new Request('GET', 'http://some.site?number=5'));
 
         $this->exercise
             ->expects($this->once())
@@ -277,13 +262,8 @@ class CgiRunnerTest extends TestCase
         $color = new Color();
         $color->setForceStyle(true);
         $output = new StdOutput($color, $this->createMock(Terminal::class));
-        $request1 = (new Request())
-            ->withMethod('GET')
-            ->withUri(new Uri('http://some.site?number=5'));
-
-        $request2 = (new Request())
-            ->withMethod('GET')
-            ->withUri(new Uri('http://some.site?number=6'));
+        $request1 = (new Request('GET', 'http://some.site?number=5'));
+        $request2 = (new Request('GET', 'http://some.site?number=6'));
 
         $this->exercise
             ->expects($this->once())
@@ -326,9 +306,7 @@ class CgiRunnerTest extends TestCase
         $color = new Color();
         $color->setForceStyle(true);
         $output = new StdOutput($color, $this->createMock(Terminal::class));
-        $request1 = (new Request())
-            ->withMethod('GET')
-            ->withUri(new Uri('http://some.site?number=5'));
+        $request1 = (new Request('GET', 'http://some.site?number=5'));
 
         $this->exercise
             ->expects($this->once())
