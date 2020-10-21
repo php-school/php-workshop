@@ -80,6 +80,6 @@ class ResultRendererFactory
      */
     protected function isImplementationNameOfClass(string $implementationName, string $className): bool
     {
-        return is_string($implementationName) && is_subclass_of($implementationName, $className);
+        return is_subclass_of($implementationName, $className);
     }
 }

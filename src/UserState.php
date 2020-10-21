@@ -8,9 +8,8 @@ namespace PhpSchool\PhpWorkshop;
  */
 class UserState
 {
-
     /**
-     * @var string
+     * @var string|null
      */
     private $currentExercise;
 
@@ -57,9 +56,9 @@ class UserState
     /**
      * Get the current exercise name.
      *
-     * @return string
+     * @return string|null
      */
-    public function getCurrentExercise(): string
+    public function getCurrentExercise(): ?string
     {
         return $this->currentExercise;
     }

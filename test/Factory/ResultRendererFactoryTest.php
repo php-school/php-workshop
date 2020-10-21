@@ -33,28 +33,6 @@ class ResultRendererFactoryTest extends TestCase
         $factory->registerRenderer($resultClass, $rendererClass);
     }
 
-    public function testRegisterRendererRequiresResultClassToBeString(): void
-    {
-        $this->expectException(InvalidArgumentException::class);
-
-        $resultClass = $this->createMock(ResultInterface::class);
-        $rendererClass = get_class($this->createMock(ResultRendererInterface::class));
-        $factory = new ResultRendererFactory();
-        
-        $factory->registerRenderer($resultClass, $rendererClass);
-    }
-
-    public function testRegisterRendererRequiresRendererClassToBeString(): void
-    {
-        $this->expectException(InvalidArgumentException::class);
-
-        $resultClass = get_class($this->createMock(ResultInterface::class));
-        $rendererClass = $this->createMock(ResultRendererInterface::class);
-        $factory = new ResultRendererFactory();
-        
-        $factory->registerRenderer($resultClass, $rendererClass);
-    }
-
     public function testCreateRequiresMappingToClassName(): void
     {
         $this->expectException(RuntimeException::class);
