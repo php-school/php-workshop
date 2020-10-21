@@ -19,7 +19,7 @@ class EventDispatcherFactory
      * @return EventDispatcher
      * @throws InvalidArgumentException
      */
-    public function __invoke(ContainerInterface $container)
+    public function __invoke(ContainerInterface $container): EventDispatcher
     {
         $dispatcher = new EventDispatcher($container->get(ResultAggregator::class));
 
@@ -46,10 +46,10 @@ class EventDispatcherFactory
     }
 
     /**
-     * @param array $listeners
-     * @return array
+     * @param array<int, array<string, array>> $listeners
+     * @return array<int, array>
      */
-    private function mergeListenerGroups(array $listeners)
+    private function mergeListenerGroups(array $listeners): array
     {
         $listeners = new Collection($listeners);
 
@@ -78,17 +78,17 @@ class EventDispatcherFactory
 
     /**
      * @param string $eventName
-     * @param array $listeners
+     * @param array<int, ContainerListenerHelper|callable> $listeners
      * @param ContainerInterface $container
      * @param EventDispatcher $dispatcher
-     * @throws \PhpSchool\PhpWorkshop\Exception\InvalidArgumentException
+     * @throws InvalidArgumentException
      */
     private function attachListeners(
-        $eventName,
+        string $eventName,
         array $listeners,
         ContainerInterface $container,
         EventDispatcher $dispatcher
-    ) {
+    ): void {
         array_walk($listeners, function ($listener) use ($eventName, $dispatcher, $container) {
             if ($listener instanceof ContainerListenerHelper) {
                 if (!$container->has($listener->getService())) {
@@ -117,7 +117,6 @@ class EventDispatcherFactory
                 );
             }
             $dispatcher->listen($eventName, $listener);
-            return;
         });
     }
 }

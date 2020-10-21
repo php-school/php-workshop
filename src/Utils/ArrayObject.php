@@ -7,20 +7,24 @@ use Countable;
 use IteratorAggregate;
 
 /**
+ *
  * Utility collection class.
+ *
+ * @template T
+ * @implements IteratorAggregate<int, T>
  */
 class ArrayObject implements IteratorAggregate, Countable
 {
 
     /**
-     * @var array
+     * @var array<T>
      */
     private $array;
 
     /**
      * Accepts an array of items.
      *
-     * @param array $array
+     * @param array<T> $array
      */
     final public function __construct(array $array = [])
     {
@@ -158,9 +162,9 @@ class ArrayObject implements IteratorAggregate, Countable
     /**
      * Return an iterator containing all the items. Allows to `foreach` over.
      *
-     * @return ArrayIterator
+     * @return ArrayIterator<int, T>
      */
-    public function getIterator()
+    public function getIterator(): ArrayIterator
     {
         return new ArrayIterator($this->array);
     }
@@ -168,9 +172,9 @@ class ArrayObject implements IteratorAggregate, Countable
     /**
      * Get all the items in the array.
      *
-     * @return array
+     * @return array<T>
      */
-    public function getArrayCopy()
+    public function getArrayCopy(): array
     {
         return $this->array;
     }

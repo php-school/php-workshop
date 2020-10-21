@@ -17,7 +17,7 @@ class RealPathListener
     /**
      * @param ExerciseRunnerEvent $event
      */
-    public function __invoke(ExerciseRunnerEvent $event)
+    public function __invoke(ExerciseRunnerEvent $event): void
     {
         if (!$event->getInput()->hasArgument('program')) {
             return;

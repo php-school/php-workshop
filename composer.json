@@ -35,7 +35,8 @@
         "composer/composer": "^1.2",
         "squizlabs/php_codesniffer": "^3.4",
         "symfony/phpunit-bridge": "^5.1",
-        "phpstan/phpstan": "^0.12.50"
+        "phpstan/phpstan": "^0.12.50",
+        "timeweb/phpstan-enum": "^2.2"
     },
     "autoload" : {
         "psr-4" : {
@@ -56,6 +57,6 @@
             "phpcs src --standard=PSR12 --encoding=UTF-8",
             "phpcs test --standard=PSR12 --encoding=UTF-8"
         ],
-        "static": "phpstan --ansi analyse --level 5 src"
+        "static": "phpstan --ansi analyse --level 6 src"
     }
 }

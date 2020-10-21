@@ -16,15 +16,15 @@ class Input
     private $appName;
 
     /**
-     * @var array
+     * @var array<string>
      */
     private $arguments = [];
 
     /**
      * @param string $appName
-     * @param array $arguments
+     * @param array<string> $arguments
      */
-    public function __construct($appName, array $arguments = [])
+    public function __construct(string $appName, array $arguments = [])
     {
         $this->appName = $appName;
         $this->arguments = $arguments;
@@ -33,7 +33,7 @@ class Input
     /**
      * @return string
      */
-    public function getAppName()
+    public function getAppName(): string
     {
         return $this->appName;
     }
@@ -42,7 +42,7 @@ class Input
      * @param string $name
      * @return bool
      */
-    public function hasArgument($name)
+    public function hasArgument($name): bool
     {
         return isset($this->arguments[$name]);
     }
@@ -52,7 +52,7 @@ class Input
      * @return string
      * @throws InvalidArgumentException
      */
-    public function getArgument($name)
+    public function getArgument(string $name): string
     {
         if (!$this->hasArgument($name)) {
             throw new InvalidArgumentException(sprintf('Argument with name: "%s" does not exist', $name));
@@ -65,7 +65,7 @@ class Input
      * @param string $name
      * @param string $value
      */
-    public function setArgument($name, $value)
+    public function setArgument(string $name, string $value): void
     {
         $this->arguments[$name] = $value;
     }

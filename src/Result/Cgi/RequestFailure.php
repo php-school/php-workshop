@@ -26,12 +26,12 @@ class RequestFailure implements FailureInterface
     private $actualOutput;
     
     /**
-     * @var array
+     * @var array<string, string>
      */
     private $expectedHeaders;
     
     /**
-     * @var array
+     * @var array<string, string>
      */
     private $actualHeaders;
 
@@ -39,21 +39,21 @@ class RequestFailure implements FailureInterface
      * @param RequestInterface $request The request that caused the failure.
      * @param string $expectedOutput
      * @param string $actualOutput
-     * @param array $expectedHeaders
-     * @param array $actualHeaders
+     * @param array<string, string> $expectedHeaders
+     * @param array<string, string> $actualHeaders
      */
     public function __construct(
         RequestInterface $request,
-        $expectedOutput,
-        $actualOutput,
+        string $expectedOutput,
+        string $actualOutput,
         array $expectedHeaders,
         array $actualHeaders
     ) {
-        $this->request          = $request;
-        $this->expectedOutput   = $expectedOutput;
-        $this->actualOutput     = $actualOutput;
-        $this->expectedHeaders  = $expectedHeaders;
-        $this->actualHeaders    = $actualHeaders;
+        $this->request = $request;
+        $this->expectedOutput = $expectedOutput;
+        $this->actualOutput = $actualOutput;
+        $this->expectedHeaders = $expectedHeaders;
+        $this->actualHeaders = $actualHeaders;
     }
 
     /**
@@ -61,7 +61,7 @@ class RequestFailure implements FailureInterface
      *
      * @return RequestInterface
      */
-    public function getRequest()
+    public function getRequest(): RequestInterface
     {
         return $this->request;
     }
@@ -71,7 +71,7 @@ class RequestFailure implements FailureInterface
      *
      * @return bool
      */
-    public function bodyDifferent()
+    public function bodyDifferent(): bool
     {
         return $this->expectedOutput !== $this->actualOutput;
     }
@@ -81,7 +81,7 @@ class RequestFailure implements FailureInterface
      *
      * @return bool
      */
-    public function headersDifferent()
+    public function headersDifferent(): bool
     {
         return $this->expectedHeaders !== $this->actualHeaders;
     }
@@ -91,7 +91,7 @@ class RequestFailure implements FailureInterface
      *
      * @return bool
      */
-    public function headersAndBodyDifferent()
+    public function headersAndBodyDifferent(): bool
     {
         return $this->bodyDifferent() && $this->headersDifferent();
     }
@@ -101,7 +101,7 @@ class RequestFailure implements FailureInterface
      *
      * @return string
      */
-    public function getExpectedOutput()
+    public function getExpectedOutput(): string
     {
         return $this->expectedOutput;
     }
@@ -111,7 +111,7 @@ class RequestFailure implements FailureInterface
      *
      * @return string
      */
-    public function getActualOutput()
+    public function getActualOutput(): string
     {
         return $this->actualOutput;
     }
@@ -119,9 +119,9 @@ class RequestFailure implements FailureInterface
     /**
      * Get the array of expected headers.
      *
-     * @return array
+     * @return array<string, string>
      */
-    public function getExpectedHeaders()
+    public function getExpectedHeaders(): array
     {
         return $this->expectedHeaders;
     }
@@ -129,9 +129,9 @@ class RequestFailure implements FailureInterface
     /**
      * Get the array of actual headers.
      *
-     * @return array
+     * @return array<string, string>
      */
-    public function getActualHeaders()
+    public function getActualHeaders(): array
     {
         return $this->actualHeaders;
     }
@@ -141,7 +141,7 @@ class RequestFailure implements FailureInterface
      *
      * @return string
      */
-    public function getCheckName()
+    public function getCheckName(): string
     {
         return 'Request Failure';
     }

@@ -12,7 +12,7 @@ interface ResultInterface extends \PhpSchool\PhpWorkshop\Result\ResultInterface
     /**
      * Get the arguments associated with this result.
      *
-     * @return ArrayObject
+     * @return ArrayObject<string>
      */
-    public function getArgs();
+    public function getArgs(): ArrayObject;
 }

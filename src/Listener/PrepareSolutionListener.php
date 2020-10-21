@@ -15,7 +15,7 @@ class PrepareSolutionListener
     /**
      * Locations for composer executable
      *
-     * @var array
+     * @var array<string>
      */
     private $composerLocations = [
         'composer',
@@ -27,7 +27,7 @@ class PrepareSolutionListener
     /**
      * @param ExerciseRunnerEvent $event
      */
-    public function __invoke(ExerciseRunnerEvent $event)
+    public function __invoke(ExerciseRunnerEvent $event): void
     {
         $exercise = $event->getExercise();
 

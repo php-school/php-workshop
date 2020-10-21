@@ -12,21 +12,21 @@ use PhpSchool\PhpWorkshop\ResultRenderer\ResultRendererInterface;
 class ResultRendererFactory
 {
     /**
-     * @var array
+     * @var array<class-string, class-string>
      */
     private $mappings = [];
 
     /**
-     * @var array
+     * @var array<class-string, callable>
      */
     private $factories = [];
 
     /**
-     * @param string $resultClass
-     * @param string $rendererClass
-     * @param callable $factory
+     * @param class-string $resultClass
+     * @param class-string $rendererClass
+     * @param callable|null $factory
      */
-    public function registerRenderer($resultClass, $rendererClass, callable $factory = null)
+    public function registerRenderer(string $resultClass, string $rendererClass, callable $factory = null): void
     {
         if (!$this->isImplementationNameOfClass($resultClass, ResultInterface::class)) {
             throw new InvalidArgumentException();
@@ -47,7 +47,7 @@ class ResultRendererFactory
      * @param ResultInterface $result
      * @return ResultRendererInterface
      */
-    public function create(ResultInterface $result)
+    public function create(ResultInterface $result): ResultRendererInterface
     {
         $class = get_class($result);
         if (!isset($this->mappings[$class])) {
@@ -73,7 +73,12 @@ class ResultRendererFactory
         return $renderer;
     }
 
-    protected function isImplementationNameOfClass($implementationName, $className)
+    /**
+     * @param class-string $implementationName
+     * @param class-string $className
+     * @return bool
+     */
+    protected function isImplementationNameOfClass(string $implementationName, string $className): bool
     {
         return is_string($implementationName) && is_subclass_of($implementationName, $className);
     }

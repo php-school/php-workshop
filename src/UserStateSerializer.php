@@ -54,7 +54,7 @@ class UserStateSerializer
      * @param UserState $state
      * @return int
      */
-    public function serialize(UserState $state)
+    public function serialize(UserState $state): int
     {
         $saveFile = sprintf('%s/%s', $this->path, static::SAVE_FILE);
 
@@ -75,7 +75,7 @@ class UserStateSerializer
      *
      * @return UserState
      */
-    public function deSerialize()
+    public function deSerialize(): UserState
     {
         $legacySaveFile = sprintf('%s/%s', $this->path, static::LEGACY_SAVE_FILE);
         if (file_exists($legacySaveFile)) {
@@ -136,7 +136,7 @@ class UserStateSerializer
      * @param string $legacySaveFile
      * @return null|UserState
      */
-    private function migrateData($legacySaveFile)
+    private function migrateData(string $legacySaveFile): ?UserState
     {
         $data = $this->readJson($legacySaveFile);
 
@@ -171,9 +171,9 @@ class UserStateSerializer
 
     /**
      * @param string $filePath
-     * @return array|null
+     * @return array<mixed>|null
      */
-    private function readJson($filePath)
+    private function readJson($filePath): ?array
     {
         if (!file_exists($filePath)) {
             return null;
@@ -197,7 +197,7 @@ class UserStateSerializer
     /**
      * Remove the file
      */
-    private function wipeFile()
+    private function wipeFile(): void
     {
         @unlink($this->path);
     }

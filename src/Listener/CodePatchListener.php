@@ -34,7 +34,7 @@ class CodePatchListener
     /**
      * @param ExerciseRunnerEvent $event
      */
-    public function patch(ExerciseRunnerEvent $event)
+    public function patch(ExerciseRunnerEvent $event): void
     {
         $fileName = $event->getInput()->getArgument('program');
 
@@ -48,7 +48,7 @@ class CodePatchListener
     /**
      * @param ExerciseRunnerEvent $event
      */
-    public function revert(ExerciseRunnerEvent $event)
+    public function revert(ExerciseRunnerEvent $event): void
     {
         if (null === $this->originalCode) {
             throw new RuntimeException('Can only revert previously patched code');

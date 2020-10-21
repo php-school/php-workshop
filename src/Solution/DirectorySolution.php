@@ -35,10 +35,10 @@ class DirectorySolution implements SolutionInterface
      *
      * @param string $directory The directory to search for files.
      * @param string $entryPoint The relative path from the directory of the entry point file.
-     * @param array  $exclusions An array of file names to exclude from the folder.
+     * @param array<string> $exclusions An array of file names to exclude from the folder.
      * @throws InvalidArgumentException If the entry point does not exist in the folder.
      */
-    public function __construct($directory, $entryPoint, array $exclusions = [])
+    public function __construct(string $directory, string $entryPoint, array $exclusions = [])
     {
         $directory  = realpath(rtrim($directory, '/'));
         $entryPoint = ltrim($entryPoint, '/');
@@ -46,7 +46,7 @@ class DirectorySolution implements SolutionInterface
         $dir  = new RecursiveDirectoryIterator($directory, RecursiveDirectoryIterator::SKIP_DOTS);
         $iter = new RecursiveIteratorIterator(
             new RecursiveCallbackFilterIterator($dir, function (\SplFileInfo $current) use ($exclusions) {
-                return !in_array($current->getBasename(), $exclusions);
+                return !in_array($current->getBasename(), $exclusions, true);
             }),
             RecursiveIteratorIterator::SELF_FIRST
         );
@@ -77,11 +77,11 @@ class DirectorySolution implements SolutionInterface
      * Static constructor to build an instance from a directory.
      *
      * @param string $directory The directory to search for files.
-     * @param array  $exclusions An array of file names to exclude from the folder.
+     * @param array<string> $exclusions An array of file names to exclude from the folder.
      * @param string $entryPoint The relative path from the directory of the entry point file.
      * @return self
      */
-    public static function fromDirectory($directory, array $exclusions = [], $entryPoint = 'solution.php')
+    public static function fromDirectory(string $directory, array $exclusions = [], $entryPoint = 'solution.php'): self
     {
         return new self($directory, $entryPoint, array_merge($exclusions, ['composer.lock', 'vendor']));
     }
@@ -92,7 +92,7 @@ class DirectorySolution implements SolutionInterface
      *
      * @return string
      */
-    public function getEntryPoint()
+    public function getEntryPoint(): string
     {
         return $this->entryPoint;
     }
@@ -102,7 +102,7 @@ class DirectorySolution implements SolutionInterface
      *
      * @return SolutionFile[]
      */
-    public function getFiles()
+    public function getFiles(): array
     {
         return $this->files;
     }
@@ -112,7 +112,7 @@ class DirectorySolution implements SolutionInterface
      *
      * @return string
      */
-    public function getBaseDirectory()
+    public function getBaseDirectory(): string
     {
         return $this->baseDirectory;
     }
@@ -122,7 +122,7 @@ class DirectorySolution implements SolutionInterface
      *
      * @return bool
      */
-    public function hasComposerFile()
+    public function hasComposerFile(): bool
     {
         return file_exists(sprintf('%s/composer.lock', $this->baseDirectory));
     }

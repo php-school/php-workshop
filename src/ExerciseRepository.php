@@ -10,6 +10,8 @@ use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 
 /**
  * Exercise repository, use to locate individual/all exercises by certain criteria.
+ *
+ * @implements IteratorAggregate<int, ExerciseInterface>
  */
 class ExerciseRepository implements IteratorAggregate, Countable
 {
@@ -21,7 +23,7 @@ class ExerciseRepository implements IteratorAggregate, Countable
     /**
      * Requires an array of `ExerciseInterface` instances.
      *
-     * @param ExerciseInterface[] $exercises
+     * @param array<ExerciseInterface> $exercises
      */
     public function __construct(array $exercises)
     {
@@ -34,7 +36,7 @@ class ExerciseRepository implements IteratorAggregate, Countable
      * @param ExerciseInterface $exercise
      * @return ExerciseInterface
      */
-    private function validateExercise(ExerciseInterface $exercise)
+    private function validateExercise(ExerciseInterface $exercise): ExerciseInterface
     {
         $type = $exercise->getType();
 
@@ -50,9 +52,9 @@ class ExerciseRepository implements IteratorAggregate, Countable
     /**
      * Retrieve all of the exercises as an array.
      *
-     * @return ExerciseInterface[]
+     * @return array<ExerciseInterface>
      */
-    public function findAll()
+    public function findAll(): array
     {
         return $this->exercises;
     }
@@ -65,7 +67,7 @@ class ExerciseRepository implements IteratorAggregate, Countable
      * @return ExerciseInterface
      * @throws InvalidArgumentException
      */
-    public function findByName($name)
+    public function findByName(string $name): ExerciseInterface
     {
         foreach ($this->exercises as $exercise) {
             if ($name === $exercise->getName()) {
@@ -79,9 +81,9 @@ class ExerciseRepository implements IteratorAggregate, Countable
     /**
      * Get the names of each exercise as an array.
      *
-     * @return array
+     * @return array<string>
      */
-    public function getAllNames()
+    public function getAllNames(): array
     {
         return array_map(function (ExerciseInterface $exercise) {
             return $exercise->getName();
@@ -93,7 +95,7 @@ class ExerciseRepository implements IteratorAggregate, Countable
      *
      * @return int
      */
-    public function count()
+    public function count(): int
     {
         return count($this->exercises);
     }
@@ -101,9 +103,9 @@ class ExerciseRepository implements IteratorAggregate, Countable
     /**
      * Allow to iterate over the repository with `foreach`.
      *
-     * @return ArrayIterator
+     * @return ArrayIterator<int, ExerciseInterface>
      */
-    public function getIterator()
+    public function getIterator(): ArrayIterator
     {
         return new ArrayIterator($this->exercises);
     }

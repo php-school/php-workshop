@@ -29,7 +29,7 @@ class StdOutput implements OutputInterface
     /**
      * @param string $error
      */
-    public function printError($error)
+    public function printError(string $error): void
     {
         $length = strlen($error) + 2;
         echo "\n";
@@ -45,7 +45,7 @@ class StdOutput implements OutputInterface
      *
      * @param string $title
      */
-    public function writeTitle($title)
+    public function writeTitle(string $title): void
     {
         echo sprintf("\n%s\n", $this->color->__invoke($title)->underline()->bold());
     }
@@ -55,7 +55,7 @@ class StdOutput implements OutputInterface
      *
      * @param string $content
      */
-    public function write($content)
+    public function write(string $content): void
     {
         echo $content;
     }
@@ -63,9 +63,9 @@ class StdOutput implements OutputInterface
     /**
      * Write an array of strings, each on a new line.
      *
-     * @param array $lines
+     * @param array<string> $lines
      */
-    public function writeLines(array $lines)
+    public function writeLines(array $lines): void
     {
         foreach ($lines as $line) {
             $this->writeLine($line);
@@ -77,7 +77,7 @@ class StdOutput implements OutputInterface
      *
      * @param string $line
      */
-    public function writeLine($line)
+    public function writeLine(string $line): void
     {
         echo sprintf("%s\n", $line);
     }
@@ -85,7 +85,7 @@ class StdOutput implements OutputInterface
     /**
      * Write an empty line.
      */
-    public function emptyLine()
+    public function emptyLine(): void
     {
         echo "\n";
     }
@@ -93,7 +93,7 @@ class StdOutput implements OutputInterface
     /**
      * Write a line break.
      */
-    public function lineBreak()
+    public function lineBreak(): void
     {
         echo $this->color->__invoke(str_repeat('─', $this->terminal->getWidth()))->yellow();
     }

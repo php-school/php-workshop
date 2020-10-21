@@ -142,7 +142,7 @@ class MenuFactory
      * @param EventDispatcher $eventDispatcher
      * @param ExerciseInterface $exercise
      */
-    private function dispatchExerciseSelectedEvent(EventDispatcher $eventDispatcher, ExerciseInterface $exercise)
+    private function dispatchExerciseSelectedEvent(EventDispatcher $eventDispatcher, ExerciseInterface $exercise): void
     {
         $eventDispatcher->dispatch(
             new Event(
