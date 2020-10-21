@@ -16,13 +16,13 @@ class Input
     private $appName;
 
     /**
-     * @var array<string>
+     * @var array<string, string|null>
      */
     private $arguments = [];
 
     /**
      * @param string $appName
-     * @param array<string> $arguments
+     * @param array<string, string|null> $arguments
      */
     public function __construct(string $appName, array $arguments = [])
     {
@@ -42,9 +42,23 @@ class Input
      * @param string $name
      * @return bool
      */
-    public function hasArgument($name): bool
+    public function hasArgument(string $name): bool
     {
-        return isset($this->arguments[$name]);
+        return array_key_exists($name, $this->arguments);
+    }
+
+    /**
+     * @param string $name
+     * @return ?string
+     * @throws InvalidArgumentException
+     */
+    public function getArgument(string $name): ?string
+    {
+        if (!$this->hasArgument($name)) {
+            throw new InvalidArgumentException(sprintf('Argument with name: "%s" does not exist', $name));
+        }
+
+        return $this->arguments[$name];
     }
 
     /**
@@ -52,13 +66,15 @@ class Input
      * @return string
      * @throws InvalidArgumentException
      */
-    public function getArgument(string $name): string
+    public function getRequiredArgument(string $name): string
     {
-        if (!$this->hasArgument($name)) {
-            throw new InvalidArgumentException(sprintf('Argument with name: "%s" does not exist', $name));
+        $arg = $this->getArgument($name);
+
+        if (null === $arg) {
+            throw new InvalidArgumentException(sprintf('Argument with name: "%s" is required', $name));
         }
 
-        return $this->arguments[$name];
+        return $arg;
     }
 
     /**

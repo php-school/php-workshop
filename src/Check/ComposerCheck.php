@@ -41,19 +41,19 @@ class ComposerCheck implements SimpleCheckInterface
             throw new \InvalidArgumentException();
         }
         
-        if (!file_exists(sprintf('%s/composer.json', dirname($input->getArgument('program'))))) {
+        if (!file_exists(sprintf('%s/composer.json', dirname($input->getRequiredArgument('program'))))) {
             return new Failure($this->getName(), 'No composer.json file found');
         }
 
-        if (!file_exists(sprintf('%s/composer.lock', dirname($input->getArgument('program'))))) {
+        if (!file_exists(sprintf('%s/composer.lock', dirname($input->getRequiredArgument('program'))))) {
             return new Failure($this->getName(), 'No composer.lock file found');
         }
 
-        if (!file_exists(sprintf('%s/vendor', dirname($input->getArgument('program'))))) {
+        if (!file_exists(sprintf('%s/vendor', dirname($input->getRequiredArgument('program'))))) {
             return new Failure($this->getName(), 'No vendor folder found');
         }
         
-        $lockFile = new LockFileParser(sprintf('%s/composer.lock', dirname($input->getArgument('program'))));
+        $lockFile = new LockFileParser(sprintf('%s/composer.lock', dirname($input->getRequiredArgument('program'))));
         $missingPackages = array_filter($exercise->getRequiredPackages(), function ($package) use ($lockFile) {
             return !$lockFile->hasInstalledPackage($package);
         });

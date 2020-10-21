@@ -24,7 +24,7 @@ class SolutionFile
      * @param string $baseDirectory The base directory of the solution.
      * @throws InvalidArgumentException If the file does not exist.
      */
-    public function __construct($relativePath, $baseDirectory)
+    public function __construct(string $relativePath, string $baseDirectory)
     {
         $this->relativePath  = trim($relativePath, '/');
         $this->baseDirectory = rtrim($baseDirectory, '/');
@@ -41,7 +41,7 @@ class SolutionFile
      * @param string $file
      * @return self
      */
-    public static function fromFile($file)
+    public static function fromFile(string $file): self
     {
         return new self(basename($file), dirname($file));
     }
@@ -51,7 +51,7 @@ class SolutionFile
      *
      * @return string
      */
-    private function getAbsolutePath()
+    private function getAbsolutePath(): string
     {
         return sprintf('%s/%s', $this->baseDirectory, $this->relativePath);
     }
@@ -61,7 +61,7 @@ class SolutionFile
      *
      * @return string
      */
-    public function getRelativePath()
+    public function getRelativePath(): string
     {
         return $this->relativePath;
     }
@@ -71,7 +71,7 @@ class SolutionFile
      *
      * @return string
      */
-    public function getBaseDirectory()
+    public function getBaseDirectory(): string
     {
         return $this->baseDirectory;
     }
@@ -81,9 +81,9 @@ class SolutionFile
      *
      * @return string
      */
-    public function getContents()
+    public function getContents(): string
     {
-        return file_get_contents($this->getAbsolutePath());
+        return (string) file_get_contents($this->getAbsolutePath());
     }
 
     /**
@@ -91,7 +91,7 @@ class SolutionFile
      *
      * @return string
      */
-    public function getExtension()
+    public function getExtension(): string
     {
         return pathinfo($this->getRelativePath(), PATHINFO_EXTENSION);
     }
@@ -101,7 +101,7 @@ class SolutionFile
      *
      * @return string
      */
-    public function __toString()
+    public function __toString(): string
     {
         return $this->getAbsolutePath();
     }

@@ -28,10 +28,10 @@ class Failure implements FailureInterface
      * @param string $name The name of the check that produced this result.
      * @param string|null $reason The reason (if any) of the failure.
      */
-    public function __construct($name, $reason = null)
+    public function __construct(string $name, string $reason = null)
     {
-        $this->name     = $name;
-        $this->reason   = $reason;
+        $this->name = $name;
+        $this->reason = $reason;
     }
 
     /**
@@ -41,7 +41,7 @@ class Failure implements FailureInterface
      * @param string|null $reason The reason (if any) of the failure.
      * @return self The result.
      */
-    public static function fromNameAndReason($name, $reason)
+    public static function fromNameAndReason(string $name, ?string $reason): self
     {
         return new self($name, $reason);
     }
@@ -53,7 +53,7 @@ class Failure implements FailureInterface
      * @param string $reason The reason (if any) of the failure.
      * @return self The result.
      */
-    public static function fromCheckAndReason(CheckInterface $check, $reason)
+    public static function fromCheckAndReason(CheckInterface $check, string $reason): self
     {
         return new self($check->getName(), $reason);
     }
@@ -65,7 +65,7 @@ class Failure implements FailureInterface
      * @param CodeExecutionException $e The exception.
      * @return self The result.
      */
-    public static function fromNameAndCodeExecutionFailure($name, CodeExecutionException $e)
+    public static function fromNameAndCodeExecutionFailure(string $name, CodeExecutionException $e): self
     {
         return new self($name, $e->getMessage());
     }
@@ -79,8 +79,11 @@ class Failure implements FailureInterface
      * @param string $file The absolute path to the solution.
      * @return self The result.
      */
-    public static function fromCheckAndCodeParseFailure(CheckInterface $check, ParseErrorException $e, $file)
-    {
+    public static function fromCheckAndCodeParseFailure(
+        CheckInterface $check,
+        ParseErrorException $e,
+        string $file
+    ): self {
         return new self(
             $check->getName(),
             sprintf('File: "%s" could not be parsed. Error: "%s"', $file, $e->getMessage())
@@ -92,7 +95,7 @@ class Failure implements FailureInterface
      *
      * @return string
      */
-    public function getCheckName()
+    public function getCheckName(): string
     {
         return $this->name;
     }
@@ -102,7 +105,7 @@ class Failure implements FailureInterface
      *
      * @return string|null
      */
-    public function getReason()
+    public function getReason(): ?string
     {
         return $this->reason;
     }

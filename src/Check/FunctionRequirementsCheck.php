@@ -4,6 +4,7 @@ namespace PhpSchool\PhpWorkshop\Check;
 
 use PhpParser\Error;
 use PhpParser\Node\Expr\FuncCall;
+use PhpParser\Node\Name;
 use PhpParser\NodeTraverser;
 use PhpParser\Parser;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
@@ -15,6 +16,7 @@ use PhpSchool\PhpWorkshop\Result\Failure;
 use PhpSchool\PhpWorkshop\Result\FunctionRequirementsFailure;
 use PhpSchool\PhpWorkshop\Result\ResultInterface;
 use PhpSchool\PhpWorkshop\Result\Success;
+use PhpSchool\PhpWorkshop\Utils\Collection;
 
 /**
  * This check verifies that the student's solution contains usages of some required functions
@@ -22,7 +24,7 @@ use PhpSchool\PhpWorkshop\Result\Success;
  */
 class FunctionRequirementsCheck implements SimpleCheckInterface
 {
-    
+
     /**
      * @var Parser
      */
@@ -62,12 +64,12 @@ class FunctionRequirementsCheck implements SimpleCheckInterface
         $requiredFunctions  = $exercise->getRequiredFunctions();
         $bannedFunctions    = $exercise->getBannedFunctions();
 
-        $code = file_get_contents($input->getArgument('program'));
+        $code = (string) file_get_contents($input->getRequiredArgument('program'));
 
         try {
-            $ast = $this->parser->parse($code);
+            $ast = $this->parser->parse($code) ?? [];
         } catch (Error $e) {
-            return Failure::fromCheckAndCodeParseFailure($this, $e, $input->getArgument('program'));
+            return Failure::fromCheckAndCodeParseFailure($this, $e, $input->getRequiredArgument('program'));
         }
 
         $visitor    = new FunctionVisitor($requiredFunctions, $bannedFunctions);

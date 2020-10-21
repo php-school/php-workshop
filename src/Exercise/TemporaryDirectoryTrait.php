@@ -18,7 +18,7 @@ trait TemporaryDirectoryTrait
     {
         return sprintf(
             '%s/%s',
-            str_replace('\\', '/', realpath(sys_get_temp_dir())),
+            str_replace('\\', '/', (string) realpath(sys_get_temp_dir())),
             str_replace('\\', '_', __CLASS__)
         );
     }

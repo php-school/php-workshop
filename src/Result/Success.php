@@ -17,7 +17,7 @@ class Success implements SuccessInterface
     /**
      * @param string $name The name of the check that produced this result.
      */
-    public function __construct($name)
+    public function __construct(string $name)
     {
         $this->name = $name;
     }
@@ -38,7 +38,7 @@ class Success implements SuccessInterface
      *
      * @return string
      */
-    public function getCheckName()
+    public function getCheckName(): string
     {
         return $this->name;
     }

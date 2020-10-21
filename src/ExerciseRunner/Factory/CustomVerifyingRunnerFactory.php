@@ -25,7 +25,7 @@ class CustomVerifyingRunnerFactory implements ExerciseRunnerFactoryInterface
      * @param ExerciseInterface $exercise
      * @return bool
      */
-    public function supports(ExerciseInterface $exercise)
+    public function supports(ExerciseInterface $exercise): bool
     {
         return $exercise->getType()->getValue() === self::$type;
     }
@@ -35,7 +35,7 @@ class CustomVerifyingRunnerFactory implements ExerciseRunnerFactoryInterface
      *
      * @param CommandDefinition $commandDefinition
      */
-    public function configureInput(CommandDefinition $commandDefinition)
+    public function configureInput(CommandDefinition $commandDefinition): void
     {
     }
 
@@ -45,7 +45,7 @@ class CustomVerifyingRunnerFactory implements ExerciseRunnerFactoryInterface
      * @param ExerciseInterface&CustomVerifyingExercise $exercise
      * @return ExerciseRunnerInterface
      */
-    public function create(ExerciseInterface $exercise)
+    public function create(ExerciseInterface $exercise): ExerciseRunnerInterface
     {
         return new CustomVerifyingRunner($exercise);
     }

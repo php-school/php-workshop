@@ -30,7 +30,7 @@ class CustomVerifyingRunner implements ExerciseRunnerInterface
      *
      * @return string
      */
-    public function getName()
+    public function getName(): string
     {
         return 'Custom Verifying Runner';
     }
@@ -38,9 +38,9 @@ class CustomVerifyingRunner implements ExerciseRunnerInterface
     /**
      * Get an array of the class names of the required checks this runner needs.
      *
-     * @return array
+     * @return array<class-string>
      */
-    public function getRequiredChecks()
+    public function getRequiredChecks(): array
     {
         return [];
     }
@@ -52,7 +52,7 @@ class CustomVerifyingRunner implements ExerciseRunnerInterface
      * @param Input $input The command line arguments passed to the command.
      * @return ResultInterface The result of the check.
      */
-    public function verify(Input $input)
+    public function verify(Input $input): ResultInterface
     {
         return $this->exercise->verify();
     }
@@ -65,7 +65,7 @@ class CustomVerifyingRunner implements ExerciseRunnerInterface
      * @param OutputInterface $output A wrapper around STDOUT.
      * @return bool If the solution was successfully executed, eg. exit code was 0.
      */
-    public function run(Input $input, OutputInterface $output)
+    public function run(Input $input, OutputInterface $output): bool
     {
         $message  = 'Nothing to run here. This exercise does not require a code solution, ';
         $message .= 'so there is nothing to execute.';

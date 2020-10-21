@@ -52,9 +52,9 @@ class UserStateSerializer
      * Save the students state for this workshop to disk.
      *
      * @param UserState $state
-     * @return int
+     * @return void
      */
-    public function serialize(UserState $state): int
+    public function serialize(UserState $state): void
     {
         $saveFile = sprintf('%s/%s', $this->path, static::SAVE_FILE);
 
@@ -64,10 +64,10 @@ class UserStateSerializer
 
         $data[$this->workshopName] = [
             'completed_exercises'   => $state->getCompletedExercises(),
-            'current_exercise'      => $state->getCurrentExercise(),
+            'current_exercise'      => $state->isAssignedExercise() ? $state->getCurrentExercise() : null,
         ];
 
-        return file_put_contents($saveFile, json_encode($data));
+        file_put_contents($saveFile, json_encode($data));
     }
 
     /**
@@ -179,7 +179,7 @@ class UserStateSerializer
             return null;
         }
 
-        $data = file_get_contents($filePath);
+        $data = (string) file_get_contents($filePath);
 
         if (trim($data) === "") {
             return null;

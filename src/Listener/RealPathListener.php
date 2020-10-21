@@ -23,10 +23,10 @@ class RealPathListener
             return;
         }
 
-        $program = $event->getInput()->getArgument('program');
+        $program = $event->getInput()->getRequiredArgument('program');
 
         if (file_exists($program)) {
-            $event->getInput()->setArgument('program', realpath($program));
+            $event->getInput()->setArgument('program', (string) realpath($program));
         }
     }
 }

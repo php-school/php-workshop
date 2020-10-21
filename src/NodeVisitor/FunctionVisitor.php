@@ -46,13 +46,13 @@ class FunctionVisitor extends NodeVisitorAbstract
      */
     public function leaveNode(Node $node)
     {
-        if ($node instanceof FuncCall) {
+        if ($node instanceof FuncCall && $node->name instanceof Node\Name) {
             $name = $node->name->__toString();
-            if (in_array($name, $this->requiredFunctions)) {
+            if (in_array($name, $this->requiredFunctions, true)) {
                 $this->requiredUsages[] = $node;
             }
 
-            if (in_array($name, $this->bannedFunctions)) {
+            if (in_array($name, $this->bannedFunctions, true)) {
                 $this->bannedUsages[] = $node;
             }
         }
@@ -91,6 +91,10 @@ class FunctionVisitor extends NodeVisitorAbstract
     {
         $metRequires = array_filter($this->requiredFunctions, function ($function) {
             foreach ($this->getRequiredUsages() as $usage) {
+                if (!$usage->name instanceof Node\Name) {
+                    continue;
+                }
+
                 if ($usage->name->__toString() === $function) {
                     return true;
                 }
@@ -108,6 +112,10 @@ class FunctionVisitor extends NodeVisitorAbstract
     {
         return array_filter($this->requiredFunctions, function ($function) {
             foreach ($this->getRequiredUsages() as $usage) {
+                if (!$usage->name instanceof Node\Name) {
+                    continue;
+                }
+
                 if ($usage->name->__toString() === $function) {
                     return false;
                 }

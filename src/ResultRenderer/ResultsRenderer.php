@@ -225,7 +225,7 @@ class ResultsRenderer
             $start = 0;
         }
 
-        return str_repeat(' ', $start) . $string;
+        return str_repeat(' ', (int) $start) . $string;
     }
 
     /**
@@ -245,9 +245,9 @@ class ResultsRenderer
             $this->style(
                 sprintf(
                     '%s%s%s',
-                    str_repeat(' ', $start),
+                    str_repeat(' ', (int) $start),
                     $string,
-                    str_repeat(' ', $this->terminal->getWidth() - $stringLength - $start)
+                    str_repeat(' ', (int) ($this->terminal->getWidth() - $stringLength - $start))
                 ),
                 $style
             )

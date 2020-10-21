@@ -49,7 +49,7 @@ class CgiRunner implements ExerciseRunnerInterface
     private $requestRenderer;
 
     /**
-     * @var array
+     * @var array<class-string>
      */
     private static $requiredChecks = [
         FileExistsCheck::class,
@@ -102,7 +102,7 @@ class CgiRunner implements ExerciseRunnerInterface
     /**
      * @return string
      */
-    public function getName()
+    public function getName(): string
     {
         return 'CGI Program Runner';
     }
@@ -110,9 +110,9 @@ class CgiRunner implements ExerciseRunnerInterface
     /**
      * Get an array of the class names of the required checks this runner needs.
      *
-     * @return array
+     * @return array<class-string>
      */
-    public function getRequiredChecks()
+    public function getRequiredChecks(): array
     {
         return static::$requiredChecks;
     }
@@ -122,7 +122,7 @@ class CgiRunner implements ExerciseRunnerInterface
      * @param string $fileName
      * @return ResultInterface
      */
-    private function checkRequest(RequestInterface $request, $fileName)
+    private function checkRequest(RequestInterface $request, string $fileName): ResultInterface
     {
         try {
             /** @var CgiExecuteEvent $event */
@@ -162,9 +162,9 @@ class CgiRunner implements ExerciseRunnerInterface
 
     /**
      * @param ResponseInterface $response
-     * @return array
+     * @return array<string,string>
      */
-    private function getHeaders(ResponseInterface $response)
+    private function getHeaders(ResponseInterface $response): array
     {
         $headers = [];
         foreach ($response->getHeaders() as $name => $values) {
@@ -179,7 +179,7 @@ class CgiRunner implements ExerciseRunnerInterface
      * @param string $type
      * @return ResponseInterface
      */
-    private function executePhpFile($fileName, RequestInterface $request, $type)
+    private function executePhpFile(string $fileName, RequestInterface $request, string $type): ResponseInterface
     {
         $process = $this->getProcess($fileName, $request);
 
@@ -205,7 +205,7 @@ class CgiRunner implements ExerciseRunnerInterface
      * @param RequestInterface $request
      * @return Process
      */
-    private function getProcess($fileName, RequestInterface $request)
+    private function getProcess(string $fileName, RequestInterface $request): Process
     {
         $env = [
             'REQUEST_METHOD'  => $request->getMethod(),
@@ -250,13 +250,13 @@ class CgiRunner implements ExerciseRunnerInterface
      * @param Input $input The command line arguments passed to the command.
      * @return CgiResult The result of the check.
      */
-    public function verify(Input $input)
+    public function verify(Input $input): ResultInterface
     {
         $this->eventDispatcher->dispatch(new ExerciseRunnerEvent('cgi.verify.start', $this->exercise, $input));
         $result = new CgiResult(
             array_map(
                 function (RequestInterface $request) use ($input) {
-                    return $this->checkRequest($request, $input->getArgument('program'));
+                    return $this->checkRequest($request, $input->getRequiredArgument('program'));
                 },
                 $this->exercise->getRequests()
             )
@@ -282,7 +282,7 @@ class CgiRunner implements ExerciseRunnerInterface
      * @param OutputInterface $output A wrapper around STDOUT.
      * @return bool If the solution was successfully executed, eg. exit code was 0.
      */
-    public function run(Input $input, OutputInterface $output)
+    public function run(Input $input, OutputInterface $output): bool
     {
         $this->eventDispatcher->dispatch(new ExerciseRunnerEvent('cgi.run.start', $this->exercise, $input));
         $success = true;
@@ -291,7 +291,7 @@ class CgiRunner implements ExerciseRunnerInterface
             $event = $this->eventDispatcher->dispatch(
                 new CgiExecuteEvent('cgi.run.student-execute.pre', $request)
             );
-            $process = $this->getProcess($input->getArgument('program'), $event->getRequest());
+            $process = $this->getProcess($input->getRequiredArgument('program'), $event->getRequest());
 
             $output->writeTitle("Request");
             $output->emptyLine();

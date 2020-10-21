@@ -32,10 +32,10 @@ class ResultAggregatorTest extends TestCase
         $resultAggregator = new ResultAggregator();
         $this->assertTrue($resultAggregator->isSuccessful());
 
-        $resultAggregator->add(new Success($this->check));
+        $resultAggregator->add(Success::fromCheck($this->check));
         $this->assertTrue($resultAggregator->isSuccessful());
 
-        $resultAggregator->add(new Failure($this->check, 'nope'));
+        $resultAggregator->add(Failure::fromCheckAndReason($this->check, 'nope'));
         $this->assertFalse($resultAggregator->isSuccessful());
     }
 
@@ -58,8 +58,8 @@ class ResultAggregatorTest extends TestCase
     public function testIterator(): void
     {
         $results = [
-            new Success($this->check),
-            new Failure($this->check, 'nope')
+            new Success('Some Check'),
+            new Failure('Some Check', 'nope')
         ];
         
         $resultAggregator = new ResultAggregator();

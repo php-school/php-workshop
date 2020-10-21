@@ -66,8 +66,7 @@ class UserStateSerializerTest extends TestCase
             ]
         ]);
 
-        $res = $serializer->serialize($state);
-        $this->assertTrue($res > 0);
+        $serializer->serialize($state);
         $this->assertSame($expected, file_get_contents($this->tmpFile));
     }
 
@@ -86,8 +85,8 @@ class UserStateSerializerTest extends TestCase
             ]
         ]);
 
-        $res = $serializer->serialize($state);
-        $this->assertTrue($res > 0);
+        $serializer->serialize($state);
+
         $this->assertSame($expected, file_get_contents($this->tmpFile));
     }
 
@@ -96,7 +95,7 @@ class UserStateSerializerTest extends TestCase
         mkdir($this->tmpDir, 0777, true);
         $serializer = new UserStateSerializer($this->tmpDir, $this->workshopName, $this->exerciseRepository);
         $state = $serializer->deSerialize();
-        $this->assertNull($state->getCurrentExercise());
+        $this->assertFalse($state->isAssignedExercise());
         $this->assertEmpty($state->getCompletedExercises());
     }
 
@@ -106,7 +105,7 @@ class UserStateSerializerTest extends TestCase
         file_put_contents($this->tmpFile, '');
         $serializer = new UserStateSerializer($this->tmpDir, $this->workshopName, $this->exerciseRepository);
         $state = $serializer->deSerialize();
-        $this->assertNull($state->getCurrentExercise());
+        $this->assertFalse($state->isAssignedExercise());
         $this->assertEmpty($state->getCompletedExercises());
     }
 
@@ -116,7 +115,7 @@ class UserStateSerializerTest extends TestCase
         file_put_contents($this->tmpFile, 'yayayayayanotjson');
         $serializer = new UserStateSerializer($this->tmpDir, $this->workshopName, $this->exerciseRepository);
         $state = $serializer->deSerialize();
-        $this->assertNull($state->getCurrentExercise());
+        $this->assertFalse($state->isAssignedExercise());
         $this->assertEmpty($state->getCompletedExercises());
     }
 
@@ -131,7 +130,10 @@ class UserStateSerializerTest extends TestCase
         $state = $serializer->deSerialize();
 
         $this->assertEquals($expected['completed_exercises'], $state->getCompletedExercises());
-        $this->assertEquals($expected['current_exercise'], $state->getCurrentExercise());
+        $this->assertEquals(
+            $expected['current_exercise'],
+            $state->isAssignedExercise() ? $state->getCurrentExercise() : null
+        );
 
         if (file_exists($this->tmpFile)) {
             unlink($this->tmpFile);
@@ -256,7 +258,7 @@ class UserStateSerializerTest extends TestCase
         $state = $serializer->deSerialize();
 
         $this->assertEquals([], $state->getCompletedExercises());
-        $this->assertEquals(null, $state->getCurrentExercise());
+        $this->assertFalse($state->isAssignedExercise());
 
         $this->assertFileExists($oldSave);
         $this->assertEquals($oldData, json_decode(file_get_contents($oldSave), true));

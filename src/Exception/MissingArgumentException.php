@@ -10,7 +10,7 @@ use RuntimeException;
 class MissingArgumentException extends RuntimeException
 {
     /**
-     * @var array
+     * @var array<string>
      */
     private $missingArguments = [];
 
@@ -18,9 +18,9 @@ class MissingArgumentException extends RuntimeException
      * Create the exception, requires the command name and missing arguments.
      *
      * @param string $commandName The command name.
-     * @param array $missingArguments An array of missing arguments (strings).
+     * @param array<string> $missingArguments An array of missing arguments.
      */
-    public function __construct($commandName, array $missingArguments)
+    public function __construct(string $commandName, array $missingArguments)
     {
         $this->missingArguments = $missingArguments;
         parent::__construct(
@@ -35,9 +35,9 @@ class MissingArgumentException extends RuntimeException
     /**
      * Retrieve the list of missing arguments.
      *
-     * @return array
+     * @return array<string>
      */
-    public function getMissingArguments()
+    public function getMissingArguments(): array
     {
         return $this->missingArguments;
     }

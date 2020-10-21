@@ -2,6 +2,7 @@
 
 namespace PhpSchool\PhpWorkshopTest;
 
+use PhpSchool\PhpWorkshop\Exception\ExerciseNotAssignedException;
 use PHPUnit\Framework\TestCase;
 use PhpSchool\PhpWorkshop\UserState;
 
@@ -12,7 +13,16 @@ class UserStateTest extends TestCase
         $state = new UserState();
         $this->assertFalse($state->isAssignedExercise());
         $this->assertEmpty($state->getCompletedExercises());
-        $this->assertNull($state->getCurrentExercise());
+    }
+
+    public function testGetCurrentExerciseThrowsExceptionIfNonAssigned(): void
+    {
+        $this->expectException(ExerciseNotAssignedException::class);
+        $this->expectExceptionMessage('Student has no exercise assigned');
+
+        $state = new UserState();
+        $this->assertFalse($state->isAssignedExercise());
+        $state->getCurrentExercise();
     }
 
     public function testWithCurrentExerciseButNoCompleted(): void
@@ -36,7 +46,6 @@ class UserStateTest extends TestCase
         $state = new UserState(['exercise1']);
         $this->assertFalse($state->isAssignedExercise());
         $this->assertSame(['exercise1'], $state->getCompletedExercises());
-        $this->assertNull($state->getCurrentExercise());
     }
 
     public function testAddCompletedExercise(): void
@@ -56,7 +65,6 @@ class UserStateTest extends TestCase
     {
         $state = new UserState(['exercise1']);
         $this->assertFalse($state->isAssignedExercise());
-        $this->assertNull($state->getCurrentExercise());
         $this->assertSame(['exercise1'], $state->getCompletedExercises());
 
         $state->setCurrentExercise('exercise2');

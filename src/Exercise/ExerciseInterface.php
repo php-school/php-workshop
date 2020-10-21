@@ -17,21 +17,21 @@ interface ExerciseInterface
      *
      * @return string
      */
-    public function getName();
+    public function getName(): string;
 
     /**
      * Return the type of exercise. This is an ENUM. See `PhpSchool\PhpWorkshop\Exercise\ExerciseType`.
      *
      * @return ExerciseType
      */
-    public function getType();
+    public function getType(): ExerciseType;
 
     /**
      * Get the absolute path to the markdown file which contains the exercise problem.
      *
      * @return string
      */
-    public function getProblem();
+    public function getProblem(): string;
 
     /**
      * This is where the exercise specifies the extra checks it may require. It is also
@@ -41,14 +41,14 @@ interface ExerciseInterface
      *
      * @param ExerciseDispatcher $dispatcher
      */
-    public function configure(ExerciseDispatcher $dispatcher);
+    public function configure(ExerciseDispatcher $dispatcher): void;
 
     /**
      * A short description of the exercise.
      *
      * @return string
      */
-    public function getDescription();
+    public function getDescription(): string;
 
     /**
      * Allows to perform some cleanup after the exercise solution's have been executed, for example
@@ -56,5 +56,5 @@ interface ExerciseInterface
      *
      * @return void
      */
-    public function tearDown();
+    public function tearDown(): void;
 }

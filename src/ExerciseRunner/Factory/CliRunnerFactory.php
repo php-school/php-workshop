@@ -40,7 +40,7 @@ class CliRunnerFactory implements ExerciseRunnerFactoryInterface
      * @param ExerciseInterface $exercise
      * @return bool
      */
-    public function supports(ExerciseInterface $exercise)
+    public function supports(ExerciseInterface $exercise): bool
     {
         return $exercise->getType()->getValue() === self::$type;
     }
@@ -50,7 +50,7 @@ class CliRunnerFactory implements ExerciseRunnerFactoryInterface
      *
      * @param CommandDefinition $commandDefinition
      */
-    public function configureInput(CommandDefinition $commandDefinition)
+    public function configureInput(CommandDefinition $commandDefinition): void
     {
         $commandDefinition->addArgument(CommandArgument::required('program'));
     }
@@ -61,7 +61,7 @@ class CliRunnerFactory implements ExerciseRunnerFactoryInterface
      * @param ExerciseInterface&CliExercise $exercise
      * @return ExerciseRunnerInterface
      */
-    public function create(ExerciseInterface $exercise)
+    public function create(ExerciseInterface $exercise): ExerciseRunnerInterface
     {
         return new CliRunner($exercise, $this->eventDispatcher);
     }

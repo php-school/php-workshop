@@ -10,7 +10,7 @@ use PhpSchool\PhpWorkshop\Exception\InvalidArgumentException;
 class LockFileParser
 {
     /**
-     * @var array
+     * @var array<string, mixed>
      */
     private $contents;
 
@@ -18,13 +18,13 @@ class LockFileParser
      * @param string $lockFilePath The absolute path to the `composer.lock` file.
      * @throws InvalidArgumentException If the file does not exist.
      */
-    public function __construct($lockFilePath)
+    public function __construct(string $lockFilePath)
     {
         if (!file_exists($lockFilePath)) {
             throw new InvalidArgumentException(sprintf('Lock File: "%s" does not exist', $lockFilePath));
         }
         
-        $this->contents = json_decode(file_get_contents($lockFilePath), true);
+        $this->contents = json_decode((string) file_get_contents($lockFilePath), true);
 
         if (!isset($this->contents['packages'])) {
             throw new InvalidArgumentException(sprintf('Lock File: "%s" does not contain packages key', $lockFilePath));
@@ -41,9 +41,9 @@ class LockFileParser
      * ];
      * ```
      *
-     * @return array
+     * @return array<array{name: string, version: string}>
      */
-    public function getInstalledPackages()
+    public function getInstalledPackages(): array
     {
         return array_map(function (array $packageDetails) {
             return [
@@ -59,7 +59,7 @@ class LockFileParser
      * @param string $packageName
      * @return bool
      */
-    public function hasInstalledPackage($packageName)
+    public function hasInstalledPackage($packageName): bool
     {
         foreach ($this->contents['packages'] as $packageDetails) {
             if ($packageName === $packageDetails['name']) {

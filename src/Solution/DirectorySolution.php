@@ -12,14 +12,13 @@ use RecursiveIteratorIterator;
  */
 class DirectorySolution implements SolutionInterface
 {
-
     /**
      * @var string
      */
     private $entryPoint;
 
     /**
-     * @var SolutionFile[]
+     * @var array<SolutionFile>
      */
     private $files = [];
 
@@ -40,7 +39,7 @@ class DirectorySolution implements SolutionInterface
      */
     public function __construct(string $directory, string $entryPoint, array $exclusions = [])
     {
-        $directory  = realpath(rtrim($directory, '/'));
+        $directory  = (string) realpath(rtrim($directory, '/'));
         $entryPoint = ltrim($entryPoint, '/');
 
         $dir  = new RecursiveDirectoryIterator($directory, RecursiveDirectoryIterator::SKIP_DOTS);
@@ -100,7 +99,7 @@ class DirectorySolution implements SolutionInterface
     /**
      * Get all the files which are contained with the solution.
      *
-     * @return SolutionFile[]
+     * @return array<SolutionFile>
      */
     public function getFiles(): array
     {

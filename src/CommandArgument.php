@@ -21,7 +21,7 @@ class CommandArgument
      * @param string $name The name of the argument
      * @param bool $optional Whether it is required or not
      */
-    public function __construct($name, $optional = false)
+    public function __construct(string $name, bool $optional = false)
     {
         $this->name = $name;
         $this->optional = $optional;

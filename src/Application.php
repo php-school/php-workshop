@@ -22,17 +22,17 @@ final class Application
     private $workshopTitle;
 
     /**
-     * @var array
+     * @var array<class-string>
      */
     private $checks = [];
 
     /**
-     * @var class-string[]
+     * @var array<class-string>
      */
     private $exercises = [];
 
     /**
-     * @var array
+     * @var array<array{resultClass: class-string, resultRendererClass: class-string}>
      */
     private $results = [];
 
@@ -68,7 +68,7 @@ final class Application
      * @param string $workshopTitle The workshop title - this is used throughout the application
      * @param string $diConfigFile The absolute path to the DI configuration file
      */
-    public function __construct($workshopTitle, $diConfigFile)
+    public function __construct(string $workshopTitle, string $diConfigFile)
     {
         Assertion::string($workshopTitle);
         Assertion::file($diConfigFile);
@@ -81,9 +81,9 @@ final class Application
      * Register a custom check with the application. Exercises will only be able to use the check
      * if it has been registered here.
      *
-     * @param string $check The FQCN of the check
+     * @param class-string $check The FQCN of the check
      */
-    public function addCheck($check)
+    public function addCheck(string $check): void
     {
         $this->checks[] = $check;
     }
@@ -94,16 +94,16 @@ final class Application
      *
      * @param class-string $exercise The FQCN of the check
      */
-    public function addExercise($exercise)
+    public function addExercise(string $exercise): void
     {
         $this->exercises[] = $exercise;
     }
 
     /**
-     * @param string $resultClass
-     * @param string $resultRendererClass
+     * @param class-string $resultClass
+     * @param class-string $resultRendererClass
      */
-    public function addResult($resultClass, $resultRendererClass)
+    public function addResult(string $resultClass, string $resultRendererClass): void
     {
         Assertion::classExists($resultClass);
         Assertion::classExists($resultRendererClass);
@@ -120,7 +120,7 @@ final class Application
      *
      * @param string $logo The logo
      */
-    public function setLogo($logo)
+    public function setLogo(string $logo): void
     {
         Assertion::string($logo);
         $this->logo = $logo;
@@ -132,7 +132,7 @@ final class Application
      *
      * @param string $colour The colour
      */
-    public function setFgColour($colour)
+    public function setFgColour(string $colour): void
     {
         Assertion::string($colour);
         $this->fgColour = $colour;
@@ -144,7 +144,7 @@ final class Application
      *
      * @param string $colour The colour
      */
-    public function setBgColour($colour)
+    public function setBgColour(string $colour): void
     {
         Assertion::string($colour);
         $this->bgColour = $colour;
@@ -156,7 +156,7 @@ final class Application
      *
      * @return int The exit code
      */
-    public function run()
+    public function run(): int
     {
         $container = $this->getContainer();
         
@@ -218,7 +218,7 @@ final class Application
     /**
      * @return \DI\Container
      */
-    private function getContainer()
+    private function getContainer(): \DI\Container
     {
         $containerBuilder = new ContainerBuilder();
         $containerBuilder->addDefinitions(

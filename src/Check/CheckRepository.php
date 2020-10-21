@@ -11,12 +11,12 @@ use PhpSchool\PhpWorkshop\Exception\InvalidArgumentException;
 class CheckRepository
 {
     /**
-     * @var CheckInterface[]
+     * @var array<CheckInterface>
      */
     private $checks = [];
 
     /**
-     * @param CheckInterface[] $checks An array of checks available to the workshop framework.
+     * @param array<CheckInterface> $checks An array of checks available to the workshop framework.
      */
     public function __construct(array $checks = [])
     {
@@ -27,6 +27,7 @@ class CheckRepository
 
     /**
      * Add a new check to the repository.
+     * @param CheckInterface $check
      */
     public function registerCheck(CheckInterface $check): void
     {
@@ -36,7 +37,7 @@ class CheckRepository
     /**
      * Get all of the checks in the repository.
      *
-     * @return array
+     * @return array<CheckInterface>
      */
     public function getAll(): array
     {
@@ -61,6 +62,9 @@ class CheckRepository
 
     /**
      * Query whether a check instance exists in this repository via its class name.
+     *
+     * @param string $class
+     * @return bool
      */
     public function has(string $class): bool
     {

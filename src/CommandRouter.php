@@ -15,9 +15,8 @@ use PhpSchool\PhpWorkshop\Input\Input;
  */
 class CommandRouter
 {
-
     /**
-     * @var CommandDefinition[]
+     * @var array<string, CommandDefinition>
      */
     private $commands;
 
@@ -43,14 +42,14 @@ class CommandRouter
      * Also accepts an instance of the container so it can look for services in there which may by defined
      * as the callable for one of the command definitions.
      *
-     * @param CommandDefinition[] $commands An array of command definitions
+     * @param array<CommandDefinition> $commands An array of command definitions
      * @param string $default The default command to use (if the workshop was invoked with no arguments)
      * @param EventDispatcher $eventDispatcher
      * @param ContainerInterface $container An instance of the container
      */
     public function __construct(
         array $commands,
-        $default,
+        string $default,
         EventDispatcher $eventDispatcher,
         ContainerInterface $container
     ) {
@@ -61,15 +60,15 @@ class CommandRouter
         if (!isset($this->commands[$default])) {
             throw new \InvalidArgumentException(sprintf('Default command: "%s" is not available', $default));
         }
-        $this->defaultCommand   = $default;
-        $this->eventDispatcher  = $eventDispatcher;
-        $this->container        = $container;
+        $this->defaultCommand = $default;
+        $this->eventDispatcher = $eventDispatcher;
+        $this->container = $container;
     }
 
     /**
      * @param CommandDefinition $c
      */
-    private function addCommand(CommandDefinition $c)
+    private function addCommand(CommandDefinition $c): void
     {
         if (isset($this->commands[$c->getName()])) {
             throw new \InvalidArgumentException(sprintf('Command with name: "%s" already exists', $c->getName()));
@@ -91,11 +90,11 @@ class CommandRouter
      * Finally, the callable is invoked with the arguments passed from the cli. The return value of
      * callable is returned (if it is an integer, if not zero (success) is returned).
      *
-     * @param array $args
+     * @param array<string>|null $args
      * @return int
      * @throws CliRouteNotExistsException
      */
-    public function route(array $args = null)
+    public function route(array $args = null): int
     {
 
         if (null === $args) {
@@ -112,7 +111,7 @@ class CommandRouter
         if (!isset($this->commands[$commandName])) {
             $command = $this->findNearestCommand($commandName, $this->commands);
 
-            if (false === $command) {
+            if (null === $command) {
                 throw new CliRouteNotExistsException($commandName);
             }
 
@@ -131,17 +130,17 @@ class CommandRouter
      * @param string $commandName
      * @param CommandArgument[] $definitionArgs
      * @param string $appName
-     * @param array $givenArgs
+     * @param array<string> $givenArgs
      * @return Input
      */
-    private function parseArgs($commandName, array $definitionArgs, $appName, array $givenArgs)
+    private function parseArgs(string $commandName, array $definitionArgs, string $appName, array $givenArgs): Input
     {
         $parsedArgs = [];
 
         while (null !== ($definitionArg = array_shift($definitionArgs))) {
             $arg = array_shift($givenArgs);
 
-            if (null == $arg && !$definitionArg->isOptional()) {
+            if (null === $arg && !$definitionArg->isOptional()) {
                 throw new MissingArgumentException($commandName, array_map(function (CommandArgument $argument) {
                     return $argument->getName();
                 }, array_merge([$definitionArg], $definitionArgs)));
@@ -158,10 +157,10 @@ class CommandRouter
      * characters different
      *
      * @param string $commandName
-     * @param array $commands
-     * @return string|false
+     * @param array<string, CommandDefinition> $commands
+     * @return string|null
      */
-    private function findNearestCommand($commandName, array $commands)
+    private function findNearestCommand(string $commandName, array $commands): ?string
     {
         $distances = [];
         foreach (array_keys($commands) as $command) {
@@ -173,10 +172,11 @@ class CommandRouter
         });
 
         if (empty($distances)) {
-            return false;
+            return null;
         }
 
-        return array_search(min($distances), $distances);
+        $name = array_search(min($distances), $distances, true);
+        return is_string($name) ? $name : null;
     }
 
     /**
@@ -184,12 +184,13 @@ class CommandRouter
      * @param Input $input
      * @return int
      */
-    private function resolveCallable(CommandDefinition $command, Input $input)
+    private function resolveCallable(CommandDefinition $command, Input $input): int
     {
         $commandCallable = $command->getCommandCallable();
 
         if (is_callable($commandCallable)) {
-            return $this->callCommand($command, $commandCallable, $input);
+            $return = $this->callCommand($command, $commandCallable, $input);
+            return is_int($return) ? $return : 0;
         }
 
         if (!is_string($commandCallable)) {
@@ -208,11 +209,7 @@ class CommandRouter
 
         $return = $this->callCommand($command, $callable, $input);
 
-        if (is_int($return)) {
-            return $return;
-        }
-
-        return 0;
+        return is_int($return) ? $return : 0;
     }
 
     /**

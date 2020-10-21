@@ -19,7 +19,7 @@ abstract class AbstractExercise
      *
      * @return string
      */
-    abstract public function getName();
+    abstract public function getName(): string;
 
     /**
      * This returns a single file solution named `solution.php` which
@@ -31,13 +31,13 @@ abstract class AbstractExercise
      *
      * @return SolutionInterface
      */
-    public function getSolution()
+    public function getSolution(): SolutionInterface
     {
         return SingleFileSolution::fromFile(
-            realpath(
+            (string) realpath(
                 sprintf(
                     '%s/../../exercises/%s/solution/solution.php',
-                    dirname((new ReflectionClass(static::class))->getFileName()),
+                    dirname((string) (new ReflectionClass(static::class))->getFileName()),
                     self::normaliseName($this->getName())
                 )
             )
@@ -50,10 +50,10 @@ abstract class AbstractExercise
      *
      * @return string
      */
-    public function getProblem()
+    public function getProblem(): string
     {
         $name = self::normaliseName($this->getName());
-        $dir  = dirname((new ReflectionClass(static::class))->getFileName());
+        $dir  = dirname((string) (new ReflectionClass(static::class))->getFileName());
         return sprintf('%s/../../exercises/%s/problem/problem.md', $dir, $name);
     }
 
@@ -63,7 +63,7 @@ abstract class AbstractExercise
      *
      * @return void
      */
-    public function tearDown()
+    public function tearDown(): void
     {
     }
 
@@ -71,9 +71,9 @@ abstract class AbstractExercise
      * @param string $name
      * @return string
      */
-    public static function normaliseName($name)
+    public static function normaliseName(string $name): string
     {
-        return preg_replace('/[^A-Za-z\-]+/', '', str_replace(' ', '-', strtolower($name)));
+        return (string) preg_replace('/[^A-Za-z\-]+/', '', str_replace(' ', '-', strtolower($name)));
     }
 
     /**
@@ -82,7 +82,7 @@ abstract class AbstractExercise
      *
      * @param ExerciseDispatcher $dispatcher
      */
-    public function configure(ExerciseDispatcher $dispatcher)
+    public function configure(ExerciseDispatcher $dispatcher): void
     {
     }
 }

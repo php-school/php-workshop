@@ -3,6 +3,7 @@
 namespace PhpSchool\PhpWorkshop;
 
 use PhpParser\Error;
+use PhpParser\Node\Stmt;
 use PhpParser\Parser;
 use PhpParser\PrettyPrinter\Standard;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
@@ -26,7 +27,7 @@ class CodePatcher
     private $printer;
     
     /**
-     * @var Patch
+     * @var Patch|null
      */
     private $defaultPatch;
 
@@ -40,12 +41,12 @@ class CodePatcher
      *
      * @param Parser $parser
      * @param Standard $printer
-     * @param Patch $defaultPatch
+     * @param Patch|null $defaultPatch
      */
     public function __construct(Parser $parser, Standard $printer, Patch $defaultPatch = null)
     {
-        $this->parser       = $parser;
-        $this->printer      = $printer;
+        $this->parser = $parser;
+        $this->printer = $printer;
         $this->defaultPatch = $defaultPatch;
     }
     
@@ -61,7 +62,7 @@ class CodePatcher
      * @param string $code
      * @return string
      */
-    public function patch(ExerciseInterface $exercise, $code)
+    public function patch(ExerciseInterface $exercise, string $code): string
     {
         if (null !== $this->defaultPatch) {
             $code = $this->applyPatch($this->defaultPatch, $code);
@@ -79,7 +80,7 @@ class CodePatcher
      * @param string $code
      * @return string
      */
-    private function applyPatch(Patch $patch, $code)
+    private function applyPatch(Patch $patch, string $code): string
     {
         $statements = $this->parser->parse($code);
         foreach ($patch->getModifiers() as $modifier) {
@@ -99,15 +100,15 @@ class CodePatcher
 
     /**
      * @param CodeInsertion $codeInsertion
-     * @param array $statements
-     * @return array
+     * @param array<Stmt> $statements
+     * @return array<Stmt>
      */
-    private function applyCodeInsertion(CodeInsertion $codeInsertion, array $statements)
+    private function applyCodeInsertion(CodeInsertion $codeInsertion, array $statements): array
     {
         try {
             $codeToInsert = $codeInsertion->getCode();
             $codeToInsert = sprintf('<?php %s', preg_replace('/^\s*<\?php/', '', $codeToInsert));
-            $additionalStatements = $this->parser->parse($codeToInsert);
+            $additionalStatements = $this->parser->parse($codeToInsert) ?? [];
         } catch (Error $e) {
             //we should probably log this and have a dev mode or something
             return $statements;

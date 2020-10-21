@@ -44,7 +44,7 @@ class CliRunner implements ExerciseRunnerInterface
     private $eventDispatcher;
 
     /**
-     * @var array
+     * @var array<class-string>
      */
     private static $requiredChecks = [
         FileExistsCheck::class,
@@ -68,7 +68,7 @@ class CliRunner implements ExerciseRunnerInterface
     /**
      * @return string
      */
-    public function getName()
+    public function getName(): string
     {
         return 'CLI Program Runner';
     }
@@ -76,20 +76,20 @@ class CliRunner implements ExerciseRunnerInterface
     /**
      * Get an array of the class names of the required checks this runner needs.
      *
-     * @return array
+     * @return array<class-string>
      */
-    public function getRequiredChecks()
+    public function getRequiredChecks(): array
     {
         return static::$requiredChecks;
     }
 
     /**
      * @param string $fileName
-     * @param ArrayObject $args
+     * @param ArrayObject<string> $args
      * @param string $type
      * @return string
      */
-    private function executePhpFile($fileName, ArrayObject $args, $type)
+    private function executePhpFile(string $fileName, ArrayObject $args, string $type): string
     {
         $process = $this->getPhpProcess($fileName, $args);
 
@@ -106,11 +106,11 @@ class CliRunner implements ExerciseRunnerInterface
 
     /**
      * @param string $fileName
-     * @param ArrayObject $args
+     * @param ArrayObject<string> $args
      *
      * @return Process
      */
-    private function getPhpProcess($fileName, ArrayObject $args)
+    private function getPhpProcess(string $fileName, ArrayObject $args): Process
     {
         return new Process(
             $args->prepend($fileName)->prepend(PHP_BINARY)->getArrayCopy(),
@@ -137,7 +137,7 @@ class CliRunner implements ExerciseRunnerInterface
      * @param Input $input The command line arguments passed to the command.
      * @return CliResult The result of the check.
      */
-    public function verify(Input $input)
+    public function verify(Input $input): ResultInterface
     {
         $this->eventDispatcher->dispatch(new ExerciseRunnerEvent('cli.verify.start', $this->exercise, $input));
         $result = new CliResult(
@@ -155,14 +155,14 @@ class CliRunner implements ExerciseRunnerInterface
     /**
      * BC - getArgs only returned 1 set of args in v1 instead of multiple sets of args in v2
      *
-     * @param array $args
-     * @return array
+     * @param array<int, array<string>>|array<int, string> $args
+     * @return array<int, array<string>>
      */
-    private function preserveOldArgFormat(array $args)
+    private function preserveOldArgFormat(array $args): array
     {
         if (isset($args[0]) && !is_array($args[0])) {
             $args = [$args];
-        } elseif (empty($args)) {
+        } elseif (count($args) === 0) {
             $args = [[]];
         }
 
@@ -170,11 +170,11 @@ class CliRunner implements ExerciseRunnerInterface
     }
 
     /**
-     * @param array $args
+     * @param array<string> $args
      * @param Input $input
      * @return ResultInterface
      */
-    private function doVerify(array $args, Input $input)
+    private function doVerify(array $args, Input $input): ResultInterface
     {
         //arrays are not pass-by-ref
         $args = new ArrayObject($args);
@@ -195,7 +195,7 @@ class CliRunner implements ExerciseRunnerInterface
         try {
             /** @var CliExecuteEvent $event */
             $event = $this->eventDispatcher->dispatch(new CliExecuteEvent('cli.verify.student-execute.pre', $args));
-            $userOutput = $this->executePhpFile($input->getArgument('program'), $event->getArgs(), 'student');
+            $userOutput = $this->executePhpFile($input->getRequiredArgument('program'), $event->getArgs(), 'student');
         } catch (CodeExecutionException $e) {
             $this->eventDispatcher->dispatch(new Event('cli.verify.student-execute.fail', ['exception' => $e]));
             return GenericFailure::fromArgsAndCodeExecutionFailure($args, $e);
@@ -223,7 +223,7 @@ class CliRunner implements ExerciseRunnerInterface
      * @param OutputInterface $output A wrapper around STDOUT.
      * @return bool If the solution was successfully executed, eg. exit code was 0.
      */
-    public function run(Input $input, OutputInterface $output)
+    public function run(Input $input, OutputInterface $output): bool
     {
         $this->eventDispatcher->dispatch(new ExerciseRunnerEvent('cli.run.start', $this->exercise, $input));
         $success = true;
@@ -244,7 +244,7 @@ class CliRunner implements ExerciseRunnerInterface
             }
 
             $output->writeTitle("Output");
-            $process = $this->getPhpProcess($input->getArgument('program'), $args);
+            $process = $this->getPhpProcess($input->getRequiredArgument('program'), $args);
             $process->start();
             $this->eventDispatcher->dispatch(
                 new CliExecuteEvent('cli.run.student.executing', $args, ['output' => $output])

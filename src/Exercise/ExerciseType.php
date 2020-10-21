@@ -12,6 +12,7 @@ use MyCLabs\Enum\Enum;
  * $typeCgi = ExerciseType::CGI();
  * $typeCustom = ExerciseType::CUSTOM();
  * ```
+ * @extends Enum<string>
  */
 class ExerciseType extends Enum
 {
@@ -19,16 +20,15 @@ class ExerciseType extends Enum
     public const CGI    = 'CGI';
     public const CUSTOM = 'CUSTOM';
 
-
     /**
      * Map of exercise types to the required interfaces exercises of that particular
      * type should implement.
      *
-     * @var array
+     * @var array<string, class-string>
      */
     private static $exerciseTypeToExerciseInterfaceMap = [
-        self::CLI    => CliExercise::class,
-        self::CGI    => CgiExercise::class,
+        self::CLI => CliExercise::class,
+        self::CGI => CgiExercise::class,
         self::CUSTOM => CustomVerifyingExercise::class,
     ];
 
@@ -36,9 +36,9 @@ class ExerciseType extends Enum
      * Get the FQCN of the interface this exercise should implement for this
      * exercise type.
      *
-     * @return string
+     * @return class-string
      */
-    public function getExerciseInterface()
+    public function getExerciseInterface(): string
     {
         return static::$exerciseTypeToExerciseInterfaceMap[$this->getKey()];
     }

@@ -70,6 +70,7 @@ class ResultRendererFactory
             );
         }
 
+        /** @var ResultRendererInterface $renderer */
         return $renderer;
     }
 

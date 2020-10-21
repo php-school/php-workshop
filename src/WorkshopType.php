@@ -7,6 +7,8 @@ use MyCLabs\Enum\Enum;
 /**
  * @method static WorkshopType STANDARD()
  * @method static WorkshopType TUTORIAL()
+ *
+ * @extends Enum<int>
  */
 class WorkshopType extends Enum
 {
@@ -16,7 +18,7 @@ class WorkshopType extends Enum
     /**
      * @return bool
      */
-    public function isTutorialMode()
+    public function isTutorialMode(): bool
     {
         return $this->getValue() === static::TUTORIAL;
     }

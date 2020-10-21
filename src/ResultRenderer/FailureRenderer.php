@@ -28,8 +28,8 @@ class FailureRenderer implements ResultRendererInterface
      * @param ResultsRenderer $renderer
      * @return string
      */
-    public function render(ResultsRenderer $renderer)
+    public function render(ResultsRenderer $renderer): string
     {
-        return $renderer->center($this->result->getReason()) . "\n";
+        return $renderer->center((string) $this->result->getReason()) . "\n";
     }
 }

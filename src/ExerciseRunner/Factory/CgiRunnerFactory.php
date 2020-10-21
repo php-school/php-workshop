@@ -47,7 +47,7 @@ class CgiRunnerFactory implements ExerciseRunnerFactoryInterface
      * @param ExerciseInterface $exercise
      * @return bool
      */
-    public function supports(ExerciseInterface $exercise)
+    public function supports(ExerciseInterface $exercise): bool
     {
         return $exercise->getType()->getValue() === self::$type;
     }
@@ -57,7 +57,7 @@ class CgiRunnerFactory implements ExerciseRunnerFactoryInterface
      *
      * @param CommandDefinition $commandDefinition
      */
-    public function configureInput(CommandDefinition $commandDefinition)
+    public function configureInput(CommandDefinition $commandDefinition): void
     {
         $commandDefinition->addArgument(CommandArgument::required('program'));
     }
@@ -68,7 +68,7 @@ class CgiRunnerFactory implements ExerciseRunnerFactoryInterface
      * @param ExerciseInterface&CgiExercise $exercise
      * @return ExerciseRunnerInterface
      */
-    public function create(ExerciseInterface $exercise)
+    public function create(ExerciseInterface $exercise): ExerciseRunnerInterface
     {
         return new CgiRunner($exercise, $this->eventDispatcher, $this->requestRenderer);
     }

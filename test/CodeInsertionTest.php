@@ -14,12 +14,6 @@ class CodeInsertionTest extends TestCase
         new CodeInsertion('notatype', '');
     }
 
-    public function testInvalidCode(): void
-    {
-        $this->expectException(InvalidArgumentException::class);
-        new CodeInsertion(CodeInsertion::TYPE_BEFORE, new \stdClass());
-    }
-
     public function testGetters(): void
     {
         $mod = new CodeInsertion(CodeInsertion::TYPE_BEFORE, '<?php codez');

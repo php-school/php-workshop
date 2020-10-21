@@ -9,7 +9,6 @@ use InvalidArgumentException;
  */
 class SingleFileSolution implements SolutionInterface
 {
-
     /**
      * @var SolutionFile
      */
@@ -19,9 +18,9 @@ class SingleFileSolution implements SolutionInterface
      * @param string $file The absolute path of the reference solution.
      * @throws InvalidArgumentException If the file does not exist.
      */
-    public function __construct($file)
+    public function __construct(string $file)
     {
-        $this->file = SolutionFile::fromFile(realpath($file));
+        $this->file = SolutionFile::fromFile((string) realpath($file));
     }
 
     /**
@@ -31,7 +30,7 @@ class SingleFileSolution implements SolutionInterface
      * @return self
      * @throws InvalidArgumentException If the file does not exist.
      */
-    public static function fromFile($file)
+    public static function fromFile(string $file): self
     {
         return new self($file);
     }
@@ -42,7 +41,7 @@ class SingleFileSolution implements SolutionInterface
      *
      * @return string
      */
-    public function getEntryPoint()
+    public function getEntryPoint(): string
     {
         return $this->file->__toString();
     }
@@ -50,7 +49,7 @@ class SingleFileSolution implements SolutionInterface
     /**
      * Get all the files which are contained with the solution.
      *
-     * @return SolutionFile[]
+     * @return array<SolutionFile>
      */
     public function getFiles(): array
     {
@@ -62,7 +61,7 @@ class SingleFileSolution implements SolutionInterface
      *
      * @return string
      */
-    public function getBaseDirectory()
+    public function getBaseDirectory(): string
     {
         return $this->file->getBaseDirectory();
     }
@@ -73,7 +72,7 @@ class SingleFileSolution implements SolutionInterface
      *
      * @return bool
      */
-    public function hasComposerFile()
+    public function hasComposerFile(): bool
     {
         return false;
     }

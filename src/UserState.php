@@ -2,6 +2,8 @@
 
 namespace PhpSchool\PhpWorkshop;
 
+use PhpSchool\PhpWorkshop\Exception\ExerciseNotAssignedException;
+
 /**
  * This class represents the current state of the user. Which exercises she/he has completed and
  * which is the current exercise being attempted.
@@ -56,10 +58,14 @@ class UserState
     /**
      * Get the current exercise name.
      *
-     * @return string|null
+     * @return string
      */
-    public function getCurrentExercise(): ?string
+    public function getCurrentExercise(): string
     {
+        if (null === $this->currentExercise) {
+            throw ExerciseNotAssignedException::notAssigned();
+        }
+
         return $this->currentExercise;
     }
 
