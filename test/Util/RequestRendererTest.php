@@ -2,16 +2,15 @@
 
 namespace PhpSchool\PhpWorkshopTest\Util;
 
+use GuzzleHttp\Psr7\Request;
 use PhpSchool\PhpWorkshop\Utils\RequestRenderer;
 use PHPUnit\Framework\TestCase;
-use Zend\Diactoros\Request;
 
 class RequestRendererTest extends TestCase
 {
     public function testWriteRequestWithHeaders(): void
     {
-        $request = (new Request('http://www.time.com/api/pt?iso=2016-01-21T18:14:33+0000'))
-            ->withMethod('GET');
+        $request = (new Request('GET', 'http://www.time.com/api/pt?iso=2016-01-21T18:14:33+0000'));
 
         $expected  = "URL:     http://www.time.com/api/pt?iso=2016-01-21T18:14:33+0000\n";
         $expected .= "METHOD:  GET\n";
@@ -22,8 +21,7 @@ class RequestRendererTest extends TestCase
 
     public function testWriteRequestWithNoHeaders(): void
     {
-        $request = (new Request('/endpoint'))
-            ->withMethod('GET');
+        $request = (new Request('GET', '/endpoint'));
 
         $expected  = "URL:     /endpoint\n";
         $expected .= "METHOD:  GET\n";
@@ -33,8 +31,7 @@ class RequestRendererTest extends TestCase
 
     public function testWriteRequestWithPostBodyJson(): void
     {
-        $request = (new Request('/endpoint'))
-            ->withMethod('POST')
+        $request = (new Request('POST', '/endpoint'))
             ->withHeader('Content-Type', 'application/json');
 
         $request->getBody()->write(
@@ -54,8 +51,7 @@ class RequestRendererTest extends TestCase
 
     public function testWriteRequestWithPostBodyUrlEncoded(): void
     {
-        $request = (new Request('/endpoint'))
-            ->withMethod('POST')
+        $request = (new Request('POST', '/endpoint'))
             ->withHeader('Content-Type', 'application/x-www-form-urlencoded');
 
         $request->getBody()->write(
