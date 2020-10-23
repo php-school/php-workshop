@@ -28,8 +28,7 @@ class CodePatcherTest extends TestCase
         $expected = "<?php\n\nini_set(\"display_errors\", 1);\n\$original = true;";
         $this->assertEquals($expected, $patcher->patch($exercise, '<?php $original = true;'));
     }
-    
-    
+
     public function testPatcherDoesNotApplyPatchIfNotPatchableExercise(): void
     {
         $patcher = new CodePatcher((new ParserFactory())->create(ParserFactory::PREFER_PHP7), new Standard());
@@ -38,21 +37,21 @@ class CodePatcherTest extends TestCase
         $code = '<?php $original = true;';
         $this->assertEquals($code, $patcher->patch($exercise, $code));
     }
-    
+
     /**
      * @dataProvider codeProvider
      */
     public function testPatcher(string $code, Patch $patch, string $expectedResult): void
     {
         $patcher = new CodePatcher((new ParserFactory())->create(ParserFactory::PREFER_PHP7), new Standard());
-        
+
         $exercise = $this->createMock(PatchableExercise::class);
-        
+
         $exercise
             ->expects($this->once())
             ->method('getPatch')
             ->willReturn($patch);
-        
+
         $result = $patcher->patch($exercise, $code);
         $this->assertEquals($expectedResult, $result);
     }

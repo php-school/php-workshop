@@ -21,7 +21,7 @@ class CliResultTest extends TestCase
     {
         $request = new RequestFailure(new ArrayObject(), 'EXPECTED', 'ACTUAL');
         $cliResult = new CliResult([$request]);
-        
+
         $this->assertFalse($cliResult->isSuccessful());
 
         $cliResult = new CliResult([new Success(new ArrayObject())]);

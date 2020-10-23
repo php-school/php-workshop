@@ -14,7 +14,7 @@ class CreditsCommand
      * @var OutputInterface
      */
     private $output;
-    
+
     /**
      * @var Color
      */
@@ -61,7 +61,7 @@ class CreditsCommand
             $this->output->writeLine(sprintf("%s  %s", str_pad($name, (int) $nameColumnSize), $gitHubUser));
         }
     }
-    
+
     /**
      *
      * @return void
@@ -71,7 +71,7 @@ class CreditsCommand
         if (empty($this->coreContributors)) {
             return;
         }
-        
+
         $this->output->writeLine(
             $this->color->__invoke("PHP School is bought to you by...")->yellow()->__toString()
         );
@@ -84,7 +84,7 @@ class CreditsCommand
 
         $this->output->emptyLine();
         $this->output->emptyLine();
-        
+
         $this->output->writeLine(
             $this->color->__invoke("This workshop is brought to you by...")->yellow()->__toString()
         );

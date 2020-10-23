@@ -58,7 +58,7 @@ class CodeParseCheck implements SimpleCheckInterface
         } catch (Error $e) {
             return Failure::fromCheckAndCodeParseFailure($this, $e, $input->getRequiredArgument('program'));
         }
-        
+
         return Success::fromCheck($this);
     }
 

@@ -162,7 +162,7 @@ final class Application
     public function run(): int
     {
         $container = $this->getContainer();
-        
+
         foreach ($this->exercises as $exercise) {
             if (false === $container->has($exercise)) {
                 throw new \RuntimeException(

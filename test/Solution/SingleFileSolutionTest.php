@@ -16,7 +16,7 @@ class SingleFileSolutionTest extends TestCase
         touch($filePath);
 
         $solution = SingleFileSolution::fromFile($filePath);
-        
+
         $this->assertSame($filePath, $solution->getEntryPoint());
         $this->assertSame($tempPath, $solution->getBaseDirectory());
         $this->assertFalse($solution->hasComposerFile());

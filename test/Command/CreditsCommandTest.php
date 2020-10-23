@@ -60,17 +60,17 @@ class CreditsCommandTest extends TestCase
     public function testWithNoContributors(): void
     {
         $this->expectOutputString('');
-        
+
         $color = new Color();
         $color->setForceStyle(true);
-        
+
         $command = new CreditsCommand(
             [],
             [],
             new StdOutput($color, $this->createMock(Terminal::class)),
             $color
         );
-        
+
         $command->__invoke();
     }
 }

@@ -23,7 +23,7 @@ class LockFileParser
         if (!file_exists($lockFilePath)) {
             throw new InvalidArgumentException(sprintf('Lock File: "%s" does not exist', $lockFilePath));
         }
-        
+
         $this->contents = json_decode((string) file_get_contents($lockFilePath), true);
 
         if (!isset($this->contents['packages'])) {
@@ -66,7 +66,7 @@ class LockFileParser
                 return true;
             }
         }
-        
+
         return false;
     }
 }

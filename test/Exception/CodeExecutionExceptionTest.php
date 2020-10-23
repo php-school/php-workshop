@@ -22,7 +22,7 @@ class CodeExecutionExceptionTest extends TestCase
             ->expects($this->once())
             ->method('getErrorOutput')
             ->willReturn('Error Output');
-        
+
         $e = CodeExecutionException::fromProcess($process);
         $this->assertEquals('PHP Code failed to execute. Error: "Error Output"', $e->getMessage());
     }
