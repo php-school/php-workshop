@@ -18,12 +18,20 @@ class PrintCommandTest extends TestCase
         $file = tempnam(sys_get_temp_dir(), 'pws');
         file_put_contents($file, '### Exercise 1');
 
-        $exercise = $this->prophesize(CliExerciseInterface::class);
-        $exercise->getProblem()->willReturn($file);
-        $exercise->getType()->willReturn(ExerciseType::CLI());
-        $exercise->getName()->willReturn('some-exercise');
+        $exercise = $this->createMock(CliExerciseInterface::class);
+        $exercise
+            ->method('getProblem')
+            ->willReturn($file);
 
-        $repo = new ExerciseRepository([$exercise->reveal()]);
+        $exercise
+            ->method('getType')
+            ->willReturn(ExerciseType::CLI());
+
+        $exercise
+            ->method('getName')
+            ->willReturn('some-exercise');
+
+        $repo = new ExerciseRepository([$exercise]);
 
         $state = new UserState();
         $state->setCurrentExercise('some-exercise');
