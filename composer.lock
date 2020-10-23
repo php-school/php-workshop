@@ -419,12 +419,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/AydinHassan/KeyLighter.git",
-                "reference": "75079029c41e534a4083ec1e0db2d7f47641ac01"
+                "reference": "61c73f38dac1889ee208a9594be1c2e881474bde"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/AydinHassan/KeyLighter/zipball/75079029c41e534a4083ec1e0db2d7f47641ac01",
-                "reference": "75079029c41e534a4083ec1e0db2d7f47641ac01",
+                "url": "https://api.github.com/repos/AydinHassan/KeyLighter/zipball/61c73f38dac1889ee208a9594be1c2e881474bde",
+                "reference": "61c73f38dac1889ee208a9594be1c2e881474bde",
                 "shasum": ""
             },
             "require": {
@@ -466,7 +466,7 @@
             "support": {
                 "source": "https://github.com/AydinHassan/KeyLighter/tree/array_merge-php8"
             },
-            "time": "2020-10-23T19:33:30+00:00"
+            "time": "2020-10-23T19:38:32+00:00"
         },
         {
             "name": "kevinlebrun/colors.php",
