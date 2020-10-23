@@ -28,10 +28,13 @@ class RunCommandTest extends TestCase
         $color->setForceStyle(true);
         $output = new StdOutput($color, $this->createMock(Terminal::class));
 
-        $dispatcher = $this->prophesize(ExerciseDispatcher::class);
-        $dispatcher->run($exercise, $input, $output)->shouldBeCalled();
+        $dispatcher = $this->createMock(ExerciseDispatcher::class);
+        $dispatcher
+            ->expects($this->once())
+            ->method('run')
+            ->with($exercise, $input, $output);
 
-        $command = new RunCommand($repo, $dispatcher->reveal(), $state, $output);
+        $command = new RunCommand($repo, $dispatcher, $state, $output);
         $command->__invoke($input);
     }
 }
