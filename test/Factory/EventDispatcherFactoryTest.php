@@ -257,7 +257,7 @@ class EventDispatcherFactoryTest extends TestCase
         $c->method('has')
             ->withConsecutive(
                 ['eventListeners'],
-                ['containerEntry'],
+                ['containerEntry']
             )
             ->willReturnOnConsecutiveCalls(
                 true,
