@@ -6,6 +6,7 @@ use Colors\Color;
 use Kadet\Highlighter\Formatter\CliFormatter;
 use Kadet\Highlighter\KeyLighter;
 use Kadet\Highlighter\Language\Php;
+use PhpSchool\PhpWorkshopTest\Asset\CliExerciseImpl;
 use PhpSchool\Terminal\Terminal;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpSchool\PhpWorkshop\Exercise\ProvidesSolution;
@@ -20,7 +21,6 @@ use PhpSchool\PhpWorkshop\ResultRenderer\ResultsRenderer;
 use PhpSchool\PhpWorkshop\Solution\SingleFileSolution;
 use PhpSchool\PhpWorkshop\UserState;
 use PHPUnit\Framework\TestCase;
-use Prophecy\Argument;
 
 class ResultsRendererTest extends TestCase
 {
@@ -32,13 +32,13 @@ class ResultsRendererTest extends TestCase
         $resultRendererFactory = new ResultRendererFactory();
         $resultRendererFactory->registerRenderer(Failure::class, FailureRenderer::class);
 
-        $terminal = $this->prophesize(Terminal::class);
-        $terminal->getWidth()->willReturn(30);
+        $terminal = $this->createMock(Terminal::class);
+        $terminal->method('getWidth')->willReturn(30);
 
         $renderer = new ResultsRenderer(
             'app',
             $color,
-            $terminal->reveal(),
+            $terminal,
             new ExerciseRepository([]),
             new KeyLighter(),
             $resultRendererFactory
@@ -54,13 +54,13 @@ class ResultsRendererTest extends TestCase
         $color = new Color();
         $color->setForceStyle(true);
 
-        $terminal = $this->prophesize(Terminal::class);
-        $terminal->getWidth()->willReturn(10);
+        $terminal = $this->createMock(Terminal::class);
+        $terminal->method('getWidth')->willReturn(10);
 
         $renderer = new ResultsRenderer(
             'app',
             $color,
-            $terminal->reveal(),
+            $terminal,
             new ExerciseRepository([]),
             new KeyLighter(),
             new ResultRendererFactory()
@@ -76,18 +76,17 @@ class ResultsRendererTest extends TestCase
 
         $resultRendererFactory = new ResultRendererFactory();
 
-        $terminal = $this->prophesize(Terminal::class);
-        $terminal->getWidth()->willReturn(100);
-        $terminal = $terminal->reveal();
+        $terminal = $this->createMock(Terminal::class);
+        $terminal->method('getWidth')->willReturn(100);
 
-        $exerciseRepo = $this->prophesize(ExerciseRepository::class);
-        $exerciseRepo->count()->willReturn(2);
+        $exerciseRepo = $this->createMock(ExerciseRepository::class);
+        $exerciseRepo->method('count')->willReturn(2);
 
         $renderer = new ResultsRenderer(
             'app',
             $color,
             $terminal,
-            $exerciseRepo->reveal(),
+            $exerciseRepo,
             new KeyLighter(),
             $resultRendererFactory
         );
@@ -113,28 +112,24 @@ class ResultsRendererTest extends TestCase
 
         $resultRendererFactory = new ResultRendererFactory();
 
-        $terminal = $this->prophesize(Terminal::class);
-        $terminal->getWidth()->willReturn(100);
-        $terminal = $terminal->reveal();
+        $terminal = $this->createMock(Terminal::class);
+        $terminal->method('getWidth')->willReturn(100);
 
-        $exerciseRepo = $this->prophesize(ExerciseRepository::class);
-        $exerciseRepo->count()->willReturn(2);
+        $exerciseRepo = $this->createMock(ExerciseRepository::class);
+        $exerciseRepo->method('count')->willReturn(2);
 
         $tmpFile = sprintf('%s/%s/some-file', sys_get_temp_dir(), $this->getName());
         mkdir(dirname($tmpFile));
         file_put_contents($tmpFile, 'FILE CONTENTS');
 
-        $solution = new SingleFileSolution($tmpFile);
-
-        $exercise = $this->prophesize(ExerciseInterface::class);
-        $exercise->willImplement(ProvidesSolution::class);
-        $exercise->getSolution()->willReturn($solution);
+        $exercise = new CliExerciseImpl();
+        $exercise->setSolution(new SingleFileSolution($tmpFile));
 
         $renderer = new ResultsRenderer(
             'app',
             $color,
             $terminal,
-            $exerciseRepo->reveal(),
+            $exerciseRepo,
             new KeyLighter(),
             $resultRendererFactory
         );
@@ -147,7 +142,7 @@ class ResultsRendererTest extends TestCase
 
         $renderer->render(
             $resultSet,
-            $exercise->reveal(),
+            $exercise,
             new UserState(['exercise1']),
             new StdOutput($color, $terminal)
         );
@@ -163,36 +158,33 @@ class ResultsRendererTest extends TestCase
 
         $resultRendererFactory = new ResultRendererFactory();
 
-        $terminal = $this->prophesize(Terminal::class);
-        $terminal->getWidth()->willReturn(100);
-        $terminal = $terminal->reveal();
+        $terminal = $this->createMock(Terminal::class);
+        $terminal->method('getWidth')->willReturn(100);
 
-        $exerciseRepo = $this->prophesize(ExerciseRepository::class);
-        $exerciseRepo->count()->willReturn(2);
+        $exerciseRepo = $this->createMock(ExerciseRepository::class);
+        $exerciseRepo->method('count')->willReturn(2);
 
         $tmpFile = sprintf('%s/%s/some-file.php', sys_get_temp_dir(), $this->getName());
         mkdir(dirname($tmpFile));
         file_put_contents($tmpFile, 'FILE CONTENTS');
 
-        $solution = new SingleFileSolution($tmpFile);
+        $exercise = new CliExerciseImpl();
+        $exercise->setSolution(new SingleFileSolution($tmpFile));
 
-        $exercise = $this->prophesize(ExerciseInterface::class);
-        $exercise->willImplement(ProvidesSolution::class);
-        $exercise->getSolution()->willReturn($solution);
-
-        $syntaxHighlighter = $this->prophesize(KeyLighter::class);
+        $syntaxHighlighter = $this->createMock(KeyLighter::class);
         $php = new Php();
-        $syntaxHighlighter->languageByExt('.php')->willReturn($php);
+        $syntaxHighlighter->method('languageByExt')->with('.php')->willReturn($php);
         $syntaxHighlighter
-            ->highlight('FILE CONTENTS', $php, Argument::type(CliFormatter::class))
+            ->method('highlight')
+            ->with('FILE CONTENTS', $php, $this->isInstanceOf(CliFormatter::class))
             ->willReturn('FILE CONTENTS');
 
         $renderer = new ResultsRenderer(
             'app',
             $color,
             $terminal,
-            $exerciseRepo->reveal(),
-            $syntaxHighlighter->reveal(),
+            $exerciseRepo,
+            $syntaxHighlighter,
             $resultRendererFactory
         );
 
@@ -204,7 +196,7 @@ class ResultsRendererTest extends TestCase
 
         $renderer->render(
             $resultSet,
-            $exercise->reveal(),
+            $exercise,
             new UserState(['exercise1']),
             new StdOutput($color, $terminal)
         );
@@ -220,23 +212,25 @@ class ResultsRendererTest extends TestCase
 
         $resultRendererFactory = new ResultRendererFactory();
         $resultRendererFactory->registerRenderer(Failure::class, FailureRenderer::class, function (Failure $failure) {
-             $renderer = $this->prophesize(FailureRenderer::class);
-             $renderer->render(Argument::type(ResultsRenderer::class))->willReturn($failure->getReason() . "\n");
-             return $renderer->reveal();
+             $renderer = $this->createMock(FailureRenderer::class);
+             $renderer
+                 ->method('render')
+                 ->with($this->isInstanceOf(ResultsRenderer::class))
+                 ->willReturn($failure->getReason() . "\n");
+             return $renderer;
         });
 
-        $terminal = $this->prophesize(Terminal::class);
-        $terminal->getWidth()->willReturn(100);
-        $terminal = $terminal->reveal();
+        $terminal = $this->createMock(Terminal::class);
+        $terminal->method('getWidth')->willReturn(100);
 
-        $exerciseRepo = $this->prophesize(ExerciseRepository::class);
-        $exerciseRepo->count()->willReturn(2);
+        $exerciseRepo = $this->createMock(ExerciseRepository::class);
+        $exerciseRepo->method('count')->willReturn(2);
 
         $renderer = new ResultsRenderer(
             'app',
             $color,
             $terminal,
-            $exerciseRepo->reveal(),
+            $exerciseRepo,
             new KeyLighter(),
             $resultRendererFactory
         );
@@ -263,23 +257,25 @@ class ResultsRendererTest extends TestCase
 
         $resultRendererFactory = new ResultRendererFactory();
         $resultRendererFactory->registerRenderer(Failure::class, FailureRenderer::class, function (Failure $failure) {
-            $renderer = $this->prophesize(FailureRenderer::class);
-            $renderer->render(Argument::type(ResultsRenderer::class))->willReturn($failure->getReason() . "\n");
-            return $renderer->reveal();
+            $renderer = $this->createMock(FailureRenderer::class);
+            $renderer
+                ->method('render')
+                ->with($this->isInstanceOf(ResultsRenderer::class))
+                ->willReturn($failure->getReason() . "\n");
+            return $renderer;
         });
 
-        $terminal = $this->prophesize(Terminal::class);
-        $terminal->getWidth()->willReturn(100);
-        $terminal = $terminal->reveal();
+        $terminal = $this->createMock(Terminal::class);
+        $terminal->method('getWidth')->willReturn(100);
 
-        $exerciseRepo = $this->prophesize(ExerciseRepository::class);
-        $exerciseRepo->count()->willReturn(2);
+        $exerciseRepo = $this->createMock(ExerciseRepository::class);
+        $exerciseRepo->method('count')->willReturn(2);
 
         $renderer = new ResultsRenderer(
             'app',
             $color,
             $terminal,
-            $exerciseRepo->reveal(),
+            $exerciseRepo,
             new KeyLighter(),
             $resultRendererFactory
         );
@@ -307,23 +303,24 @@ class ResultsRendererTest extends TestCase
 
         $resultRendererFactory = new ResultRendererFactory();
         $resultRendererFactory->registerRenderer(Failure::class, FailureRenderer::class, function (Failure $failure) {
-            $renderer = $this->prophesize(FailureRenderer::class);
-            $renderer->render(Argument::type(ResultsRenderer::class))->willReturn($failure->getReason() . "\n");
-            return $renderer->reveal();
+            $renderer = $this->createMock(FailureRenderer::class);
+            $renderer
+                ->method('render')
+                ->with($this->isInstanceOf(ResultsRenderer::class))
+                ->willReturn($failure->getReason() . "\n");
+            return $renderer;
         });
 
-        $terminal = $this->prophesize(Terminal::class);
-        $terminal->getWidth()->willReturn(100);
-        $terminal = $terminal->reveal();
+        $terminal = $this->createMock(Terminal::class);
+        $terminal->method('getWidth')->willReturn(100);
 
-        $exerciseRepo = $this->prophesize(ExerciseRepository::class);
-        $exerciseRepo->count()->willReturn(2);
-
+        $exerciseRepo = $this->createMock(ExerciseRepository::class);
+        $exerciseRepo->method('count')->willReturn(2);
         $renderer = new ResultsRenderer(
             'app',
             $color,
             $terminal,
-            $exerciseRepo->reveal(),
+            $exerciseRepo,
             new KeyLighter(),
             $resultRendererFactory
         );

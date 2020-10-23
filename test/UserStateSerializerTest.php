@@ -188,16 +188,16 @@ class UserStateSerializerTest extends TestCase
         $oldSave = sprintf('%s/.phpschool.json', $this->tmpDir);
         $newSave = sprintf('%s/.phpschool-save.json', $this->tmpDir);
 
-        $exercise1 = $this->prophesize(CliExerciseInterface::class);
-        $exercise2 = $this->prophesize(CliExerciseInterface::class);
-        $exercise1->getType()->willReturn(ExerciseType::CLI());
-        $exercise2->getType()->willReturn(ExerciseType::CLI());
-        $exercise1->getName()->willReturn('Exercise 1');
-        $exercise2->getName()->willReturn('Exercise 2');
+        $exercise1 = $this->createMock(CliExerciseInterface::class);
+        $exercise2 = $this->createMock(CliExerciseInterface::class);
+        $exercise1->method('getType')->willReturn(ExerciseType::CLI());
+        $exercise2->method('getType')->willReturn(ExerciseType::CLI());
+        $exercise1->method('getName')->willReturn('Exercise 1');
+        $exercise2->method('getName')->willReturn('Exercise 2');
 
         $exercises = [
-            $exercise1->reveal(),
-            $exercise2->reveal()
+            $exercise1,
+            $exercise2
         ];
 
         $repo = new ExerciseRepository($exercises);
@@ -233,16 +233,16 @@ class UserStateSerializerTest extends TestCase
         $oldSave = sprintf('%s/.phpschool.json', $this->tmpDir);
         $newSave = sprintf('%s/.phpschool-save.json', $this->tmpDir);
 
-        $exercise1 = $this->prophesize(CliExerciseInterface::class);
-        $exercise2 = $this->prophesize(CliExerciseInterface::class);
-        $exercise1->getType()->willReturn(ExerciseType::CLI());
-        $exercise2->getType()->willReturn(ExerciseType::CLI());
-        $exercise1->getName()->willReturn('Exercise 1');
-        $exercise2->getName()->willReturn('Exercise 2');
+        $exercise1 = $this->createMock(CliExerciseInterface::class);
+        $exercise2 = $this->createMock(CliExerciseInterface::class);
+        $exercise1->method('getType')->willReturn(ExerciseType::CLI());
+        $exercise2->method('getType')->willReturn(ExerciseType::CLI());
+        $exercise1->method('getName')->willReturn('Exercise 1');
+        $exercise2->method('getName')->willReturn('Exercise 2');
 
         $exercises = [
-            $exercise1->reveal(),
-            $exercise2->reveal()
+            $exercise1,
+            $exercise2
         ];
 
         $repo = new ExerciseRepository($exercises);
@@ -272,16 +272,16 @@ class UserStateSerializerTest extends TestCase
         $oldSave = sprintf('%s/.phpschool.json', $this->tmpDir);
         $newSave = sprintf('%s/.phpschool-save.json', $this->tmpDir);
 
-        $exercise1 = $this->prophesize(CliExerciseInterface::class);
-        $exercise2 = $this->prophesize(CliExerciseInterface::class);
-        $exercise1->getType()->willReturn(ExerciseType::CLI());
-        $exercise2->getType()->willReturn(ExerciseType::CLI());
-        $exercise1->getName()->willReturn('Exercise 1');
-        $exercise2->getName()->willReturn('Exercise 2');
+        $exercise1 = $this->createMock(CliExerciseInterface::class);
+        $exercise2 = $this->createMock(CliExerciseInterface::class);
+        $exercise1->method('getType')->willReturn(ExerciseType::CLI());
+        $exercise2->method('getType')->willReturn(ExerciseType::CLI());
+        $exercise1->method('getName')->willReturn('Exercise 1');
+        $exercise2->method('getName')->willReturn('Exercise 2');
 
         $exercises = [
-            $exercise1->reveal(),
-            $exercise2->reveal()
+            $exercise1,
+            $exercise2
         ];
 
         $repo = new ExerciseRepository($exercises);

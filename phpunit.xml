@@ -10,7 +10,4 @@
       <directory suffix=".php">./src</directory>
     </whitelist>
   </filter>
-  <php>
-    <env name="SYMFONY_PHPUNIT_REMOVE" value="symfony/yaml"/>
-  </php>
 </phpunit>

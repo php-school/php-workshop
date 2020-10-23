@@ -25,11 +25,11 @@ class ConfigureCommandListenerTest extends TestCase
         $exercise = new CliExerciseImpl('Exercise 1');
         $repo     = new ExerciseRepository([$exercise]);
 
-        $runnerManager = $this->prophesize(RunnerManager::class);
-        $runnerManager->configureInput($exercise, $command)->shouldBeCalled();
+        $runnerManager = $this->createMock(RunnerManager::class);
+        $runnerManager->expects($this->once())->method('configureInput')->with($exercise, $command);
 
         $event = new Event('some-event', ['command' => $command]);
-        (new ConfigureCommandListener($state, $repo, $runnerManager->reveal()))->__invoke($event);
+        (new ConfigureCommandListener($state, $repo, $runnerManager))->__invoke($event);
     }
 
     public function configurableCommands(): array
@@ -52,12 +52,11 @@ class ConfigureCommandListenerTest extends TestCase
         $exercise = new CliExerciseImpl('Exercise 1');
         $repo     = new ExerciseRepository([$exercise]);
 
-        $runnerManager = $this->prophesize(RunnerManager::class);
+        $runnerManager = $this->createMock(RunnerManager::class);
+        $runnerManager->expects($this->never())->method('configureInput')->with($exercise, $command);
 
         $event = new Event('some-event', ['command' => $command]);
-        (new ConfigureCommandListener($state, $repo, $runnerManager->reveal()))->__invoke($event);
-
-        $runnerManager->configureInput($exercise, $command)->shouldNotHaveBeenCalled();
+        (new ConfigureCommandListener($state, $repo, $runnerManager))->__invoke($event);
     }
 
     public function nonConfigurableCommands(): array

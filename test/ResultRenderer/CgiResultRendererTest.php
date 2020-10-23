@@ -24,14 +24,14 @@ class CgiResultRendererTest extends AbstractResultRendererTest
 
     public function testRenderWithFailedRequest(): void
     {
-        $failureRenderer = $this->prophesize(RequestFailureRenderer::class);
-        $failureRenderer->render($this->getRenderer())->willReturn("REQUEST FAILURE\n");
+        $failureRenderer = $this->createMock(RequestFailureRenderer::class);
+        $failureRenderer->method('render')->with($this->getRenderer())->willReturn("REQUEST FAILURE\n");
 
         $this->getResultRendererFactory()->registerRenderer(
             RequestFailure::class,
             RequestFailureRenderer::class,
             function (RequestFailure $failure) use ($failureRenderer) {
-                return $failureRenderer->reveal();
+                return $failureRenderer;
             }
         );
 
@@ -62,14 +62,14 @@ class CgiResultRendererTest extends AbstractResultRendererTest
 
     public function testMultipleFailedRequests(): void
     {
-        $failureRenderer = $this->prophesize(RequestFailureRenderer::class);
-        $failureRenderer->render($this->getRenderer())->willReturn("REQUEST FAILURE\n");
+        $failureRenderer = $this->createMock(RequestFailureRenderer::class);
+        $failureRenderer->method('render')->with($this->getRenderer())->willReturn("REQUEST FAILURE\n");
 
         $this->getResultRendererFactory()->registerRenderer(
             RequestFailure::class,
             RequestFailureRenderer::class,
             function (RequestFailure $failure) use ($failureRenderer) {
-                return $failureRenderer->reveal();
+                return $failureRenderer;
             }
         );
 
@@ -120,14 +120,14 @@ class CgiResultRendererTest extends AbstractResultRendererTest
 
     public function testRenderWithFailedRequestAndSuccess(): void
     {
-        $failureRenderer = $this->prophesize(RequestFailureRenderer::class);
-        $failureRenderer->render($this->getRenderer())->willReturn("REQUEST FAILURE\n");
+        $failureRenderer = $this->createMock(RequestFailureRenderer::class);
+        $failureRenderer->method('render')->with($this->getRenderer())->willReturn("REQUEST FAILURE\n");
 
         $this->getResultRendererFactory()->registerRenderer(
             RequestFailure::class,
             RequestFailureRenderer::class,
             function (RequestFailure $failure) use ($failureRenderer) {
-                return $failureRenderer->reveal();
+                return $failureRenderer;
             }
         );
 
@@ -158,26 +158,25 @@ class CgiResultRendererTest extends AbstractResultRendererTest
 
     public function testRenderWithFailedRequestAndGenericFailure(): void
     {
-
-        $requestFailureRenderer = $this->prophesize(RequestFailureRenderer::class);
-        $requestFailureRenderer->render($this->getRenderer())->willReturn("REQUEST FAILURE\n");
+        $failureRenderer = $this->createMock(RequestFailureRenderer::class);
+        $failureRenderer->method('render')->with($this->getRenderer())->willReturn("REQUEST FAILURE\n");
 
         $this->getResultRendererFactory()->registerRenderer(
             RequestFailure::class,
             RequestFailureRenderer::class,
-            function (RequestFailure $failure) use ($requestFailureRenderer) {
-                return $requestFailureRenderer->reveal();
+            function (RequestFailure $failure) use ($failureRenderer) {
+                return $failureRenderer;
             }
         );
 
-        $genericFailureRenderer = $this->prophesize(FailureRenderer::class);
-        $genericFailureRenderer->render($this->getRenderer())->willReturn("Code Execution Failure\n");
+        $genericFailureRenderer = $this->createMock(FailureRenderer::class);
+        $genericFailureRenderer->method('render')->with($this->getRenderer())->willReturn("Code Execution Failure\n");
 
         $this->getResultRendererFactory()->registerRenderer(
             GenericFailure::class,
             FailureRenderer::class,
             function (GenericFailure $failure) use ($genericFailureRenderer) {
-                return $genericFailureRenderer->reveal();
+                return $genericFailureRenderer;
             }
         );
 

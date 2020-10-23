@@ -21,14 +21,14 @@ class CliResultRendererTest extends AbstractResultRendererTest
 
     public function testRenderWithFailedRequest(): void
     {
-        $failureRenderer = $this->prophesize(RequestFailureRenderer::class);
-        $failureRenderer->render($this->getRenderer())->willReturn("REQUEST FAILURE\n");
+        $failureRenderer = $this->createMock(RequestFailureRenderer::class);
+        $failureRenderer->method('render')->with($this->getRenderer())->willReturn("REQUEST FAILURE\n");
 
         $this->getResultRendererFactory()->registerRenderer(
             RequestFailure::class,
             RequestFailureRenderer::class,
             function (RequestFailure $failure) use ($failureRenderer) {
-                return $failureRenderer->reveal();
+                return $failureRenderer;
             }
         );
 
@@ -51,14 +51,14 @@ class CliResultRendererTest extends AbstractResultRendererTest
 
     public function testRenderWithFailedRequestWithMultipleArgs(): void
     {
-        $failureRenderer = $this->prophesize(RequestFailureRenderer::class);
-        $failureRenderer->render($this->getRenderer())->willReturn("REQUEST FAILURE\n");
+        $failureRenderer = $this->createMock(RequestFailureRenderer::class);
+        $failureRenderer->method('render')->with($this->getRenderer())->willReturn("REQUEST FAILURE\n");
 
         $this->getResultRendererFactory()->registerRenderer(
             RequestFailure::class,
             RequestFailureRenderer::class,
             function (RequestFailure $failure) use ($failureRenderer) {
-                return $failureRenderer->reveal();
+                return $failureRenderer;
             }
         );
 

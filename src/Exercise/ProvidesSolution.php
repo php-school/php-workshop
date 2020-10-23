@@ -14,5 +14,5 @@ interface ProvidesSolution
      *
      * @return SolutionInterface
      */
-    public function getSolution();
+    public function getSolution(): SolutionInterface;
 }
