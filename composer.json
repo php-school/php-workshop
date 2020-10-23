@@ -26,7 +26,7 @@
         "php-school/cli-menu": "dev-master",
         "psr/http-message": "^1.0",
         "myclabs/php-enum": "^1.4",
-        "kadet/keylighter": "^0.8.3",
+        "kadet/keylighter": "dev-array_merge-php8 as 0.8.3",
         "nikic/php-parser": "^4.0",
         "guzzlehttp/guzzle": "^7.2"
     },
@@ -38,6 +38,12 @@
         "phpstan/extension-installer": "^1.0",
         "phpstan/phpstan-symfony": "^0.12.8"
     },
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "git@github.com:AydinHassan/KeyLighter.git"
+        }
+    ],
     "autoload" : {
         "psr-4" : {
             "PhpSchool\\PhpWorkshop\\": "src"
@@ -48,8 +54,8 @@
         ]
     },
     "autoload-dev": {
-        "psr-4": { 
-            "PhpSchool\\PhpWorkshopTest\\": "test" 
+        "psr-4": {
+            "PhpSchool\\PhpWorkshopTest\\": "test"
         }
     },
     "scripts" : {
