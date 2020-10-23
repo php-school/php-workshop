@@ -51,7 +51,7 @@ class PhpLintCheckTest extends TestCase
         );
         $this->assertInstanceOf(Failure::class, $failure);
         $this->assertMatchesRegularExpression(
-            "/(PHP )?Parse error:\W+syntax error, unexpected end of file, expecting '[,;]' or '[;,]'/",
+            "/(PHP )?Parse error:\W+syntax error, unexpected end of file, expecting ['\"][,;]['\"] or ['\"][;,]['\"]/",
             $failure->getReason()
         );
     }

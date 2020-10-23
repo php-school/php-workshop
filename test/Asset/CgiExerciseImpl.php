@@ -6,6 +6,7 @@ use PhpSchool\PhpWorkshop\Exercise\CgiExercise;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseType;
 use PhpSchool\PhpWorkshop\ExerciseDispatcher;
+use PhpSchool\PhpWorkshop\Solution\SolutionInterface;
 use Psr\Http\Message\RequestInterface;
 
 class CgiExerciseImpl implements ExerciseInterface, CgiExercise
@@ -31,7 +32,7 @@ class CgiExerciseImpl implements ExerciseInterface, CgiExercise
         return $this->name;
     }
 
-    public function getSolution(): string
+    public function getSolution(): SolutionInterface
     {
         // TODO: Implement getSolution() method.
     }
