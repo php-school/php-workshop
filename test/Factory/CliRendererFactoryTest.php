@@ -5,7 +5,7 @@ namespace PhpSchool\PhpWorkshopTest\Factory;
 use AydinHassan\CliMdRenderer\CliRenderer;
 use Colors\Color;
 use PhpSchool\PhpWorkshop\Factory\MarkdownCliRendererFactory;
-use Interop\Container\ContainerInterface;
+use Psr\Container\ContainerInterface;
 use PhpSchool\Terminal\Terminal;
 use PHPUnit\Framework\TestCase;
 

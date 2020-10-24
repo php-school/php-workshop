@@ -2,7 +2,7 @@
 
 namespace PhpSchool\PhpWorkshopTest;
 
-use Interop\Container\ContainerInterface;
+use Psr\Container\ContainerInterface;
 use InvalidArgumentException;
 use PhpSchool\PhpWorkshop\CommandArgument;
 use PhpSchool\PhpWorkshop\Event\EventDispatcher;
