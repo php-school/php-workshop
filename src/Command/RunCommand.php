@@ -45,18 +45,18 @@ class RunCommand
         UserState $userState,
         OutputInterface $output
     ) {
-        $this->output               = $output;
-        $this->exerciseRepository   = $exerciseRepository;
-        $this->userState            = $userState;
-        $this->exerciseDispatcher   = $exerciseDispatcher;
+        $this->output = $output;
+        $this->exerciseRepository = $exerciseRepository;
+        $this->userState = $userState;
+        $this->exerciseDispatcher = $exerciseDispatcher;
     }
 
     /**
      * @param Input $input The command line arguments passed to the command.
      *
-     * @return int|void
+     * @return void
      */
-    public function __invoke(Input $input)
+    public function __invoke(Input $input): void
     {
         $exercise = $this->exerciseRepository->findByName($this->userState->getCurrentExercise());
         $this->exerciseDispatcher->run($exercise, $input, $this->output);

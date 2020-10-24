@@ -13,7 +13,7 @@ use PhpSchool\PhpWorkshop\ExerciseRunner\Factory\ExerciseRunnerFactoryInterface;
 class RunnerManager
 {
     /**
-     * @var ExerciseRunnerFactoryInterface[]
+     * @var array<ExerciseRunnerFactoryInterface>
      */
     private $factories = [];
 

@@ -22,5 +22,5 @@ interface SelfCheck
      * @param Input $input The command line arguments passed to the command.
      * @return ResultInterface The result of the check.
      */
-    public function check(Input $input);
+    public function check(Input $input): ResultInterface;
 }

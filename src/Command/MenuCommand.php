@@ -25,7 +25,7 @@ class MenuCommand
     /**
      * @return void
      */
-    public function __invoke()
+    public function __invoke(): void
     {
         $this->menu->open();
     }

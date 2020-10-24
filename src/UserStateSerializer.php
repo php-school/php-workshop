@@ -37,8 +37,11 @@ class UserStateSerializer
      * @param string $workshopName The name of the current workshop.
      * @param ExerciseRepository $exerciseRepository The repository of exercises.
      */
-    public function __construct($saveFileDirectory, $workshopName, ExerciseRepository $exerciseRepository)
-    {
+    public function __construct(
+        string $saveFileDirectory,
+        string $workshopName,
+        ExerciseRepository $exerciseRepository
+    ) {
         $this->workshopName         = $workshopName;
         $this->path                 = $saveFileDirectory;
         $this->exerciseRepository   = $exerciseRepository;
@@ -173,7 +176,7 @@ class UserStateSerializer
      * @param string $filePath
      * @return array<mixed>|null
      */
-    private function readJson($filePath): ?array
+    private function readJson(string $filePath): ?array
     {
         if (!file_exists($filePath)) {
             return null;

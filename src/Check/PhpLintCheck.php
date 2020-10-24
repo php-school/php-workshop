@@ -16,7 +16,6 @@ use Symfony\Component\Process\Process;
  */
 class PhpLintCheck implements SimpleCheckInterface
 {
-
     /**
      * Return the check's name
      */

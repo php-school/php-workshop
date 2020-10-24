@@ -67,7 +67,7 @@ class CliResult implements ResultGroupInterface, IteratorAggregate
     }
 
     /**
-     * @return ResultInterface[]
+     * @return array<ResultInterface>
      */
     public function getResults(): array
     {

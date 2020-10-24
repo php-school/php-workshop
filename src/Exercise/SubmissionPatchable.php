@@ -18,5 +18,5 @@ interface SubmissionPatchable
      *
      * @return Patch
      */
-    public function getPatch();
+    public function getPatch(): Patch;
 }

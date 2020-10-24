@@ -17,7 +17,7 @@ class CommandDefinition
     private $name;
 
     /**
-     * @var CommandArgument[]
+     * @var array<CommandArgument>
      */
     private $args = [];
 
@@ -31,10 +31,10 @@ class CommandDefinition
      * @param string[]|CommandArgument[] $args A list of arguments. Must be an array of strings or `CommandArgument`'s.
      * @param string|callable $commandCallable The name of a callable container entry or an actual PHP callable.
      */
-    public function __construct($name, array $args, $commandCallable)
+    public function __construct(string $name, array $args, $commandCallable)
     {
-        $this->name             = $name;
-        $this->commandCallable  = $commandCallable;
+        $this->name = $name;
+        $this->commandCallable = $commandCallable;
 
         array_walk($args, function ($arg) {
             $this->addArgument($arg);
@@ -45,7 +45,7 @@ class CommandDefinition
      * @param string|CommandArgument $argument
      * @return $this
      */
-    public function addArgument($argument)
+    public function addArgument($argument): self
     {
         if (!is_string($argument) && !$argument instanceof CommandArgument) {
             throw InvalidArgumentException::notValidParameter(
@@ -80,7 +80,7 @@ class CommandDefinition
      *
      * @return string
      */
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }
@@ -88,9 +88,9 @@ class CommandDefinition
     /**
      * Get the list of required arguments.
      *
-     * @return CommandArgument[]
+     * @return array<CommandArgument>
      */
-    public function getRequiredArgs()
+    public function getRequiredArgs(): array
     {
         return $this->args;
     }

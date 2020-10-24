@@ -21,7 +21,7 @@ class ContainerListenerHelper
      * @param string $service
      * @param string $method
      */
-    public function __construct($service, $method = '__invoke')
+    public function __construct(string $service, string $method = '__invoke')
     {
         $this->service = $service;
         $this->method = $method;
@@ -30,7 +30,7 @@ class ContainerListenerHelper
     /**
      * @return string
      */
-    public function getService()
+    public function getService(): string
     {
         return $this->service;
     }
@@ -38,7 +38,7 @@ class ContainerListenerHelper
     /**
      * @return string
      */
-    public function getMethod()
+    public function getMethod(): string
     {
         return $this->method;
     }

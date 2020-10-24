@@ -33,7 +33,7 @@ class Success implements SuccessInterface
      *
      * @return string
      */
-    public function getCheckName()
+    public function getCheckName(): string
     {
         return $this->name;
     }
@@ -43,7 +43,7 @@ class Success implements SuccessInterface
      *
      * @return RequestInterface
      */
-    public function getRequest()
+    public function getRequest(): RequestInterface
     {
         return $this->request;
     }

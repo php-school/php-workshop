@@ -16,7 +16,7 @@ use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 class ExerciseRepository implements IteratorAggregate, Countable
 {
     /**
-     * @var ExerciseInterface[]
+     * @var array<ExerciseInterface>
      */
     private $exercises;
 

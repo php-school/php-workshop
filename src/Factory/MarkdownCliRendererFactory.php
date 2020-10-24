@@ -44,7 +44,7 @@ class MarkdownCliRendererFactory
      * @param ContainerInterface $c
      * @return CliRenderer
      */
-    public function __invoke(ContainerInterface $c)
+    public function __invoke(ContainerInterface $c): CliRenderer
     {
         $terminal = $c->get(Terminal::class);
 

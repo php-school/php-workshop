@@ -17,7 +17,6 @@ use PhpSchool\PhpWorkshop\Result\Success;
  */
 class ComposerCheck implements SimpleCheckInterface
 {
-
     /**
      * Return the check's name
      */

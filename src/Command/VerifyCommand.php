@@ -62,20 +62,20 @@ class VerifyCommand
         OutputInterface $output,
         ResultsRenderer $resultsRenderer
     ) {
-        $this->output               = $output;
-        $this->exerciseRepository   = $exerciseRepository;
-        $this->userState            = $userState;
-        $this->userStateSerializer  = $userStateSerializer;
-        $this->resultsRenderer      = $resultsRenderer;
-        $this->exerciseDispatcher   = $exerciseDispatcher;
+        $this->output = $output;
+        $this->exerciseRepository = $exerciseRepository;
+        $this->userState = $userState;
+        $this->userStateSerializer = $userStateSerializer;
+        $this->resultsRenderer = $resultsRenderer;
+        $this->exerciseDispatcher = $exerciseDispatcher;
     }
 
     /**
      * @param Input $input The command line arguments passed to the command.
      *
-     * @return int|void
+     * @return int
      */
-    public function __invoke(Input $input)
+    public function __invoke(Input $input): int
     {
         $exercise   = $this->exerciseRepository->findByName($this->userState->getCurrentExercise());
         $results    = $this->exerciseDispatcher->verify($exercise, $input);

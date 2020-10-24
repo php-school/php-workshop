@@ -10,10 +10,10 @@ interface ResultGroupInterface extends ResultInterface
     /**
      * @return bool
      */
-    public function isSuccessful();
+    public function isSuccessful(): bool;
 
     /**
-     * @return ResultInterface[]
+     * @return array<ResultInterface>
      */
-    public function getResults();
+    public function getResults(): array;
 }

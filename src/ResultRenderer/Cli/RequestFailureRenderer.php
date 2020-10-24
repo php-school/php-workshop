@@ -30,7 +30,7 @@ class RequestFailureRenderer implements ResultRendererInterface
      * @param ResultsRenderer $renderer
      * @return string
      */
-    public function render(ResultsRenderer $renderer)
+    public function render(ResultsRenderer $renderer): string
     {
         return sprintf(
             "  %s\n%s\n\n  %s\n%s\n",
@@ -45,7 +45,7 @@ class RequestFailureRenderer implements ResultRendererInterface
      * @param string $string
      * @return string
      */
-    private function indent($string)
+    private function indent(string $string): string
     {
         return implode(
             "\n",

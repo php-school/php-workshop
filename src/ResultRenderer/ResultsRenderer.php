@@ -70,11 +70,11 @@ class ResultsRenderer
         KeyLighter $keyLighter,
         ResultRendererFactory $resultRendererFactory
     ) {
-        $this->color                 = $color;
-        $this->terminal              = $terminal;
-        $this->exerciseRepository    = $exerciseRepository;
-        $this->keyLighter            = $keyLighter;
-        $this->appName               = $appName;
+        $this->color = $color;
+        $this->terminal = $terminal;
+        $this->exerciseRepository = $exerciseRepository;
+        $this->keyLighter = $keyLighter;
+        $this->appName = $appName;
         $this->resultRendererFactory = $resultRendererFactory;
     }
 
@@ -137,7 +137,7 @@ class ResultsRenderer
      */
     private function renderErrorInformation(
         array $failures,
-        $padLength,
+        int $padLength,
         ExerciseInterface $exercise,
         OutputInterface $output
     ): void {

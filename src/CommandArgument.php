@@ -31,7 +31,7 @@ class CommandArgument
      * @param string $name
      * @return self
      */
-    public static function optional($name)
+    public static function optional(string $name): self
     {
         return new self($name, true);
     }
@@ -40,7 +40,7 @@ class CommandArgument
      * @param string $name
      * @return self
      */
-    public static function required($name)
+    public static function required(string $name): self
     {
         return new self($name);
     }
@@ -48,7 +48,7 @@ class CommandArgument
     /**
      * @return string
      */
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }
@@ -56,7 +56,7 @@ class CommandArgument
     /**
      * @return bool
      */
-    public function isRequired()
+    public function isRequired(): bool
     {
         return !$this->isOptional();
     }
@@ -64,7 +64,7 @@ class CommandArgument
     /**
      * @return bool
      */
-    public function isOptional()
+    public function isOptional(): bool
     {
         return $this->optional;
     }

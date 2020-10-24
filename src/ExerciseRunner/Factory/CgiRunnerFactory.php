@@ -34,6 +34,7 @@ class CgiRunnerFactory implements ExerciseRunnerFactoryInterface
 
     /**
      * @param EventDispatcher $eventDispatcher
+     * @param RequestRenderer $requestRenderer
      */
     public function __construct(EventDispatcher $eventDispatcher, RequestRenderer $requestRenderer)
     {

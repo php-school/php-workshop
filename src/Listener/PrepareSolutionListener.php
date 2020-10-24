@@ -54,7 +54,7 @@ class PrepareSolutionListener
     /**
      * @return string
      */
-    private function locateComposer()
+    private function locateComposer(): string
     {
         foreach ($this->composerLocations as $location) {
             if (file_exists($location) && is_executable($location)) {

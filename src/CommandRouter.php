@@ -218,7 +218,7 @@ class CommandRouter
      * @param Input $input
      * @return ?int
      */
-    private function callCommand(CommandDefinition $command, callable $callable, Input $input)
+    private function callCommand(CommandDefinition $command, callable $callable, Input $input): ?int
     {
         $this->eventDispatcher->dispatch(new Event\Event('route.pre.invoke'));
         $this->eventDispatcher->dispatch(new Event\Event(sprintf('route.pre.invoke.%s', $command->getName())));

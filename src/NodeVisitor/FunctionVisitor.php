@@ -36,13 +36,12 @@ class FunctionVisitor extends NodeVisitorAbstract
      */
     public function __construct(array $requiredFunctions, array $bannedFunctions)
     {
-        $this->requiredFunctions    = $requiredFunctions;
-        $this->bannedFunctions      = $bannedFunctions;
+        $this->requiredFunctions = $requiredFunctions;
+        $this->bannedFunctions = $bannedFunctions;
     }
 
     /**
      * @param Node $node
-     * @return null
      */
     public function leaveNode(Node $node)
     {

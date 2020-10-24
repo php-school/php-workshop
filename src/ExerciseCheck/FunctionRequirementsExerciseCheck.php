@@ -12,15 +12,15 @@ interface FunctionRequirementsExerciseCheck
      * Returns an array of function names that the student's solution should use. The solution
      * will be parsed and checked for usages of these functions.
      *
-     * @return string[] An array of function names that *should* be used.
+     * @return array<string> An array of function names that *should* be used.
      */
-    public function getRequiredFunctions();
+    public function getRequiredFunctions(): array;
 
     /**
      * Returns an array of function names that the student's solution should not use. The solution
      * will be parsed and checked for usages of these functions.
      *
-     * @return string[] An array of function names that *should not* be used.
+     * @return array<string> An array of function names that *should not* be used.
      */
-    public function getBannedFunctions();
+    public function getBannedFunctions(): array;
 }
