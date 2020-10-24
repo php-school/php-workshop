@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "6bd14f47973f74451108731c27485955",
+    "content-hash": "731f2dc2865e6d45cb0258cfca6f5f48",
     "packages": [
         {
             "name": "aydin-hassan/cli-md-renderer",
