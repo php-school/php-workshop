@@ -11,11 +11,12 @@ Updates should follow the [Keep a CHANGELOG](http://keepachangelog.com/) princip
 
 ### Removed
 
-## [2.3.0]
+## [3.0.0]
 ### Added
  - Add support for PHP 7.4 (#164)
  - Docblock cleanup (#166)
  - Added phpstan on maximum level and improved type coverage (#167)
+ - declared strict_types in all files (#180)
  
 ### Changed
  - Use symfony/phpunit-bridge to test on more versions of PHP then phpunit allows (#164)
