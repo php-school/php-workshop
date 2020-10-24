@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PhpSchool\PhpWorkshop\Result\Cgi;
 
 use PhpSchool\PhpWorkshop\Check\CheckInterface;

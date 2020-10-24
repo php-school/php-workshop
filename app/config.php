@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use Colors\Color;
 use function DI\create;
 use function DI\factory;
@@ -241,14 +243,14 @@ return [
             ->withInsertion(new Insertion(Insertion::TYPE_BEFORE, 'ini_set("display_errors", 1);'))
             ->withInsertion(new Insertion(Insertion::TYPE_BEFORE, 'error_reporting(E_ALL);'))
             ->withInsertion(new Insertion(Insertion ::TYPE_BEFORE, 'date_default_timezone_set("Europe/London");'));
-        
+
         return new CodePatcher($c->get(Parser::class), new Standard, $patch);
     },
     FakerGenerator::class => function () {
         return FakerFactory::create();
     },
     RequestRenderer::class => create(),
-    
+
     Terminal::class => factory([TerminalFactory::class, 'fromSystem']),
     'menu' => factory(MenuFactory::class),
     MenuFactory::class => create(),

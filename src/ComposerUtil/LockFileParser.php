@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PhpSchool\PhpWorkshop\ComposerUtil;
 
 use PhpSchool\PhpWorkshop\Exception\InvalidArgumentException;

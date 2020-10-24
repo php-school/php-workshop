@@ -49,7 +49,7 @@ class CommandRouterTest extends TestCase
 
         $mock->expects($this->once())
             ->method('__invoke')
-            ->willReturn(true);
+            ->willReturn(1);
 
         $c = $this->createMock(ContainerInterface::class);
         $eventDispatcher = $this->createMock(EventDispatcher::class);
@@ -68,7 +68,7 @@ class CommandRouterTest extends TestCase
 
         $mock->expects($this->once())
             ->method('__invoke')
-            ->willReturn(true);
+            ->willReturn(1);
 
         $c = $this->createMock(ContainerInterface::class);
         $eventDispatcher = $this->createMock(EventDispatcher::class);
@@ -138,7 +138,7 @@ class CommandRouterTest extends TestCase
                     && $input->getArgument('exercise') === 'some-exercise'
                     && $input->getArgument('program') === 'program.php';
             }))
-            ->willReturn(true);
+            ->willReturn(1);
 
         $c = $this->createMock(ContainerInterface::class);
         $eventDispatcher = $this->createMock(EventDispatcher::class);
@@ -234,7 +234,7 @@ class CommandRouterTest extends TestCase
                     && $input->getArgument('exercise') === 'some-exercise'
                     && $input->getArgument('program') === 'program.php';
             }))
-            ->willReturn(true);
+            ->willReturn(1);
 
         $c
             ->expects($this->once())
@@ -313,7 +313,7 @@ class CommandRouterTest extends TestCase
                 && $input->getArgument('exercise') === 'some-exercise'
                 && $input->getArgument('program') === 'program.php';
             }))
-            ->willReturn(true);
+            ->willReturn(1);
 
         $c = $this->createMock(ContainerInterface::class);
         $eventDispatcher = $this->createMock(EventDispatcher::class);
@@ -358,7 +358,7 @@ class CommandRouterTest extends TestCase
                     })
                 ]
             )
-            ->willReturnOnConsecutiveCalls(true, true);
+            ->willReturnOnConsecutiveCalls(1, null, 1);
 
         $c = $this->createMock(ContainerInterface::class);
         $eventDispatcher = $this->createMock(EventDispatcher::class);

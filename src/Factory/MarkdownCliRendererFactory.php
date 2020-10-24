@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PhpSchool\PhpWorkshop\Factory;
 
 use AydinHassan\CliMdRenderer\Renderer\ListBlockRenderer;

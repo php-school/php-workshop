@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PhpSchool\PhpWorkshop\ResultRenderer\Cgi;
 
 use PhpSchool\PhpWorkshop\Result\Cgi\RequestFailure;
