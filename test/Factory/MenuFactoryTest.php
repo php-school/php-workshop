@@ -43,7 +43,7 @@ class MenuFactoryTest extends TestCase
         $terminal
             ->method('getWidth')
             ->willReturn(70);
-            
+
         $services = [
             UserStateSerializer::class => $userStateSerializer,
             ExerciseRepository::class => $exerciseRepository,
@@ -59,14 +59,14 @@ class MenuFactoryTest extends TestCase
             EventDispatcher::class => $this->createMock(EventDispatcher::class),
             Terminal::class => $terminal
         ];
-        
+
         $container
             ->method('get')
             ->willReturnCallback(function ($name) use ($services) {
                 return $services[$name];
             });
-        
-        
+
+
         $factory = new MenuFactory();
         $this->assertInstanceOf(CliMenu::class, $factory($container));
     }

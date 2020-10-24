@@ -13,7 +13,7 @@ class PatchTest extends TestCase
         $patch = new Patch();
         $insertion = new CodeInsertion(CodeInsertion::TYPE_BEFORE, 'MEH');
         $new = $patch->withInsertion($insertion);
-        
+
         $this->assertNotSame($patch, $new);
         $this->assertEmpty($patch->getModifiers());
         $this->assertEquals([$insertion], $new->getModifiers());

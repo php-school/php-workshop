@@ -14,7 +14,7 @@ class RequestFailure implements FailureInterface
      * @var RequestInterface
      */
     private $request;
-    
+
     /**
      * @var string
      */
@@ -24,12 +24,12 @@ class RequestFailure implements FailureInterface
      * @var string
      */
     private $actualOutput;
-    
+
     /**
      * @var array<string, string>
      */
     private $expectedHeaders;
-    
+
     /**
      * @var array<string, string>
      */

@@ -63,11 +63,11 @@ class DirectorySolution implements SolutionInterface
                 sprintf('Entry point: "%s" does not exist in: "%s"', $entryPoint, $directory)
             );
         }
-        
+
         $this->files = array_map(function ($file) use ($directory) {
             return new SolutionFile($file, $directory);
         }, $files);
-        
+
         $this->entryPoint    = sprintf('%s/%s', $directory, $entryPoint);
         $this->baseDirectory = $directory;
     }

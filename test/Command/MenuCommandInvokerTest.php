@@ -14,7 +14,7 @@ class MenuCommandInvokerTest extends TestCase
         $menu
             ->expects($this->once())
             ->method('close');
-        
+
         $command = $this->getMockBuilder('stdClass')
             ->setMethods(['__invoke'])
             ->getMock();

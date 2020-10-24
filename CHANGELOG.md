@@ -11,6 +11,14 @@ Updates should follow the [Keep a CHANGELOG](http://keepachangelog.com/) princip
 
 ### Removed
 
+## [2.3.0]
+### Added
+ - Builds support for PHP 7.4
+ - Various code cleaning (phpstan, psr12, docblock removal)
+
+### Removed
+ - Removed support for PHP 7.1
+
 ## [2.2.0]
 ### Added
  - Builds for PHP 7.1 & 7.2 (#160)

@@ -11,7 +11,7 @@ use PhpSchool\PhpWorkshop\Check\CheckInterface;
 class FunctionRequirementsFailure implements FailureInterface
 {
     use ResultTrait;
-    
+
     /**
      * @var array<int, string>
      */

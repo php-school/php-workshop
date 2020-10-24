@@ -26,7 +26,7 @@ class ResultAggregatorTest extends TestCase
             ->method('getName')
             ->willReturn('Some Check');
     }
-    
+
     public function testIsSuccessful(): void
     {
         $resultAggregator = new ResultAggregator();
@@ -43,7 +43,7 @@ class ResultAggregatorTest extends TestCase
     {
         $resultAggregator = new ResultAggregator();
         $this->assertTrue($resultAggregator->isSuccessful());
-        
+
         $resultGroup = new CliResult();
         $resultGroup->add(new CliSuccess(new ArrayObject()));
 
@@ -61,11 +61,11 @@ class ResultAggregatorTest extends TestCase
             new Success('Some Check'),
             new Failure('Some Check', 'nope')
         ];
-        
+
         $resultAggregator = new ResultAggregator();
         $resultAggregator->add($results[0]);
         $resultAggregator->add($results[1]);
-        
+
         $this->assertEquals($results, iterator_to_array($resultAggregator));
     }
 }

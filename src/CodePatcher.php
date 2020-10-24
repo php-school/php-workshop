@@ -20,12 +20,12 @@ class CodePatcher
      * @var Parser
      */
     private $parser;
-    
+
     /**
      * @var Standard
      */
     private $printer;
-    
+
     /**
      * @var Patch|null
      */
@@ -49,7 +49,7 @@ class CodePatcher
         $this->printer = $printer;
         $this->defaultPatch = $defaultPatch;
     }
-    
+
     /**
      * Accepts an exercise and a string containing the students solution to the exercise.
      *
@@ -71,7 +71,7 @@ class CodePatcher
         if ($exercise instanceof SubmissionPatchable) {
             $code = $this->applyPatch($exercise->getPatch(), $code);
         }
-        
+
         return $code;
     }
 

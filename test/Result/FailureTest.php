@@ -26,7 +26,7 @@ class FailureTest extends TestCase
         $failure = new Failure($this->check->getName(), '');
         $this->assertSame('Some Check', $failure->getCheckName());
     }
-    
+
     public function testFailure(): void
     {
         $failure = new Failure($this->check->getName(), 'Something went wrong yo');

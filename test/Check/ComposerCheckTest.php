@@ -37,7 +37,7 @@ class ComposerCheckTest extends TestCase
         $this->assertTrue($this->check->canRun(ExerciseType::CGI()));
         $this->assertTrue($this->check->canRun(ExerciseType::CLI()));
     }
-    
+
     public function testExceptionIsThrownIfNotValidExercise(): void
     {
         $exercise = $this->createMock(ExerciseInterface::class);

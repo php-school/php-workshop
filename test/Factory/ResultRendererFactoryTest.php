@@ -18,7 +18,7 @@ class ResultRendererFactoryTest extends TestCase
         $resultClass = get_class($this->createMock(TestCase::class));
         $rendererClass = get_class($this->createMock(ResultRendererInterface::class));
         $factory = new ResultRendererFactory();
-        
+
         $factory->registerRenderer($resultClass, $rendererClass);
     }
 
@@ -29,7 +29,7 @@ class ResultRendererFactoryTest extends TestCase
         $resultClass = get_class($this->createMock(ResultInterface::class));
         $rendererClass = get_class($this->createMock(TestCase::class));
         $factory = new ResultRendererFactory();
-        
+
         $factory->registerRenderer($resultClass, $rendererClass);
     }
 

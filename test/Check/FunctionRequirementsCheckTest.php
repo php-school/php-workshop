@@ -95,7 +95,7 @@ class FunctionRequirementsCheckTest extends TestCase
             new Input('app', ['program' => __DIR__ . '/../res/function-requirements/fail-banned-function.php'])
         );
         $this->assertInstanceOf(FunctionRequirementsFailure::class, $failure);
-        
+
         $this->assertEquals(['file_get_contents', 'implode'], $failure->getMissingFunctions());
         $this->assertEquals([], $failure->getBannedFunctions());
     }

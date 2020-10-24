@@ -25,7 +25,7 @@ class VerifyCommandTest extends TestCase
      * @var CheckInterface
      */
     private $check;
-    
+
     public function setUp(): void
     {
         $this->check = $this->createMock(CheckInterface::class);
@@ -49,7 +49,7 @@ class VerifyCommandTest extends TestCase
         $color = new Color();
         $color->setForceStyle(true);
         $output = new StdOutput($color, $this->createMock(Terminal::class));
-        
+
         $serializer = $this->createMock(UserStateSerializer::class);
         $serializer
             ->expects($this->once())
@@ -68,13 +68,13 @@ class VerifyCommandTest extends TestCase
             ->method('verify')
             ->with($exercise, $input)
             ->willReturn($results);
-        
+
         $renderer
             ->expects($this->once())
             ->method('render')
             ->with($results, $exercise, $state, $output);
 
-    
+
         $command = new VerifyCommand($repo, $dispatcher, $state, $serializer, $output, $renderer);
         $this->assertEquals(0, $command->__invoke($input));
         $this->assertEquals(['my-exercise'], $state->getCompletedExercises());
