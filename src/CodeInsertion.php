@@ -2,7 +2,7 @@
 
 namespace PhpSchool\PhpWorkshop;
 
-use Assert\Assertion;
+use PhpSchool\PhpWorkshop\Exception\InvalidArgumentException;
 
 /**
  * This class is a simple DTO to represent a code insertion which should
@@ -49,7 +49,11 @@ class CodeInsertion
      */
     public function __construct(string $type, string $code)
     {
-        Assertion::inArray($type, $this->types);
+        if (!in_array($type, $this->types, true)) {
+            throw new InvalidArgumentException(
+                sprintf('Value "%s" is not an element of the valid values: %s', $type, implode(', ', $this->types))
+            );
+        }
 
         $this->type = $type;
         $this->code = $code;

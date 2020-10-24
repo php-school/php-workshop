@@ -2,9 +2,9 @@
 
 namespace PhpSchool\PhpWorkshop;
 
-use Assert\Assertion;
 use DI\ContainerBuilder;
 use PhpSchool\PhpWorkshop\Check\CheckRepository;
+use PhpSchool\PhpWorkshop\Exception\InvalidArgumentException;
 use PhpSchool\PhpWorkshop\Exception\MissingArgumentException;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpSchool\PhpWorkshop\Factory\ResultRendererFactory;
@@ -70,8 +70,9 @@ final class Application
      */
     public function __construct(string $workshopTitle, string $diConfigFile)
     {
-        Assertion::string($workshopTitle);
-        Assertion::file($diConfigFile);
+        if (!\is_file($diConfigFile)) {
+            throw new InvalidArgumentException(\sprintf('File "%s" was expected to exist.', $diConfigFile));
+        }
 
         $this->workshopTitle = $workshopTitle;
         $this->diConfigFile = $diConfigFile;
@@ -105,8 +106,13 @@ final class Application
      */
     public function addResult(string $resultClass, string $resultRendererClass): void
     {
-        Assertion::classExists($resultClass);
-        Assertion::classExists($resultRendererClass);
+        if (!\class_exists($resultClass)) {
+            throw new InvalidArgumentException(\sprintf('Class "%s" does not exist', $resultClass));
+        }
+
+        if (!\class_exists($resultRendererClass)) {
+            throw new InvalidArgumentException(\sprintf('Class "%s" does not exist', $resultRendererClass));
+        }
 
         $this->results[] = [
             'resultClass' => $resultClass,
@@ -122,7 +128,6 @@ final class Application
      */
     public function setLogo(string $logo): void
     {
-        Assertion::string($logo);
         $this->logo = $logo;
     }
 
@@ -134,7 +139,6 @@ final class Application
      */
     public function setFgColour(string $colour): void
     {
-        Assertion::string($colour);
         $this->fgColour = $colour;
     }
 
@@ -146,7 +150,6 @@ final class Application
      */
     public function setBgColour(string $colour): void
     {
-        Assertion::string($colour);
         $this->bgColour = $colour;
     }
 
