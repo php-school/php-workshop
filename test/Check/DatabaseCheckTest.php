@@ -237,7 +237,6 @@ class DatabaseCheckTest extends TestCase
     {
         $solution = SingleFileSolution::fromFile(realpath(__DIR__ . '/../res/database/solution.php'));
 
-
         $this->exercise
             ->expects($this->once())
             ->method('getSolution')
@@ -291,6 +290,10 @@ class DatabaseCheckTest extends TestCase
         $this->exercise
             ->method('getArgs')
             ->willReturn([]);
+
+        $this->exercise
+            ->method('verify')
+            ->willReturn(true);
 
         $this->exercise
             ->expects($this->once())

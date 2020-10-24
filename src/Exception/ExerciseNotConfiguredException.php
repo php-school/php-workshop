@@ -18,7 +18,7 @@ class ExerciseNotConfiguredException extends RuntimeException
      * @param string $interface The FQCN of the interface.
      * @return self
      */
-    public static function missingImplements(ExerciseInterface $exercise, $interface)
+    public static function missingImplements(ExerciseInterface $exercise, string $interface): self
     {
         return new self(sprintf('Exercise: "%s" should implement interface: "%s"', $exercise->getName(), $interface));
     }

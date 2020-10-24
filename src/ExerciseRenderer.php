@@ -65,13 +65,13 @@ class ExerciseRenderer
         Color $color,
         OutputInterface $output
     ) {
-        $this->appName              = $appName;
-        $this->exerciseRepository   = $exerciseRepository;
-        $this->markdownRenderer     = $markdownRenderer;
-        $this->color                = $color;
-        $this->output               = $output;
-        $this->userState            = $userState;
-        $this->userStateSerializer  = $userStateSerializer;
+        $this->appName = $appName;
+        $this->exerciseRepository = $exerciseRepository;
+        $this->markdownRenderer = $markdownRenderer;
+        $this->color = $color;
+        $this->output = $output;
+        $this->userState = $userState;
+        $this->userStateSerializer = $userStateSerializer;
     }
 
     /**
@@ -81,15 +81,15 @@ class ExerciseRenderer
     {
         $menu->close();
 
-        $item           = $menu->getSelectedItem();
-        $exercise       = $this->exerciseRepository->findByName($item->getText());
-        $exercises      = $this->exerciseRepository->findAll();
+        $item = $menu->getSelectedItem();
+        $exercise = $this->exerciseRepository->findByName($item->getText());
+        $exercises = $this->exerciseRepository->findAll();
 
         $this->userState->setCurrentExercise($item->getText());
         $this->userStateSerializer->serialize($this->userState);
 
-        $numExercises   = count($exercises);
-        $exerciseIndex  = ((int) array_search($exercise, $exercises)) + 1;
+        $numExercises = count($exercises);
+        $exerciseIndex = ((int) array_search($exercise, $exercises)) + 1;
 
         $output  = "\n";
         $output .= $this->color->__invoke(' LEARN YOU THE PHP FOR MUCH WIN! ')->magenta()->bold() . "\n";

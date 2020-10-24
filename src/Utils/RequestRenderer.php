@@ -15,7 +15,7 @@ class RequestRenderer
      * @param RequestInterface $request
      * @return string
      */
-    public function renderRequest(RequestInterface $request)
+    public function renderRequest(RequestInterface $request): string
     {
         $return  = '';
         $return .= sprintf("URL:     %s\n", $request->getUri());

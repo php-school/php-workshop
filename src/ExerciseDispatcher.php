@@ -24,12 +24,12 @@ use PhpSchool\PhpWorkshop\Output\OutputInterface;
 class ExerciseDispatcher
 {
     /**
-     * @var SimpleCheckInterface[]
+     * @var array<SimpleCheckInterface>
      */
     private $checksToRunBefore = [];
 
     /**
-     * @var SimpleCheckInterface[]
+     * @var array<SimpleCheckInterface>
      */
     private $checksToRunAfter = [];
 

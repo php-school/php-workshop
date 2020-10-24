@@ -14,5 +14,5 @@ interface ResultInterface
      *
      * @return string
      */
-    public function getCheckName();
+    public function getCheckName(): string;
 }

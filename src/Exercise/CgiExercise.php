@@ -13,7 +13,7 @@ interface CgiExercise extends ProvidesSolution
      * This method should return an array of PSR-7 requests, which will be forwarded to the student's
      * solution.
      *
-     * @return RequestInterface[] An array of PSR-7 requests.
+     * @return array<RequestInterface> An array of PSR-7 requests.
      */
-    public function getRequests();
+    public function getRequests(): array;
 }

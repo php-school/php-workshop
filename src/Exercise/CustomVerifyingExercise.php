@@ -12,5 +12,5 @@ interface CustomVerifyingExercise
     /**
      * @return ResultInterface
      */
-    public function verify();
+    public function verify(): ResultInterface;
 }

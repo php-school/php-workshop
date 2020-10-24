@@ -41,7 +41,7 @@ class MarkdownRenderer
      * @param string $markdown
      * @return string
      */
-    public function render($markdown)
+    public function render(string $markdown): string
     {
         $ast = $this->docParser->parse($markdown);
         return $this->cliRenderer->renderBlock($ast);

@@ -28,7 +28,7 @@ class FunctionRequirementsFailureRenderer implements ResultRendererInterface
      * @param ResultsRenderer $renderer
      * @return string
      */
-    public function render(ResultsRenderer $renderer)
+    public function render(ResultsRenderer $renderer): string
     {
         $output = '';
         if (count($bannedFunctions = $this->result->getBannedFunctions())) {

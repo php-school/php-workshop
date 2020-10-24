@@ -31,17 +31,17 @@ class HelpCommand
      * @param OutputInterface $output
      * @param Color $color
      */
-    public function __construct($appName, OutputInterface $output, Color $color)
+    public function __construct(string $appName, OutputInterface $output, Color $color)
     {
-        $this->output   = $output;
-        $this->color    = $color;
-        $this->appName  = $appName;
+        $this->output = $output;
+        $this->color = $color;
+        $this->appName = $appName;
     }
 
     /**
      * @return void
      */
-    public function __invoke()
+    public function __invoke(): void
     {
         $this->output->writeLine($this->color->__invoke('Usage')->yellow()->bold());
         $this->output->writeLine("");

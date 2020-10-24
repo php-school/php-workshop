@@ -16,7 +16,7 @@ class CodeExecutionException extends RuntimeException
      * @param Process $process The `Symfony\Component\Process\Process` instance which failed.
      * @return self
      */
-    public static function fromProcess(Process $process)
+    public static function fromProcess(Process $process): self
     {
         return new self(
             sprintf(

@@ -58,7 +58,7 @@ class DirectorySolution implements SolutionInterface
         }
         sort($files);
 
-        if (!in_array($entryPoint, $files)) {
+        if (!in_array($entryPoint, $files, true)) {
             throw new InvalidArgumentException(
                 sprintf('Entry point: "%s" does not exist in: "%s"', $entryPoint, $directory)
             );

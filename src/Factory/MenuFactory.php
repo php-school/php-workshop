@@ -31,7 +31,7 @@ class MenuFactory
      * @param ContainerInterface $c
      * @return CliMenu
      */
-    public function __invoke(ContainerInterface $c)
+    public function __invoke(ContainerInterface $c): CliMenu
     {
         $userStateSerializer    = $c->get(UserStateSerializer::class);
         $exerciseRepository     = $c->get(ExerciseRepository::class);
@@ -116,11 +116,11 @@ class MenuFactory
 
     /**
      * @param ExerciseInterface $exercise
-     * @param UserState         $userState
-     * @param WorkshopType      $type
+     * @param UserState $userState
+     * @param WorkshopType $type
      * @return bool
      */
-    private function isExerciseDisabled(ExerciseInterface $exercise, UserState $userState, WorkshopType $type)
+    private function isExerciseDisabled(ExerciseInterface $exercise, UserState $userState, WorkshopType $type): bool
     {
         static $previous = null;
 
@@ -129,7 +129,7 @@ class MenuFactory
             return false;
         }
 
-        if (in_array($previous->getName(), $userState->getCompletedExercises())) {
+        if (in_array($previous->getName(), $userState->getCompletedExercises(), true)) {
             $previous = $exercise;
             return false;
         }

@@ -41,7 +41,7 @@ class Failure implements FailureInterface
      * @param string|null $reason The reason (if any) of the failure.
      * @return self The result.
      */
-    public static function fromNameAndReason(string $name, ?string $reason): self
+    public static function fromNameAndReason(string $name, string $reason = null): self
     {
         return new self($name, $reason);
     }
@@ -50,10 +50,10 @@ class Failure implements FailureInterface
      * Static constructor to create from an instance of `PhpSchool\PhpWorkshop\Check\CheckInterface`.
      *
      * @param CheckInterface $check The check instance.
-     * @param string $reason The reason (if any) of the failure.
+     * @param string|null $reason The reason (if any) of the failure.
      * @return self The result.
      */
-    public static function fromCheckAndReason(CheckInterface $check, string $reason): self
+    public static function fromCheckAndReason(CheckInterface $check, string $reason = null): self
     {
         return new self($check->getName(), $reason);
     }

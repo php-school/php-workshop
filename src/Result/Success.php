@@ -28,7 +28,7 @@ class Success implements SuccessInterface
      * @param CheckInterface $check The check instance.
      * @return self The result.
      */
-    public static function fromCheck(CheckInterface $check)
+    public static function fromCheck(CheckInterface $check): self
     {
         return new self($check->getName());
     }

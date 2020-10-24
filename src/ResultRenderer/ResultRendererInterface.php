@@ -19,5 +19,5 @@ interface ResultRendererInterface
      * @param ResultsRenderer $renderer The main renderer instance.
      * @return string The string representation of the result.
      */
-    public function render(ResultsRenderer $renderer);
+    public function render(ResultsRenderer $renderer): string;
 }

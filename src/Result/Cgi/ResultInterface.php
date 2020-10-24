@@ -14,5 +14,5 @@ interface ResultInterface extends \PhpSchool\PhpWorkshop\Result\ResultInterface
      *
      * @return RequestInterface
      */
-    public function getRequest();
+    public function getRequest(): RequestInterface;
 }

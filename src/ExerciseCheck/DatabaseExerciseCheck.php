@@ -17,7 +17,7 @@ interface DatabaseExerciseCheck
      * @param PDO $db A `PDO` instance pointing to the database which will be accessible to the student's solution.
      * @return void
      */
-    public function seed(PDO $db);
+    public function seed(PDO $db): void;
 
     /**
      * This method allows your exercise to verify the state of database *after* the student's solution has been
@@ -28,5 +28,5 @@ interface DatabaseExerciseCheck
      * @param PDO $db A `PDO` instance pointing to the database which was accessible by the student's solution.
      * @return bool The result of the verification.
      */
-    public function verify(PDO $db);
+    public function verify(PDO $db): bool;
 }

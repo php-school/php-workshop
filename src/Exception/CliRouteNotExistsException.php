@@ -12,7 +12,7 @@ class CliRouteNotExistsException extends RuntimeException
     /**
      * @param string $routeName The name of the command which was typed.
      */
-    public function __construct($routeName)
+    public function __construct(string $routeName)
     {
         parent::__construct(sprintf('Command: "%s" does not exist', $routeName));
     }

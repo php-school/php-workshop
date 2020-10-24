@@ -46,23 +46,23 @@ class PrintCommand
      * @param OutputInterface $output
      */
     public function __construct(
-        $appName,
+        string $appName,
         ExerciseRepository $exerciseRepository,
         UserState $userState,
         MarkdownRenderer $markdownRenderer,
         OutputInterface $output
     ) {
-        $this->appName              = $appName;
-        $this->markdownRenderer     = $markdownRenderer;
-        $this->output               = $output;
-        $this->userState            = $userState;
-        $this->exerciseRepository   = $exerciseRepository;
+        $this->appName = $appName;
+        $this->markdownRenderer = $markdownRenderer;
+        $this->output = $output;
+        $this->userState = $userState;
+        $this->exerciseRepository = $exerciseRepository;
     }
 
     /**
-     * @return int|void
+     * @return void
      */
-    public function __invoke()
+    public function __invoke(): void
     {
         $currentExercise = $this->userState->getCurrentExercise();
         $exercise = $this->exerciseRepository->findByName($currentExercise);

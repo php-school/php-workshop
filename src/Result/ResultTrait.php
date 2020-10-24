@@ -21,7 +21,7 @@ trait ResultTrait
      *
      * @return string
      */
-    public function getCheckName()
+    public function getCheckName(): string
     {
         return $this->check->getName();
     }

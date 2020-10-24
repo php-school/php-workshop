@@ -24,7 +24,6 @@ use PhpSchool\PhpWorkshop\Utils\Collection;
  */
 class FunctionRequirementsCheck implements SimpleCheckInterface
 {
-
     /**
      * @var Parser
      */

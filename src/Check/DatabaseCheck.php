@@ -51,11 +51,11 @@ class DatabaseCheck implements ListenableCheckInterface
      */
     public function __construct()
     {
-        $this->databaseDirectory    = $this->getTemporaryPath();
-        $this->userDatabasePath     = sprintf('%s/user-db.sqlite', $this->databaseDirectory);
+        $this->databaseDirectory = $this->getTemporaryPath();
+        $this->userDatabasePath = sprintf('%s/user-db.sqlite', $this->databaseDirectory);
         $this->solutionDatabasePath = sprintf('%s/solution-db.sqlite', $this->databaseDirectory);
-        $this->solutionDsn          = sprintf('sqlite:%s', $this->solutionDatabasePath);
-        $this->userDsn              = sprintf('sqlite:%s', $this->userDatabasePath);
+        $this->solutionDsn = sprintf('sqlite:%s', $this->solutionDatabasePath);
+        $this->userDsn = sprintf('sqlite:%s', $this->userDatabasePath);
     }
 
     /**

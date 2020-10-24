@@ -27,11 +27,11 @@ class ComparisonFailure implements FailureInterface
      * @param string $expectedValue
      * @param string $actualValue
      */
-    public function __construct($name, $expectedValue, $actualValue)
+    public function __construct(string $name, string $expectedValue, string $actualValue)
     {
-        $this->name          = $name;
+        $this->name = $name;
         $this->expectedValue = $expectedValue;
-        $this->actualValue   = $actualValue;
+        $this->actualValue = $actualValue;
     }
 
     /**
@@ -40,7 +40,7 @@ class ComparisonFailure implements FailureInterface
      * @param string $actualValue
      * @return self
      */
-    public static function fromNameAndValues($name, $expectedValue, $actualValue)
+    public static function fromNameAndValues(string $name, string $expectedValue, string $actualValue): self
     {
         return new self($name, $expectedValue, $actualValue);
     }
@@ -50,7 +50,7 @@ class ComparisonFailure implements FailureInterface
      *
      * @return string
      */
-    public function getCheckName()
+    public function getCheckName(): string
     {
         return $this->name;
     }
@@ -60,7 +60,7 @@ class ComparisonFailure implements FailureInterface
      *
      * @return string
      */
-    public function getExpectedValue()
+    public function getExpectedValue(): string
     {
         return $this->expectedValue;
     }
@@ -70,7 +70,7 @@ class ComparisonFailure implements FailureInterface
      *
      * @return string
      */
-    public function getActualValue()
+    public function getActualValue(): string
     {
         return $this->actualValue;
     }
