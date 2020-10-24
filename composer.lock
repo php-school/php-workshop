@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "a86bde0ed96422423aa7c6c4c59ac60a",
+    "content-hash": "6bd14f47973f74451108731c27485955",
     "packages": [
         {
             "name": "aydin-hassan/cli-md-renderer",
@@ -1580,16 +1580,16 @@
         },
         {
             "name": "composer/composer",
-            "version": "dev-master",
+            "version": "2.0.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/composer/composer.git",
-                "reference": "37cb6eb40dd3ed1f5981208c81171b15ac0b164d"
+                "reference": "66f4e5d49ff52eecb603e7e5b5bb8645204d0658"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/composer/composer/zipball/37cb6eb40dd3ed1f5981208c81171b15ac0b164d",
-                "reference": "37cb6eb40dd3ed1f5981208c81171b15ac0b164d",
+                "url": "https://api.github.com/repos/composer/composer/zipball/66f4e5d49ff52eecb603e7e5b5bb8645204d0658",
+                "reference": "66f4e5d49ff52eecb603e7e5b5bb8645204d0658",
                 "shasum": ""
             },
             "require": {
@@ -1617,7 +1617,6 @@
                 "ext-zip": "Enabling the zip extension allows you to unzip archives",
                 "ext-zlib": "Allow gzip compression of HTTP requests"
             },
-            "default-branch": true,
             "bin": [
                 "bin/composer"
             ],
@@ -1658,7 +1657,7 @@
             "support": {
                 "irc": "irc://irc.freenode.org/composer",
                 "issues": "https://github.com/composer/composer/issues",
-                "source": "https://github.com/composer/composer/tree/master"
+                "source": "https://github.com/composer/composer/tree/2.0.1"
             },
             "funding": [
                 {
@@ -1674,7 +1673,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2020-10-24T18:54:37+00:00"
+            "time": "2020-10-24T18:53:21+00:00"
         },
         {
             "name": "composer/semver",
@@ -3243,9 +3242,7 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": {
-        "composer/composer": 20
-    },
+    "stability-flags": [],
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
