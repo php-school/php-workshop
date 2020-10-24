@@ -2,7 +2,7 @@
 
 namespace PhpSchool\PhpWorkshopTest\Factory;
 
-use Interop\Container\ContainerInterface;
+use Psr\Container\ContainerInterface;
 use PhpSchool\CliMenu\CliMenu;
 use PhpSchool\PhpWorkshop\Command\CreditsCommand;
 use PhpSchool\PhpWorkshop\Command\HelpCommand;

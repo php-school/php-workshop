@@ -4,7 +4,7 @@ namespace PhpSchool\PhpWorkshopTest\Factory;
 
 use DI\ContainerBuilder;
 use PhpSchool\PhpWorkshop\Event\Event;
-use Interop\Container\ContainerInterface;
+use Psr\Container\ContainerInterface;
 use PhpSchool\PhpWorkshop\Event\EventDispatcher;
 use PhpSchool\PhpWorkshop\Exception\InvalidArgumentException;
 use PhpSchool\PhpWorkshop\Factory\EventDispatcherFactory;
