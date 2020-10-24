@@ -13,11 +13,23 @@ Updates should follow the [Keep a CHANGELOG](http://keepachangelog.com/) princip
 
 ## [2.3.0]
 ### Added
- - Builds support for PHP 7.4
- - Various code cleaning (phpstan, psr12, docblock removal)
+ - Add support for PHP 7.4 (#164)
+ - Docblock cleanup (#166)
+ - Added phpstan on maximum level and improved type coverage (#167)
+ 
+### Changed
+ - Use symfony/phpunit-bridge to test on more versions of PHP then phpunit allows (#164)
+ - Coding standards checks updated to use PSR-12 (#165)
+ - Updated php-school/cli-menu (#169)
+ - Swapped zendframework/zend-diactoros for guzzlehttp/guzzle (#172)
+ - Updated internal composer to 2.0 (#173)
+ - Switch to PSR-11 (#177)
+ - Updated symfony components (#178)
 
 ### Removed
- - Removed support for PHP 7.1
+ - Removed support for PHP < 7.2 (#164)
+ - Dropped beberlei/assert (#171)
+ - All usages of prophecy (#174)
 
 ## [2.2.0]
 ### Added
