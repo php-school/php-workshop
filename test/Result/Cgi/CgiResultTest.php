@@ -21,12 +21,12 @@ class CgiResultTest extends TestCase
     {
         $request = new RequestFailure($this->createMock(RequestInterface::class), '', '', [], []);
         $cgiResult = new CgiResult([$request]);
-        
+
         $this->assertFalse($cgiResult->isSuccessful());
 
         $cgiResult = new CgiResult([new Success($this->createMock(RequestInterface::class))]);
         $this->assertTrue($cgiResult->isSuccessful());
-        
+
         $cgiResult->add($request);
         $this->assertFalse($cgiResult->isSuccessful());
     }

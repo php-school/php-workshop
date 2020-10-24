@@ -14,7 +14,7 @@ class FunctionRequirementsFailureTest extends TestCase
         $check
             ->method('getName')
             ->willReturn('Some Check');
-        
+
         $failure = new FunctionRequirementsFailure($check, ['function' => 'file', 'line' => 3], ['explode']);
         $this->assertEquals(['function' => 'file', 'line' => 3], $failure->getBannedFunctions());
         $this->assertEquals(['explode'], $failure->getMissingFunctions());

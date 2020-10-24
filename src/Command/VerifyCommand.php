@@ -35,7 +35,7 @@ class VerifyCommand
      * @var UserStateSerializer
      */
     private $userStateSerializer;
-    
+
     /**
      * @var ResultsRenderer
      */
@@ -84,7 +84,7 @@ class VerifyCommand
             $this->userState->addCompletedExercise($exercise->getName());
             $this->userStateSerializer->serialize($this->userState);
         }
-        
+
         $this->resultsRenderer->render($results, $exercise, $this->userState, $this->output);
         return $results->isSuccessful() ? 0 : 1;
     }

@@ -45,7 +45,7 @@ class Failure implements FailureInterface
     {
         return new self($name, $reason);
     }
-    
+
     /**
      * Static constructor to create from an instance of `PhpSchool\PhpWorkshop\Check\CheckInterface`.
      *

@@ -12,7 +12,7 @@ class SolutionFileTest extends TestCase
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('File: "file/that/does/not/exist.php" does not exist');
-        
+
         SolutionFile::fromFile('file/that/does/not/exist.php');
     }
 
@@ -23,13 +23,13 @@ class SolutionFileTest extends TestCase
 
         @mkdir($tempPath, 0775, true);
         touch($filePath);
-        
+
         $file = SolutionFile::fromFile($filePath);
-        
+
         $this->assertSame($filePath, $file->__toString());
         $this->assertSame('test.file', $file->getRelativePath());
         $this->assertSame($tempPath, $file->getBaseDirectory());
-        
+
         unlink($filePath);
         rmdir($tempPath);
     }

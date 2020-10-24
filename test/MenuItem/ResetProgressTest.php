@@ -63,7 +63,7 @@ class ResetProgressTest extends TestCase
             ->expects($this->once())
             ->method('serialize')
             ->with($this->isInstanceOf(UserState::class));
-        
+
         $resetProgress = new ResetProgress($userStateSerializer);
         $resetProgress->__invoke($subMenu);
     }

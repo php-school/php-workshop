@@ -15,7 +15,7 @@ class HelpCommand
      * @var string
      */
     private $appName;
-    
+
     /**
      * @var OutputInterface
      */
@@ -37,7 +37,7 @@ class HelpCommand
         $this->color    = $color;
         $this->appName  = $appName;
     }
-    
+
     /**
      * @return void
      */

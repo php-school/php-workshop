@@ -49,14 +49,18 @@
         ]
     },
     "autoload-dev": {
-        "psr-4": { 
-            "PhpSchool\\PhpWorkshopTest\\": "test" 
+        "psr-4": {
+            "PhpSchool\\PhpWorkshopTest\\": "test"
         }
     },
     "scripts" : {
         "cs" : [
             "phpcs src --standard=PSR12 --encoding=UTF-8",
             "phpcs test --standard=PSR12 --encoding=UTF-8"
+        ],
+        "cs-fix" : [
+            "phpcbf src --standard=PSR12 --encoding=UTF-8",
+            "phpcbf test --standard=PSR12 --encoding=UTF-8"
         ],
         "static": "phpstan --ansi analyse --level max src"
     }

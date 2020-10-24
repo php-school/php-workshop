@@ -15,7 +15,7 @@ class RequestFailureTest extends TestCase
         $this->assertSame('Request Failure', $requestFailure->getCheckName());
         $this->assertSame($request, $requestFailure->getRequest());
     }
-    
+
     public function testWhenOnlyOutputDifferent(): void
     {
         $requestFailure = new RequestFailure(
@@ -25,7 +25,7 @@ class RequestFailureTest extends TestCase
             [],
             []
         );
-        
+
         $this->assertEquals('Expected Output', $requestFailure->getExpectedOutput());
         $this->assertEquals('Actual Output', $requestFailure->getActualOutput());
         $this->assertTrue($requestFailure->bodyDifferent());
@@ -43,7 +43,7 @@ class RequestFailureTest extends TestCase
             ['header1' => 'some-value'],
             ['header2' => 'some-value']
         );
-        
+
         $this->assertEquals(['header1' => 'some-value'], $requestFailure->getExpectedHeaders());
         $this->assertEquals(['header2' => 'some-value'], $requestFailure->getActualHeaders());
         $this->assertTrue($requestFailure->headersDifferent());
@@ -61,7 +61,7 @@ class RequestFailureTest extends TestCase
             ['header1' => 'some-value'],
             ['header2' => 'some-value']
         );
-        
+
         $this->assertTrue($requestFailure->headersDifferent());
         $this->assertTrue($requestFailure->bodyDifferent());
         $this->assertTrue($requestFailure->headersAndBodyDifferent());

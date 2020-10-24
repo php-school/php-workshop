@@ -14,7 +14,7 @@ trait ResultTrait
      * @var CheckInterface
      */
     private $check;
-    
+
     /**
      * Get the check name from the underlying check. Assumes that the `check` property has been
      * assigned an instance of `PhpSchool\PhpWorkshop\Check\CheckInterface`.

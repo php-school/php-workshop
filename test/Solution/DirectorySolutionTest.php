@@ -13,10 +13,10 @@ class DirectorySolutionTest extends TestCase
         $tempPath = sprintf('%s/%s', realpath(sys_get_temp_dir()), $this->getName());
         @mkdir($tempPath, 0775, true);
         touch(sprintf('%s/some-class.php', $tempPath));
-        
+
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage(sprintf('Entry point: "solution.php" does not exist in: "%s"', $tempPath));
-        
+
         DirectorySolution::fromDirectory($tempPath);
 
         unlink(sprintf('%s/some-class.php', $tempPath));
@@ -29,18 +29,18 @@ class DirectorySolutionTest extends TestCase
         @mkdir($tempPath, 0775, true);
         touch(sprintf('%s/solution.php', $tempPath));
         touch(sprintf('%s/some-class.php', $tempPath));
-        
+
         $solution = DirectorySolution::fromDirectory($tempPath);
-        
+
         $this->assertSame($tempPath, $solution->getBaseDirectory());
         $this->assertFalse($solution->hasComposerFile());
         $this->assertSame(sprintf('%s/solution.php', $tempPath), $solution->getEntryPoint());
         $files = $solution->getFiles();
         $this->assertCount(2, $files);
-        
+
         $this->assertSame(sprintf('%s/solution.php', $tempPath), $files[0]->__toString());
         $this->assertSame(sprintf('%s/some-class.php', $tempPath), $files[1]->__toString());
-        
+
         unlink(sprintf('%s/solution.php', $tempPath));
         unlink(sprintf('%s/some-class.php', $tempPath));
         rmdir($tempPath);

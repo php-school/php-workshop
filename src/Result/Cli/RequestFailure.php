@@ -59,7 +59,7 @@ class RequestFailure implements FailureInterface
     {
         return $this->args;
     }
-    
+
     /**
      * Get the expected output.
      *

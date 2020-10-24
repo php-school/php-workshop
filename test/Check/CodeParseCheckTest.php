@@ -23,7 +23,7 @@ class CodeParseCheckTest extends TestCase
      * @var string
      */
     private $file;
-    
+
     public function setUp(): void
     {
         $this->check = new CodeParseCheck((new ParserFactory())->create(ParserFactory::PREFER_PHP7));
@@ -42,13 +42,13 @@ class CodeParseCheckTest extends TestCase
     public function testUnParseableCodeReturnsFailure(): void
     {
         file_put_contents($this->file, '<?php $lol');
-        
+
         $result = $this->check->check(
             $this->createMock(ExerciseInterface::class),
             new Input('app', ['program' => $this->file])
         );
         $this->assertInstanceOf(Failure::class, $result);
-        
+
         $this->assertEquals('Code Parse Check', $result->getCheckName());
         $this->assertMatchesRegularExpression(
             sprintf('|^File: "%s" could not be parsed\. Error: "|', preg_quote($this->file)),
