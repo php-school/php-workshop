@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PhpSchool\PhpWorkshop\Event;
 
 use PhpSchool\PhpWorkshop\Result\ResultInterface;
