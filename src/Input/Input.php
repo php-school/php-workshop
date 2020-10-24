@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace PhpSchool\PhpWorkshop\Input;
 
-use PhpSchool\PhpWorkshop\CommandDefinition;
 use PhpSchool\PhpWorkshop\Exception\InvalidArgumentException;
 
 /**
@@ -20,7 +19,7 @@ class Input
     /**
      * @var array<string, string|null>
      */
-    private $arguments = [];
+    private $arguments;
 
     /**
      * @param string $appName

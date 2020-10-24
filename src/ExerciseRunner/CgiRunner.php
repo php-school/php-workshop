@@ -28,7 +28,6 @@ use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use RuntimeException;
 use Symfony\Component\Process\Process;
-use Zend\Diactoros\Response\Serializer as ResponseSerializer;
 
 /**
  * The `CGI` runner. This runner executes solutions as if they were behind a web-server. They populate the `$_SERVER`,
@@ -74,9 +73,9 @@ class CgiRunner implements ExerciseRunnerInterface
         EventDispatcher $eventDispatcher,
         RequestRenderer $requestRenderer
     ) {
-        if (strpos(PHP_OS, 'WIN') !== false) {
+        if (PHP_OS_FAMILY === 'Windows') {
             // Check if in path. 2> nul > nul equivalent to 2>&1 /dev/null
-            $silence  = (PHP_OS == 'CYGWIN' ? '> /dev/null 2>&1' : '2> nul > nul');
+            $silence  = (PHP_OS === 'CYGWIN' ? '> /dev/null 2>&1' : '2> nul > nul');
             system(sprintf('php-cgi --version %s', $silence), $failedToRun);
             if ($failedToRun) {
                 $newPath = realpath(sprintf('%s/%s', dirname(PHP_BINARY), 'php-cgi.exe'));

@@ -5,8 +5,6 @@ declare(strict_types=1);
 namespace PhpSchool\PhpWorkshop\Check;
 
 use PhpParser\Error;
-use PhpParser\Node\Expr\FuncCall;
-use PhpParser\NodeTraverser;
 use PhpParser\Parser;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseType;
@@ -66,6 +64,8 @@ class CodeParseCheck implements SimpleCheckInterface
 
     /**
      * This check can run on any exercise type.
+     * @param ExerciseType $exerciseType
+     * @return bool
      */
     public function canRun(ExerciseType $exerciseType): bool
     {

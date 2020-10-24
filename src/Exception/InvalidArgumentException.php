@@ -52,7 +52,7 @@ class InvalidArgumentException extends \InvalidArgumentException
      * @param class-string $requiredInterface
      * @return self
      */
-    public static function missingImplements($object, string $requiredInterface): self
+    public static function missingImplements(object $object, string $requiredInterface): self
     {
         return new self(
             sprintf(

@@ -13,7 +13,7 @@ use PhpSchool\Terminal\Terminal;
 class StdOutput implements OutputInterface
 {
     /**
-     * @var \Colors\Color
+     * @var Color
      */
     private $color;
 

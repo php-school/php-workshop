@@ -94,8 +94,6 @@ class EventDispatcher
             //return type hints pls
             if ($result instanceof ResultInterface) {
                 $this->resultAggregator->add($result);
-            } else {
-                //??!!
             }
         });
     }

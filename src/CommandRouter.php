@@ -4,11 +4,13 @@ declare(strict_types=1);
 
 namespace PhpSchool\PhpWorkshop;
 
+use InvalidArgumentException;
 use PhpSchool\PhpWorkshop\Event\EventDispatcher;
 use PhpSchool\PhpWorkshop\Exception\CliRouteNotExistsException;
 use PhpSchool\PhpWorkshop\Exception\MissingArgumentException;
 use Psr\Container\ContainerInterface;
 use PhpSchool\PhpWorkshop\Input\Input;
+use RuntimeException;
 
 /**
  * Parses $argv (or passed array) and attempts to find a command
@@ -60,7 +62,7 @@ class CommandRouter
         }
 
         if (!isset($this->commands[$default])) {
-            throw new \InvalidArgumentException(sprintf('Default command: "%s" is not available', $default));
+            throw new InvalidArgumentException(sprintf('Default command: "%s" is not available', $default));
         }
         $this->defaultCommand = $default;
         $this->eventDispatcher = $eventDispatcher;
@@ -73,7 +75,7 @@ class CommandRouter
     private function addCommand(CommandDefinition $c): void
     {
         if (isset($this->commands[$c->getName()])) {
-            throw new \InvalidArgumentException(sprintf('Command with name: "%s" already exists', $c->getName()));
+            throw new InvalidArgumentException(sprintf('Command with name: "%s" already exists', $c->getName()));
         }
 
         $this->commands[$c->getName()] = $c;
@@ -100,7 +102,7 @@ class CommandRouter
     {
 
         if (null === $args) {
-            $args = isset($_SERVER['argv']) ? $_SERVER['argv'] : [];
+            $args = $_SERVER['argv'] ?? [];
         }
 
         $appName = array_shift($args);
@@ -196,17 +198,17 @@ class CommandRouter
         }
 
         if (!is_string($commandCallable)) {
-            throw new \RuntimeException('Callable must be a callable or a container entry for a callable service');
+            throw new RuntimeException('Callable must be a callable or a container entry for a callable service');
         }
 
         if (!$this->container->has($commandCallable)) {
-            throw new \RuntimeException(sprintf('Container has no entry named: "%s"', $commandCallable));
+            throw new RuntimeException(sprintf('Container has no entry named: "%s"', $commandCallable));
         }
 
         $callable = $this->container->get($commandCallable);
 
         if (!is_callable($callable)) {
-            throw new \RuntimeException(sprintf('Container entry: "%s" not callable', $commandCallable));
+            throw new RuntimeException(sprintf('Container entry: "%s" not callable', $commandCallable));
         }
 
         $return = $this->callCommand($command, $callable, $input);

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace PhpSchool\PhpWorkshop\Check;
 
 use PDO;
+use PDOException;
 use PhpSchool\PhpWorkshop\Event\CliExecuteEvent;
 use PhpSchool\PhpWorkshop\Event\Event;
 use PhpSchool\PhpWorkshop\Event\EventDispatcher;
@@ -12,6 +13,7 @@ use PhpSchool\PhpWorkshop\Exercise\TemporaryDirectoryTrait;
 use PhpSchool\PhpWorkshop\ExerciseCheck\DatabaseExerciseCheck;
 use PhpSchool\PhpWorkshop\Result\Failure;
 use PhpSchool\PhpWorkshop\Result\Success;
+use RuntimeException;
 
 /**
  * This check sets up a database and a `PDO` object. It prepends the database DSN as a CLI argument to the student's
@@ -75,12 +77,14 @@ class DatabaseCheck implements ListenableCheckInterface
 
     /**
      * Here we attach to various events to seed, verify and inject the DSN's
-     * to the student & reference solution programs's CLI arguments.
+     * to the student & reference solution programs' CLI arguments.
+     *
+     * @param EventDispatcher $eventDispatcher
      */
     public function attach(EventDispatcher $eventDispatcher): void
     {
         if (file_exists($this->databaseDirectory)) {
-            throw new \RuntimeException(
+            throw new RuntimeException(
                 sprintf('Database directory: "%s" already exists', $this->databaseDirectory)
             );
         }
@@ -90,7 +94,7 @@ class DatabaseCheck implements ListenableCheckInterface
         try {
             $db = new PDO($this->userDsn);
             $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-        } catch (\PDOException $e) {
+        } catch (PDOException $e) {
             rmdir($this->databaseDirectory);
             throw $e;
         }
@@ -132,7 +136,7 @@ class DatabaseCheck implements ListenableCheckInterface
                 'verify.finish',
                 'run.finish'
             ],
-            function (Event $e) use ($db) {
+            function () use ($db) {
                 unset($db);
                 @unlink($this->userDatabasePath);
                 @unlink($this->solutionDatabasePath);

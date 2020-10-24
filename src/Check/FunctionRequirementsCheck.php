@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace PhpSchool\PhpWorkshop\Check;
 
+use InvalidArgumentException;
 use PhpParser\Error;
 use PhpParser\Node\Expr\FuncCall;
-use PhpParser\Node\Name;
 use PhpParser\NodeTraverser;
 use PhpParser\Parser;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
@@ -18,7 +18,6 @@ use PhpSchool\PhpWorkshop\Result\Failure;
 use PhpSchool\PhpWorkshop\Result\FunctionRequirementsFailure;
 use PhpSchool\PhpWorkshop\Result\ResultInterface;
 use PhpSchool\PhpWorkshop\Result\Success;
-use PhpSchool\PhpWorkshop\Utils\Collection;
 
 /**
  * This check verifies that the student's solution contains usages of some required functions
@@ -59,7 +58,7 @@ class FunctionRequirementsCheck implements SimpleCheckInterface
     public function check(ExerciseInterface $exercise, Input $input): ResultInterface
     {
         if (!$exercise instanceof FunctionRequirementsExerciseCheck) {
-            throw new \InvalidArgumentException();
+            throw new InvalidArgumentException();
         }
 
         $requiredFunctions  = $exercise->getRequiredFunctions();
@@ -100,6 +99,9 @@ class FunctionRequirementsCheck implements SimpleCheckInterface
 
     /**
      * This check can run on any exercise type.
+     *
+     * @param ExerciseType $exerciseType
+     * @return bool
      */
     public function canRun(ExerciseType $exerciseType): bool
     {

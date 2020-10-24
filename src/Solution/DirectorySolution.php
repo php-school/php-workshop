@@ -8,6 +8,7 @@ use InvalidArgumentException;
 use RecursiveCallbackFilterIterator;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
+use SplFileInfo;
 
 /**
  * Solution which can contain multiple files, the file to execute is defined as the entry point.
@@ -22,7 +23,7 @@ class DirectorySolution implements SolutionInterface
     /**
      * @var array<SolutionFile>
      */
-    private $files = [];
+    private $files;
 
     /**
      * @var string
@@ -46,7 +47,7 @@ class DirectorySolution implements SolutionInterface
 
         $dir  = new RecursiveDirectoryIterator($directory, RecursiveDirectoryIterator::SKIP_DOTS);
         $iter = new RecursiveIteratorIterator(
-            new RecursiveCallbackFilterIterator($dir, function (\SplFileInfo $current) use ($exclusions) {
+            new RecursiveCallbackFilterIterator($dir, function (SplFileInfo $current) use ($exclusions) {
                 return !in_array($current->getBasename(), $exclusions, true);
             }),
             RecursiveIteratorIterator::SELF_FIRST

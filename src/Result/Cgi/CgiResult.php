@@ -6,7 +6,6 @@ namespace PhpSchool\PhpWorkshop\Result\Cgi;
 
 use ArrayIterator;
 use IteratorAggregate;
-use PhpSchool\PhpWorkshop\Result\Cgi\ResultInterface;
 use PhpSchool\PhpWorkshop\Result\ResultGroupInterface;
 
 /**

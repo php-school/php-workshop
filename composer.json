@@ -16,6 +16,7 @@
     ],
     "require" : {
         "php" : ">=7.2",
+        "ext-pdo": "*",
         "ext-pdo_sqlite": "*",
         "php-di/php-di": "^6.0",
         "psr/container": "^1.0",
