@@ -31,14 +31,14 @@ class CliRunnerFactoryTest extends TestCase
 
     public function testSupports(): void
     {
-        $exercise1 = $this->prophesize(ExerciseInterface::class);
-        $exercise2 = $this->prophesize(ExerciseInterface::class);
+        $exercise1 = $this->createMock(ExerciseInterface::class);
+        $exercise2 = $this->createMock(ExerciseInterface::class);
 
-        $exercise1->getType()->willReturn(ExerciseType::CLI());
-        $exercise2->getType()->willReturn(ExerciseType::CGI());
+        $exercise1->method('getType')->willReturn(ExerciseType::CLI());
+        $exercise2->method('getType')->willReturn(ExerciseType::CGI());
 
-        $this->assertTrue($this->factory->supports($exercise1->reveal()));
-        $this->assertFalse($this->factory->supports($exercise2->reveal()));
+        $this->assertTrue($this->factory->supports($exercise1));
+        $this->assertFalse($this->factory->supports($exercise2));
     }
 
     public function testConfigureInputAddsProgramArgument(): void

@@ -29,7 +29,6 @@ class CodePatcherTest extends TestCase
         $this->assertEquals($expected, $patcher->patch($exercise, '<?php $original = true;'));
     }
 
-
     public function testPatcherDoesNotApplyPatchIfNotPatchableExercise(): void
     {
         $patcher = new CodePatcher((new ParserFactory())->create(ParserFactory::PREFER_PHP7), new Standard());

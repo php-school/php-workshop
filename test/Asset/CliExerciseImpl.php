@@ -5,7 +5,9 @@ namespace PhpSchool\PhpWorkshopTest\Asset;
 use PhpSchool\PhpWorkshop\Exercise\CliExercise;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseType;
+use PhpSchool\PhpWorkshop\Exercise\ProvidesSolution;
 use PhpSchool\PhpWorkshop\ExerciseDispatcher;
+use PhpSchool\PhpWorkshop\Solution\SolutionInterface;
 
 class CliExerciseImpl implements ExerciseInterface, CliExercise
 {
@@ -14,6 +16,11 @@ class CliExerciseImpl implements ExerciseInterface, CliExercise
      * @var string
      */
     private $name;
+
+    /**
+     * @var SolutionInterface
+     */
+    private $solution;
 
     public function __construct(string $name = 'my-exercise')
     {
@@ -30,9 +37,14 @@ class CliExerciseImpl implements ExerciseInterface, CliExercise
         return $this->name;
     }
 
-    public function getSolution(): string
+    public function setSolution(SolutionInterface $solution): void
     {
-        // TODO: Implement getSolution() method.
+        $this->solution = $solution;
+    }
+
+    public function getSolution(): SolutionInterface
+    {
+        return $this->solution;
     }
 
     public function getProblem(): string

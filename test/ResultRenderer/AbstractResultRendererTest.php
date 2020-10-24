@@ -43,14 +43,14 @@ abstract class AbstractResultRendererTest extends TestCase
             $color = new Color();
             $color->setForceStyle(true);
 
-            $terminal = $this->prophesize(Terminal::class);
-            $terminal->getWidth()->willReturn(50);
+            $terminal = $this->createMock(Terminal::class);
+            $terminal->method('getWidth')->willReturn(50);
             $exerciseRepo = $this->createMock(ExerciseRepository::class);
 
             $this->renderer = new ResultsRenderer(
                 'appName',
                 $color,
-                $terminal->reveal(),
+                $terminal,
                 $exerciseRepo,
                 new KeyLighter(),
                 $this->getResultRendererFactory()
