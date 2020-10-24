@@ -6,6 +6,7 @@ namespace PhpSchool\PhpWorkshopTest;
 
 use PhpSchool\PhpWorkshop\Application;
 use PHPUnit\Framework\TestCase;
+use PhpSchool\PhpWorkshop\Exception\InvalidArgumentException;
 
 class ApplicationTest extends TestCase
 {
@@ -57,5 +58,31 @@ class ApplicationTest extends TestCase
             ],
             $eventListeners
         );
+    }
+
+    public function testExceptionIsThrownIfConfigFileDoesNotExist(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('File "not-existing-file.php" was expected to exist.');
+
+        new Application('My workshop', 'not-existing-file.php');
+    }
+
+    public function testExceptionIsThrownIfResultClassDoesNotExist(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Class "NotExistingClass" does not exist');
+
+        $app = new Application('My workshop', __DIR__ . '/../app/config.php');
+        $app->addResult(\NotExistingClass::class, \NotExistingClass::class);
+    }
+
+    public function testExceptionIsThrownIfResultRendererClassDoesNotExist(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Class "NotExistingClass" does not exist');
+
+        $app = new Application('My workshop', __DIR__ . '/../app/config.php');
+        $app->addResult(\PhpSchool\PhpWorkshop\Result\Success::class, \NotExistingClass::class);
     }
 }
