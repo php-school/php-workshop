@@ -149,11 +149,7 @@ class ArrayObject implements IteratorAggregate, Countable
      */
     public function get(string $key, $default = null)
     {
-        if (isset($this->array[$key])) {
-            return $this->array[$key];
-        }
-
-        return $default;
+        return $this->array[$key] ?? $default;
     }
 
     /**

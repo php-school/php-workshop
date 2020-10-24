@@ -59,7 +59,7 @@ class ExerciseRenderer
      * @param OutputInterface $output
      */
     public function __construct(
-        $appName,
+        string $appName,
         ExerciseRepository $exerciseRepository,
         UserState $userState,
         UserStateSerializer $userStateSerializer,
@@ -91,7 +91,7 @@ class ExerciseRenderer
         $this->userStateSerializer->serialize($this->userState);
 
         $numExercises = count($exercises);
-        $exerciseIndex = ((int) array_search($exercise, $exercises)) + 1;
+        $exerciseIndex = ((int) array_search($exercise, $exercises, true)) + 1;
 
         $output  = "\n";
         $output .= $this->color->__invoke(' LEARN YOU THE PHP FOR MUCH WIN! ')->magenta()->bold() . "\n";

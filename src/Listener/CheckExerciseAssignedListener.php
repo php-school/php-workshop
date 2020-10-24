@@ -7,6 +7,7 @@ namespace PhpSchool\PhpWorkshop\Listener;
 use PhpSchool\PhpWorkshop\CommandDefinition;
 use PhpSchool\PhpWorkshop\Event\Event;
 use PhpSchool\PhpWorkshop\UserState;
+use RuntimeException;
 
 class CheckExerciseAssignedListener
 {
@@ -36,7 +37,7 @@ class CheckExerciseAssignedListener
         }
 
         if (!$this->userState->isAssignedExercise()) {
-            throw new \RuntimeException('No active exercise. Select one from the menu');
+            throw new RuntimeException('No active exercise. Select one from the menu');
         }
     }
 }

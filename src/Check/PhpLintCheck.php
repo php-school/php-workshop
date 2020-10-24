@@ -47,6 +47,9 @@ class PhpLintCheck implements SimpleCheckInterface
 
     /**
      * This check can run on any exercise type.
+     *
+     * @param ExerciseType $exerciseType
+     * @return bool
      */
     public function canRun(ExerciseType $exerciseType): bool
     {

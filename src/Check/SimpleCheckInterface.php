@@ -31,6 +31,9 @@ interface SimpleCheckInterface extends CheckInterface
 
     /**
      * Can this check run this exercise?
+     *
+     * @param ExerciseType $exerciseType
+     * @return bool
      */
     public function canRun(ExerciseType $exerciseType): bool;
 

@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace PhpSchool\PhpWorkshop;
 
 use ArrayIterator;
-use Countable;
 use IteratorAggregate;
 use PhpSchool\PhpWorkshop\Result\FailureInterface;
 use PhpSchool\PhpWorkshop\Result\ResultGroupInterface;

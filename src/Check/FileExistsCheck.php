@@ -45,6 +45,9 @@ class FileExistsCheck implements SimpleCheckInterface
 
     /**
      * This check can run on any exercise type.
+     *
+     * @param ExerciseType $exerciseType
+     * @return bool
      */
     public function canRun(ExerciseType $exerciseType): bool
     {
@@ -57,7 +60,7 @@ class FileExistsCheck implements SimpleCheckInterface
     }
 
     /**
-     * This check must run before executing the solution becuase it may not exist.
+     * This check must run before executing the solution because it may not exist.
      */
     public function getPosition(): string
     {

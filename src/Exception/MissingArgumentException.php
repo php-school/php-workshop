@@ -14,7 +14,7 @@ class MissingArgumentException extends RuntimeException
     /**
      * @var array<string>
      */
-    private $missingArguments = [];
+    private $missingArguments;
 
     /**
      * Create the exception, requires the command name and missing arguments.

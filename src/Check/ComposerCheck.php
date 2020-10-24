@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace PhpSchool\PhpWorkshop\Check;
 
+use InvalidArgumentException;
 use PhpSchool\PhpWorkshop\ComposerUtil\LockFileParser;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseType;
@@ -35,11 +36,12 @@ class ComposerCheck implements SimpleCheckInterface
      * @param ExerciseInterface $exercise The exercise to check against.
      * @param Input $input The command line arguments passed to the command.
      * @return ResultInterface The result of the check.
+     * @noinspection SpellCheckingInspection
      */
     public function check(ExerciseInterface $exercise, Input $input): ResultInterface
     {
         if (!$exercise instanceof ComposerExerciseCheck) {
-            throw new \InvalidArgumentException();
+            throw new InvalidArgumentException();
         }
 
         if (!file_exists(sprintf('%s/composer.json', dirname($input->getRequiredArgument('program'))))) {
@@ -74,6 +76,9 @@ class ComposerCheck implements SimpleCheckInterface
 
     /**
      * This check can run on any exercise type.
+     *
+     * @param ExerciseType $exerciseType
+     * @return bool
      */
     public function canRun(ExerciseType $exerciseType): bool
     {

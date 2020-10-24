@@ -61,7 +61,7 @@ class LockFileParser
      * @param string $packageName
      * @return bool
      */
-    public function hasInstalledPackage($packageName): bool
+    public function hasInstalledPackage(string $packageName): bool
     {
         foreach ($this->contents['packages'] as $packageDetails) {
             if ($packageName === $packageDetails['name']) {

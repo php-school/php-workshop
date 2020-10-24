@@ -151,7 +151,7 @@ class UserStateSerializer
         }
 
         //lets check if the data is in the old format
-        if (!isset($data['completed_exercises']) || !isset($data['current_exercise'])) {
+        if (!isset($data['completed_exercises'], $data['current_exercise'])) {
             unlink($legacySaveFile);
             return null;
         }
@@ -162,7 +162,7 @@ class UserStateSerializer
         //check to see if this old data represents THIS workshop
         //if not we bail
         foreach ($completedExercises as $completedExercise) {
-            if (!in_array($completedExercise, $availableExercises)) {
+            if (!in_array($completedExercise, $availableExercises, true)) {
                 return null;
             }
         }

@@ -4,11 +4,7 @@ declare(strict_types=1);
 
 namespace PhpSchool\PhpWorkshop\Listener;
 
-use PhpSchool\PhpWorkshop\CommandDefinition;
-use PhpSchool\PhpWorkshop\Event\Event;
 use PhpSchool\PhpWorkshop\Event\ExerciseRunnerEvent;
-use PhpSchool\PhpWorkshop\Input\Input;
-use PhpSchool\PhpWorkshop\UserState;
 
 /**
  * Replace program arg with absolute path

@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 namespace PhpSchool\PhpWorkshop\Exception;
 
+use RuntimeException;
+
 /**
  * When a student has no exercise assigned
  */
-class ExerciseNotAssignedException extends \RuntimeException
+class ExerciseNotAssignedException extends RuntimeException
 {
     /**
      * @return self

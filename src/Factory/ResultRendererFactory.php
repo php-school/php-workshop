@@ -7,6 +7,7 @@ namespace PhpSchool\PhpWorkshop\Factory;
 use PhpSchool\PhpWorkshop\Exception\InvalidArgumentException;
 use PhpSchool\PhpWorkshop\Result\ResultInterface;
 use PhpSchool\PhpWorkshop\ResultRenderer\ResultRendererInterface;
+use RuntimeException;
 
 /**
  * Manages and creates renderers for results
@@ -53,7 +54,7 @@ class ResultRendererFactory
     {
         $class = get_class($result);
         if (!isset($this->mappings[$class])) {
-            throw new \RuntimeException(sprintf('No renderer found for "%s"', $class));
+            throw new RuntimeException(sprintf('No renderer found for "%s"', $class));
         }
 
         $class = $this->mappings[$class];
@@ -62,7 +63,7 @@ class ResultRendererFactory
         $renderer = $factory($result);
 
         if (!$renderer instanceof $class) {
-            throw new \RuntimeException(
+            throw new RuntimeException(
                 sprintf(
                     'Renderer Factory for "%s" produced "%s" instead of expected "%s"',
                     $class,

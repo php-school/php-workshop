@@ -14,6 +14,8 @@ interface ListenableCheckInterface extends CheckInterface
     /**
      * Attach to events throughout the running/verifying process. Inject verifiers
      * and listeners.
+     *
+     * @param EventDispatcher $eventDispatcher
      */
     public function attach(EventDispatcher $eventDispatcher): void;
 }

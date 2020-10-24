@@ -7,7 +7,6 @@ namespace PhpSchool\PhpWorkshop\ResultRenderer;
 use Colors\Color;
 use Kadet\Highlighter\Formatter\CliFormatter;
 use Kadet\Highlighter\KeyLighter;
-use PhpSchool\PhpWorkshop\Result\FailureInterface;
 use PhpSchool\Terminal\Terminal;
 use PhpSchool\CliMenu\Util\StringUtil;
 use PhpSchool\PhpWorkshop\Exercise\ProvidesSolution;
@@ -20,9 +19,12 @@ use PhpSchool\PhpWorkshop\ExerciseRepository;
 use PhpSchool\PhpWorkshop\Result\ResultInterface;
 use PhpSchool\PhpWorkshop\ResultAggregator;
 use PhpSchool\PhpWorkshop\UserState;
+use PhpSchool\PhpWorkshop\Result\FailureInterface;
+
+use function mb_str_pad;
 
 /**
- * Renderer which renders a `PhpSchool\PhpWorkshop\ResultAggregator` and writes it to x§the output.
+ * Renderer which renders a `PhpSchool\PhpWorkshop\ResultAggregator` and writes it to the output.
  */
 class ResultsRenderer
 {
@@ -145,7 +147,7 @@ class ResultsRenderer
     ): void {
         foreach ($failures as [$failure, $message]) {
             $output->writeLine($this->center($this->style(str_repeat(' ', $padLength), ['bg_red'])));
-            $output->writeLine($this->center($this->style(\mb_str_pad($message, $padLength), ['bg_red'])));
+            $output->writeLine($this->center($this->style(mb_str_pad($message, $padLength), ['bg_red'])));
             $output->writeLine($this->center($this->style(str_repeat(' ', $padLength), ['bg_red'])));
 
             $output->emptyLine();

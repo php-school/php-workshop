@@ -5,9 +5,7 @@ declare(strict_types=1);
 namespace PhpSchool\PhpWorkshop\Listener;
 
 use PhpSchool\PhpWorkshop\CodePatcher;
-use PhpSchool\PhpWorkshop\Event\Event;
 use PhpSchool\PhpWorkshop\Event\ExerciseRunnerEvent;
-use PhpSchool\PhpWorkshop\Input\Input;
 use RuntimeException;
 
 /**

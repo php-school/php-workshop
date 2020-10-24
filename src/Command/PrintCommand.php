@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace PhpSchool\PhpWorkshop\Command;
 
-use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpSchool\PhpWorkshop\ExerciseRepository;
 use PhpSchool\PhpWorkshop\MarkdownRenderer;
 use PhpSchool\PhpWorkshop\Output\OutputInterface;

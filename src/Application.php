@@ -4,13 +4,18 @@ declare(strict_types=1);
 
 namespace PhpSchool\PhpWorkshop;
 
+use DI\Container;
 use DI\ContainerBuilder;
 use PhpSchool\PhpWorkshop\Check\CheckRepository;
 use PhpSchool\PhpWorkshop\Exception\InvalidArgumentException;
 use PhpSchool\PhpWorkshop\Exception\MissingArgumentException;
-use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpSchool\PhpWorkshop\Factory\ResultRendererFactory;
 use PhpSchool\PhpWorkshop\Output\OutputInterface;
+use RuntimeException;
+
+use function class_exists;
+use function is_file;
+use function sprintf;
 
 /**
  * This is the main application class, this takes care of bootstrapping, routing and
@@ -46,7 +51,7 @@ final class Application
     /**
      * @var string|null
      */
-    private $logo = null;
+    private $logo;
 
     /**
      * @var string
@@ -72,8 +77,8 @@ final class Application
      */
     public function __construct(string $workshopTitle, string $diConfigFile)
     {
-        if (!\is_file($diConfigFile)) {
-            throw new InvalidArgumentException(\sprintf('File "%s" was expected to exist.', $diConfigFile));
+        if (!is_file($diConfigFile)) {
+            throw new InvalidArgumentException(sprintf('File "%s" was expected to exist.', $diConfigFile));
         }
 
         $this->workshopTitle = $workshopTitle;
@@ -108,12 +113,12 @@ final class Application
      */
     public function addResult(string $resultClass, string $resultRendererClass): void
     {
-        if (!\class_exists($resultClass)) {
-            throw new InvalidArgumentException(\sprintf('Class "%s" does not exist', $resultClass));
+        if (!class_exists($resultClass)) {
+            throw new InvalidArgumentException(sprintf('Class "%s" does not exist', $resultClass));
         }
 
-        if (!\class_exists($resultRendererClass)) {
-            throw new InvalidArgumentException(\sprintf('Class "%s" does not exist', $resultRendererClass));
+        if (!class_exists($resultRendererClass)) {
+            throw new InvalidArgumentException(sprintf('Class "%s" does not exist', $resultRendererClass));
         }
 
         $this->results[] = [
@@ -167,7 +172,7 @@ final class Application
 
         foreach ($this->exercises as $exercise) {
             if (false === $container->has($exercise)) {
-                throw new \RuntimeException(
+                throw new RuntimeException(
                     sprintf('No DI config found for exercise: "%s". Register a factory.', $exercise)
                 );
             }
@@ -176,7 +181,7 @@ final class Application
         $checkRepository = $container->get(CheckRepository::class);
         foreach ($this->checks as $check) {
             if (false === $container->has($check)) {
-                throw new \RuntimeException(
+                throw new RuntimeException(
                     sprintf('No DI config found for check: "%s". Register a factory.', $check)
                 );
             }
@@ -206,7 +211,7 @@ final class Application
                     )
                 );
             return 1;
-        } catch (\RuntimeException $e) {
+        } catch (RuntimeException $e) {
             $container
                 ->get(OutputInterface::class)
                 ->printError(
@@ -221,9 +226,9 @@ final class Application
     }
 
     /**
-     * @return \DI\Container
+     * @return Container
      */
-    private function getContainer(): \DI\Container
+    private function getContainer(): Container
     {
         $containerBuilder = new ContainerBuilder();
         $containerBuilder->addDefinitions(
