@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "d7b338a0327bc3118eb2d64a86a72002",
+    "content-hash": "315be55eb76d5318468f8ec13092bbec",
     "packages": [
         {
             "name": "aydin-hassan/cli-md-renderer",
@@ -910,16 +910,16 @@
         },
         {
             "name": "php-school/cli-menu",
-            "version": "dev-master",
+            "version": "4.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/php-school/cli-menu.git",
-                "reference": "277ba7a8931ee51b0ec3c07e92c61ec01cbb95f7"
+                "reference": "d25ae866d86b1ac95f026e7147c0e30ef4996dcd"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/php-school/cli-menu/zipball/277ba7a8931ee51b0ec3c07e92c61ec01cbb95f7",
-                "reference": "277ba7a8931ee51b0ec3c07e92c61ec01cbb95f7",
+                "url": "https://api.github.com/repos/php-school/cli-menu/zipball/d25ae866d86b1ac95f026e7147c0e30ef4996dcd",
+                "reference": "d25ae866d86b1ac95f026e7147c0e30ef4996dcd",
                 "shasum": ""
             },
             "require": {
@@ -966,7 +966,7 @@
                 "phpschool",
                 "terminal"
             ],
-            "time": "2020-10-20T11:12:56+00:00"
+            "time": "2020-10-24T09:18:48+00:00"
         },
         {
             "name": "php-school/terminal",
@@ -1490,12 +1490,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/composer/composer.git",
-                "reference": "8564dd8daca9c4da9ff4393eb154a6fac464478f"
+                "reference": "191196de481e8fb652824b84fa504238dfabacb3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/composer/composer/zipball/8564dd8daca9c4da9ff4393eb154a6fac464478f",
-                "reference": "8564dd8daca9c4da9ff4393eb154a6fac464478f",
+                "url": "https://api.github.com/repos/composer/composer/zipball/191196de481e8fb652824b84fa504238dfabacb3",
+                "reference": "191196de481e8fb652824b84fa504238dfabacb3",
                 "shasum": ""
             },
             "require": {
@@ -1574,7 +1574,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2020-10-23T11:27:46+00:00"
+            "time": "2020-10-24T09:10:08+00:00"
         },
         {
             "name": "composer/semver",
@@ -3070,7 +3070,6 @@
     ],
     "minimum-stability": "stable",
     "stability-flags": {
-        "php-school/cli-menu": 20,
         "kadet/keylighter": 20,
         "composer/composer": 20
     },

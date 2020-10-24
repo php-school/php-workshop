@@ -23,7 +23,7 @@
         "symfony/filesystem": "^3.0 | ^4.0",
         "fzaninotto/faker": "^1.5",
         "aydin-hassan/cli-md-renderer": "^2.3",
-        "php-school/cli-menu": "dev-master",
+        "php-school/cli-menu": "^4.1",
         "psr/http-message": "^1.0",
         "myclabs/php-enum": "^1.4",
         "kadet/keylighter": "dev-array_merge-php8 as 0.8.3",
