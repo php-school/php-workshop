@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "0e9744ccbe44f4a0316f8c547243a18e",
+    "content-hash": "d05327f7044aff5b0399e3ee94891ef6",
     "packages": [
         {
             "name": "aydin-hassan/cli-md-renderer",
@@ -405,64 +405,6 @@
                 "source": "https://github.com/guzzle/psr7/tree/1.7.0"
             },
             "time": "2020-09-30T07:37:11+00:00"
-        },
-        {
-            "name": "kadet/keylighter",
-            "version": "dev-master",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/kadet1090/KeyLighter.git",
-                "reference": "c6e009635f3b5db2a797374653ea7aaf91c9c842"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/kadet1090/KeyLighter/zipball/c6e009635f3b5db2a797374653ea7aaf91c9c842",
-                "reference": "c6e009635f3b5db2a797374653ea7aaf91c9c842",
-                "shasum": ""
-            },
-            "require": {
-                "php": "^7.1.3 | ^8.0"
-            },
-            "require-dev": {
-                "easybook/geshi": "v1.0.8.19",
-                "ext-json": "*",
-                "phpunit/phpunit": "^7.0",
-                "squizlabs/php_codesniffer": "^3.5",
-                "symfony/console": "^4.4",
-                "symfony/var-exporter": "^4.4"
-            },
-            "suggest": {
-                "symfony/console": "Allows usage of keylighters CLI utility."
-            },
-            "default-branch": true,
-            "bin": [
-                "bin/keylighter"
-            ],
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "Kadet\\Highlighter\\": "."
-                },
-                "files": [
-                    "./functions.php"
-                ]
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Kacper Donat",
-                    "email": "contact@kadet.net"
-                }
-            ],
-            "description": "Yet another syntax highlighter for PHP",
-            "support": {
-                "issues": "https://github.com/kadet1090/KeyLighter/issues",
-                "source": "https://github.com/kadet1090/KeyLighter/tree/master"
-            },
-            "time": "2020-10-24T16:35:14+00:00"
         },
         {
             "name": "kevinlebrun/colors.php",
@@ -3265,9 +3207,7 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": {
-        "kadet/keylighter": 20
-    },
+    "stability-flags": [],
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
