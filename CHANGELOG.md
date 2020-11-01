@@ -12,8 +12,6 @@ Updates should follow the [Keep a CHANGELOG](http://keepachangelog.com/) princip
 ### Removed
 
 ## [2.0.1]
-### Added
-
 ### Changed
  - Updated to `fakerphp/faker` package and new version to support PHP8 (#182)
 
