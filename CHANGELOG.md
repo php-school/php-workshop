@@ -13,6 +13,7 @@ Updates should follow the [Keep a CHANGELOG](http://keepachangelog.com/) princip
 
 ## [3.0.0]
 ### Added
+ - Add support for PHP 8.0 (#176)
  - Add support for PHP 7.4 (#164)
  - Docblock cleanup (#166)
  - Added phpstan on maximum level and improved type coverage (#167)
