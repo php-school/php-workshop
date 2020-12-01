@@ -34,12 +34,14 @@ class InitialCodeListener
     {
         $exercise = $event->getParameter('exercise');
 
-        if ($exercise instanceof ProvidesInitialCode) {
-            foreach ($exercise->getInitialCode()->getFiles() as $file) {
-                /** @var SolutionFile $file */
-                if (!file_exists($this->workingDirectory . '/' . $file->getRelativePath())) {
-                    copy($file->getAbsolutePath(), $this->workingDirectory . '/' . $file->getRelativePath());
-                }
+        if (!$exercise instanceof ProvidesInitialCode) {
+            return;
+        }
+
+        foreach ($exercise->getInitialCode()->getFiles() as $file) {
+            /** @var SolutionFile $file */
+            if (!file_exists($this->workingDirectory . '/' . $file->getRelativePath())) {
+                copy($file->getAbsolutePath(), $this->workingDirectory . '/' . $file->getRelativePath());
             }
         }
     }
