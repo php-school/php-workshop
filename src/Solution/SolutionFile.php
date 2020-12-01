@@ -53,7 +53,7 @@ class SolutionFile
      *
      * @return string
      */
-    private function getAbsolutePath(): string
+    public function getAbsolutePath(): string
     {
         return sprintf('%s/%s', $this->baseDirectory, $this->relativePath);
     }
