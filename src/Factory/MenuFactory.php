@@ -76,6 +76,7 @@ class MenuFactory
             ->setExitButtonText('EXIT')
             ->setBackgroundColour($c->get('bgColour'))
             ->setForegroundColour($c->get('fgColour'))
+            ->setMarginAuto()
             ->setWidth(70)
             ->modifySelectableStyle(function (SelectableStyle $style) {
                 $style
