@@ -22,6 +22,10 @@ class SingleFileSolution implements SolutionInterface
      */
     public function __construct(string $file)
     {
+        if (!file_exists($file)) {
+            throw new InvalidArgumentException(sprintf('File: "%s" does not exist', $file));
+        }
+
         $this->file = SolutionFile::fromFile((string) realpath($file));
     }
 

@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use Colors\Color;
+use PhpSchool\PhpWorkshop\Listener\InitialCodeListener;
 use function DI\create;
 use function DI\factory;
 use Kadet\Highlighter\KeyLighter;
@@ -201,17 +202,20 @@ return [
     },
 
     //Listeners
-    PrepareSolutionListener::class       => create(),
-    CodePatchListener::class             => function (ContainerInterface $c) {
+    InitialCodeListener::class => function (ContainerInterface $c) {
+        return new InitialCodeListener(getcwd());
+    },
+    PrepareSolutionListener::class => create(),
+    CodePatchListener::class => function (ContainerInterface $c) {
         return new CodePatchListener($c->get(CodePatcher::class));
     },
-    SelfCheckListener::class             => function (ContainerInterface $c) {
+    SelfCheckListener::class => function (ContainerInterface $c) {
         return new SelfCheckListener($c->get(ResultAggregator::class));
     },
     CheckExerciseAssignedListener::class => function (ContainerInterface $c) {
         return new CheckExerciseAssignedListener($c->get(UserState::class));
     },
-    ConfigureCommandListener::class      => function (ContainerInterface $c) {
+    ConfigureCommandListener::class => function (ContainerInterface $c) {
         return new ConfigureCommandListener(
             $c->get(UserState::class),
             $c->get(ExerciseRepository::class),
@@ -393,5 +397,10 @@ return [
                 containerListener(SelfCheckListener::class)
             ],
         ],
+        'create-initial-code' => [
+            'exercise.selected' => [
+                containerListener(InitialCodeListener::class)
+            ]
+        ]
     ],
 ];

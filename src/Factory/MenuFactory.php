@@ -147,13 +147,9 @@ class MenuFactory
      */
     private function dispatchExerciseSelectedEvent(EventDispatcher $eventDispatcher, ExerciseInterface $exercise): void
     {
+        $eventDispatcher->dispatch(new Event('exercise.selected', ['exercise' => $exercise]));
         $eventDispatcher->dispatch(
-            new Event(
-                sprintf(
-                    'exercise.selected.%s',
-                    AbstractExercise::normaliseName($exercise->getName())
-                )
-            )
+            new Event(sprintf('exercise.selected.%s', AbstractExercise::normaliseName($exercise->getName())))
         );
     }
 }
