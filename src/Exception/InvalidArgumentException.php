@@ -10,6 +10,25 @@ namespace PhpSchool\PhpWorkshop\Exception;
 class InvalidArgumentException extends \InvalidArgumentException
 {
     /**
+     * Static constructor to create an exception when using string doesn't match an array
+     * of options.
+     *
+     * @param string $needle
+     * @param array $haystack
+     * @return static
+     */
+    public static function notInArray(string $needle, array $haystack): self
+    {
+        return new self(
+            sprintf(
+                'Value "%s" is not an element of the valid values: %s',
+                $needle,
+                implode(', ', $haystack)
+            )
+        );
+    }
+
+    /**
      * Static constructor to create from the expected type & the actual value.
      *
      * @param string $expected

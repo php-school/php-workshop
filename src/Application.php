@@ -9,6 +9,7 @@ use DI\ContainerBuilder;
 use PhpSchool\PhpWorkshop\Check\CheckRepository;
 use PhpSchool\PhpWorkshop\Exception\InvalidArgumentException;
 use PhpSchool\PhpWorkshop\Exception\MissingArgumentException;
+use PhpSchool\PhpWorkshop\Exercise\ExerciseAssets;
 use PhpSchool\PhpWorkshop\Factory\ResultRendererFactory;
 use PhpSchool\PhpWorkshop\Output\OutputInterface;
 use RuntimeException;
@@ -169,6 +170,8 @@ final class Application
     public function run(): int
     {
         $container = $this->getContainer();
+
+        ExerciseAssets::init($container->get('exerciseAssetPath'));
 
         foreach ($this->exercises as $exercise) {
             if (false === $container->has($exercise)) {

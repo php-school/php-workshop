@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use Colors\Color;
+use PhpSchool\PhpWorkshop\Exercise\ExerciseAssets;
 use PhpSchool\PhpWorkshop\Listener\InitialCodeListener;
 use function DI\create;
 use function DI\factory;
