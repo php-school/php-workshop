@@ -53,9 +53,18 @@ class ExerciseAssetsTest extends TestCase
         ExerciseAssets::init($path);
         $exercise = new BaseExerciseImpl('my-exercise');
 
-        $this->assertSame("$path/my-exercise/solution/solution.php", ExerciseAssets::getAssetPath($exercise, 'solution', 'solution.php'));
-        $this->assertSame("$path/my-exercise/problem/problem.md", ExerciseAssets::getAssetPath($exercise, 'problem', 'problem.md'));
-        $this->assertSame("$path/my-exercise/initial/solution.php", ExerciseAssets::getAssetPath($exercise, 'initial', 'solution.php'));
+        $this->assertSame(
+            "$path/my-exercise/solution/solution.php",
+            ExerciseAssets::getAssetPath($exercise, 'solution', 'solution.php')
+        );
+        $this->assertSame(
+            "$path/my-exercise/problem/problem.md",
+            ExerciseAssets::getAssetPath($exercise, 'problem', 'problem.md')
+        );
+        $this->assertSame(
+            "$path/my-exercise/initial/solution.php",
+            ExerciseAssets::getAssetPath($exercise, 'initial', 'solution.php')
+        );
 
         (new Filesystem())->remove($path);
     }

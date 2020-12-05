@@ -35,7 +35,10 @@ class InvalidArgumentExceptionTest extends TestCase
     public function testExceptionFromNotInArray(): void
     {
         $e = InvalidArgumentException::notInArray('not-a-type', ['type-a', 'type-b']);
-        self::assertEquals('Value "not-a-type" is not an element of the valid values: type-a, type-b', $e->getMessage());
+        self::assertEquals(
+            'Value "not-a-type" is not an element of the valid values: type-a, type-b',
+            $e->getMessage()
+        );
     }
 
     /**
