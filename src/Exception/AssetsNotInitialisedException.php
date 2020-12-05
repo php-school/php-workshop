@@ -10,6 +10,6 @@ class AssetsNotInitialisedException extends RuntimeException
 {
     public static function new(): self
     {
-        return new static('Assets not initialised with a base path');
+        return new self('Assets not initialised with a base path');
     }
 }

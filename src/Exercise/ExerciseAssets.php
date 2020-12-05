@@ -27,11 +27,12 @@ class ExerciseAssets
      */
     public static function init(string $assetPath): void
     {
-        if (!is_dir($assetPath)) {
+        $assetPath = realpath($assetPath);
+        if (!$assetPath || !is_dir($assetPath)) {
             throw new InvalidArgumentException('Exercise assets path must be a directory');
         }
 
-        static::$assetPath = realpath($assetPath);
+        static::$assetPath = $assetPath;
     }
 
 

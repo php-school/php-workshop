@@ -14,8 +14,8 @@ class InvalidArgumentException extends \InvalidArgumentException
      * of options.
      *
      * @param string $needle
-     * @param array $haystack
-     * @return static
+     * @param array<string> $haystack
+     * @return self
      */
     public static function notInArray(string $needle, array $haystack): self
     {
