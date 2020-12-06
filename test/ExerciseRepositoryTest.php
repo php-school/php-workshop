@@ -45,6 +45,25 @@ class ExerciseRepositoryTest extends TestCase
         $repo->findByName('exercise1');
     }
 
+    public function testFindByClassName(): void
+    {
+        $exercises = [
+            new CliExerciseImpl('Exercise 1'),
+        ];
+
+        $repo = new ExerciseRepository($exercises);
+        $this->assertSame($exercises[0], $repo->findByClassName(CliExerciseImpl::class));
+    }
+
+    public function testFindByClassNameThrowsExceptionIfNotFound(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage(sprintf('Exercise with name: "%s" does not exist', CliExerciseImpl::class));
+
+        $repo = new ExerciseRepository([]);
+        $repo->findByClassName(CliExerciseImpl::class);
+    }
+
     public function testGetAllNames(): void
     {
         $exercises = [

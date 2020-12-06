@@ -7,3 +7,10 @@ parameters:
         -
             message: '#Call to an undefined method PhpParser\\Node\\Expr\|PhpParser\\Node\\Name\:\:__toString\(\)#'
             path: src/Check/FunctionRequirementsCheck.php
+
+        -
+            message: '#Class PHPUnit\\Framework\\TestCase not found#'
+            path: src/TestUtils/WorkshopExerciseTest.php
+
+    excludes_analyse:
+        - src/TestUtils/WorkshopExerciseTest.php

@@ -134,4 +134,33 @@ class ArrayObjectTest extends TestCase
         $arrayObject = new ArrayObject();
         self::assertTrue($arrayObject->isEmpty());
     }
+
+    public function testFilter(): void
+    {
+        $arrayObject = new ArrayObject([1, 2, 3]);
+        $new = $arrayObject->filter(function ($elem) {
+            return $elem > 1;
+        });
+
+        $this->assertNotSame($arrayObject, $new);
+        $this->assertEquals([1 => 2, 2 => 3], $new->getArrayCopy());
+    }
+
+    public function testValues(): void
+    {
+        $arrayObject = new ArrayObject([1, 2, 3]);
+        $new = $arrayObject->filter(function ($elem) {
+            return $elem > 1;
+        });
+
+        $this->assertNotSame($arrayObject, $new);
+        $this->assertEquals([0 => 2, 1 => 3], $new->values()->getArrayCopy());
+    }
+
+    public function testFirst(): void
+    {
+        $arrayObject = new ArrayObject([10, 11, 12]);
+
+        $this->assertEquals(10, $arrayObject->first());
+    }
 }

@@ -108,6 +108,22 @@ class ArrayObject implements IteratorAggregate, Countable
     }
 
     /**
+     * @return static
+     */
+    public function values(): self
+    {
+        return new static(array_values($this->array));
+    }
+
+    /**
+     * @return T|mixed
+     */
+    public function first()
+    {
+        return $this->get(0);
+    }
+
+    /**
      * Implode each item together using the provided glue.
      *
      * @param string $glue
@@ -143,11 +159,11 @@ class ArrayObject implements IteratorAggregate, Countable
     /**
      * Get an item at the given key.
      *
-     * @param string $key
+     * @param string|int $key
      * @param mixed $default
      * @return T|mixed
      */
-    public function get(string $key, $default = null)
+    public function get($key, $default = null)
     {
         return $this->array[$key] ?? $default;
     }

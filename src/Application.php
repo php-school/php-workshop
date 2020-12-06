@@ -11,6 +11,7 @@ use PhpSchool\PhpWorkshop\Exception\InvalidArgumentException;
 use PhpSchool\PhpWorkshop\Exception\MissingArgumentException;
 use PhpSchool\PhpWorkshop\Factory\ResultRendererFactory;
 use PhpSchool\PhpWorkshop\Output\OutputInterface;
+use Psr\Container\ContainerInterface;
 use RuntimeException;
 
 use function class_exists;
@@ -160,13 +161,7 @@ final class Application
         $this->bgColour = $colour;
     }
 
-    /**
-     * Executes the framework, invoking the specified command.
-     * The return value is the exit code. 0 for success, anything else is a failure.
-     *
-     * @return int The exit code
-     */
-    public function run(): int
+    public function configure(): ContainerInterface
     {
         $container = $this->getContainer();
 
@@ -196,6 +191,19 @@ final class Application
                 $resultFactory->registerRenderer($result['resultClass'], $result['resultRendererClass']);
             }
         }
+
+        return $container;
+    }
+
+    /**
+     * Executes the framework, invoking the specified command.
+     * The return value is the exit code. 0 for success, anything else is a failure.
+     *
+     * @return int The exit code
+     */
+    public function run(): int
+    {
+        $container = $this->configure();
 
         try {
             $exitCode = $container->get(CommandRouter::class)->route();

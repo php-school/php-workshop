@@ -81,6 +81,25 @@ class ExerciseRepository implements IteratorAggregate, Countable
     }
 
     /**
+     * Find an exercise by it's class name. If it does not exist
+     * an `InvalidArgumentException` exception is thrown.
+     *
+     * @param class-string $className
+     * @return ExerciseInterface
+     * @throws InvalidArgumentException
+     */
+    public function findByClassName(string $className): ExerciseInterface
+    {
+        foreach ($this->exercises as $exercise) {
+            if ($className === get_class($exercise)) {
+                return $exercise;
+            }
+        }
+
+        throw new InvalidArgumentException(sprintf('Exercise with name: "%s" does not exist', $className));
+    }
+
+    /**
      * Get the names of each exercise as an array.
      *
      * @return array<string>
