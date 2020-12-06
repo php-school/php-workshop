@@ -104,15 +104,6 @@ abstract class WorkshopExerciseTest extends TestCase
 
     public function assertVerifyWasNotSuccessful(): void
     {
-        $failures = (new Collection($this->results->getIterator()->getArrayCopy()))
-            ->filter(function (ResultInterface $result) {
-                return $result instanceof FailureInterface;
-            })
-            ->map(function (FailureInterface $failure) {
-                return get_class($failure);
-            })
-            ->implode(', ');
-
         $this->assertFalse($this->results->isSuccessful());
     }
 
