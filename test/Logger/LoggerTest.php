@@ -34,8 +34,11 @@ class LoggerTest extends ContainerAwareTest
         $logger->critical('Failed to copy file');
 
         $this->assertFileExists($expectedFileName);
+        $match  = '/Time\: \d{2}\-\d{2}\-\d{2} \d{2}\:\d{2}\:\d{2}, Level\: critical, Message\: Failed to copy file,';
+        $match .= ' Context\: \[\]' . "\n\n/";
+
         $this->assertMatchesRegularExpression(
-            '/Time\: \d{2}\-\d{2}\-\d{2} \d{2}\:\d{2}\:\d{2}, Level\: critical, Message\: Failed to copy file, Context\: \[\]/',
+            $match,
             file_get_contents($expectedFileName)
         );
     }
