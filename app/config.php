@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 use Colors\Color;
 use PhpSchool\PhpWorkshop\Listener\InitialCodeListener;
+use PhpSchool\PhpWorkshop\Logger\Logger;
+use Psr\Log\LoggerInterface;
 use function DI\create;
 use function DI\factory;
 use Kadet\Highlighter\KeyLighter;
@@ -84,7 +86,14 @@ use Faker\Generator as FakerGenerator;
 
 return [
     'appName' => basename($_SERVER['argv'][0]),
+    'phpschoolGlobalDir' => sprintf('%s/.php-school', getenv('HOME')),
     WorkshopType::class => WorkshopType::STANDARD(),
+    Psr\Log\LoggerInterface::class => function (ContainerInterface $c) {
+        $appName = $c->get('appName');
+        $globalDir = $c->get('phpschoolGlobalDir');
+
+        return new Logger("$globalDir/logs/$appName.log");
+    },
     ExerciseDispatcher::class => function (ContainerInterface $c) {
         return new ExerciseDispatcher(
             $c->get(RunnerManager::class),
