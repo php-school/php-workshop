@@ -87,6 +87,9 @@ use Faker\Generator as FakerGenerator;
 return [
     'appName' => basename($_SERVER['argv'][0]),
     'phpschoolGlobalDir' => sprintf('%s/.php-school', getenv('HOME')),
+    'currentWorkingDirectory' => function (ContainerInterface $c) {
+        return getcwd();
+    },
     WorkshopType::class => WorkshopType::STANDARD(),
     Psr\Log\LoggerInterface::class => function (ContainerInterface $c) {
         $appName = $c->get('appName');
@@ -212,7 +215,7 @@ return [
 
     //Listeners
     InitialCodeListener::class => function (ContainerInterface $c) {
-        return new InitialCodeListener(getcwd());
+        return new InitialCodeListener($c->get('currentWorkingDirectory'), $c->get(LoggerInterface::class));
     },
     PrepareSolutionListener::class => create(),
     CodePatchListener::class => function (ContainerInterface $c) {
