@@ -8,27 +8,16 @@ use PhpSchool\PhpWorkshop\Event\Event;
 use PhpSchool\PhpWorkshop\Listener\InitialCodeListener;
 use PhpSchool\PhpWorkshopTest\Asset\CliExerciseImpl;
 use PhpSchool\PhpWorkshopTest\Asset\ExerciseWithInitialCode;
-use PHPUnit\Framework\TestCase;
-use Symfony\Component\Filesystem\Filesystem;
+use PhpSchool\PhpWorkshopTest\ContainerAwareTest;
 
-class InitialCodeListenerTest extends TestCase
+class InitialCodeListenerTest extends ContainerAwareTest
 {
-    /**
-     * @var Filesystem
-     */
-    private $filesystem;
-
-    /**
-     * @var string
-     */
-    private $cwd;
-
     public function setUp(): void
     {
-        $this->filesystem = new Filesystem();
+        parent::setUp();
 
-        $this->cwd = sprintf('%s/%s', str_replace('\\', '/', sys_get_temp_dir()), $this->getName());
-        mkdir($this->cwd, 0775, true);
+        $this->mockCurrentWorkingDirectory();
+        $this->mockLogger();
     }
 
     public function testExerciseCodeIsCopiedIfExerciseProvidesInitialCode(): void
@@ -37,13 +26,55 @@ class InitialCodeListenerTest extends TestCase
 
         $event = new Event('exercise.selected', ['exercise' => $exercise]);
 
-        $listener = new InitialCodeListener($this->cwd);
+        $listener = $this->container->get(InitialCodeListener::class);
         $listener->__invoke($event);
 
-        $this->assertFileExists($this->cwd . '/init-solution.php');
+        $this->assertFileExists($this->getCurrentWorkingDirectory() . '/init-solution.php');
         $this->assertFileEquals(
             $exercise->getInitialCode()->getFiles()[0]->getAbsolutePath(),
-            $this->cwd . '/init-solution.php'
+            $this->getCurrentWorkingDirectory() . '/init-solution.php'
+        );
+
+        $this->assertLoggerHasMessages(
+            [
+                [
+                    'level' => 'debug',
+                    'message' => 'File successfully copied to working directory',
+                    'context' => [
+                        'exercise' => 'exercise-with-initial-code',
+                        'workingDir' => $this->getCurrentWorkingDirectory(),
+                        'file' => $exercise->getInitialCode()->getFiles()[0]->getAbsolutePath()
+                    ]
+                ]
+            ]
+        );
+    }
+
+    public function testExerciseCodeIsNotCopiedIfFileWithSameNameExistsInWorkingDirectory(): void
+    {
+        $exercise = new ExerciseWithInitialCode();
+
+        $event = new Event('exercise.selected', ['exercise' => $exercise]);
+
+        touch($this->getCurrentWorkingDirectory() . '/init-solution.php');
+
+        $listener = $this->container->get(InitialCodeListener::class);
+        $listener->__invoke($event);
+
+        $this->assertFileExists($this->getCurrentWorkingDirectory() . '/init-solution.php');
+
+        $this->assertLoggerHasMessages(
+            [
+                [
+                    'level' => 'debug',
+                    'message' => 'File not copied. File with same name already exists in working directory',
+                    'context' => [
+                        'exercise' => 'exercise-with-initial-code',
+                        'workingDir' => $this->getCurrentWorkingDirectory(),
+                        'file' => $exercise->getInitialCode()->getFiles()[0]->getAbsolutePath()
+                    ]
+                ]
+            ]
         );
     }
 
@@ -53,14 +84,9 @@ class InitialCodeListenerTest extends TestCase
 
         $event = new Event('exercise.selected', ['exercise' => $exercise]);
 
-        $listener = new InitialCodeListener($this->cwd);
+        $listener = $this->container->get(InitialCodeListener::class);
         $listener->__invoke($event);
 
-        $this->assertEmpty(array_diff(scandir($this->cwd), ['.', '..']));
-    }
-
-    public function tearDown(): void
-    {
-        $this->filesystem->remove($this->cwd);
+        $this->assertEmpty(array_diff(scandir($this->getCurrentWorkingDirectory()), ['.', '..']));
     }
 }

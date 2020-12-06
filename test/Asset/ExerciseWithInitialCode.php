@@ -13,7 +13,7 @@ class ExerciseWithInitialCode implements ExerciseInterface, ProvidesInitialCode
 {
     public function getName(): string
     {
-        // TODO: Implement getName() method.
+        return 'exercise-with-initial-code';
     }
 
     public function getDescription(): string
