@@ -219,7 +219,7 @@ final class Application
                     )
                 );
             return 1;
-        } catch (RuntimeException $e) {
+        } catch (\Throwable $e) {
             $container
                 ->get(OutputInterface::class)
                 ->printError(

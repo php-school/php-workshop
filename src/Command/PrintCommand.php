@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace PhpSchool\PhpWorkshop\Command;
 
+use PhpSchool\PhpWorkshop\Exception\InvalidArgumentException;
+use PhpSchool\PhpWorkshop\Exception\ProblemFileDoesNotExistException;
 use PhpSchool\PhpWorkshop\ExerciseRepository;
 use PhpSchool\PhpWorkshop\MarkdownRenderer;
 use PhpSchool\PhpWorkshop\Output\OutputInterface;
@@ -68,7 +70,14 @@ class PrintCommand
         $currentExercise = $this->userState->getCurrentExercise();
         $exercise = $this->exerciseRepository->findByName($currentExercise);
 
-        $markDown = (string) file_get_contents($exercise->getProblem());
+        $problemFile = $exercise->getProblem();
+
+        if (!is_readable($problemFile)) {
+            throw ProblemFileDoesNotExistException::fromFile($problemFile);
+        }
+
+        $markDown = (string) file_get_contents($problemFile);
+
         $doc = $this->markdownRenderer->render($markDown);
         $doc = str_replace('{appname}', $this->appName, $doc);
         $this->output->write($doc);
