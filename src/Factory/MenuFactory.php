@@ -81,7 +81,7 @@ class MenuFactory
             ->modifySelectableStyle(function (SelectableStyle $style) {
                 $style
                     ->setUnselectedMarker('  ')
-                    ->setSelectedMarker('↳');
+                    ->setSelectedMarker('↳ ');
             })
             ->setItemExtra('[COMPLETED]');
 
