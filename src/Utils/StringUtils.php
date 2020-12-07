@@ -11,7 +11,7 @@ class StringUtils
     public static function canonicalisePath(string $filename): string
     {
         $path = [];
-        foreach(explode('/', $filename) as $part) {
+        foreach (explode('/', $filename) as $part) {
             // ignore parts that have no value
             if (strlen($part) === 0 || $part === '.') {
                 continue;
@@ -19,7 +19,7 @@ class StringUtils
 
             if ($part !== '..') {
                 $path[] = $part;
-            } else if (count($path) > 0) {
+            } elseif (count($path) > 0) {
                 array_pop($path);
             } else {
                 throw new RuntimeException('Climbing above the root is not permitted.');
