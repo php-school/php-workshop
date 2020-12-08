@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+use PhpSchool\PhpWorkshop\Utils\StringUtils;
+
 if (!function_exists('mb_str_pad')) {
 
     /**
@@ -29,5 +31,17 @@ if (!function_exists('camel_case_to_kebab_case')) {
         return (string) preg_replace_callback('/[A-Z]/', function ($matches) {
             return '-' . strtolower($matches[0]);
         }, $string);
+    }
+}
+
+if (!function_exists('canonicalise_path')) {
+
+    /**
+     * @param string $path
+     * @return string
+     */
+    function canonicalise_path(string $path): string
+    {
+        return StringUtils::canonicalisePath($path);
     }
 }

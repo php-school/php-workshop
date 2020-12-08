@@ -6,6 +6,7 @@ namespace PhpSchool\PhpWorkshop;
 
 use Colors\Color;
 use PhpSchool\CliMenu\CliMenu;
+use PhpSchool\PhpWorkshop\Exception\ProblemFileDoesNotExistException;
 use PhpSchool\PhpWorkshop\Output\OutputInterface;
 
 /**
@@ -100,7 +101,12 @@ class ExerciseRenderer
         $output .= $this->color->__invoke(" " . $exercise->getName())->yellow()->bold() . "\n";
         $output .= $this->color->__invoke(sprintf(" Exercise %d of %d\n\n", $exerciseIndex, $numExercises))->yellow();
 
-        $content = (string) file_get_contents($exercise->getProblem());
+        $problemFile = $exercise->getProblem();
+        if (!is_readable($problemFile)) {
+            throw ProblemFileDoesNotExistException::fromFile($problemFile);
+        }
+
+        $content = (string) file_get_contents($problemFile);
         $doc     = $this->markdownRenderer->render($content);
         $doc     = str_replace('{appname}', $this->appName, $doc);
         $output .= $doc;

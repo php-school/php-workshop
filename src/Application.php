@@ -219,13 +219,20 @@ final class Application
                     )
                 );
             return 1;
-        } catch (RuntimeException $e) {
+        } catch (\Throwable $e) {
+            $message = $e->getMessage();
+            $basePath = canonicalise_path($container->get('basePath'));
+
+            if (strpos($message, $basePath) !== null) {
+                $message = str_replace($basePath, '', $message);
+            }
+
             $container
                 ->get(OutputInterface::class)
                 ->printError(
                     sprintf(
                         '%s',
-                        $e->getMessage()
+                        $message
                     )
                 );
             return 1;
