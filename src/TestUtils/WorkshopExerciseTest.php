@@ -162,7 +162,7 @@ abstract class WorkshopExerciseTest extends TestCase
         return $results->values()->get(0);
     }
 
-    public function assertResultHasFailureAndMatches(string $resultClass, callable $matcher): void
+    public function assertResultsHasFailureAndMatches(string $resultClass, callable $matcher): void
     {
         $failures = collect($this->results->getIterator()->getArrayCopy())
             ->filter(function (ResultInterface $result) {
