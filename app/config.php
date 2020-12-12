@@ -239,16 +239,19 @@ return [
     RealPathListener::class => create(),
 
     //checks
-    FileExistsCheck::class              => create(),
-    PhpLintCheck::class                 => create(),
-    CodeParseCheck::class               => function (ContainerInterface $c) {
+    FileExistsCheck::class => create(),
+    PhpLintCheck::class => create(),
+    CodeParseCheck::class => function (ContainerInterface $c) {
         return new CodeParseCheck($c->get(Parser::class));
     },
-    FunctionRequirementsCheck::class    => function (ContainerInterface $c) {
+    FunctionRequirementsCheck::class => function (ContainerInterface $c) {
         return new FunctionRequirementsCheck($c->get(Parser::class));
     },
-    DatabaseCheck::class                => create(),
-    ComposerCheck::class                => create(),
+    FunctionRequirementsBeforeCheck::class => function (ContainerInterface $c) {
+        return new FunctionRequirementsBeforeCheck($c->get(Parser::class));
+    },
+    DatabaseCheck::class => create(),
+    ComposerCheck::class => create(),
 
     //Utils
     Filesystem::class   => create(),
