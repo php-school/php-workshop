@@ -15,9 +15,11 @@ use PhpSchool\PhpWorkshop\Result\Cgi\CgiResult;
 use PhpSchool\PhpWorkshop\Result\Cli\CliResult;
 use PhpSchool\PhpWorkshop\Result\Failure;
 use PhpSchool\PhpWorkshop\Result\FailureInterface;
+use PhpSchool\PhpWorkshop\Result\ResultGroupInterface;
 use PhpSchool\PhpWorkshop\Result\ResultInterface;
 use PhpSchool\PhpWorkshop\ResultAggregator;
 use PhpSchool\PhpWorkshop\Utils\Collection;
+use PHPUnit\Framework\ExpectationFailedException;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 use PhpSchool\PhpWorkshop\Input\Input;
@@ -127,10 +129,20 @@ abstract class WorkshopExerciseTest extends TestCase
 
     public function assertOutputWasIncorrect(): void
     {
+        $this->assertFalse($this->getOutputResult()->isSuccessful());
+    }
+
+    public function assertOutputWasCorrect(): void
+    {
+        $this->assertTrue($this->getOutputResult()->isSuccessful());
+    }
+
+    private function getOutputResult(): ResultGroupInterface
+    {
         $exerciseType = $this->getExercise()->getType();
 
         if ($exerciseType->equals(ExerciseType::CLI())) {
-            $results = (new Collection($this->results->getIterator()->getArrayCopy()))
+            $results = collect($this->results->getIterator()->getArrayCopy())
                 ->filter(function (ResultInterface $result) {
                     return $result instanceof CliResult;
                 });
@@ -139,7 +151,7 @@ abstract class WorkshopExerciseTest extends TestCase
         }
 
         if ($exerciseType->equals(ExerciseType::CGI())) {
-            $results = (new Collection($this->results->getIterator()->getArrayCopy()))
+            $results = collect($this->results->getIterator()->getArrayCopy())
                 ->filter(function (ResultInterface $result) {
                     return $result instanceof CgiResult;
                 });
@@ -147,8 +159,25 @@ abstract class WorkshopExerciseTest extends TestCase
             $this->assertCount(1, $results);
         }
 
-        $outputResults = $results->values()->get(0);
+        return $results->values()->get(0);
+    }
 
-        $this->assertFalse($outputResults->isSuccessful());
+    public function assertResultHasFailureAndMatches(string $resultClass, callable $matcher): void
+    {
+        $failures = collect($this->results->getIterator()->getArrayCopy())
+            ->filter(function (ResultInterface $result) {
+                return $result instanceof FailureInterface;
+            })
+            ->filter(function (FailureInterface $failure) use ($resultClass) {
+                return $failure instanceof $resultClass;
+            });
+
+        if ($failures->count() === 0) {
+            throw new ExpectationFailedException("No failures found for class: '$resultClass'");
+        }
+
+        $failures->each(function ($failure) use ($matcher) {
+            $this->assertTrue($matcher($failure));
+        });
     }
 }
