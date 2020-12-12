@@ -50,4 +50,15 @@ class FunctionVisitorTest extends TestCase
         $this->assertFalse($visitor->hasUsedBannedFunctions());
         $this->assertSame([], $visitor->getBannedUsages());
     }
+
+    public function testLeaveNodeWithMultipleRequirements(): void
+    {
+        $node = new FuncCall(new Name('file'));
+        $visitor = new FunctionVisitor(['file', 'file_get_contents'], []);
+        $visitor->leaveNode($node);
+
+        $this->assertSame([$node], $visitor->getRequiredUsages());
+        $this->assertFalse($visitor->hasMetFunctionRequirements());
+        $this->assertSame(['file_get_contents'], $visitor->getMissingRequirements());
+    }
 }
