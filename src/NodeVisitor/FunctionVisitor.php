@@ -112,7 +112,7 @@ class FunctionVisitor extends NodeVisitorAbstract
      */
     public function getMissingRequirements(): array
     {
-        return array_filter($this->requiredFunctions, function ($function) {
+        return array_values(array_filter($this->requiredFunctions, function ($function) {
             foreach ($this->getRequiredUsages() as $usage) {
                 if (!$usage->name instanceof Node\Name) {
                     continue;
@@ -123,6 +123,6 @@ class FunctionVisitor extends NodeVisitorAbstract
                 }
             }
             return true;
-        });
+        }));
     }
 }
