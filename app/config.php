@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use Colors\Color;
+use PhpSchool\PhpWorkshop\Check\FunctionRequirementsBeforeCheck;
 use PhpSchool\PhpWorkshop\Listener\InitialCodeListener;
 use PhpSchool\PhpWorkshop\Logger\Logger;
 use Psr\Log\LoggerInterface;
@@ -113,6 +114,7 @@ return [
             $c->get(CodeParseCheck::class),
             $c->get(ComposerCheck::class),
             $c->get(FunctionRequirementsCheck::class),
+            $c->get(FunctionRequirementsBeforeCheck::class),
             $c->get(DatabaseCheck::class),
         ]);
     },
