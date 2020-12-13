@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use PhpSchool\PhpWorkshop\Utils\Collection;
 use PhpSchool\PhpWorkshop\Utils\StringUtils;
 
 if (!function_exists('mb_str_pad')) {
@@ -43,5 +44,18 @@ if (!function_exists('canonicalise_path')) {
     function canonicalise_path(string $path): string
     {
         return StringUtils::canonicalisePath($path);
+    }
+}
+
+if (!function_exists('collect')) {
+
+    /**
+     * @template T
+     * @param array<T> $array
+     * @return Collection<T>
+     */
+    function collect(array $array): Collection
+    {
+        return new Collection($array);
     }
 }

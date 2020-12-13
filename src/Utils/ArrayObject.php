@@ -46,6 +46,19 @@ class ArrayObject implements IteratorAggregate, Countable
     }
 
     /**
+     * Run a callable function over each item in the array
+     *
+     * @param callable $callback
+     * @return static
+     */
+    public function each(callable $callback): self
+    {
+        array_walk($this->array, $callback);
+
+        return new static($this->array);
+    }
+
+    /**
      * @param callable $callback
      * @return static
      */

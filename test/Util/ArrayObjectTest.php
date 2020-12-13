@@ -163,4 +163,16 @@ class ArrayObjectTest extends TestCase
 
         $this->assertEquals(10, $arrayObject->first());
     }
+
+    public function testEach(): void
+    {
+        $c = new ArrayObject($original = [1, 2, 3, 4]);
+
+        $result = [];
+        $c->each(function ($item, $key) use (&$result) {
+            $result[$key] = $item;
+        });
+
+        $this->assertEquals($original, $result);
+    }
 }
