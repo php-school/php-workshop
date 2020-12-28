@@ -47,6 +47,20 @@ if (!function_exists('canonicalise_path')) {
     }
 }
 
+if (!function_exists('pluralise')) {
+
+    /**
+     * @param string $path
+     * @param array $items
+     * @param string[] ...$items
+     * @return string
+     */
+    function pluralise(string $string, array $items, string ...$args): string
+    {
+        return StringUtils::pluralise($string, $items, $args);
+    }
+}
+
 if (!function_exists('collect')) {
 
     /**
