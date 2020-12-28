@@ -8,6 +8,14 @@ use PhpSchool\PhpWorkshop\Exception\RuntimeException;
 
 class StringUtils
 {
+    /**
+     * @var array<string,string>
+     */
+    private static $pluraliseSearchReplace = [
+        'Property "%s" was' => 'Properties "%s" were',
+        'Property' => 'Properties',
+    ];
+
     public static function canonicalisePath(string $filename): string
     {
         $path = [];
@@ -29,5 +37,28 @@ class StringUtils
         return $filename[0] === '/'
             ? '/' . implode('/', $path)
             : implode('/', $path);
+    }
+
+
+    /**
+     * @param string $string
+     * @param array<mixed> $items
+     * @param string ...$args
+     * @return string
+     */
+    public static function pluralise(string $string, array $items, string ...$args): string
+    {
+        if (count($items) <= 1) {
+            return vsprintf($string, $args);
+        }
+
+        return vsprintf(
+            str_replace(
+                array_keys(static::$pluraliseSearchReplace),
+                array_values(static::$pluraliseSearchReplace),
+                $string
+            ),
+            $args
+        );
     }
 }

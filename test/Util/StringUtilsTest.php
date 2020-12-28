@@ -29,4 +29,43 @@ class StringUtilsTest extends TestCase
 
         StringUtils::canonicalisePath('/path/to/../../../');
     }
+
+    /**
+     * @dataProvider pluraliseMultipleProvider
+     */
+    public function testPluraliseWithMultipleValues(string $string, string $expected): void
+    {
+        $props = ['propOne', 'propTwo'];
+        $this->assertEquals($expected, StringUtils::pluralise($string, $props, implode('" & "', $props)));
+    }
+
+    public function pluraliseMultipleProvider(): array
+    {
+        return [
+            [
+                'Property "%s" should not have changed type',
+                'Properties "propOne" & "propTwo" should not have changed type'
+            ],
+            ['Property "%s" was not promoted', 'Properties "propOne" & "propTwo" were not promoted'],
+            ['Property "%s" was missing', 'Properties "propOne" & "propTwo" were missing'],
+        ];
+    }
+
+    /**
+     * @dataProvider pluraliseSingularProvider
+     */
+    public function testPluraliseWithSingularValues(string $string, string $expected): void
+    {
+        $props = ['propOne'];
+        $this->assertEquals($expected, StringUtils::pluralise($string, $props, implode('" & "', $props)));
+    }
+
+    public function pluraliseSingularProvider(): array
+    {
+        return [
+            ['Property "%s" should not have changed type', 'Property "propOne" should not have changed type'],
+            ['Property "%s" was not promoted', 'Property "propOne" was not promoted'],
+            ['Property "%s" was missing', 'Property "propOne" was missing'],
+        ];
+    }
 }
