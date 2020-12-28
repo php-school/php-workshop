@@ -8,7 +8,10 @@ use PhpSchool\PhpWorkshop\Exception\RuntimeException;
 
 class StringUtils
 {
-    static $pluraliseSearchReplace = [
+    /**
+     * @var array<string,string>
+     */
+    private static $pluraliseSearchReplace = [
         'Property "%s" was' => 'Properties "%s" were',
         'Property' => 'Properties',
     ];
@@ -37,6 +40,12 @@ class StringUtils
     }
 
 
+    /**
+     * @param string $string
+     * @param array<mixed> $items
+     * @param string ...$args
+     * @return string
+     */
     public static function pluralise(string $string, array $items, string ...$args): string
     {
         if (count($items) <= 1) {

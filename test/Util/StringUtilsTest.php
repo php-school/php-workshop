@@ -42,7 +42,10 @@ class StringUtilsTest extends TestCase
     public function pluraliseMultipleProvider(): array
     {
         return [
-            ['Property "%s" should not have changed type', 'Properties "propOne" & "propTwo" should not have changed type'],
+            [
+                'Property "%s" should not have changed type',
+                'Properties "propOne" & "propTwo" should not have changed type'
+            ],
             ['Property "%s" was not promoted', 'Properties "propOne" & "propTwo" were not promoted'],
             ['Property "%s" was missing', 'Properties "propOne" & "propTwo" were missing'],
         ];
