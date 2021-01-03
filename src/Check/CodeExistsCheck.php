@@ -6,6 +6,8 @@ namespace PhpSchool\PhpWorkshop\Check;
 
 use PhpParser\Error;
 use PhpParser\ErrorHandler;
+use PhpParser\Node\Stmt\InlineHTML;
+use PhpParser\NodeFinder;
 use PhpParser\Parser;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseType;
@@ -46,7 +48,14 @@ class CodeExistsCheck implements SimpleCheckInterface
         $code = (string) file_get_contents($input->getRequiredArgument('program'));
         $statements = $this->parser->parse($code, $noopHandler);
 
-        if (null === $statements || empty($statements)) {
+        $empty = null === $statements || empty($statements);
+
+        if (!$empty) {
+            $openingTag = is_array($statements) && count($statements) === 1 ? $statements[0] : null;
+            $empty = $openingTag instanceof InlineHTML ? in_array($openingTag->value, ['<?php', '<?']) : false;
+        }
+
+        if ($empty) {
             return Failure::fromCheckAndReason($this, 'No code was found');
         }
 
