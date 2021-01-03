@@ -63,6 +63,7 @@ use PhpSchool\PhpWorkshop\ResultRenderer\Cgi\RequestFailureRenderer as CgiReques
 use PhpSchool\PhpWorkshop\Utils\RequestRenderer;
 use PhpSchool\PhpWorkshop\WorkshopType;
 use PhpSchool\PhpWorkshop\Check\FileExistsCheck;
+use PhpSchool\PhpWorkshop\Check\CodeExistsCheck;
 use PhpSchool\PhpWorkshop\Check\FunctionRequirementsCheck;
 use PhpSchool\PhpWorkshop\Check\PhpLintCheck;
 use PhpSchool\PhpWorkshop\Command\CreditsCommand;
@@ -109,6 +110,7 @@ return [
     CheckRepository::class => function (ContainerInterface $c) {
         return new CheckRepository([
             $c->get(FileExistsCheck::class),
+            $c->get(CodeExistsCheck::class),
             $c->get(PhpLintCheck::class),
             $c->get(CodeParseCheck::class),
             $c->get(ComposerCheck::class),
@@ -239,6 +241,9 @@ return [
     //checks
     FileExistsCheck::class              => create(),
     PhpLintCheck::class                 => create(),
+    CodeExistsCheck::class              => function (ContainerInterface $c) {
+        return new CodeExistsCheck($c->get(Parser::class));
+    },
     CodeParseCheck::class               => function (ContainerInterface $c) {
         return new CodeParseCheck($c->get(Parser::class));
     },
