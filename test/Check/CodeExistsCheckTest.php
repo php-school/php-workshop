@@ -56,25 +56,26 @@ class CodeExistsCheckTest extends TestCase
     public function testSuccess(): void
     {
         file_put_contents($this->file, '<?php echo "Hello World";');
-        touch($this->file);
 
         $this->assertInstanceOf(
             Success::class,
             $this->check->check($this->exercise, new Input('app', ['program' => $this->file]))
         );
-        unlink($this->file);
     }
 
     public function testFailure(): void
     {
         file_put_contents($this->file, '<?php');
+
         $failure = $this->check->check($this->exercise, new Input('app', ['program' => $this->file]));
+
         $this->assertInstanceOf(Failure::class, $failure);
         $this->assertEquals('No code was found', $failure->getReason());
     }
 
     public function tearDown(): void
     {
+        unlink($this->file);
         rmdir($this->testDir);
     }
 }
