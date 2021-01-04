@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace PhpSchool\PhpWorkshop\ExerciseRunner;
 
+use PhpSchool\PhpWorkshop\Check\CodeExistsCheck;
 use PhpSchool\PhpWorkshop\Check\CodeParseCheck;
 use PhpSchool\PhpWorkshop\Check\FileExistsCheck;
 use PhpSchool\PhpWorkshop\Check\PhpLintCheck;
@@ -50,6 +51,7 @@ class CliRunner implements ExerciseRunnerInterface
      */
     private static $requiredChecks = [
         FileExistsCheck::class,
+        CodeExistsCheck::class,
         PhpLintCheck::class,
         CodeParseCheck::class,
     ];

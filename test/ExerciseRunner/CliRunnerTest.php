@@ -3,6 +3,7 @@
 namespace PhpSchool\PhpWorkshopTest\ExerciseRunner;
 
 use Colors\Color;
+use PhpSchool\PhpWorkshop\Check\CodeExistsCheck;
 use PhpSchool\Terminal\Terminal;
 use PhpSchool\PhpWorkshop\Check\CodeParseCheck;
 use PhpSchool\PhpWorkshop\Check\FileExistsCheck;
@@ -54,6 +55,7 @@ class CliRunnerTest extends TestCase
     {
         $requiredChecks = [
             FileExistsCheck::class,
+            CodeExistsCheck::class,
             PhpLintCheck::class,
             CodeParseCheck::class,
         ];
