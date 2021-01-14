@@ -3,11 +3,13 @@
 namespace PhpSchool\PhpWorkshopTest\Asset;
 
 use PhpSchool\PhpWorkshop\Exercise\AbstractExercise;
+use PhpSchool\PhpWorkshop\Exercise\BaseExerciseTrait;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseType;
 
-class CliExerciseMissingInterface extends AbstractExercise implements ExerciseInterface
+class CliExerciseMissingInterface implements ExerciseInterface
 {
+    use BaseExerciseTrait;
 
     /**
      * Get the name of the exercise, like `Hello World!`.

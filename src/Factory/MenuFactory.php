@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace PhpSchool\PhpWorkshop\Factory;
 
 use PhpSchool\CliMenu\Style\SelectableStyle;
+use PhpSchool\PhpWorkshop\Exercise\ExerciseAssets;
 use PhpSchool\Terminal\Terminal;
 use Psr\Container\ContainerInterface;
 use PhpSchool\CliMenu\CliMenu;
@@ -149,7 +150,7 @@ class MenuFactory
     {
         $eventDispatcher->dispatch(new Event('exercise.selected', ['exercise' => $exercise]));
         $eventDispatcher->dispatch(
-            new Event(sprintf('exercise.selected.%s', AbstractExercise::normaliseName($exercise->getName())))
+            new Event(sprintf('exercise.selected.%s', ExerciseAssets::normaliseName($exercise->getName())))
         );
     }
 }

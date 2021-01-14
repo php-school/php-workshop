@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use Colors\Color;
+use PhpSchool\PhpWorkshop\Exercise\ExerciseAssets;
 use PhpSchool\PhpWorkshop\Listener\InitialCodeListener;
 use PhpSchool\PhpWorkshop\Logger\Logger;
 use Psr\Log\LoggerInterface;

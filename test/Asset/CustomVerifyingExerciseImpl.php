@@ -3,14 +3,16 @@
 namespace PhpSchool\PhpWorkshopTest\Asset;
 
 use PhpSchool\PhpWorkshop\Exercise\AbstractExercise;
+use PhpSchool\PhpWorkshop\Exercise\BaseExerciseTrait;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseType;
 use PhpSchool\PhpWorkshop\Exercise\CustomVerifyingExercise;
 use PhpSchool\PhpWorkshop\Result\ResultInterface;
 use PhpSchool\PhpWorkshop\Result\Success;
 
-class CustomVerifyingExerciseImpl extends AbstractExercise implements ExerciseInterface, CustomVerifyingExercise
+class CustomVerifyingExerciseImpl implements ExerciseInterface, CustomVerifyingExercise
 {
+    use BaseExerciseTrait;
 
     /**
      * Get the name of the exercise, like `Hello World!`.
