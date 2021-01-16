@@ -48,6 +48,7 @@ class StringUtilsTest extends TestCase
             ],
             ['Property "%s" was not promoted', 'Properties "propOne" & "propTwo" were not promoted'],
             ['Property "%s" was missing', 'Properties "propOne" & "propTwo" were missing'],
+            ['Visibility changed for property "%s"', 'Visibility changed for properties "propOne" & "propTwo"'],
         ];
     }
 
@@ -66,6 +67,7 @@ class StringUtilsTest extends TestCase
             ['Property "%s" should not have changed type', 'Property "propOne" should not have changed type'],
             ['Property "%s" was not promoted', 'Property "propOne" was not promoted'],
             ['Property "%s" was missing', 'Property "propOne" was missing'],
+            ['Visibility changed for property "%s"', 'Visibility changed for property "propOne"'],
         ];
     }
 }
