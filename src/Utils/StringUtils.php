@@ -14,6 +14,7 @@ class StringUtils
     private static $pluraliseSearchReplace = [
         'Property "%s" was' => 'Properties "%s" were',
         'Property' => 'Properties',
+        'property' => 'properties',
     ];
 
     public static function canonicalisePath(string $filename): string
