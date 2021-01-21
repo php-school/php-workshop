@@ -26,8 +26,8 @@ class FunctionRequirementsFailure implements FailureInterface
 
     /**
      * @param CheckInterface $check The check that produced this result.
-     * @param array<array{function: string, line: int}> $bannedFunctions A list of functions that were used, but were banned.
-     * @param array<int, string> $missingFunctions A list of functions that were not used, but were required.
+     * @param array<array{function: string, line: int}> $bannedFunctions Functions that were used, but were banned.
+     * @param array<int, string> $missingFunctions Functions that were not used, but were required.
      */
     public function __construct(CheckInterface $check, array $bannedFunctions, array $missingFunctions)
     {
