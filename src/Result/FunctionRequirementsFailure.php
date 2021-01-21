@@ -15,7 +15,7 @@ class FunctionRequirementsFailure implements FailureInterface
     use ResultTrait;
 
     /**
-     * @var array<int, string>
+     * @var array<array{function: string, line: int}>
      */
     private $bannedFunctions;
 
@@ -26,7 +26,7 @@ class FunctionRequirementsFailure implements FailureInterface
 
     /**
      * @param CheckInterface $check The check that produced this result.
-     * @param array<int, string> $bannedFunctions A list of functions that were used, but were banned.
+     * @param array<array{function: string, line: int}> $bannedFunctions A list of functions that were used, but were banned.
      * @param array<int, string> $missingFunctions A list of functions that were not used, but were required.
      */
     public function __construct(CheckInterface $check, array $bannedFunctions, array $missingFunctions)
@@ -39,7 +39,7 @@ class FunctionRequirementsFailure implements FailureInterface
     /**
      * Get the list of functions that were used, but were banned.
      *
-     * @return array<int, string>
+     * @return array<array{function: string, line: int}>
      */
     public function getBannedFunctions(): array
     {
