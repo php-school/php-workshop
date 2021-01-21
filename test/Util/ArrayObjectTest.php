@@ -175,4 +175,21 @@ class ArrayObjectTest extends TestCase
 
         $this->assertEquals($original, $result);
     }
+
+    public function testKstort()
+    {
+        $arrayObject = new ArrayObject([
+            'z' => 'more test data',
+            'a' => 'test data',
+            't' => 'yup moar test data'
+        ]);
+
+        $expected = [
+            'a' => 'test data',
+            't' => 'yup moar test data',
+            'z' => 'more test data',
+        ];
+
+        $this->assertEquals($expected, $arrayObject->ksort()->getArrayCopy());
+    }
 }
