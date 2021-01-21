@@ -22,6 +22,7 @@ use PhpSchool\PhpWorkshop\Result\Cli\RequestFailure;
 use PhpSchool\PhpWorkshop\Result\Cli\CliResult;
 use PhpSchool\PhpWorkshop\Result\Cli\GenericFailure;
 use PhpSchool\PhpWorkshop\Result\Cli\Success;
+use PhpSchool\PhpWorkshop\Result\Cli\ResultInterface as CliResultInterface;
 use PhpSchool\PhpWorkshop\Result\ResultInterface;
 use PhpSchool\PhpWorkshop\Utils\ArrayObject;
 use Symfony\Component\Process\Process;
@@ -176,9 +177,9 @@ class CliRunner implements ExerciseRunnerInterface
     /**
      * @param array<string> $args
      * @param Input $input
-     * @return ResultInterface
+     * @return CliResultInterface
      */
-    private function doVerify(array $args, Input $input): ResultInterface
+    private function doVerify(array $args, Input $input): CliResultInterface
     {
         //arrays are not pass-by-ref
         $args = new ArrayObject($args);
