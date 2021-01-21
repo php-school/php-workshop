@@ -100,11 +100,14 @@ class ArrayObject implements IteratorAggregate, Countable
         return new static($results);
     }
 
+    /**
+     * @return static
+     */
     public function ksort(): self
     {
         $data = $this->getArrayCopy();
         ksort($data);
-        return new self($data);
+        return new static($data);
     }
 
     /**

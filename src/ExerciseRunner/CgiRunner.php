@@ -23,6 +23,7 @@ use PhpSchool\PhpWorkshop\Result\Cgi\CgiResult;
 use PhpSchool\PhpWorkshop\Result\Cgi\RequestFailure;
 use PhpSchool\PhpWorkshop\Result\Cgi\GenericFailure;
 use PhpSchool\PhpWorkshop\Result\Cgi\Success;
+use PhpSchool\PhpWorkshop\Result\Cgi\ResultInterface as CgiResultInterface;
 use PhpSchool\PhpWorkshop\Result\ResultInterface;
 use PhpSchool\PhpWorkshop\Utils\RequestRenderer;
 use Psr\Http\Message\RequestInterface;
@@ -124,9 +125,9 @@ class CgiRunner implements ExerciseRunnerInterface
     /**
      * @param RequestInterface $request
      * @param string $fileName
-     * @return ResultInterface
+     * @return CgiResultInterface
      */
-    private function checkRequest(RequestInterface $request, string $fileName): ResultInterface
+    private function checkRequest(RequestInterface $request, string $fileName): CgiResultInterface
     {
         try {
             /** @var CgiExecuteEvent $event */
