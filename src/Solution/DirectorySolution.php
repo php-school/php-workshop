@@ -40,7 +40,7 @@ class DirectorySolution implements SolutionInterface
      * @param array<string> $exclusions An array of file names to exclude from the folder.
      * @throws InvalidArgumentException If the entry point does not exist in the folder.
      */
-    public function __construct(string $directory, string $entryPoint, array $exclusions = [])
+    private function __construct(string $directory, string $entryPoint, array $exclusions = [])
     {
         $directory  = (string) realpath(rtrim($directory, '/'));
         $entryPoint = ltrim($entryPoint, '/');
@@ -83,13 +83,18 @@ class DirectorySolution implements SolutionInterface
      * @param string $entryPoint The relative path from the directory of the entry point file.
      * @return self
      */
-    public static function fromDirectory(string $directory, array $exclusions = [], $entryPoint = 'solution.php'): self
-    {
-        return new self($directory, $entryPoint, array_merge($exclusions, ['composer.lock', 'vendor']));
+    public static function fromDirectory(
+        string $directory,
+        array $exclusions = [],
+        $entryPoint = 'solution.php'
+    ): SolutionInterface {
+        return InMemorySolution::fromSolution(
+            new self($directory, $entryPoint, array_merge($exclusions, ['composer.lock', 'vendor']))
+        );
     }
 
     /**
-     * Get the entry point. This is the PHP file that PHO would execute in order to run the
+     * Get the entry point. This is the PHP file that PHP would execute in order to run the
      * program. This should be the absolute path.
      *
      * @return string
