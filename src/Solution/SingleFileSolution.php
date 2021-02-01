@@ -20,7 +20,7 @@ class SingleFileSolution implements SolutionInterface
      * @param string $file The absolute path of the reference solution.
      * @throws InvalidArgumentException If the file does not exist.
      */
-    public function __construct(string $file)
+    private function __construct(string $file)
     {
         if (!file_exists($file)) {
             throw new InvalidArgumentException(sprintf('File: "%s" does not exist', $file));
@@ -36,9 +36,9 @@ class SingleFileSolution implements SolutionInterface
      * @return self
      * @throws InvalidArgumentException If the file does not exist.
      */
-    public static function fromFile(string $file): self
+    public static function fromFile(string $file): SolutionInterface
     {
-        return new self($file);
+        return InMemorySolution::fromSolution(new self($file));
     }
 
     /**

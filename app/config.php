@@ -384,6 +384,12 @@ return [
             ],
         ],
         'code-patcher' => [
+            'application.tear-down' => [
+                containerListener(CodePatchListener::class, 'revert'),
+            ],
+            'verify.post.exception' => [
+                containerListener(CodePatchListener::class, 'revert'),
+            ],
             'cli.verify.start' => [
                 containerListener(CodePatchListener::class, 'patch'),
             ],

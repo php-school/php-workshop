@@ -15,6 +15,7 @@ use ReflectionClass;
  */
 abstract class AbstractExercise
 {
+    protected ?SolutionInterface $solution = null;
 
     /**
      * Get the name of the exercise, like `Hello World!`.
@@ -35,15 +36,19 @@ abstract class AbstractExercise
      */
     public function getSolution(): SolutionInterface
     {
-        return SingleFileSolution::fromFile(
-            (string) realpath(
-                sprintf(
-                    '%s/../../exercises/%s/solution/solution.php',
-                    dirname((string) (new ReflectionClass(static::class))->getFileName()),
-                    self::normaliseName($this->getName())
+        if (null === $this->solution) {
+            $this->solution = SingleFileSolution::fromFile(
+                (string)realpath(
+                    sprintf(
+                        '%s/../../exercises/%s/solution/solution.php',
+                        dirname((string)(new ReflectionClass(static::class))->getFileName()),
+                        self::normaliseName($this->getName())
+                    )
                 )
-            )
-        );
+            );
+        }
+
+        return $this->solution;
     }
 
     /**

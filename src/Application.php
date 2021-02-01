@@ -7,6 +7,8 @@ namespace PhpSchool\PhpWorkshop;
 use DI\Container;
 use DI\ContainerBuilder;
 use PhpSchool\PhpWorkshop\Check\CheckRepository;
+use PhpSchool\PhpWorkshop\Event\Event;
+use PhpSchool\PhpWorkshop\Event\EventDispatcher;
 use PhpSchool\PhpWorkshop\Exception\InvalidArgumentException;
 use PhpSchool\PhpWorkshop\Exception\MissingArgumentException;
 use PhpSchool\PhpWorkshop\Factory\ResultRendererFactory;
@@ -84,6 +86,8 @@ final class Application
 
         $this->workshopTitle = $workshopTitle;
         $this->diConfigFile = $diConfigFile;
+
+        set_error_handler([$this, 'handleInternalError']);
     }
 
     /**
@@ -192,6 +196,18 @@ final class Application
             }
         }
 
+        $tearDown = function () use ($container): bool {
+            // TODO: This works.. but wrong event as PatchListener take ExerciseRunnerEvent
+            $container
+                ->get(EventDispatcher::class)
+                ->dispatch(new Event('application.tear-down'));
+
+            // Fallback to default error handler
+            return false;
+        };
+
+        set_error_handler($tearDown);
+
         return $container;
     }
 
@@ -226,6 +242,10 @@ final class Application
             if (strpos($message, $basePath) !== null) {
                 $message = str_replace($basePath, '', $message);
             }
+
+            $container
+                ->get(EventDispatcher::class)
+                ->dispatch(new Event('application.tear-down'));
 
             $container
                 ->get(OutputInterface::class)
@@ -267,5 +287,17 @@ final class Application
         $containerBuilder->useAnnotations(false);
 
         return $containerBuilder->build();
+    }
+
+    private function handleInternalError(
+        int $errno,
+        string $errstr,
+        string $errfile,
+        int $errline
+    ): bool {
+
+
+
+        return false;
     }
 }

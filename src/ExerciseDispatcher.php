@@ -151,6 +151,9 @@ class ExerciseDispatcher
 
         try {
             $this->results->add($runner->verify($input));
+        } catch (\Throwable $e) {
+            $this->eventDispatcher->dispatch(new ExerciseRunnerEvent('verify.post.exception', $exercise, $input));
+            throw $e;
         } finally {
             $this->eventDispatcher->dispatch(new ExerciseRunnerEvent('verify.post.execute', $exercise, $input));
         }
