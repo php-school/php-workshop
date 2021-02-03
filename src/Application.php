@@ -86,8 +86,6 @@ final class Application
 
         $this->workshopTitle = $workshopTitle;
         $this->diConfigFile = $diConfigFile;
-
-        set_error_handler([$this, 'handleInternalError']);
     }
 
     /**
@@ -196,17 +194,13 @@ final class Application
             }
         }
 
-        $tearDown = function () use ($container): bool {
-            // TODO: This works.. but wrong event as PatchListener take ExerciseRunnerEvent
+        set_error_handler(function () use ($container): bool {
             $container
                 ->get(EventDispatcher::class)
                 ->dispatch(new Event('application.tear-down'));
 
-            // Fallback to default error handler
-            return false;
-        };
-
-        set_error_handler($tearDown);
+            return false; // Use default error handler
+        });
 
         return $container;
     }
@@ -287,17 +281,5 @@ final class Application
         $containerBuilder->useAnnotations(false);
 
         return $containerBuilder->build();
-    }
-
-    private function handleInternalError(
-        int $errno,
-        string $errstr,
-        string $errfile,
-        int $errline
-    ): bool {
-
-
-
-        return false;
     }
 }

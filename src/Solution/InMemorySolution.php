@@ -66,7 +66,7 @@ class InMemorySolution implements SolutionInterface
     }
 
     /**
-     * Get the entry point. This is the PHP file that PHO would execute in order to run the
+     * Get the entry point. This is the PHP file that PHP would execute in order to run the
      * program. This should be the absolute path.
      *
      * @return string

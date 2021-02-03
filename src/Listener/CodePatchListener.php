@@ -47,11 +47,7 @@ class CodePatchListener
             $files[] = $exercise->getSolution()->getEntryPoint();
         }
 
-        foreach ($files as $fileName) {
-            if (null === $fileName) {
-                return;
-            }
-
+        foreach (array_filter($files) as $fileName) {
             $this->originalCode[$fileName] = (string) file_get_contents($fileName);
 
             file_put_contents(
