@@ -3,10 +3,13 @@
 declare(strict_types=1);
 
 use Colors\Color;
+use PhpSchool\PhpWorkshop\Check\FileComparisonCheck;
 use PhpSchool\PhpWorkshop\Listener\InitialCodeListener;
 use PhpSchool\PhpWorkshop\Listener\TearDownListener;
 use PhpSchool\PhpWorkshop\Logger\ConsoleLogger;
 use PhpSchool\PhpWorkshop\Logger\Logger;
+use PhpSchool\PhpWorkshop\Result\FileComparisonFailure;
+use PhpSchool\PhpWorkshop\ResultRenderer\FileComparisonFailureRenderer;
 use Psr\Log\LoggerInterface;
 use function DI\create;
 use function DI\factory;
@@ -122,6 +125,7 @@ return [
             $c->get(ComposerCheck::class),
             $c->get(FunctionRequirementsCheck::class),
             $c->get(DatabaseCheck::class),
+            $c->get(FileComparisonCheck::class)
         ]);
     },
     CommandRouter::class => function (ContainerInterface $c) {
@@ -261,6 +265,7 @@ return [
     },
     DatabaseCheck::class                => create(),
     ComposerCheck::class                => create(),
+    FileComparisonCheck::class => create(),
 
     //Utils
     Filesystem::class   => create(),
@@ -332,6 +337,7 @@ return [
         $factory->registerRenderer(CliRequestFailure::class, CliRequestFailureRenderer::class);
 
         $factory->registerRenderer(ComparisonFailure::class, ComparisonFailureRenderer::class);
+        $factory->registerRenderer(FileComparisonFailure::class, FileComparisonFailureRenderer::class);
 
         return $factory;
     },
