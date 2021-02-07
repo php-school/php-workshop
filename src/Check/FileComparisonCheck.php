@@ -5,8 +5,10 @@ declare(strict_types=1);
 namespace PhpSchool\PhpWorkshop\Check;
 
 use InvalidArgumentException;
+use PhpSchool\PhpWorkshop\Exception\RuntimeException;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseType;
+use PhpSchool\PhpWorkshop\Exercise\ProvidesSolution;
 use PhpSchool\PhpWorkshop\ExerciseCheck\FileComparisonExerciseCheck;
 use PhpSchool\PhpWorkshop\ExerciseCheck\FunctionRequirementsExerciseCheck;
 use PhpSchool\PhpWorkshop\Input\Input;
@@ -32,7 +34,7 @@ class FileComparisonCheck implements SimpleCheckInterface
     /**
      * Simply check that the file exists.
      *
-     * @param ExerciseInterface $exercise The exercise to check against.
+     * @param ExerciseInterface&ProvidesSolution $exercise The exercise to check against.
      * @param Input $input The command line arguments passed to the command.
      * @return ResultInterface The result of the check.
      */
@@ -47,7 +49,7 @@ class FileComparisonCheck implements SimpleCheckInterface
             $referenceFile = $exercise->getSolution()->getBaseDirectory() . '/' . ltrim($file, '/');
 
             if (!file_exists($referenceFile)) {
-                throw new Exception('Reference file does not exit');
+                throw new RuntimeException(sprintf('File: "%s" does not exist in solution folder', $file));
             }
 
             if (!file_exists($studentFile)) {
@@ -57,8 +59,8 @@ class FileComparisonCheck implements SimpleCheckInterface
                 );
             }
 
-            $actual = file_get_contents($studentFile);
-            $expected = file_get_contents($referenceFile);
+            $actual = (string) file_get_contents($studentFile);
+            $expected = (string) file_get_contents($referenceFile);
 
             if ($expected !== $actual) {
                 return new FileComparisonFailure($this, $file, $expected, $actual);
