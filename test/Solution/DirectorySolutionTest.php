@@ -4,6 +4,7 @@ namespace PhpSchool\PhpWorkshopTest\Solution;
 
 use InvalidArgumentException;
 use PhpSchool\PhpWorkshop\Solution\DirectorySolution;
+use PhpSchool\PhpWorkshop\TestUtils\SolutionPathTransformer;
 use PHPUnit\Framework\TestCase;
 
 class DirectorySolutionTest extends TestCase
@@ -32,18 +33,23 @@ class DirectorySolutionTest extends TestCase
 
         $solution = DirectorySolution::fromDirectory($tempPath);
 
-        $this->assertSame($tempPath, $solution->getBaseDirectory());
+        $expectedBaseDir = SolutionPathTransformer::tempPathToSolutionTempPath($tempPath);
+
+        $this->assertSame($expectedBaseDir, $solution->getBaseDirectory());
         $this->assertFalse($solution->hasComposerFile());
-        $this->assertSame(sprintf('%s/solution.php', $tempPath), $solution->getEntryPoint());
+        $this->assertSame(sprintf('%s/solution.php', $expectedBaseDir), $solution->getEntryPoint());
         $files = $solution->getFiles();
         $this->assertCount(2, $files);
 
-        $this->assertSame(sprintf('%s/solution.php', $tempPath), $files[0]->__toString());
-        $this->assertSame(sprintf('%s/some-class.php', $tempPath), $files[1]->__toString());
+        $this->assertSame(sprintf('%s/solution.php', $expectedBaseDir), $files[0]->__toString());
+        $this->assertSame(sprintf('%s/some-class.php', $expectedBaseDir), $files[1]->__toString());
 
+        unlink(sprintf('%s/solution.php', $expectedBaseDir));
+        unlink(sprintf('%s/some-class.php', $expectedBaseDir));
         unlink(sprintf('%s/solution.php', $tempPath));
         unlink(sprintf('%s/some-class.php', $tempPath));
         rmdir($tempPath);
+        rmdir($expectedBaseDir);
     }
 
     public function testWithManualEntryPoint(): void
@@ -55,18 +61,23 @@ class DirectorySolutionTest extends TestCase
 
         $solution = DirectorySolution::fromDirectory($tempPath, [], 'index.php');
 
-        $this->assertSame($tempPath, $solution->getBaseDirectory());
+        $expectedBaseDir = SolutionPathTransformer::tempPathToSolutionTempPath($tempPath);
+
+        $this->assertSame($expectedBaseDir, $solution->getBaseDirectory());
         $this->assertFalse($solution->hasComposerFile());
-        $this->assertSame(sprintf('%s/index.php', $tempPath), $solution->getEntryPoint());
+        $this->assertSame(sprintf('%s/index.php', $expectedBaseDir), $solution->getEntryPoint());
         $files = $solution->getFiles();
         $this->assertCount(2, $files);
 
-        $this->assertSame(sprintf('%s/index.php', $tempPath), $files[0]->__toString());
-        $this->assertSame(sprintf('%s/some-class.php', $tempPath), $files[1]->__toString());
+        $this->assertSame(sprintf('%s/index.php', $expectedBaseDir), $files[0]->__toString());
+        $this->assertSame(sprintf('%s/some-class.php', $expectedBaseDir), $files[1]->__toString());
 
+        unlink(sprintf('%s/index.php', $expectedBaseDir));
+        unlink(sprintf('%s/some-class.php', $expectedBaseDir));
         unlink(sprintf('%s/index.php', $tempPath));
         unlink(sprintf('%s/some-class.php', $tempPath));
         rmdir($tempPath);
+        rmdir($expectedBaseDir);
     }
 
     public function testHasComposerFileReturnsTrueIfPresent(): void
@@ -79,15 +90,20 @@ class DirectorySolutionTest extends TestCase
 
         $solution = DirectorySolution::fromDirectory($tempPath);
 
-        $this->assertSame($tempPath, $solution->getBaseDirectory());
+        $expectedBaseDir = SolutionPathTransformer::tempPathToSolutionTempPath($tempPath);
+
+        $this->assertSame($expectedBaseDir, $solution->getBaseDirectory());
         $this->assertTrue($solution->hasComposerFile());
-        $this->assertSame(sprintf('%s/solution.php', $tempPath), $solution->getEntryPoint());
+        $this->assertSame(sprintf('%s/solution.php', $expectedBaseDir), $solution->getEntryPoint());
         $files = $solution->getFiles();
         $this->assertCount(2, $files);
 
-        $this->assertSame(sprintf('%s/solution.php', $tempPath), $files[0]->__toString());
-        $this->assertSame(sprintf('%s/some-class.php', $tempPath), $files[1]->__toString());
+        $this->assertSame(sprintf('%s/solution.php', $expectedBaseDir), $files[0]->__toString());
+        $this->assertSame(sprintf('%s/some-class.php', $expectedBaseDir), $files[1]->__toString());
 
+        unlink(sprintf('%s/composer.lock', $expectedBaseDir));
+        unlink(sprintf('%s/solution.php', $expectedBaseDir));
+        unlink(sprintf('%s/some-class.php', $expectedBaseDir));
         unlink(sprintf('%s/composer.lock', $tempPath));
         unlink(sprintf('%s/solution.php', $tempPath));
         unlink(sprintf('%s/some-class.php', $tempPath));
@@ -105,17 +121,23 @@ class DirectorySolutionTest extends TestCase
 
         $solution = DirectorySolution::fromDirectory($tempPath, $exclusions);
 
-        $this->assertSame(sprintf('%s/solution.php', $tempPath), $solution->getEntryPoint());
+        $expectedBaseDir = SolutionPathTransformer::tempPathToSolutionTempPath($tempPath);
+
+        $this->assertSame(sprintf('%s/solution.php', $expectedBaseDir), $solution->getEntryPoint());
         $files = $solution->getFiles();
         $this->assertCount(2, $files);
 
-        $this->assertSame(sprintf('%s/solution.php', $tempPath), $files[0]->__toString());
-        $this->assertSame(sprintf('%s/some-class.php', $tempPath), $files[1]->__toString());
+        $this->assertSame(sprintf('%s/solution.php', $expectedBaseDir), $files[0]->__toString());
+        $this->assertSame(sprintf('%s/some-class.php', $expectedBaseDir), $files[1]->__toString());
 
+        unlink(sprintf('%s/solution.php', $expectedBaseDir));
+        unlink(sprintf('%s/some-class.php', $expectedBaseDir));
+        unlink(sprintf('%s/exclude.txt', $expectedBaseDir));
         unlink(sprintf('%s/solution.php', $tempPath));
         unlink(sprintf('%s/some-class.php', $tempPath));
         unlink(sprintf('%s/exclude.txt', $tempPath));
         rmdir($tempPath);
+        rmdir($expectedBaseDir);
     }
 
     public function testWithNestedDirectories(): void
@@ -134,15 +156,17 @@ class DirectorySolutionTest extends TestCase
 
         $solution = DirectorySolution::fromDirectory($tempPath);
 
-        $this->assertSame(sprintf('%s/solution.php', $tempPath), $solution->getEntryPoint());
+        $expectedBaseDir = SolutionPathTransformer::tempPathToSolutionTempPath($tempPath);
+
+        $this->assertSame(sprintf('%s/solution.php', $expectedBaseDir), $solution->getEntryPoint());
         $files = $solution->getFiles();
         $this->assertCount(5, $files);
 
-        $this->assertSame(sprintf('%s/composer.json', $tempPath), $files[0]->__toString());
-        $this->assertSame(sprintf('%s/nested/another-class.php', $tempPath), $files[1]->__toString());
-        $this->assertSame(sprintf('%s/nested/deep/even-more.php', $tempPath), $files[2]->__toString());
-        $this->assertSame(sprintf('%s/solution.php', $tempPath), $files[3]->__toString());
-        $this->assertSame(sprintf('%s/some-class.php', $tempPath), $files[4]->__toString());
+        $this->assertSame(sprintf('%s/composer.json', $expectedBaseDir), $files[0]->__toString());
+        $this->assertSame(sprintf('%s/nested/another-class.php', $expectedBaseDir), $files[1]->__toString());
+        $this->assertSame(sprintf('%s/nested/deep/even-more.php', $expectedBaseDir), $files[2]->__toString());
+        $this->assertSame(sprintf('%s/solution.php', $expectedBaseDir), $files[3]->__toString());
+        $this->assertSame(sprintf('%s/some-class.php', $expectedBaseDir), $files[4]->__toString());
 
         unlink(sprintf('%s/solution.php', $tempPath));
         unlink(sprintf('%s/some-class.php', $tempPath));
@@ -152,6 +176,14 @@ class DirectorySolutionTest extends TestCase
         rmdir(sprintf('%s/nested/deep', $tempPath));
         rmdir(sprintf('%s/nested', $tempPath));
         rmdir($tempPath);
+        unlink(sprintf('%s/solution.php', $expectedBaseDir));
+        unlink(sprintf('%s/some-class.php', $expectedBaseDir));
+        unlink(sprintf('%s/composer.json', $expectedBaseDir));
+        unlink(sprintf('%s/nested/another-class.php', $expectedBaseDir));
+        unlink(sprintf('%s/nested/deep/even-more.php', $expectedBaseDir));
+        rmdir(sprintf('%s/nested/deep', $expectedBaseDir));
+        rmdir(sprintf('%s/nested', $expectedBaseDir));
+        rmdir($expectedBaseDir);
     }
 
     public function testExceptionsWithNestedDirectories(): void
@@ -175,12 +207,14 @@ class DirectorySolutionTest extends TestCase
 
         $solution = DirectorySolution::fromDirectory($tempPath, $exclusions);
 
-        $this->assertSame(sprintf('%s/solution.php', $tempPath), $solution->getEntryPoint());
+        $expectedBaseDir = SolutionPathTransformer::tempPathToSolutionTempPath($tempPath);
+
+        $this->assertSame(sprintf('%s/solution.php', $expectedBaseDir), $solution->getEntryPoint());
         $files = $solution->getFiles();
         $this->assertCount(2, $files);
 
-        $this->assertSame(sprintf('%s/solution.php', $tempPath), $files[0]->__toString());
-        $this->assertSame(sprintf('%s/some-class.php', $tempPath), $files[1]->__toString());
+        $this->assertSame(sprintf('%s/solution.php', $expectedBaseDir), $files[0]->__toString());
+        $this->assertSame(sprintf('%s/some-class.php', $expectedBaseDir), $files[1]->__toString());
 
         unlink(sprintf('%s/solution.php', $tempPath));
         unlink(sprintf('%s/some-class.php', $tempPath));
@@ -193,5 +227,16 @@ class DirectorySolutionTest extends TestCase
         rmdir(sprintf('%s/vendor/somelib', $tempPath));
         rmdir(sprintf('%s/vendor', $tempPath));
         rmdir($tempPath);
+        unlink(sprintf('%s/solution.php', $expectedBaseDir));
+        unlink(sprintf('%s/some-class.php', $expectedBaseDir));
+        unlink(sprintf('%s/exclude.txt', $expectedBaseDir));
+        unlink(sprintf('%s/nested/exclude.txt', $expectedBaseDir));
+        unlink(sprintf('%s/nested/deep/exclude.txt', $expectedBaseDir));
+        unlink(sprintf('%s/vendor/somelib/app.php', $expectedBaseDir));
+        rmdir(sprintf('%s/nested/deep', $expectedBaseDir));
+        rmdir(sprintf('%s/nested', $expectedBaseDir));
+        rmdir(sprintf('%s/vendor/somelib', $expectedBaseDir));
+        rmdir(sprintf('%s/vendor', $expectedBaseDir));
+        rmdir($expectedBaseDir);
     }
 }

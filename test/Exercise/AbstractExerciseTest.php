@@ -24,14 +24,14 @@ class AbstractExerciseTest extends TestCase
     {
         $exercise   = new AbstractExerciseImpl($name);
         $path       = __DIR__ . '/../../exercises/array-we-go/solution/solution.php';
-        mkdir(dirname($path), 0777, true);
-        touch($path);
+        @mkdir(dirname($path), 0777, true);
+        file_put_contents($path, 'FILE CONTENTS');
         $solution = $exercise->getSolution();
         $this->assertInstanceOf(SolutionInterface::class, $solution);
         $files = $solution->getFiles();
         $this->assertCount(1, $files);
         $this->assertInstanceOf(SolutionFile::class, $files[0]);
-        $this->assertSame(realpath($path), $files[0]->__toString());
+        $this->assertSame('FILE CONTENTS', file_get_contents($files[0]->__toString()));
         unlink($path);
         rmdir(__DIR__ . '/../../exercises/array-we-go/solution');
         rmdir(__DIR__ . '/../../exercises/array-we-go');

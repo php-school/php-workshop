@@ -28,11 +28,15 @@ class InMemorySolution implements SolutionInterface
 
         $intersection = array_intersect($currentPath, $solutionPath);
 
+        if (count($intersection) <= 1) {
+            $intersection = explode('/', realpath(sys_get_temp_dir()));
+        }
+
         $basename = implode('/', array_diff($solutionPath, $intersection));
         $entrypoint = implode('/', array_diff($entryPointPath, $intersection));
 
-        $this->baseDirectory = sprintf('%s/php-school/%s', sys_get_temp_dir(), $basename);
-        $this->entryPoint = sprintf('%s/php-school/%s', sys_get_temp_dir(), $entrypoint);
+        $this->baseDirectory = sprintf('%s/php-school/%s', realpath(sys_get_temp_dir()), $basename);
+        $this->entryPoint = sprintf('%s/php-school/%s', realpath(sys_get_temp_dir()), $entrypoint);
 
         if ($fileSystem->exists($this->baseDirectory)) {
             $fileSystem->remove($this->baseDirectory);
@@ -56,7 +60,7 @@ class InMemorySolution implements SolutionInterface
         $this->files = array_map(function (SolutionFile $solutionFile) use ($intersection) {
             $filePath = explode('/', realpath($solutionFile->__toString()));
             $file = implode('/', array_diff($filePath, $intersection));
-            return SolutionFile::fromFile(sprintf('%s/php-school/%s', sys_get_temp_dir(), $file));
+            return SolutionFile::fromFile(sprintf('%s/php-school/%s', realpath(sys_get_temp_dir()), $file));
         }, $solution->getFiles());
     }
 

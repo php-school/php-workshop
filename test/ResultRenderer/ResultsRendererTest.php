@@ -119,11 +119,11 @@ class ResultsRendererTest extends TestCase
         $exerciseRepo->method('count')->willReturn(2);
 
         $tmpFile = sprintf('%s/%s/some-file', sys_get_temp_dir(), $this->getName());
-        mkdir(dirname($tmpFile));
+        @mkdir(dirname($tmpFile));
         file_put_contents($tmpFile, 'FILE CONTENTS');
 
         $exercise = new CliExerciseImpl();
-        $exercise->setSolution(new SingleFileSolution($tmpFile));
+        $exercise->setSolution(SingleFileSolution::fromFile($tmpFile));
 
         $renderer = new ResultsRenderer(
             'app',
@@ -165,11 +165,11 @@ class ResultsRendererTest extends TestCase
         $exerciseRepo->method('count')->willReturn(2);
 
         $tmpFile = sprintf('%s/%s/some-file.php', sys_get_temp_dir(), $this->getName());
-        mkdir(dirname($tmpFile));
+        @mkdir(dirname($tmpFile));
         file_put_contents($tmpFile, 'FILE CONTENTS');
 
         $exercise = new CliExerciseImpl();
-        $exercise->setSolution(new SingleFileSolution($tmpFile));
+        $exercise->setSolution(SingleFileSolution::fromFile($tmpFile));
 
         $syntaxHighlighter = $this->createMock(KeyLighter::class);
         $php = new Php();
