@@ -4,14 +4,20 @@ declare(strict_types=1);
 
 namespace PhpSchool\PhpWorkshop\Solution;
 
+use PhpSchool\PhpWorkshop\Utils\System;
 use Symfony\Component\Filesystem\Filesystem;
 
-class InMemorySolution implements SolutionInterface
+class InTempSolution implements SolutionInterface
 {
     /**
      * @var string
      */
     private string $baseDirectory;
+
+    /**
+     * @var string
+     */
+    private string $entryPoint;
 
     /**
      * @var SolutionFile[]
@@ -22,21 +28,22 @@ class InMemorySolution implements SolutionInterface
     {
         $fileSystem = new Filesystem();
 
-        $currentPath = explode('/', realpath(__DIR__));
-        $solutionPath = explode('/', realpath($solution->getBaseDirectory()));
-        $entryPointPath = explode('/', realpath($solution->getEntryPoint()));
+        $tempDir = System::tempDir();
+        $currentPath = explode('/', System::realpath(__DIR__));
+        $solutionPath = explode('/', System::realpath($solution->getBaseDirectory()));
+        $entryPointPath = explode('/', System::realpath($solution->getEntryPoint()));
 
         $intersection = array_intersect($currentPath, $solutionPath);
 
         if (count($intersection) <= 1) {
-            $intersection = explode('/', realpath(sys_get_temp_dir()));
+            $intersection = explode('/', $tempDir);
         }
 
         $basename = implode('/', array_diff($solutionPath, $intersection));
         $entrypoint = implode('/', array_diff($entryPointPath, $intersection));
 
-        $this->baseDirectory = sprintf('%s/php-school/%s', realpath(sys_get_temp_dir()), $basename);
-        $this->entryPoint = sprintf('%s/php-school/%s', realpath(sys_get_temp_dir()), $entrypoint);
+        $this->baseDirectory = sprintf('%s/php-school/%s', $tempDir, $basename);
+        $this->entryPoint = sprintf('%s/php-school/%s', $tempDir, $entrypoint);
 
         if ($fileSystem->exists($this->baseDirectory)) {
             $fileSystem->remove($this->baseDirectory);
@@ -57,14 +64,14 @@ class InMemorySolution implements SolutionInterface
                 : $fileSystem->copy($file->getPathname(), $target);
         }
 
-        $this->files = array_map(function (SolutionFile $solutionFile) use ($intersection) {
-            $filePath = explode('/', realpath($solutionFile->__toString()));
+        $this->files = array_map(function (SolutionFile $solutionFile) use ($intersection, $tempDir) {
+            $filePath = explode('/', System::realpath($solutionFile->__toString()));
             $file = implode('/', array_diff($filePath, $intersection));
-            return SolutionFile::fromFile(sprintf('%s/php-school/%s', realpath(sys_get_temp_dir()), $file));
+            return SolutionFile::fromFile(sprintf('%s/php-school/%s', $tempDir, $file));
         }, $solution->getFiles());
     }
 
-    public static function fromSolution(SolutionInterface $solution)
+    public static function fromSolution(SolutionInterface $solution): SolutionInterface
     {
         return new self($solution);
     }

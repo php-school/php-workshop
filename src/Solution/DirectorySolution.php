@@ -81,14 +81,14 @@ class DirectorySolution implements SolutionInterface
      * @param string $directory The directory to search for files.
      * @param array<string> $exclusions An array of file names to exclude from the folder.
      * @param string $entryPoint The relative path from the directory of the entry point file.
-     * @return self
+     * @return SolutionInterface
      */
     public static function fromDirectory(
         string $directory,
         array $exclusions = [],
         $entryPoint = 'solution.php'
     ): SolutionInterface {
-        return InMemorySolution::fromSolution(
+        return InTempSolution::fromSolution(
             new self($directory, $entryPoint, array_merge($exclusions, ['composer.lock', 'vendor']))
         );
     }

@@ -33,12 +33,12 @@ class SingleFileSolution implements SolutionInterface
      * Static constructor to build an instance from an absolute file path.
      *
      * @param string $file The absolute path of the reference solution.
-     * @return self
+     * @return SolutionInterface
      * @throws InvalidArgumentException If the file does not exist.
      */
     public static function fromFile(string $file): SolutionInterface
     {
-        return InMemorySolution::fromSolution(new self($file));
+        return InTempSolution::fromSolution(new self($file));
     }
 
     /**
