@@ -63,7 +63,7 @@ class CodePatchListener
     public function revert(\PhpSchool\PhpWorkshop\Event\EventInterface $event): void
     {
         if (null === $this->originalCode || empty($this->originalCode)) {
-            throw new RuntimeException('Can only revert previously patched code');
+            return;
         }
 
         foreach ($this->originalCode as $fileName => $contents) {

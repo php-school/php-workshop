@@ -38,19 +38,6 @@ class CodePatchListenerTest extends TestCase
         touch($this->file);
     }
 
-    public function testRevertThrowsExceptionIfPatchNotPreviouslyCalled(): void
-    {
-        $input    = new Input('app', ['program' => $this->file]);
-        $exercise = $this->createMock(ExerciseInterface::class);
-
-        $listener   = new CodePatchListener($this->codePatcher);
-        $event      = new ExerciseRunnerEvent('event', $exercise, $input);
-
-        $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage('Can only revert previously patched code');
-        $listener->revert($event);
-    }
-
     public function testPatchUpdatesCode(): void
     {
         file_put_contents($this->file, 'ORIGINAL CONTENT');
