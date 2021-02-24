@@ -12,17 +12,17 @@ class InTempSolution implements SolutionInterface
     /**
      * @var string
      */
-    private string $baseDirectory;
+    private $baseDirectory;
 
     /**
      * @var string
      */
-    private string $entryPoint;
+    private $entryPoint;
 
     /**
      * @var SolutionFile[]
      */
-    private array $files;
+    private $files;
 
     private function __construct(SolutionInterface $solution)
     {

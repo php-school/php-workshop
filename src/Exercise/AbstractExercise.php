@@ -15,7 +15,10 @@ use ReflectionClass;
  */
 abstract class AbstractExercise
 {
-    protected ?SolutionInterface $solution = null;
+    /**
+     * @var SolutionInterface|null
+     */
+    protected $solution;
 
     /**
      * Get the name of the exercise, like `Hello World!`.
