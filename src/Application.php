@@ -14,6 +14,7 @@ use PhpSchool\PhpWorkshop\Exception\MissingArgumentException;
 use PhpSchool\PhpWorkshop\Factory\ResultRendererFactory;
 use PhpSchool\PhpWorkshop\Output\OutputInterface;
 use Psr\Container\ContainerInterface;
+use Psr\Log\LoggerInterface;
 use RuntimeException;
 
 use function class_exists;
@@ -195,9 +196,7 @@ final class Application
         }
 
         set_error_handler(function () use ($container): bool {
-            $container
-                ->get(EventDispatcher::class)
-                ->dispatch(new Event('application.tear-down'));
+            $this->tearDown($container);
 
             return false; // Use default error handler
         });
@@ -237,9 +236,7 @@ final class Application
                 $message = str_replace($basePath, '', $message);
             }
 
-            $container
-                ->get(EventDispatcher::class)
-                ->dispatch(new Event('application.tear-down'));
+            $this->tearDown($container);
 
             $container
                 ->get(OutputInterface::class)
@@ -281,5 +278,16 @@ final class Application
         $containerBuilder->useAnnotations(false);
 
         return $containerBuilder->build();
+    }
+
+    private function tearDown(ContainerInterface $container): void
+    {
+        try {
+            $container
+                ->get(EventDispatcher::class)
+                ->dispatch(new Event('application.tear-down'));
+        } catch (\Throwable $t) {
+            $container->get(LoggerInterface::class)->error($t->getMessage(), ['exception' => $t]);
+        }
     }
 }
