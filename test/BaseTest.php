@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace PhpSchool\PhpWorkshopTest;
 
+use PhpSchool\PhpWorkshop\Utils\Path;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Filesystem\Filesystem;
 
@@ -21,6 +22,20 @@ abstract class BaseTest extends TestCase
         }
 
         return $this->tempDirectory;
+    }
+
+    public function getTemporaryFile(string $filename): string
+    {
+        $file = Path::join($this->getTemporaryDirectory(), $filename);
+
+        if (file_exists($file)) {
+            return $file;
+        }
+
+        @mkdir(dirname($file), 0777, true);
+        touch($file);
+
+        return $file;
     }
 
     public function tearDown(): void
