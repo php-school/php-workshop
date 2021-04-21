@@ -40,14 +40,6 @@ class FunctionRequirementsExercise implements ExerciseInterface, FunctionRequire
         return []; // TODO: Implement getArgs() method.
     }
 
-    public function getRequiredPackages(): array
-    {
-        return [
-            'klein/klein',
-            'danielstjules/stringy'
-        ];
-    }
-
     public function getType(): ExerciseType
     {
         return ExerciseType::CLI();
