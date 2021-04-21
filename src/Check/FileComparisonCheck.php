@@ -5,17 +5,17 @@ declare(strict_types=1);
 namespace PhpSchool\PhpWorkshop\Check;
 
 use InvalidArgumentException;
-use PhpSchool\PhpWorkshop\Exception\RuntimeException;
+use PhpSchool\PhpWorkshop\Exception\SolutionFileDoesNotExistException;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseType;
 use PhpSchool\PhpWorkshop\Exercise\ProvidesSolution;
 use PhpSchool\PhpWorkshop\ExerciseCheck\FileComparisonExerciseCheck;
-use PhpSchool\PhpWorkshop\ExerciseCheck\FunctionRequirementsExerciseCheck;
 use PhpSchool\PhpWorkshop\Input\Input;
 use PhpSchool\PhpWorkshop\Result\Failure;
 use PhpSchool\PhpWorkshop\Result\FileComparisonFailure;
 use PhpSchool\PhpWorkshop\Result\ResultInterface;
 use PhpSchool\PhpWorkshop\Result\Success;
+use PhpSchool\PhpWorkshop\Utils\Path;
 
 /**
  * This check verifies that any additional files which should be created by a student, match the ones
@@ -45,18 +45,15 @@ class FileComparisonCheck implements SimpleCheckInterface
         }
 
         foreach ($exercise->getFilesToCompare() as $file) {
-            $studentFile = dirname($input->getRequiredArgument('program')) . '/' . ltrim($file, '/');
-            $referenceFile = $exercise->getSolution()->getBaseDirectory() . '/' . ltrim($file, '/');
+            $studentFile = Path::join(dirname($input->getRequiredArgument('program')), $file);
+            $referenceFile = Path::join($exercise->getSolution()->getBaseDirectory(), $file);
 
             if (!file_exists($referenceFile)) {
-                throw new RuntimeException(sprintf('File: "%s" does not exist in solution folder', $file));
+                throw SolutionFileDoesNotExistException::fromExpectedFile($file);
             }
 
             if (!file_exists($studentFile)) {
-                return Failure::fromCheckAndReason(
-                    $this,
-                    sprintf('File: "%s" does not exist', $file)
-                );
+                return Failure::fromCheckAndReason($this, sprintf('File: "%s" does not exist', $file));
             }
 
             $actual = (string) file_get_contents($studentFile);
