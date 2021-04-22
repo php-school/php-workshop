@@ -1,6 +1,6 @@
 <?php
 
-namespace PhpSchool\PhpWorkshopTest\Util;
+namespace PhpSchool\PhpWorkshopTest\Utils;
 
 use PhpSchool\PhpWorkshop\Utils\ArrayObject;
 use PHPUnit\Framework\TestCase;

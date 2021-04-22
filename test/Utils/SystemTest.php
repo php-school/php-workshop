@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace PhpSchool\PhpWorkshopTest\Util;
+namespace PhpSchool\PhpWorkshopTest\Utils;
 
 use PhpSchool\PhpWorkshop\Exception\RuntimeException;
 use PhpSchool\PhpWorkshop\Utils\System;
