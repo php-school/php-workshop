@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace PhpSchool\PhpWorkshop\Exercise;
 
+use PhpSchool\PhpWorkshop\Utils\System;
+
 /**
  * Helper trait to use in exercises to get a temporary path
  * for IO stuff.
@@ -18,10 +20,6 @@ trait TemporaryDirectoryTrait
      */
     public function getTemporaryPath(): string
     {
-        return sprintf(
-            '%s/%s',
-            str_replace('\\', '/', (string) realpath(sys_get_temp_dir())),
-            str_replace('\\', '_', __CLASS__)
-        );
+        return System::tempDir(str_replace('\\', '_', __CLASS__));
     }
 }

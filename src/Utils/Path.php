@@ -12,7 +12,7 @@ class Path
                 [rtrim($base, '/')],
                 array_map(function (string $part) {
                     return trim($part, '/');
-                }, $parts)
+                }, array_filter($parts))
             )
         );
     }
