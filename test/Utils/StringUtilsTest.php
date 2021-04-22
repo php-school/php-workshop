@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace PhpSchool\PhpWorkshopTest\Util;
+namespace PhpSchool\PhpWorkshopTest\Utils;
 
 use PhpSchool\PhpWorkshop\Utils\StringUtils;
 use PHPUnit\Framework\TestCase;

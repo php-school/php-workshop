@@ -1,6 +1,6 @@
 <?php
 
-namespace PhpSchool\PhpWorkshopTest\Util;
+namespace PhpSchool\PhpWorkshopTest\Utils;
 
 use GuzzleHttp\Psr7\Request;
 use PhpSchool\PhpWorkshop\Utils\RequestRenderer;
