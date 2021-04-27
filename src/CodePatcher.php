@@ -86,8 +86,12 @@ class CodePatcher
     {
         $statements = $this->parser->parse($code);
 
+        if ($statements === null) {
+            $statements = [];
+        }
+
         $declare = null;
-        if ($statements[0] instanceof \PhpParser\Node\Stmt\Declare_) {
+        if (isset($statements[0]) && $statements[0] instanceof \PhpParser\Node\Stmt\Declare_) {
             $declare = array_shift($statements);
         }
 
