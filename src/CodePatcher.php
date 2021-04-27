@@ -85,6 +85,12 @@ class CodePatcher
     private function applyPatch(Patch $patch, string $code): string
     {
         $statements = $this->parser->parse($code);
+
+        $declare = null;
+        if ($statements[0] instanceof \PhpParser\Node\Stmt\Declare_) {
+            $declare = array_shift($statements);
+        }
+
         foreach ($patch->getModifiers() as $modifier) {
             if ($modifier instanceof CodeInsertion) {
                 $statements = $this->applyCodeInsertion($modifier, $statements);
@@ -95,6 +101,10 @@ class CodePatcher
                 $statements = $modifier($statements);
                 continue;
             }
+        }
+
+        if ($declare !== null) {
+            array_unshift($statements, $declare);
         }
 
         return $this->printer->prettyPrintFile($statements);

@@ -121,4 +121,52 @@ class CodePatcherTest extends TestCase
             ],
         ];
     }
+
+    public function testBeforeInsertionInsertsAfterStrictTypesDeclaration(): void
+    {
+        $code = '<?php declare(strict_types=1); $original = true;';
+        $patch = (new Patch())->withInsertion(new Insertion(Insertion::TYPE_BEFORE, '$before = "here";'));
+
+        $patcher = new CodePatcher((new ParserFactory())->create(ParserFactory::PREFER_PHP7), new Standard());
+
+        $exercise = $this->createMock(PatchableExercise::class);
+
+        $exercise
+            ->expects($this->once())
+            ->method('getPatch')
+            ->willReturn($patch);
+
+        $this->assertEquals(
+            "<?php\n\ndeclare (strict_types=1);\n\$before = \"here\";\n\$original = true;",
+            $patcher->patch($exercise, $code)
+        );
+    }
+
+    public function testTransformerWithStrictTypes(): void
+    {
+        $code = '<?php declare(strict_types=1); $original = true;';
+        $patch = (new Patch())
+            ->withTransformer(function (array $statements) {
+                return [
+                    new TryCatch(
+                        $statements,
+                        [new Catch_([new Name(\Exception::class)], new Variable('e'), [])]
+                    )
+                ];
+            });
+
+        $patcher = new CodePatcher((new ParserFactory())->create(ParserFactory::PREFER_PHP7), new Standard());
+
+        $exercise = $this->createMock(PatchableExercise::class);
+
+        $exercise
+            ->expects($this->once())
+            ->method('getPatch')
+            ->willReturn($patch);
+
+        $this->assertEquals(
+            "<?php\n\ndeclare (strict_types=1);\ntry {\n    \$original = true;\n} catch (Exception \$e) {\n}",
+            $patcher->patch($exercise, $code)
+        );
+    }
 }
