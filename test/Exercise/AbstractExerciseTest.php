@@ -26,12 +26,10 @@ class AbstractExerciseTest extends TestCase
         $path       = __DIR__ . '/../../exercises/array-we-go/solution/solution.php';
         mkdir(dirname($path), 0777, true);
         touch($path);
-        $solution = $exercise->getSolution();
-        $this->assertInstanceOf(SolutionInterface::class, $solution);
-        $files = $solution->getFiles();
-        $this->assertCount(1, $files);
-        $this->assertInstanceOf(SolutionFile::class, $files[0]);
-        $this->assertSame(realpath($path), $files[0]->__toString());
+        $files = $exercise->getSolution()->getFiles();
+        self::assertCount(1, $files);
+        self::assertInstanceOf(SolutionFile::class, $files[0]);
+        self::assertFileEquals(realpath($path), $files[0]->__toString());
         unlink($path);
         rmdir(__DIR__ . '/../../exercises/array-we-go/solution');
         rmdir(__DIR__ . '/../../exercises/array-we-go');
