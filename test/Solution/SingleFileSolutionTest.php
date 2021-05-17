@@ -13,15 +13,14 @@ class SingleFileSolutionTest extends TestCase
         $filePath   = sprintf('%s/test.file', $tempPath);
 
         @mkdir($tempPath, 0775, true);
-        touch($filePath);
+        file_put_contents($filePath, 'FILE CONTENTS');
 
         $solution = SingleFileSolution::fromFile($filePath);
 
-        $this->assertSame($filePath, $solution->getEntryPoint());
-        $this->assertSame($tempPath, $solution->getBaseDirectory());
-        $this->assertFalse($solution->hasComposerFile());
-        $this->assertCount(1, $solution->getFiles());
-        $this->assertSame($filePath, $solution->getFiles()[0]->__toString());
+        self::assertSame('FILE CONTENTS', file_get_contents($solution->getEntryPoint()));
+        self::assertFalse($solution->hasComposerFile());
+        self::assertCount(1, $solution->getFiles());
+        self::assertSame('FILE CONTENTS', file_get_contents($solution->getFiles()[0]->__toString()));
         unlink($filePath);
         rmdir($tempPath);
     }
