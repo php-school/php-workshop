@@ -13,7 +13,7 @@ class InTempSolutionMapper
     public static function mapDirectory(string $directory): string
     {
         $fileSystem = new Filesystem();
-        $tempDir = self::getRandomTempDir();
+        $tempDir = self::getDeterministicTempDir($directory);
 
         $fileSystem->mkdir($tempDir);
 
@@ -22,6 +22,11 @@ class InTempSolutionMapper
 
         foreach ($iterator as $file) {
             $target = Path::join($tempDir, $iterator->getSubPathName());
+
+            if ($fileSystem->exists($target)) {
+                continue;
+            }
+
             $file->isDir()
                 ? $fileSystem->mkdir($target)
                 : $fileSystem->copy($file->getPathname(), $target);
@@ -33,7 +38,11 @@ class InTempSolutionMapper
     public static function mapFile(string $file): string
     {
         $fileSystem = new Filesystem();
-        $tempFile = Path::join(self::getRandomTempDir(), basename($file));
+        $tempFile = Path::join(self::getDeterministicTempDir($file), basename($file));
+
+        if ($fileSystem->exists($tempFile)) {
+            return $tempFile;
+        }
 
         $fileSystem->mkdir(System::tempDir());
         $fileSystem->copy($file, $tempFile);
@@ -41,8 +50,8 @@ class InTempSolutionMapper
         return $tempFile;
     }
 
-    private static function getRandomTempDir(): string
+    private static function getDeterministicTempDir(string $path): string
     {
-        return Path::join(System::tempDir(), 'php-school', bin2hex(random_bytes(10)));
+        return Path::join(System::tempDir(), 'php-school', md5($path));
     }
 }
