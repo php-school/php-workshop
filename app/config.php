@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use Colors\Color;
 use PhpSchool\PhpWorkshop\Listener\InitialCodeListener;
+use PhpSchool\PhpWorkshop\Logger\ConsoleLogger;
 use PhpSchool\PhpWorkshop\Logger\Logger;
 use Psr\Log\LoggerInterface;
 use function DI\create;
@@ -95,6 +96,10 @@ return [
     Psr\Log\LoggerInterface::class => function (ContainerInterface $c) {
         $appName = $c->get('appName');
         $globalDir = $c->get('phpschoolGlobalDir');
+
+        if ($c->get('debugMode')) {
+            return new ConsoleLogger($c->get(OutputInterface::class));
+        }
 
         return new Logger("$globalDir/logs/$appName.log");
     },
