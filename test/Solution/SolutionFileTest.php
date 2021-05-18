@@ -73,5 +73,4 @@ class SolutionFileTest extends BaseTest
         $file = new SolutionFile('test.php', $tempPath);
         $this->assertSame('php', $file->getExtension());
     }
-
 }
