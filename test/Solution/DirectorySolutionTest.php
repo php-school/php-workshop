@@ -4,194 +4,154 @@ namespace PhpSchool\PhpWorkshopTest\Solution;
 
 use InvalidArgumentException;
 use PhpSchool\PhpWorkshop\Solution\DirectorySolution;
+use PhpSchool\PhpWorkshop\Utils\Path;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\Filesystem\Filesystem;
 
 class DirectorySolutionTest extends TestCase
 {
+    /**
+     * @var string
+     */
+    private $tempPath;
+
+    public function setUp(): void
+    {
+        $this->tempPath = sprintf('%s/%s', realpath(sys_get_temp_dir()), $this->getName());
+        @mkdir($this->tempPath);
+    }
+
+    public function tearDown(): void
+    {
+        $fileSystem = new Filesystem();
+        $fileSystem->remove(Path::join(realpath(sys_get_temp_dir()), 'php-school'));
+        $fileSystem->remove($this->tempPath);
+    }
+
     public function testExceptionIsThrownIfEntryPointDoesNotExist(): void
     {
-        $tempPath = sprintf('%s/%s', realpath(sys_get_temp_dir()), $this->getName());
-        @mkdir($tempPath, 0775, true);
-        touch(sprintf('%s/some-class.php', $tempPath));
+        touch(sprintf('%s/some-class.php', $this->tempPath));
 
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage(sprintf('Entry point: "solution.php" does not exist in: "%s"', $tempPath));
+        $this->expectExceptionMessageMatches('/Entry point: "solution.php" does not exist in: ".*"/');
 
-        DirectorySolution::fromDirectory($tempPath);
-
-        unlink(sprintf('%s/some-class.php', $tempPath));
-        rmdir($tempPath);
+        DirectorySolution::fromDirectory($this->tempPath);
     }
 
     public function testWithDefaultEntryPoint(): void
     {
-        $tempPath = sprintf('%s/%s', realpath(sys_get_temp_dir()), $this->getName());
-        @mkdir($tempPath, 0775, true);
-        touch(sprintf('%s/solution.php', $tempPath));
-        touch(sprintf('%s/some-class.php', $tempPath));
+        file_put_contents(sprintf('%s/solution.php', $this->tempPath), 'ENTRYPOINT');
+        file_put_contents(sprintf('%s/some-class.php', $this->tempPath), 'SOME CLASS');
 
-        $solution = DirectorySolution::fromDirectory($tempPath);
+        $solution = DirectorySolution::fromDirectory($this->tempPath);
 
-        $this->assertSame($tempPath, $solution->getBaseDirectory());
-        $this->assertFalse($solution->hasComposerFile());
-        $this->assertSame(sprintf('%s/solution.php', $tempPath), $solution->getEntryPoint());
+        self::assertFalse($solution->hasComposerFile());
+        self::assertSame('ENTRYPOINT', file_get_contents($solution->getEntryPoint()));
         $files = $solution->getFiles();
-        $this->assertCount(2, $files);
+        self::assertCount(2, $files);
 
-        $this->assertSame(sprintf('%s/solution.php', $tempPath), $files[0]->__toString());
-        $this->assertSame(sprintf('%s/some-class.php', $tempPath), $files[1]->__toString());
-
-        unlink(sprintf('%s/solution.php', $tempPath));
-        unlink(sprintf('%s/some-class.php', $tempPath));
-        rmdir($tempPath);
+        self::assertSame('ENTRYPOINT', file_get_contents($files[0]->__toString()));
+        self::assertSame('SOME CLASS', file_get_contents($files[1]->__toString()));
     }
 
     public function testWithManualEntryPoint(): void
     {
-        $tempPath = sprintf('%s/%s', realpath(sys_get_temp_dir()), $this->getName());
-        @mkdir($tempPath, 0775, true);
-        touch(sprintf('%s/index.php', $tempPath));
-        touch(sprintf('%s/some-class.php', $tempPath));
+        file_put_contents(sprintf('%s/index.php', $this->tempPath), 'ENTRYPOINT');
+        file_put_contents(sprintf('%s/some-class.php', $this->tempPath), 'SOME CLASS');
 
-        $solution = DirectorySolution::fromDirectory($tempPath, [], 'index.php');
+        $solution = DirectorySolution::fromDirectory($this->tempPath, [], 'index.php');
 
-        $this->assertSame($tempPath, $solution->getBaseDirectory());
-        $this->assertFalse($solution->hasComposerFile());
-        $this->assertSame(sprintf('%s/index.php', $tempPath), $solution->getEntryPoint());
+        self::assertFalse($solution->hasComposerFile());
+        self::assertSame('ENTRYPOINT', file_get_contents($solution->getEntryPoint()));
         $files = $solution->getFiles();
-        $this->assertCount(2, $files);
+        self::assertCount(2, $files);
 
-        $this->assertSame(sprintf('%s/index.php', $tempPath), $files[0]->__toString());
-        $this->assertSame(sprintf('%s/some-class.php', $tempPath), $files[1]->__toString());
-
-        unlink(sprintf('%s/index.php', $tempPath));
-        unlink(sprintf('%s/some-class.php', $tempPath));
-        rmdir($tempPath);
+        self::assertSame('ENTRYPOINT', file_get_contents($files[0]->__toString()));
+        self::assertSame('SOME CLASS', file_get_contents($files[1]->__toString()));
     }
 
     public function testHasComposerFileReturnsTrueIfPresent(): void
     {
-        $tempPath = sprintf('%s/%s', realpath(sys_get_temp_dir()), $this->getName());
-        @mkdir($tempPath, 0775, true);
-        touch(sprintf('%s/solution.php', $tempPath));
-        touch(sprintf('%s/some-class.php', $tempPath));
-        touch(sprintf('%s/composer.lock', $tempPath));
+        file_put_contents(sprintf('%s/solution.php', $this->tempPath), 'ENTRYPOINT');
+        file_put_contents(sprintf('%s/some-class.php', $this->tempPath), 'SOME CLASS');
+        touch(sprintf('%s/composer.lock', $this->tempPath));
 
-        $solution = DirectorySolution::fromDirectory($tempPath);
+        $solution = DirectorySolution::fromDirectory($this->tempPath);
 
-        $this->assertSame($tempPath, $solution->getBaseDirectory());
-        $this->assertTrue($solution->hasComposerFile());
-        $this->assertSame(sprintf('%s/solution.php', $tempPath), $solution->getEntryPoint());
+        self::assertTrue($solution->hasComposerFile());
+        self::assertSame('ENTRYPOINT', file_get_contents($solution->getEntryPoint()));
         $files = $solution->getFiles();
-        $this->assertCount(2, $files);
+        self::assertCount(2, $files);
 
-        $this->assertSame(sprintf('%s/solution.php', $tempPath), $files[0]->__toString());
-        $this->assertSame(sprintf('%s/some-class.php', $tempPath), $files[1]->__toString());
-
-        unlink(sprintf('%s/composer.lock', $tempPath));
-        unlink(sprintf('%s/solution.php', $tempPath));
-        unlink(sprintf('%s/some-class.php', $tempPath));
+        self::assertSame('ENTRYPOINT', file_get_contents($files[0]->__toString()));
+        self::assertSame('SOME CLASS', file_get_contents($files[1]->__toString()));
     }
 
     public function testWithExceptions(): void
     {
-        $tempPath = sprintf('%s/%s', realpath(sys_get_temp_dir()), $this->getName());
-        @mkdir($tempPath, 0775, true);
-        touch(sprintf('%s/solution.php', $tempPath));
-        touch(sprintf('%s/some-class.php', $tempPath));
-        touch(sprintf('%s/exclude.txt', $tempPath));
+        file_put_contents(sprintf('%s/solution.php', $this->tempPath), 'ENTRYPOINT');
+        file_put_contents(sprintf('%s/some-class.php', $this->tempPath), 'SOME CLASS');
+        touch(sprintf('%s/exclude.txt', $this->tempPath));
 
         $exclusions = ['exclude.txt'];
 
-        $solution = DirectorySolution::fromDirectory($tempPath, $exclusions);
+        $solution = DirectorySolution::fromDirectory($this->tempPath, $exclusions);
 
-        $this->assertSame(sprintf('%s/solution.php', $tempPath), $solution->getEntryPoint());
+        self::assertSame('ENTRYPOINT', file_get_contents($solution->getEntryPoint()));
         $files = $solution->getFiles();
-        $this->assertCount(2, $files);
+        self::assertCount(2, $files);
 
-        $this->assertSame(sprintf('%s/solution.php', $tempPath), $files[0]->__toString());
-        $this->assertSame(sprintf('%s/some-class.php', $tempPath), $files[1]->__toString());
-
-        unlink(sprintf('%s/solution.php', $tempPath));
-        unlink(sprintf('%s/some-class.php', $tempPath));
-        unlink(sprintf('%s/exclude.txt', $tempPath));
-        rmdir($tempPath);
+        self::assertSame('ENTRYPOINT', file_get_contents($files[0]->__toString()));
+        self::assertSame('SOME CLASS', file_get_contents($files[1]->__toString()));
     }
 
     public function testWithNestedDirectories(): void
     {
-        $tempPath = sprintf('%s/%s', realpath(sys_get_temp_dir()), $this->getName());
-        @mkdir($tempPath, 0775, true);
+        @mkdir(sprintf('%s/nested', $this->tempPath), 0775, true);
+        @mkdir(sprintf('%s/nested/deep', $this->tempPath), 0775, true);
 
-        @mkdir(sprintf('%s/nested', $tempPath), 0775, true);
-        @mkdir(sprintf('%s/nested/deep', $tempPath), 0775, true);
+        file_put_contents(sprintf('%s/solution.php', $this->tempPath), 'ENTRYPOINT');
+        file_put_contents(sprintf('%s/some-class.php', $this->tempPath), 'SOME CLASS');
+        file_put_contents(sprintf('%s/composer.json', $this->tempPath), 'COMPOSER DATA');
+        file_put_contents(sprintf('%s/nested/another-class.php', $this->tempPath), 'ANOTHER CLASS');
+        file_put_contents(sprintf('%s/nested/deep/even-more.php', $this->tempPath), 'EVEN MOAR');
 
-        touch(sprintf('%s/solution.php', $tempPath));
-        touch(sprintf('%s/some-class.php', $tempPath));
-        touch(sprintf('%s/composer.json', $tempPath));
-        touch(sprintf('%s/nested/another-class.php', $tempPath));
-        touch(sprintf('%s/nested/deep/even-more.php', $tempPath));
+        $solution = DirectorySolution::fromDirectory($this->tempPath);
 
-        $solution = DirectorySolution::fromDirectory($tempPath);
-
-        $this->assertSame(sprintf('%s/solution.php', $tempPath), $solution->getEntryPoint());
+        self::assertSame('ENTRYPOINT', file_get_contents($solution->getEntryPoint()));
         $files = $solution->getFiles();
-        $this->assertCount(5, $files);
+        self::assertCount(5, $files);
 
-        $this->assertSame(sprintf('%s/composer.json', $tempPath), $files[0]->__toString());
-        $this->assertSame(sprintf('%s/nested/another-class.php', $tempPath), $files[1]->__toString());
-        $this->assertSame(sprintf('%s/nested/deep/even-more.php', $tempPath), $files[2]->__toString());
-        $this->assertSame(sprintf('%s/solution.php', $tempPath), $files[3]->__toString());
-        $this->assertSame(sprintf('%s/some-class.php', $tempPath), $files[4]->__toString());
-
-        unlink(sprintf('%s/solution.php', $tempPath));
-        unlink(sprintf('%s/some-class.php', $tempPath));
-        unlink(sprintf('%s/composer.json', $tempPath));
-        unlink(sprintf('%s/nested/another-class.php', $tempPath));
-        unlink(sprintf('%s/nested/deep/even-more.php', $tempPath));
-        rmdir(sprintf('%s/nested/deep', $tempPath));
-        rmdir(sprintf('%s/nested', $tempPath));
-        rmdir($tempPath);
+        self::assertSame('COMPOSER DATA', file_get_contents($files[0]->__toString()));
+        self::assertSame('ANOTHER CLASS', file_get_contents($files[1]->__toString()));
+        self::assertSame('EVEN MOAR', file_get_contents($files[2]->__toString()));
+        self::assertSame('ENTRYPOINT', file_get_contents($files[3]->__toString()));
+        self::assertSame('SOME CLASS', file_get_contents($files[4]->__toString()));
     }
 
     public function testExceptionsWithNestedDirectories(): void
     {
-        $tempPath = sprintf('%s/%s', realpath(sys_get_temp_dir()), $this->getName());
-        @mkdir($tempPath, 0775, true);
+        @mkdir(sprintf('%s/nested', $this->tempPath), 0775, true);
+        @mkdir(sprintf('%s/nested/deep', $this->tempPath), 0775, true);
+        @mkdir(sprintf('%s/vendor', $this->tempPath), 0775, true);
+        @mkdir(sprintf('%s/vendor/somelib', $this->tempPath), 0775, true);
 
-        @mkdir(sprintf('%s/nested', $tempPath), 0775, true);
-        @mkdir(sprintf('%s/nested/deep', $tempPath), 0775, true);
-        @mkdir(sprintf('%s/vendor', $tempPath), 0775, true);
-        @mkdir(sprintf('%s/vendor/somelib', $tempPath), 0775, true);
-
-        touch(sprintf('%s/solution.php', $tempPath));
-        touch(sprintf('%s/some-class.php', $tempPath));
-        touch(sprintf('%s/exclude.txt', $tempPath));
-        touch(sprintf('%s/nested/exclude.txt', $tempPath));
-        touch(sprintf('%s/nested/deep/exclude.txt', $tempPath));
-        touch(sprintf('%s/vendor/somelib/app.php', $tempPath));
+        file_put_contents(sprintf('%s/solution.php', $this->tempPath), 'ENTRYPOINT');
+        file_put_contents(sprintf('%s/some-class.php', $this->tempPath), 'SOME CLASS');
+        touch(sprintf('%s/exclude.txt', $this->tempPath));
+        touch(sprintf('%s/nested/exclude.txt', $this->tempPath));
+        touch(sprintf('%s/nested/deep/exclude.txt', $this->tempPath));
+        touch(sprintf('%s/vendor/somelib/app.php', $this->tempPath));
 
         $exclusions = ['exclude.txt', 'vendor'];
 
-        $solution = DirectorySolution::fromDirectory($tempPath, $exclusions);
+        $solution = DirectorySolution::fromDirectory($this->tempPath, $exclusions);
 
-        $this->assertSame(sprintf('%s/solution.php', $tempPath), $solution->getEntryPoint());
+        self::assertSame('ENTRYPOINT', file_get_contents($solution->getEntryPoint()));
         $files = $solution->getFiles();
-        $this->assertCount(2, $files);
+        self::assertCount(2, $files);
 
-        $this->assertSame(sprintf('%s/solution.php', $tempPath), $files[0]->__toString());
-        $this->assertSame(sprintf('%s/some-class.php', $tempPath), $files[1]->__toString());
-
-        unlink(sprintf('%s/solution.php', $tempPath));
-        unlink(sprintf('%s/some-class.php', $tempPath));
-        unlink(sprintf('%s/exclude.txt', $tempPath));
-        unlink(sprintf('%s/nested/exclude.txt', $tempPath));
-        unlink(sprintf('%s/nested/deep/exclude.txt', $tempPath));
-        unlink(sprintf('%s/vendor/somelib/app.php', $tempPath));
-        rmdir(sprintf('%s/nested/deep', $tempPath));
-        rmdir(sprintf('%s/nested', $tempPath));
-        rmdir(sprintf('%s/vendor/somelib', $tempPath));
-        rmdir(sprintf('%s/vendor', $tempPath));
-        rmdir($tempPath);
+        self::assertSame('ENTRYPOINT', file_get_contents($files[0]->__toString()));
+        self::assertSame('SOME CLASS', file_get_contents($files[1]->__toString()));
     }
 }

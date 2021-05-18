@@ -85,6 +85,7 @@ class DirectorySolution implements SolutionInterface
      */
     public static function fromDirectory(string $directory, array $exclusions = [], $entryPoint = 'solution.php'): self
     {
+        $directory = InTempSolutionMapper::mapDirectory($directory);
         return new self($directory, $entryPoint, array_merge($exclusions, ['composer.lock', 'vendor']));
     }
 
