@@ -98,7 +98,7 @@ return [
         $globalDir = $c->get('phpschoolGlobalDir');
 
         if ($c->get('debugMode')) {
-            return new ConsoleLogger($c->get(OutputInterface::class));
+            return new ConsoleLogger($c->get(OutputInterface::class), $c->get(Color::class));
         }
 
         return new Logger("$globalDir/logs/$appName.log");

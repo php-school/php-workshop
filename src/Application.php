@@ -223,9 +223,9 @@ final class Application
     {
         $args = $_SERVER['argv'] ?? [];
 
-        $debug = array_reduce($args, function (bool $debugEnabled, string $arg) {
-            return $debugEnabled || $arg === '--debug';
-        }, false);
+        $debug = any($args, function (string $arg) {
+            return $arg === '--debug';
+        });
 
         $args = array_values(array_filter($args, function (string $arg) {
             return $arg !== '--debug';

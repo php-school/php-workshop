@@ -16,10 +16,8 @@ abstract class BaseTest extends TestCase
     public function getTemporaryDirectory(): string
     {
         if (!$this->tempDirectory) {
-            $tempDirectory = System::tempDir($this->getName());
-            mkdir($tempDirectory, 0777, true);
-
-            $this->tempDirectory = realpath($tempDirectory);
+            $this->tempDirectory = System::tempDir($this->getName());
+            mkdir($this->tempDirectory, 0777, true);
         }
 
         return $this->tempDirectory;

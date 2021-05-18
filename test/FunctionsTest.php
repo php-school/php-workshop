@@ -40,4 +40,15 @@ class FunctionsTest extends TestCase
             ]
         ];
     }
+
+    public function testAny(): void
+    {
+        self::assertEquals(true, any([1, 2, 3, 10, 11], function (int $num) {
+            return $num > 10;
+        }));
+
+        self::assertEquals(false, any([1, 2, 3, 10, 11], function (int $num) {
+            return $num > 11;
+        }));
+    }
 }

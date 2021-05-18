@@ -73,3 +73,14 @@ if (!function_exists('collect')) {
         return new Collection($array);
     }
 }
+
+
+if (!function_exists('any')) {
+
+    function any(array $values, callable $cb): bool
+    {
+        return array_reduce($values, function (bool $carry, $value) use ($cb) {
+            return $carry || $cb($value);
+        }, false);
+    }
+}
