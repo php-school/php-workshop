@@ -4,7 +4,6 @@ namespace PhpSchool\PhpWorkshopTest\Solution;
 
 use InvalidArgumentException;
 use PhpSchool\PhpWorkshop\Solution\DirectorySolution;
-use PhpSchool\PhpWorkshop\Utils\Path;
 use PhpSchool\PhpWorkshop\Utils\System;
 use PhpSchool\PhpWorkshopTest\BaseTest;
 use Symfony\Component\Filesystem\Filesystem;
@@ -13,7 +12,7 @@ class DirectorySolutionTest extends BaseTest
 {
     public function tearDown(): void
     {
-        (new Filesystem())->remove(Path::join(System::tempDir(), 'php-school'));
+        (new Filesystem())->remove(System::tempDir('php-school'));
 
         parent::tearDown();
     }

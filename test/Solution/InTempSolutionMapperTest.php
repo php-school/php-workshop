@@ -14,7 +14,7 @@ class InTempSolutionMapperTest extends BaseTest
 {
     public function tearDown(): void
     {
-        (new Filesystem())->remove(Path::join(System::tempDir(), 'php-school'));
+        (new Filesystem())->remove(System::tempDir('php-school'));
 
         parent::tearDown();
     }
