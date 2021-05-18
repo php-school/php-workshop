@@ -2,29 +2,30 @@
 
 declare(strict_types=1);
 
-namespace Solution;
+namespace PhpSchool\PhpWorkshopTest\Solution;
 
 use PhpSchool\PhpWorkshop\Solution\InTempSolutionMapper;
 use PhpSchool\PhpWorkshop\Utils\Path;
+use PhpSchool\PhpWorkshop\Utils\System;
 use PHPUnit\Framework\TestCase;
 
 class InTempSolutionMapperTest extends TestCase
 {
     public function testFileMapping(): void
     {
-        $filePath  = Path::join(realpath(sys_get_temp_dir()), 'test.file');
+        $filePath = System::tempDir('test.file');
         touch($filePath);
 
         $mappedFile = InTempSolutionMapper::mapFile($filePath);
 
         self::assertFileExists($mappedFile);
         self::assertNotSame($filePath, $mappedFile);
-        self::assertStringContainsString(realpath(sys_get_temp_dir()), $mappedFile);
+        self::assertStringContainsString(System::tempDir(), $mappedFile);
     }
 
     public function testDirectoryMapping(): void
     {
-        $tempDir = Path::join(realpath(sys_get_temp_dir()), bin2hex(random_bytes(10)));
+        $tempDir = System::tempDir(bin2hex(random_bytes(10)));
         $file  = Path::join($tempDir, 'test.file');
         $inner = Path::join($tempDir, 'innerDir');
         $innerFile  = Path::join($inner, 'test.file');
@@ -45,11 +46,11 @@ class InTempSolutionMapperTest extends TestCase
 
     public function testMappingIsDeterministicTempDir(): void
     {
-        $filePath  = Path::join(realpath(sys_get_temp_dir()), 'test.file');
+        $filePath = System::tempDir('test.file');
         touch($filePath);
 
         $dirName = bin2hex(random_bytes(10));
-        $tempDir = Path::join(realpath(sys_get_temp_dir()), $dirName);
+        $tempDir = System::tempDir($dirName);
         @mkdir($tempDir);
 
         $fileHash = md5($filePath);
@@ -57,27 +58,27 @@ class InTempSolutionMapperTest extends TestCase
 
         self::assertSame(
             InTempSolutionMapper::mapFile($filePath),
-            Path::join(realpath(sys_get_temp_dir()), 'php-school', $fileHash, 'test.file')
+            Path::join(System::tempDir(), 'php-school', $fileHash, 'test.file')
         );
 
         self::assertNotSame(
             InTempSolutionMapper::mapDirectory($tempDir),
-            Path::join(realpath(sys_get_temp_dir()), 'php-school', $dirHash, $dirName)
+            Path::join(System::tempDir(), 'php-school', $dirHash, $dirName)
         );
     }
 
     public function testContentsAreNotOverwroteIfExists(): void
     {
-        $filePath = Path::join(realpath(sys_get_temp_dir()), 'test.file');
+        $filePath = System::tempDir('test.file');
         file_put_contents($filePath, 'Old contents');
 
         $dirName = bin2hex(random_bytes(10));
-        $tempDir = Path::join(realpath(sys_get_temp_dir()), $dirName);
+        $tempDir = System::tempDir($dirName);
         mkdir($tempDir);
         file_put_contents(Path::join($tempDir, 'test.file'), 'Old contents');
 
-        $tempFilePath = Path::join(realpath(sys_get_temp_dir()), 'php-school', md5($filePath), 'test.file');
-        $tempDirPath = Path::join(realpath(sys_get_temp_dir()), 'php-school', md5($tempDir), $dirName);
+        $tempFilePath = Path::join(System::tempDir(), 'php-school', md5($filePath), 'test.file');
+        $tempDirPath = Path::join(System::tempDir(), 'php-school', md5($tempDir), $dirName);
 
         file_put_contents($tempFilePath, 'Fresh contents');
         mkdir($tempDirPath, 0777, true);

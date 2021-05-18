@@ -3,8 +3,10 @@
 namespace PhpSchool\PhpWorkshopTest\Solution;
 
 use InvalidArgumentException;
+use PhpSchool\PhpWorkshop\Exercise\TemporaryDirectoryTrait;
 use PhpSchool\PhpWorkshop\Solution\DirectorySolution;
 use PhpSchool\PhpWorkshop\Utils\Path;
+use PhpSchool\PhpWorkshop\Utils\System;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Filesystem\Filesystem;
 
@@ -17,14 +19,15 @@ class DirectorySolutionTest extends TestCase
 
     public function setUp(): void
     {
-        $this->tempPath = sprintf('%s/%s', realpath(sys_get_temp_dir()), $this->getName());
+        $this->tempPath = System::tempDir($this->getName());
         @mkdir($this->tempPath);
     }
 
     public function tearDown(): void
     {
         $fileSystem = new Filesystem();
-        $fileSystem->remove(Path::join(realpath(sys_get_temp_dir()), 'php-school'));
+
+        $fileSystem->remove(System::tempDir('php-school'));
         $fileSystem->remove($this->tempPath);
     }
 
