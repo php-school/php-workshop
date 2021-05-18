@@ -35,11 +35,9 @@ abstract class BaseTest extends TestCase
 
         @mkdir(dirname($file), 0777, true);
 
-        if ($content !== null) {
-            file_put_contents($file, $content);
-        } else {
-            touch($file);
-        }
+        $content !== null
+            ? file_put_contents($file, $content)
+            : touch($file);
 
         return $file;
     }
