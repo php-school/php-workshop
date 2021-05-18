@@ -4,9 +4,10 @@ namespace PhpSchool\PhpWorkshopTest\Solution;
 
 use InvalidArgumentException;
 use PhpSchool\PhpWorkshop\Solution\SolutionFile;
-use PHPUnit\Framework\TestCase;
+use PhpSchool\PhpWorkshop\Utils\Path;
+use PhpSchool\PhpWorkshopTest\BaseTest;
 
-class SolutionFileTest extends TestCase
+class SolutionFileTest extends BaseTest
 {
     public function testExceptionIsThrowIfFileNotExists(): void
     {
@@ -18,85 +19,59 @@ class SolutionFileTest extends TestCase
 
     public function testPaths(): void
     {
-        $tempPath   = sprintf('%s/%s', sys_get_temp_dir(), $this->getName());
-        $filePath   = sprintf('%s/test.file', $tempPath);
-
-        @mkdir($tempPath, 0775, true);
-        touch($filePath);
+        $filePath = $this->getTemporaryFile('test.file');
 
         $file = SolutionFile::fromFile($filePath);
 
         $this->assertSame($filePath, $file->__toString());
         $this->assertSame('test.file', $file->getRelativePath());
-        $this->assertSame($tempPath, $file->getBaseDirectory());
-
-        unlink($filePath);
-        rmdir($tempPath);
+        $this->assertSame($this->getTemporaryDirectory(), $file->getBaseDirectory());
     }
 
     public function testEmptyContents(): void
     {
-        $tempPath   = sprintf('%s/%s', sys_get_temp_dir(), $this->getName());
-        $filePath   = sprintf('%s/test.file', $tempPath);
-
-        @mkdir($tempPath, 0775, true);
-        touch($filePath);
+        $filePath = $this->getTemporaryFile('test.file');
 
         $file = SolutionFile::fromFile($filePath);
 
         $this->assertSame($filePath, $file->__toString());
         $this->assertSame('test.file', $file->getRelativePath());
-        $this->assertSame($tempPath, $file->getBaseDirectory());
+        $this->assertSame($this->getTemporaryDirectory(), $file->getBaseDirectory());
         $this->assertSame('', $file->getContents());
-        unlink($filePath);
-        rmdir($tempPath);
     }
 
     public function testGetContents(): void
     {
-        $tempPath   = sprintf('%s/%s', sys_get_temp_dir(), $this->getName());
-        $filePath   = sprintf('%s/test.file', $tempPath);
-
-        @mkdir($tempPath, 0775, true);
-        file_put_contents($filePath, 'epiccontentz');
+        $filePath = $this->getTemporaryFile('test.file', 'epiccontentz');
 
         $file = SolutionFile::fromFile($filePath);
 
         $this->assertSame($filePath, $file->__toString());
         $this->assertSame('test.file', $file->getRelativePath());
-        $this->assertSame($tempPath, $file->getBaseDirectory());
+        $this->assertSame($this->getTemporaryDirectory(), $file->getBaseDirectory());
         $this->assertSame('epiccontentz', $file->getContents());
-        unlink($filePath);
-        rmdir($tempPath);
     }
 
     public function testConstructionWithManualBaseDirectory(): void
     {
-        $tempPath   = sprintf('%s/%s/sub-dir', sys_get_temp_dir(), $this->getName());
-        $filePath   = sprintf('%s/test.file', $tempPath);
-
-        @mkdir($tempPath, 0775, true);
-        touch($filePath);
-
+        $tempPath = Path::join($this->getTemporaryDirectory(), 'sub-dir');
+        $filePath = $this->getTemporaryFile('sub-dir/test.file', 'epiccontentz');
         $file = new SolutionFile('test.file', $tempPath);
 
         $this->assertSame($filePath, $file->__toString());
         $this->assertSame('test.file', $file->getRelativePath());
         $this->assertSame($tempPath, $file->getBaseDirectory());
-        $this->assertSame('', $file->getContents());
-        unlink($filePath);
-        rmdir($tempPath);
+        $this->assertSame('epiccontentz', $file->getContents());
     }
+
 
     public function testGetExtension(): void
     {
-        $tempPath   = sprintf('%s/%s/sub-dir', sys_get_temp_dir(), $this->getName());
-        $filePath   = sprintf('%s/test.php', $tempPath);
-
-        @mkdir($tempPath, 0775, true);
-        touch($filePath);
+        $tempPath = Path::join($this->getTemporaryDirectory(), 'sub-dir');
+        $this->getTemporaryFile('sub-dir/test.php', 'epiccontentz');
 
         $file = new SolutionFile('test.php', $tempPath);
         $this->assertSame('php', $file->getExtension());
     }
+
 }
