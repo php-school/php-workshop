@@ -3,9 +3,7 @@
 namespace PhpSchool\PhpWorkshopTest\Solution;
 
 use InvalidArgumentException;
-use PhpSchool\PhpWorkshop\Exercise\TemporaryDirectoryTrait;
 use PhpSchool\PhpWorkshop\Solution\DirectorySolution;
-use PhpSchool\PhpWorkshop\Utils\Path;
 use PhpSchool\PhpWorkshop\Utils\System;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Filesystem\Filesystem;
