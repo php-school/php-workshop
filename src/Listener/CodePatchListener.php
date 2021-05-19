@@ -5,11 +5,13 @@ declare(strict_types=1);
 namespace PhpSchool\PhpWorkshop\Listener;
 
 use PhpSchool\PhpWorkshop\CodePatcher;
+use PhpSchool\PhpWorkshop\Event\EventInterface;
 use PhpSchool\PhpWorkshop\Event\ExerciseRunnerEvent;
+use PhpSchool\PhpWorkshop\Exercise\ProvidesSolution;
 use RuntimeException;
 
 /**
- * Listener which patches student's solutions
+ * Listener which patches internal and student's solutions
  */
 class CodePatchListener
 {
@@ -19,9 +21,9 @@ class CodePatchListener
     private $codePatcher;
 
     /**
-     * @var string
+     * @var array<string, string>
      */
-    private $originalCode;
+    private $originalCode = [];
 
     /**
      * @param CodePatcher $codePatcher
@@ -36,34 +38,34 @@ class CodePatchListener
      */
     public function patch(ExerciseRunnerEvent $event): void
     {
-        $fileName = $event->getInput()->getArgument('program');
+        $files = [$event->getInput()->getArgument('program')];
 
-        if (null === $fileName) {
-            return;
+        $exercise = $event->getExercise();
+        if ($exercise instanceof ProvidesSolution) {
+            $files[] = $exercise->getSolution()->getEntryPoint();
         }
 
-        $this->originalCode = (string) file_get_contents($fileName);
-        file_put_contents(
-            $fileName,
-            $this->codePatcher->patch($event->getExercise(), $this->originalCode)
-        );
+        foreach (array_filter($files) as $fileName) {
+            $this->originalCode[$fileName] = (string) file_get_contents($fileName);
+
+            file_put_contents(
+                $fileName,
+                $this->codePatcher->patch($event->getExercise(), $this->originalCode[$fileName])
+            );
+        }
     }
 
     /**
-     * @param ExerciseRunnerEvent $event
+     * @param EventInterface $event
      */
-    public function revert(ExerciseRunnerEvent $event): void
+    public function revert(EventInterface $event): void
     {
-        if (null === $this->originalCode) {
-            throw new RuntimeException('Can only revert previously patched code');
-        }
-
-        $fileName = $event->getInput()->getArgument('program');
-
-        if (null === $fileName) {
+        if (null === $this->originalCode || empty($this->originalCode)) {
             return;
         }
 
-        file_put_contents($fileName, $this->originalCode);
+        foreach ($this->originalCode as $fileName => $contents) {
+            file_put_contents($fileName, $contents);
+        }
     }
 }

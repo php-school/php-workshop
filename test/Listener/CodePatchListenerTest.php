@@ -7,8 +7,9 @@ use PhpSchool\PhpWorkshop\Event\ExerciseRunnerEvent;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpSchool\PhpWorkshop\Input\Input;
 use PhpSchool\PhpWorkshop\Listener\CodePatchListener;
+use PhpSchool\PhpWorkshop\Utils\System;
+use PhpSchool\PhpWorkshopTest\Asset\ProvidesSolutionExercise;
 use PHPUnit\Framework\TestCase;
-use RuntimeException;
 use Symfony\Component\Filesystem\Filesystem;
 
 class CodePatchListenerTest extends TestCase
@@ -17,6 +18,11 @@ class CodePatchListenerTest extends TestCase
      * @var string
      */
     private $file;
+
+    /**
+     * @var string
+     */
+    private $solution;
 
     /**
      * @var Filesystem
@@ -33,22 +39,12 @@ class CodePatchListenerTest extends TestCase
         $this->filesystem = new Filesystem();
         $this->codePatcher = $this->createMock(CodePatcher::class);
 
-        $this->file = sprintf('%s/%s/submission.php', str_replace('\\', '/', sys_get_temp_dir()), $this->getName());
+        $this->file = sprintf('%s/%s/submission.php', System::tempDir(), $this->getName());
         mkdir(dirname($this->file), 0775, true);
         touch($this->file);
-    }
 
-    public function testRevertThrowsExceptionIfPatchNotPreviouslyCalled(): void
-    {
-        $input    = new Input('app', ['program' => $this->file]);
-        $exercise = $this->createMock(ExerciseInterface::class);
-
-        $listener   = new CodePatchListener($this->codePatcher);
-        $event      = new ExerciseRunnerEvent('event', $exercise, $input);
-
-        $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage('Can only revert previously patched code');
-        $listener->revert($event);
+        $this->solution = sprintf('%s/%s/solution.php', System::tempDir(), $this->getName());
+        touch($this->solution);
     }
 
     public function testPatchUpdatesCode(): void
@@ -68,7 +64,7 @@ class CodePatchListenerTest extends TestCase
         $event      = new ExerciseRunnerEvent('event', $exercise, $input);
         $listener->patch($event);
 
-        $this->assertStringEqualsFile($this->file, 'MODIFIED CONTENT');
+        self::assertStringEqualsFile($this->file, 'MODIFIED CONTENT');
     }
 
     public function testRevertAfterPatch(): void
@@ -89,7 +85,28 @@ class CodePatchListenerTest extends TestCase
         $listener->patch($event);
         $listener->revert($event);
 
-        $this->assertStringEqualsFile($this->file, 'ORIGINAL CONTENT');
+        self::assertStringEqualsFile($this->file, 'ORIGINAL CONTENT');
+    }
+
+    public function testPatchesProvidedSolution(): void
+    {
+        file_put_contents($this->file, 'ORIGINAL CONTENT');
+
+        $input    = new Input('app', ['program' => $this->file]);
+        $exercise = new ProvidesSolutionExercise();
+
+        $this->codePatcher
+            ->expects($this->exactly(2))
+            ->method('patch')
+            ->withConsecutive([$exercise, 'ORIGINAL CONTENT'], [$exercise, "<?php\n\necho 'Hello World';\n"])
+            ->willReturn('MODIFIED CONTENT');
+
+        $listener   = new CodePatchListener($this->codePatcher);
+        $event      = new ExerciseRunnerEvent('event', $exercise, $input);
+        $listener->patch($event);
+
+        self::assertStringEqualsFile($this->file, 'MODIFIED CONTENT');
+        self::assertStringEqualsFile($exercise->getSolution()->getEntryPoint(), 'MODIFIED CONTENT');
     }
 
     public function tearDown(): void
