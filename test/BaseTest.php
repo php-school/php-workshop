@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace PhpSchool\PhpWorkshopTest;
 
 use PhpSchool\PhpWorkshop\Utils\Path;
+use PhpSchool\PhpWorkshop\Utils\System;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Filesystem\Filesystem;
 
@@ -15,7 +16,7 @@ abstract class BaseTest extends TestCase
     public function getTemporaryDirectory(): string
     {
         if (!$this->tempDirectory) {
-            $tempDirectory = sprintf('%s/%s', realpath(sys_get_temp_dir()), $this->getName());
+            $tempDirectory = System::tempDir($this->getName());
             mkdir($tempDirectory, 0777, true);
 
             $this->tempDirectory = realpath($tempDirectory);
@@ -24,7 +25,7 @@ abstract class BaseTest extends TestCase
         return $this->tempDirectory;
     }
 
-    public function getTemporaryFile(string $filename): string
+    public function getTemporaryFile(string $filename, string $content = null): string
     {
         $file = Path::join($this->getTemporaryDirectory(), $filename);
 
@@ -33,7 +34,10 @@ abstract class BaseTest extends TestCase
         }
 
         @mkdir(dirname($file), 0777, true);
-        touch($file);
+
+        $content !== null
+            ? file_put_contents($file, $content)
+            : touch($file);
 
         return $file;
     }
