@@ -5,35 +5,44 @@
 namespace PhpSchool\PhpWorkshopTest;
 
 use PhpSchool\PhpWorkshop\Application;
-use PHPUnit\Framework\TestCase;
+use PhpSchool\PhpWorkshop\CommandDefinition;
+use PhpSchool\PhpWorkshop\CommandRouter;
+use PhpSchool\PhpWorkshop\Event\EventDispatcher;
 use PhpSchool\PhpWorkshop\Exception\InvalidArgumentException;
+use PhpSchool\PhpWorkshop\Exception\RuntimeException;
+use PhpSchool\PhpWorkshop\Output\NullOutput;
+use PhpSchool\PhpWorkshop\Output\OutputInterface;
+use PhpSchool\PhpWorkshopTest\Asset\MockEventDispatcher;
+use Psr\Log\LoggerInterface;
+use Psr\Log\NullLogger;
 
-class ApplicationTest extends TestCase
+class ApplicationTest extends BaseTest
 {
     public function testEventListenersFromLocalAndWorkshopConfigAreMerged(): void
     {
+        $frameworkFileContent = <<<'FRAME'
+        <?php return [
+            'eventListeners' => [
+                'event1' => [
+                    'entry1',
+                    'entry2',
+                ]
+            ]
+        ];
+FRAME;
 
-        $frameworkFileContent  = '<?php return [';
-        $frameworkFileContent .= "    'eventListeners' => [";
-        $frameworkFileContent .= "        'event1' => [";
-        $frameworkFileContent .= "             'entry1',";
-        $frameworkFileContent .= "             'entry2',";
-        $frameworkFileContent .= '         ]';
-        $frameworkFileContent .= '    ]';
-        $frameworkFileContent .= '];';
+        $localFileContent = <<<'LOCAL'
+        <?php return [
+            'eventListeners' => [
+                'event1' => [
+                    'entry3',
+                ]
+            ]
+        ];
+LOCAL;
 
-        $localFileContent  = '<?php return [';
-        $localFileContent .= "    'eventListeners' => [";
-        $localFileContent .= "        'event1' => [";
-        $localFileContent .= "             'entry3',";
-        $localFileContent .= '         ]';
-        $localFileContent .= '    ]';
-        $localFileContent .= '];';
-
-        $localFile = sprintf('%s/%s', sys_get_temp_dir(), uniqid($this->getName(), true));
-        $frameworkFile = sprintf('%s/%s', sys_get_temp_dir(), uniqid($this->getName(), true));
-        file_put_contents($frameworkFile, $frameworkFileContent);
-        file_put_contents($localFile, $localFileContent);
+        $localFile = $this->getTemporaryFile(uniqid($this->getName(), true), $localFileContent);
+        $frameworkFile = $this->getTemporaryFile(uniqid($this->getName(), true), $frameworkFileContent);
 
         $app = new Application('Test App', $localFile);
 
@@ -48,7 +57,7 @@ class ApplicationTest extends TestCase
 
         $eventListeners = $container->get('eventListeners');
 
-        $this->assertEquals(
+        self::assertEquals(
             [
                 'event1' => [
                     'entry1',
@@ -84,5 +93,77 @@ class ApplicationTest extends TestCase
 
         $app = new Application('My workshop', __DIR__ . '/../app/config.php');
         $app->addResult(\PhpSchool\PhpWorkshop\Result\Success::class, \NotExistingClass::class);
+    }
+
+    public function testTearDownEventIsFiredOnApplicationException(): void
+    {
+        $configFile = $this->getTemporaryFile('config.php', '<?php return [];');
+        $application = new Application('Testing TearDown', $configFile);
+
+        $container = $application->configure();
+        $container->set('basePath', __DIR__);
+        $container->set(EventDispatcher::class, new MockEventDispatcher());
+        $container->set(OutputInterface::class, new NullOutput());
+
+        /** @var MockEventDispatcher $eventDispatcher */
+        $eventDispatcher = $container->get(EventDispatcher::class);
+
+        $commandRouter = $container->get(CommandRouter::class);
+        $commandRouter->addCommand(new CommandDefinition('Failure', [], function () {
+            throw new RuntimeException('We failed somewhere...');
+        }));
+
+        $_SERVER['argv'] = [$this->getName(), 'Failure'];
+
+        $application->run();
+
+        self::assertSame(1, $eventDispatcher->getEventDispatchCount('application.tear-down'));
+    }
+
+    public function testLoggingExceptionDuringTearDown(): void
+    {
+        $configFile = $this->getTemporaryFile('config.php', '<?php return [];');
+        $application = new Application('Testing tear down logging', $configFile);
+        $exception = new \Exception('Unexpected error');
+
+        $container = $application->configure();
+        $container->set('basePath', __DIR__);
+        $container->set(OutputInterface::class, new NullOutput());
+        $container->set(LoggerInterface::class, new MockLogger());
+        $container->set('eventListeners', [
+            'testing-failure-logging' => [
+                'application.tear-down' => [
+                    static function () use ($exception) {
+                        throw $exception;
+                    },
+                ]
+            ]
+        ]);
+
+        $commandRouter = $container->get(CommandRouter::class);
+        $commandRouter->addCommand(new CommandDefinition('Failure', [], function () {
+            throw new RuntimeException('We failed somewhere...');
+        }));
+
+        $application->run();
+
+        /** @var MockLogger $logger */
+        $logger = $container->get(LoggerInterface::class);
+        self::assertCount(1, $logger->messages);
+        self::assertSame('Unexpected error', $logger->messages[0]['message']);
+        self::assertSame($exception, $logger->messages[0]['context']['exception']);
+    }
+
+    public function testConfigureReturnsSameContainerInstance(): void
+    {
+        $configFile = $this->getTemporaryFile('config.php', '<?php return [];');
+        $application = new Application('Testing Configure', $configFile);
+
+        self::assertSame($application->configure(), $application->configure());
+    }
+
+    public function tearDown(): void
+    {
+        parent::tearDown();
     }
 }

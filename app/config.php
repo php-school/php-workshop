@@ -384,28 +384,19 @@ return [
             ],
         ],
         'code-patcher' => [
-            'cli.verify.start' => [
+            'verify.pre.execute' => [
                 containerListener(CodePatchListener::class, 'patch'),
             ],
-            'cli.verify.finish' => [
+            'verify.post.execute' => [
                 containerListener(CodePatchListener::class, 'revert'),
             ],
-            'cli.run.start' => [
+            'run.start' => [
                 containerListener(CodePatchListener::class, 'patch'),
             ],
-            'cli.run.finish' => [
+            'run.finish' => [
                 containerListener(CodePatchListener::class, 'revert'),
             ],
-            'cgi.verify.start' => [
-                containerListener(CodePatchListener::class, 'patch'),
-            ],
-            'cgi.verify.finish' => [
-                containerListener(CodePatchListener::class, 'revert'),
-            ],
-            'cgi.run.start' => [
-                containerListener(CodePatchListener::class, 'patch'),
-            ],
-            'cgi.run.finish' => [
+            'application.tear-down' => [
                 containerListener(CodePatchListener::class, 'revert'),
             ],
         ],

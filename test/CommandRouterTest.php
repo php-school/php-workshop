@@ -26,6 +26,31 @@ class CommandRouterTest extends TestCase
         new CommandRouter([], 'cmd', $eventDispatcher, $c);
     }
 
+    public function testAddCommandAppendsToExistingCommands(): void
+    {
+        $c = $this->createMock(ContainerInterface::class);
+        $eventDispatcher = $this->createMock(EventDispatcher::class);
+
+        $callCount = 0;
+        $routeCallable = function () use (&$callCount) {
+            $callCount++;
+        };
+
+        $router = new CommandRouter(
+            [new CommandDefinition('verify', [], $routeCallable)],
+            'verify',
+            $eventDispatcher,
+            $c
+        );
+
+        $router->addCommand(new CommandDefinition('run', [], $routeCallable));
+
+        $router->route(['app', 'verify']);
+        $router->route(['app', 'run']);
+
+        self::assertSame(2, $callCount);
+    }
+
     public function testAddCommandThrowsExceptionIfCommandWithSameNameExists(): void
     {
         $this->expectException(InvalidArgumentException::class);

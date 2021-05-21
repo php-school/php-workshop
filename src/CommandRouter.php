@@ -72,7 +72,7 @@ class CommandRouter
     /**
      * @param CommandDefinition $c
      */
-    private function addCommand(CommandDefinition $c): void
+    public function addCommand(CommandDefinition $c): void
     {
         if (isset($this->commands[$c->getName()])) {
             throw new InvalidArgumentException(sprintf('Command with name: "%s" already exists', $c->getName()));

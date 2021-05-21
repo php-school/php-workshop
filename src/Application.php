@@ -7,11 +7,14 @@ namespace PhpSchool\PhpWorkshop;
 use DI\Container;
 use DI\ContainerBuilder;
 use PhpSchool\PhpWorkshop\Check\CheckRepository;
+use PhpSchool\PhpWorkshop\Event\Event;
+use PhpSchool\PhpWorkshop\Event\EventDispatcher;
 use PhpSchool\PhpWorkshop\Exception\InvalidArgumentException;
 use PhpSchool\PhpWorkshop\Exception\MissingArgumentException;
 use PhpSchool\PhpWorkshop\Factory\ResultRendererFactory;
 use PhpSchool\PhpWorkshop\Output\OutputInterface;
 use Psr\Container\ContainerInterface;
+use Psr\Log\LoggerInterface;
 use RuntimeException;
 
 use function class_exists;
@@ -68,6 +71,11 @@ final class Application
      * @var string
      */
     private $frameworkConfigLocation = __DIR__ . '/../app/config.php';
+
+    /**
+     * @var ?ContainerInterface
+     */
+    private $container;
 
     /**
      * It should be instantiated with the title of
@@ -163,6 +171,10 @@ final class Application
 
     public function configure(): ContainerInterface
     {
+        if ($this->container instanceof ContainerInterface) {
+            return $this->container;
+        }
+
         $container = $this->getContainer();
 
         foreach ($this->exercises as $exercise) {
@@ -192,6 +204,12 @@ final class Application
             }
         }
 
+        set_error_handler(function () use ($container): bool {
+            $this->tearDown($container);
+            return false; // Use default error handler
+        });
+
+        $this->container = $container;
         return $container;
     }
 
@@ -226,6 +244,8 @@ final class Application
             if (strpos($message, $basePath) !== null) {
                 $message = str_replace($basePath, '', $message);
             }
+
+            $this->tearDown($container);
 
             $container
                 ->get(OutputInterface::class)
@@ -267,5 +287,16 @@ final class Application
         $containerBuilder->useAnnotations(false);
 
         return $containerBuilder->build();
+    }
+
+    private function tearDown(ContainerInterface $container): void
+    {
+        try {
+            $container
+                ->get(EventDispatcher::class)
+                ->dispatch(new Event('application.tear-down'));
+        } catch (\Throwable $t) {
+            $container->get(LoggerInterface::class)->error($t->getMessage(), ['exception' => $t]);
+        }
     }
 }
