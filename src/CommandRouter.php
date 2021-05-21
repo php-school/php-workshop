@@ -100,7 +100,6 @@ class CommandRouter
      */
     public function route(array $args = null): int
     {
-
         if (null === $args) {
             $args = $_SERVER['argv'] ?? [];
         }

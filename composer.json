@@ -30,7 +30,8 @@
         "php-school/keylighter": "^0.8.4",
         "nikic/php-parser": "^4.0",
         "guzzlehttp/guzzle": "^7.2",
-        "psr/log": "^1.1"
+        "psr/log": "^1.1",
+        "ext-json": "*"
     },
     "require-dev": {
         "composer/composer": "^2.0",

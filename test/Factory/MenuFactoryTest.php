@@ -2,6 +2,8 @@
 
 namespace PhpSchool\PhpWorkshopTest\Factory;
 
+use PhpSchool\CliMenu\MenuItem\SelectableItem;
+use PhpSchool\PhpWorkshop\Event\EventInterface;
 use Psr\Container\ContainerInterface;
 use PhpSchool\CliMenu\CliMenu;
 use PhpSchool\PhpWorkshop\Command\CreditsCommand;
@@ -68,6 +70,84 @@ class MenuFactoryTest extends TestCase
 
 
         $factory = new MenuFactory();
-        $this->assertInstanceOf(CliMenu::class, $factory($container));
+
+        $factory($container);
+    }
+
+    public function testSelectExercise(): void
+    {
+        $container = $this->createMock(ContainerInterface::class);
+        $userStateSerializer = $this->createMock(UserStateSerializer::class);
+        $userStateSerializer
+            ->expects($this->once())
+            ->method('deSerialize')
+            ->willReturn(new UserState());
+
+        $exerciseRepository = $this->createMock(ExerciseRepository::class);
+        $exercise = $this->createMock(ExerciseInterface::class);
+        $exercise
+            ->method('getName')
+            ->willReturn('Exercise');
+        $exerciseRepository
+            ->expects($this->once())
+            ->method('findAll')
+            ->willReturn([$exercise]);
+
+        $terminal = $this->createMock(Terminal::class);
+        $terminal
+            ->method('getWidth')
+            ->willReturn(70);
+
+        $eventDispatcher = $this->createMock(EventDispatcher::class);
+        $eventDispatcher
+            ->expects(self::exactly(2))
+            ->method('dispatch')
+            ->withConsecutive(
+                [
+                    self::callback(function ($event) {
+                        return $event instanceof EventInterface && $event->getName() === 'exercise.selected';
+                    })
+                ],
+                [
+                    self::callback(function ($event) {
+                        return $event instanceof EventInterface && $event->getName() === 'exercise.selected.exercise';
+                    })
+                ]
+            );
+
+        $exerciseRenderer = $this->createMock(ExerciseRenderer::class);
+        $exerciseRenderer->expects(self::once())
+            ->method('__invoke')
+            ->with(self::isInstanceOf(CliMenu::class));
+
+        $services = [
+            UserStateSerializer::class => $userStateSerializer,
+            ExerciseRepository::class => $exerciseRepository,
+            ExerciseRenderer::class => $exerciseRenderer,
+            HelpCommand::class => $this->createMock(HelpCommand::class),
+            CreditsCommand::class => $this->createMock(CreditsCommand::class),
+            ResetProgress::class => $this->createMock(ResetProgress::class),
+            'workshopLogo'  => 'LOGO',
+            'bgColour'      => 'black',
+            'fgColour'      => 'green',
+            'workshopTitle' => 'TITLE',
+            WorkshopType::class => WorkshopType::STANDARD(),
+            EventDispatcher::class => $eventDispatcher,
+            Terminal::class => $terminal
+        ];
+
+        $container
+            ->method('get')
+            ->willReturnCallback(function ($name) use ($services) {
+                return $services[$name];
+            });
+
+
+        $factory = new MenuFactory();
+
+        $menu = $factory($container);
+
+        $firstExercise = $menu->getItemByIndex(6);
+        $menu->executeAsSelected($firstExercise);
     }
 }

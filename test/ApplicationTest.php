@@ -15,6 +15,9 @@ use PhpSchool\PhpWorkshop\Output\OutputInterface;
 use PhpSchool\PhpWorkshopTest\Asset\MockEventDispatcher;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
+use PhpSchool\PhpWorkshop\Logger\ConsoleLogger;
+use PhpSchool\PhpWorkshop\Logger\Logger;
+use PHPUnit\Framework\TestCase;
 
 class ApplicationTest extends BaseTest
 {
@@ -53,7 +56,7 @@ LOCAL;
         $rp->setAccessible(true);
         $rp->setValue($app, $frameworkFile);
 
-        $container = $rm->invoke($app);
+        $container = $rm->invoke($app, false);
 
         $eventListeners = $container->get('eventListeners');
 
@@ -162,8 +165,16 @@ LOCAL;
         self::assertSame($application->configure(), $application->configure());
     }
 
-    public function tearDown(): void
+    public function testDebugFlagSwitchesLoggerToConsoleLogger(): void
     {
-        parent::tearDown();
+        $configFile = $this->getTemporaryFile('config.php', '<?php return [];');
+        $application = new Application('My workshop', $configFile);
+        $container = $application->configure(true);
+
+        $container->set('phpschoolGlobalDir', $this->getTemporaryDirectory());
+        $container->set('appName', 'my-workshop');
+
+        $logger = $container->get(LoggerInterface::class);
+        self::assertInstanceOf(ConsoleLogger::class, $logger);
     }
 }

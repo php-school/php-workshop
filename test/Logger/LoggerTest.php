@@ -15,6 +15,7 @@ class LoggerTest extends ContainerAwareTest
 
         $this->container->set('phpschoolGlobalDir', $this->getTemporaryDirectory());
         $this->container->set('appName', 'my-workshop');
+        $this->container->set('debugMode', false);
     }
 
     public function testLoggerDoesNotCreateFileIfNoMessageIsLogged(): void

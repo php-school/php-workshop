@@ -33,10 +33,6 @@ class ExerciseRendererTest extends TestCase
             ->method('getSelectedItem')
             ->willReturn($item);
 
-        $menu
-            ->expects($this->once())
-            ->method('close');
-
         $exercise1 = $this->createMock(ExerciseInterface::class);
         $exercise2 = $this->createMock(ExerciseInterface::class);
         $exercises = [$exercise1, $exercise2];

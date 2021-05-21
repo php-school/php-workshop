@@ -82,8 +82,6 @@ class ExerciseRenderer
      */
     public function __invoke(CliMenu $menu): void
     {
-        $menu->close();
-
         $item = $menu->getSelectedItem();
         $exercise = $this->exerciseRepository->findByName($item->getText());
         $exercises = $this->exerciseRepository->findAll();

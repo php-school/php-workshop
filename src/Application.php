@@ -169,13 +169,13 @@ final class Application
         $this->bgColour = $colour;
     }
 
-    public function configure(): ContainerInterface
+    public function configure(bool $debugMode = false): ContainerInterface
     {
         if ($this->container instanceof ContainerInterface) {
             return $this->container;
         }
 
-        $container = $this->getContainer();
+        $container = $this->getContainer($debugMode);
 
         foreach ($this->exercises as $exercise) {
             if (false === $container->has($exercise)) {
@@ -221,10 +221,20 @@ final class Application
      */
     public function run(): int
     {
-        $container = $this->configure();
+        $args = $_SERVER['argv'] ?? [];
+
+        $debug = any($args, function (string $arg) {
+            return $arg === '--debug';
+        });
+
+        $args = array_values(array_filter($args, function (string $arg) {
+            return $arg !== '--debug';
+        }));
+
+        $container = $this->configure($debug);
 
         try {
-            $exitCode = $container->get(CommandRouter::class)->route();
+            $exitCode = $container->get(CommandRouter::class)->route($args);
         } catch (MissingArgumentException $e) {
             $container
                 ->get(OutputInterface::class)
@@ -261,9 +271,10 @@ final class Application
     }
 
     /**
+     * @param bool $debugMode
      * @return Container
      */
-    private function getContainer(): Container
+    private function getContainer(bool $debugMode): Container
     {
         $containerBuilder = new ContainerBuilder();
         $containerBuilder->addDefinitions(
@@ -276,6 +287,7 @@ final class Application
         $containerBuilder->addDefinitions(
             [
                 'workshopTitle' => $this->workshopTitle,
+                'debugMode'     => $debugMode,
                 'exercises'     => $this->exercises,
                 'workshopLogo'  => $this->logo,
                 'bgColour'      => $this->bgColour,

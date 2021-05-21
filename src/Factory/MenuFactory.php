@@ -59,6 +59,7 @@ class MenuFactory
             $builder->addItem(
                 $exercise->getName(),
                 function (CliMenu $menu) use ($exerciseRenderer, $eventDispatcher, $exercise) {
+                    $menu->close();
                     $this->dispatchExerciseSelectedEvent($eventDispatcher, $exercise);
                     $exerciseRenderer->__invoke($menu);
                 },
