@@ -29,7 +29,7 @@ class ApplicationTest extends BaseTest
                 ]
             ]
         ];
-        FRAME;
+FRAME;
 
         $localFileContent = <<<'LOCAL'
         <?php return [
@@ -39,7 +39,7 @@ class ApplicationTest extends BaseTest
                 ]
             ]
         ];
-        LOCAL;
+LOCAL;
 
         $localFile = $this->getTemporaryFile(uniqid($this->getName(), true), $localFileContent);
         $frameworkFile = $this->getTemporaryFile(uniqid($this->getName(), true), $frameworkFileContent);
