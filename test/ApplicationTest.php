@@ -167,19 +167,9 @@ LOCAL;
 
     public function testDebugFlagSwitchesLoggerToConsoleLogger(): void
     {
-        $app = new Application('My workshop', __DIR__ . '/../app/config.php');
-
-        $frameworkFile = sprintf('%s/%s', sys_get_temp_dir(), uniqid($this->getName(), true));
-        file_put_contents($frameworkFile, '<?php return []; ');
-
-        $rp = new \ReflectionProperty(Application::class, 'frameworkConfigLocation');
-        $rp->setAccessible(true);
-        $rp->setValue($app, $frameworkFile);
-
-        $rm = new \ReflectionMethod($app, 'getContainer');
-        $rm->setAccessible(true);
-
-        $container = $rm->invoke($app, true);
+        $configFile = $this->getTemporaryFile('config.php', '<?php return [];');
+        $application = new Application('My workshop', $configFile);
+        $container = $application->configure(true);
 
         $container->set('phpschoolGlobalDir', $this->getTemporaryDirectory());
         $container->set('appName', 'my-workshop');
