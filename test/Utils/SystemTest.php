@@ -25,12 +25,12 @@ class SystemTest extends TestCase
 
     public function testTempDir(): void
     {
-        self::assertSame(realpath(sys_get_temp_dir()), System::tempDir());
+        self::assertSame(realpath(sys_get_temp_dir()) . '/php-school', System::tempDir());
     }
 
     public function testTempDirWithPath(): void
     {
-        $expect = sprintf('%s/%s', realpath(sys_get_temp_dir()), 'test');
+        $expect = sprintf('%s/php-school/%s', realpath(sys_get_temp_dir()), 'test');
         self::assertSame($expect, System::tempDir('test'));
     }
 }

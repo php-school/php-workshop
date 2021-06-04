@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use Colors\Color;
 use PhpSchool\PhpWorkshop\Listener\InitialCodeListener;
+use PhpSchool\PhpWorkshop\Listener\TearDownListener;
 use PhpSchool\PhpWorkshop\Logger\ConsoleLogger;
 use PhpSchool\PhpWorkshop\Logger\Logger;
 use Psr\Log\LoggerInterface;
@@ -242,6 +243,9 @@ return [
         );
     },
     RealPathListener::class => create(),
+    TearDownListener::class => function (ContainerInterface $c) {
+        return new TearDownListener($c->get(Filesystem::class));
+    },
 
     //checks
     FileExistsCheck::class              => create(),
@@ -413,6 +417,11 @@ return [
         'create-initial-code' => [
             'exercise.selected' => [
                 containerListener(InitialCodeListener::class)
+            ]
+        ],
+        'cleanup-filesystem' => [
+            'application.tear-down' => [
+                containerListener(TearDownListener::class, 'cleanupTempDir')
             ]
         ]
     ],

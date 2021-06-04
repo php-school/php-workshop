@@ -21,6 +21,6 @@ class System
 
     public static function tempDir(string $path = ''): string
     {
-        return Path::join(self::realpath(sys_get_temp_dir()), $path);
+        return Path::join(self::realpath(sys_get_temp_dir()), 'php-school', $path);
     }
 }

@@ -27,7 +27,7 @@ class InTempSolutionMapperTest extends BaseTest
 
         self::assertFileExists($mappedFile);
         self::assertNotSame($filePath, $mappedFile);
-        self::assertStringContainsString(System::tempDir('php-school'), $mappedFile);
+        self::assertStringContainsString(System::tempDir(), $mappedFile);
     }
 
     public function testDirectoryMapping(): void
@@ -42,7 +42,7 @@ class InTempSolutionMapperTest extends BaseTest
         self::assertFileExists(Path::join($mappedDir, 'test.file'));
         self::assertFileExists(Path::join($mappedDir, 'innerDir', 'test.file'));
         self::assertNotSame($this->getTemporaryDirectory(), $mappedDir);
-        self::assertStringContainsString(System::tempDir('php-school'), $mappedDir);
+        self::assertStringContainsString(System::tempDir(), $mappedDir);
     }
 
     public function testMappingIsDeterministicTempDir(): void
@@ -58,7 +58,7 @@ class InTempSolutionMapperTest extends BaseTest
 
         self::assertSame(
             InTempSolutionMapper::mapFile($filePath),
-            Path::join(System::tempDir(), 'php-school', $fileHash, 'test.file')
+            Path::join(System::tempDir(), $fileHash, 'test.file')
         );
 
         self::assertNotSame(

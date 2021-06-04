@@ -58,7 +58,7 @@ class DatabaseCheckTest extends TestCase
         $this->exercise = $this->createMock(DatabaseExerciseInterface::class);
         $this->exercise->method('getType')->willReturn(ExerciseType::CLI());
         $this->dbDir = sprintf(
-            '%s/PhpSchool_PhpWorkshop_Check_DatabaseCheck',
+            '%s/php-school/PhpSchool_PhpWorkshop_Check_DatabaseCheck',
             str_replace('\\', '/', realpath(sys_get_temp_dir()))
         );
 

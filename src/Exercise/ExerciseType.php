@@ -15,6 +15,9 @@ use MyCLabs\Enum\Enum;
  * $typeCustom = ExerciseType::CUSTOM();
  * ```
  * @extends Enum<string>
+ * @method static self CLI()
+ * @method static self CGI()
+ * @method static self CUSTOM()
  */
 class ExerciseType extends Enum
 {
