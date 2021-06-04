@@ -89,7 +89,7 @@ class DatabaseCheckTest extends TestCase
     public function testIfDatabaseFolderExistsExceptionIsThrown(): void
     {
         $eventDispatcher = new EventDispatcher(new ResultAggregator());
-        @mkdir($this->dbDir);
+        mkdir($this->dbDir, 0777, true);
         try {
             $this->check->attach($eventDispatcher);
             $this->fail('Exception was not thrown');
