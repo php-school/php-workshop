@@ -138,10 +138,17 @@ class DatabaseCheck implements ListenableCheckInterface
             ],
             function () use ($db) {
                 unset($db);
-                @unlink($this->userDatabasePath);
-                @unlink($this->solutionDatabasePath);
+                $this->unlink($this->userDatabasePath);
+                $this->unlink($this->solutionDatabasePath);
                 rmdir($this->databaseDirectory);
             }
         );
+    }
+
+    private function unlink(string $file): void
+    {
+        if (file_exists($file)) {
+            unlink($file);
+        }
     }
 }
