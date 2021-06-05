@@ -4,12 +4,14 @@ namespace PhpSchool\PhpWorkshopTest\Logger;
 
 use PhpSchool\CliMenu\Util\StringUtil;
 use PhpSchool\PhpWorkshop\Logger\ConsoleLogger;
-use PhpSchool\PhpWorkshop\Utils\StringUtils;
 use PhpSchool\PhpWorkshopTest\ContainerAwareTest;
 use Psr\Log\LoggerInterface;
+use Yoast\PHPUnitPolyfills\Polyfills\AssertionRenames;
 
 class ConsoleLoggerTest extends ContainerAwareTest
 {
+    use AssertionRenames;
+
     public function setUp(): void
     {
         parent::setUp();

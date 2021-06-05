@@ -13,9 +13,12 @@ use PHPUnit\Framework\TestCase;
 use ReflectionProperty;
 use RuntimeException;
 use Symfony\Component\Filesystem\Filesystem;
+use Yoast\PHPUnitPolyfills\Polyfills\AssertionRenames;
 
 class PrepareSolutionListenerTest extends TestCase
 {
+    use AssertionRenames;
+
     /**
      * @var string
      */

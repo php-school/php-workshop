@@ -22,9 +22,12 @@ use PhpSchool\PhpWorkshop\ResultAggregator;
 use PhpSchool\PhpWorkshop\Solution\SingleFileSolution;
 use PhpSchool\PhpWorkshopTest\Asset\CliExerciseInterface;
 use PHPUnit\Framework\TestCase;
+use Yoast\PHPUnitPolyfills\Polyfills\AssertionRenames;
 
 class CliRunnerTest extends TestCase
 {
+    use AssertionRenames;
+
     /** @var  CliRunner */
     private $runner;
 
