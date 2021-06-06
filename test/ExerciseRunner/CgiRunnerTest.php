@@ -23,9 +23,12 @@ use PhpSchool\PhpWorkshop\Solution\SingleFileSolution;
 use PhpSchool\PhpWorkshop\Utils\RequestRenderer;
 use PhpSchool\PhpWorkshopTest\Asset\CgiExerciseInterface;
 use PHPUnit\Framework\TestCase;
+use Yoast\PHPUnitPolyfills\Polyfills\AssertionRenames;
 
 class CgiRunnerTest extends TestCase
 {
+    use AssertionRenames;
+
     /** @var  CgiRunner */
     private $runner;
 

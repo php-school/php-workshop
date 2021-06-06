@@ -11,9 +11,12 @@ use PhpSchool\PhpWorkshop\Input\Input;
 use PhpSchool\PhpWorkshop\Result\Failure;
 use PhpSchool\PhpWorkshop\Result\Success;
 use PHPUnit\Framework\TestCase;
+use Yoast\PHPUnitPolyfills\Polyfills\AssertionRenames;
 
 class CodeParseCheckTest extends TestCase
 {
+    use AssertionRenames;
+
     /**
      * @var SimpleCheckInterface
      */

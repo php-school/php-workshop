@@ -8,9 +8,12 @@ use PhpSchool\PhpWorkshop\UserState;
 use PhpSchool\PhpWorkshop\UserStateSerializer;
 use PhpSchool\PhpWorkshopTest\Asset\CliExerciseInterface;
 use PHPUnit\Framework\TestCase;
+use Yoast\PHPUnitPolyfills\Polyfills\AssertionRenames;
 
 class UserStateSerializerTest extends TestCase
 {
+    use AssertionRenames;
+
     /**
      * @var string
      */

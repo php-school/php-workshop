@@ -10,9 +10,12 @@ use PhpSchool\PhpWorkshop\Check\PhpLintCheck;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpSchool\PhpWorkshop\Result\Failure;
 use PhpSchool\PhpWorkshop\Result\Success;
+use Yoast\PHPUnitPolyfills\Polyfills\AssertionRenames;
 
 class PhpLintCheckTest extends TestCase
 {
+    use AssertionRenames;
+
     /**
      * @var PhpLintCheck
      */

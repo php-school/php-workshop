@@ -6,9 +6,12 @@ namespace PhpSchool\PhpWorkshopTest\Logger;
 
 use PhpSchool\PhpWorkshopTest\ContainerAwareTest;
 use Psr\Log\LoggerInterface;
+use Yoast\PHPUnitPolyfills\Polyfills\AssertionRenames;
 
 class LoggerTest extends ContainerAwareTest
 {
+    use AssertionRenames;
+
     public function setUp(): void
     {
         parent::setUp();
