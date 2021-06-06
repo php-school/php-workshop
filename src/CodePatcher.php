@@ -100,17 +100,14 @@ class CodePatcher
         foreach ($patch->getModifiers() as $modifier) {
             if ($modifier instanceof CodeInsertion) {
                 $statements = $this->applyCodeInsertion($modifier, $statements);
-                continue;
             }
 
             if ($modifier instanceof \Closure) {
                 $statements = $modifier($statements);
-                continue;
             }
 
             if ($modifier instanceof Transformer) {
                 $statements = $modifier->transform($statements);
-                continue;
             }
         }
 
