@@ -267,6 +267,9 @@ final class Application
                 );
             return 1;
         }
+
+        $this->tearDown($container);
+
         return $exitCode;
     }
 

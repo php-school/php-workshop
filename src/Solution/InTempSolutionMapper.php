@@ -52,6 +52,6 @@ class InTempSolutionMapper
 
     private static function getDeterministicTempDir(string $path): string
     {
-        return Path::join(System::tempDir(), 'php-school', md5($path));
+        return Path::join(System::tempDir(), md5($path));
     }
 }

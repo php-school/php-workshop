@@ -31,7 +31,9 @@ abstract class BaseTest extends TestCase
             return $file;
         }
 
-        @mkdir(dirname($file), 0777, true);
+        if (!file_exists(dirname($file))) {
+            mkdir(dirname($file), 0777, true);
+        }
 
         $content !== null
             ? file_put_contents($file, $content)
