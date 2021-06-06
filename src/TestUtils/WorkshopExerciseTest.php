@@ -60,7 +60,7 @@ abstract class WorkshopExerciseTest extends TestCase
             ->findByClassName($this->getExerciseClass());
     }
 
-    public function runExercise(string $submissionFile)
+    public function runExercise(string $submissionFile): void
     {
         $exercise = $this->getExercise();
 
