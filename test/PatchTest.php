@@ -19,7 +19,7 @@ class PatchTest extends TestCase
         $this->assertEquals([$insertion], $new->getModifiers());
     }
 
-    public function testWithTransformer(): void
+    public function testWithTransformerWithClosure(): void
     {
         $patch = new Patch();
         $transformer = function (array $statements) {
@@ -29,5 +29,43 @@ class PatchTest extends TestCase
         $this->assertNotSame($patch, $new);
         $this->assertEmpty($patch->getModifiers());
         $this->assertEquals([$transformer], $new->getModifiers());
+    }
+
+    public function testWithTransformerWithTransformer(): void
+    {
+        $patch = new Patch();
+        $transformer = new class implements Patch\Transformer {
+            public function transform(array $ast): array
+            {
+                return $ast;
+            }
+        };
+
+        $new = $patch->withTransformer($transformer);
+        $this->assertNotSame($patch, $new);
+        $this->assertEmpty($patch->getModifiers());
+        $this->assertEquals([$transformer], $new->getModifiers());
+    }
+
+    public function testWithTransformerMultiple(): void
+    {
+        $transformer1 = new class implements Patch\Transformer {
+            public function transform(array $ast): array
+            {
+                return $ast;
+            }
+        };
+        $transformer2 = function (array $statements) {
+            return $statements;
+        };
+
+        $patch = new Patch();
+        $new = $patch
+            ->withTransformer($transformer1)
+            ->withTransformer($transformer2);
+
+        $this->assertNotSame($patch, $new);
+        $this->assertEmpty($patch->getModifiers());
+        $this->assertEquals([$transformer1, $transformer2], $new->getModifiers());
     }
 }
