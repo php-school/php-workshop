@@ -44,7 +44,7 @@ class InTempSolutionMapper
             return $tempFile;
         }
 
-        $fileSystem->mkdir(System::tempDir());
+        $fileSystem->mkdir(dirname($tempFile));
         $fileSystem->copy($file, $tempFile);
 
         return $tempFile;
