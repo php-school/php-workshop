@@ -121,6 +121,9 @@ class CodePatcher
         return $this->printer->prettyPrintFile($statements);
     }
 
+    /**
+     * @param array<Stmt> $statements
+     */
     public function isFirstStatementStrictTypesDeclare(array $statements): bool
     {
         return isset($statements[0])
