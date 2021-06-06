@@ -95,7 +95,7 @@ class CodePatcherTest extends TestCase
                 (new Patch())->withInsertion(new Insertion(Insertion::TYPE_BEFORE, '    <?php $before = "here";')),
                 "<?php\n\n\$before = \"here\";\n\$original = true;"
             ],
-            'transformer' => [
+            'transformer-closure' => [
                 '<?php $original = true;',
                 (new Patch())
                     ->withTransformer(function (array $statements) {
@@ -121,6 +121,22 @@ class CodePatcherTest extends TestCase
                         ];
                     }),
                 "<?php\n\ntry {\n    \$before = \"here\";\n    \$original = true;\n} catch (Exception \$e) {\n}"
+            ],
+            'transformer-class' => [
+                '<?php $original = true;',
+                (new Patch())
+                    ->withTransformer(new class implements Patch\Transformer {
+                        public function transform(array $statements): array
+                        {
+                            return [
+                                new TryCatch(
+                                    $statements,
+                                    [new Catch_([new Name(\Exception::class)], new Variable('e'), [])]
+                                )
+                            ];
+                        }
+                    }),
+                "<?php\n\ntry {\n    \$original = true;\n} catch (Exception \$e) {\n}"
             ],
         ];
     }

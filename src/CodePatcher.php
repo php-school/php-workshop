@@ -11,6 +11,7 @@ use PhpParser\Parser;
 use PhpParser\PrettyPrinter\Standard;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpSchool\PhpWorkshop\Exercise\SubmissionPatchable;
+use PhpSchool\PhpWorkshop\Patch\Transformer;
 
 /**
  * Service to apply patches to a student's solution. Accepts a default patch via the constructor.
@@ -102,8 +103,13 @@ class CodePatcher
                 continue;
             }
 
-            if (is_callable($modifier)) {
+            if ($modifier instanceof \Closure) {
                 $statements = $modifier($statements);
+                continue;
+            }
+
+            if ($modifier instanceof Transformer) {
+                $statements = $modifier->transform($statements);
                 continue;
             }
         }
