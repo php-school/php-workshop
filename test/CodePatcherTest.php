@@ -216,4 +216,33 @@ class CodePatcherTest extends TestCase
             $patcher->patch($exercise, $code)
         );
     }
+
+    public function testAddingStrictTypesDeclareDoesNotBreakBeforeInsertion(): void
+    {
+        $code = '<?php $original = true;';
+        $patch = (new Patch())
+            ->withTransformer(function (array $statements) {
+                return array_merge([new \PhpParser\Node\Stmt\Declare_([
+                    new DeclareDeclare(
+                        new \PhpParser\Node\Identifier('strict_types'),
+                        new LNumber(1)
+                    )
+                ])], $statements);
+            })
+            ->withInsertion(new Insertion(Insertion::TYPE_BEFORE, '$before = "here";'));
+
+        $patcher = new CodePatcher((new ParserFactory())->create(ParserFactory::PREFER_PHP7), new Standard());
+
+        $exercise = $this->createMock(PatchableExercise::class);
+
+        $exercise
+            ->expects($this->once())
+            ->method('getPatch')
+            ->willReturn($patch);
+
+        $this->assertEquals(
+            "<?php\n\ndeclare (strict_types=1);\n\$before = \"here\";\n\$original = true;",
+            $patcher->patch($exercise, $code)
+        );
+    }
 }
