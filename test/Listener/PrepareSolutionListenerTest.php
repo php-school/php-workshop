@@ -44,6 +44,9 @@ class PrepareSolutionListenerTest extends TestCase
         touch($this->file);
     }
 
+    /**
+     * @runInSeparateProcess
+     */
     public function testIfSolutionRequiresComposerButComposerCannotBeLocatedExceptionIsThrown(): void
     {
         $refProp = new ReflectionProperty(PrepareSolutionListener::class, 'composerLocations');

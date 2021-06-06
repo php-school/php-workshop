@@ -19,7 +19,7 @@ class PrepareSolutionListener
      *
      * @var array<string>
      */
-    private $composerLocations = [
+    private static $composerLocations = [
         'composer',
         'composer.phar',
         '/usr/local/bin/composer',
@@ -45,7 +45,7 @@ class PrepareSolutionListener
 
             if (!file_exists(sprintf('%s/vendor', $solution->getBaseDirectory()))) {
                 $process = new Process(
-                    [$this->locateComposer(), 'install', '--no-interaction'],
+                    [self::locateComposer(), 'install', '--no-interaction'],
                     $solution->getBaseDirectory()
                 );
                 $process->run();
@@ -56,9 +56,9 @@ class PrepareSolutionListener
     /**
      * @return string
      */
-    private function locateComposer(): string
+    public static function locateComposer(): string
     {
-        foreach ($this->composerLocations as $location) {
+        foreach (self::$composerLocations as $location) {
             if (file_exists($location) && is_executable($location)) {
                 return $location;
             }

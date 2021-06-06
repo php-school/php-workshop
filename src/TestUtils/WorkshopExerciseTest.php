@@ -9,8 +9,11 @@ use PhpSchool\PhpWorkshop\Exception\InvalidArgumentException;
 use PhpSchool\PhpWorkshop\Exercise\AbstractExercise;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseType;
+use PhpSchool\PhpWorkshop\Exercise\ProvidesSolution;
+use PhpSchool\PhpWorkshop\ExerciseCheck\ComposerExerciseCheck;
 use PhpSchool\PhpWorkshop\ExerciseDispatcher;
 use PhpSchool\PhpWorkshop\ExerciseRepository;
+use PhpSchool\PhpWorkshop\Listener\PrepareSolutionListener;
 use PhpSchool\PhpWorkshop\Result\Cgi\CgiResult;
 use PhpSchool\PhpWorkshop\Result\Cli\CliResult;
 use PhpSchool\PhpWorkshop\Result\Failure;
@@ -23,6 +26,7 @@ use PHPUnit\Framework\ExpectationFailedException;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 use PhpSchool\PhpWorkshop\Input\Input;
+use Symfony\Component\Process\Process;
 
 abstract class WorkshopExerciseTest extends TestCase
 {
@@ -81,12 +85,32 @@ abstract class WorkshopExerciseTest extends TestCase
             );
         }
 
+        if ($exercise instanceof ComposerExerciseCheck) {
+            $this->installDeps($exercise, dirname($submissionFileAbsolute));
+        }
+
+
         $input = new Input($this->container->get('appName'), [
             'program' => $submissionFileAbsolute
         ]);
 
         $this->results = $this->container->get(ExerciseDispatcher::class)
             ->verify($exercise, $input);
+    }
+
+    /**
+     * @param ExerciseInterface&ProvidesSolution $exercise
+     * @param string $directory
+     */
+    private function installDeps(ExerciseInterface $exercise, string $directory): void
+    {
+        if (file_exists("$directory/composer.json") && !file_exists("$directory/vendor")) {
+            $process = new Process(
+                [PrepareSolutionListener::locateComposer(), 'install', '--no-interaction'],
+                $directory
+            );
+            $process->run();
+        }
     }
 
     public function assertVerifyWasSuccessful(): void
