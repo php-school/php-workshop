@@ -6,6 +6,7 @@ namespace PhpSchool\PhpWorkshop;
 
 use PhpParser\Error;
 use PhpParser\Node\Stmt;
+use PhpParser\Node\Stmt\Declare_;
 use PhpParser\Parser;
 use PhpParser\PrettyPrinter\Standard;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
@@ -91,7 +92,7 @@ class CodePatcher
         }
 
         $declare = null;
-        if (isset($statements[0]) && $statements[0] instanceof \PhpParser\Node\Stmt\Declare_) {
+        if ($this->isFirstStatementStrictTypesDeclare($statements)) {
             $declare = array_shift($statements);
         }
 
@@ -107,11 +108,16 @@ class CodePatcher
             }
         }
 
-        if ($declare !== null) {
+        if ($declare !== null && !$this->isFirstStatementStrictTypesDeclare($statements)) {
             array_unshift($statements, $declare);
         }
 
         return $this->printer->prettyPrintFile($statements);
+    }
+
+    public function isFirstStatementStrictTypesDeclare(array $statements): bool
+    {
+        return isset($statements[0]) && $statements[0] instanceof Declare_;
     }
 
     /**
