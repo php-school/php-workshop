@@ -89,7 +89,6 @@ abstract class WorkshopExerciseTest extends TestCase
             $this->installDeps($exercise, dirname($submissionFileAbsolute));
         }
 
-
         $input = new Input($this->container->get('appName'), [
             'program' => $submissionFileAbsolute
         ]);
