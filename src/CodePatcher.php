@@ -92,12 +92,12 @@ class CodePatcher
             $statements = [];
         }
 
-        $declare = null;
-        if ($this->isFirstStatementStrictTypesDeclare($statements)) {
-            $declare = array_shift($statements);
-        }
-
         foreach ($patch->getModifiers() as $modifier) {
+            $declare = null;
+            if ($this->isFirstStatementStrictTypesDeclare($statements)) {
+                $declare = array_shift($statements);
+            }
+
             if ($modifier instanceof CodeInsertion) {
                 $statements = $this->applyCodeInsertion($modifier, $statements);
             }
@@ -109,10 +109,10 @@ class CodePatcher
             if ($modifier instanceof Transformer) {
                 $statements = $modifier->transform($statements);
             }
-        }
 
-        if ($declare !== null && !$this->isFirstStatementStrictTypesDeclare($statements)) {
-            array_unshift($statements, $declare);
+            if ($declare !== null && !$this->isFirstStatementStrictTypesDeclare($statements)) {
+                array_unshift($statements, $declare);
+            }
         }
 
         return $this->printer->prettyPrintFile($statements);
