@@ -123,7 +123,10 @@ class CodePatcher
 
     public function isFirstStatementStrictTypesDeclare(array $statements): bool
     {
-        return isset($statements[0]) && $statements[0] instanceof Declare_;
+        return isset($statements[0])
+            && $statements[0] instanceof Declare_
+            && isset($statements[0]->declares[0])
+            && $statements[0]->declares[0]->key->name === 'strict_types';
     }
 
     /**
