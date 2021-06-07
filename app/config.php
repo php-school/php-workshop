@@ -270,7 +270,7 @@ return [
     },
     CodePatcher::class  => function (ContainerInterface $c) {
         $patch = (new Patch)
-            ->withInsertion(new Insertion(Insertion::TYPE_BEFORE, 'ini_set("display_errors", 1);'))
+            ->withInsertion(new Insertion(Insertion::TYPE_BEFORE, 'ini_set("display_errors", "1");'))
             ->withInsertion(new Insertion(Insertion::TYPE_BEFORE, 'error_reporting(E_ALL);'))
             ->withInsertion(new Insertion(Insertion ::TYPE_BEFORE, 'date_default_timezone_set("Europe/London");'));
 
