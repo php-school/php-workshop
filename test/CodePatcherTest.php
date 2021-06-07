@@ -4,10 +4,13 @@ namespace PhpSchool\PhpWorkshopTest;
 
 use PhpParser\Node\Expr\Variable;
 use PhpParser\Node\Name;
+use PhpParser\Node\Scalar\LNumber;
 use PhpParser\Node\Stmt\Catch_;
+use PhpParser\Node\Stmt\DeclareDeclare;
 use PhpParser\Node\Stmt\TryCatch;
 use PhpParser\ParserFactory;
 use PhpParser\PrettyPrinter\Standard;
+use PhpParser\PrettyPrinterAbstract;
 use PhpSchool\PhpWorkshop\CodePatcher;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpSchool\PhpWorkshop\Patch;
@@ -92,7 +95,7 @@ class CodePatcherTest extends TestCase
                 (new Patch())->withInsertion(new Insertion(Insertion::TYPE_BEFORE, '    <?php $before = "here";')),
                 "<?php\n\n\$before = \"here\";\n\$original = true;"
             ],
-            'transformer' => [
+            'transformer-closure' => [
                 '<?php $original = true;',
                 (new Patch())
                     ->withTransformer(function (array $statements) {
@@ -118,6 +121,22 @@ class CodePatcherTest extends TestCase
                         ];
                     }),
                 "<?php\n\ntry {\n    \$before = \"here\";\n    \$original = true;\n} catch (Exception \$e) {\n}"
+            ],
+            'transformer-class' => [
+                '<?php $original = true;',
+                (new Patch())
+                    ->withTransformer(new class implements Patch\Transformer {
+                        public function transform(array $statements): array
+                        {
+                            return [
+                                new TryCatch(
+                                    $statements,
+                                    [new Catch_([new Name(\Exception::class)], new Variable('e'), [])]
+                                )
+                            ];
+                        }
+                    }),
+                "<?php\n\ntry {\n    \$original = true;\n} catch (Exception \$e) {\n}"
             ],
         ];
     }
@@ -166,6 +185,63 @@ class CodePatcherTest extends TestCase
 
         $this->assertEquals(
             "<?php\n\ndeclare (strict_types=1);\ntry {\n    \$original = true;\n} catch (Exception \$e) {\n}",
+            $patcher->patch($exercise, $code)
+        );
+    }
+
+    public function testTransformerWhichAddsStrictTypesDoesNotResultInDoubleStrictTypesStatement(): void
+    {
+        $code = '<?php declare(strict_types=1); $original = true;';
+        $patch = (new Patch())
+            ->withTransformer(function (array $statements) {
+                return [new \PhpParser\Node\Stmt\Declare_([
+                    new DeclareDeclare(
+                        new \PhpParser\Node\Identifier('strict_types'),
+                        new LNumber(1)
+                    )
+                ])];
+            });
+
+        $patcher = new CodePatcher((new ParserFactory())->create(ParserFactory::PREFER_PHP7), new Standard());
+
+        $exercise = $this->createMock(PatchableExercise::class);
+
+        $exercise
+            ->expects($this->once())
+            ->method('getPatch')
+            ->willReturn($patch);
+
+        $this->assertEquals(
+            "<?php\n\ndeclare (strict_types=1);",
+            $patcher->patch($exercise, $code)
+        );
+    }
+
+    public function testAddingStrictTypesDeclareDoesNotBreakBeforeInsertion(): void
+    {
+        $code = '<?php $original = true;';
+        $patch = (new Patch())
+            ->withTransformer(function (array $statements) {
+                return array_merge([new \PhpParser\Node\Stmt\Declare_([
+                    new DeclareDeclare(
+                        new \PhpParser\Node\Identifier('strict_types'),
+                        new LNumber(1)
+                    )
+                ])], $statements);
+            })
+            ->withInsertion(new Insertion(Insertion::TYPE_BEFORE, '$before = "here";'));
+
+        $patcher = new CodePatcher((new ParserFactory())->create(ParserFactory::PREFER_PHP7), new Standard());
+
+        $exercise = $this->createMock(PatchableExercise::class);
+
+        $exercise
+            ->expects($this->once())
+            ->method('getPatch')
+            ->willReturn($patch);
+
+        $this->assertEquals(
+            "<?php\n\ndeclare (strict_types=1);\n\$before = \"here\";\n\$original = true;",
             $patcher->patch($exercise, $code)
         );
     }

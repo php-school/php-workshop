@@ -6,10 +6,12 @@ namespace PhpSchool\PhpWorkshop;
 
 use PhpParser\Error;
 use PhpParser\Node\Stmt;
+use PhpParser\Node\Stmt\Declare_;
 use PhpParser\Parser;
 use PhpParser\PrettyPrinter\Standard;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpSchool\PhpWorkshop\Exercise\SubmissionPatchable;
+use PhpSchool\PhpWorkshop\Patch\Transformer;
 
 /**
  * Service to apply patches to a student's solution. Accepts a default patch via the constructor.
@@ -90,28 +92,41 @@ class CodePatcher
             $statements = [];
         }
 
-        $declare = null;
-        if (isset($statements[0]) && $statements[0] instanceof \PhpParser\Node\Stmt\Declare_) {
-            $declare = array_shift($statements);
-        }
-
         foreach ($patch->getModifiers() as $modifier) {
+            $declare = null;
+            if ($this->isFirstStatementStrictTypesDeclare($statements)) {
+                $declare = array_shift($statements);
+            }
+
             if ($modifier instanceof CodeInsertion) {
                 $statements = $this->applyCodeInsertion($modifier, $statements);
-                continue;
             }
 
-            if (is_callable($modifier)) {
+            if ($modifier instanceof \Closure) {
                 $statements = $modifier($statements);
-                continue;
             }
-        }
 
-        if ($declare !== null) {
-            array_unshift($statements, $declare);
+            if ($modifier instanceof Transformer) {
+                $statements = $modifier->transform($statements);
+            }
+
+            if ($declare !== null && !$this->isFirstStatementStrictTypesDeclare($statements)) {
+                array_unshift($statements, $declare);
+            }
         }
 
         return $this->printer->prettyPrintFile($statements);
+    }
+
+    /**
+     * @param array<Stmt> $statements
+     */
+    public function isFirstStatementStrictTypesDeclare(array $statements): bool
+    {
+        return isset($statements[0])
+            && $statements[0] instanceof Declare_
+            && isset($statements[0]->declares[0])
+            && $statements[0]->declares[0]->key->name === 'strict_types';
     }
 
     /**

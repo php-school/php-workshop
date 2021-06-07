@@ -5,19 +5,23 @@ declare(strict_types=1);
 namespace PhpSchool\PhpWorkshop;
 
 use Closure;
+use PhpSchool\PhpWorkshop\Patch\Transformer;
 
 /**
  * This class is responsible for storing the modifications that should
  * be made to a PHP file. That includes insertions and transformers.
  * A transformer is a simple closure which should receives an AST
  * representation of the student's solution and it should return the modified AST.
+ *
+ * Transformers can also be class implementing `Transformer`.
+ *
  * An insertion is a block of code that can be inserted at the top or bottom of
  * the students solution.
  */
 final class Patch
 {
     /**
-     * @var array<CodeInsertion|Closure>
+     * @var array<CodeInsertion|Closure|Transformer>
      */
     private $modifications = [];
 
@@ -35,12 +39,12 @@ final class Patch
     }
 
     /**
-     * Add a new transformer (`Closure`). `Patch` is immutable so a new instance is returned.
+     * Add a new transformer (`Closure` OR `Transformer`). `Patch` is immutable so a new instance is returned.
      *
-     * @param Closure $closure
+     * @param Closure|Transformer $closure
      * @return self
      */
-    public function withTransformer(Closure $closure): self
+    public function withTransformer($closure): self
     {
         $new = clone $this;
         $new->modifications[] = $closure;
@@ -48,9 +52,10 @@ final class Patch
     }
 
     /**
-     * Retrieve all the modifications including insertions (`CodeInsertion`'s) & transformers (`Closure`'s)
+     * Retrieve all the modifications including insertions (`CodeInsertion`'s)
+     * & transformers (`Closure`'s OR `Transformer`'s)
      *
-     * @return array<CodeInsertion|Closure>
+     * @return array<CodeInsertion|Closure|Transformer>
      */
     public function getModifiers(): array
     {
