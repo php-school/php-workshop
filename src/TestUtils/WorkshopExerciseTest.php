@@ -159,16 +159,13 @@ abstract class WorkshopExerciseTest extends TestCase
                     get_class($failure),
                     $failure instanceof Failure ? ": {$failure->getReason()}" : ''
                 );
-            })
-            ->implode("\n");
+            });
 
-        if ($allFailures) {
-            $allFailures = "\n\nAll Failures:\n$allFailures\n\n";
-        } else {
-            $allFailures = "";
-        }
+        $help = $allFailures->isEmpty()
+            ? ""
+            : sprintf("\n\nAll Failures:\n\n\n", $allFailures->implode("\n"));
 
-        $this->assertCount(1, $failures, "No failure with reason: '$reason'.$allFailures");
+        $this->assertCount(1, $failures, "No failure with reason: '$reason' . $help");
     }
 
     public function assertOutputWasIncorrect(): void
