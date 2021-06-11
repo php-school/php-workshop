@@ -269,12 +269,12 @@ return [
         return $parserFactory->create(ParserFactory::PREFER_PHP7);
     },
     CodePatcher::class  => function (ContainerInterface $c) {
-        $patch = (new Patch)
+        $patch = (new Patch())
             ->withInsertion(new Insertion(Insertion::TYPE_BEFORE, 'ini_set("display_errors", "1");'))
             ->withInsertion(new Insertion(Insertion::TYPE_BEFORE, 'error_reporting(E_ALL);'))
             ->withInsertion(new Insertion(Insertion ::TYPE_BEFORE, 'date_default_timezone_set("Europe/London");'));
 
-        return new CodePatcher($c->get(Parser::class), new Standard, $patch);
+        return new CodePatcher($c->get(Parser::class), new Standard(), $c->get(LoggerInterface::class), $patch);
     },
     FakerGenerator::class => function () {
         return FakerFactory::create();
