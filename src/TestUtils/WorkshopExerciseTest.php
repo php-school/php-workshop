@@ -21,11 +21,13 @@ use PhpSchool\PhpWorkshop\Result\FailureInterface;
 use PhpSchool\PhpWorkshop\Result\ResultGroupInterface;
 use PhpSchool\PhpWorkshop\Result\ResultInterface;
 use PhpSchool\PhpWorkshop\ResultAggregator;
+use PhpSchool\PhpWorkshop\Utils\ArrayObject;
 use PhpSchool\PhpWorkshop\Utils\Collection;
 use PHPUnit\Framework\ExpectationFailedException;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 use PhpSchool\PhpWorkshop\Input\Input;
+use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Process\Process;
 
 abstract class WorkshopExerciseTest extends TestCase
@@ -58,7 +60,7 @@ abstract class WorkshopExerciseTest extends TestCase
 
     abstract public function getApplication(): Application;
 
-    private function getExercise(): ExerciseInterface
+    protected function getExercise(): ExerciseInterface
     {
         return $this->container->get(ExerciseRepository::class)
             ->findByClassName($this->getExerciseClass());
@@ -147,7 +149,26 @@ abstract class WorkshopExerciseTest extends TestCase
                 return $failure->getReason() === $reason;
             });
 
-        $this->assertCount(1, $failures, "No failure with reason: '$reason'");
+        $allFailures = (new Collection($this->results->getIterator()->getArrayCopy()))
+            ->filter(function (ResultInterface $result) {
+                return $result instanceof FailureInterface;
+            })
+            ->map(function (FailureInterface $failure) {
+                return sprintf(
+                    '  * %s%s',
+                    get_class($failure),
+                    $failure instanceof Failure ? ": {$failure->getReason()}" : ''
+                );
+            })
+            ->implode("\n");
+
+        if ($allFailures) {
+            $allFailures = "\n\nAll Failures:\n$allFailures\n\n";
+        } else {
+            $allFailures = "";
+        }
+
+        $this->assertCount(1, $failures, "No failure with reason: '$reason'.$allFailures");
     }
 
     public function assertOutputWasIncorrect(): void
@@ -202,5 +223,17 @@ abstract class WorkshopExerciseTest extends TestCase
         $failures->each(function ($failure) use ($matcher) {
             $this->assertTrue($matcher($failure));
         });
+    }
+
+    public function removeSolutionAsset(string $file): void
+    {
+        $path = sprintf(
+            '%s/test/solutions/%s/%s',
+            rtrim($this->container->get('basePath'), '/'),
+            AbstractExercise::normaliseName($this->getExercise()->getName()),
+            $file
+        );
+
+        (new Filesystem())->remove($path);
     }
 }
