@@ -120,13 +120,19 @@ abstract class WorkshopExerciseTest extends TestCase
             ->filter(function (ResultInterface $result) {
                 return $result instanceof FailureInterface;
             })
-            ->map(function (Failure $failure) {
-                return $failure->getReason();
-            })
-            ->implode(', ');
+            ->map(function (FailureInterface $failure) {
+                return sprintf(
+                    '  * %s%s',
+                    get_class($failure),
+                    $failure instanceof Failure ? ": {$failure->getReason()}" : ''
+                );
+            });
 
+        $help = $failures->isEmpty()
+            ? ""
+            : sprintf("\n\nAll Failures:\n\n%s\n", $failures->implode("\n"));
 
-        $this->assertTrue($this->results->isSuccessful(), $failures);
+        $this->assertTrue($this->results->isSuccessful(), $help);
     }
 
     public function assertVerifyWasNotSuccessful(): void
@@ -163,7 +169,7 @@ abstract class WorkshopExerciseTest extends TestCase
 
         $help = $allFailures->isEmpty()
             ? ""
-            : sprintf("\n\nAll Failures:\n\n\n", $allFailures->implode("\n"));
+            : sprintf("\n\nAll Failures:\n\n%s\n", $allFailures->implode("\n"));
 
         $this->assertCount(1, $failures, "No failure with reason: '$reason' . $help");
     }
