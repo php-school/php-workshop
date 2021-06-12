@@ -17,6 +17,8 @@ use PhpSchool\PhpWorkshop\Patch;
 use PhpSchool\PhpWorkshopTest\Asset\PatchableExercise;
 use PHPUnit\Framework\TestCase;
 use PhpSchool\PhpWorkshop\CodeInsertion as Insertion;
+use Psr\Log\LoggerInterface;
+use Psr\Log\NullLogger;
 
 class CodePatcherTest extends TestCase
 {
@@ -25,7 +27,12 @@ class CodePatcherTest extends TestCase
         $patch = (new Patch())
             ->withInsertion(new Insertion(Insertion::TYPE_BEFORE, 'ini_set("display_errors", 1);'));
 
-        $patcher = new CodePatcher((new ParserFactory())->create(ParserFactory::PREFER_PHP7), new Standard(), $patch);
+        $patcher = new CodePatcher(
+            (new ParserFactory())->create(ParserFactory::PREFER_PHP7),
+            new Standard(),
+            new NullLogger(),
+            $patch
+        );
         $exercise = $this->createMock(ExerciseInterface::class);
 
         $expected = "<?php\n\nini_set(\"display_errors\", 1);\n\$original = true;";
@@ -34,7 +41,11 @@ class CodePatcherTest extends TestCase
 
     public function testPatcherDoesNotApplyPatchIfNotPatchableExercise(): void
     {
-        $patcher = new CodePatcher((new ParserFactory())->create(ParserFactory::PREFER_PHP7), new Standard());
+        $patcher = new CodePatcher(
+            (new ParserFactory())->create(ParserFactory::PREFER_PHP7),
+            new Standard(),
+            new NullLogger()
+        );
         $exercise = $this->createMock(ExerciseInterface::class);
 
         $code = '<?php $original = true;';
@@ -46,8 +57,11 @@ class CodePatcherTest extends TestCase
      */
     public function testPatcher(string $code, Patch $patch, string $expectedResult): void
     {
-        $patcher = new CodePatcher((new ParserFactory())->create(ParserFactory::PREFER_PHP7), new Standard());
-
+        $patcher = new CodePatcher(
+            (new ParserFactory())->create(ParserFactory::PREFER_PHP7),
+            new Standard(),
+            new NullLogger()
+        );
         $exercise = $this->createMock(PatchableExercise::class);
 
         $exercise
@@ -146,7 +160,11 @@ class CodePatcherTest extends TestCase
         $code = '<?php declare(strict_types=1); $original = true;';
         $patch = (new Patch())->withInsertion(new Insertion(Insertion::TYPE_BEFORE, '$before = "here";'));
 
-        $patcher = new CodePatcher((new ParserFactory())->create(ParserFactory::PREFER_PHP7), new Standard());
+        $patcher = new CodePatcher(
+            (new ParserFactory())->create(ParserFactory::PREFER_PHP7),
+            new Standard(),
+            new NullLogger()
+        );
 
         $exercise = $this->createMock(PatchableExercise::class);
 
@@ -174,7 +192,11 @@ class CodePatcherTest extends TestCase
                 ];
             });
 
-        $patcher = new CodePatcher((new ParserFactory())->create(ParserFactory::PREFER_PHP7), new Standard());
+        $patcher = new CodePatcher(
+            (new ParserFactory())->create(ParserFactory::PREFER_PHP7),
+            new Standard(),
+            new NullLogger()
+        );
 
         $exercise = $this->createMock(PatchableExercise::class);
 
@@ -202,7 +224,11 @@ class CodePatcherTest extends TestCase
                 ])];
             });
 
-        $patcher = new CodePatcher((new ParserFactory())->create(ParserFactory::PREFER_PHP7), new Standard());
+        $patcher = new CodePatcher(
+            (new ParserFactory())->create(ParserFactory::PREFER_PHP7),
+            new Standard(),
+            new NullLogger()
+        );
 
         $exercise = $this->createMock(PatchableExercise::class);
 
@@ -231,7 +257,11 @@ class CodePatcherTest extends TestCase
             })
             ->withInsertion(new Insertion(Insertion::TYPE_BEFORE, '$before = "here";'));
 
-        $patcher = new CodePatcher((new ParserFactory())->create(ParserFactory::PREFER_PHP7), new Standard());
+        $patcher = new CodePatcher(
+            (new ParserFactory())->create(ParserFactory::PREFER_PHP7),
+            new Standard(),
+            new NullLogger()
+        );
 
         $exercise = $this->createMock(PatchableExercise::class);
 
@@ -243,6 +273,37 @@ class CodePatcherTest extends TestCase
         $this->assertEquals(
             "<?php\n\ndeclare (strict_types=1);\n\$before = \"here\";\n\$original = true;",
             $patcher->patch($exercise, $code)
+        );
+    }
+
+    public function testExceptionIsLoggedIfCodeIsNotParseable(): void
+    {
+        $patcher = new CodePatcher(
+            (new ParserFactory())->create(ParserFactory::PREFER_PHP7),
+            new Standard(),
+            $logger = $this->createMock(LoggerInterface::class)
+        );
+
+        $exercise = $this->createMock(PatchableExercise::class);
+
+        $patch = (new Patch())->withInsertion(new Insertion(Insertion::TYPE_BEFORE, '$before = "here"'));
+
+        $exercise
+            ->expects($this->once())
+            ->method('getPatch')
+            ->willReturn($patch);
+
+        $logger
+            ->expects($this->once())
+            ->method('critical')
+            ->with(
+                'Code Insertion could not be parsed: Syntax error, unexpected EOF on line 1',
+                ['code' => '$before = "here"']
+            );
+
+        $this->assertEquals(
+            "<?php\n\n\$original = true;",
+            $patcher->patch($exercise, '<?php $original = true;')
         );
     }
 }

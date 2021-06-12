@@ -12,6 +12,7 @@ use PhpParser\PrettyPrinter\Standard;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpSchool\PhpWorkshop\Exercise\SubmissionPatchable;
 use PhpSchool\PhpWorkshop\Patch\Transformer;
+use Psr\Log\LoggerInterface;
 
 /**
  * Service to apply patches to a student's solution. Accepts a default patch via the constructor.
@@ -31,6 +32,11 @@ class CodePatcher
     private $printer;
 
     /**
+     * @var LoggerInterface
+     */
+    private $logger;
+
+    /**
      * @var Patch|null
      */
     private $defaultPatch;
@@ -45,12 +51,14 @@ class CodePatcher
      *
      * @param Parser $parser
      * @param Standard $printer
+     * @param LoggerInterface $logger
      * @param Patch|null $defaultPatch
      */
-    public function __construct(Parser $parser, Standard $printer, Patch $defaultPatch = null)
+    public function __construct(Parser $parser, Standard $printer, LoggerInterface $logger, Patch $defaultPatch = null)
     {
         $this->parser = $parser;
         $this->printer = $printer;
+        $this->logger = $logger;
         $this->defaultPatch = $defaultPatch;
     }
 
@@ -141,7 +149,10 @@ class CodePatcher
             $codeToInsert = sprintf('<?php %s', preg_replace('/^\s*<\?php/', '', $codeToInsert));
             $additionalStatements = $this->parser->parse($codeToInsert) ?? [];
         } catch (Error $e) {
-            //we should probably log this and have a dev mode or something
+            $this->logger->critical(
+                'Code Insertion could not be parsed: ' . $e->getMessage(),
+                ['code' => $codeInsertion->getCode()]
+            );
             return $statements;
         }
 
