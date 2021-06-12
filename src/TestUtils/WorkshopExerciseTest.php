@@ -23,6 +23,7 @@ use PhpSchool\PhpWorkshop\Result\ResultInterface;
 use PhpSchool\PhpWorkshop\ResultAggregator;
 use PhpSchool\PhpWorkshop\Utils\ArrayObject;
 use PhpSchool\PhpWorkshop\Utils\Collection;
+use PhpSchool\PhpWorkshop\Utils\System;
 use PHPUnit\Framework\ExpectationFailedException;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
@@ -51,6 +52,11 @@ abstract class WorkshopExerciseTest extends TestCase
     {
         $this->app = $this->getApplication();
         $this->container = $this->app->configure();
+    }
+
+    public function tearDown(): void
+    {
+        (new Filesystem())->remove(System::tempDir());
     }
 
     /**

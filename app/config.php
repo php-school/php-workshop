@@ -231,7 +231,11 @@ return [
     },
     PrepareSolutionListener::class => create(),
     CodePatchListener::class => function (ContainerInterface $c) {
-        return new CodePatchListener($c->get(CodePatcher::class));
+        return new CodePatchListener(
+            $c->get(CodePatcher::class),
+            $c->get(LoggerInterface::class),
+            $c->get('debugMode')
+        );
     },
     SelfCheckListener::class => function (ContainerInterface $c) {
         return new SelfCheckListener($c->get(ResultAggregator::class));

@@ -10,6 +10,8 @@ use PhpSchool\PhpWorkshop\Listener\CodePatchListener;
 use PhpSchool\PhpWorkshop\Utils\System;
 use PhpSchool\PhpWorkshopTest\Asset\ProvidesSolutionExercise;
 use PHPUnit\Framework\TestCase;
+use Psr\Log\LoggerInterface;
+use Psr\Log\NullLogger;
 use Symfony\Component\Filesystem\Filesystem;
 
 class CodePatchListenerTest extends TestCase
@@ -47,6 +49,11 @@ class CodePatchListenerTest extends TestCase
         touch($this->solution);
     }
 
+    public function tearDown(): void
+    {
+        $this->filesystem->remove(dirname($this->file));
+    }
+
     public function testPatchUpdatesCode(): void
     {
         file_put_contents($this->file, 'ORIGINAL CONTENT');
@@ -60,7 +67,7 @@ class CodePatchListenerTest extends TestCase
             ->with($exercise, 'ORIGINAL CONTENT')
             ->willReturn('MODIFIED CONTENT');
 
-        $listener   = new CodePatchListener($this->codePatcher);
+        $listener   = new CodePatchListener($this->codePatcher, new NullLogger(), false);
         $event      = new ExerciseRunnerEvent('event', $exercise, $input);
         $listener->patch($event);
 
@@ -80,7 +87,7 @@ class CodePatchListenerTest extends TestCase
             ->with($exercise, 'ORIGINAL CONTENT')
             ->willReturn('MODIFIED CONTENT');
 
-        $listener   = new CodePatchListener($this->codePatcher);
+        $listener   = new CodePatchListener($this->codePatcher, new NullLogger(), false);
         $event      = new ExerciseRunnerEvent('event', $exercise, $input);
         $listener->patch($event);
         $listener->revert($event);
@@ -101,7 +108,7 @@ class CodePatchListenerTest extends TestCase
             ->withConsecutive([$exercise, 'ORIGINAL CONTENT'], [$exercise, "<?php\n\necho 'Hello World';\n"])
             ->willReturn('MODIFIED CONTENT');
 
-        $listener   = new CodePatchListener($this->codePatcher);
+        $listener   = new CodePatchListener($this->codePatcher, new NullLogger(), false);
         $event      = new ExerciseRunnerEvent('event', $exercise, $input);
         $listener->patch($event);
 
@@ -109,8 +116,47 @@ class CodePatchListenerTest extends TestCase
         self::assertStringEqualsFile($exercise->getSolution()->getEntryPoint(), 'MODIFIED CONTENT');
     }
 
-    public function tearDown(): void
+    public function testFileIsLoggedWhenPatches(): void
     {
-        $this->filesystem->remove(dirname($this->file));
+        file_put_contents($this->file, 'ORIGINAL CONTENT');
+
+        $input    = new Input('app', ['program' => $this->file]);
+        $exercise = $this->createMock(ExerciseInterface::class);
+
+        $this->codePatcher
+            ->expects($this->once())
+            ->method('patch')
+            ->with($exercise, 'ORIGINAL CONTENT')
+            ->willReturn('MODIFIED CONTENT');
+
+        $logger = $this->createMock(LoggerInterface::class);
+        $logger->expects($this->once())
+            ->method('debug')
+            ->with('Patching file: ' . $this->file);
+
+        $listener  = new CodePatchListener($this->codePatcher, $logger, false);
+        $event      = new ExerciseRunnerEvent('event', $exercise, $input);
+        $listener->patch($event);
+    }
+
+    public function testRevertDoesNotRevertStudentSubmissionPatchIfInDebugMode(): void
+    {
+        file_put_contents($this->file, 'ORIGINAL CONTENT');
+
+        $input    = new Input('app', ['program' => $this->file]);
+        $exercise = $this->createMock(ExerciseInterface::class);
+
+        $this->codePatcher
+            ->expects($this->once())
+            ->method('patch')
+            ->with($exercise, 'ORIGINAL CONTENT')
+            ->willReturn('MODIFIED CONTENT');
+
+        $listener   = new CodePatchListener($this->codePatcher, new NullLogger(), true);
+        $event      = new ExerciseRunnerEvent('event', $exercise, $input);
+        $listener->patch($event);
+        $listener->revert($event);
+
+        self::assertStringEqualsFile($this->file, 'MODIFIED CONTENT');
     }
 }

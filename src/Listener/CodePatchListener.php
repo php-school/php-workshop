@@ -8,6 +8,7 @@ use PhpSchool\PhpWorkshop\CodePatcher;
 use PhpSchool\PhpWorkshop\Event\EventInterface;
 use PhpSchool\PhpWorkshop\Event\ExerciseRunnerEvent;
 use PhpSchool\PhpWorkshop\Exercise\ProvidesSolution;
+use Psr\Log\LoggerInterface;
 use RuntimeException;
 
 /**
@@ -21,16 +22,30 @@ class CodePatchListener
     private $codePatcher;
 
     /**
+     * @var LoggerInterface
+     */
+    private $logger;
+
+    /**
+     * @var bool
+     */
+    private $debugMode;
+
+    /**
      * @var array<string, string>
      */
     private $originalCode = [];
 
     /**
      * @param CodePatcher $codePatcher
+     * @param LoggerInterface $logger
+     * @param bool $debugMode
      */
-    public function __construct(CodePatcher $codePatcher)
+    public function __construct(CodePatcher $codePatcher, LoggerInterface $logger, bool $debugMode)
     {
         $this->codePatcher = $codePatcher;
+        $this->logger = $logger;
+        $this->debugMode = $debugMode;
     }
 
     /**
@@ -46,6 +61,8 @@ class CodePatchListener
         }
 
         foreach (array_filter($files) as $fileName) {
+            $this->logger->debug("Patching file: $fileName");
+
             $this->originalCode[$fileName] = (string) file_get_contents($fileName);
 
             file_put_contents(
@@ -62,6 +79,11 @@ class CodePatchListener
     {
         if (null === $this->originalCode || empty($this->originalCode)) {
             return;
+        }
+
+        //if we're in debug mode leave the students patch for debugging
+        if ($event instanceof ExerciseRunnerEvent && $this->debugMode) {
+            unset($this->originalCode[$event->getInput()->getArgument('program')]);
         }
 
         foreach ($this->originalCode as $fileName => $contents) {
