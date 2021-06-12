@@ -5,11 +5,27 @@ namespace PhpSchool\PhpWorkshopTest\Asset;
 use PhpSchool\PhpWorkshop\Check\ComposerCheck;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseType;
-use PhpSchool\PhpWorkshop\ExerciseCheck\FunctionRequirementsExerciseCheck;
+use PhpSchool\PhpWorkshop\ExerciseCheck\FileComparisonExerciseCheck;
 use PhpSchool\PhpWorkshop\ExerciseDispatcher;
+use PhpSchool\PhpWorkshop\Solution\SolutionInterface;
 
-class FunctionRequirementsExercise implements ExerciseInterface, FunctionRequirementsExerciseCheck
+class FileComparisonExercise implements ExerciseInterface, FileComparisonExerciseCheck
 {
+    /**
+     * @var array<string>
+     */
+    private $files;
+
+    /**
+     * @var SolutionInterface
+     */
+    private $solution;
+
+    public function __construct(array $files)
+    {
+        $this->files = $files;
+    }
+
     public function getName(): string
     {
         // TODO: Implement getName() method.
@@ -20,9 +36,14 @@ class FunctionRequirementsExercise implements ExerciseInterface, FunctionRequire
         // TODO: Implement getDescription() method.
     }
 
-    public function getSolution(): string
+    public function setSolution(SolutionInterface $solution): void
     {
-        // TODO: Implement getSolution() method.
+        $this->solution = $solution;
+    }
+
+    public function getSolution(): SolutionInterface
+    {
+        return $this->solution;
     }
 
     public function getProblem(): string
@@ -50,19 +71,8 @@ class FunctionRequirementsExercise implements ExerciseInterface, FunctionRequire
         $dispatcher->requireCheck(ComposerCheck::class);
     }
 
-    /**
-     * @return string[]
-     */
-    public function getRequiredFunctions(): array
+    public function getFilesToCompare(): array
     {
-        return [];
-    }
-
-    /**
-     * @return string[]
-     */
-    public function getBannedFunctions(): array
-    {
-        return ['file'];
+        return $this->files;
     }
 }
