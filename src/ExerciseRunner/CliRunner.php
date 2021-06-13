@@ -120,7 +120,7 @@ class CliRunner implements ExerciseRunnerInterface
         return new Process(
             $args->prepend($fileName)->prepend(PHP_BINARY)->getArrayCopy(),
             dirname($fileName),
-            null,
+            ['XDEBUG_MODE' => 'off'],
             null,
             10
         );

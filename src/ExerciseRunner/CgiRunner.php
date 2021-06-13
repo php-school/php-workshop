@@ -217,7 +217,8 @@ class CgiRunner implements ExerciseRunnerInterface
             'SCRIPT_FILENAME' => $fileName,
             'REDIRECT_STATUS' => 302,
             'QUERY_STRING'    => $request->getUri()->getQuery(),
-            'REQUEST_URI'     => $request->getUri()->getPath()
+            'REQUEST_URI'     => $request->getUri()->getPath(),
+            'XDEBUG_MODE'     => 'off',
         ];
 
         $cgi = sprintf('php-cgi%s', DIRECTORY_SEPARATOR === '\\' ? '.exe' : '');
