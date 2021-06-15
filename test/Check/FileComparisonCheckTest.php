@@ -46,8 +46,7 @@ class FileComparisonCheckTest extends BaseTest
 
     public function testFailureIsReturnedIfStudentsFileDoesNotExist(): void
     {
-        $file = $this->getTemporaryFile('solution/some-file.txt');
-        file_put_contents($file, "name,age\nAydin,33\nMichael,29\n");
+        $referenceFile = $this->getTemporaryFile('solution/some-file.txt', "name,age\nAydin,33\nMichael,29\n");
 
         $exercise = new FileComparisonExercise(['some-file.txt']);
         $exercise->setSolution(new SingleFileSolution($this->getTemporaryFile('solution/solution.php')));
@@ -60,17 +59,15 @@ class FileComparisonCheckTest extends BaseTest
 
     public function testFailureIsReturnedIfStudentFileDosNotMatchReferenceFile(): void
     {
-        $file = $this->getTemporaryFile('solution/some-file.txt');
-        file_put_contents($file, "name,age\nAydin,33\nMichael,29\n");
-
-        $studentSolution = $this->getTemporaryFile('student/my-solution.php');
-        $studentFile = $this->getTemporaryFile('student/some-file.txt');
-        file_put_contents($studentFile, "somegibberish");
+        $referenceFile = $this->getTemporaryFile('solution/some-file.txt', "name,age\nAydin,33\nMichael,29\n");
+        $studentFile = $this->getTemporaryFile('student/some-file.txt', "somegibberish");
 
         $exercise = new FileComparisonExercise(['some-file.txt']);
         $exercise->setSolution(new SingleFileSolution($this->getTemporaryFile('solution/solution.php')));
 
-        $failure = $this->check->check($exercise, new Input('app', ['program' => $studentSolution]));
+        $failure = $this->check->check($exercise, new Input('app', [
+            'program' => $this->getTemporaryFile('student/my-solution.php')
+        ]));
 
         $this->assertInstanceOf(FileComparisonFailure::class, $failure);
         $this->assertEquals($failure->getFileName(), 'some-file.txt');
@@ -80,19 +77,41 @@ class FileComparisonCheckTest extends BaseTest
 
     public function testSuccessIsReturnedIfFilesMatch(): void
     {
-        $file = $this->getTemporaryFile('solution/some-file.txt');
-        file_put_contents($file, "name,age\nAydin,33\nMichael,29\n");
-
-        $studentSolution = $this->getTemporaryFile('student/my-solution.php');
-        $studentFile = $this->getTemporaryFile('student/some-file.txt');
-        file_put_contents($studentFile, "name,age\nAydin,33\nMichael,29\n");
+        $referenceFile = $this->getTemporaryFile('solution/some-file.txt', "name,age\nAydin,33\nMichael,29\n");
+        $studentFile = $this->getTemporaryFile('student/some-file.txt', "name,age\nAydin,33\nMichael,29\n");
 
         $exercise = new FileComparisonExercise(['some-file.txt']);
         $exercise->setSolution(new SingleFileSolution($this->getTemporaryFile('solution/solution.php')));
 
         $this->assertInstanceOf(
             Success::class,
-            $this->check->check($exercise, new Input('app', ['program' => $studentSolution]))
+            $this->check->check($exercise, new Input('app', [
+                'program' => $this->getTemporaryFile('student/my-solution.php')
+            ]))
         );
+    }
+
+    public function testFailureIsReturnedIfFileDoNotMatchUsingStrip(): void
+    {
+        $referenceFile = $this->getTemporaryFile(
+            'solution/some-file.txt',
+            "01:03name,age\n04:05Aydin,33\n17:21Michael,29\n"
+        );
+        $studentFile = $this->getTemporaryFile(
+            'student/some-file.txt',
+            "01:04name,age\n06:76Aydin,34\n99:00Michael,29\n"
+        );
+
+        $exercise = new FileComparisonExercise(['some-file.txt' => ['strip' => '/\d{2}:\d{2}/']]);
+        $exercise->setSolution(new SingleFileSolution($this->getTemporaryFile('solution/solution.php')));
+
+        $failure = $this->check->check($exercise, new Input('app', [
+            'program' => $this->getTemporaryFile('student/my-solution.php')
+        ]));
+
+        $this->assertInstanceOf(FileComparisonFailure::class, $failure);
+        $this->assertEquals($failure->getFileName(), 'some-file.txt');
+        $this->assertEquals($failure->getExpectedValue(), "01:03name,age\n04:05Aydin,33\n17:21Michael,29\n");
+        $this->assertEquals($failure->getActualValue(), "01:04name,age\n06:76Aydin,34\n99:00Michael,29\n");
     }
 }

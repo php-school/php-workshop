@@ -44,7 +44,9 @@ class FileComparisonCheck implements SimpleCheckInterface
             throw new InvalidArgumentException();
         }
 
-        foreach ($exercise->getFilesToCompare() as $file) {
+        foreach ($exercise->getFilesToCompare() as $key => $file) {
+            [$options, $file] = $this->getOptionsAndFile($key, $file);
+
             $studentFile = Path::join(dirname($input->getRequiredArgument('program')), $file);
             $referenceFile = Path::join($exercise->getSolution()->getBaseDirectory(), $file);
 
@@ -56,15 +58,38 @@ class FileComparisonCheck implements SimpleCheckInterface
                 return Failure::fromCheckAndReason($this, sprintf('File: "%s" does not exist', $file));
             }
 
-            $actual = (string) file_get_contents($studentFile);
-            $expected = (string) file_get_contents($referenceFile);
+            $actualOriginal = (string) file_get_contents($studentFile);
+            $expectedOriginal = (string) file_get_contents($referenceFile);
+
+            $actual = isset($options['strip'])
+                ? preg_replace($options['strip'], '', $actualOriginal)
+                : $actualOriginal;
+
+            $expected = isset($options['strip'])
+                ? preg_replace($options['strip'], '', $expectedOriginal)
+                : $expectedOriginal;
 
             if ($expected !== $actual) {
-                return new FileComparisonFailure($this, $file, $expected, $actual);
+                return new FileComparisonFailure($this, $file, $expectedOriginal, $actualOriginal);
             }
         }
 
         return Success::fromCheck($this);
+    }
+
+    /**
+     * @param int|string $key
+     * @param string|array<string, string> $file
+     * @return array{0: array, 1:string}
+     */
+    private function getOptionsAndFile($key, $file): array
+    {
+        if (!is_array($file) && is_int($key)) {
+            return [[], $file];
+        }
+        /** @var array $file */
+        /** @var string $key */
+        return [$file, $key];
     }
 
     /**

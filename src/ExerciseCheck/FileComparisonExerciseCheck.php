@@ -11,7 +11,7 @@ namespace PhpSchool\PhpWorkshop\ExerciseCheck;
 interface FileComparisonExerciseCheck
 {
     /**
-     * @return array<string>
+     * @return array<int|string, string|array{strip: string}>
      */
     public function getFilesToCompare(): array;
 }
