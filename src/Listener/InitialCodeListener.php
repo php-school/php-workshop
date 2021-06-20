@@ -48,7 +48,6 @@ class InitialCodeListener
         }
 
         foreach ($exercise->getInitialCode()->getFiles() as $file) {
-            /** @var SolutionFile $file */
             if (!file_exists($this->workingDirectory . '/' . $file->getRelativePath())) {
                 copy($file->getAbsolutePath(), $this->workingDirectory . '/' . $file->getRelativePath());
                 $message = 'File successfully copied to working directory';
