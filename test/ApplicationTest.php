@@ -100,7 +100,7 @@ LOCAL;
 
     public function testTearDownEventIsFiredOnApplicationException(): void
     {
-        $configFile = $this->getTemporaryFile('config.php', '<?php return [];');
+        $configFile = $this->getTemporaryFile('config.php', '<?php return ["basePath" => __DIR__ . "../"];');
         $application = new Application('Testing TearDown', $configFile);
 
         $container = $application->configure();
@@ -125,7 +125,7 @@ LOCAL;
 
     public function testLoggingExceptionDuringTearDown(): void
     {
-        $configFile = $this->getTemporaryFile('config.php', '<?php return [];');
+        $configFile = $this->getTemporaryFile('config.php', '<?php return ["basePath" => __DIR__ . "../"];');
         $application = new Application('Testing tear down logging', $configFile);
         $exception = new \Exception('Unexpected error');
 
@@ -159,7 +159,7 @@ LOCAL;
 
     public function testConfigureReturnsSameContainerInstance(): void
     {
-        $configFile = $this->getTemporaryFile('config.php', '<?php return [];');
+        $configFile = $this->getTemporaryFile('config.php', '<?php return ["basePath" => __DIR__ . "../"];');
         $application = new Application('Testing Configure', $configFile);
 
         self::assertSame($application->configure(), $application->configure());
@@ -167,7 +167,7 @@ LOCAL;
 
     public function testDebugFlagSwitchesLoggerToConsoleLogger(): void
     {
-        $configFile = $this->getTemporaryFile('config.php', '<?php return [];');
+        $configFile = $this->getTemporaryFile('config.php', '<?php return ["basePath" => __DIR__ . "../"];');
         $application = new Application('My workshop', $configFile);
         $container = $application->configure(true);
 

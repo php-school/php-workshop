@@ -204,9 +204,9 @@ final class Application
             }
         }
 
-        set_error_handler(function () use ($container): bool {
-            $this->tearDown($container);
-            return false; // Use default error handler
+        //turn all notices & warnings in to exceptions
+        set_error_handler(function (int $severity, string $message, string $file, int $line) {
+            throw new \ErrorException($message, 0, $severity, $file, $line);
         });
 
         $this->container = $container;
@@ -259,12 +259,7 @@ final class Application
 
             $container
                 ->get(OutputInterface::class)
-                ->printError(
-                    sprintf(
-                        '%s',
-                        $message
-                    )
-                );
+                ->printException($e);
             return 1;
         }
 
@@ -280,12 +275,17 @@ final class Application
     private function getContainer(bool $debugMode): Container
     {
         $containerBuilder = new ContainerBuilder();
-        $containerBuilder->addDefinitions(
-            array_merge_recursive(
-                require $this->frameworkConfigLocation,
-                require $this->diConfigFile
-            )
+        $diConfig = require $this->diConfigFile;
+        $fwConfig = require $this->frameworkConfigLocation;
+
+        $fwConfig['eventListeners'] = array_merge_recursive(
+            $fwConfig['eventListeners'],
+            $diConfig['eventListeners'] ?? []
         );
+
+        unset($diConfig['eventListeners']);
+
+        $containerBuilder->addDefinitions($diConfig, $fwConfig);
 
         $containerBuilder->addDefinitions(
             [
