@@ -21,7 +21,7 @@ class Logger extends AbstractLogger implements LoggerInterface
 
     public function log($level, $message, array $context = []): void
     {
-        if (!file_exists($this->filePath)) {
+        if (!file_exists(dirname($this->filePath))) {
             if (!mkdir($concurrentDirectory = dirname($this->filePath), 0777, true) && !is_dir($concurrentDirectory)) {
                 throw new \RuntimeException(sprintf('Directory "%s" was not created', $concurrentDirectory));
             }
