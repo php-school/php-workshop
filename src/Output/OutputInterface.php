@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace PhpSchool\PhpWorkshop\Output;
 
+use Throwable;
+
 /**
  * Output interface
  */
@@ -16,6 +18,14 @@ interface OutputInterface
      * @param string $error
      */
     public function printError(string $error): void;
+
+    /**
+     * Write an Exception. Should be decorated in someway
+     * which highlights the severity.
+     *
+     * @param Throwable $exception
+     */
+    public function printException(Throwable $exception): void;
 
     /**
      * Write a string to the output.
