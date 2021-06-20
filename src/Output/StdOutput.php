@@ -82,7 +82,15 @@ class StdOutput implements OutputInterface
         $this->writeLine(' ' . $this->color->__invoke(str_repeat(' ', $length))->bg_red());
         $this->emptyLine();
 
-        $this->writeLine(implode("\n", array_map(fn ($l) => " $l", explode("\n", $exception->getTraceAsString()))));
+        $this->writeLine(
+            implode(
+                "\n",
+                array_map(function ($l) {
+                    return " $l";
+                },
+                explode("\n", $exception->getTraceAsString()))
+            )
+        );
     }
 
     /**
