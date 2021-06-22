@@ -190,7 +190,7 @@ abstract class WorkshopExerciseTest extends TestCase
         $this->assertTrue($this->getOutputResult()->isSuccessful());
     }
 
-    private function getOutputResult(): ResultGroupInterface
+    public function getOutputResult(): ResultGroupInterface
     {
         $exerciseType = $this->getExercise()->getType();
 
