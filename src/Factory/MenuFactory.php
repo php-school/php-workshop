@@ -112,7 +112,7 @@ class MenuFactory
             })
             ->addLineBreak();
 
-        $builder->addMenuItem(new SelectableItem('EXIT', new ExitAction));
+        $builder->addMenuItem(new SelectableItem('EXIT', new ExitAction()));
 
         if (PHP_OS_FAMILY === 'Darwin') {
             $builder->addLineBreak();
