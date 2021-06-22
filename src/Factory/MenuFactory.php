@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace PhpSchool\PhpWorkshop\Factory;
 
+use PhpSchool\CliMenu\Action\ExitAction;
+use PhpSchool\CliMenu\MenuItem\SelectableItem;
 use PhpSchool\CliMenu\Style\SelectableStyle;
 use PhpSchool\Terminal\Terminal;
 use Psr\Container\ContainerInterface;
@@ -74,7 +76,7 @@ class MenuFactory
             ->addLineBreak()
             ->addItem('HELP', new MenuCommandInvoker($c->get(HelpCommand::class)))
             ->addItem('CREDITS', new MenuCommandInvoker($c->get(CreditsCommand::class)))
-            ->setExitButtonText('EXIT')
+            ->disableDefaultItems()
             ->setBackgroundColour($c->get('bgColour'))
             ->setForegroundColour($c->get('fgColour'))
             ->setMarginAuto()
@@ -110,6 +112,12 @@ class MenuFactory
             })
             ->addLineBreak();
 
+        $builder->addMenuItem(new SelectableItem('EXIT', new ExitAction));
+
+        if (PHP_OS_FAMILY === 'Darwin') {
+            $builder->addLineBreak();
+            $builder->addItem('www.phpschool.io', fn () => exec('open https://www.phpschool.io'));
+        }
 
         if (null !== $c->get('workshopTitle')) {
             $builder->setTitle($c->get('workshopTitle'));
