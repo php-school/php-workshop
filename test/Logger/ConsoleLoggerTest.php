@@ -18,6 +18,7 @@ class ConsoleLoggerTest extends ContainerAwareTest
 
         $this->container->set('phpschoolGlobalDir', $this->getTemporaryDirectory());
         $this->container->set('appName', 'my-workshop');
+        $this->container->set('basePath', __DIR__ . '/../');
         $this->container->set('debugMode', true);
     }
 

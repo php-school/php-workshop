@@ -7,6 +7,7 @@ use Kadet\Highlighter\Formatter\CliFormatter;
 use Kadet\Highlighter\KeyLighter;
 use Kadet\Highlighter\Language\Php;
 use PhpSchool\PhpWorkshopTest\Asset\CliExerciseImpl;
+use PhpSchool\PhpWorkshopTest\BaseTest;
 use PhpSchool\Terminal\Terminal;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpSchool\PhpWorkshop\Exercise\ProvidesSolution;
@@ -22,7 +23,7 @@ use PhpSchool\PhpWorkshop\Solution\SingleFileSolution;
 use PhpSchool\PhpWorkshop\UserState;
 use PHPUnit\Framework\TestCase;
 
-class ResultsRendererTest extends TestCase
+class ResultsRendererTest extends BaseTest
 {
     public function testRenderIndividualResult(): void
     {
@@ -118,9 +119,7 @@ class ResultsRendererTest extends TestCase
         $exerciseRepo = $this->createMock(ExerciseRepository::class);
         $exerciseRepo->method('count')->willReturn(2);
 
-        $tmpFile = sprintf('%s/%s/some-file', sys_get_temp_dir(), $this->getName());
-        mkdir(dirname($tmpFile));
-        file_put_contents($tmpFile, 'FILE CONTENTS');
+        $tmpFile = $this->getTemporaryFile('some-file', 'FILE CONTENTS');
 
         $exercise = new CliExerciseImpl();
         $exercise->setSolution(new SingleFileSolution($tmpFile));
@@ -146,9 +145,6 @@ class ResultsRendererTest extends TestCase
             new UserState(['exercise1']),
             new StdOutput($color, $terminal)
         );
-
-        unlink($tmpFile);
-        rmdir(dirname($tmpFile));
     }
 
     public function testRenderSuccessWithPhpSolutionFileIsSyntaxHighlighted(): void
@@ -164,9 +160,7 @@ class ResultsRendererTest extends TestCase
         $exerciseRepo = $this->createMock(ExerciseRepository::class);
         $exerciseRepo->method('count')->willReturn(2);
 
-        $tmpFile = sprintf('%s/%s/some-file.php', sys_get_temp_dir(), $this->getName());
-        mkdir(dirname($tmpFile));
-        file_put_contents($tmpFile, 'FILE CONTENTS');
+        $tmpFile = $this->getTemporaryFile('some-file.php', 'FILE CONTENTS');
 
         $exercise = new CliExerciseImpl();
         $exercise->setSolution(new SingleFileSolution($tmpFile));
@@ -200,9 +194,6 @@ class ResultsRendererTest extends TestCase
             new UserState(['exercise1']),
             new StdOutput($color, $terminal)
         );
-
-        unlink($tmpFile);
-        rmdir(dirname($tmpFile));
     }
 
     public function testRenderSuccessAndFailure(): void

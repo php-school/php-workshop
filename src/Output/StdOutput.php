@@ -6,6 +6,7 @@ namespace PhpSchool\PhpWorkshop\Output;
 
 use Colors\Color;
 use PhpSchool\Terminal\Terminal;
+use Throwable;
 
 /**
  * Console output interface
@@ -22,10 +23,16 @@ class StdOutput implements OutputInterface
      */
     private $terminal;
 
-    public function __construct(Color $color, Terminal $terminal)
+    /**
+     * @var string
+     */
+    private $workshopBasePath;
+
+    public function __construct(Color $color, Terminal $terminal, string $workshopBasePath = '')
     {
         $this->color = $color;
         $this->terminal = $terminal;
+        $this->workshopBasePath = $workshopBasePath;
     }
 
     /**
@@ -39,6 +46,51 @@ class StdOutput implements OutputInterface
         echo sprintf(" %s\n", $this->color->__invoke(sprintf(' %s ', $error))->bg_red()->white()->bold());
         echo sprintf(" %s\n", $this->color->__invoke(str_repeat(' ', $length))->bg_red());
         echo "\n";
+    }
+
+    /**
+     * @param Throwable $exception
+     */
+    public function printException(Throwable $exception): void
+    {
+        $message = $exception->getMessage();
+        if (strpos($message, $this->workshopBasePath) !== null) {
+            $message = str_replace($this->workshopBasePath, '', $message);
+        }
+
+        $file = $exception->getFile();
+        if (strpos($file, $this->workshopBasePath) !== null) {
+            $file = str_replace($this->workshopBasePath, '', $file);
+        }
+
+        $lines = [
+            sprintf("In %s line %d:", $file, $exception->getLine()),
+            sprintf("[%s (%s)]:", get_class($exception), $exception->getCode()),
+            '',
+            $message
+        ];
+
+        $length = max(array_map('strlen', $lines)) + 2;
+        $this->emptyLine();
+        $this->writeLine(' ' . $this->color->__invoke(str_repeat(' ', $length))->bg_red());
+
+        foreach ($lines as $line) {
+            $line = str_pad($line, $length - 2, ' ', STR_PAD_RIGHT);
+            $this->writeLine(' ' . $this->color->__invoke(" $line ")->bg_red()->white()->bold());
+        }
+
+        $this->writeLine(' ' . $this->color->__invoke(str_repeat(' ', $length))->bg_red());
+        $this->emptyLine();
+
+        $this->writeLine(
+            implode(
+                "\n",
+                array_map(function ($l) {
+                    return " $l";
+                },
+                explode("\n", $exception->getTraceAsString()))
+            )
+        );
     }
 
     /**

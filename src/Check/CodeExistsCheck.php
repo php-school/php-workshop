@@ -52,7 +52,7 @@ class CodeExistsCheck implements SimpleCheckInterface
 
         if (!$empty) {
             $openingTag = is_array($statements) && count($statements) === 1 ? $statements[0] : null;
-            $empty = $openingTag instanceof InlineHTML ? in_array($openingTag->value, ['<?php', '<?']) : false;
+            $empty = $openingTag instanceof InlineHTML && in_array($openingTag->value, ['<?php', '<?']);
         }
 
         if ($empty) {

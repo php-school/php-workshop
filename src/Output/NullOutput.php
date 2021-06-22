@@ -4,9 +4,16 @@ declare(strict_types=1);
 
 namespace PhpSchool\PhpWorkshop\Output;
 
+use Throwable;
+
 class NullOutput implements OutputInterface
 {
     public function printError(string $error): void
+    {
+        // noop
+    }
+
+    public function printException(Throwable $exception): void
     {
         // noop
     }

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use Colors\Color;
 use PhpSchool\PhpWorkshop\Check\FileComparisonCheck;
+use PhpSchool\PhpWorkshop\ExerciseRunner\Factory\ServerRunnerFactory;
 use PhpSchool\PhpWorkshop\Listener\InitialCodeListener;
 use PhpSchool\PhpWorkshop\Listener\TearDownListener;
 use PhpSchool\PhpWorkshop\Logger\ConsoleLogger;
@@ -96,6 +97,9 @@ return [
     'currentWorkingDirectory' => function (ContainerInterface $c) {
         return getcwd();
     },
+    'basePath' => DI\decorate(function (string $previous) {
+        return canonicalise_path($previous);
+    }),
     WorkshopType::class => WorkshopType::STANDARD(),
     Psr\Log\LoggerInterface::class => function (ContainerInterface $c) {
         $appName = $c->get('appName');
@@ -150,7 +154,7 @@ return [
         return $colors;
     },
     OutputInterface::class => function (ContainerInterface $c) {
-        return new StdOutput($c->get(Color::class), $c->get(Terminal::class));
+        return new StdOutput($c->get(Color::class), $c->get(Terminal::class), $c->get('basePath'));
     },
 
     ExerciseRepository::class => function (ContainerInterface $c) {
@@ -166,10 +170,10 @@ return [
 
     //Exercise Runners
     RunnerManager::class => function (ContainerInterface $c) {
-        $manager = new RunnerManager;
+        $manager = new RunnerManager();
         $manager->addFactory(new CliRunnerFactory($c->get(EventDispatcher::class)));
         $manager->addFactory(new CgiRunnerFactory($c->get(EventDispatcher::class), $c->get(RequestRenderer::class)));
-        $manager->addFactory(new CustomVerifyingRunnerFactory);
+        $manager->addFactory(new CustomVerifyingRunnerFactory());
         return $manager;
     },
 

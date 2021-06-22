@@ -204,6 +204,8 @@ class UserStateSerializer
      */
     private function wipeFile(): void
     {
-        @unlink($this->path);
+        if (file_exists(sprintf('%s/%s', $this->path, static::SAVE_FILE))) {
+            unlink(sprintf('%s/%s', $this->path, static::SAVE_FILE));
+        }
     }
 }

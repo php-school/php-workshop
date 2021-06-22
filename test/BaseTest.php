@@ -44,8 +44,8 @@ abstract class BaseTest extends TestCase
 
     public function tearDown(): void
     {
-        if ($this->tempDirectory) {
-            (new Filesystem())->remove($this->tempDirectory);
+        if (file_exists(System::tempDir($this->getName()))) {
+            (new Filesystem())->remove(System::tempDir($this->getName()));
         }
     }
 }
