@@ -116,7 +116,9 @@ class MenuFactory
 
         if (PHP_OS_FAMILY === 'Darwin') {
             $builder->addLineBreak();
-            $builder->addItem('www.phpschool.io', fn () => exec('open https://www.phpschool.io'));
+            $builder->addItem('www.phpschool.io', function () {
+                exec('open https://www.phpschool.io');
+            });
         }
 
         if (null !== $c->get('workshopTitle')) {
