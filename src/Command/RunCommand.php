@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 namespace PhpSchool\PhpWorkshop\Command;
 
+use PhpSchool\PhpWorkshop\Check\FileExistsCheck;
 use PhpSchool\PhpWorkshop\ExerciseDispatcher;
 use PhpSchool\PhpWorkshop\ExerciseRepository;
 use PhpSchool\PhpWorkshop\Input\Input;
 use PhpSchool\PhpWorkshop\Output\OutputInterface;
+use PhpSchool\PhpWorkshop\Result\Success;
 use PhpSchool\PhpWorkshop\UserState;
 
 /**
@@ -60,6 +62,11 @@ class RunCommand
      */
     public function __invoke(Input $input): void
     {
+        if (!file_exists($input->getRequiredArgument('program'))) {
+            $this->output->printError(sprintf('File: "%s" does not exist', $input->getRequiredArgument('program')));
+            return;
+        }
+
         $exercise = $this->exerciseRepository->findByName($this->userState->getCurrentExercise());
         $this->exerciseDispatcher->run($exercise, $input, $this->output);
     }

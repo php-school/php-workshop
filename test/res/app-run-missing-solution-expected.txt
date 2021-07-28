@@ -1,0 +1,5 @@
+
+ [41m                                     [0m
+ [1m[97m[41m File: "solution.php" does not exist [0m[0m[0m
+ [41m                                     [0m
+
