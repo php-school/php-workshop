@@ -3,13 +3,48 @@ All notable changes to this project will be documented in this file.
 Updates should follow the [Keep a CHANGELOG](http://keepachangelog.com/) principles.
 
 ## [Unreleased][unreleased]
+
+## [4.0.0]
 ### Added
+ - Allow exercises to provide initial solution files (#183)
+ - Framework logger (#188)
+ - Abstract testing classes for easier testing: `BaseTest` & `ContainerAwareTest` (#188)
+ - Abstract exercise test class for exercise integration tests (#189)
+ - `findByClassName` to `ExerciseRepository` (#189)
+ - `each` to `ArrayObject` (#193)
+ - `collect` global function to create collection instance (#193)
+ - More assertions to the workshop integration test base class (#194)
+ - `pluralise` global function (#196)
+ - `CodeExistsCheck` check (#197)
+ - `ksort` to `ArrayObject` (#199)
+ - `Path` util to join file system paths (#203)
+ - `getTemporaryFile` to `BaseTest` (#204)
+ - `System` util for realpath'ing and getting temp directory (#205)
+ - `application.tear-down` event when workshop is shutting down (#212)
+ - `any` global function (#213)
+ - `--debug` flag to dump logs to console (#213)
+ - Support for class based transformers (#220)
+ - `ForceStrictTypes` transformer (#220)
+ - `FileComparisonCheck` check for external files (#202)
+ - Logging for when code patches fail (#222)
+ - `WrapInTryCatch` transformer (#229)
+ - Link to website on mac (#230)
 
 ### Changed
+ - Center CLI menu by default (#184)
+ - Improved exception handling for missing problem files (#190)
+ - Copy solution files to temporary directory before running (#209)
+ - Patch reference solutions as well as student solutions (#211)
+ - Upgrade to `phpunt/phpunit` 8 (#216)
+ - Disable Xdebug when verifying solutions (#225)
+ - Log file patching & don't revert patch when in debug mode (#224)
+ - Improve general error handling (#227)
+ - Check solution file exists in run command (#231)
 
 ### Fixed
-
-### Removed
+ - `FunctionVisitor` indexing issue when multiple functions are required and only some found (#192)
+ - `CodePatcher` should retain the position of declare statements when patching code (#207)
+ - Type error with code patches (#219)
 
 ## [3.0.1]
 ### Changed
