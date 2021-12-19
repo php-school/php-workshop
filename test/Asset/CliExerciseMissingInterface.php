@@ -8,7 +8,6 @@ use PhpSchool\PhpWorkshop\Exercise\ExerciseType;
 
 class CliExerciseMissingInterface extends AbstractExercise implements ExerciseInterface
 {
-
     /**
      * Get the name of the exercise, like `Hello World!`.
      */

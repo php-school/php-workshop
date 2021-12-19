@@ -10,5 +10,4 @@ namespace PhpSchool\PhpWorkshop\Result\Cgi;
  */
 interface FailureInterface extends ResultInterface
 {
-
 }

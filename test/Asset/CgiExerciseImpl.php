@@ -11,7 +11,6 @@ use Psr\Http\Message\RequestInterface;
 
 class CgiExerciseImpl implements ExerciseInterface, CgiExercise
 {
-
     /**
      * @var string
      */

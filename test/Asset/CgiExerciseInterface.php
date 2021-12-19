@@ -7,5 +7,4 @@ use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 
 interface CgiExerciseInterface extends ExerciseInterface, CgiExercise
 {
-
 }

@@ -6,7 +6,6 @@ use PhpSchool\PhpWorkshop\Exercise\AbstractExercise;
 
 class AbstractExerciseImpl extends AbstractExercise
 {
-
     /**
      * @var string
      */

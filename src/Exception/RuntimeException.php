@@ -6,5 +6,4 @@ namespace PhpSchool\PhpWorkshop\Exception;
 
 class RuntimeException extends \RuntimeException
 {
-
 }

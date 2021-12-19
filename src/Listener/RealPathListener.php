@@ -11,7 +11,6 @@ use PhpSchool\PhpWorkshop\Event\ExerciseRunnerEvent;
  */
 class RealPathListener
 {
-
     /**
      * @param ExerciseRunnerEvent $event
      */

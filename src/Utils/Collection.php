@@ -12,5 +12,4 @@ namespace PhpSchool\PhpWorkshop\Utils;
  */
 class Collection extends ArrayObject
 {
-
 }

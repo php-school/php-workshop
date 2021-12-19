@@ -25,7 +25,6 @@ use RuntimeException;
 
 class DatabaseCheckTest extends TestCase
 {
-
     /**
      * @var DatabaseCheck
      */

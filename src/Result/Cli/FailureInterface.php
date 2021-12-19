@@ -10,5 +10,4 @@ namespace PhpSchool\PhpWorkshop\Result\Cli;
  */
 interface FailureInterface extends ResultInterface
 {
-
 }

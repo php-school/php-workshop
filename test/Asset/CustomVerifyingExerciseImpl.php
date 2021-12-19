@@ -11,7 +11,6 @@ use PhpSchool\PhpWorkshop\Result\Success;
 
 class CustomVerifyingExerciseImpl extends AbstractExercise implements ExerciseInterface, CustomVerifyingExercise
 {
-
     /**
      * Get the name of the exercise, like `Hello World!`.
      */

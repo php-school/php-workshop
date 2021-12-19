@@ -12,5 +12,4 @@ use RuntimeException;
  */
 class SolutionExecutionException extends RuntimeException
 {
-
 }
