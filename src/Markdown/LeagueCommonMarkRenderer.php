@@ -1,17 +1,11 @@
 <?php
 
-declare(strict_types=1);
+namespace PhpSchool\PhpWorkshop\Markdown;
 
-namespace PhpSchool\PhpWorkshop;
-
-use League\CommonMark\DocParser;
 use AydinHassan\CliMdRenderer\CliRenderer;
+use League\CommonMark\DocParser;
 
-/**
- * Utility to render a markdown string to a string formatted with ANSI escape codes for output
- * on the console.
- */
-class MarkdownRenderer
+class LeagueCommonMarkRenderer implements Renderer
 {
     /**
      * @var DocParser
@@ -24,7 +18,7 @@ class MarkdownRenderer
     private $cliRenderer;
 
     /**
-     * Should be constructed with an instance of `DocParser` with parses the markdown to an AST.
+     * Should be constructed with an instance of `MarkdownParser` with parses the markdown to an AST.
      * `CliRenderer` renders the AST to a string formatted for the console.
      *
      * @param DocParser $docParser

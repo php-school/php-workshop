@@ -3,12 +3,19 @@
 declare(strict_types=1);
 
 use Colors\Color;
+use Composer\InstalledVersions;
+use Composer\Semver\VersionParser;
+use League\CommonMark\Environment\Environment;
+use League\CommonMark\Extension\CommonMark\CommonMarkCoreExtension;
+use League\CommonMark\Parser\MarkdownParser;
 use PhpSchool\PhpWorkshop\Check\FileComparisonCheck;
 use PhpSchool\PhpWorkshop\ExerciseRunner\Factory\ServerRunnerFactory;
 use PhpSchool\PhpWorkshop\Listener\InitialCodeListener;
 use PhpSchool\PhpWorkshop\Listener\TearDownListener;
 use PhpSchool\PhpWorkshop\Logger\ConsoleLogger;
 use PhpSchool\PhpWorkshop\Logger\Logger;
+use PhpSchool\PhpWorkshop\Markdown\Renderer;
+use PhpSchool\PhpWorkshop\Markdown\RendererFactory;
 use PhpSchool\PhpWorkshop\Result\FileComparisonFailure;
 use PhpSchool\PhpWorkshop\ResultRenderer\FileComparisonFailureRenderer;
 use Psr\Log\LoggerInterface;
@@ -17,8 +24,6 @@ use function DI\factory;
 use Kadet\Highlighter\KeyLighter;
 use function PhpSchool\PhpWorkshop\Event\containerListener;
 use Psr\Container\ContainerInterface;
-use League\CommonMark\DocParser;
-use League\CommonMark\Environment;
 use PhpParser\PrettyPrinter\Standard;
 use PhpSchool\CliMenu\Terminal\TerminalFactory;
 use PhpSchool\Terminal\Terminal;
@@ -308,11 +313,8 @@ return [
             $c->get(OutputInterface::class)
         );
     },
-    MarkdownRenderer::class => function (ContainerInterface $c) {
-        $docParser =   new DocParser(Environment::createCommonMarkEnvironment());
-        $cliRenderer = (new MarkdownCliRendererFactory)->__invoke($c);
-        return new MarkdownRenderer($docParser, $cliRenderer);
-    },
+    Renderer::class => factory(RendererFactory::class),
+    RendererFactory::class => create(),
     UserStateSerializer::class => function (ContainerInterface $c) {
         return new UserStateSerializer(
             getenv('HOME'),

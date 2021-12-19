@@ -4,10 +4,10 @@ namespace PhpSchool\PhpWorkshopTest\Command;
 
 use PhpSchool\PhpWorkshop\Command\PrintCommand;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseType;
+use PhpSchool\PhpWorkshop\Markdown\Renderer;
 use PhpSchool\PhpWorkshopTest\Asset\CliExerciseInterface;
 use PHPUnit\Framework\TestCase;
 use PhpSchool\PhpWorkshop\ExerciseRepository;
-use PhpSchool\PhpWorkshop\MarkdownRenderer;
 use PhpSchool\PhpWorkshop\Output\OutputInterface;
 use PhpSchool\PhpWorkshop\UserState;
 
@@ -37,7 +37,7 @@ class PrintCommandTest extends TestCase
         $state->setCurrentExercise('some-exercise');
 
         $output = $this->createMock(OutputInterface::class);
-        $renderer = $this->createMock(MarkdownRenderer::class);
+        $renderer = $this->createMock(Renderer::class);
 
         $renderer
             ->expects($this->once())

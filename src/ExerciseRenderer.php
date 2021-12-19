@@ -7,6 +7,7 @@ namespace PhpSchool\PhpWorkshop;
 use Colors\Color;
 use PhpSchool\CliMenu\CliMenu;
 use PhpSchool\PhpWorkshop\Exception\ProblemFileDoesNotExistException;
+use PhpSchool\PhpWorkshop\Markdown\Renderer;
 use PhpSchool\PhpWorkshop\Output\OutputInterface;
 
 /**
@@ -26,7 +27,7 @@ class ExerciseRenderer
     private $exerciseRepository;
 
     /**
-     * @var MarkdownRenderer
+     * @var Renderer
      */
     private $markdownRenderer;
 
@@ -55,7 +56,7 @@ class ExerciseRenderer
      * @param ExerciseRepository $exerciseRepository
      * @param UserState $userState
      * @param UserStateSerializer $userStateSerializer
-     * @param MarkdownRenderer $markdownRenderer
+     * @param Renderer $markdownRenderer
      * @param Color $color
      * @param OutputInterface $output
      */
@@ -64,7 +65,7 @@ class ExerciseRenderer
         ExerciseRepository $exerciseRepository,
         UserState $userState,
         UserStateSerializer $userStateSerializer,
-        MarkdownRenderer $markdownRenderer,
+        Renderer $markdownRenderer,
         Color $color,
         OutputInterface $output
     ) {

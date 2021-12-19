@@ -7,7 +7,7 @@ namespace PhpSchool\PhpWorkshop\Command;
 use PhpSchool\PhpWorkshop\Exception\InvalidArgumentException;
 use PhpSchool\PhpWorkshop\Exception\ProblemFileDoesNotExistException;
 use PhpSchool\PhpWorkshop\ExerciseRepository;
-use PhpSchool\PhpWorkshop\MarkdownRenderer;
+use PhpSchool\PhpWorkshop\Markdown\Renderer;
 use PhpSchool\PhpWorkshop\Output\OutputInterface;
 use PhpSchool\PhpWorkshop\UserState;
 
@@ -22,7 +22,7 @@ class PrintCommand
     private $appName;
 
     /**
-     * @var MarkdownRenderer
+     * @var Renderer
      */
     private $markdownRenderer;
 
@@ -45,14 +45,14 @@ class PrintCommand
      * @param string $appName
      * @param ExerciseRepository $exerciseRepository
      * @param UserState $userState
-     * @param MarkdownRenderer $markdownRenderer
+     * @param Renderer $markdownRenderer
      * @param OutputInterface $output
      */
     public function __construct(
         string $appName,
         ExerciseRepository $exerciseRepository,
         UserState $userState,
-        MarkdownRenderer $markdownRenderer,
+        Renderer $markdownRenderer,
         OutputInterface $output
     ) {
         $this->appName = $appName;

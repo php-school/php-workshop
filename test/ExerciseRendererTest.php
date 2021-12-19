@@ -4,10 +4,13 @@ namespace PhpSchool\PhpWorkshopTest;
 
 use AydinHassan\CliMdRenderer\CliRendererFactory;
 use Colors\Color;
-use League\CommonMark\DocParser;
-use League\CommonMark\Environment;
+use League\CommonMark\Environment\Environment;
+use League\CommonMark\Extension\CommonMark\CommonMarkCoreExtension;
+use League\CommonMark\Parser\MarkdownParser;
 use PhpSchool\CliMenu\CliMenu;
 use PhpSchool\CliMenu\MenuItem\MenuItemInterface;
+use PhpSchool\PhpWorkshop\Markdown\Renderer;
+use PhpSchool\PhpWorkshopTest\Factory\MarkdownParserFactory;
 use PhpSchool\Terminal\Terminal;
 use PHPUnit\Framework\TestCase;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
@@ -18,7 +21,7 @@ use PhpSchool\PhpWorkshop\Output\StdOutput;
 use PhpSchool\PhpWorkshop\UserState;
 use PhpSchool\PhpWorkshop\UserStateSerializer;
 
-class ExerciseRendererTest extends TestCase
+class ExerciseRendererTest extends ContainerAwareTest
 {
     public function testExerciseRendererSetsCurrentExerciseAndRendersExercise(): void
     {
@@ -71,10 +74,7 @@ class ExerciseRendererTest extends TestCase
         }
         file_put_contents($problemFile, '### Exercise Content');
 
-        $markdownRenderer = new MarkdownRenderer(
-            new DocParser(Environment::createCommonMarkEnvironment()),
-            (new CliRendererFactory())->__invoke()
-        );
+        $markdownRenderer = $this->container->get(Renderer::class);
 
         $color = new Color();
         $color->setForceStyle(true);
