@@ -12,7 +12,6 @@ use PhpSchool\PhpWorkshop\ExerciseDispatcher;
  */
 interface ExerciseInterface
 {
-
     /**
      * Get the name of the exercise, like `Hello World!`.
      *

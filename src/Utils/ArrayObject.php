@@ -17,7 +17,6 @@ use IteratorAggregate;
  */
 class ArrayObject implements IteratorAggregate, Countable
 {
-
     /**
      * @var array<T>
      */

@@ -11,7 +11,6 @@ use PhpSchool\PhpWorkshop\Solution\SolutionInterface;
 
 class CliExerciseImpl implements ExerciseInterface, CliExercise
 {
-
     /**
      * @var string
      */

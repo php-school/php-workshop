@@ -15,7 +15,6 @@ use ReflectionClass;
  */
 abstract class AbstractExercise
 {
-
     /**
      * Get the name of the exercise, like `Hello World!`.
      *

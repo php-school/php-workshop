@@ -10,5 +10,4 @@ namespace PhpSchool\PhpWorkshop\Result;
  */
 interface SuccessInterface extends ResultInterface
 {
-
 }

@@ -7,5 +7,4 @@ use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 
 interface CliExerciseInterface extends ExerciseInterface, CliExercise
 {
-
 }

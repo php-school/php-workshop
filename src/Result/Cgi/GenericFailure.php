@@ -13,7 +13,6 @@ use Psr\Http\Message\RequestInterface;
  */
 class GenericFailure extends Failure implements FailureInterface
 {
-
     /**
      * @var RequestInterface
      */

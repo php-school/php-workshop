@@ -9,7 +9,6 @@ namespace PhpSchool\PhpWorkshop\ResultRenderer;
  */
 interface ResultRendererInterface
 {
-
     /**
      * This method should return a string representation of the result,
      * formatted for output on the command line.

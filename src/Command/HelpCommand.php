@@ -12,7 +12,6 @@ use PhpSchool\PhpWorkshop\Output\OutputInterface;
  */
 class HelpCommand
 {
-
     /**
      * @var string
      */
