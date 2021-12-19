@@ -4,6 +4,8 @@ namespace PhpSchool\PhpWorkshop\Markdown;
 
 use Composer\InstalledVersions;
 use Composer\Semver\VersionParser;
+use League\CommonMark\DocParser;
+use League\CommonMark\Environment;
 use League\CommonMark\Environment\Environment as EnvironmentV3;
 use League\CommonMark\Extension\CommonMark\CommonMarkCoreExtension;
 use League\CommonMark\Parser\MarkdownParser;

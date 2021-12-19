@@ -23,7 +23,7 @@
         "symfony/process": "^4.0 | ^5.0",
         "symfony/filesystem": "^4.0 | ^5.0",
         "fakerphp/faker": "^1.10.1",
-        "aydin-hassan/cli-md-renderer": "dev-master",
+        "aydin-hassan/cli-md-renderer": "^2.0 | dev-master",
         "php-school/cli-menu": "^4.1",
         "psr/http-message": "^1.0",
         "myclabs/php-enum": "^1.4",
