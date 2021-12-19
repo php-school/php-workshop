@@ -15,18 +15,18 @@ use Psr\Container\ContainerInterface;
 
 class RendererFactory
 {
-    public function __invoke(ContainerInterface $c) : Renderer
+    public function __invoke(ContainerInterface $c): Renderer
     {
         if ($this->isV3()) {
             $parser = new MarkdownParser((new EnvironmentV3())->addExtension(new CommonMarkCoreExtension()));
-            $renderer = (new MarkdownCliRendererV3Factory)->__invoke($c);
+            $renderer = (new MarkdownCliRendererV3Factory())->__invoke($c);
 
             return new LeagueCommonMarkV2Renderer($parser, $renderer);
         }
 
         return new LeagueCommonMarkRenderer(
             new DocParser(Environment::createCommonMarkEnvironment()),
-            (new MarkdownCliRendererFactory)->__invoke($c)
+            (new MarkdownCliRendererFactory())->__invoke($c)
         );
     }
 
