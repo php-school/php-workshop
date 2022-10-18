@@ -12,7 +12,7 @@ use PhpSchool\PhpWorkshop\Exception\InvalidArgumentException;
 class LockFileParser
 {
     /**
-     * @var array<string, mixed>
+     * @var array{packages: array<array{name: string, version: string}>}
      */
     private $contents;
 
@@ -26,11 +26,18 @@ class LockFileParser
             throw new InvalidArgumentException(sprintf('Lock File: "%s" does not exist', $lockFilePath));
         }
 
-        $this->contents = json_decode((string) file_get_contents($lockFilePath), true);
+        $content = json_decode((string) file_get_contents($lockFilePath), true);
 
-        if (!isset($this->contents['packages'])) {
+        if (!is_array($content)) {
+            throw new InvalidArgumentException(sprintf('Lock File: "%s" is corrupted', $lockFilePath));
+        }
+
+        if (!isset($content['packages']) || !is_array($content['packages'])) {
             throw new InvalidArgumentException(sprintf('Lock File: "%s" does not contain packages key', $lockFilePath));
         }
+
+        /** @var array{packages: array<array{name: string, version: string}>} $content */
+        $this->contents = $content;
     }
 
     /**

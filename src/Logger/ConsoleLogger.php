@@ -27,6 +27,9 @@ class ConsoleLogger extends AbstractLogger implements LoggerInterface
         $this->color = $color;
     }
 
+    /**
+     * @param string $level
+     */
     public function log($level, $message, array $context = []): void
     {
         $parts = [

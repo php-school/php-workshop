@@ -80,7 +80,7 @@ class FileComparisonCheck implements SimpleCheckInterface
     /**
      * @param int|string $key
      * @param string|array<string, string> $file
-     * @return array{0: array, 1:string}
+     * @return array{0: array{strip?: string}, 1:string}
      */
     private function getOptionsAndFile($key, $file): array
     {

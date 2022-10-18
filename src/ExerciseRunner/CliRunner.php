@@ -85,12 +85,12 @@ class CliRunner implements ExerciseRunnerInterface
      */
     public function getRequiredChecks(): array
     {
-        return static::$requiredChecks;
+        return self::$requiredChecks;
     }
 
     /**
      * @param string $fileName
-     * @param ArrayObject<string> $args
+     * @param ArrayObject<int, string> $args
      * @param string $type
      * @return string
      */
@@ -111,7 +111,7 @@ class CliRunner implements ExerciseRunnerInterface
 
     /**
      * @param string $fileName
-     * @param ArrayObject<string> $args
+     * @param ArrayObject<int, string> $args
      *
      * @return Process
      */

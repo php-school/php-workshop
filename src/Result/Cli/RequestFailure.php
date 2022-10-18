@@ -13,7 +13,7 @@ use PhpSchool\PhpWorkshop\Utils\ArrayObject;
 class RequestFailure implements FailureInterface
 {
     /**
-     * @var ArrayObject<string>
+     * @var ArrayObject<int, string>
      */
     private $args;
 
@@ -28,7 +28,7 @@ class RequestFailure implements FailureInterface
     private $actualOutput;
 
     /**
-     * @param ArrayObject<string> $args The arguments that caused the failure.
+     * @param ArrayObject<int, string> $args The arguments that caused the failure.
      * @param string $expectedOutput The expected output.
      * @param string $actualOutput The actual output.
      */
@@ -42,7 +42,7 @@ class RequestFailure implements FailureInterface
     /**
      * Named constructor, for added code legibility.
      *
-     * @param ArrayObject<string> $args The arguments that caused the failure.
+     * @param ArrayObject<int, string> $args The arguments that caused the failure.
      * @param string $expectedOutput The expected result.
      * @param string $actualOutput The actual output.
      * @return self The result.
@@ -55,7 +55,7 @@ class RequestFailure implements FailureInterface
     /**
      * Get the arguments that caused the failure.
      *
-     * @return ArrayObject<string>
+     * @return ArrayObject<int, string>
      */
     public function getArgs(): ArrayObject
     {

@@ -12,5 +12,5 @@ parameters:
             message: '#Class PHPUnit\\Framework\\TestCase not found#'
             path: src/TestUtils/WorkshopExerciseTest.php
 
-    excludes_analyse:
+    excludePaths:
         - src/TestUtils/WorkshopExerciseTest.php

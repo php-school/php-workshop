@@ -21,6 +21,7 @@ class InTempSolutionMapper
         $iterator = new \RecursiveIteratorIterator($dirIterator, \RecursiveIteratorIterator::SELF_FIRST);
 
         foreach ($iterator as $file) {
+            /** @var \SplFileInfo $file */
             $target = Path::join($tempDir, $iterator->getSubPathName());
 
             if ($fileSystem->exists($target)) {

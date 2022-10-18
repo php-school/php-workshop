@@ -13,13 +13,13 @@ use PhpSchool\PhpWorkshop\Utils\ArrayObject;
 class CliExecuteEvent extends Event
 {
     /**
-     * @var ArrayObject<string>
+     * @var ArrayObject<int, string>
      */
     private $args;
 
     /**
      * @param string $name The event name.
-     * @param ArrayObject<string> $args The arguments that should be/have been passed to the program.
+     * @param ArrayObject<int, string> $args The arguments that should be/have been passed to the program.
      * @param array<mixed> $parameters The event parameters.
      */
     public function __construct(string $name, ArrayObject $args, array $parameters = [])
@@ -52,7 +52,7 @@ class CliExecuteEvent extends Event
     /**
      * Get the arguments to be passed to the program.
      *
-     * @return ArrayObject<string>
+     * @return ArrayObject<int, string>
      */
     public function getArgs(): ArrayObject
     {

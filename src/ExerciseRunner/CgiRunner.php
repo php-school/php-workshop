@@ -119,7 +119,7 @@ class CgiRunner implements ExerciseRunnerInterface
      */
     public function getRequiredChecks(): array
     {
-        return static::$requiredChecks;
+        return self::$requiredChecks;
     }
 
     /**

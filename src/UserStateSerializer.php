@@ -61,7 +61,7 @@ class UserStateSerializer
      */
     public function serialize(UserState $state): void
     {
-        $saveFile = sprintf('%s/%s', $this->path, static::SAVE_FILE);
+        $saveFile = sprintf('%s/%s', $this->path, self::SAVE_FILE);
 
         $data = file_exists($saveFile)
             ? $this->readJson($saveFile)
@@ -82,7 +82,7 @@ class UserStateSerializer
      */
     public function deSerialize(): UserState
     {
-        $legacySaveFile = sprintf('%s/%s', $this->path, static::LEGACY_SAVE_FILE);
+        $legacySaveFile = sprintf('%s/%s', $this->path, self::LEGACY_SAVE_FILE);
         if (file_exists($legacySaveFile)) {
             $userState = $this->migrateData($legacySaveFile);
 
@@ -91,17 +91,18 @@ class UserStateSerializer
             }
         }
 
-        $json = $this->readJson(sprintf('%s/%s', $this->path, static::SAVE_FILE));
+        $json = $this->readJson(sprintf('%s/%s', $this->path, self::SAVE_FILE));
         if (null === $json) {
             $this->wipeFile();
             return new UserState();
         }
 
-        if (!isset($json[$this->workshopName])) {
+        if (!isset($json[$this->workshopName]) || !is_array($json[$this->workshopName])) {
             return new UserState();
         }
 
         $json = $json[$this->workshopName];
+
         if (!array_key_exists('completed_exercises', $json)) {
             return new UserState();
         }
@@ -167,7 +168,11 @@ class UserStateSerializer
             }
         }
 
-        $userState = new UserState($data['completed_exercises'], $data['current_exercise']);
+        $userState = new UserState(
+            $data['completed_exercises'],
+            is_string($data['current_exercise']) ? $data['current_exercise'] : null
+        );
+
         $this->serialize($userState);
 
         unlink($legacySaveFile);
@@ -196,6 +201,10 @@ class UserStateSerializer
             return null;
         }
 
+        if (!is_array($data)) {
+            return null;
+        }
+
         return $data;
     }
 
@@ -204,8 +213,8 @@ class UserStateSerializer
      */
     private function wipeFile(): void
     {
-        if (file_exists(sprintf('%s/%s', $this->path, static::SAVE_FILE))) {
-            unlink(sprintf('%s/%s', $this->path, static::SAVE_FILE));
+        if (file_exists(sprintf('%s/%s', $this->path, self::SAVE_FILE))) {
+            unlink(sprintf('%s/%s', $this->path, self::SAVE_FILE));
         }
     }
 }

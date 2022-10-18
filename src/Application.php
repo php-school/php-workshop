@@ -6,6 +6,7 @@ namespace PhpSchool\PhpWorkshop;
 
 use DI\Container;
 use DI\ContainerBuilder;
+use PhpSchool\PhpWorkshop\Check\CheckInterface;
 use PhpSchool\PhpWorkshop\Check\CheckRepository;
 use PhpSchool\PhpWorkshop\Event\Event;
 use PhpSchool\PhpWorkshop\Event\EventDispatcher;
@@ -185,6 +186,7 @@ final class Application
             }
         }
 
+        /** @var CheckRepository $checkRepository */
         $checkRepository = $container->get(CheckRepository::class);
         foreach ($this->checks as $check) {
             if (false === $container->has($check)) {
@@ -193,10 +195,23 @@ final class Application
                 );
             }
 
-            $checkRepository->registerCheck($container->get($check));
+            $checkInstance = $container->get($check);
+
+            if (!$checkInstance instanceof CheckInterface) {
+                throw new RuntimeException(
+                    sprintf(
+                        'Check: "%s" does not implement the required interface: "%s".',
+                        $check,
+                        CheckInterface::class
+                    )
+                );
+            }
+
+            $checkRepository->registerCheck($checkInstance);
         }
 
         if (!empty($this->results)) {
+            /** @var ResultRendererFactory $resultFactory */
             $resultFactory = $container->get(ResultRendererFactory::class);
 
             foreach ($this->results as $result) {
@@ -234,22 +249,24 @@ final class Application
         $container = $this->configure($debug);
 
         try {
-            $exitCode = $container->get(CommandRouter::class)->route($args);
+            /** @var CommandRouter $router */
+            $router = $container->get(CommandRouter::class);
+            $exitCode = $router->route($args);
         } catch (MissingArgumentException $e) {
-            $container
-                ->get(OutputInterface::class)
-                ->printError(
-                    sprintf(
-                        'Argument%s: "%s" %s missing!',
-                        count($e->getMissingArguments()) > 1 ? 's' : '',
-                        implode('", "', $e->getMissingArguments()),
-                        count($e->getMissingArguments()) > 1 ? 'are' : 'is'
-                    )
-                );
+            /** @var OutputInterface $output */
+            $output = $container->get(OutputInterface::class);
+            $output->printError(
+                sprintf(
+                    'Argument%s: "%s" %s missing!',
+                    count($e->getMissingArguments()) > 1 ? 's' : '',
+                    implode('", "', $e->getMissingArguments()),
+                    count($e->getMissingArguments()) > 1 ? 'are' : 'is'
+                )
+            );
             return 1;
         } catch (\Throwable $e) {
             $message = $e->getMessage();
-            $basePath = canonicalise_path($container->get('basePath'));
+            $basePath = canonicalise_path(is_string($path  = $container->get('basePath')) ? $path : '');
 
             if (strpos($message, $basePath) !== null) {
                 $message = str_replace($basePath, '', $message);
@@ -257,9 +274,10 @@ final class Application
 
             $this->tearDown($container);
 
-            $container
-                ->get(OutputInterface::class)
-                ->printException($e);
+            /** @var OutputInterface $output */
+            $output = $container->get(OutputInterface::class);
+            $output->printException($e);
+
             return 1;
         }
 
@@ -307,11 +325,13 @@ final class Application
     private function tearDown(ContainerInterface $container): void
     {
         try {
-            $container
-                ->get(EventDispatcher::class)
-                ->dispatch(new Event('application.tear-down'));
+            /** @var EventDispatcher $eventDispatcher */
+            $eventDispatcher =  $container->get(EventDispatcher::class);
+            $eventDispatcher->dispatch(new Event('application.tear-down'));
         } catch (\Throwable $t) {
-            $container->get(LoggerInterface::class)->error($t->getMessage(), ['exception' => $t]);
+            /** @var LoggerInterface $logger */
+            $logger = $container->get(LoggerInterface::class);
+            $logger->error($t->getMessage(), ['exception' => $t]);
         }
     }
 }

@@ -100,13 +100,17 @@ class DatabaseCheck implements ListenableCheckInterface
         }
 
         $eventDispatcher->listen('verify.start', function (Event $e) use ($db) {
-            $e->getParameter('exercise')->seed($db);
+            /** @var DatabaseExerciseCheck $exercise */
+            $exercise = $e->getParameter('exercise');
+            $exercise->seed($db);
             //make a copy - so solution can modify without effecting database user has access to
             copy($this->userDatabasePath, $this->solutionDatabasePath);
         });
 
         $eventDispatcher->listen('run.start', function (Event $e) use ($db) {
-            $e->getParameter('exercise')->seed($db);
+            /** @var DatabaseExerciseCheck $exercise */
+            $exercise = $e->getParameter('exercise');
+            $exercise->seed($db);
         });
 
         $eventDispatcher->listen('cli.verify.reference-execute.pre', function (CliExecuteEvent $e) {
@@ -121,7 +125,9 @@ class DatabaseCheck implements ListenableCheckInterface
         );
 
         $eventDispatcher->insertVerifier('verify.finish', function (Event $e) use ($db) {
-            $verifyResult = $e->getParameter('exercise')->verify($db);
+            /** @var DatabaseExerciseCheck $exercise */
+            $exercise = $e->getParameter('exercise');
+            $verifyResult = $exercise->verify($db);
 
             if (false === $verifyResult) {
                 return Failure::fromNameAndReason($this->getName(), 'Database verification failed');

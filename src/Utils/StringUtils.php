@@ -55,8 +55,8 @@ class StringUtils
 
         return vsprintf(
             str_replace(
-                array_keys(static::$pluraliseSearchReplace),
-                array_values(static::$pluraliseSearchReplace),
+                array_keys(self::$pluraliseSearchReplace),
+                array_values(self::$pluraliseSearchReplace),
                 $string
             ),
             $args

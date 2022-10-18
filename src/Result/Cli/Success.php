@@ -12,7 +12,7 @@ use PhpSchool\PhpWorkshop\Utils\ArrayObject;
 class Success implements SuccessInterface
 {
     /**
-     * @var ArrayObject<string>
+     * @var ArrayObject<int, string>
      */
     private $args;
 
@@ -22,7 +22,7 @@ class Success implements SuccessInterface
     private $name = 'CLI Program Runner';
 
     /**
-     * @param ArrayObject<string> $args The arguments for this success.
+     * @param ArrayObject<int, string> $args The arguments for this success.
      */
     public function __construct(ArrayObject $args)
     {
@@ -42,7 +42,7 @@ class Success implements SuccessInterface
     /**
      * Get the arguments for this success.
      *
-     * @return ArrayObject<string>
+     * @return ArrayObject<int, string>
      */
     public function getArgs(): ArrayObject
     {
