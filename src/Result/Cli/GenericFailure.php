@@ -14,7 +14,7 @@ use PhpSchool\PhpWorkshop\Utils\ArrayObject;
 class GenericFailure extends Failure implements FailureInterface
 {
     /**
-     * @var ArrayObject<string>
+     * @var ArrayObject<int, string>
      */
     private $args;
 
@@ -24,19 +24,19 @@ class GenericFailure extends Failure implements FailureInterface
     private static $name = 'CLI Program Runner';
 
     /**
-     * @param ArrayObject<string> $args The arguments that caused the failure.
+     * @param ArrayObject<int, string> $args The arguments that caused the failure.
      * @param string|null $reason The reason (if any) of the failure.
      */
     public function __construct(ArrayObject $args, string $reason = null)
     {
         $this->args = $args;
-        parent::__construct(static::$name, $reason);
+        parent::__construct(self::$name, $reason);
     }
 
     /**
      * Named constructor, for added code legibility.
      *
-     * @param ArrayObject<string> $args The arguments that caused the failure.
+     * @param ArrayObject<int, string> $args The arguments that caused the failure.
      * @param string|null $reason The reason (if any) of the failure.
      * @return self The result.
      */
@@ -48,7 +48,7 @@ class GenericFailure extends Failure implements FailureInterface
     /**
      * Static constructor to create from a `PhpSchool\PhpWorkshop\Exception\CodeExecutionException` exception.
      *
-     * @param ArrayObject<string> $args The arguments that caused the failure.
+     * @param ArrayObject<int, string> $args The arguments that caused the failure.
      * @param CodeExecutionException $e The exception.
      * @return self The result.
      */
@@ -58,7 +58,7 @@ class GenericFailure extends Failure implements FailureInterface
     }
 
     /**
-     * @return ArrayObject<string>
+     * @return ArrayObject<int, string>
      */
     public function getArgs(): ArrayObject
     {

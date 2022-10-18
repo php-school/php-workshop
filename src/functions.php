@@ -64,13 +64,16 @@ if (!function_exists('pluralise')) {
 if (!function_exists('collect')) {
 
     /**
+     * @template TKey of array-key
      * @template T
-     * @param array<T> $array
-     * @return Collection<T>
+     * @param array<TKey, T> $array
+     * @return Collection<TKey, T>
      */
     function collect(array $array): Collection
     {
-        return new Collection($array);
+        /** @var Collection<TKey, T> $collection */
+        $collection = new Collection($array);
+        return $collection;
     }
 }
 

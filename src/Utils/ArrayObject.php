@@ -12,20 +12,21 @@ use IteratorAggregate;
  *
  * Utility collection class.
  *
+ * @template TKey of array-key
  * @template T
- * @implements IteratorAggregate<int, T>
+ * @implements IteratorAggregate<TKey, T>
  */
 class ArrayObject implements IteratorAggregate, Countable
 {
     /**
-     * @var array<T>
+     * @var array<TKey, T>
      */
     private $array;
 
     /**
      * Accepts an array of items.
      *
-     * @param array<T> $array
+     * @param array<TKey, T> $array
      */
     final public function __construct(array $array = [])
     {
@@ -112,17 +113,26 @@ class ArrayObject implements IteratorAggregate, Countable
     /**
      * Reduce the items to a single value.
      *
-     * @param callable $callback
-     * @param mixed $initial
-     * @return mixed
+     * @template TReduceInitial
+     * @template TReduceReturnType
+     *
+     * @param  callable(TReduceInitial|TReduceReturnType, T): TReduceReturnType  $callback
+     * @param  TReduceInitial $initial
+     * @return TReduceInitial|TReduceReturnType
      */
     public function reduce(callable $callback, $initial = null)
     {
-        return array_reduce($this->array, $callback, $initial);
+        $result = $initial;
+
+        foreach ($this->array as $value) {
+            $result = $callback($result, $value);
+        }
+
+        return $result;
     }
 
     /**
-     * @return static
+     * @return static<int, TKey>
      */
     public function keys(): self
     {
@@ -181,9 +191,11 @@ class ArrayObject implements IteratorAggregate, Countable
     /**
      * Get an item at the given key.
      *
+     * @template TGetDefault
+     *
      * @param string|int $key
-     * @param mixed $default
-     * @return T|mixed
+     * @param TGetDefault $default
+     * @return T|TGetDefault
      */
     public function get($key, $default = null)
     {
@@ -207,7 +219,7 @@ class ArrayObject implements IteratorAggregate, Countable
     /**
      * Return an iterator containing all the items. Allows to `foreach` over.
      *
-     * @return ArrayIterator<int, T>
+     * @return ArrayIterator<TKey, T>
      */
     public function getIterator(): ArrayIterator
     {
@@ -217,7 +229,7 @@ class ArrayObject implements IteratorAggregate, Countable
     /**
      * Get all the items in the array.
      *
-     * @return array<T>
+     * @return array<TKey, T>
      */
     public function getArrayCopy(): array
     {

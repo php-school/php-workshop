@@ -11,7 +11,6 @@ use PhpSchool\Terminal\Terminal;
 use Psr\Container\ContainerInterface;
 use PhpSchool\CliMenu\CliMenu;
 use PhpSchool\CliMenu\Builder\CliMenuBuilder;
-use PhpSchool\CliMenu\MenuItem\AsciiArtItem;
 use PhpSchool\PhpWorkshop\Command\CreditsCommand;
 use PhpSchool\PhpWorkshop\Command\HelpCommand;
 use PhpSchool\PhpWorkshop\Command\MenuCommandInvoker;
@@ -37,18 +36,31 @@ class MenuFactory
      */
     public function __invoke(ContainerInterface $c): CliMenu
     {
-        $userStateSerializer    = $c->get(UserStateSerializer::class);
-        $exerciseRepository     = $c->get(ExerciseRepository::class);
-        $userState              = $userStateSerializer->deSerialize();
-        $exerciseRenderer       = $c->get(ExerciseRenderer::class);
-        $workshopType           = $c->get(WorkshopType::class);
-        $eventDispatcher        = $c->get(EventDispatcher::class);
+        /** @var UserStateSerializer $userStateSerializer */
+        $userStateSerializer = $c->get(UserStateSerializer::class);
+        $userState = $userStateSerializer->deSerialize();
+        /** @var ExerciseRepository $exerciseRepository */
+        $exerciseRepository = $c->get(ExerciseRepository::class);
+        /** @var ExerciseRenderer $exerciseRenderer */
+        $exerciseRenderer = $c->get(ExerciseRenderer::class);
+        /** @var WorkshopType $workshopType */
+        $workshopType = $c->get(WorkshopType::class);
+        /** @var EventDispatcher $eventDispatcher */
+        $eventDispatcher = $c->get(EventDispatcher::class);
 
-        $builder = (new CliMenuBuilder($c->get(Terminal::class)))
+        /** @var Terminal $terminal */
+        $terminal = $c->get(Terminal::class);
+        $builder = (new CliMenuBuilder($terminal))
             ->addLineBreak();
 
-        if (null !== $c->get('workshopLogo')) {
-            $builder->addAsciiArt($c->get('workshopLogo'), AsciiArtItem::POSITION_CENTER);
+        $logo = $c->get('workshopLogo');
+
+        if (!is_string($logo)) {
+            $logo = null;
+        }
+
+        if ($logo) {
+            $builder->addAsciiArt($logo);
         }
 
         $builder
@@ -69,16 +81,19 @@ class MenuFactory
                 $this->isExerciseDisabled($exercise, $userState, $workshopType)
             );
         }
-
+        /** @var HelpCommand $helpCommand */
+        $helpCommand = $c->get(HelpCommand::class);
+        /** @var CreditsCommand $creditsCommand */
+        $creditsCommand = $c->get(CreditsCommand::class);
         $builder
             ->addLineBreak()
             ->addLineBreak('-')
             ->addLineBreak()
-            ->addItem('HELP', new MenuCommandInvoker($c->get(HelpCommand::class)))
-            ->addItem('CREDITS', new MenuCommandInvoker($c->get(CreditsCommand::class)))
+            ->addItem('HELP', new MenuCommandInvoker($helpCommand))
+            ->addItem('CREDITS', new MenuCommandInvoker($creditsCommand))
             ->disableDefaultItems()
-            ->setBackgroundColour($c->get('bgColour'))
-            ->setForegroundColour($c->get('fgColour'))
+            ->setBackgroundColour(is_string($bg = $c->get('bgColour')) ? $bg : 'black')
+            ->setForegroundColour(is_string($fg = $c->get('fgColour')) ? $fg : 'magenta')
             ->setMarginAuto()
             ->setWidth(70)
             ->modifySelectableStyle(function (SelectableStyle $style) {
@@ -89,25 +104,28 @@ class MenuFactory
             ->setItemExtra('[COMPLETED]');
 
         $builder
-            ->addSubMenu('OPTIONS', function (CliMenuBuilder $subMenu) use ($c) {
-                if (null !== $c->get('workshopLogo')) {
-                    $subMenu->addAsciiArt($c->get('workshopLogo'), AsciiArtItem::POSITION_CENTER);
+            ->addSubMenu('OPTIONS', function (CliMenuBuilder $subMenu) use ($c, $logo) {
+                if ($logo) {
+                    $subMenu->addAsciiArt($logo);
                 }
+
+                /** @var ResetProgress $reset */
+                $reset = $c->get(ResetProgress::class);
 
                 $subMenu
                     ->addLineBreak('_')
                     ->addLineBreak()
                     ->addStaticItem('Options')
                     ->addStaticItem('-------')
-                    ->addItem('Reset workshop progress', $c->get(ResetProgress::class))
+                    ->addItem('Reset workshop progress', $reset)
                     ->addLineBreak()
                     ->addLineBreak('-')
                     ->addLineBreak()
                     ->setGoBackButtonText('GO BACK')
                     ->setExitButtonText('EXIT');
 
-                if (null !== $c->get('workshopTitle')) {
-                    $subMenu->setTitle($c->get('workshopTitle'));
+                if (is_string($title = $c->get('workshopTitle'))) {
+                    $subMenu->setTitle($title);
                 }
             })
             ->addLineBreak();
@@ -121,8 +139,8 @@ class MenuFactory
             });
         }
 
-        if (null !== $c->get('workshopTitle')) {
-            $builder->setTitle($c->get('workshopTitle'));
+        if (is_string($title = $c->get('workshopTitle'))) {
+            $builder->setTitle($title);
         }
 
         return $builder->build();

@@ -23,7 +23,9 @@ class EventDispatcherFactory
      */
     public function __invoke(ContainerInterface $container): EventDispatcher
     {
-        $dispatcher = new EventDispatcher($container->get(ResultAggregator::class));
+        /** @var ResultAggregator $results */
+        $results = $container->get(ResultAggregator::class);
+        $dispatcher = new EventDispatcher($results);
 
         //add listeners from config
         $eventListeners = $container->has('eventListeners') ? $container->get('eventListeners') : [];
@@ -48,21 +50,25 @@ class EventDispatcherFactory
     }
 
     /**
-     * @param array<int, array<string, array>> $listeners
-     * @return array<int, array>
+     * @param array<int, array<string, array<ContainerListenerHelper|callable>>> $listeners
+     * @return array<string, array<ContainerListenerHelper|callable>>
      */
     private function mergeListenerGroups(array $listeners): array
     {
         $listeners = new Collection($listeners);
 
-        return $listeners
+        /** @var Collection<string, array<ContainerListenerHelper|callable>> $mergedListeners */
+        $mergedListeners = $listeners
             ->keys()
-            ->reduce(function (Collection $carry, $listenerGroup) use ($listeners) {
-                $events = new Collection($listeners->get($listenerGroup));
+            ->reduce(function (Collection $carry, string $listenerGroup) use ($listeners): Collection {
+                /** @var array<string, array<ContainerListenerHelper|callable>> $groupListeners */
+                $groupListeners = $listeners->get($listenerGroup);
+                $events = new Collection($groupListeners);
 
                 return $events
                     ->keys()
-                    ->reduce(function (Collection $carry, $event) use ($events) {
+                    ->reduce(function (Collection $carry, string $event) use ($events) {
+                        /** @var Collection<string, array<ContainerListenerHelper|callable>> $carry */
                         $listeners = $events->get($event);
 
                         if (!is_array($listeners)) {
@@ -74,8 +80,9 @@ class EventDispatcherFactory
                             array_merge($carry->get($event, []), $listeners)
                         );
                     }, $carry);
-            }, new Collection())
-            ->getArrayCopy();
+            }, new Collection());
+
+            return $mergedListeners->getArrayCopy();
     }
 
     /**
@@ -100,6 +107,7 @@ class EventDispatcherFactory
                 }
 
                 $dispatcher->listen($eventName, function (...$args) use ($container, $listener) {
+                    /** @var object $service */
                     $service = $container->get($listener->getService());
 
                     if (!method_exists($service, $listener->getMethod())) {

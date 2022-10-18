@@ -41,8 +41,8 @@ class InvalidArgumentException extends \InvalidArgumentException
             sprintf(
                 'Parameter: "%s" can only be one of: "%s" Received: "%s"',
                 $parameterName,
-                static::stringify($allowedValues),
-                static::stringify($actualValue)
+                self::stringify($allowedValues),
+                self::stringify($actualValue)
             )
         );
     }

@@ -45,6 +45,6 @@ class ExerciseType extends Enum
      */
     public function getExerciseInterface(): string
     {
-        return static::$exerciseTypeToExerciseInterfaceMap[$this->getKey()];
+        return self::$exerciseTypeToExerciseInterfaceMap[$this->getKey()];
     }
 }

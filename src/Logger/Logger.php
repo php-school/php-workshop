@@ -19,6 +19,9 @@ class Logger extends AbstractLogger implements LoggerInterface
         $this->filePath = $filePath;
     }
 
+    /**
+     * @param string $level
+     */
     public function log($level, $message, array $context = []): void
     {
         if (!file_exists(dirname($this->filePath))) {

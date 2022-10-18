@@ -30,7 +30,7 @@ class GenericFailure extends Failure implements FailureInterface
     public function __construct(RequestInterface $request, string $reason = null)
     {
         $this->request = $request;
-        parent::__construct(static::$name, $reason);
+        parent::__construct(self::$name, $reason);
     }
 
     /**

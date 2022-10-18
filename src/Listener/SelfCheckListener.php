@@ -6,6 +6,7 @@ namespace PhpSchool\PhpWorkshop\Listener;
 
 use PhpSchool\PhpWorkshop\Event\Event;
 use PhpSchool\PhpWorkshop\ExerciseCheck\SelfCheck;
+use PhpSchool\PhpWorkshop\Input\Input;
 use PhpSchool\PhpWorkshop\ResultAggregator;
 
 /**
@@ -34,7 +35,9 @@ class SelfCheckListener
         $exercise = $event->getParameter('exercise');
 
         if ($exercise instanceof SelfCheck) {
-            $this->results->add($exercise->check($event->getParameter('input')));
+            /** @var Input $input */
+            $input = $event->getParameter('input');
+            $this->results->add($exercise->check($input));
         }
     }
 }

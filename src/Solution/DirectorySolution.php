@@ -55,6 +55,7 @@ class DirectorySolution implements SolutionInterface
 
         $files = [];
         foreach ($iter as $file) {
+            /** @var \SplFileInfo $file */
             if ($file->isFile()) {
                 $files[] = trim(substr($file->getPathname(), strlen($directory)), '/');
             }
