@@ -48,6 +48,7 @@ class MarkdownCliRendererFactory
      */
     public function __invoke(ContainerInterface $c): CliRenderer
     {
+        /** @var Terminal $terminal */
         $terminal = $c->get(Terminal::class);
 
         $codeRender = new FencedCodeRenderer();
@@ -72,10 +73,13 @@ class MarkdownCliRendererFactory
             Link::class => new LinkRenderer(),
         ];
 
+        /** @var Color $color */
+        $color = $c->get(Color::class);
+
         return new CliRenderer(
             $blockRenderers,
             $inlineBlockRenderers,
-            $c->get(Color::class)
+            $color
         );
     }
 }
