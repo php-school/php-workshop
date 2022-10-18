@@ -66,5 +66,10 @@
             "phpcbf test --standard=PSR12 --encoding=UTF-8"
         ],
         "static": "phpstan --ansi analyse --level max src"
+    },
+    "config": {
+        "allow-plugins": {
+            "phpstan/extension-installer": true
+        }
     }
 }
