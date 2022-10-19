@@ -71,8 +71,10 @@ class ArrayObject implements IteratorAggregate, Countable
      * Run a callable over each item in the array and flatten the results by one level returning a new instance of
      * `ArrayObject` with the flattened items.
      *
-     * @param callable $callback
-     * @return static
+     * @template TFlatMapReturn of array
+     *
+     * @param  callable(T): TFlatMapReturn $callback
+     * @return static<int|string, mixed>
      */
     public function flatMap(callable $callback): self
     {
