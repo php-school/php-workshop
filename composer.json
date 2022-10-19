@@ -20,8 +20,8 @@
         "ext-pdo_sqlite": "*",
         "php-di/php-di": "^6.0",
         "psr/container": "^1.0",
-        "symfony/process": "^4.0 | ^5.0",
-        "symfony/filesystem": "^4.0 | ^5.0",
+        "symfony/process": "^4.0 | ^5.0 | ^6.0",
+        "symfony/filesystem": "^4.0 | ^5.0 | ^6.0",
         "fakerphp/faker": "^1.10.1",
         "aydin-hassan/cli-md-renderer": "^2.4",
         "php-school/cli-menu": "^4.1",
@@ -56,6 +56,12 @@
         }
     },
     "scripts" : {
+        "test": [
+            "@unit-tests",
+            "@cs",
+            "@static"
+        ],
+        "unit-tests": "phpunit",
         "cs" : [
             "phpcs src --standard=PSR12 --encoding=UTF-8",
             "phpcs test --standard=PSR12 --encoding=UTF-8"
