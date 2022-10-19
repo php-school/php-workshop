@@ -6,11 +6,10 @@ use PhpSchool\CliMenu\CliMenu;
 use PhpSchool\CliMenu\Dialogue\Confirm;
 use PhpSchool\CliMenu\MenuItem\MenuItemInterface;
 use PhpSchool\CliMenu\MenuStyle;
+use PhpSchool\PhpWorkshop\UserState\UserState;
 use PhpSchool\Terminal\Terminal;
 use PhpSchool\PhpWorkshop\MenuItem\ResetProgress;
-use PhpSchool\PhpWorkshop\Output\OutputInterface;
-use PhpSchool\PhpWorkshop\UserState;
-use PhpSchool\PhpWorkshop\UserStateSerializer;
+use PhpSchool\PhpWorkshop\UserState\Serializer;
 use PHPUnit\Framework\TestCase;
 
 class ResetProgressTest extends TestCase
@@ -58,7 +57,7 @@ class ResetProgressTest extends TestCase
             ->method('confirm')
             ->willReturn($confirm);
 
-        $userStateSerializer = $this->createMock(UserStateSerializer::class);
+        $userStateSerializer = $this->createMock(Serializer::class);
         $userStateSerializer
             ->expects($this->once())
             ->method('serialize')

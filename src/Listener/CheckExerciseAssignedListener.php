@@ -6,7 +6,7 @@ namespace PhpSchool\PhpWorkshop\Listener;
 
 use PhpSchool\PhpWorkshop\CommandDefinition;
 use PhpSchool\PhpWorkshop\Event\Event;
-use PhpSchool\PhpWorkshop\UserState;
+use PhpSchool\PhpWorkshop\UserState\UserState;
 use RuntimeException;
 
 class CheckExerciseAssignedListener

@@ -4,6 +4,8 @@ namespace PhpSchool\PhpWorkshopTest\Factory;
 
 use PhpSchool\CliMenu\MenuItem\SelectableItem;
 use PhpSchool\PhpWorkshop\Event\EventInterface;
+use PhpSchool\PhpWorkshop\UserState\Serializer;
+use PhpSchool\PhpWorkshop\UserState\UserState;
 use Psr\Container\ContainerInterface;
 use PhpSchool\CliMenu\CliMenu;
 use PhpSchool\PhpWorkshop\Command\CreditsCommand;
@@ -14,8 +16,6 @@ use PhpSchool\PhpWorkshop\ExerciseRenderer;
 use PhpSchool\PhpWorkshop\ExerciseRepository;
 use PhpSchool\PhpWorkshop\Factory\MenuFactory;
 use PhpSchool\PhpWorkshop\MenuItem\ResetProgress;
-use PhpSchool\PhpWorkshop\UserState;
-use PhpSchool\PhpWorkshop\UserStateSerializer;
 use PhpSchool\PhpWorkshop\WorkshopType;
 use PhpSchool\Terminal\Terminal;
 use PHPUnit\Framework\TestCase;
@@ -25,7 +25,7 @@ class MenuFactoryTest extends TestCase
     public function testFactoryReturnsInstance(): void
     {
         $container = $this->createMock(ContainerInterface::class);
-        $userStateSerializer = $this->createMock(UserStateSerializer::class);
+        $userStateSerializer = $this->createMock(Serializer::class);
         $userStateSerializer
             ->expects($this->once())
             ->method('deSerialize')
@@ -47,7 +47,7 @@ class MenuFactoryTest extends TestCase
             ->willReturn(70);
 
         $services = [
-            UserStateSerializer::class => $userStateSerializer,
+            Serializer::class => $userStateSerializer,
             ExerciseRepository::class => $exerciseRepository,
             ExerciseRenderer::class => $this->createMock(ExerciseRenderer::class),
             HelpCommand::class => $this->createMock(HelpCommand::class),
@@ -77,7 +77,7 @@ class MenuFactoryTest extends TestCase
     public function testSelectExercise(): void
     {
         $container = $this->createMock(ContainerInterface::class);
-        $userStateSerializer = $this->createMock(UserStateSerializer::class);
+        $userStateSerializer = $this->createMock(Serializer::class);
         $userStateSerializer
             ->expects($this->once())
             ->method('deSerialize')
@@ -121,7 +121,7 @@ class MenuFactoryTest extends TestCase
             ->with(self::isInstanceOf(CliMenu::class));
 
         $services = [
-            UserStateSerializer::class => $userStateSerializer,
+            Serializer::class => $userStateSerializer,
             ExerciseRepository::class => $exerciseRepository,
             ExerciseRenderer::class => $exerciseRenderer,
             HelpCommand::class => $this->createMock(HelpCommand::class),

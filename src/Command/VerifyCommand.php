@@ -9,8 +9,8 @@ use PhpSchool\PhpWorkshop\ExerciseRepository;
 use PhpSchool\PhpWorkshop\Input\Input;
 use PhpSchool\PhpWorkshop\Output\OutputInterface;
 use PhpSchool\PhpWorkshop\ResultRenderer\ResultsRenderer;
-use PhpSchool\PhpWorkshop\UserState;
-use PhpSchool\PhpWorkshop\UserStateSerializer;
+use PhpSchool\PhpWorkshop\UserState\UserState;
+use PhpSchool\PhpWorkshop\UserState\Serializer;
 
 /**
  * A command to verify the users solution
@@ -33,7 +33,7 @@ class VerifyCommand
     private $userState;
 
     /**
-     * @var UserStateSerializer
+     * @var Serializer
      */
     private $userStateSerializer;
 
@@ -51,7 +51,7 @@ class VerifyCommand
      * @param ExerciseRepository $exerciseRepository
      * @param ExerciseDispatcher $exerciseDispatcher
      * @param UserState $userState
-     * @param UserStateSerializer $userStateSerializer
+     * @param Serializer $userStateSerializer
      * @param OutputInterface $output
      * @param ResultsRenderer $resultsRenderer
      */
@@ -59,7 +59,7 @@ class VerifyCommand
         ExerciseRepository $exerciseRepository,
         ExerciseDispatcher $exerciseDispatcher,
         UserState $userState,
-        UserStateSerializer $userStateSerializer,
+        Serializer $userStateSerializer,
         OutputInterface $output,
         ResultsRenderer $resultsRenderer
     ) {

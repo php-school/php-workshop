@@ -4,12 +4,12 @@ namespace PhpSchool\PhpWorkshopTest\Command;
 
 use PhpSchool\PhpWorkshop\Command\PrintCommand;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseType;
+use PhpSchool\PhpWorkshop\UserState\UserState;
 use PhpSchool\PhpWorkshopTest\Asset\CliExerciseInterface;
 use PHPUnit\Framework\TestCase;
 use PhpSchool\PhpWorkshop\ExerciseRepository;
 use PhpSchool\PhpWorkshop\MarkdownRenderer;
 use PhpSchool\PhpWorkshop\Output\OutputInterface;
-use PhpSchool\PhpWorkshop\UserState;
 
 class PrintCommandTest extends TestCase
 {

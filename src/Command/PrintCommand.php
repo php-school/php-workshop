@@ -9,7 +9,7 @@ use PhpSchool\PhpWorkshop\Exception\ProblemFileDoesNotExistException;
 use PhpSchool\PhpWorkshop\ExerciseRepository;
 use PhpSchool\PhpWorkshop\MarkdownRenderer;
 use PhpSchool\PhpWorkshop\Output\OutputInterface;
-use PhpSchool\PhpWorkshop\UserState;
+use PhpSchool\PhpWorkshop\UserState\UserState;
 
 /**
  * A command to print the exercise's readme

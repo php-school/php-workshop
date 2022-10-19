@@ -3,6 +3,7 @@
 namespace PhpSchool\PhpWorkshopTest\Command;
 
 use Colors\Color;
+use PhpSchool\PhpWorkshop\UserState\Serializer;
 use PhpSchool\Terminal\Terminal;
 use PhpSchool\PhpWorkshop\Check\CheckInterface;
 use PhpSchool\PhpWorkshop\ExerciseDispatcher;
@@ -16,8 +17,7 @@ use PhpSchool\PhpWorkshop\Result\Failure;
 use PhpSchool\PhpWorkshop\Result\Success;
 use PhpSchool\PhpWorkshop\ResultAggregator;
 use PhpSchool\PhpWorkshop\ResultRenderer\ResultsRenderer;
-use PhpSchool\PhpWorkshop\UserState;
-use PhpSchool\PhpWorkshop\UserStateSerializer;
+use PhpSchool\PhpWorkshop\UserState\UserState;
 
 class VerifyCommandTest extends TestCase
 {
@@ -50,7 +50,7 @@ class VerifyCommandTest extends TestCase
         $color->setForceStyle(true);
         $output = new StdOutput($color, $this->createMock(Terminal::class));
 
-        $serializer = $this->createMock(UserStateSerializer::class);
+        $serializer = $this->createMock(Serializer::class);
         $serializer
             ->expects($this->once())
             ->method('serialize')
@@ -96,7 +96,7 @@ class VerifyCommandTest extends TestCase
         $color->setForceStyle(true);
         $output = new StdOutput($color, $this->createMock(Terminal::class));
 
-        $serializer = $this->createMock(UserStateSerializer::class);
+        $serializer = $this->createMock(Serializer::class);
 
         $serializer
             ->expects($this->never())

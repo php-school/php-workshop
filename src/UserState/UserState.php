@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace PhpSchool\PhpWorkshop;
+namespace PhpSchool\PhpWorkshop\UserState;
 
 use PhpSchool\PhpWorkshop\Exception\ExerciseNotAssignedException;
 
