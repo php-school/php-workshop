@@ -4,6 +4,10 @@ namespace PhpSchool\PhpWorkshopTest;
 
 use PHPUnit\Framework\TestCase;
 
+use function PhpSchool\PhpWorkshop\any;
+use function PhpSchool\PhpWorkshop\camel_case_to_kebab_case;
+use function PhpSchool\PhpWorkshop\mb_str_pad;
+
 class FunctionsTest extends TestCase
 {
     /**

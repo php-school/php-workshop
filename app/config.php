@@ -15,6 +15,7 @@ use Psr\Log\LoggerInterface;
 use function DI\create;
 use function DI\factory;
 use Kadet\Highlighter\KeyLighter;
+use function PhpSchool\PhpWorkshop\canonicalise_path;
 use function PhpSchool\PhpWorkshop\Event\containerListener;
 use Psr\Container\ContainerInterface;
 use League\CommonMark\DocParser;

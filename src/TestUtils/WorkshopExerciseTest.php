@@ -31,6 +31,8 @@ use PhpSchool\PhpWorkshop\Input\Input;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Process\Process;
 
+use function PhpSchool\PhpWorkshop\collect;
+
 abstract class WorkshopExerciseTest extends TestCase
 {
     /**

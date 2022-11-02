@@ -23,6 +23,8 @@ use PhpSchool\PhpWorkshop\Solution\SingleFileSolution;
 use PhpSchool\PhpWorkshop\UserState;
 use PHPUnit\Framework\TestCase;
 
+use function PhpSchool\PhpWorkshop\camel_case_to_kebab_case;
+
 class ResultsRendererTest extends BaseTest
 {
     public function testRenderIndividualResult(): void
