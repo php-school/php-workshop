@@ -4,6 +4,14 @@ Updates should follow the [Keep a CHANGELOG](http://keepachangelog.com/) princip
 
 ## [Unreleased][unreleased]
 
+## [4.0.1]
+### Added
+ - Support for symfony 6.x components (#243)
+ - Support for PHP 8.1 (#242)
+
+### Changed
+ - Namespaced global functions and udpated usages (#245)
+
 ## [4.0.0]
 ### Added
  - Allow exercises to provide initial solution files (#183)
