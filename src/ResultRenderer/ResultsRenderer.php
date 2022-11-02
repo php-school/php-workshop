@@ -21,7 +21,7 @@ use PhpSchool\PhpWorkshop\ResultAggregator;
 use PhpSchool\PhpWorkshop\UserState;
 use PhpSchool\PhpWorkshop\Result\FailureInterface;
 
-use function mb_str_pad;
+use function PhpSchool\PhpWorkshop\mb_str_pad;
 
 /**
  * Renderer which renders a `PhpSchool\PhpWorkshop\ResultAggregator` and writes it to the output.
