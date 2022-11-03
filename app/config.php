@@ -93,7 +93,7 @@ use Faker\Factory as FakerFactory;
 use Faker\Generator as FakerGenerator;
 
 return [
-    'appName' => basename($_SERVER['argv'][0]),
+    'appName' => basename($_SERVER['argv'][0] ?? 'phpschool'),
     'phpschoolGlobalDir' => sprintf('%s/.php-school', getenv('HOME')),
     'currentWorkingDirectory' => function (ContainerInterface $c) {
         return getcwd();
