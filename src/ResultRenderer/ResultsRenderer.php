@@ -199,7 +199,7 @@ class ResultsRenderer
                 );
 
                 //make sure there is a new line at the end
-                $code = preg_replace('/\n$/', '', $code) . "\n";
+                $code = rtrim($code, "\n") . "\n";
 
                 $output->write($code);
                 $output->writeLine($this->lineBreak());
