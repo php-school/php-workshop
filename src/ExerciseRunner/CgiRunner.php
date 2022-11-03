@@ -86,7 +86,7 @@ class CgiRunner implements ExerciseRunnerInterface
                 system(sprintf('%s --version %s', $newPath, $silence), $stillFailedToRun);
                 if ($stillFailedToRun) {
                     throw new RuntimeException(
-                        'Could not load php-cgi binary. Please install php-cgi using your package manager.'
+                        'Could not find php-cgi binary. Please install php-cgi using your package manager.'
                     );
                 }
             }
@@ -94,7 +94,7 @@ class CgiRunner implements ExerciseRunnerInterface
             @system('php-cgi --version > /dev/null 2>&1', $failedToRun);
             if ($failedToRun) {
                 throw new RuntimeException(
-                    'Could not load php-cgi binary. Please install php-cgi using your package manager.'
+                    'Could not find php-cgi binary. Please install php-cgi using your package manager.'
                 );
             }
         }

@@ -25,6 +25,7 @@ use PhpSchool\PhpWorkshop\Result\Cli\Success;
 use PhpSchool\PhpWorkshop\Result\Cli\ResultInterface as CliResultInterface;
 use PhpSchool\PhpWorkshop\Result\ResultInterface;
 use PhpSchool\PhpWorkshop\Utils\ArrayObject;
+use RuntimeException;
 use Symfony\Component\Process\ExecutableFinder;
 use Symfony\Component\Process\Process;
 
@@ -49,6 +50,11 @@ class CliRunner implements ExerciseRunnerInterface
     private $eventDispatcher;
 
     /**
+     * @var string
+     */
+    private $phpLocation;
+
+    /**
      * @var array<class-string>
      */
     private static $requiredChecks = [
@@ -66,6 +72,16 @@ class CliRunner implements ExerciseRunnerInterface
      */
     public function __construct(CliExercise $exercise, EventDispatcher $eventDispatcher)
     {
+        $php = (new ExecutableFinder())->find('php');
+
+        if (null === $php) {
+            throw new RuntimeException(
+                'Could not load php binary. Please install php using your package manager.'
+            );
+        }
+
+        $this->phpLocation = $php;
+
         /** @var CliExercise&ExerciseInterface $exercise */
         $this->eventDispatcher = $eventDispatcher;
         $this->exercise = $exercise;
@@ -119,7 +135,7 @@ class CliRunner implements ExerciseRunnerInterface
     private function getPhpProcess(string $fileName, ArrayObject $args): Process
     {
         return new Process(
-            $args->prepend($fileName)->prepend((new ExecutableFinder())->find('php'))->getArrayCopy(),
+            $args->prepend($fileName)->prepend($this->phpLocation)->getArrayCopy(),
             dirname($fileName),
             ['XDEBUG_MODE' => 'off'],
             null,
