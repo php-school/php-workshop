@@ -10,6 +10,7 @@ use PhpSchool\PhpWorkshop\Input\Input;
 use PhpSchool\PhpWorkshop\Result\ResultInterface;
 use PhpSchool\PhpWorkshop\Result\Success;
 use PhpSchool\PhpWorkshop\Result\Failure;
+use Symfony\Component\Process\ExecutableFinder;
 use Symfony\Component\Process\Process;
 
 /**
@@ -35,14 +36,15 @@ class PhpLintCheck implements SimpleCheckInterface
      */
     public function check(ExerciseInterface $exercise, Input $input): ResultInterface
     {
-        $process = new Process([PHP_BINARY, '-l', $input->getArgument('program')]);
+        $finder = new ExecutableFinder();
+        $process = new Process([$finder->find('php'), '-l', $input->getArgument('program')]);
         $process->run();
 
         if ($process->isSuccessful()) {
             return Success::fromCheck($this);
         }
 
-        return Failure::fromCheckAndReason($this, trim($process->getErrorOutput()));
+        return Failure::fromCheckAndReason($this, trim($process->getErrorOutput()) ?: trim($process->getOutput()));
     }
 
     /**
