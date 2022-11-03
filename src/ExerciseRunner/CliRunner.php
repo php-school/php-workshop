@@ -25,6 +25,7 @@ use PhpSchool\PhpWorkshop\Result\Cli\Success;
 use PhpSchool\PhpWorkshop\Result\Cli\ResultInterface as CliResultInterface;
 use PhpSchool\PhpWorkshop\Result\ResultInterface;
 use PhpSchool\PhpWorkshop\Utils\ArrayObject;
+use Symfony\Component\Process\ExecutableFinder;
 use Symfony\Component\Process\Process;
 
 /**
@@ -118,7 +119,7 @@ class CliRunner implements ExerciseRunnerInterface
     private function getPhpProcess(string $fileName, ArrayObject $args): Process
     {
         return new Process(
-            $args->prepend($fileName)->prepend(PHP_BINARY)->getArrayCopy(),
+            $args->prepend($fileName)->prepend((new ExecutableFinder())->find('php'))->getArrayCopy(),
             dirname($fileName),
             ['XDEBUG_MODE' => 'off'],
             null,
