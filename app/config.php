@@ -2,7 +2,10 @@
 
 declare(strict_types=1);
 
+use AydinHassan\CliMdRenderer\CliRenderer;
+use AydinHassan\CliMdRenderer\CliRendererExtension;
 use Colors\Color;
+use League\CommonMark\ElementRendererInterface;
 use PhpSchool\PhpWorkshop\Check\FileComparisonCheck;
 use PhpSchool\PhpWorkshop\ExerciseRunner\Factory\ServerRunnerFactory;
 use PhpSchool\PhpWorkshop\Listener\InitialCodeListener;
@@ -10,6 +13,13 @@ use PhpSchool\PhpWorkshop\Listener\OutputRunInfoListener;
 use PhpSchool\PhpWorkshop\Listener\TearDownListener;
 use PhpSchool\PhpWorkshop\Logger\ConsoleLogger;
 use PhpSchool\PhpWorkshop\Logger\Logger;
+use PhpSchool\PhpWorkshop\Markdown\ProblemFileExtension;
+use PhpSchool\PhpWorkshop\Markdown\Renderer\CliSpecificRenderer;
+use PhpSchool\PhpWorkshop\Markdown\Renderer\ContextSpecificRendererInterface;
+use PhpSchool\PhpWorkshop\Markdown\Shorthands\AppName;
+use PhpSchool\PhpWorkshop\Markdown\Shorthands\Documentation;
+use PhpSchool\PhpWorkshop\Markdown\Shorthands\Run;
+use PhpSchool\PhpWorkshop\Markdown\Shorthands\Verify;
 use PhpSchool\PhpWorkshop\Result\ComposerFailure;
 use PhpSchool\PhpWorkshop\Result\FileComparisonFailure;
 use PhpSchool\PhpWorkshop\ResultRenderer\ComposerFailureRenderer;
@@ -87,7 +97,6 @@ use PhpSchool\PhpWorkshop\CommandDefinition;
 use PhpSchool\PhpWorkshop\CommandRouter;
 use PhpSchool\PhpWorkshop\ExerciseRenderer;
 use PhpSchool\PhpWorkshop\ExerciseRepository;
-use PhpSchool\PhpWorkshop\Factory\MarkdownCliRendererFactory;
 use PhpSchool\PhpWorkshop\MarkdownRenderer;
 use PhpSchool\PhpWorkshop\ResultRenderer\ResultsRenderer;
 use PhpSchool\PhpWorkshop\UserState\UserState;
@@ -317,10 +326,43 @@ return [
             $c->get(OutputInterface::class)
         );
     },
+    ContextSpecificRendererInterface::class => function () {
+        return new CliSpecificRenderer();
+    },
+    Environment::class => function (ContainerInterface $c) {
+        $terminal = $c->get(Terminal::class);
+
+        $environment = new Environment([
+            'renderer' => [
+               'width' => $terminal->getWidth()
+            ]
+        ]);
+
+        $environment
+            ->addExtension(new CliRendererExtension())
+            ->addExtension(new ProblemFileExtension(
+                $c->get(ContextSpecificRendererInterface::class),
+                [
+                    'appname' => new AppName($c->get('appName')),
+                    'doc' => new Documentation(),
+                    'run' => new Run(),
+                    'verify' => new Verify()
+                ]
+            ));
+
+        return $environment;
+    },
     MarkdownRenderer::class => function (ContainerInterface $c) {
-        $docParser =   new DocParser(Environment::createCommonMarkEnvironment());
-        $cliRenderer = (new MarkdownCliRendererFactory)->__invoke($c);
-        return new MarkdownRenderer($docParser, $cliRenderer);
+        return new MarkdownRenderer(
+            new DocParser($c->get(Environment::class)),
+            $c->get(ElementRendererInterface::class)
+        );
+    },
+    ElementRendererInterface::class => function (ContainerInterface $c) {
+        return new CliRenderer(
+            $c->get(Environment::class),
+            $c->get(Color::class)
+        );
     },
     Serializer::class => function (ContainerInterface $c) {
         return new LocalJsonSerializer(

@@ -16,7 +16,7 @@ final class ContextSpecificBlockParser implements \League\CommonMark\Block\Parse
 
     public static function getParserRegex(): string
     {
-        return '/^{{\s?('. implode('|', self::TYPES) .')\s?}}/';
+        return '/^{{\s?(' . implode('|', self::TYPES) . ')\s?}}/';
     }
 
     public function parse(ContextInterface $context, Cursor $cursor): bool

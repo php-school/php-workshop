@@ -22,7 +22,7 @@ final class CliSpecificRenderer implements ContextSpecificRendererInterface
         if (ContextSpecificBlock::CLI_TYPE !== $block->getType()) {
             return '';
         }
-        
+
         return $renderer->renderInlines($block->children());
     }
 }

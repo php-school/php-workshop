@@ -88,7 +88,7 @@ final class HandleBarParser implements InlineParserInterface
             if ($open && $isAQuoteChar && $matchesOpenChar) {
                 $mergingArgs[] = rtrim($args[$i], $openChar);
                 $parsedArgs[] = implode(' ', $mergingArgs);
-                $mergingArgs= [];
+                $mergingArgs = [];
                 $open = false;
                 continue;
             }

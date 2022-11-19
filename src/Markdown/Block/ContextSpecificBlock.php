@@ -63,7 +63,7 @@ final class ContextSpecificBlock extends AbstractStringContainerBlock
             $this->finalize($context, $context->getLineNumber());
             return;
         }
-        
+
         /** @var self $tip */
         $tip = $context->getTip();
         $tip->addLine($cursor->getRemainder());

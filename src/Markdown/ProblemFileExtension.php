@@ -28,8 +28,7 @@ final class ProblemFileExtension implements ExtensionInterface
     public function __construct(
         ContextSpecificRendererInterface $contextSpecificRenderer,
         array $shorthandExpanders
-    )
-    {
+    ) {
         $this->contextSpecificRenderer = $contextSpecificRenderer;
         $this->shorthandExpanders = $shorthandExpanders;
     }
