@@ -5,6 +5,7 @@ declare(strict_types=1);
 use Colors\Color;
 use League\CommonMark\ElementRendererInterface;
 use PhpSchool\CliMdRenderer\CliExtension;
+use PhpSchool\CliMdRenderer\CliRenderer;
 use PhpSchool\PhpWorkshop\Check\FileComparisonCheck;
 use PhpSchool\PhpWorkshop\ExerciseRunner\Factory\ServerRunnerFactory;
 use PhpSchool\PhpWorkshop\Listener\InitialCodeListener;
