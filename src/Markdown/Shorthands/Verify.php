@@ -9,6 +9,10 @@ use League\CommonMark\Node\Node;
 
 final class Verify implements ShorthandInterface
 {
+    /**
+     * @param array<string> $callArgs
+     * @return Text[]
+     */
     public function __invoke(array $callArgs): array
     {
         return [

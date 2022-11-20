@@ -10,7 +10,6 @@ use PhpSchool\PhpWorkshop\Markdown\Block\ContextSpecificBlock;
 use PhpSchool\PhpWorkshop\Markdown\Renderer\ContextSpecificRendererInterface;
 use PhpSchool\PhpWorkshop\Markdown\Parser\ContextSpecificBlockParser;
 use PhpSchool\PhpWorkshop\Markdown\Parser\HandleBarParser;
-use PhpSchool\PhpWorkshop\Markdown\Renderer\ContextSpecificRenderer;
 use PhpSchool\PhpWorkshop\Markdown\Shorthands\ShorthandInterface;
 
 final class ProblemFileExtension implements ExtensionInterface
@@ -25,6 +24,9 @@ final class ProblemFileExtension implements ExtensionInterface
      */
     private $shorthandExpanders;
 
+    /**
+     * @param array<string, ShorthandInterface> $shorthandExpanders
+     */
     public function __construct(
         ContextSpecificRendererInterface $contextSpecificRenderer,
         array $shorthandExpanders

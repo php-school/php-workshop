@@ -18,6 +18,9 @@ final class HandleBarParser implements InlineParserInterface
      */
     private $shorthands;
 
+    /**
+     * @param array<string, ShorthandInterface> $shorthands
+     */
     public function __construct(array $shorthands)
     {
         $this->shorthands = $shorthands;
@@ -37,9 +40,18 @@ final class HandleBarParser implements InlineParserInterface
         $cursor = $inlineContext->getCursor();
 
         $handle = $cursor->match('/{{\s?.*?\s?}}/m');
+
+        if (null === $handle) {
+            return false;
+        }
+
         $content = trim(str_replace(['{', '}'], '', $handle));
         $parsedArgs = $this->parseArgs($content);
         $shorthand = array_shift($parsedArgs);
+
+        if (null === $shorthand) {
+            return false;
+        }
 
         if (!array_key_exists($shorthand, $this->shorthands)) {
             return false;

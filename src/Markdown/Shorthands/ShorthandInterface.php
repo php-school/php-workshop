@@ -9,6 +9,7 @@ use League\CommonMark\Node\Node;
 interface ShorthandInterface
 {
     /**
+     * @param array<string> $callArgs
      * @return array<Node>
      */
     public function __invoke(array $callArgs): array;

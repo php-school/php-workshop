@@ -22,6 +22,10 @@ final class AppName implements ShorthandInterface
         $this->appName = $appName;
     }
 
+    /**
+     * @param array<string> $callArgs
+     * @return array<Node>
+     */
     public function __invoke(array $callArgs): array
     {
         $wrapped = isset($callArgs[0]);
@@ -33,13 +37,18 @@ final class AppName implements ShorthandInterface
         switch ($callArgs[0]) {
             case '`':
                 return [new Code($this->appName)];
-                break;
             case '*':
-                return [new Strong($this->appName)];
-                break;
+                $text = new Text($this->appName);
+                $container = new Strong();
+                $container->appendChild($text);
+                return [$container];
             case '_':
-                return [new Emphasis($this->appName)];
-                break;
+                $text = new Text($this->appName);
+                $container = new Emphasis();
+                $container->appendChild($text);
+                return [$container];
         }
+
+        return [];
     }
 }
