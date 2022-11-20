@@ -2,7 +2,7 @@
 
 namespace PhpSchool\PhpWorkshopTest;
 
-use AydinHassan\CliMdRenderer\CliRendererFactory;
+use PhpSchool\CliMdRenderer\CliRendererFactory;
 use Colors\Color;
 use League\CommonMark\DocParser;
 use League\CommonMark\Environment;

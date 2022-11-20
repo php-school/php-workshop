@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace PhpSchool\PhpWorkshop;
 
 use League\CommonMark\DocParser;
-use AydinHassan\CliMdRenderer\CliRenderer;
+use PhpSchool\CliMdRenderer\CliRenderer;
 
 /**
  * Utility to render a markdown string to a string formatted with ANSI escape codes for output
