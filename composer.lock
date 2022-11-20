@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "8e4d6b5837e3360fda5ce1e97e419641",
+    "content-hash": "418aefc37fa4433676d44fe60701060c",
     "packages": [
         {
             "name": "beberlei/assert",
@@ -974,16 +974,16 @@
         },
         {
             "name": "php-school/cli-md-renderer",
-            "version": "dev-master",
+            "version": "dev-namespace",
             "source": {
                 "type": "git",
                 "url": "https://github.com/php-school/cli-md-renderer.git",
-                "reference": "d0449eb8b445f89c08bcc80711a6b7d460528f28"
+                "reference": "392e29979664d5c17d100ff60fa38d71ac52b52b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/php-school/cli-md-renderer/zipball/d0449eb8b445f89c08bcc80711a6b7d460528f28",
-                "reference": "d0449eb8b445f89c08bcc80711a6b7d460528f28",
+                "url": "https://api.github.com/repos/php-school/cli-md-renderer/zipball/392e29979664d5c17d100ff60fa38d71ac52b52b",
+                "reference": "392e29979664d5c17d100ff60fa38d71ac52b52b",
                 "shasum": ""
             },
             "require": {
@@ -997,7 +997,6 @@
                 "phpunit/phpunit": "^7.0 | ^8.0 | ^9.0",
                 "squizlabs/php_codesniffer": "^3.0"
             },
-            "default-branch": true,
             "type": "library",
             "autoload": {
                 "psr-4": {
@@ -1016,9 +1015,9 @@
             ],
             "description": "A CLI Markdown Render for league/commonmark compatible AST",
             "support": {
-                "source": "https://github.com/php-school/cli-md-renderer/tree/master"
+                "source": "https://github.com/php-school/cli-md-renderer/tree/namespace"
             },
-            "time": "2022-12-10T10:51:32+00:00"
+            "time": "2022-11-20T00:22:23+00:00"
         },
         {
             "name": "php-school/cli-menu",
