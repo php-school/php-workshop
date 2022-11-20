@@ -2,10 +2,9 @@
 
 declare(strict_types=1);
 
-use AydinHassan\CliMdRenderer\CliRenderer;
-use AydinHassan\CliMdRenderer\CliRendererExtension;
 use Colors\Color;
 use League\CommonMark\ElementRendererInterface;
+use PhpSchool\CliMdRenderer\CliExtension;
 use PhpSchool\PhpWorkshop\Check\FileComparisonCheck;
 use PhpSchool\PhpWorkshop\ExerciseRunner\Factory\ServerRunnerFactory;
 use PhpSchool\PhpWorkshop\Listener\InitialCodeListener;
@@ -339,7 +338,7 @@ return [
         ]);
 
         $environment
-            ->addExtension(new CliRendererExtension())
+            ->addExtension(new CliExtension())
             ->addExtension(new ProblemFileExtension(
                 $c->get(ContextSpecificRendererInterface::class),
                 [
