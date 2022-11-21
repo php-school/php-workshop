@@ -7,7 +7,7 @@ namespace PhpSchool\PhpWorkshop\Markdown;
 use League\CommonMark\ConfigurableEnvironmentInterface;
 use League\CommonMark\Extension\ExtensionInterface;
 use PhpSchool\PhpWorkshop\Markdown\Block\ContextSpecificBlock;
-use PhpSchool\PhpWorkshop\Markdown\Renderer\ContextSpecificRendererInterface;
+use PhpSchool\PhpWorkshop\Markdown\Renderer\ContextSpecificRenderer;
 use PhpSchool\PhpWorkshop\Markdown\Parser\ContextSpecificBlockParser;
 use PhpSchool\PhpWorkshop\Markdown\Parser\HandleBarParser;
 use PhpSchool\PhpWorkshop\Markdown\Shorthands\ShorthandInterface;
@@ -15,7 +15,7 @@ use PhpSchool\PhpWorkshop\Markdown\Shorthands\ShorthandInterface;
 final class ProblemFileExtension implements ExtensionInterface
 {
     /**
-     * @var ContextSpecificRendererInterface
+     * @var ContextSpecificRenderer
      */
     private $contextSpecificRenderer;
 
@@ -28,7 +28,7 @@ final class ProblemFileExtension implements ExtensionInterface
      * @param array<string, ShorthandInterface> $shorthandExpanders
      */
     public function __construct(
-        ContextSpecificRendererInterface $contextSpecificRenderer,
+        ContextSpecificRenderer $contextSpecificRenderer,
         array $shorthandExpanders
     ) {
         $this->contextSpecificRenderer = $contextSpecificRenderer;

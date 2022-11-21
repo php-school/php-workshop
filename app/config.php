@@ -14,9 +14,9 @@ use PhpSchool\PhpWorkshop\Listener\TearDownListener;
 use PhpSchool\PhpWorkshop\Logger\ConsoleLogger;
 use PhpSchool\PhpWorkshop\Logger\Logger;
 use PhpSchool\PhpWorkshop\Markdown\ProblemFileExtension;
-use PhpSchool\PhpWorkshop\Markdown\Renderer\CliSpecificRenderer;
-use PhpSchool\PhpWorkshop\Markdown\Renderer\ContextSpecificRendererInterface;
+use PhpSchool\PhpWorkshop\Markdown\Renderer\ContextSpecificRenderer;
 use PhpSchool\PhpWorkshop\Markdown\Shorthands\AppName;
+use PhpSchool\PhpWorkshop\Markdown\Shorthands\Context;
 use PhpSchool\PhpWorkshop\Markdown\Shorthands\Documentation;
 use PhpSchool\PhpWorkshop\Markdown\Shorthands\Run;
 use PhpSchool\PhpWorkshop\Markdown\Shorthands\Verify;
@@ -326,8 +326,11 @@ return [
             $c->get(OutputInterface::class)
         );
     },
-    ContextSpecificRendererInterface::class => function () {
-        return new CliSpecificRenderer();
+    ContextSpecificRenderer::class => function () {
+        return new ContextSpecificRenderer('cli');
+    },
+    Context::class => function () {
+        return new Context('cli');
     },
     Environment::class => function (ContainerInterface $c) {
         $terminal = $c->get(Terminal::class);
@@ -341,12 +344,13 @@ return [
         $environment
             ->addExtension(new CliExtension())
             ->addExtension(new ProblemFileExtension(
-                $c->get(ContextSpecificRendererInterface::class),
+                $c->get(ContextSpecificRenderer::class),
                 [
                     'appname' => new AppName($c->get('appName')),
                     'doc' => new Documentation(),
                     'run' => new Run(),
-                    'verify' => new Verify()
+                    'verify' => new Verify(),
+                    'context' => $c->get(Context::class)
                 ]
             ));
 
