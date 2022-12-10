@@ -30,6 +30,11 @@ class CodeExistsCheckTest extends TestCase
      */
     private $exercise;
 
+    /**
+     * @var string
+     */
+    private $file;
+
     public function setUp(): void
     {
         $this->testDir = sprintf(
