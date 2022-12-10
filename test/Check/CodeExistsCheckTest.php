@@ -29,6 +29,11 @@ class CodeExistsCheckTest extends TestCase
      * @var ExerciseInterface
      */
     private $exercise;
+    
+    /**
+     * @var string
+     */
+    private $file;
 
     public function setUp(): void
     {
