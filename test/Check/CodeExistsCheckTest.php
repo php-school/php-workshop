@@ -29,7 +29,7 @@ class CodeExistsCheckTest extends TestCase
      * @var ExerciseInterface
      */
     private $exercise;
-    
+
     /**
      * @var string
      */
