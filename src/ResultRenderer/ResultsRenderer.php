@@ -18,7 +18,7 @@ use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpSchool\PhpWorkshop\ExerciseRepository;
 use PhpSchool\PhpWorkshop\Result\ResultInterface;
 use PhpSchool\PhpWorkshop\ResultAggregator;
-use PhpSchool\PhpWorkshop\UserState;
+use PhpSchool\PhpWorkshop\UserState\UserState;
 use PhpSchool\PhpWorkshop\Result\FailureInterface;
 
 use function PhpSchool\PhpWorkshop\mb_str_pad;

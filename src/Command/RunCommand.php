@@ -10,7 +10,7 @@ use PhpSchool\PhpWorkshop\ExerciseRepository;
 use PhpSchool\PhpWorkshop\Input\Input;
 use PhpSchool\PhpWorkshop\Output\OutputInterface;
 use PhpSchool\PhpWorkshop\Result\Success;
-use PhpSchool\PhpWorkshop\UserState;
+use PhpSchool\PhpWorkshop\UserState\UserState;
 
 /**
  * A command to run the users solution

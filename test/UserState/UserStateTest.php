@@ -1,10 +1,10 @@
 <?php
 
-namespace PhpSchool\PhpWorkshopTest;
+namespace PhpSchool\PhpWorkshopTest\UserState;
 
 use PhpSchool\PhpWorkshop\Exception\ExerciseNotAssignedException;
+use PhpSchool\PhpWorkshop\UserState\UserState;
 use PHPUnit\Framework\TestCase;
-use PhpSchool\PhpWorkshop\UserState;
 
 class UserStateTest extends TestCase
 {

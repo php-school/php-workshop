@@ -2,12 +2,14 @@
 
 declare(strict_types=1);
 
-namespace PhpSchool\PhpWorkshop;
+namespace PhpSchool\PhpWorkshop\UserState;
+
+use PhpSchool\PhpWorkshop\ExerciseRepository;
 
 /**
  * Reads and persists the `UserState` instance to storage (file based).
  */
-class UserStateSerializer
+class LocalJsonSerializer implements Serializer
 {
     /**
      * @var string

@@ -11,6 +11,7 @@ use PhpSchool\PhpWorkshop\Logger\ConsoleLogger;
 use PhpSchool\PhpWorkshop\Logger\Logger;
 use PhpSchool\PhpWorkshop\Result\FileComparisonFailure;
 use PhpSchool\PhpWorkshop\ResultRenderer\FileComparisonFailureRenderer;
+use PhpSchool\PhpWorkshop\UserState\LocalJsonSerializer;
 use Psr\Log\LoggerInterface;
 use function DI\create;
 use function DI\factory;
@@ -86,8 +87,8 @@ use PhpSchool\PhpWorkshop\ExerciseRepository;
 use PhpSchool\PhpWorkshop\Factory\MarkdownCliRendererFactory;
 use PhpSchool\PhpWorkshop\MarkdownRenderer;
 use PhpSchool\PhpWorkshop\ResultRenderer\ResultsRenderer;
-use PhpSchool\PhpWorkshop\UserState;
-use PhpSchool\PhpWorkshop\UserStateSerializer;
+use PhpSchool\PhpWorkshop\UserState\UserState;
+use PhpSchool\PhpWorkshop\UserState\Serializer;
 use Symfony\Component\Filesystem\Filesystem;
 use Faker\Factory as FakerFactory;
 use Faker\Generator as FakerGenerator;
@@ -198,7 +199,7 @@ return [
             $c->get(ExerciseRepository::class),
             $c->get(ExerciseDispatcher::class),
             $c->get(UserState::class),
-            $c->get(UserStateSerializer::class),
+            $c->get(Serializer::class),
             $c->get(OutputInterface::class),
             $c->get(ResultsRenderer::class)
         );
@@ -303,7 +304,7 @@ return [
             $c->get('appName'),
             $c->get(ExerciseRepository::class),
             $c->get(UserState::class),
-            $c->get(UserStateSerializer::class),
+            $c->get(Serializer::class),
             $c->get(MarkdownRenderer::class),
             $c->get(Color::class),
             $c->get(OutputInterface::class)
@@ -314,18 +315,18 @@ return [
         $cliRenderer = (new MarkdownCliRendererFactory)->__invoke($c);
         return new MarkdownRenderer($docParser, $cliRenderer);
     },
-    UserStateSerializer::class => function (ContainerInterface $c) {
-        return new UserStateSerializer(
+    Serializer::class => function (ContainerInterface $c) {
+        return new LocalJsonSerializer(
             getenv('HOME'),
             $c->get('workshopTitle'),
             $c->get(ExerciseRepository::class)
         );
     },
     UserState::class => function (ContainerInterface $c) {
-        return $c->get(UserStateSerializer::class)->deSerialize();
+        return $c->get(Serializer::class)->deSerialize();
     },
     ResetProgress::class => function (ContainerInterface $c) {
-        return new ResetProgress($c->get(UserStateSerializer::class));
+        return new ResetProgress($c->get(Serializer::class));
     },
     ResultRendererFactory::class => function (ContainerInterface $c) {
         $factory = new ResultRendererFactory;

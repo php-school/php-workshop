@@ -8,6 +8,8 @@ use Colors\Color;
 use PhpSchool\CliMenu\CliMenu;
 use PhpSchool\PhpWorkshop\Exception\ProblemFileDoesNotExistException;
 use PhpSchool\PhpWorkshop\Output\OutputInterface;
+use PhpSchool\PhpWorkshop\UserState\Serializer;
+use PhpSchool\PhpWorkshop\UserState\UserState;
 
 /**
  * This class is used to render the exercise problem to the student, it also sets the current exercise
@@ -46,7 +48,7 @@ class ExerciseRenderer
     private $userState;
 
     /**
-     * @var UserStateSerializer
+     * @var Serializer
      */
     private $userStateSerializer;
 
@@ -54,7 +56,7 @@ class ExerciseRenderer
      * @param string $appName
      * @param ExerciseRepository $exerciseRepository
      * @param UserState $userState
-     * @param UserStateSerializer $userStateSerializer
+     * @param Serializer $userStateSerializer
      * @param MarkdownRenderer $markdownRenderer
      * @param Color $color
      * @param OutputInterface $output
@@ -63,7 +65,7 @@ class ExerciseRenderer
         string $appName,
         ExerciseRepository $exerciseRepository,
         UserState $userState,
-        UserStateSerializer $userStateSerializer,
+        Serializer $userStateSerializer,
         MarkdownRenderer $markdownRenderer,
         Color $color,
         OutputInterface $output

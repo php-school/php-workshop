@@ -1,17 +1,18 @@
 <?php
 
-namespace PhpSchool\PhpWorkshopTest;
+namespace PhpSchool\PhpWorkshopTest\UserState;
 
 use PhpSchool\PhpWorkshop\Exercise\ExerciseType;
 use PhpSchool\PhpWorkshop\ExerciseRepository;
-use PhpSchool\PhpWorkshop\UserState;
-use PhpSchool\PhpWorkshop\UserStateSerializer;
+use PhpSchool\PhpWorkshop\UserState\LocalJsonSerializer;
+use PhpSchool\PhpWorkshop\UserState\UserState;
 use PhpSchool\PhpWorkshop\Utils\Path;
 use PhpSchool\PhpWorkshop\Utils\System;
 use PhpSchool\PhpWorkshopTest\Asset\CliExerciseInterface;
+use PhpSchool\PhpWorkshopTest\BaseTest;
 use Yoast\PHPUnitPolyfills\Polyfills\AssertionRenames;
 
-class UserStateSerializerTest extends BaseTest
+class LocalJsonSerializerTest extends BaseTest
 {
     use AssertionRenames;
 
@@ -43,19 +44,19 @@ class UserStateSerializerTest extends BaseTest
     public function testIfDirNotExistsItIsCreated(): void
     {
         self::assertFileDoesNotExist(System::tempDir($this->getName()));
-        new UserStateSerializer(System::tempDir($this->getName()), $this->workshopName, $this->exerciseRepository);
+        new LocalJsonSerializer(System::tempDir($this->getName()), $this->workshopName, $this->exerciseRepository);
         $this->assertFileExists(System::tempDir($this->getName()));
     }
 
     public function testConstructWhenFileExists(): void
     {
         $this->assertFileExists($this->getTemporaryDirectory());
-        new UserStateSerializer($this->getTemporaryDirectory(), $this->workshopName, $this->exerciseRepository);
+        new LocalJsonSerializer($this->getTemporaryDirectory(), $this->workshopName, $this->exerciseRepository);
     }
 
     public function testSerializeEmptySate(): void
     {
-        $serializer = new UserStateSerializer(
+        $serializer = new LocalJsonSerializer(
             $this->getTemporaryDirectory(),
             $this->workshopName,
             $this->exerciseRepository
@@ -76,7 +77,7 @@ class UserStateSerializerTest extends BaseTest
 
     public function testSerialize(): void
     {
-        $serializer = new UserStateSerializer(
+        $serializer = new LocalJsonSerializer(
             $this->getTemporaryDirectory(),
             $this->workshopName,
             $this->exerciseRepository
@@ -99,7 +100,7 @@ class UserStateSerializerTest extends BaseTest
 
     public function testDeserializeNonExistingFile(): void
     {
-        $serializer = new UserStateSerializer(
+        $serializer = new LocalJsonSerializer(
             $this->getTemporaryDirectory(),
             $this->workshopName,
             $this->exerciseRepository
@@ -113,7 +114,7 @@ class UserStateSerializerTest extends BaseTest
     public function testDeserializeEmptyFile(): void
     {
         $this->getTemporaryFile('.phpschool-save.json', '');
-        $serializer = new UserStateSerializer(
+        $serializer = new LocalJsonSerializer(
             $this->getTemporaryDirectory(),
             $this->workshopName,
             $this->exerciseRepository
@@ -126,7 +127,7 @@ class UserStateSerializerTest extends BaseTest
     public function testDeserializeNonValidJson(): void
     {
         $this->getTemporaryFile('.phpschool-save.json', 'yayayayayanotjson');
-        $serializer = new UserStateSerializer(
+        $serializer = new LocalJsonSerializer(
             $this->getTemporaryDirectory(),
             $this->workshopName,
             $this->exerciseRepository
@@ -142,7 +143,7 @@ class UserStateSerializerTest extends BaseTest
     public function testDeserialize(array $data, array $expected): void
     {
         $this->getTemporaryFile('.phpschool-save.json', json_encode($data));
-        $serializer = new UserStateSerializer(
+        $serializer = new LocalJsonSerializer(
             $this->getTemporaryDirectory(),
             $this->workshopName,
             $this->exerciseRepository
@@ -214,7 +215,7 @@ class UserStateSerializerTest extends BaseTest
 
         $oldSave = $this->getTemporaryFile('.phpschool.json', json_encode($oldData));
 
-        $serializer = new UserStateSerializer(
+        $serializer = new LocalJsonSerializer(
             $this->getTemporaryDirectory(),
             $this->workshopName,
             new ExerciseRepository([
@@ -265,7 +266,7 @@ class UserStateSerializerTest extends BaseTest
 
         $oldSave = $this->getTemporaryFile('.phpschool.json', json_encode($oldData));
 
-        $serializer = new UserStateSerializer($this->getTemporaryDirectory(), $this->workshopName, $repo);
+        $serializer = new LocalJsonSerializer($this->getTemporaryDirectory(), $this->workshopName, $repo);
         $state = $serializer->deSerialize();
 
         $this->assertEquals([], $state->getCompletedExercises());
@@ -300,7 +301,7 @@ class UserStateSerializerTest extends BaseTest
         $oldSave = $this->getTemporaryFile('.phpschool.json', json_encode($oldData));
         $newSave = $this->getTemporaryFile('.phpschool-save.json', json_encode($newData));
 
-        $serializer = new UserStateSerializer(
+        $serializer = new LocalJsonSerializer(
             $this->getTemporaryDirectory(),
             $this->workshopName,
             new ExerciseRepository([

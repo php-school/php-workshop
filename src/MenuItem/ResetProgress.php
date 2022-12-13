@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace PhpSchool\PhpWorkshop\MenuItem;
 
 use PhpSchool\CliMenu\CliMenu;
-use PhpSchool\PhpWorkshop\UserState;
-use PhpSchool\PhpWorkshop\UserStateSerializer;
+use PhpSchool\PhpWorkshop\UserState\Serializer;
+use PhpSchool\PhpWorkshop\UserState\UserState;
 
 /**
  * Menu action to reset the workshop progress
@@ -14,14 +14,14 @@ use PhpSchool\PhpWorkshop\UserStateSerializer;
 class ResetProgress
 {
     /**
-     * @var UserStateSerializer
+     * @var Serializer
      */
     private $userStateSerializer;
 
     /**
-     * @param UserStateSerializer $userStateSerializer
+     * @param Serializer $userStateSerializer
      */
-    public function __construct(UserStateSerializer $userStateSerializer)
+    public function __construct(Serializer $userStateSerializer)
     {
         $this->userStateSerializer = $userStateSerializer;
     }

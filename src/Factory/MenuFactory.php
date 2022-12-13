@@ -7,6 +7,8 @@ namespace PhpSchool\PhpWorkshop\Factory;
 use PhpSchool\CliMenu\Action\ExitAction;
 use PhpSchool\CliMenu\MenuItem\SelectableItem;
 use PhpSchool\CliMenu\Style\SelectableStyle;
+use PhpSchool\PhpWorkshop\UserState\Serializer;
+use PhpSchool\PhpWorkshop\UserState\UserState;
 use PhpSchool\Terminal\Terminal;
 use Psr\Container\ContainerInterface;
 use PhpSchool\CliMenu\CliMenu;
@@ -21,8 +23,6 @@ use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpSchool\PhpWorkshop\ExerciseRenderer;
 use PhpSchool\PhpWorkshop\ExerciseRepository;
 use PhpSchool\PhpWorkshop\MenuItem\ResetProgress;
-use PhpSchool\PhpWorkshop\UserState;
-use PhpSchool\PhpWorkshop\UserStateSerializer;
 use PhpSchool\PhpWorkshop\WorkshopType;
 
 /**
@@ -36,8 +36,8 @@ class MenuFactory
      */
     public function __invoke(ContainerInterface $c): CliMenu
     {
-        /** @var UserStateSerializer $userStateSerializer */
-        $userStateSerializer = $c->get(UserStateSerializer::class);
+        /** @var Serializer $userStateSerializer */
+        $userStateSerializer = $c->get(Serializer::class);
         $userState = $userStateSerializer->deSerialize();
         /** @var ExerciseRepository $exerciseRepository */
         $exerciseRepository = $c->get(ExerciseRepository::class);

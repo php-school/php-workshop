@@ -8,6 +8,8 @@ use League\CommonMark\DocParser;
 use League\CommonMark\Environment;
 use PhpSchool\CliMenu\CliMenu;
 use PhpSchool\CliMenu\MenuItem\MenuItemInterface;
+use PhpSchool\PhpWorkshop\UserState\Serializer;
+use PhpSchool\PhpWorkshop\UserState\UserState;
 use PhpSchool\Terminal\Terminal;
 use PHPUnit\Framework\TestCase;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
@@ -15,8 +17,6 @@ use PhpSchool\PhpWorkshop\ExerciseRenderer;
 use PhpSchool\PhpWorkshop\ExerciseRepository;
 use PhpSchool\PhpWorkshop\MarkdownRenderer;
 use PhpSchool\PhpWorkshop\Output\StdOutput;
-use PhpSchool\PhpWorkshop\UserState;
-use PhpSchool\PhpWorkshop\UserStateSerializer;
 
 class ExerciseRendererTest extends TestCase
 {
@@ -38,7 +38,7 @@ class ExerciseRendererTest extends TestCase
         $exercises = [$exercise1, $exercise2];
         $exerciseRepository = $this->createMock(ExerciseRepository::class);
         $userState = $this->createMock(UserState::class);
-        $userStateSerializer = $this->createMock(UserStateSerializer::class);
+        $userStateSerializer = $this->createMock(Serializer::class);
 
         $exerciseRepository
             ->expects($this->once())

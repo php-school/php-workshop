@@ -6,6 +6,7 @@ use Colors\Color;
 use Kadet\Highlighter\Formatter\CliFormatter;
 use Kadet\Highlighter\KeyLighter;
 use Kadet\Highlighter\Language\Php;
+use PhpSchool\PhpWorkshop\UserState\UserState;
 use PhpSchool\PhpWorkshopTest\Asset\CliExerciseImpl;
 use PhpSchool\PhpWorkshopTest\BaseTest;
 use PhpSchool\Terminal\Terminal;
@@ -20,7 +21,6 @@ use PhpSchool\PhpWorkshop\ResultAggregator;
 use PhpSchool\PhpWorkshop\ResultRenderer\FailureRenderer;
 use PhpSchool\PhpWorkshop\ResultRenderer\ResultsRenderer;
 use PhpSchool\PhpWorkshop\Solution\SingleFileSolution;
-use PhpSchool\PhpWorkshop\UserState;
 use PHPUnit\Framework\TestCase;
 
 use function PhpSchool\PhpWorkshop\camel_case_to_kebab_case;
