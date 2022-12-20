@@ -29,6 +29,7 @@ use PhpSchool\PhpWorkshop\Utils\RequestRenderer;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use RuntimeException;
+use Symfony\Component\Process\ExecutableFinder;
 use Symfony\Component\Process\Process;
 
 /**
@@ -51,6 +52,11 @@ class CgiRunner implements ExerciseRunnerInterface
      * @var RequestRenderer
      */
     private $requestRenderer;
+
+    /**
+     * @var string
+     */
+    private $phpLocation;
 
     /**
      * @var array<class-string>
@@ -76,28 +82,16 @@ class CgiRunner implements ExerciseRunnerInterface
         EventDispatcher $eventDispatcher,
         RequestRenderer $requestRenderer
     ) {
-        if (PHP_OS_FAMILY === 'Windows') {
-            // Check if in path. 2> nul > nul equivalent to 2>&1 /dev/null
-            $silence  = (PHP_OS === 'CYGWIN' ? '> /dev/null 2>&1' : '2> nul > nul');
-            system(sprintf('php-cgi --version %s', $silence), $failedToRun);
-            if ($failedToRun) {
-                $newPath = realpath(sprintf('%s/%s', dirname(PHP_BINARY), 'php-cgi.exe'));
-                // Try one more time, relying on being in the php binary's directory (where it should be on Windows)
-                system(sprintf('%s --version %s', $newPath, $silence), $stillFailedToRun);
-                if ($stillFailedToRun) {
-                    throw new RuntimeException(
-                        'Could not find php-cgi binary. Please install php-cgi using your package manager.'
-                    );
-                }
-            }
-        } else {
-            @system('php-cgi --version > /dev/null 2>&1', $failedToRun);
-            if ($failedToRun) {
-                throw new RuntimeException(
-                    'Could not find php-cgi binary. Please install php-cgi using your package manager.'
-                );
-            }
+        $php = (new ExecutableFinder())->find('php-cgi');
+
+        if (null === $php) {
+            throw new RuntimeException(
+                'Could not load php-cgi binary. Please install php using your package manager.'
+            );
         }
+
+        $this->phpLocation = $php;
+
         /** @var CgiExercise&ExerciseInterface $exercise */
         $this->eventDispatcher = $eventDispatcher;
         $this->exercise = $exercise;
@@ -221,10 +215,9 @@ class CgiRunner implements ExerciseRunnerInterface
             'XDEBUG_MODE'     => 'off',
         ];
 
-        $cgi = sprintf('php-cgi%s', DIRECTORY_SEPARATOR === '\\' ? '.exe' : '');
         $cgiBinary = sprintf(
             '%s -dalways_populate_raw_post_data=-1 -dhtml_errors=0 -dexpose_php=0',
-            realpath(sprintf('%s/%s', str_replace('\\', '/', dirname(PHP_BINARY)), $cgi))
+            $this->phpLocation
         );
 
         $content                = $request->getBody()->__toString();
