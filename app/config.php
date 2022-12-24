@@ -9,7 +9,9 @@ use PhpSchool\PhpWorkshop\Listener\InitialCodeListener;
 use PhpSchool\PhpWorkshop\Listener\TearDownListener;
 use PhpSchool\PhpWorkshop\Logger\ConsoleLogger;
 use PhpSchool\PhpWorkshop\Logger\Logger;
+use PhpSchool\PhpWorkshop\Result\ComposerFailure;
 use PhpSchool\PhpWorkshop\Result\FileComparisonFailure;
+use PhpSchool\PhpWorkshop\ResultRenderer\ComposerFailureRenderer;
 use PhpSchool\PhpWorkshop\ResultRenderer\FileComparisonFailureRenderer;
 use PhpSchool\PhpWorkshop\UserState\LocalJsonSerializer;
 use Psr\Log\LoggerInterface;
@@ -348,6 +350,7 @@ return [
 
         $factory->registerRenderer(ComparisonFailure::class, ComparisonFailureRenderer::class);
         $factory->registerRenderer(FileComparisonFailure::class, FileComparisonFailureRenderer::class);
+        $factory->registerRenderer(ComposerFailure::class, ComposerFailureRenderer::class);
 
         return $factory;
     },

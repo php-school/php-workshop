@@ -10,6 +10,7 @@ use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseType;
 use PhpSchool\PhpWorkshop\ExerciseCheck\ComposerExerciseCheck;
 use PhpSchool\PhpWorkshop\Input\Input;
+use PhpSchool\PhpWorkshop\Result\ComposerFailure;
 use PhpSchool\PhpWorkshop\Result\Failure;
 use PhpSchool\PhpWorkshop\Result\ResultInterface;
 use PhpSchool\PhpWorkshop\Result\Success;
@@ -45,15 +46,15 @@ class ComposerCheck implements SimpleCheckInterface
         }
 
         if (!file_exists(sprintf('%s/composer.json', dirname($input->getRequiredArgument('program'))))) {
-            return new Failure($this->getName(), 'No composer.json file found');
+            return ComposerFailure::fromCheckAndMissingFileOrFolder($this, 'composer.json');
         }
 
         if (!file_exists(sprintf('%s/composer.lock', dirname($input->getRequiredArgument('program'))))) {
-            return new Failure($this->getName(), 'No composer.lock file found');
+            return ComposerFailure::fromCheckAndMissingFileOrFolder($this, 'composer.lock');
         }
 
         if (!file_exists(sprintf('%s/vendor', dirname($input->getRequiredArgument('program'))))) {
-            return new Failure($this->getName(), 'No vendor folder found');
+            return ComposerFailure::fromCheckAndMissingFileOrFolder($this, 'vendor');
         }
 
         $lockFile = new LockFileParser(sprintf('%s/composer.lock', dirname($input->getRequiredArgument('program'))));
@@ -62,13 +63,7 @@ class ComposerCheck implements SimpleCheckInterface
         });
 
         if (count($missingPackages) > 0) {
-            return new Failure(
-                $this->getName(),
-                sprintf(
-                    'Lockfile doesn\'t include the following packages at any version: "%s"',
-                    implode('", "', $missingPackages)
-                )
-            );
+            return ComposerFailure::fromCheckAndMissingPackages($this, $missingPackages);
         }
 
         return new Success($this->getName());
