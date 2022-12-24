@@ -45,7 +45,7 @@ class ComposerFailureRenderer implements ResultRendererInterface
             $missingPackages = $this->result->getMissingPackages();
 
             return $renderer->center(sprintf(
-                'Lockfile doesn\'t include the following packages at any version: "%s"',
+                "Lockfile doesn't include the following packages at any version: \"%s\"\n",
                 implode('", "', $missingPackages)
             ));
         }
