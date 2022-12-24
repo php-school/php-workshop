@@ -37,7 +37,6 @@ class ComposerFailure implements FailureInterface
     public function __construct(CheckInterface $check, string $missingComponent = null, array $missingPackages = [])
     {
         $this->check = $check;
-        $this->missingComponent = $missingComponent;
         $this->missingPackages = $missingPackages;
 
         if ($missingComponent !== null && !in_array($missingComponent, self::$validComponents, true)) {
@@ -47,6 +46,7 @@ class ComposerFailure implements FailureInterface
                 $missingComponent
             );
         }
+        $this->missingComponent = $missingComponent;
     }
 
     /**
