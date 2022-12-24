@@ -9,6 +9,7 @@ use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseType;
 use PhpSchool\PhpWorkshop\ExerciseCheck\ComposerExerciseCheck;
 use PhpSchool\PhpWorkshop\Input\Input;
+use PhpSchool\PhpWorkshop\Result\ComposerFailure;
 use PhpSchool\PhpWorkshop\Result\Failure;
 use PhpSchool\PhpWorkshop\Result\Success;
 use PhpSchool\PhpWorkshopTest\Asset\ComposerExercise;
@@ -53,9 +54,10 @@ class ComposerCheckTest extends TestCase
             new Input('app', ['program' => 'invalid/solution'])
         );
 
-        $this->assertInstanceOf(Failure::class, $result);
+        $this->assertInstanceOf(ComposerFailure::class, $result);
         $this->assertSame('Composer Dependency Check', $result->getCheckName());
-        $this->assertSame('No composer.json file found', $result->getReason());
+        $this->assertTrue($result->isMissingComponent());
+        $this->assertSame('composer.json', $result->getMissingComponent());
     }
 
     public function testCheckReturnsFailureIfNoComposerLockFile(): void
@@ -65,9 +67,10 @@ class ComposerCheckTest extends TestCase
             new Input('app', ['program' => __DIR__ . '/../res/composer/not-locked/solution.php'])
         );
 
-        $this->assertInstanceOf(Failure::class, $result);
+        $this->assertInstanceOf(ComposerFailure::class, $result);
         $this->assertSame('Composer Dependency Check', $result->getCheckName());
-        $this->assertSame('No composer.lock file found', $result->getReason());
+        $this->assertTrue($result->isMissingComponent());
+        $this->assertSame('composer.lock', $result->getMissingComponent());
     }
 
     public function testCheckReturnsFailureIfNoVendorFolder(): void
@@ -77,9 +80,10 @@ class ComposerCheckTest extends TestCase
             new Input('app', ['program' => __DIR__ . '/../res/composer/no-vendor/solution.php'])
         );
 
-        $this->assertInstanceOf(Failure::class, $result);
+        $this->assertInstanceOf(ComposerFailure::class, $result);
         $this->assertSame('Composer Dependency Check', $result->getCheckName());
-        $this->assertSame('No vendor folder found', $result->getReason());
+        $this->assertTrue($result->isMissingComponent());
+        $this->assertSame('vendor', $result->getMissingComponent());
     }
 
     /**
@@ -88,7 +92,7 @@ class ComposerCheckTest extends TestCase
      * @param string $dependency
      * @param string $solutionFile
      */
-    public function testCheckReturnsFailureIfDependencyNotRequired($dependency, $solutionFile): void
+    public function testCheckReturnsFailureIfDependencyNotRequired(string $dependency, string $solutionFile): void
     {
         $exercise = $this->createMock(ComposerExercise::class);
         $exercise->expects($this->once())
@@ -97,12 +101,10 @@ class ComposerCheckTest extends TestCase
 
         $result = $this->check->check($exercise, new Input('app', ['program' => $solutionFile]));
 
-        $this->assertInstanceOf(Failure::class, $result);
+        $this->assertInstanceOf(ComposerFailure::class, $result);
         $this->assertSame('Composer Dependency Check', $result->getCheckName());
-        $this->assertSame(
-            sprintf('Lockfile doesn\'t include the following packages at any version: "%s"', $dependency),
-            $result->getReason()
-        );
+        $this->assertTrue($result->isMissingPackages());
+        $this->assertSame([$dependency], $result->getMissingPackages());
     }
 
     /**
