@@ -221,6 +221,11 @@ final class Application
 
         //turn all notices & warnings in to exceptions
         set_error_handler(function (int $severity, string $message, string $file, int $line) {
+            //ignore silenced errors
+            if (!(error_reporting() & $severity)) {
+                return false;
+            }
+
             throw new \ErrorException($message, 0, $severity, $file, $line);
         });
 
