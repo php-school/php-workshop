@@ -118,7 +118,7 @@ abstract class WorkshopExerciseTest extends TestCase
                 [PrepareSolutionListener::locateComposer(), 'install', '--no-interaction'],
                 $directory
             );
-            $process->run();
+            $process->mustRun();
         }
     }
 
