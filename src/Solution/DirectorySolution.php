@@ -122,12 +122,12 @@ class DirectorySolution implements SolutionInterface
     }
 
     /**
-     * Check whether there is a `composer.lock` file in the base directory.
+     * Check whether there is a `composer.json` file in the base directory.
      *
      * @return bool
      */
     public function hasComposerFile(): bool
     {
-        return file_exists(sprintf('%s/composer.lock', $this->baseDirectory));
+        return file_exists(sprintf('%s/composer.json', $this->baseDirectory));
     }
 }
