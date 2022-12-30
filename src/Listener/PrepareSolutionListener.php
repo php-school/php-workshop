@@ -6,7 +6,7 @@ namespace PhpSchool\PhpWorkshop\Listener;
 
 use PhpSchool\PhpWorkshop\Event\ExerciseRunnerEvent;
 use PhpSchool\PhpWorkshop\Exercise\ProvidesSolution;
-use RuntimeException;
+use PhpSchool\PhpWorkshop\Exception\RuntimeException;
 use Symfony\Component\Process\Process;
 
 /**
@@ -48,7 +48,12 @@ class PrepareSolutionListener
                     [self::locateComposer(), 'install', '--no-interaction'],
                     $solution->getBaseDirectory()
                 );
-                $process->run();
+
+                try {
+                    $process->mustRun();
+                } catch (\Symfony\Component\Process\Exception\RuntimeException $e) {
+                    throw new RuntimeException('Composer dependencies could not be installed', 0, $e);
+                }
             }
         }
     }
