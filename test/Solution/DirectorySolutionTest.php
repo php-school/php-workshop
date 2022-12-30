@@ -63,17 +63,18 @@ class DirectorySolutionTest extends BaseTest
     {
         $this->getTemporaryFile('solution.php', 'ENTRYPOINT');
         $this->getTemporaryFile('some-class.php', 'SOME CLASS');
-        $this->getTemporaryFile('composer.lock');
+        $this->getTemporaryFile('composer.json', 'composer');
 
         $solution = DirectorySolution::fromDirectory($this->getTemporaryDirectory());
 
         self::assertTrue($solution->hasComposerFile());
         self::assertSame('ENTRYPOINT', file_get_contents($solution->getEntryPoint()));
         $files = $solution->getFiles();
-        self::assertCount(2, $files);
+        self::assertCount(3, $files);
 
-        self::assertSame('ENTRYPOINT', file_get_contents($files[0]->__toString()));
-        self::assertSame('SOME CLASS', file_get_contents($files[1]->__toString()));
+        self::assertSame('composer', file_get_contents($files[0]->__toString()));
+        self::assertSame('ENTRYPOINT', file_get_contents($files[1]->__toString()));
+        self::assertSame('SOME CLASS', file_get_contents($files[2]->__toString()));
     }
 
     public function testWithExceptions(): void
