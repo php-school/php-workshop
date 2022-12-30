@@ -102,8 +102,41 @@ class PrepareSolutionListenerTest extends TestCase
     {
         $this->assertFileDoesNotExist(sprintf('%s/vendor', dirname($this->file)));
         file_put_contents(sprintf('%s/composer.json', dirname($this->file)), json_encode([
-            'requires' => [
+            'require' => [
                 'phpunit/phpunit' => '~5.0'
+            ],
+        ]));
+
+        $solution = $this->createMock(SolutionInterface::class);
+        $exercise = $this->createMock(CliExerciseInterface::class);
+        $exercise
+            ->method('getSolution')
+            ->willReturn($solution);
+
+        $solution
+            ->expects($this->once())
+            ->method('hasComposerFile')
+            ->willReturn(true);
+
+        $solution
+            ->method('getBaseDirectory')
+            ->willReturn(dirname($this->file));
+
+        $event = new ExerciseRunnerEvent('event', $exercise, new Input('app'));
+        $this->listener->__invoke($event);
+
+        $this->assertFileExists(sprintf('%s/vendor', dirname($this->file)));
+    }
+
+    public function testExceptionIsThrownIfDependenciesCannotBeResolved(): void
+    {
+        $this->expectException(\PhpSchool\PhpWorkshop\Exception\RuntimeException::class);
+        $this->expectExceptionMessage('Composer dependencies could not be installed');
+
+        $this->assertFileDoesNotExist(sprintf('%s/vendor', dirname($this->file)));
+        file_put_contents(sprintf('%s/composer.json', dirname($this->file)), json_encode([
+            'require' => [
+                'phpunit/phpunit' => '1.0'
             ],
         ]));
 
