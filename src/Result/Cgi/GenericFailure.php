@@ -69,12 +69,23 @@ class GenericFailure extends Failure implements FailureInterface
         return $this->request;
     }
 
+    /**
+     * @return array{
+     *    request: array{
+     *        method: string,
+     *        uri: string,
+     *        headers: array<string, array<string>>,
+     *        body: string
+     *    },
+     *    reason: ?string
+     * }
+     */
     public function toArray(): array
     {
         return [
             'request' => [
                 'method' => $this->getRequest()->getMethod(),
-                'uri' => $this->getRequest()->getUri(),
+                'uri' => $this->getRequest()->getUri()->__toString(),
                 'headers' => $this->getRequest()->getHeaders(),
                 'body' => $this->getRequest()->getBody()->__toString(),
             ],

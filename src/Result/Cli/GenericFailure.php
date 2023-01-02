@@ -65,6 +65,12 @@ class GenericFailure extends Failure implements FailureInterface
         return $this->args;
     }
 
+    /**
+     * @return array{
+     *    args: array<string>,
+     *    reason: ?string,
+     * }
+     */
     public function toArray(): array
     {
         return [

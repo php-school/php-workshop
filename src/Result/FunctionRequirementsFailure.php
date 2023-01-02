@@ -56,6 +56,12 @@ class FunctionRequirementsFailure implements FailureInterface
         return $this->missingFunctions;
     }
 
+    /**
+     * @return array{
+     *     banned_functions: array<array{line: int, function: string}>,
+     *     missing_functions: array<string>
+     * }
+     */
     public function toArray(): array
     {
         return [
