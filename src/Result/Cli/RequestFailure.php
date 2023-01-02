@@ -91,4 +91,13 @@ class RequestFailure implements FailureInterface
     {
         return 'Request Failure';
     }
+
+    public function toArray(): array
+    {
+        return [
+            'args' => $this->getArgs()->getArrayCopy(),
+            'expected_output' => $this->getExpectedOutput(),
+            'actual_output' => $this->getActualOutput()
+        ];
+    }
 }

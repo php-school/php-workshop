@@ -10,4 +10,10 @@ namespace PhpSchool\PhpWorkshop\Result\Cli;
  */
 interface FailureInterface extends ResultInterface
 {
+    /**
+     * Return the failure data as an array
+     *
+     * @return array
+     */
+    public function toArray(): array;
 }

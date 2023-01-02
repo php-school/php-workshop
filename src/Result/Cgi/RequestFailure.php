@@ -147,4 +147,22 @@ class RequestFailure implements FailureInterface
     {
         return 'Request Failure';
     }
+
+    public function toArray(): array
+    {
+        return [
+            'request' => [
+                'method' => $this->getRequest()->getMethod(),
+                'uri' => $this->getRequest()->getUri(),
+                'headers' => $this->getRequest()->getHeaders(),
+                'body' => $this->getRequest()->getBody()->__toString(),
+            ],
+            'headers_different' => $this->headersDifferent(),
+            'body_different' => $this->bodyDifferent(),
+            'expected_output' => $this->getExpectedOutput(),
+            'actual_output' => $this->getActualOutput(),
+            'expected_headers' => $this->getExpectedHeaders(),
+            'actual_headers' => $this->getActualHeaders(),
+        ];
+    }
 }

@@ -76,4 +76,12 @@ class ComparisonFailure implements FailureInterface
     {
         return $this->actualValue;
     }
+
+    public function toArray(): array
+    {
+        return [
+            'expected_value' => $this->getExpectedValue(),
+            'actual_value' => $this->getActualValue()
+        ];
+    }
 }
