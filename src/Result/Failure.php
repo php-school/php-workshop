@@ -111,4 +111,14 @@ class Failure implements FailureInterface
     {
         return $this->reason;
     }
+
+    /**
+     * @return array{reason: ?string}
+     */
+    public function toArray(): array
+    {
+        return [
+            'reason' => $this->getReason(),
+        ];
+    }
 }

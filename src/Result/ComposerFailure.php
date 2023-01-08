@@ -87,9 +87,6 @@ class ComposerFailure implements FailureInterface
 
     /**
      * @return array{
-     *     success: false,
-     *     name: string,
-     *     type: class-string<static>,
      *     is_missing_component: bool,
      *     is_missing_packages: bool,
      *     missing_component: ?string,
@@ -99,9 +96,6 @@ class ComposerFailure implements FailureInterface
     public function toArray(): array
     {
         return [
-            'success' => false,
-            'name' => $this->getCheckName(),
-            'type' => static::class,
             'is_missing_component' => $this->isMissingComponent(),
             'is_missing_packages' => $this->isMissingPackages(),
             'missing_component' => $this->getMissingComponent(),

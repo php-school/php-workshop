@@ -41,9 +41,6 @@ class ComposerFailureTest extends TestCase
 
         $this->assertEquals(
             [
-                'success' => false,
-                'name' => 'Some Check',
-                'type' => ComposerFailure::class,
                 'is_missing_component' => true,
                 'is_missing_packages' => false,
                 'missing_component' => 'composer.json',
@@ -72,9 +69,6 @@ class ComposerFailureTest extends TestCase
 
         $this->assertEquals(
             [
-                'success' => false,
-                'name' => 'Some Check',
-                'type' => ComposerFailure::class,
                 'is_missing_component' => false,
                 'is_missing_packages' => true,
                 'missing_component' => null,

@@ -71,4 +71,16 @@ class FileComparisonFailure implements FailureInterface
     {
         return $this->actualValue;
     }
+
+    /**
+     * @return array{file_name: string, expected_value: string, actual_value: string}
+     */
+    public function toArray(): array
+    {
+        return [
+            'file_name' => $this->getFileName(),
+            'expected_value' => $this->getExpectedValue(),
+            'actual_value' => $this->getActualValue()
+        ];
+    }
 }
