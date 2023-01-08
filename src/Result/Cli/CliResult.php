@@ -7,6 +7,7 @@ namespace PhpSchool\PhpWorkshop\Result\Cli;
 use ArrayIterator;
 use IteratorAggregate;
 use PhpSchool\PhpWorkshop\Result\ResultGroupInterface;
+use PhpSchool\PhpWorkshop\Result\ResultInterface as BaseResult;
 
 /**
  * A result which encompasses all the results for each individual execution made during
@@ -84,5 +85,10 @@ class CliResult implements ResultGroupInterface, IteratorAggregate
     public function getIterator(): ArrayIterator
     {
         return new ArrayIterator($this->results);
+    }
+
+    public function isResultSuccess(BaseResult $result): bool
+    {
+        return $result instanceof SuccessInterface;
     }
 }
