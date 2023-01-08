@@ -18,4 +18,6 @@ interface ResultGroupInterface extends ResultInterface
      * @return array<ResultInterface>
      */
     public function getResults(): array;
+
+    public function isResultSuccess(ResultInterface $result): bool;
 }
