@@ -257,15 +257,6 @@ class CliRunner implements ExerciseRunnerInterface
 
             $args = $event->getArgs();
 
-            if (count($args)) {
-                $glue = max(array_map('strlen', $args->getArrayCopy())) > 30 ? "\n" : ', ';
-
-                $output->writeTitle('Arguments');
-                $output->write(implode($glue, $args->getArrayCopy()));
-                $output->emptyLine();
-            }
-
-            $output->writeTitle("Output");
             $process = $this->getPhpProcess($input->getRequiredArgument('program'), $args);
             $process->start();
             $this->eventDispatcher->dispatch(

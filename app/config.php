@@ -6,6 +6,7 @@ use Colors\Color;
 use PhpSchool\PhpWorkshop\Check\FileComparisonCheck;
 use PhpSchool\PhpWorkshop\ExerciseRunner\Factory\ServerRunnerFactory;
 use PhpSchool\PhpWorkshop\Listener\InitialCodeListener;
+use PhpSchool\PhpWorkshop\Listener\OutputRunInfoListener;
 use PhpSchool\PhpWorkshop\Listener\TearDownListener;
 use PhpSchool\PhpWorkshop\Logger\ConsoleLogger;
 use PhpSchool\PhpWorkshop\Logger\Logger;
@@ -263,6 +264,10 @@ return [
         return new TearDownListener($c->get(Filesystem::class));
     },
 
+    OutputRunInfoListener::class => function (ContainerInterface  $c) {
+        return new OutputRunInfoListener($c->get(OutputInterface::class), $c->get(RequestRenderer::class));
+    },
+
     //checks
     FileExistsCheck::class              => create(),
     PhpLintCheck::class                 => create(),
@@ -442,6 +447,14 @@ return [
             'application.tear-down' => [
                 containerListener(TearDownListener::class, 'cleanupTempDir')
             ]
-        ]
+        ],
+        'decorate-run-output' => [
+            'cli.run.student-execute.pre' => [
+                containerListener(OutputRunInfoListener::class)
+            ],
+            'cgi.run.student-execute.pre' => [
+                containerListener(OutputRunInfoListener::class)
+            ]
+        ],
     ],
 ];
