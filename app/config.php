@@ -177,7 +177,7 @@ return [
     RunnerManager::class => function (ContainerInterface $c) {
         $manager = new RunnerManager();
         $manager->addFactory(new CliRunnerFactory($c->get(EventDispatcher::class)));
-        $manager->addFactory(new CgiRunnerFactory($c->get(EventDispatcher::class), $c->get(RequestRenderer::class)));
+        $manager->addFactory(new CgiRunnerFactory($c->get(EventDispatcher::class)));
         $manager->addFactory(new CustomVerifyingRunnerFactory());
         return $manager;
     },

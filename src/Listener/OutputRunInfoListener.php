@@ -44,12 +44,12 @@ class OutputRunInfoListener
                 }
 
                 break;
-           case CgiExecuteEvent::class:
-               $request = $event->getRequest();
+            case CgiExecuteEvent::class:
+                $request = $event->getRequest();
 
-               $this->output->writeTitle("Request");
-               $this->output->emptyLine();
-               $this->output->write($this->requestRenderer->renderRequest($request));
+                $this->output->writeTitle("Request");
+                $this->output->emptyLine();
+                $this->output->write($this->requestRenderer->renderRequest($request));
 
                 break;
             default:

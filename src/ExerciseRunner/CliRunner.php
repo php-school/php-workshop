@@ -272,6 +272,10 @@ class CliRunner implements ExerciseRunnerInterface
             }
 
             $output->lineBreak();
+
+            $this->eventDispatcher->dispatch(
+                new CliExecuteEvent('cli.run.student-execute.post', $args)
+            );
         }
 
         $this->eventDispatcher->dispatch(new ExerciseRunnerEvent('cli.run.finish', $this->exercise, $input));

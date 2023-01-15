@@ -30,18 +30,11 @@ class CgiRunnerFactory implements ExerciseRunnerFactoryInterface
     private $eventDispatcher;
 
     /**
-     * @var RequestRenderer
-     */
-    private $requestRenderer;
-
-    /**
      * @param EventDispatcher $eventDispatcher
-     * @param RequestRenderer $requestRenderer
      */
-    public function __construct(EventDispatcher $eventDispatcher, RequestRenderer $requestRenderer)
+    public function __construct(EventDispatcher $eventDispatcher)
     {
         $this->eventDispatcher = $eventDispatcher;
-        $this->requestRenderer = $requestRenderer;
     }
 
     /**
@@ -73,6 +66,6 @@ class CgiRunnerFactory implements ExerciseRunnerFactoryInterface
      */
     public function create(ExerciseInterface $exercise): ExerciseRunnerInterface
     {
-        return new CgiRunner($exercise, $this->eventDispatcher, $this->requestRenderer);
+        return new CgiRunner($exercise, $this->eventDispatcher);
     }
 }

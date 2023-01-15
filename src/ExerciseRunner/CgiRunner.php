@@ -298,6 +298,10 @@ class CgiRunner implements ExerciseRunnerInterface
             }
 
             $output->lineBreak();
+
+            $this->eventDispatcher->dispatch(
+                new CgiExecuteEvent('cgi.run.student-execute.post', $request)
+            );
         }
         $this->eventDispatcher->dispatch(new ExerciseRunnerEvent('cgi.run.finish', $this->exercise, $input));
         return $success;
