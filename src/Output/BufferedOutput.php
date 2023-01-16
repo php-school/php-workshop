@@ -53,8 +53,14 @@ class BufferedOutput implements OutputInterface
         // noop
     }
 
-    public function fetch(): string
+    public function fetch(bool $clear = false): string
     {
-        return $this->buffer;
+        $buffer =  $this->buffer;
+
+        if ($clear) {
+            $this->buffer = '';
+        }
+
+        return $buffer;
     }
 }

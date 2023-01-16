@@ -55,6 +55,7 @@ class BufferedOutputTest extends TestCase
         $message = 'Talk is cheap. Show me the code.';
         $this->output->writeLine($message);
         $this->assertEquals($message . "\n", $this->output->fetch());
+        $this->assertEquals($message . "\n", $this->output->fetch());
     }
 
     public function testWriteLines(): void
@@ -68,5 +69,13 @@ class BufferedOutputTest extends TestCase
     {
         $this->output->emptyLine();
         $this->assertEquals("\n", $this->output->fetch());
+    }
+
+    public function testFetchWithClear(): void
+    {
+        $message = 'Talk is cheap. Show me the code.';
+        $this->output->writeLine($message);
+        $this->assertEquals($message . "\n", $this->output->fetch(true));
+        $this->assertEquals('', $this->output->fetch());
     }
 }
