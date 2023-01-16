@@ -5,6 +5,7 @@ namespace PhpSchool\PhpWorkshopTest\ExerciseRunner;
 use Colors\Color;
 use GuzzleHttp\Psr7\Request;
 use PhpSchool\PhpWorkshop\Check\CodeExistsCheck;
+use PhpSchool\PhpWorkshop\Listener\OutputRunInfoListener;
 use PhpSchool\Terminal\Terminal;
 use PhpSchool\PhpWorkshop\Check\CodeParseCheck;
 use PhpSchool\PhpWorkshop\Check\FileExistsCheck;
@@ -37,14 +38,16 @@ class CgiRunnerTest extends TestCase
      */
     private $exercise;
 
+    /**
+     * @var EventDispatcher
+     */
+    private $eventDispatcher;
+
     public function setUp(): void
     {
         $this->exercise = $this->createMock(CgiExerciseInterface::class);
-        $this->runner = new CgiRunner(
-            $this->exercise,
-            new EventDispatcher(new ResultAggregator()),
-            new RequestRenderer()
-        );
+        $this->eventDispatcher = new EventDispatcher(new ResultAggregator());
+        $this->runner = new CgiRunner($this->exercise, $this->eventDispatcher);
 
         $this->exercise
             ->method('getType')
@@ -270,6 +273,11 @@ class CgiRunnerTest extends TestCase
         $request1 = (new Request('GET', 'http://some.site?number=5'));
         $request2 = (new Request('GET', 'http://some.site?number=6'));
 
+        $this->eventDispatcher->listen(
+            'cgi.run.student-execute.pre',
+            new OutputRunInfoListener($output, new RequestRenderer())
+        );
+
         $this->exercise
             ->expects($this->once())
             ->method('getRequests')
@@ -312,6 +320,11 @@ class CgiRunnerTest extends TestCase
         $color->setForceStyle(true);
         $output = new StdOutput($color, $this->createMock(Terminal::class));
         $request1 = (new Request('GET', 'http://some.site?number=5'));
+
+        $this->eventDispatcher->listen(
+            'cgi.run.student-execute.pre',
+            new OutputRunInfoListener($output, new RequestRenderer())
+        );
 
         $this->exercise
             ->expects($this->once())

@@ -27,7 +27,7 @@ class CgiRunnerFactoryTest extends TestCase
     public function setUp(): void
     {
         $this->eventDispatcher = $this->createMock(EventDispatcher::class);
-        $this->factory = new CgiRunnerFactory($this->eventDispatcher, new RequestRenderer());
+        $this->factory = new CgiRunnerFactory($this->eventDispatcher);
     }
 
     public function testSupports(): void

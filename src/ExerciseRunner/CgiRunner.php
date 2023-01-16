@@ -49,11 +49,6 @@ class CgiRunner implements ExerciseRunnerInterface
     private $eventDispatcher;
 
     /**
-     * @var RequestRenderer
-     */
-    private $requestRenderer;
-
-    /**
      * @var string
      */
     private $phpLocation;
@@ -75,12 +70,10 @@ class CgiRunner implements ExerciseRunnerInterface
      *
      * @param CgiExercise $exercise The exercise to be invoked.
      * @param EventDispatcher $eventDispatcher The event dispatcher.
-     * @param RequestRenderer $requestRenderer
      */
     public function __construct(
         CgiExercise $exercise,
-        EventDispatcher $eventDispatcher,
-        RequestRenderer $requestRenderer
+        EventDispatcher $eventDispatcher
     ) {
         $php = (new ExecutableFinder())->find('php-cgi');
 
@@ -95,7 +88,6 @@ class CgiRunner implements ExerciseRunnerInterface
         /** @var CgiExercise&ExerciseInterface $exercise */
         $this->eventDispatcher = $eventDispatcher;
         $this->exercise = $exercise;
-        $this->requestRenderer = $requestRenderer;
     }
 
     /**
@@ -292,12 +284,6 @@ class CgiRunner implements ExerciseRunnerInterface
             );
             $process = $this->getProcess($input->getRequiredArgument('program'), $event->getRequest());
 
-            $output->writeTitle("Request");
-            $output->emptyLine();
-            $output->write($this->requestRenderer->renderRequest($request));
-
-            $output->writeTitle("Output");
-            $output->emptyLine();
             $process->start();
             $this->eventDispatcher->dispatch(
                 new CgiExecuteEvent('cgi.run.student.executing', $request, ['output' => $output])
@@ -312,6 +298,10 @@ class CgiRunner implements ExerciseRunnerInterface
             }
 
             $output->lineBreak();
+
+            $this->eventDispatcher->dispatch(
+                new CgiExecuteEvent('cgi.run.student-execute.post', $request)
+            );
         }
         $this->eventDispatcher->dispatch(new ExerciseRunnerEvent('cgi.run.finish', $this->exercise, $input));
         return $success;

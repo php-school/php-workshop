@@ -4,6 +4,8 @@ namespace PhpSchool\PhpWorkshopTest\ExerciseRunner;
 
 use Colors\Color;
 use PhpSchool\PhpWorkshop\Check\CodeExistsCheck;
+use PhpSchool\PhpWorkshop\Listener\OutputRunInfoListener;
+use PhpSchool\PhpWorkshop\Utils\RequestRenderer;
 use PhpSchool\Terminal\Terminal;
 use PhpSchool\PhpWorkshop\Check\CodeParseCheck;
 use PhpSchool\PhpWorkshop\Check\FileExistsCheck;
@@ -185,6 +187,11 @@ class CliRunnerTest extends TestCase
         $color->setForceStyle(true);
         $output = new StdOutput($color, $this->createMock(Terminal::class));
 
+        $this->eventDispatcher->listen(
+            'cli.run.student-execute.pre',
+            new OutputRunInfoListener($output, new RequestRenderer())
+        );
+
         $this->exercise
             ->expects($this->once())
             ->method('getArgs')
@@ -192,12 +199,12 @@ class CliRunnerTest extends TestCase
 
         $exp  = "\n\e[1m\e[4mArguments\e[0m\e[0m\n";
         $exp .= "1, 2, 3\n";
-        $exp .= "\n\e[1m\e[4mOutput\e[0m\e[0m\n";
+        $exp .= "\n\e[1m\e[4mOutput\e[0m\e[0m\n\n";
         $exp .= "6\n";
         $exp .= "\e[33m\e[0m\n";
         $exp .= "\e[1m\e[4mArguments\e[0m\e[0m\n";
         $exp .= "4, 5, 6\n\n";
-        $exp .= "\e[1m\e[4mOutput\e[0m\e[0m\n";
+        $exp .= "\e[1m\e[4mOutput\e[0m\e[0m\n\n";
         $exp .= "15\n";
         $exp .= "\e[33m\e[0m";
 

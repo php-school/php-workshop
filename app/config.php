@@ -6,6 +6,7 @@ use Colors\Color;
 use PhpSchool\PhpWorkshop\Check\FileComparisonCheck;
 use PhpSchool\PhpWorkshop\ExerciseRunner\Factory\ServerRunnerFactory;
 use PhpSchool\PhpWorkshop\Listener\InitialCodeListener;
+use PhpSchool\PhpWorkshop\Listener\OutputRunInfoListener;
 use PhpSchool\PhpWorkshop\Listener\TearDownListener;
 use PhpSchool\PhpWorkshop\Logger\ConsoleLogger;
 use PhpSchool\PhpWorkshop\Logger\Logger;
@@ -176,7 +177,7 @@ return [
     RunnerManager::class => function (ContainerInterface $c) {
         $manager = new RunnerManager();
         $manager->addFactory(new CliRunnerFactory($c->get(EventDispatcher::class)));
-        $manager->addFactory(new CgiRunnerFactory($c->get(EventDispatcher::class), $c->get(RequestRenderer::class)));
+        $manager->addFactory(new CgiRunnerFactory($c->get(EventDispatcher::class)));
         $manager->addFactory(new CustomVerifyingRunnerFactory());
         return $manager;
     },
@@ -261,6 +262,10 @@ return [
     RealPathListener::class => create(),
     TearDownListener::class => function (ContainerInterface $c) {
         return new TearDownListener($c->get(Filesystem::class));
+    },
+
+    OutputRunInfoListener::class => function (ContainerInterface  $c) {
+        return new OutputRunInfoListener($c->get(OutputInterface::class), $c->get(RequestRenderer::class));
     },
 
     //checks
@@ -442,6 +447,14 @@ return [
             'application.tear-down' => [
                 containerListener(TearDownListener::class, 'cleanupTempDir')
             ]
-        ]
+        ],
+        'decorate-run-output' => [
+            'cli.run.student-execute.pre' => [
+                containerListener(OutputRunInfoListener::class)
+            ],
+            'cgi.run.student-execute.pre' => [
+                containerListener(OutputRunInfoListener::class)
+            ]
+        ],
     ],
 ];
