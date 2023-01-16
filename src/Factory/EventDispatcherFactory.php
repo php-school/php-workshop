@@ -123,7 +123,7 @@ class EventDispatcherFactory
 
             if (!is_callable($listener)) {
                 throw new InvalidArgumentException(
-                    sprintf('Listener must be a callable or a container entry for a callable service.')
+                    'Listener must be a callable or a container entry for a callable service.'
                 );
             }
             $dispatcher->listen($eventName, $listener);
