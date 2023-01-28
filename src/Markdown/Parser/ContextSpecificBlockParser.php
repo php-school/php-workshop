@@ -8,11 +8,11 @@ use League\CommonMark\Block\Parser\BlockParserInterface;
 use PhpSchool\PhpWorkshop\Markdown\Block\ContextSpecificBlock;
 use League\CommonMark\ContextInterface;
 use League\CommonMark\Cursor;
-use PhpSchool\PhpWorkshop\Markdown\Context;
+use PhpSchool\PhpWorkshop\Markdown\CurrentContext;
 
 final class ContextSpecificBlockParser implements BlockParserInterface
 {
-    public const TYPES = [Context::CONTEXT_CLI, Context::CONTEXT_CLOUD];
+    public const TYPES = [CurrentContext::CONTEXT_CLI, CurrentContext::CONTEXT_CLOUD];
 
     public static function getParserRegex(): string
     {

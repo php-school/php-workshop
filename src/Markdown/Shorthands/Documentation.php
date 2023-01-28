@@ -8,27 +8,12 @@ use League\CommonMark\Inline\Element\Code;
 use League\CommonMark\Inline\Element\Link;
 use League\CommonMark\Inline\Element\Newline;
 use League\CommonMark\Inline\Element\Text;
-use League\CommonMark\Node\Node;
 
 final class Documentation implements ShorthandInterface
 {
-    public function cli(array $callArgs): array
+    public function __invoke(array $callArgs): array
     {
-        return $this->getBlocks($callArgs);
-    }
-
-    public function cloud(array $callArgs): array
-    {
-        return $this->getBlocks($callArgs);
-    }
-
-    /**
-     * @param array<string> $callArgs
-     * @return array<Node>
-     */
-    public function getBlocks(array $callArgs): array
-    {
-        if (count($callArgs) < 3) {
+        if (\count($callArgs) < 3) {
             return [];
         }
 

@@ -4,7 +4,7 @@ namespace PhpSchool\PhpWorkshop\Markdown;
 
 use PhpSchool\PhpWorkshop\Exception\InvalidArgumentException;
 
-class Context
+class CurrentContext
 {
     public const CONTEXT_CLI = 'cli';
     public const CONTEXT_CLOUD = 'cloud';
@@ -26,7 +26,17 @@ class Context
         $this->context = $context;
     }
 
-    public function getCurrentContext(): string
+    public static function cli(): self
+    {
+        return new self(self::CONTEXT_CLI);
+    }
+
+    public static function cloud(): self
+    {
+        return new self(self::CONTEXT_CLOUD);
+    }
+
+    public function get(): string
     {
         return $this->context;
     }

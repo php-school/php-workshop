@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace PhpSchool\PhpWorkshop\Markdown\Shorthands;
+namespace PhpSchool\PhpWorkshop\Markdown\Shorthands\Cli;
 
 use League\CommonMark\Inline\Element\Text;
-use League\CommonMark\Node\Node;
 use PhpSchool\PhpWorkshop\Exception\RuntimeException;
+use PhpSchool\PhpWorkshop\Markdown\Shorthands\ShorthandInterface;
 
 final class Verify implements ShorthandInterface
 {
@@ -27,29 +27,11 @@ final class Verify implements ShorthandInterface
     public function __invoke(array $callArgs): array
     {
         if (!isset($callArgs[1])) {
-            throw new RuntimeException('The solution file must be specific');
+            throw new RuntimeException('The solution file must be specified');
         }
 
         return [
             new Text($this->appName . ' verify ' . $callArgs[1]),
-        ];
-    }
-
-    public function cli(array $callArgs): array
-    {
-        if (!isset($callArgs[1])) {
-            throw new RuntimeException('The solution file must be specific');
-        }
-
-        return [
-            new Text($this->appName . ' verify ' . $callArgs[1]),
-        ];
-    }
-
-    public function cloud(array $callArgs): array
-    {
-        return [
-            new Text('Click the Verify button in the bottom right'),
         ];
     }
 }

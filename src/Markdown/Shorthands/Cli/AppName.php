@@ -2,13 +2,14 @@
 
 declare(strict_types=1);
 
-namespace PhpSchool\PhpWorkshop\Markdown\Shorthands;
+namespace PhpSchool\PhpWorkshop\Markdown\Shorthands\Cli;
 
 use League\CommonMark\Inline\Element\Code;
 use League\CommonMark\Inline\Element\Emphasis;
 use League\CommonMark\Inline\Element\Strong;
 use League\CommonMark\Inline\Element\Text;
 use League\CommonMark\Node\Node;
+use PhpSchool\PhpWorkshop\Markdown\Shorthands\ShorthandInterface;
 
 final class AppName implements ShorthandInterface
 {
@@ -22,21 +23,7 @@ final class AppName implements ShorthandInterface
         $this->appName = $appName;
     }
 
-    public function cli(array $callArgs): array
-    {
-        return $this->getBlocks($callArgs);
-    }
-
-    public function cloud(array $callArgs): array
-    {
-        return $this->getBlocks($callArgs);
-    }
-
-    /**
-     * @param array<string> $callArgs
-     * @return array<Node>
-     */
-    public function getBlocks(array $callArgs): array
+    public function __invoke(array $callArgs): array
     {
         $wrapped = isset($callArgs[0]);
 

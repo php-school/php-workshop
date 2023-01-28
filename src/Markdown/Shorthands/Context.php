@@ -5,36 +5,23 @@ declare(strict_types=1);
 namespace PhpSchool\PhpWorkshop\Markdown\Shorthands;
 
 use League\CommonMark\Inline\Element\Text;
+use PhpSchool\PhpWorkshop\Markdown\CurrentContext;
 
 final class Context implements ShorthandInterface
 {
     /**
-     * @var string
+     * @var CurrentContext
      */
-    private $type;
+    private $currentContext;
 
-    public function __construct(string $type)
+    public function __construct(CurrentContext $currentContext)
     {
-        $this->type = $type;
+        $this->currentContext = $currentContext;
     }
 
-    public function cli(array $callArgs): array
+    public function __invoke(array $callArgs): array
     {
-        return $this->getBlocks($callArgs);
-    }
-
-    public function cloud(array $callArgs): array
-    {
-        return $this->getBlocks($callArgs);
-    }
-
-    /**
-     * @param array<string> $callArgs
-     * @return Text[]
-     */
-    public function getBlocks(array $callArgs): array
-    {
-        $offset = array_search($this->type, $callArgs, true);
+        $offset = array_search($this->currentContext->get(), $callArgs, true);
 
         if (false === $offset || !is_int($offset) || !isset($callArgs[$offset + 1])) {
             return [];

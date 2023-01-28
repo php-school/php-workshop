@@ -9,16 +9,16 @@ use League\CommonMark\Block\Renderer\BlockRendererInterface;
 use League\CommonMark\ElementRendererInterface;
 use League\CommonMark\Inline\Element\AbstractInline;
 use PhpSchool\PhpWorkshop\Markdown\Block\ContextSpecificBlock;
-use PhpSchool\PhpWorkshop\Markdown\Context;
+use PhpSchool\PhpWorkshop\Markdown\CurrentContext;
 
 final class ContextSpecificRenderer implements BlockRendererInterface
 {
     /**
-     * @var Context
+     * @var CurrentContext
      */
     private $currentContext;
 
-    public function __construct(Context $currentContext)
+    public function __construct(CurrentContext $currentContext)
     {
         $this->currentContext = $currentContext;
     }
@@ -31,7 +31,7 @@ final class ContextSpecificRenderer implements BlockRendererInterface
             return $renderer->renderInlines($children);
         }
 
-        if ($this->currentContext->getCurrentContext() !== $block->getType()) {
+        if ($this->currentContext->get() !== $block->getType()) {
             return '';
         }
 
