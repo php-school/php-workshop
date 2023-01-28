@@ -18,11 +18,21 @@ final class Context implements ShorthandInterface
         $this->type = $type;
     }
 
+    public function cli(array $callArgs): array
+    {
+        return $this->getBlocks($callArgs);
+    }
+
+    public function cloud(array $callArgs): array
+    {
+        return $this->getBlocks($callArgs);
+    }
+
     /**
      * @param array<string> $callArgs
      * @return Text[]
      */
-    public function __invoke(array $callArgs): array
+    public function getBlocks(array $callArgs): array
     {
         $offset = array_search($this->type, $callArgs, true);
 

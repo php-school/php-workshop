@@ -22,11 +22,21 @@ final class AppName implements ShorthandInterface
         $this->appName = $appName;
     }
 
+    public function cli(array $callArgs): array
+    {
+        return $this->getBlocks($callArgs);
+    }
+
+    public function cloud(array $callArgs): array
+    {
+        return $this->getBlocks($callArgs);
+    }
+
     /**
      * @param array<string> $callArgs
      * @return array<Node>
      */
-    public function __invoke(array $callArgs): array
+    public function getBlocks(array $callArgs): array
     {
         $wrapped = isset($callArgs[0]);
 

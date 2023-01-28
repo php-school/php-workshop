@@ -13,6 +13,7 @@ use PhpSchool\PhpWorkshop\Listener\OutputRunInfoListener;
 use PhpSchool\PhpWorkshop\Listener\TearDownListener;
 use PhpSchool\PhpWorkshop\Logger\ConsoleLogger;
 use PhpSchool\PhpWorkshop\Logger\Logger;
+use PhpSchool\PhpWorkshop\Markdown\Parser\ContextSpecificBlockParser;
 use PhpSchool\PhpWorkshop\Markdown\ProblemFileExtension;
 use PhpSchool\PhpWorkshop\Markdown\Renderer\ContextSpecificRenderer;
 use PhpSchool\PhpWorkshop\Markdown\Shorthands\AppName;
@@ -327,10 +328,10 @@ return [
         );
     },
     ContextSpecificRenderer::class => function () {
-        return new ContextSpecificRenderer('cli');
+        return new ContextSpecificRenderer(ContextSpecificBlockParser::CLI_TYPE);
     },
     Context::class => function () {
-        return new Context('cli');
+        return new Context(ContextSpecificBlockParser::CLI_TYPE);
     },
     Environment::class => function (ContainerInterface $c) {
         $terminal = $c->get(Terminal::class);

@@ -18,7 +18,7 @@ final class ContextSpecificBlock extends AbstractStringContainerBlock
      */
     private $type;
 
-    public function __construct(string $type = ContextSpecificBlockParser::CLI_TYPE)
+    public function __construct(string $type)
     {
         if (!in_array($type, ContextSpecificBlockParser::TYPES, true)) {
             throw InvalidArgumentException::notValidParameter('type', ContextSpecificBlockParser::TYPES, $type);

@@ -9,17 +9,18 @@ use League\CommonMark\Block\Renderer\BlockRendererInterface;
 use League\CommonMark\ElementRendererInterface;
 use League\CommonMark\Inline\Element\AbstractInline;
 use PhpSchool\PhpWorkshop\Markdown\Block\ContextSpecificBlock;
+use PhpSchool\PhpWorkshop\Markdown\Context;
 
 final class ContextSpecificRenderer implements BlockRendererInterface
 {
     /**
-     * @var string
+     * @var Context
      */
-    private $type;
+    private $currentContext;
 
-    public function __construct(string $type)
+    public function __construct(Context $currentContext)
     {
-        $this->type = $type;
+        $this->currentContext = $currentContext;
     }
 
     public function render(AbstractBlock $block, ElementRendererInterface $renderer, bool $inTightList = false): string
@@ -30,7 +31,7 @@ final class ContextSpecificRenderer implements BlockRendererInterface
             return $renderer->renderInlines($children);
         }
 
-        if ($this->type !== $block->getType()) {
+        if ($this->currentContext->getCurrentContext() !== $block->getType()) {
             return '';
         }
 

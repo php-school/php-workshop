@@ -9,8 +9,18 @@ use League\CommonMark\Node\Node;
 interface ShorthandInterface
 {
     /**
+     * When running via the CLI
+     *
      * @param array<string> $callArgs
      * @return array<Node>
      */
-    public function __invoke(array $callArgs): array;
+    public function cli(array $callArgs): array;
+
+    /**
+     * When running via Cloud
+     *
+     * @param array<string> $callArgs
+     * @return array<Node>
+     */
+    public function cloud(array $callArgs): array;
 }

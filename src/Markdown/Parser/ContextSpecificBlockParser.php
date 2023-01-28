@@ -4,15 +4,15 @@ declare(strict_types=1);
 
 namespace PhpSchool\PhpWorkshop\Markdown\Parser;
 
+use League\CommonMark\Block\Parser\BlockParserInterface;
 use PhpSchool\PhpWorkshop\Markdown\Block\ContextSpecificBlock;
 use League\CommonMark\ContextInterface;
 use League\CommonMark\Cursor;
+use PhpSchool\PhpWorkshop\Markdown\Context;
 
-final class ContextSpecificBlockParser implements \League\CommonMark\Block\Parser\BlockParserInterface
+final class ContextSpecificBlockParser implements BlockParserInterface
 {
-    public const CLI_TYPE = 'cli';
-    public const CLOUD_TYPE = 'cloud';
-    public const TYPES = [self::CLI_TYPE, self::CLOUD_TYPE];
+    public const TYPES = [Context::CONTEXT_CLI, Context::CONTEXT_CLOUD];
 
     public static function getParserRegex(): string
     {

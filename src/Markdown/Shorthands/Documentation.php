@@ -12,11 +12,21 @@ use League\CommonMark\Node\Node;
 
 final class Documentation implements ShorthandInterface
 {
+    public function cli(array $callArgs): array
+    {
+        return $this->getBlocks($callArgs);
+    }
+
+    public function cloud(array $callArgs): array
+    {
+        return $this->getBlocks($callArgs);
+    }
+
     /**
      * @param array<string> $callArgs
      * @return array<Node>
      */
-    public function __invoke(array $callArgs): array
+    public function getBlocks(array $callArgs): array
     {
         if (count($callArgs) < 3) {
             return [];

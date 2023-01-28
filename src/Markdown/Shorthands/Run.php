@@ -19,4 +19,14 @@ final class Run implements ShorthandInterface
             new Text('Run XXXX '),
         ];
     }
+
+    public function cli(array $callArgs): array
+    {
+        // TODO: Implement cli() method.
+    }
+
+    public function cloud(array $callArgs): array
+    {
+        // TODO: Implement cloud() method.
+    }
 }
