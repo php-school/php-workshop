@@ -10,8 +10,9 @@ use League\CommonMark\Block\Element\AbstractBlock;
 use League\CommonMark\Block\Element\AbstractStringContainerBlock;
 use PhpSchool\PhpWorkshop\Exception\InvalidArgumentException;
 use PhpSchool\PhpWorkshop\Markdown\Parser\ContextSpecificBlockParser;
+use League\CommonMark\Block\Element\InlineContainerInterface;
 
-final class ContextSpecificBlock extends AbstractStringContainerBlock
+final class ContextSpecificBlock extends AbstractBlock
 {
     /**
      * @var string
@@ -25,8 +26,6 @@ final class ContextSpecificBlock extends AbstractStringContainerBlock
         }
 
         $this->type = $type;
-
-        parent::__construct();
     }
 
     public function getType(): string
@@ -36,36 +35,17 @@ final class ContextSpecificBlock extends AbstractStringContainerBlock
 
     public function canContain(AbstractBlock $block): bool
     {
-        return false;
+        return true;
     }
 
     public function isCode(): bool
     {
-        return true;
+        return false;
     }
 
     public function matchesNextLine(Cursor $cursor): bool
     {
-        return true;
-    }
-
-    public function finalize(ContextInterface $context, int $endLineNumber)
-    {
-        parent::finalize($context, $endLineNumber);
-
-        $this->finalStringContents = \implode("\n", $this->strings->toArray());
-    }
-
-    public function handleRemainingContents(ContextInterface $context, Cursor $cursor)
-    {
-        $tagged = $cursor->match(ContextSpecificBlockParser::getParserRegex());
-        if ($tagged !== null) {
-            $this->finalize($context, $context->getLineNumber());
-            return;
-        }
-
-        /** @var self $tip */
-        $tip = $context->getTip();
-        $tip->addLine($cursor->getRemainder());
+        $content = $cursor->match(ContextSpecificBlockParser::getEndBlockRegex($this->type));
+        return $content === null;
     }
 }

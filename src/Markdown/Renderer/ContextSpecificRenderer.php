@@ -35,6 +35,8 @@ final class ContextSpecificRenderer implements BlockRendererInterface
             return '';
         }
 
-        return $renderer->renderInlines($block->children());
+        /** @var iterable<AbstractBlock> $children */
+        $children = $block->children();
+        return $renderer->renderBlocks($children);
     }
 }
