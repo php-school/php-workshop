@@ -71,7 +71,8 @@ final class HandleBarParser implements InlineParserInterface
      */
     private function parseArgs(string $args): array
     {
-        $args = explode(' ', $args);
+        $args = preg_split('/\s+/', $args) ?: [];
+
         $parsedArgs = [];
 
         $open = false;
@@ -84,6 +85,12 @@ final class HandleBarParser implements InlineParserInterface
             $lastChar = substr($args[$i], -1, 1);
             $isAQuoteChar = ($firstChar === '"' || $firstChar === "'") || ($lastChar === '"' || $lastChar === "'");
             $matchesOpenChar = ($firstChar === $openChar) || ($lastChar === $openChar);
+
+            //if this is a quoted arg without spaces inside it
+            if (($firstChar === '"' || $firstChar === "'") && $firstChar === $lastChar) {
+                $parsedArgs[] = trim($args[$i], $firstChar);
+                continue;
+            }
 
             if (!$open && $isAQuoteChar) {
                 $open = true;

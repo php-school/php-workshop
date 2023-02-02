@@ -26,12 +26,12 @@ final class Run implements ShorthandInterface
      */
     public function __invoke(array $callArgs): array
     {
-        if (!isset($callArgs[1])) {
+        if (!isset($callArgs[0])) {
             throw new RuntimeException('The solution file must be specified');
         }
 
         return [
-            new Text($this->appName . ' run ' . $callArgs[1]),
+            new Text($this->appName . ' run ' . $callArgs[0]),
         ];
     }
 }

@@ -4,13 +4,10 @@ declare(strict_types=1);
 
 namespace PhpSchool\PhpWorkshop\Markdown\Block;
 
-use League\CommonMark\ContextInterface;
 use League\CommonMark\Cursor;
 use League\CommonMark\Block\Element\AbstractBlock;
-use League\CommonMark\Block\Element\AbstractStringContainerBlock;
 use PhpSchool\PhpWorkshop\Exception\InvalidArgumentException;
 use PhpSchool\PhpWorkshop\Markdown\Parser\ContextSpecificBlockParser;
-use League\CommonMark\Block\Element\InlineContainerInterface;
 
 final class ContextSpecificBlock extends AbstractBlock
 {
