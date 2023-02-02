@@ -2,8 +2,8 @@
 
 namespace PhpSchool\PhpWorkshopTest;
 
-use AydinHassan\CliMdRenderer\CliRenderer;
-use AydinHassan\CliMdRenderer\CliRendererFactory;
+use PhpSchool\CliMdRenderer\CliRenderer;
+use PhpSchool\CliMdRenderer\CliRendererFactory;
 use League\CommonMark\DocParser;
 use League\CommonMark\Environment;
 use PHPUnit\Framework\TestCase;

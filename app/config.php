@@ -3,43 +3,45 @@
 declare(strict_types=1);
 
 use Colors\Color;
-use PhpSchool\PhpWorkshop\Check\FileComparisonCheck;
-use PhpSchool\PhpWorkshop\ExerciseRunner\Factory\ServerRunnerFactory;
-use PhpSchool\PhpWorkshop\Listener\InitialCodeListener;
-use PhpSchool\PhpWorkshop\Listener\OutputRunInfoListener;
-use PhpSchool\PhpWorkshop\Listener\TearDownListener;
-use PhpSchool\PhpWorkshop\Logger\ConsoleLogger;
-use PhpSchool\PhpWorkshop\Logger\Logger;
-use PhpSchool\PhpWorkshop\Result\ComposerFailure;
-use PhpSchool\PhpWorkshop\Result\FileComparisonFailure;
-use PhpSchool\PhpWorkshop\ResultRenderer\ComposerFailureRenderer;
-use PhpSchool\PhpWorkshop\ResultRenderer\FileComparisonFailureRenderer;
-use PhpSchool\PhpWorkshop\UserState\LocalJsonSerializer;
-use Psr\Log\LoggerInterface;
-use function DI\create;
-use function DI\factory;
+use Faker\Factory as FakerFactory;
+use Faker\Generator as FakerGenerator;
 use Kadet\Highlighter\KeyLighter;
-use function PhpSchool\PhpWorkshop\canonicalise_path;
-use function PhpSchool\PhpWorkshop\Event\containerListener;
-use Psr\Container\ContainerInterface;
 use League\CommonMark\DocParser;
+use League\CommonMark\ElementRendererInterface;
 use League\CommonMark\Environment;
-use PhpParser\PrettyPrinter\Standard;
-use PhpSchool\CliMenu\Terminal\TerminalFactory;
-use PhpSchool\Terminal\Terminal;
 use PhpParser\Parser;
 use PhpParser\ParserFactory;
+use PhpParser\PrettyPrinter\Standard;
+use PhpSchool\CliMdRenderer\CliExtension;
+use PhpSchool\CliMdRenderer\CliRenderer;
+use PhpSchool\CliMenu\Terminal\TerminalFactory;
 use PhpSchool\PhpWorkshop\Check\CheckRepository;
+use PhpSchool\PhpWorkshop\Check\CodeExistsCheck;
 use PhpSchool\PhpWorkshop\Check\CodeParseCheck;
 use PhpSchool\PhpWorkshop\Check\ComposerCheck;
 use PhpSchool\PhpWorkshop\Check\DatabaseCheck;
+use PhpSchool\PhpWorkshop\Check\FileComparisonCheck;
+use PhpSchool\PhpWorkshop\Check\FileExistsCheck;
+use PhpSchool\PhpWorkshop\Check\FunctionRequirementsCheck;
+use PhpSchool\PhpWorkshop\Check\PhpLintCheck;
 use PhpSchool\PhpWorkshop\CodeInsertion as Insertion;
 use PhpSchool\PhpWorkshop\CodePatcher;
+use PhpSchool\PhpWorkshop\Command\CreditsCommand;
+use PhpSchool\PhpWorkshop\Command\HelpCommand;
+use PhpSchool\PhpWorkshop\Command\MenuCommand;
+use PhpSchool\PhpWorkshop\Command\PrintCommand;
+use PhpSchool\PhpWorkshop\Command\RunCommand;
+use PhpSchool\PhpWorkshop\Command\VerifyCommand;
+use PhpSchool\PhpWorkshop\CommandDefinition;
+use PhpSchool\PhpWorkshop\CommandRouter;
 use PhpSchool\PhpWorkshop\Event\EventDispatcher;
 use PhpSchool\PhpWorkshop\ExerciseDispatcher;
+use PhpSchool\PhpWorkshop\ExerciseRenderer;
+use PhpSchool\PhpWorkshop\ExerciseRepository;
 use PhpSchool\PhpWorkshop\ExerciseRunner\Factory\CgiRunnerFactory;
 use PhpSchool\PhpWorkshop\ExerciseRunner\Factory\CliRunnerFactory;
 use PhpSchool\PhpWorkshop\ExerciseRunner\Factory\CustomVerifyingRunnerFactory;
+use PhpSchool\PhpWorkshop\ExerciseRunner\Factory\ServerRunnerFactory;
 use PhpSchool\PhpWorkshop\ExerciseRunner\RunnerManager;
 use PhpSchool\PhpWorkshop\Factory\EventDispatcherFactory;
 use PhpSchool\PhpWorkshop\Factory\MenuFactory;
@@ -47,54 +49,63 @@ use PhpSchool\PhpWorkshop\Factory\ResultRendererFactory;
 use PhpSchool\PhpWorkshop\Listener\CheckExerciseAssignedListener;
 use PhpSchool\PhpWorkshop\Listener\CodePatchListener;
 use PhpSchool\PhpWorkshop\Listener\ConfigureCommandListener;
+use PhpSchool\PhpWorkshop\Listener\InitialCodeListener;
+use PhpSchool\PhpWorkshop\Listener\OutputRunInfoListener;
 use PhpSchool\PhpWorkshop\Listener\PrepareSolutionListener;
 use PhpSchool\PhpWorkshop\Listener\RealPathListener;
 use PhpSchool\PhpWorkshop\Listener\SelfCheckListener;
+use PhpSchool\PhpWorkshop\Listener\TearDownListener;
+use PhpSchool\PhpWorkshop\Logger\ConsoleLogger;
+use PhpSchool\PhpWorkshop\Logger\Logger;
+use PhpSchool\PhpWorkshop\Markdown\CurrentContext;
+use PhpSchool\PhpWorkshop\Markdown\Parser\ContextSpecificBlockParser;
+use PhpSchool\PhpWorkshop\Markdown\ProblemFileExtension;
+use PhpSchool\PhpWorkshop\Markdown\Renderer\ContextSpecificRenderer;
+use PhpSchool\PhpWorkshop\Markdown\Shorthands\Cli\AppName;
+use PhpSchool\PhpWorkshop\Markdown\Shorthands\Cli\Run;
+use PhpSchool\PhpWorkshop\Markdown\Shorthands\Cli\Verify;
+use PhpSchool\PhpWorkshop\Markdown\Shorthands\Context;
+use PhpSchool\PhpWorkshop\Markdown\Shorthands\Documentation;
+use PhpSchool\PhpWorkshop\MarkdownRenderer;
 use PhpSchool\PhpWorkshop\MenuItem\ResetProgress;
 use PhpSchool\PhpWorkshop\Output\OutputInterface;
 use PhpSchool\PhpWorkshop\Output\StdOutput;
 use PhpSchool\PhpWorkshop\Patch;
+use PhpSchool\PhpWorkshop\Result\Cgi\CgiResult;
 use PhpSchool\PhpWorkshop\Result\Cgi\GenericFailure as CgiGenericFailure;
 use PhpSchool\PhpWorkshop\Result\Cgi\RequestFailure as CgiRequestFailure;
-use PhpSchool\PhpWorkshop\Result\Cgi\CgiResult;
 use PhpSchool\PhpWorkshop\Result\Cli\CliResult;
 use PhpSchool\PhpWorkshop\Result\Cli\GenericFailure as CliGenericFailure;
 use PhpSchool\PhpWorkshop\Result\Cli\RequestFailure as CliRequestFailure;
 use PhpSchool\PhpWorkshop\Result\ComparisonFailure;
+use PhpSchool\PhpWorkshop\Result\ComposerFailure;
 use PhpSchool\PhpWorkshop\Result\Failure;
+use PhpSchool\PhpWorkshop\Result\FileComparisonFailure;
 use PhpSchool\PhpWorkshop\Result\FunctionRequirementsFailure;
 use PhpSchool\PhpWorkshop\ResultAggregator;
+use PhpSchool\PhpWorkshop\ResultRenderer\Cgi\RequestFailureRenderer as CgiRequestFailureRenderer;
 use PhpSchool\PhpWorkshop\ResultRenderer\CgiResultRenderer;
+use PhpSchool\PhpWorkshop\ResultRenderer\Cli\RequestFailureRenderer as CliRequestFailureRenderer;
 use PhpSchool\PhpWorkshop\ResultRenderer\CliResultRenderer;
 use PhpSchool\PhpWorkshop\ResultRenderer\ComparisonFailureRenderer;
+use PhpSchool\PhpWorkshop\ResultRenderer\ComposerFailureRenderer;
 use PhpSchool\PhpWorkshop\ResultRenderer\FailureRenderer;
+use PhpSchool\PhpWorkshop\ResultRenderer\FileComparisonFailureRenderer;
 use PhpSchool\PhpWorkshop\ResultRenderer\FunctionRequirementsFailureRenderer;
-use PhpSchool\PhpWorkshop\ResultRenderer\Cli\RequestFailureRenderer as CliRequestFailureRenderer;
-use PhpSchool\PhpWorkshop\ResultRenderer\Cgi\RequestFailureRenderer as CgiRequestFailureRenderer;
+use PhpSchool\PhpWorkshop\ResultRenderer\ResultsRenderer;
+use PhpSchool\PhpWorkshop\UserState\LocalJsonSerializer;
+use PhpSchool\PhpWorkshop\UserState\Serializer;
+use PhpSchool\PhpWorkshop\UserState\UserState;
 use PhpSchool\PhpWorkshop\Utils\RequestRenderer;
 use PhpSchool\PhpWorkshop\WorkshopType;
-use PhpSchool\PhpWorkshop\Check\FileExistsCheck;
-use PhpSchool\PhpWorkshop\Check\CodeExistsCheck;
-use PhpSchool\PhpWorkshop\Check\FunctionRequirementsCheck;
-use PhpSchool\PhpWorkshop\Check\PhpLintCheck;
-use PhpSchool\PhpWorkshop\Command\CreditsCommand;
-use PhpSchool\PhpWorkshop\Command\HelpCommand;
-use PhpSchool\PhpWorkshop\Command\MenuCommand;
-use PhpSchool\PhpWorkshop\Command\PrintCommand;
-use PhpSchool\PhpWorkshop\Command\VerifyCommand;
-use PhpSchool\PhpWorkshop\Command\RunCommand;
-use PhpSchool\PhpWorkshop\CommandDefinition;
-use PhpSchool\PhpWorkshop\CommandRouter;
-use PhpSchool\PhpWorkshop\ExerciseRenderer;
-use PhpSchool\PhpWorkshop\ExerciseRepository;
-use PhpSchool\PhpWorkshop\Factory\MarkdownCliRendererFactory;
-use PhpSchool\PhpWorkshop\MarkdownRenderer;
-use PhpSchool\PhpWorkshop\ResultRenderer\ResultsRenderer;
-use PhpSchool\PhpWorkshop\UserState\UserState;
-use PhpSchool\PhpWorkshop\UserState\Serializer;
+use PhpSchool\Terminal\Terminal;
+use Psr\Container\ContainerInterface;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Filesystem\Filesystem;
-use Faker\Factory as FakerFactory;
-use Faker\Generator as FakerGenerator;
+use function DI\create;
+use function DI\factory;
+use function PhpSchool\PhpWorkshop\canonicalise_path;
+use function PhpSchool\PhpWorkshop\Event\containerListener;
 
 return [
     'appName' => basename($_SERVER['argv'][0] ?? 'phpschool'),
@@ -317,10 +328,50 @@ return [
             $c->get(OutputInterface::class)
         );
     },
+    ContextSpecificRenderer::class => function (ContainerInterface $c) {
+        return new ContextSpecificRenderer($c->get(CurrentContext::class));
+    },
+    Context::class => function (ContainerInterface $c) {
+        return new Context($c->get(CurrentContext::class));
+    },
+    CurrentContext::class => function () {
+        return CurrentContext::cli();
+    },
+    Environment::class => function (ContainerInterface $c) {
+        $terminal = $c->get(Terminal::class);
+
+        $environment = new Environment([
+            'renderer' => [
+               'width' => $terminal->getWidth()
+            ]
+        ]);
+
+        $environment
+            ->addExtension(new CliExtension())
+            ->addExtension(new ProblemFileExtension(
+                $c->get(ContextSpecificRenderer::class),
+                [
+                    'appname' => new AppName($c->get('appName')),
+                    'doc' => new Documentation(),
+                    'run' => new Run($c->get('appName')),
+                    'verify' => new Verify($c->get('appName')),
+                    'context' => $c->get(Context::class)
+                ]
+            ));
+
+        return $environment;
+    },
     MarkdownRenderer::class => function (ContainerInterface $c) {
-        $docParser =   new DocParser(Environment::createCommonMarkEnvironment());
-        $cliRenderer = (new MarkdownCliRendererFactory)->__invoke($c);
-        return new MarkdownRenderer($docParser, $cliRenderer);
+        return new MarkdownRenderer(
+            new DocParser($c->get(Environment::class)),
+            $c->get(ElementRendererInterface::class)
+        );
+    },
+    ElementRendererInterface::class => function (ContainerInterface $c) {
+        return new CliRenderer(
+            $c->get(Environment::class),
+            $c->get(Color::class)
+        );
     },
     Serializer::class => function (ContainerInterface $c) {
         return new LocalJsonSerializer(
