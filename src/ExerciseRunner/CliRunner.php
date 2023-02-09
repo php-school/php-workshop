@@ -205,7 +205,7 @@ class CliRunner implements ExerciseRunnerInterface
             /** @var CliExecuteEvent $event */
             $event = $this->eventDispatcher->dispatch(new CliExecuteEvent('cli.verify.reference-execute.pre', $args));
             $solutionOutput = $this->executePhpFile(
-                $this->exercise->getSolution()->getEntryPoint(),
+                $this->exercise->getSolution()->getEntryPoint()->getAbsolutePath(),
                 $event->getArgs(),
                 'reference'
             );

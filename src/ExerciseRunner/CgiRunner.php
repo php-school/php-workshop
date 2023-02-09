@@ -121,7 +121,7 @@ class CgiRunner implements ExerciseRunnerInterface
                 new CgiExecuteEvent('cgi.verify.reference-execute.pre', $request)
             );
             $solutionResponse = $this->executePhpFile(
-                $this->exercise->getSolution()->getEntryPoint(),
+                $this->exercise->getSolution()->getEntryPoint()->getAbsolutePath(),
                 $event->getRequest(),
                 'reference'
             );

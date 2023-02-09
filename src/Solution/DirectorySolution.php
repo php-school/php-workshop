@@ -16,7 +16,7 @@ use SplFileInfo;
 class DirectorySolution implements SolutionInterface
 {
     /**
-     * @var string
+     * @var SolutionFile
      */
     private $entryPoint;
 
@@ -72,7 +72,9 @@ class DirectorySolution implements SolutionInterface
             return new SolutionFile($file, $directory);
         }, $files);
 
-        $this->entryPoint    = sprintf('%s/%s', $directory, $entryPoint);
+        $this->entryPoint = array_values(array_filter($this->files, function (SolutionFile $file) use ($entryPoint) {
+            return $file->getRelativePath() === $entryPoint;
+        }))[0];
         $this->baseDirectory = $directory;
     }
 
@@ -92,11 +94,11 @@ class DirectorySolution implements SolutionInterface
 
     /**
      * Get the entry point. This is the PHP file that PHO would execute in order to run the
-     * program. This should be the absolute path.
+     * program.
      *
-     * @return string
+     * @return SolutionFile
      */
-    public function getEntryPoint(): string
+    public function getEntryPoint(): SolutionFile
     {
         return $this->entryPoint;
     }
