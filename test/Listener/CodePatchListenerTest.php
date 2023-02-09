@@ -113,7 +113,7 @@ class CodePatchListenerTest extends TestCase
         $listener->patch($event);
 
         self::assertStringEqualsFile($this->file, 'MODIFIED CONTENT');
-        self::assertStringEqualsFile($exercise->getSolution()->getEntryPoint(), 'MODIFIED CONTENT');
+        self::assertStringEqualsFile($exercise->getSolution()->getEntryPoint()->getAbsolutePath(), 'MODIFIED CONTENT');
     }
 
     public function testFileIsLoggedWhenPatches(): void

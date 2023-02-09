@@ -57,7 +57,7 @@ class CodePatchListener
 
         $exercise = $event->getExercise();
         if ($exercise instanceof ProvidesSolution) {
-            $files[] = $exercise->getSolution()->getEntryPoint();
+            $files[] = $exercise->getSolution()->getEntryPoint()->getAbsolutePath();
         }
 
         foreach (array_filter($files) as $fileName) {

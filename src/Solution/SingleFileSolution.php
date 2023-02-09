@@ -43,13 +43,13 @@ class SingleFileSolution implements SolutionInterface
 
     /**
      * Get the entry point. This is the PHP file that php would execute in order to run the
-     * program. This should be the absolute path.
+     * program.
      *
-     * @return string
+     * @return SolutionFile
      */
-    public function getEntryPoint(): string
+    public function getEntryPoint(): SolutionFile
     {
-        return $this->file->__toString();
+        return $this->file;
     }
 
     /**
