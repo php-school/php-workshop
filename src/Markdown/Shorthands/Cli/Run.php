@@ -34,4 +34,9 @@ final class Run implements ShorthandInterface
             new Text($this->appName . ' run ' . $callArgs[0]),
         ];
     }
+
+    public function getCode(): string
+    {
+        return 'run';
+    }
 }

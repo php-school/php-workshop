@@ -6,7 +6,9 @@ use League\CommonMark\Block\Element\AbstractBlock;
 use League\CommonMark\Cursor;
 use League\CommonMark\Inline\Element\Text;
 use League\CommonMark\InlineParserContext;
+use PhpSchool\PhpWorkshop\Markdown\CurrentContext;
 use PhpSchool\PhpWorkshop\Markdown\Parser\HandleBarParser;
+use PhpSchool\PhpWorkshop\Markdown\Shorthands\Context;
 use PhpSchool\PhpWorkshop\Markdown\Shorthands\ShorthandInterface;
 use PHPUnit\Framework\TestCase;
 
@@ -41,10 +43,10 @@ class HandleBarParserTest extends TestCase
         return [
             ['some content'],
             ['{{cloud}}'],
-            ['{{cloud}}wut{{cloud}}'],
-            ['{{ cloud}}wut{{ cloud}}'],
-            ['{{ cloud}}wut{{cloud}}'],
-            ['{{ cloud }}wut{{ cloud }}']
+            ['{{cloud wut}}'],
+            ['{{ cloud wut}}'],
+            ['{{ cloud wut }}'],
+            ['{{ cloud wut }}']
         ];
     }
 
@@ -89,8 +91,13 @@ class HandleBarParserTest extends TestCase
 
                 return [new Text('Some element')];
             }
+
+            public function getCode(): string
+            {
+                return 'test';
+            }
         };
-        $parser = new HandleBarParser(['test' => $shorthand]);
+        $parser = new HandleBarParser([$shorthand]);
 
         static::assertEquals($expectedParseResult, $parser->parse($context));
         static::assertEquals($expectedArgs, $shorthand->args);
@@ -123,5 +130,35 @@ class HandleBarParserTest extends TestCase
                 ['argument 1', 'a really long argument two', 'arg3']
             ],
         ];
+    }
+
+    public function testParsingWithContextShorthand(): void
+    {
+        $cursor  = new Cursor('{{ context cli  \'CLI ONLY CONTENT\'}}');
+        $context = $this->createMock(InlineParserContext::class);
+        $context->expects($this->any())
+            ->method('getCursor')
+            ->willReturn($cursor);
+
+        $container = static::getMockForAbstractClass(
+            AbstractBlock::class,
+            [],
+            '',
+            true,
+            true,
+            true,
+            ['appendChild']
+        );
+        $container->expects($this->once())
+            ->method('appendChild')
+            ->with(static::callback(function (Text $text) {
+                static::assertEquals('CLI ONLY CONTENT', $text->getContent());
+                return true;
+            }));
+
+        $context->expects($this->once())->method('getContainer')->willReturn($container);
+
+        $parser = new HandleBarParser([new Context(CurrentContext::cli())]);
+        static::assertTrue($parser->parse($context));
     }
 }

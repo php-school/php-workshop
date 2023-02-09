@@ -48,4 +48,9 @@ final class AppName implements ShorthandInterface
 
         return [];
     }
+
+    public function getCode(): string
+    {
+        return 'appname';
+    }
 }

@@ -19,4 +19,9 @@ final class Verify implements ShorthandInterface
             new Text('Click the Verify button in the bottom right'),
         ];
     }
+
+    public function getCode(): string
+    {
+        return 'verify';
+    }
 }

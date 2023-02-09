@@ -34,4 +34,9 @@ final class Verify implements ShorthandInterface
             new Text($this->appName . ' verify ' . $callArgs[0]),
         ];
     }
+
+    public function getCode(): string
+    {
+        return 'verify';
+    }
 }

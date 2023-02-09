@@ -9,6 +9,11 @@ use League\CommonMark\Node\Node;
 interface ShorthandInterface
 {
     /**
+     * The code the shorthand should react to
+     */
+    public function getCode(): string;
+
+    /**
      * @param array<string> $callArgs
      * @return array<Node>
      */
