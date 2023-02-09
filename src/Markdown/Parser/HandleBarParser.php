@@ -28,7 +28,7 @@ final class HandleBarParser implements InlineParserInterface
                 return $shorthand->getCode();
             }, $shorthands),
             $shorthands
-        );
+        ) ?: [];
     }
 
     public function getCharacters(): array
