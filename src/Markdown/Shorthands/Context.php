@@ -29,4 +29,9 @@ final class Context implements ShorthandInterface
 
         return [new Text($callArgs[$offset + 1])];
     }
+
+    public function getCode(): string
+    {
+        return 'context';
+    }
 }

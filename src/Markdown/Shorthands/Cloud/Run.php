@@ -19,4 +19,9 @@ final class Run implements ShorthandInterface
             new Text('Click the Run button in the bottom right'),
         ];
     }
+
+    public function getCode(): string
+    {
+        return 'run';
+    }
 }

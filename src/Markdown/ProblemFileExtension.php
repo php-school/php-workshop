@@ -25,7 +25,7 @@ final class ProblemFileExtension implements ExtensionInterface
     private $shorthandExpanders;
 
     /**
-     * @param array<string, ShorthandInterface> $shorthandExpanders
+     * @param array<ShorthandInterface> $shorthandExpanders
      */
     public function __construct(
         ContextSpecificRenderer $contextSpecificRenderer,

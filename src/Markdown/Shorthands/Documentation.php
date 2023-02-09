@@ -36,4 +36,9 @@ final class Documentation implements ShorthandInterface
             $links
         );
     }
+
+    public function getCode(): string
+    {
+        return 'doc';
+    }
 }

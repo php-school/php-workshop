@@ -23,7 +23,12 @@ final class HandleBarParser implements InlineParserInterface
      */
     public function __construct(array $shorthands)
     {
-        $this->shorthands = $shorthands;
+        $this->shorthands = array_combine(
+            array_map(function (ShorthandInterface $shorthand) {
+                return $shorthand->getCode();
+            }, $shorthands),
+            $shorthands
+        );
     }
 
     public function getCharacters(): array

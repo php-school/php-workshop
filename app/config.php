@@ -343,7 +343,7 @@ return [
         $environment = new Environment([
             'renderer' => [
                'width' => $terminal->getWidth()
-            ]
+            ],
         ]);
 
         $environment
@@ -351,11 +351,11 @@ return [
             ->addExtension(new ProblemFileExtension(
                 $c->get(ContextSpecificRenderer::class),
                 [
-                    'appname' => new AppName($c->get('appName')),
-                    'doc' => new Documentation(),
-                    'run' => new Run($c->get('appName')),
-                    'verify' => new Verify($c->get('appName')),
-                    'context' => $c->get(Context::class)
+                    new AppName($c->get('appName')),
+                    new Documentation(),
+                    new Run($c->get('appName')),
+                    new Verify($c->get('appName')),
+                    $c->get(Context::class)
                 ]
             ));
 
