@@ -28,10 +28,6 @@ class OutputRunInfoListener
 
     public function __invoke(Event $event): void
     {
-        if (PHP_SAPI !== "cli") {
-            return;
-        }
-
         switch (get_class($event)) {
             case CliExecuteEvent::class:
                 $args = $event->getArgs();
