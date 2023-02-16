@@ -139,4 +139,26 @@ class EventDispatcherTest extends TestCase
 
         $this->eventDispatcher->dispatch($e1);
     }
+
+    public function testRemoveListener(): void
+    {
+        $listener = function () {
+        };
+
+        $listener2 = function () {
+        };
+
+        $this->eventDispatcher->listen('some-event', $listener);
+        $this->eventDispatcher->listen('some-event', $listener2);
+
+        $this->assertEquals(['some-event' => [$listener, $listener2]], $this->eventDispatcher->getListeners());
+
+        $this->eventDispatcher->removeListener('some-event', $listener);
+
+        $this->assertEquals(['some-event' => [$listener2]], $this->eventDispatcher->getListeners());
+
+        $this->eventDispatcher->removeListener('some-event', $listener2);
+
+        $this->assertEquals([], $this->eventDispatcher->getListeners());
+    }
 }

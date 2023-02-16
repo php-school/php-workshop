@@ -78,6 +78,22 @@ class EventDispatcher
         }
     }
 
+    public function removeListener(string $eventName, callable $callback): void
+    {
+        foreach ($this->listeners[$eventName] ?? [] as $key => $listener) {
+            if ($listener === $callback) {
+                unset($this->listeners[$eventName][$key]);
+                $this->listeners[$eventName] = array_values($this->listeners[$eventName]);
+
+                if (empty($this->listeners[$eventName])) {
+                    unset($this->listeners[$eventName]);
+                }
+
+                break;
+            }
+        }
+    }
+
     /**
      * Insert a verifier callback which will execute at the given event name much like normal listeners.
      * A verifier should return an object which implements `PhpSchool\PhpWorkshop\Result\FailureInterface`
