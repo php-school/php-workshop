@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace PhpSchool\PhpWorkshop\Factory;
 
+use PhpSchool\PhpWorkshop\Listener\LazyContainerListener;
 use Psr\Container\ContainerInterface;
 use PhpSchool\PhpWorkshop\Event\EventDispatcher;
 use PhpSchool\PhpWorkshop\Event\ContainerListenerHelper;
@@ -106,18 +107,10 @@ class EventDispatcherFactory
                     );
                 }
 
-                $dispatcher->listen($eventName, function (...$args) use ($container, $listener) {
-                    /** @var object $service */
-                    $service = $container->get($listener->getService());
-
-                    if (!method_exists($service, $listener->getMethod())) {
-                        throw new InvalidArgumentException(
-                            sprintf('Method "%s" does not exist on "%s"', $listener->getMethod(), get_class($service))
-                        );
-                    }
-
-                    $service->{$listener->getMethod()}(...$args);
-                });
+                $dispatcher->listen(
+                    $eventName,
+                    new LazyContainerListener($container, $listener)
+                );
                 return;
             }
 
