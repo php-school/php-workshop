@@ -2,12 +2,14 @@
 
 namespace PhpSchool\PhpWorkshopTest\Event;
 
+use PhpSchool\PhpWorkshop\Event\ContainerListenerHelper;
 use PhpSchool\PhpWorkshop\Event\Event;
 use PhpSchool\PhpWorkshop\Event\EventDispatcher;
-use PhpSchool\PhpWorkshop\Event\EventInterface;
+use PhpSchool\PhpWorkshop\Listener\LazyContainerListener;
 use PhpSchool\PhpWorkshop\Result\ResultInterface;
 use PhpSchool\PhpWorkshop\ResultAggregator;
 use PHPUnit\Framework\TestCase;
+use Psr\Container\ContainerInterface;
 
 class EventDispatcherTest extends TestCase
 {
@@ -158,6 +160,64 @@ class EventDispatcherTest extends TestCase
         $this->assertEquals(['some-event' => [$listener2]], $this->eventDispatcher->getListeners());
 
         $this->eventDispatcher->removeListener('some-event', $listener2);
+
+        $this->assertEquals([], $this->eventDispatcher->getListeners());
+    }
+
+    public function testRemoveLazyListeners(): void
+    {
+        $container = $this->createMock(ContainerInterface::class);
+
+        $myListener = new class {
+            public function __invoke()
+            {
+            }
+        };
+
+        $container->expects($this->any())
+            ->method('get')
+            ->with('my-listener')
+            ->willReturn($myListener);
+
+        $lazy = new LazyContainerListener(
+            $container,
+            new ContainerListenerHelper('my-listener')
+        );
+
+        $this->eventDispatcher->listen('some-event', $lazy);
+
+        $this->assertEquals(['some-event' => [$lazy]], $this->eventDispatcher->getListeners());
+
+        $this->eventDispatcher->removeListener('some-event', [$myListener, '__invoke']);
+
+        $this->assertEquals([], $this->eventDispatcher->getListeners());
+    }
+
+    public function testRemoveLazyListenersWithAlternateMethod(): void
+    {
+        $container = $this->createMock(ContainerInterface::class);
+
+        $myListener = new class {
+            public function myMethod()
+            {
+            }
+        };
+
+        $container->expects($this->any())
+            ->method('get')
+            ->with('my-listener')
+            ->willReturn($myListener);
+
+        $lazy = new LazyContainerListener(
+            $container,
+            new ContainerListenerHelper('my-listener', 'myMethod')
+        );
+
+        $this->eventDispatcher->listen('some-event', $lazy);
+
+        $this->assertEquals(['some-event' => [$lazy]], $this->eventDispatcher->getListeners());
+
+        $this->eventDispatcher->removeListener('some-event', [$myListener, 'myMethod']);
 
         $this->assertEquals([], $this->eventDispatcher->getListeners());
     }

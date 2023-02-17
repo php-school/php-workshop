@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace PhpSchool\PhpWorkshop\Event;
 
+use PhpSchool\PhpWorkshop\Listener\LazyContainerListener;
 use PhpSchool\PhpWorkshop\Result\ResultInterface;
 use PhpSchool\PhpWorkshop\ResultAggregator;
 
@@ -81,6 +82,10 @@ class EventDispatcher
     public function removeListener(string $eventName, callable $callback): void
     {
         foreach ($this->listeners[$eventName] ?? [] as $key => $listener) {
+            if ($listener instanceof LazyContainerListener) {
+                $listener = $listener->getWrapped();
+            }
+
             if ($listener === $callback) {
                 unset($this->listeners[$eventName][$key]);
                 $this->listeners[$eventName] = array_values($this->listeners[$eventName]);
