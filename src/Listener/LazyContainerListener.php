@@ -24,7 +24,10 @@ class LazyContainerListener
         $this->listener = $listener;
     }
 
-    public function __invoke(...$args)
+    /**
+     * @param mixed ...$args
+     */
+    public function __invoke(...$args): void
     {
         /** @var object $service */
         $service = $this->container->get($this->listener->getService());
@@ -38,11 +41,17 @@ class LazyContainerListener
         $service->{$this->listener->getMethod()}(...$args);
     }
 
+    /**
+     * @return callable
+     */
     public function getWrapped(): callable
     {
-        return [
+        /** @var callable $listener */
+        $listener =  [
             $this->container->get($this->listener->getService()),
             $this->listener->getMethod()
         ];
+
+        return $listener;
     }
 }
