@@ -138,7 +138,7 @@ class ExerciseDispatcher
         }
 
         $this->eventDispatcher->dispatch(new ExerciseRunnerEvent('verify.start', $exercise, $input));
-
+        
         $this->validateChecks($this->checksToRunBefore, $exercise);
         $this->validateChecks($this->checksToRunAfter, $exercise);
 

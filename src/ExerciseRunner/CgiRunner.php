@@ -19,12 +19,14 @@ use PhpSchool\PhpWorkshop\Exercise\CgiExercise;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpSchool\PhpWorkshop\Input\Input;
 use PhpSchool\PhpWorkshop\Output\OutputInterface;
+use PhpSchool\PhpWorkshop\Process\ProcessFactory;
 use PhpSchool\PhpWorkshop\Result\Cgi\CgiResult;
 use PhpSchool\PhpWorkshop\Result\Cgi\RequestFailure;
 use PhpSchool\PhpWorkshop\Result\Cgi\GenericFailure;
 use PhpSchool\PhpWorkshop\Result\Cgi\Success;
 use PhpSchool\PhpWorkshop\Result\Cgi\ResultInterface as CgiResultInterface;
 use PhpSchool\PhpWorkshop\Result\ResultInterface;
+use PhpSchool\PhpWorkshop\Utils\ArrayObject;
 use PhpSchool\PhpWorkshop\Utils\RequestRenderer;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -49,9 +51,9 @@ class CgiRunner implements ExerciseRunnerInterface
     private $eventDispatcher;
 
     /**
-     * @var string
+     * @var ProcessFactory
      */
-    private $phpLocation;
+    private $processFactory;
 
     /**
      * @var array<class-string>
@@ -73,21 +75,13 @@ class CgiRunner implements ExerciseRunnerInterface
      */
     public function __construct(
         CgiExercise $exercise,
-        EventDispatcher $eventDispatcher
+        EventDispatcher $eventDispatcher,
+        ProcessFactory $processFactory
     ) {
-        $php = (new ExecutableFinder())->find('php-cgi');
-
-        if (null === $php) {
-            throw new RuntimeException(
-                'Could not load php-cgi binary. Please install php using your package manager.'
-            );
-        }
-
-        $this->phpLocation = $php;
-
         /** @var CgiExercise&ExerciseInterface $exercise */
         $this->eventDispatcher = $eventDispatcher;
         $this->exercise = $exercise;
+        $this->processFactory = $processFactory;
     }
 
     /**
@@ -201,28 +195,22 @@ class CgiRunner implements ExerciseRunnerInterface
         $env = $this->getDefaultEnv();
         $env += [
             'REQUEST_METHOD'  => $request->getMethod(),
-            'SCRIPT_FILENAME' => $fileName,
+            'SCRIPT_FILENAME' => '/solution/' . basename($fileName), // TODO: Figure out this path in the container
             'REDIRECT_STATUS' => 302,
             'QUERY_STRING'    => $request->getUri()->getQuery(),
             'REQUEST_URI'     => $request->getUri()->getPath(),
             'XDEBUG_MODE'     => 'off',
         ];
 
-        $cgiBinary = sprintf(
-            '%s -dalways_populate_raw_post_data=-1 -dhtml_errors=0 -dexpose_php=0',
-            $this->phpLocation
-        );
-
         $content                = $request->getBody()->__toString();
-        $cmd                    = sprintf('echo %s | %s', escapeshellarg($content), $cgiBinary);
         $env['CONTENT_LENGTH']  = $request->getBody()->getSize();
         $env['CONTENT_TYPE']    = $request->getHeaderLine('Content-Type');
 
         foreach ($request->getHeaders() as $name => $values) {
             $env[sprintf('HTTP_%s', strtoupper($name))] = implode(", ", $values);
         }
-
-        return Process::fromShellCommandline($cmd, null, $env, null, 10);
+        
+        return $this->processFactory->phpCgi(dirname($fileName), $env, $content);
     }
 
     /**

@@ -191,6 +191,19 @@ class ArrayObject implements IteratorAggregate, Countable
     }
 
     /**
+     * Merge two or more ArrayObjects together
+     * @param ArrayObject ...$arrays
+     * @return ArrayObject
+     */
+    public function merge(ArrayObject ...$arrays)
+    {
+        return new static(array_merge(
+            $this->getArrayCopy(),
+            ...array_map(fn (ArrayObject $array) => $array->getArrayCopy(), $arrays)
+        ));
+    }
+
+    /**
      * Get an item at the given key.
      *
      * @template TGetDefault

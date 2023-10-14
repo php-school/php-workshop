@@ -18,6 +18,7 @@ use PhpSchool\PhpWorkshop\Exercise\CliExercise;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpSchool\PhpWorkshop\Input\Input;
 use PhpSchool\PhpWorkshop\Output\OutputInterface;
+use PhpSchool\PhpWorkshop\Process\ProcessFactory;
 use PhpSchool\PhpWorkshop\Result\Cli\RequestFailure;
 use PhpSchool\PhpWorkshop\Result\Cli\CliResult;
 use PhpSchool\PhpWorkshop\Result\Cli\GenericFailure;
@@ -25,6 +26,7 @@ use PhpSchool\PhpWorkshop\Result\Cli\Success;
 use PhpSchool\PhpWorkshop\Result\Cli\ResultInterface as CliResultInterface;
 use PhpSchool\PhpWorkshop\Result\ResultInterface;
 use PhpSchool\PhpWorkshop\Utils\ArrayObject;
+use Psr\Container\ContainerInterface;
 use RuntimeException;
 use Symfony\Component\Process\ExecutableFinder;
 use Symfony\Component\Process\Process;
@@ -50,9 +52,9 @@ class CliRunner implements ExerciseRunnerInterface
     private $eventDispatcher;
 
     /**
-     * @var string
+     * @var ProcessFactory
      */
-    private $phpLocation;
+    private $processFactory;
 
     /**
      * @var array<class-string>
@@ -70,21 +72,12 @@ class CliRunner implements ExerciseRunnerInterface
      * @param CliExercise $exercise The exercise to be invoked.
      * @param EventDispatcher $eventDispatcher The event dispatcher.
      */
-    public function __construct(CliExercise $exercise, EventDispatcher $eventDispatcher)
+    public function __construct(CliExercise $exercise, EventDispatcher $eventDispatcher, ProcessFactory $processFactory)
     {
-        $php = (new ExecutableFinder())->find('php');
-
-        if (null === $php) {
-            throw new RuntimeException(
-                'Could not load php binary. Please install php using your package manager.'
-            );
-        }
-
-        $this->phpLocation = $php;
-
         /** @var CliExercise&ExerciseInterface $exercise */
         $this->eventDispatcher = $eventDispatcher;
         $this->exercise = $exercise;
+        $this->processFactory = $processFactory;
     }
 
     /**
@@ -134,29 +127,8 @@ class CliRunner implements ExerciseRunnerInterface
      */
     private function getPhpProcess(string $fileName, ArrayObject $args): Process
     {
-        return new Process(
-            $args->prepend($fileName)->prepend($this->phpLocation)->getArrayCopy(),
-            dirname($fileName),
-            $this->getDefaultEnv() + ['XDEBUG_MODE' => 'off'],
-            null,
-            10
-        );
+        return $this->processFactory->phpCli(dirname($fileName), $args->getArrayCopy());
     }
-
-    /**
-     * We need to reset env entirely, because Symfony inherits it. We do that by setting all
-     * the current env vars to false
-     *
-     * @return array<string, false>
-     */
-    private function getDefaultEnv(): array
-    {
-        $env = array_map(fn () => false, $_ENV);
-        $env + array_map(fn () => false, $_SERVER);
-
-        return $env;
-    }
-
 
     /**
      * Verifies a solution by invoking PHP from the CLI passing the arguments gathered from the exercise

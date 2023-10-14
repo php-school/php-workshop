@@ -7,6 +7,9 @@ namespace PhpSchool\PhpWorkshop\Listener;
 use PhpSchool\PhpWorkshop\Event\ExerciseRunnerEvent;
 use PhpSchool\PhpWorkshop\Exercise\ProvidesSolution;
 use PhpSchool\PhpWorkshop\Exception\RuntimeException;
+use PhpSchool\PhpWorkshop\Process\ProcessFactory;
+use PhpSchool\PhpWorkshop\Utils\ArrayObject;
+use Symfony\Component\Process\ExecutableFinder;
 use Symfony\Component\Process\Process;
 
 /**
@@ -14,6 +17,13 @@ use Symfony\Component\Process\Process;
  */
 class PrepareSolutionListener
 {
+    private ProcessFactory $processFactory;
+
+    public function __construct(ProcessFactory $processFactory)
+    {
+                $this->processFactory = $processFactory;
+    }
+    
     /**
      * Locations for composer executable
      *
@@ -44,9 +54,10 @@ class PrepareSolutionListener
             //only install if composer.lock file not available
 
             if (!file_exists(sprintf('%s/vendor', $solution->getBaseDirectory()))) {
-                $process = new Process(
-                    [self::locateComposer(), 'install', '--no-interaction'],
-                    $solution->getBaseDirectory()
+                $process = $this->processFactory->composer(
+                    $solution->getBaseDirectory(),
+                    'install',
+                    ['--no-interaction']
                 );
 
                 try {
