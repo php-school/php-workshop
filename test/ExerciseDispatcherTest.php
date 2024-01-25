@@ -5,6 +5,7 @@ namespace PhpSchool\PhpWorkshopTest;
 use PhpSchool\PhpWorkshop\Check\CheckInterface;
 use PhpSchool\PhpWorkshop\Check\CheckRepository;
 use PhpSchool\PhpWorkshop\Check\ListenableCheckInterface;
+use PhpSchool\PhpWorkshop\Check\PhpLintCheck;
 use PhpSchool\PhpWorkshop\Check\SimpleCheckInterface;
 use PhpSchool\PhpWorkshop\Event\EventDispatcher;
 use PhpSchool\PhpWorkshop\Event\EventInterface;
@@ -538,7 +539,7 @@ class ExerciseDispatcherTest extends TestCase
             $runnerManager,
             new ResultAggregator(),
             new EventDispatcher(new ResultAggregator()),
-            new CheckRepository()
+            new CheckRepository([new PhpLintCheck()])
         );
 
         $this->assertTrue($exerciseDispatcher->run($exercise, $input, $output));

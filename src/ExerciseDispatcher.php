@@ -6,6 +6,7 @@ namespace PhpSchool\PhpWorkshop;
 
 use PhpSchool\PhpWorkshop\Check\CheckRepository;
 use PhpSchool\PhpWorkshop\Check\ListenableCheckInterface;
+use PhpSchool\PhpWorkshop\Check\PhpLintCheck;
 use PhpSchool\PhpWorkshop\Check\SimpleCheckInterface;
 use PhpSchool\PhpWorkshop\Event\EventDispatcher;
 use PhpSchool\PhpWorkshop\Event\ExerciseRunnerEvent;
@@ -16,6 +17,8 @@ use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpSchool\PhpWorkshop\ExerciseRunner\RunnerManager;
 use PhpSchool\PhpWorkshop\Input\Input;
 use PhpSchool\PhpWorkshop\Output\OutputInterface;
+use PhpSchool\PhpWorkshop\Result\FailureInterface;
+use PhpSchool\PhpWorkshop\Exception\CouldNotRunException;
 
 /**
  * This class is used to verify/run a student's solution to an exercise. It routes to the correct
@@ -179,6 +182,15 @@ class ExerciseDispatcher
     public function run(ExerciseInterface $exercise, Input $input, OutputInterface $output): bool
     {
         $exercise->configure($this);
+
+        /** @var PhpLintCheck $lint */
+        $lint = $this->checkRepository->getByClass(PhpLintCheck::class);
+        $result = $lint->check($exercise, $input);
+
+        if ($result instanceof FailureInterface) {
+            throw CouldNotRunException::fromFailure($result);
+        }
+
         $this->eventDispatcher->dispatch(new ExerciseRunnerEvent('run.start', $exercise, $input));
 
         try {
