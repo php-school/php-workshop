@@ -129,7 +129,7 @@ class EventDispatcherFactoryTest extends TestCase
     {
         $eventConfig = [
             'my-group' => [
-                'someEvent' => [containerListener('nonExistingContainerEntry')]
+                'someEvent' => [containerListener('nonExistingContainerEntry')()]
             ]
         ];
 
@@ -274,7 +274,7 @@ class EventDispatcherFactoryTest extends TestCase
     {
         $eventConfig = [
             'my-group' => [
-                'someEvent' => [containerListener('containerEntry', 'notHere')]
+                'someEvent' => [containerListener('containerEntry', 'notHere')()]
             ]
         ];
 
