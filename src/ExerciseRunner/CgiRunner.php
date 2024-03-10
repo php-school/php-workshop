@@ -198,7 +198,8 @@ class CgiRunner implements ExerciseRunnerInterface
      */
     private function getProcess(string $fileName, RequestInterface $request): Process
     {
-        $env = [
+        $env = $this->getDefaultEnv();
+        $env += [
             'REQUEST_METHOD'  => $request->getMethod(),
             'SCRIPT_FILENAME' => $fileName,
             'REDIRECT_STATUS' => 302,
@@ -222,6 +223,20 @@ class CgiRunner implements ExerciseRunnerInterface
         }
 
         return Process::fromShellCommandline($cmd, null, $env, null, 10);
+    }
+
+    /**
+     * We need to reset env entirely, because Symfony inherits it. We do that by setting all
+     * the current env vars to false
+     *
+     * @return array<string, false>
+     */
+    private function getDefaultEnv(): array
+    {
+        $env = array_map(fn () => false, $_ENV);
+        $env + array_map(fn () => false, $_SERVER);
+
+        return $env;
     }
 
     /**

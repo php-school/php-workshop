@@ -137,11 +137,26 @@ class CliRunner implements ExerciseRunnerInterface
         return new Process(
             $args->prepend($fileName)->prepend($this->phpLocation)->getArrayCopy(),
             dirname($fileName),
-            ['XDEBUG_MODE' => 'off'],
+            $this->getDefaultEnv() + ['XDEBUG_MODE' => 'off'],
             null,
             10
         );
     }
+
+    /**
+     * We need to reset env entirely, because Symfony inherits it. We do that by setting all
+     * the current env vars to false
+     *
+     * @return array<string, false>
+     */
+    private function getDefaultEnv(): array
+    {
+        $env = array_map(fn () => false, $_ENV);
+        $env + array_map(fn () => false, $_SERVER);
+
+        return $env;
+    }
+
 
     /**
      * Verifies a solution by invoking PHP from the CLI passing the arguments gathered from the exercise
