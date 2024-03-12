@@ -209,7 +209,7 @@ class CgiRunner implements ExerciseRunnerInterface
         foreach ($request->getHeaders() as $name => $values) {
             $env[sprintf('HTTP_%s', strtoupper($name))] = implode(", ", $values);
         }
-        
+
         return $this->processFactory->phpCgi(dirname($fileName), $env, $content);
     }
 

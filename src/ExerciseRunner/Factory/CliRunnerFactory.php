@@ -28,9 +28,9 @@ class CliRunnerFactory implements ExerciseRunnerFactoryInterface
      * @var EventDispatcher
      */
     private $eventDispatcher;
-    
+
     /**
-* @var ProcessFactory 
+* @var ProcessFactory
     */
     private $processFactory;
 
@@ -72,6 +72,6 @@ class CliRunnerFactory implements ExerciseRunnerFactoryInterface
      */
     public function create(ExerciseInterface $exercise): ExerciseRunnerInterface
     {
-        return new CliRunner($exercise, $this->eventDispatcher,  $this->processFactory);
+        return new CliRunner($exercise, $this->eventDispatcher, $this->processFactory);
     }
 }

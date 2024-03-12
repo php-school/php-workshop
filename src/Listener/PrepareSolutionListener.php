@@ -23,7 +23,7 @@ class PrepareSolutionListener
     {
                 $this->processFactory = $processFactory;
     }
-    
+
     /**
      * Locations for composer executable
      *
