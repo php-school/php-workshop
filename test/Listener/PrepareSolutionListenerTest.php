@@ -7,12 +7,15 @@ use PhpSchool\PhpWorkshop\Exercise\CliExercise;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpSchool\PhpWorkshop\Input\Input;
 use PhpSchool\PhpWorkshop\Listener\PrepareSolutionListener;
+use PhpSchool\PhpWorkshop\Process\HostProcessFactory;
+use PhpSchool\PhpWorkshop\Process\ProcessNotFoundException;
 use PhpSchool\PhpWorkshop\Solution\SolutionInterface;
 use PhpSchool\PhpWorkshopTest\Asset\CliExerciseInterface;
 use PHPUnit\Framework\TestCase;
 use ReflectionProperty;
 use RuntimeException;
 use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\Process\ExecutableFinder;
 use Yoast\PHPUnitPolyfills\Polyfills\AssertionRenames;
 
 class PrepareSolutionListenerTest extends TestCase
@@ -37,21 +40,18 @@ class PrepareSolutionListenerTest extends TestCase
     public function setUp(): void
     {
         $this->filesystem = new Filesystem();
-        $this->listener = new PrepareSolutionListener();
+        $this->listener = new PrepareSolutionListener(new HostProcessFactory());
         $this->file = sprintf('%s/%s/submission.php', str_replace('\\', '/', sys_get_temp_dir()), $this->getName());
 
         mkdir(dirname($this->file), 0775, true);
         touch($this->file);
     }
 
-    /**
-     * @runInSeparateProcess
-     */
     public function testIfSolutionRequiresComposerButComposerCannotBeLocatedExceptionIsThrown(): void
     {
-        $refProp = new ReflectionProperty(PrepareSolutionListener::class, 'composerLocations');
-        $refProp->setAccessible(true);
-        $refProp->setValue($this->listener, []);
+        $finder = $this->createMock(ExecutableFinder::class);
+        $finder->expects($this->once())->method('find')->with('composer')->willReturn(null);
+        $this->listener = new PrepareSolutionListener(new HostProcessFactory($finder));
 
         $solution = $this->createMock(SolutionInterface::class);
         $exercise = $this->createMock(CliExerciseInterface::class);
@@ -64,8 +64,8 @@ class PrepareSolutionListenerTest extends TestCase
             ->method('hasComposerFile')
             ->willReturn(true);
 
-        $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage('Composer could not be located on the system');
+        $this->expectException(ProcessNotFoundException::class);
+        $this->expectExceptionMessage('Could not find executable: "composer"');
         $event = new ExerciseRunnerEvent('event', $exercise, new Input('app'));
         $this->listener->__invoke($event);
     }

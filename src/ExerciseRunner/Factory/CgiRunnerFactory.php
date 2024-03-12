@@ -12,6 +12,7 @@ use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseType;
 use PhpSchool\PhpWorkshop\ExerciseRunner\CgiRunner;
 use PhpSchool\PhpWorkshop\ExerciseRunner\ExerciseRunnerInterface;
+use PhpSchool\PhpWorkshop\Process\ProcessFactory;
 use PhpSchool\PhpWorkshop\Utils\RequestRenderer;
 
 /**
@@ -30,11 +31,17 @@ class CgiRunnerFactory implements ExerciseRunnerFactoryInterface
     private $eventDispatcher;
 
     /**
+     * @var ProcessFactory
+     */
+    private $processFactory;
+
+    /**
      * @param EventDispatcher $eventDispatcher
      */
-    public function __construct(EventDispatcher $eventDispatcher)
+    public function __construct(EventDispatcher $eventDispatcher, ProcessFactory $processFactory)
     {
         $this->eventDispatcher = $eventDispatcher;
+        $this->processFactory = $processFactory;
     }
 
     /**
@@ -66,6 +73,6 @@ class CgiRunnerFactory implements ExerciseRunnerFactoryInterface
      */
     public function create(ExerciseInterface $exercise): ExerciseRunnerInterface
     {
-        return new CgiRunner($exercise, $this->eventDispatcher);
+        return new CgiRunner($exercise, $this->eventDispatcher, $this->processFactory);
     }
 }

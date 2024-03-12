@@ -187,10 +187,23 @@ return [
     //Exercise Runners
     RunnerManager::class => function (ContainerInterface $c) {
         $manager = new RunnerManager();
-        $manager->addFactory(new CliRunnerFactory($c->get(EventDispatcher::class)));
-        $manager->addFactory(new CgiRunnerFactory($c->get(EventDispatcher::class)));
+        $manager->addFactory(new CliRunnerFactory($c->get(EventDispatcher::class), $c->get(\PhpSchool\PhpWorkshop\Process\ProcessFactory::class)));
+        $manager->addFactory(new CgiRunnerFactory($c->get(EventDispatcher::class), $c->get(\PhpSchool\PhpWorkshop\Process\ProcessFactory::class)));
         $manager->addFactory(new CustomVerifyingRunnerFactory());
         return $manager;
+    },
+    \PhpSchool\PhpWorkshop\Process\ProcessFactory::class => function (ContainerInterface $c) {
+        return new \PhpSchool\PhpWorkshop\Process\DockerProcessFactory(
+            $c->get('basePath'),
+            (new \Symfony\Component\Process\ExecutableFinder())->find('docker'),
+            $c->get('appName')
+        );
+
+//        return new \PhpSchool\PhpWorkshop\Process\HostProcessFactory(
+//            (new \Symfony\Component\Process\ExecutableFinder())->find('php'),
+//            (new \Symfony\Component\Process\ExecutableFinder())->find('php-cgi'),
+//            '/usr/local/bin/composer',
+//        );
     },
 
     //commands
@@ -249,7 +262,9 @@ return [
     InitialCodeListener::class => function (ContainerInterface $c) {
         return new InitialCodeListener($c->get('currentWorkingDirectory'), $c->get(LoggerInterface::class));
     },
-    PrepareSolutionListener::class => create(),
+    PrepareSolutionListener::class => function (ContainerInterface $c) {
+            return new PrepareSolutionListener($c->get(\PhpSchool\PhpWorkshop\Process\ProcessFactory::class));
+    },
     CodePatchListener::class => function (ContainerInterface $c) {
         return new CodePatchListener(
             $c->get(CodePatcher::class),
