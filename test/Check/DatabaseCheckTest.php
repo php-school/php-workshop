@@ -15,6 +15,7 @@ use PhpSchool\PhpWorkshop\ExerciseRunner\CliRunner;
 use PhpSchool\PhpWorkshop\ExerciseRunner\RunnerManager;
 use PhpSchool\PhpWorkshop\Input\Input;
 use PhpSchool\PhpWorkshop\Output\OutputInterface;
+use PhpSchool\PhpWorkshop\Process\HostProcessFactory;
 use PhpSchool\PhpWorkshop\ResultAggregator;
 use PhpSchool\PhpWorkshop\Solution\SingleFileSolution;
 use PhpSchool\PhpWorkshopTest\Asset\DatabaseExerciseInterface;
@@ -68,8 +69,8 @@ class DatabaseCheckTest extends TestCase
     private function getRunnerManager(ExerciseInterface $exercise, EventDispatcher $eventDispatcher): MockObject
     {
         $runner = $this->getMockBuilder(CliRunner::class)
-            ->setConstructorArgs([$exercise, $eventDispatcher])
-            ->setMethods(['configure', 'getRequiredChecks'])
+            ->setConstructorArgs([$exercise, $eventDispatcher, new HostProcessFactory()])
+            ->onlyMethods(['getRequiredChecks'])
             ->getMock();
 
         $runner
@@ -127,7 +128,7 @@ class DatabaseCheckTest extends TestCase
         $this->exercise
             ->expects($this->once())
             ->method('getArgs')
-            ->willReturn([1, 2, 3]);
+            ->willReturn([[1, 2, 3]]);
 
         $this->exercise
             ->expects($this->once())
@@ -244,7 +245,7 @@ class DatabaseCheckTest extends TestCase
         $this->exercise
             ->expects($this->once())
             ->method('getArgs')
-            ->willReturn([1, 2, 3]);
+            ->willReturn([[1, 2, 3]]);
 
         $this->exercise
             ->expects($this->once())
@@ -288,7 +289,7 @@ class DatabaseCheckTest extends TestCase
 
         $this->exercise
             ->method('getArgs')
-            ->willReturn([]);
+            ->willReturn([[]]);
 
         $this->exercise
             ->method('verify')
@@ -321,6 +322,7 @@ class DatabaseCheckTest extends TestCase
                 $users = $db->query('SELECT * FROM users');
                 $users = $users->fetchAll(PDO::FETCH_ASSOC);
 
+                $this->assertCount(2, $users);
                 $this->assertEquals(
                     [
                         ['id' => 1, 'name' => 'Jimi Hendrix', 'age' => '27', 'gender' => 'Male'],

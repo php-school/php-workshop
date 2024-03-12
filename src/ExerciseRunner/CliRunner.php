@@ -26,6 +26,7 @@ use PhpSchool\PhpWorkshop\Result\Cli\Success;
 use PhpSchool\PhpWorkshop\Result\Cli\ResultInterface as CliResultInterface;
 use PhpSchool\PhpWorkshop\Result\ResultInterface;
 use PhpSchool\PhpWorkshop\Utils\ArrayObject;
+use PhpSchool\PhpWorkshop\Utils\Collection;
 use Psr\Container\ContainerInterface;
 use RuntimeException;
 use Symfony\Component\Process\ExecutableFinder;
@@ -100,11 +101,11 @@ class CliRunner implements ExerciseRunnerInterface
 
     /**
      * @param string $fileName
-     * @param ArrayObject<int, string> $args
+     * @param Collection<int, string> $args
      * @param string $type
      * @return string
      */
-    private function executePhpFile(string $fileName, ArrayObject $args, string $type): string
+    private function executePhpFile(string $fileName, Collection $args, string $type): string
     {
         $process = $this->getPhpProcess($fileName, $args);
 
@@ -121,13 +122,13 @@ class CliRunner implements ExerciseRunnerInterface
 
     /**
      * @param string $fileName
-     * @param ArrayObject<int, string> $args
+     * @param Collection<int, string> $args
      *
      * @return Process
      */
-    private function getPhpProcess(string $fileName, ArrayObject $args): Process
+    private function getPhpProcess(string $fileName, Collection $args): Process
     {
-        return $this->processFactory->phpCli(dirname($fileName), $args->getArrayCopy());
+        return $this->processFactory->phpCli($fileName, $args);
     }
 
     /**
@@ -151,31 +152,12 @@ class CliRunner implements ExerciseRunnerInterface
         $this->eventDispatcher->dispatch(new ExerciseRunnerEvent('cli.verify.start', $this->exercise, $input));
         $result = new CliResult(
             array_map(
-                function (array $args) use ($input) {
-                    return $this->doVerify($args, $input);
-                },
-                $this->preserveOldArgFormat($this->exercise->getArgs())
+                fn(array $args) => $this->doVerify($args, $input),
+                $this->exercise->getArgs()
             )
         );
         $this->eventDispatcher->dispatch(new ExerciseRunnerEvent('cli.verify.finish', $this->exercise, $input));
         return $result;
-    }
-
-    /**
-     * BC - getArgs only returned 1 set of args in v1 instead of multiple sets of args in v2
-     *
-     * @param array<int, array<string>>|array<int, string> $args
-     * @return array<int, array<string>>
-     */
-    private function preserveOldArgFormat(array $args): array
-    {
-        if (isset($args[0]) && !is_array($args[0])) {
-            $args = [$args];
-        } elseif (count($args) === 0) {
-            $args = [[]];
-        }
-
-        return $args;
     }
 
     /**
@@ -186,7 +168,8 @@ class CliRunner implements ExerciseRunnerInterface
     private function doVerify(array $args, Input $input): CliResultInterface
     {
         //arrays are not pass-by-ref
-        $args = new ArrayObject($args);
+        $args = new Collection($args);
+        /** @var Collection<int,string> $args */
 
         try {
             /** @var CliExecuteEvent $event */
@@ -236,10 +219,12 @@ class CliRunner implements ExerciseRunnerInterface
     {
         $this->eventDispatcher->dispatch(new ExerciseRunnerEvent('cli.run.start', $this->exercise, $input));
         $success = true;
-        foreach ($this->preserveOldArgFormat($this->exercise->getArgs()) as $i => $args) {
+        foreach ($this->exercise->getArgs() as $i => $args) {
+            /** @var Collection<int, string> $argsCollection */
+            $argsCollection = new Collection($args);
             /** @var CliExecuteEvent $event */
             $event = $this->eventDispatcher->dispatch(
-                new CliExecuteEvent('cli.run.student-execute.pre', new ArrayObject($args))
+                new CliExecuteEvent('cli.run.student-execute.pre', $argsCollection)
             );
 
             $args = $event->getArgs();

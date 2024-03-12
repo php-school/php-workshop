@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace PhpSchool\PhpWorkshop\Process;
 
+use PhpSchool\PhpWorkshop\Utils\Collection;
 use Symfony\Component\Process\ExecutableFinder;
 use Symfony\Component\Process\Process;
 
@@ -20,22 +21,25 @@ final class DockerProcessFactory implements ProcessFactory
         $this->projectName = $projectName;
     }
 
+    /**
+     * @return array<string>
+     */
     private function baseComposeCommand(): array
     {
-                return [
-                    $this->docker,
-                    'compose',
-                    '-p', $this->projectName,
-                    '-f', '.docker/runtime/docker-compose.yml',
-                    'run',
-                    '--rm'
-                ];
+        return [
+            $this->docker,
+            'compose',
+            '-p', $this->projectName,
+            '-f', '.docker/runtime/docker-compose.yml',
+            'run',
+            '--rm'
+        ];
     }
 
-    public function composer(string $solitionPath, string $composerCommand, array $composerArgs): Process
+    public function composer(string $solutionPath, string $composerCommand, array $composerArgs): Process
     {
         return new Process(
-            [...$this->baseComposeCommand(), 'runtime', ...$composerCommand, ...$composerArgs],
+            [...$this->baseComposeCommand(), 'runtime', $composerCommand, ...$composerArgs],
             $this->basePath,
             ['SOLUTION' => $solutionPath],
             null,
@@ -43,7 +47,7 @@ final class DockerProcessFactory implements ProcessFactory
         );
     }
 
-    public function phpCli(string $fileName, array $args): Process
+    public function phpCli(string $fileName, Collection $args): Process
     {
         return new Process(
             [...$this->baseComposeCommand(), 'runtime', 'php', '/solution/' . basename($fileName), ...$args],

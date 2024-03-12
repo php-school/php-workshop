@@ -2,9 +2,6 @@ parameters:
     treatPhpDocTypesAsCertain: false
     ignoreErrors:
         -
-            message: '#PhpSchool\\PhpWorkshop\\ExerciseRunner\\CliRunner\:\:preserveOldArgFormat\(\) should return#'
-            path: src/ExerciseRunner/CliRunner.php
-        -
             message: '#Call to an undefined method PhpParser\\Node\\Expr\|PhpParser\\Node\\Name\:\:__toString\(\)#'
             path: src/Check/FunctionRequirementsCheck.php
 

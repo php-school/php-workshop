@@ -4,33 +4,43 @@ declare(strict_types=1);
 
 namespace PhpSchool\PhpWorkshop\Process;
 
+use PhpSchool\PhpWorkshop\Utils\Collection;
+use Symfony\Component\Process\ExecutableFinder;
 use Symfony\Component\Process\Process;
 
 final class HostProcessFactory implements ProcessFactory
 {
-    private string $cliBinary;
-    private string $cgiBinary;
-    private string $composerBinary;
+    private ExecutableFinder $executableFinder;
 
-    public function __construct(string $phpCliBinary, string $phpCgiBinary, string $composerBinary)
+    public function __construct(ExecutableFinder $executableFinder = null)
     {
-        $this->cliBinary = $phpCliBinary;
-        $this->cgiBinary = $phpCgiBinary;
-        $this->composerBinary = $composerBinary;
+        $this->executableFinder = $executableFinder ?? new ExecutableFinder();
     }
 
     public function composer(string $solutionPath, string $composerCommand, array $composerArgs): Process
     {
-        $process = new Process(
-            array_merge([$this->composerBinary, $composerCommand], $composerArgs),
+        $composer = $this->executableFinder->find('composer');
+
+        if ($composer === null) {
+            throw ProcessNotFoundException::fromExecutable('composer');
+        }
+
+        return new Process(
+            array_merge([$composer, $composerCommand], $composerArgs),
             $solutionPath
         );
     }
 
-    public function phpCli(string $fileName, array $args): Process
+    public function phpCli(string $fileName, Collection $args): Process
     {
+        $php = $this->executableFinder->find('php');
+
+        if ($php === null) {
+            throw ProcessNotFoundException::fromExecutable('php');
+        }
+
         return new Process(
-            array_merge([$this->cliBinary], $args),
+            $args->prepend($fileName)->prepend($php)->getArrayCopy(),
             dirname($fileName),
             $this->getDefaultEnv() + ['XDEBUG_MODE' => 'off'],
             null,
@@ -56,7 +66,7 @@ final class HostProcessFactory implements ProcessFactory
     {
         $cgiBinary = sprintf(
             '%s -dalways_populate_raw_post_data=-1 -dhtml_errors=0 -dexpose_php=0',
-            $this->cgiBinary
+            $this->executableFinder->find('php-cgi')
         );
 
         $cmd = sprintf('echo %s | %s', escapeshellarg($content), $cgiBinary);

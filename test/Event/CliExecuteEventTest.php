@@ -4,13 +4,14 @@ namespace PhpSchool\PhpWorkshopTest\Event;
 
 use PhpSchool\PhpWorkshop\Event\CliExecuteEvent;
 use PhpSchool\PhpWorkshop\Utils\ArrayObject;
+use PhpSchool\PhpWorkshop\Utils\Collection;
 use PHPUnit\Framework\TestCase;
 
 class CliExecuteEventTest extends TestCase
 {
     public function testAppendArg(): void
     {
-        $arr = new ArrayObject([1, 2, 3]);
+        $arr = new Collection([1, 2, 3]);
         $e = new CliExecuteEvent('event', $arr);
 
         $e->appendArg('4');
@@ -20,7 +21,7 @@ class CliExecuteEventTest extends TestCase
 
     public function testPrependArg(): void
     {
-        $arr = new ArrayObject([1, 2, 3]);
+        $arr = new Collection([1, 2, 3]);
         $e = new CliExecuteEvent('event', $arr);
 
         $e->prependArg('4');
@@ -30,7 +31,7 @@ class CliExecuteEventTest extends TestCase
 
     public function testGetArgs(): void
     {
-        $arr = new ArrayObject([1, 2, 3]);
+        $arr = new Collection([1, 2, 3]);
         $e = new CliExecuteEvent('event', $arr);
 
         $this->assertSame($arr, $e->getArgs());

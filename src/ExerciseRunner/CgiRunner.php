@@ -195,15 +195,16 @@ class CgiRunner implements ExerciseRunnerInterface
         $env = $this->getDefaultEnv();
         $env += [
             'REQUEST_METHOD'  => $request->getMethod(),
-            'SCRIPT_FILENAME' => '/solution/' . basename($fileName), // TODO: Figure out this path in the container
-            'REDIRECT_STATUS' => 302,
+            //'SCRIPT_FILENAME' => '/solution/' . basename($fileName), // TODO: Figure out this path in the container
+            'SCRIPT_FILENAME' => $fileName,
+            'REDIRECT_STATUS' => '302',
             'QUERY_STRING'    => $request->getUri()->getQuery(),
             'REQUEST_URI'     => $request->getUri()->getPath(),
             'XDEBUG_MODE'     => 'off',
         ];
 
         $content                = $request->getBody()->__toString();
-        $env['CONTENT_LENGTH']  = $request->getBody()->getSize();
+        $env['CONTENT_LENGTH']  = (string) $request->getBody()->getSize();
         $env['CONTENT_TYPE']    = $request->getHeaderLine('Content-Type');
 
         foreach ($request->getHeaders() as $name => $values) {

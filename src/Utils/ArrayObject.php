@@ -192,8 +192,8 @@ class ArrayObject implements IteratorAggregate, Countable
 
     /**
      * Merge two or more ArrayObjects together
-     * @param ArrayObject ...$arrays
-     * @return ArrayObject
+     * @param ArrayObject<TKey, T> ...$arrays
+     * @return ArrayObject<TKey, T>
      */
     public function merge(ArrayObject ...$arrays)
     {
