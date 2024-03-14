@@ -13,6 +13,7 @@ use PhpSchool\PhpWorkshop\Exercise\ProvidesSolution;
 use PhpSchool\PhpWorkshop\ExerciseCheck\ComposerExerciseCheck;
 use PhpSchool\PhpWorkshop\ExerciseDispatcher;
 use PhpSchool\PhpWorkshop\ExerciseRepository;
+use PhpSchool\PhpWorkshop\ExerciseRunner\RunnerManager;
 use PhpSchool\PhpWorkshop\Listener\PrepareSolutionListener;
 use PhpSchool\PhpWorkshop\Result\Cgi\CgiResult;
 use PhpSchool\PhpWorkshop\Result\Cli\CliResult;
@@ -59,6 +60,7 @@ abstract class WorkshopExerciseTest extends TestCase
     public function tearDown(): void
     {
         (new Filesystem())->remove(System::tempDir());
+        sleep(1);
     }
 
     /**
@@ -102,6 +104,7 @@ abstract class WorkshopExerciseTest extends TestCase
         $input = new Input($this->container->get('appName'), [
             'program' => $submissionFileAbsolute
         ]);
+
 
         $this->results = $this->container->get(ExerciseDispatcher::class)
             ->verify($exercise, $input);
