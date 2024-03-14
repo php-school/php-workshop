@@ -109,6 +109,19 @@ use function PhpSchool\PhpWorkshop\Event\containerListener;
 
 return [
     'appName' => basename($_SERVER['argv'][0] ?? 'phpschool'),
+    'appName' => function (ContainerInterface $c) {
+        if (!isset($_SERVER['argv'][0])) {
+            return 'phpschool';
+        }
+
+        $name = basename($_SERVER['argv'][0]);
+
+        if ($name !== 'phpunit') {
+            return $name;
+        }
+
+        return 'phpschool';
+    },
     'phpschoolGlobalDir' => sprintf('%s/.php-school', getenv('HOME')),
     'currentWorkingDirectory' => function (ContainerInterface $c) {
         return getcwd();
@@ -263,7 +276,9 @@ return [
         return new InitialCodeListener($c->get('currentWorkingDirectory'), $c->get(LoggerInterface::class));
     },
     PrepareSolutionListener::class => function (ContainerInterface $c) {
-            return new PrepareSolutionListener($c->get(\PhpSchool\PhpWorkshop\Process\ProcessFactory::class));
+        return new PrepareSolutionListener(
+            $c->get(\PhpSchool\PhpWorkshop\Process\ProcessFactory::class)
+        );
     },
     CodePatchListener::class => function (ContainerInterface $c) {
         return new CodePatchListener(
