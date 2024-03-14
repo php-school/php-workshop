@@ -7,6 +7,7 @@ namespace PhpSchool\PhpWorkshop\Process;
 use PhpSchool\PhpWorkshop\Utils\Collection;
 use Symfony\Component\Process\ExecutableFinder;
 use Symfony\Component\Process\Process;
+use PhpSchool\PhpWorkshop\Utils\System;
 
 final class DockerProcessFactory implements ProcessFactory
 {
@@ -32,18 +33,25 @@ final class DockerProcessFactory implements ProcessFactory
             '-p', $this->projectName,
             '-f', '.docker/runtime/docker-compose.yml',
             'run',
-            '--rm'
+            '--rm',
+            '-w',
+            '/solution',
         ];
     }
 
     public function composer(string $solutionPath, string $composerCommand, array $composerArgs): Process
     {
+        $composerCache = System::tempDir('composer-cache');
+        if (!file_exists($composerCache)) {
+            mkdir($composerCache, 0777, true);
+        }
+
         return new Process(
-            [...$this->baseComposeCommand(), 'runtime', $composerCommand, ...$composerArgs],
+            [...$this->baseComposeCommand(), '-v', $composerCache . ':/root/.composer/cache', 'runtime', 'composer', $composerCommand, ...$composerArgs],
             $this->basePath,
             ['SOLUTION' => $solutionPath],
             null,
-            60
+            120
         );
     }
 
