@@ -6,6 +6,8 @@ namespace PhpSchool\PhpWorkshop\Check;
 
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseType;
+use PhpSchool\PhpWorkshop\ExerciseRunner\Context\ExecutionContext;
+use PhpSchool\PhpWorkshop\ExerciseRunner\Environment;
 use PhpSchool\PhpWorkshop\Input\Input;
 use PhpSchool\PhpWorkshop\Result\ResultInterface;
 use PhpSchool\PhpWorkshop\Result\Success;
@@ -34,10 +36,10 @@ class PhpLintCheck implements SimpleCheckInterface
      * @param Input $input The command line arguments passed to the command.
      * @return ResultInterface The result of the check.
      */
-    public function check(ExerciseInterface $exercise, Input $input): ResultInterface
+    public function check(ExecutionContext $context): ResultInterface
     {
         $finder = new ExecutableFinder();
-        $process = new Process([$finder->find('php'), '-l', $input->getArgument('program')]);
+        $process = new Process([$finder->find('php'), '-l', $context->input->getArgument('program')]);
         $process->run();
 
         if ($process->isSuccessful()) {

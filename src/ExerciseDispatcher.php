@@ -14,6 +14,7 @@ use PhpSchool\PhpWorkshop\Exception\CheckNotApplicableException;
 use PhpSchool\PhpWorkshop\Exception\ExerciseNotConfiguredException;
 use PhpSchool\PhpWorkshop\Exception\InvalidArgumentException;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
+use PhpSchool\PhpWorkshop\ExerciseRunner\Context\ExecutionContext;
 use PhpSchool\PhpWorkshop\ExerciseRunner\RunnerManager;
 use PhpSchool\PhpWorkshop\Input\Input;
 use PhpSchool\PhpWorkshop\Output\OutputInterface;
@@ -129,43 +130,47 @@ class ExerciseDispatcher
      */
     public function verify(ExerciseInterface $exercise, Input $input): ResultAggregator
     {
-        $exercise->configure($this);
 
-        $runner = $this->runnerManager->getRunner($exercise);
+        $context = ExecutionContext::fromInputAndExercise($input, $exercise);
+
+        $runner  = $this->runnerManager->getRunner($exercise);
+        $context = $this->runnerManager->wrapContext($context);
+
+        $exercise->configure($this, $context);
 
         foreach ($runner->getRequiredChecks() as $requiredCheck) {
             $this->requireCheck($requiredCheck);
         }
 
-        $this->eventDispatcher->dispatch(new ExerciseRunnerEvent('verify.start', $exercise, $input));
+        $this->eventDispatcher->dispatch(new ExerciseRunnerEvent('verify.start', $context));
 
         $this->validateChecks($this->checksToRunBefore, $exercise);
         $this->validateChecks($this->checksToRunAfter, $exercise);
 
         foreach ($this->checksToRunBefore as $check) {
-            $this->results->add($check->check($exercise, $input));
+            $this->results->add($check->check($context->getExecutionContext()));
 
             if (!$this->results->isSuccessful()) {
                 return $this->results;
             }
         }
 
-        $this->eventDispatcher->dispatch(new ExerciseRunnerEvent('verify.pre.execute', $exercise, $input));
+        $this->eventDispatcher->dispatch(new ExerciseRunnerEvent('verify.pre.execute', $context));
 
         try {
-            $this->results->add($runner->verify($input));
+            $this->results->add($runner->verify($context));
         } finally {
-            $this->eventDispatcher->dispatch(new ExerciseRunnerEvent('verify.post.execute', $exercise, $input));
+            $this->eventDispatcher->dispatch(new ExerciseRunnerEvent('verify.post.execute', $context));
         }
 
         foreach ($this->checksToRunAfter as $check) {
-            $this->results->add($check->check($exercise, $input));
+            $this->results->add($check->check($context->getExecutionContext()));
         }
 
-        $this->eventDispatcher->dispatch(new ExerciseRunnerEvent('verify.post.check', $exercise, $input));
+        $this->eventDispatcher->dispatch(new ExerciseRunnerEvent('verify.post.check', $context));
         $exercise->tearDown();
 
-        $this->eventDispatcher->dispatch(new ExerciseRunnerEvent('verify.finish', $exercise, $input));
+        $this->eventDispatcher->dispatch(new ExerciseRunnerEvent('verify.finish', $context));
         return $this->results;
     }
 

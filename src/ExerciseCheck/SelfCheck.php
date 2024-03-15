@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace PhpSchool\PhpWorkshop\ExerciseCheck;
 
+use PhpSchool\PhpWorkshop\ExerciseRunner\Context\ExecutionContext;
+use PhpSchool\PhpWorkshop\ExerciseRunner\Context\RunnerContext;
+use PhpSchool\PhpWorkshop\ExerciseRunner\Environment;
 use PhpSchool\PhpWorkshop\Input\Input;
 use PhpSchool\PhpWorkshop\Result\ResultInterface;
 
@@ -24,5 +27,5 @@ interface SelfCheck
      * @param Input $input The command line arguments passed to the command.
      * @return ResultInterface The result of the check.
      */
-    public function check(Input $input): ResultInterface;
+    public function check(ExecutionContext $environment): ResultInterface;
 }

@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace PhpSchool\PhpWorkshop\Process;
 
+use PhpSchool\PhpWorkshop\ExerciseRunner\CliEnvironment;
+use PhpSchool\PhpWorkshop\ExerciseRunner\CliExecutionContext;
+use PhpSchool\PhpWorkshop\ExerciseRunner\Context\Environment;
 use PhpSchool\PhpWorkshop\Utils\Collection;
 use Symfony\Component\Process\ExecutableFinder;
 use Symfony\Component\Process\Process;
@@ -31,7 +34,7 @@ final class HostProcessFactory implements ProcessFactory
         );
     }
 
-    public function phpCli(string $fileName, Collection $args): Process
+    public function phpCli(Environment $environment, string $fileName, Collection $args): Process
     {
         $php = $this->executableFinder->find('php');
 
@@ -41,7 +44,7 @@ final class HostProcessFactory implements ProcessFactory
 
         return new Process(
             $args->prepend($fileName)->prepend($php)->getArrayCopy(),
-            dirname($fileName),
+            $environment->workingDirectory,
             $this->getDefaultEnv() + ['XDEBUG_MODE' => 'off'],
             null,
             10
@@ -62,7 +65,7 @@ final class HostProcessFactory implements ProcessFactory
         return $env;
     }
 
-    public function phpCgi(string $solutionPath, array $env, string $content): Process
+    public function phpCgi(Environment $environment, array $env, string $content): Process
     {
         $cgiBinary = sprintf(
             '%s -dalways_populate_raw_post_data=-1 -dhtml_errors=0 -dexpose_php=0',
@@ -71,6 +74,6 @@ final class HostProcessFactory implements ProcessFactory
 
         $cmd = sprintf('echo %s | %s', escapeshellarg($content), $cgiBinary);
 
-        return Process::fromShellCommandline($cmd, null, $env, null, 10);
+        return Process::fromShellCommandline($cmd, $environment->workingDirectory, $env, null, 10);
     }
 }

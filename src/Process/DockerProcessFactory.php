@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace PhpSchool\PhpWorkshop\Process;
 
+use PhpSchool\PhpWorkshop\ExerciseRunner\CliEnvironment;
+use PhpSchool\PhpWorkshop\ExerciseRunner\CliExecutionContext;
+use PhpSchool\PhpWorkshop\ExerciseRunner\Context\Environment;
 use PhpSchool\PhpWorkshop\Utils\Collection;
 use Symfony\Component\Process\ExecutableFinder;
 use Symfony\Component\Process\Process;
@@ -55,19 +58,24 @@ final class DockerProcessFactory implements ProcessFactory
         );
     }
 
-    public function phpCli(string $fileName, Collection $args): Process
+    public function phpCli(Environment $environment, string $fileName, Collection $args): Process
     {
+        while(!file_exists($environment->workingDirectory)) {
+            usleep(0.1 * 1000000);
+        }
+
         return new Process(
-            [...$this->baseComposeCommand(), 'runtime', 'php', '/solution/' . basename($fileName), ...$args],
+            [...$this->baseComposeCommand(), 'runtime', 'php', basename($fileName), ...$args],
             $this->basePath,
-            ['SOLUTION' => dirname($fileName)],
+            ['SOLUTION' => $environment->workingDirectory],
             null,
             10
         );
     }
 
-    public function phpCgi(string $solutionPath, array $env, string $content): Process
+    public function phpCgi(Environment $environment, array $env, string $content): Process
     {
+
         $env = array_map(function ($key, $value) {
             return sprintf('-e %s=%s', $key, $value);
         }, array_keys($env), $env);
@@ -86,7 +94,7 @@ final class DockerProcessFactory implements ProcessFactory
         return new Process(
             $command,
             $this->basePath,
-            ['SOLUTION' => $solutionPath],
+            ['SOLUTION' => $environment->workingDirectory],
             null,
             10
         );

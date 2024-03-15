@@ -5,6 +5,9 @@ declare(strict_types=1);
 namespace PhpSchool\PhpWorkshop\Event;
 
 use PhpSchool\PhpWorkshop\Exception\InvalidArgumentException;
+use PhpSchool\PhpWorkshop\ExerciseRunner\CliEnvironment;
+use PhpSchool\PhpWorkshop\ExerciseRunner\Context\RunnerContext;
+use PhpSchool\PhpWorkshop\ExerciseRunner\Environment;
 
 /**
  * A generic `PhpSchool\PhpWorkshop\Event\EventInterface` implementation.
@@ -25,7 +28,7 @@ class Event implements EventInterface
      * @param string $name The event name.
      * @param array<mixed> $parameters The event parameters.
      */
-    public function __construct(string $name, array $parameters = [])
+    public function __construct(string $name, public RunnerContext $context, array $parameters = [])
     {
         $this->name = $name;
         $this->parameters = $parameters;

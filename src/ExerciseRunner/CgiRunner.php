@@ -17,6 +17,11 @@ use PhpSchool\PhpWorkshop\Exception\CodeExecutionException;
 use PhpSchool\PhpWorkshop\Exception\SolutionExecutionException;
 use PhpSchool\PhpWorkshop\Exercise\CgiExercise;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
+use PhpSchool\PhpWorkshop\ExerciseRunner\Context\CgiContext;
+use PhpSchool\PhpWorkshop\ExerciseRunner\Context\CliContext;
+use PhpSchool\PhpWorkshop\ExerciseRunner\Context\Environment;
+use PhpSchool\PhpWorkshop\ExerciseRunner\Context\ExecutionContext;
+use PhpSchool\PhpWorkshop\ExerciseRunner\Context\RunnerContext;
 use PhpSchool\PhpWorkshop\Input\Input;
 use PhpSchool\PhpWorkshop\Output\OutputInterface;
 use PhpSchool\PhpWorkshop\Process\ProcessFactory;
@@ -26,11 +31,14 @@ use PhpSchool\PhpWorkshop\Result\Cgi\GenericFailure;
 use PhpSchool\PhpWorkshop\Result\Cgi\Success;
 use PhpSchool\PhpWorkshop\Result\Cgi\ResultInterface as CgiResultInterface;
 use PhpSchool\PhpWorkshop\Result\ResultInterface;
+use PhpSchool\PhpWorkshop\Solution\SolutionInterface;
 use PhpSchool\PhpWorkshop\Utils\ArrayObject;
+use PhpSchool\PhpWorkshop\Utils\Path;
 use PhpSchool\PhpWorkshop\Utils\RequestRenderer;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use RuntimeException;
+use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Process\ExecutableFinder;
 use Symfony\Component\Process\Process;
 
@@ -107,30 +115,43 @@ class CgiRunner implements ExerciseRunnerInterface
      * @param string $fileName
      * @return CgiResultInterface
      */
-    private function checkRequest(RequestInterface $request, string $fileName): CgiResultInterface
+    private function checkRequest(CgiContext $context, RequestInterface $request): CgiResultInterface
     {
+        $this->setupEnvironment($context->getExecutionContext(), $this->exercise->getSolution());
+
         try {
             /** @var CgiExecuteEvent $event */
             $event = $this->eventDispatcher->dispatch(
-                new CgiExecuteEvent('cgi.verify.reference-execute.pre', $request)
+                new CgiExecuteEvent('cgi.verify.reference-execute.pre', $context, $request)
             );
             $solutionResponse = $this->executePhpFile(
+                $context->getExecutionContext()->referenceEnvironment,
+                $context,
                 $this->exercise->getSolution()->getEntryPoint()->getAbsolutePath(),
                 $event->getRequest(),
                 'reference'
             );
         } catch (CodeExecutionException $e) {
-            $this->eventDispatcher->dispatch(new Event('cgi.verify.reference-execute.fail', ['exception' => $e]));
+            $this->eventDispatcher->dispatch(new Event('cgi.verify.reference-execute.fail', $context, ['exception' => $e]));
             throw new SolutionExecutionException($e->getMessage());
         }
 
+        $this->setupStudentEnvironment($context->getExecutionContext());
         try {
             /** @var CgiExecuteEvent $event */
-            $event = $this->eventDispatcher->dispatch(new CgiExecuteEvent('cgi.verify.student-execute.pre', $request));
-            $userResponse = $this->executePhpFile($fileName, $event->getRequest(), 'student');
+            $event = $this->eventDispatcher->dispatch(new CgiExecuteEvent('cgi.verify.student-execute.pre', $context, $request));
+            $userResponse = $this->executePhpFile(
+                $context->getExecutionContext()->studentEnvironment,
+                $context,
+                $context->getExecutionContext()->input->getRequiredArgument('program'),
+                $event->getRequest(),
+                'student'
+            );
         } catch (CodeExecutionException $e) {
-            $this->eventDispatcher->dispatch(new Event('cgi.verify.student-execute.fail', ['exception' => $e]));
+            $this->eventDispatcher->dispatch(new Event('cgi.verify.student-execute.fail', $context, ['exception' => $e]));
             return GenericFailure::fromRequestAndCodeExecutionFailure($request, $e);
+        } finally {
+            $this->cleanupStudentEnvironment($context->getExecutionContext());
         }
 
         $solutionBody       = (string) $solutionResponse->getBody();
@@ -143,6 +164,44 @@ class CgiRunner implements ExerciseRunnerInterface
         }
 
         return new Success($request);
+    }
+
+    private function setupEnvironment(ExecutionContext $context, SolutionInterface $solution): void
+    {
+        $filesystem = new Filesystem();
+
+        foreach ($solution->getFiles() as $file) {
+            $filesystem->copy(
+                $file->getAbsolutePath(),
+                Path::join($context->referenceEnvironment->workingDirectory, $file->getRelativePath()))
+            ;
+        }
+
+        foreach ($context->getFiles() as $fileName => $content) {
+            file_put_contents(
+                Path::join($context->referenceEnvironment->workingDirectory, $fileName),
+                $content
+            );
+        }
+//       sleep(1);
+    }
+
+    private function setupStudentEnvironment(ExecutionContext $context): void
+    {
+        $filesystem = new Filesystem();
+
+        foreach ($context->getFiles() as $fileName => $content) {
+            $filesystem->dumpFile(Path::join($context->studentEnvironment->workingDirectory, $fileName), $content);
+        }
+    }
+
+    private function cleanupStudentEnvironment(ExecutionContext $context): void
+    {
+        $filesystem = new Filesystem();
+
+        foreach ($context->getFiles() as $fileName => $content) {
+            $filesystem->remove(Path::join($context->studentEnvironment->workingDirectory, $fileName));
+        }
     }
 
     /**
@@ -164,12 +223,12 @@ class CgiRunner implements ExerciseRunnerInterface
      * @param string $type
      * @return ResponseInterface
      */
-    private function executePhpFile(string $fileName, RequestInterface $request, string $type): ResponseInterface
+    private function executePhpFile(Environment $environment, CgiContext $context, string $fileName, RequestInterface $request, string $type): ResponseInterface
     {
-        $process = $this->getProcess($fileName, $request);
+        $process = $this->getProcess($environment, basename($fileName), $request);
 
         $process->start();
-        $this->eventDispatcher->dispatch(new CgiExecuteEvent(sprintf('cgi.verify.%s.executing', $type), $request));
+        $this->eventDispatcher->dispatch(new CgiExecuteEvent(sprintf('cgi.verify.%s.executing', $type), $context, $request));
         $process->wait();
 
         if (!$process->isSuccessful()) {
@@ -190,7 +249,7 @@ class CgiRunner implements ExerciseRunnerInterface
      * @param RequestInterface $request
      * @return Process
      */
-    private function getProcess(string $fileName, RequestInterface $request): Process
+    private function getProcess(Environment $environment, string $fileName, RequestInterface $request): Process
     {
         $env = $this->getDefaultEnv();
         $env += [
@@ -211,7 +270,7 @@ class CgiRunner implements ExerciseRunnerInterface
             $env[sprintf('HTTP_%s', strtoupper($name))] = implode(", ", $values);
         }
 
-        return $this->processFactory->phpCgi(dirname($fileName), $env, $content);
+        return $this->processFactory->phpCgi($environment, $env, $content);
     }
 
     /**
@@ -245,18 +304,18 @@ class CgiRunner implements ExerciseRunnerInterface
      * @param Input $input The command line arguments passed to the command.
      * @return CgiResult The result of the check.
      */
-    public function verify(Input $input): ResultInterface
+    public function verify(RunnerContext $context): ResultInterface
     {
-        $this->eventDispatcher->dispatch(new ExerciseRunnerEvent('cgi.verify.start', $this->exercise, $input));
+        $this->eventDispatcher->dispatch(new ExerciseRunnerEvent('cgi.verify.start', $context));
         $result = new CgiResult(
             array_map(
-                function (RequestInterface $request) use ($input) {
-                    return $this->checkRequest($request, $input->getRequiredArgument('program'));
+                function (RequestInterface $request) use ($context) {
+                    return $this->checkRequest($context, $request);
                 },
                 $this->exercise->getRequests()
             )
         );
-        $this->eventDispatcher->dispatch(new ExerciseRunnerEvent('cgi.verify.finish', $this->exercise, $input));
+        $this->eventDispatcher->dispatch(new ExerciseRunnerEvent('cgi.verify.finish', $context));
         return $result;
     }
 

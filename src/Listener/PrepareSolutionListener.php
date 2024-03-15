@@ -11,6 +11,7 @@ use PhpSchool\PhpWorkshop\Process\ProcessFactory;
 use PhpSchool\PhpWorkshop\Utils\ArrayObject;
 use Symfony\Component\Process\ExecutableFinder;
 use Symfony\Component\Process\Process;
+use PhpSchool\PhpWorkshop\Event\CliExecuteEvent;
 
 /**
  * Listener to install composer deps for an exercise solution
@@ -29,24 +30,29 @@ class PrepareSolutionListener
      */
     public function __invoke(ExerciseRunnerEvent $event): void
     {
-        $exercise = $event->getExercise();
-
-        if (!$exercise instanceof ProvidesSolution) {
+        if (!$event->getExercise() instanceof ProvidesSolution) {
             return;
         }
 
-        $solution = $exercise->getSolution();
+        $solution = $event->getExercise()->getSolution();
 
         if (!$solution->hasComposerFile()) {
             return;
         }
 
-        //prepare composer deps
-        //only install if composer.lock file not available
+        $this->runComposerInstallIn(
+            $event->context->getExecutionContext()->referenceEnvironment->workingDirectory
+        );
+    }
 
-        if (!file_exists(sprintf('%s/vendor', $solution->getBaseDirectory()))) {
+    private function runComposerInstallIn(string $directory): void
+    {
+        //prepare composer deps
+        //only install if vendor folder not available
+        
+        if (!file_exists(sprintf('%s/vendor', $directory))) {
             $process = $this->processFactory->composer(
-                $solution->getBaseDirectory(),
+                $directory,
                 'install',
                 ['--no-interaction']
             );

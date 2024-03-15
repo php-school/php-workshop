@@ -17,6 +17,7 @@ use PhpSchool\PhpWorkshop\ExerciseRunner\RunnerManager;
 use PhpSchool\PhpWorkshop\Listener\PrepareSolutionListener;
 use PhpSchool\PhpWorkshop\Result\Cgi\CgiResult;
 use PhpSchool\PhpWorkshop\Result\Cli\CliResult;
+use PhpSchool\PhpWorkshop\Result\Cli\RequestFailure;
 use PhpSchool\PhpWorkshop\Result\Failure;
 use PhpSchool\PhpWorkshop\Result\FailureInterface;
 use PhpSchool\PhpWorkshop\Result\ResultGroupInterface;
@@ -60,7 +61,6 @@ abstract class WorkshopExerciseTest extends TestCase
     public function tearDown(): void
     {
         (new Filesystem())->remove(System::tempDir());
-        sleep(1);
     }
 
     /**

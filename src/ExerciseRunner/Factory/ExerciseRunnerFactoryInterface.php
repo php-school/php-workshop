@@ -6,6 +6,8 @@ namespace PhpSchool\PhpWorkshop\ExerciseRunner\Factory;
 
 use PhpSchool\PhpWorkshop\CommandDefinition;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
+use PhpSchool\PhpWorkshop\ExerciseRunner\Context\ExecutionContext;
+use PhpSchool\PhpWorkshop\ExerciseRunner\Context\RunnerContext;
 use PhpSchool\PhpWorkshop\ExerciseRunner\ExerciseRunnerInterface;
 
 /**
@@ -35,4 +37,6 @@ interface ExerciseRunnerFactoryInterface
      * @return ExerciseRunnerInterface
      */
     public function create(ExerciseInterface $exercise): ExerciseRunnerInterface;
+
+    public function wrapContext(ExecutionContext $context): RunnerContext;
 }

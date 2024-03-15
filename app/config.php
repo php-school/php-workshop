@@ -212,11 +212,7 @@ return [
             $c->get('appName')
         );
 
-//        return new \PhpSchool\PhpWorkshop\Process\HostProcessFactory(
-//            (new \Symfony\Component\Process\ExecutableFinder())->find('php'),
-//            (new \Symfony\Component\Process\ExecutableFinder())->find('php-cgi'),
-//            '/usr/local/bin/composer',
-//        );
+        return new \PhpSchool\PhpWorkshop\Process\HostProcessFactory();
     },
 
     //commands
@@ -484,13 +480,13 @@ return [
             ],
         ],
         'prepare-solution' => [
-            'cli.verify.start' => [
+            'cli.verify.reference-execute.pre' => [
                 containerListener(PrepareSolutionListener::class),
             ],
             'cli.run.start' => [
                 containerListener(PrepareSolutionListener::class),
             ],
-            'cgi.verify.start' => [
+            'cgi.verify.reference-execute.pre' => [
                 containerListener(PrepareSolutionListener::class),
             ],
             'cgi.run.start' => [

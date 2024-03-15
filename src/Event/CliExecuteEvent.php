@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace PhpSchool\PhpWorkshop\Event;
 
+use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
+use PhpSchool\PhpWorkshop\ExerciseRunner\CliExecutionContext;
+use PhpSchool\PhpWorkshop\ExerciseRunner\Context\CliContext;
+use PhpSchool\PhpWorkshop\ExerciseRunner\Environment;
 use PhpSchool\PhpWorkshop\Utils\ArrayObject;
 use PhpSchool\PhpWorkshop\Utils\Collection;
 
@@ -11,7 +15,7 @@ use PhpSchool\PhpWorkshop\Utils\Collection;
  * An event to represent events which occur throughout the verification and running process in
  * `\PhpSchool\PhpWorkshop\ExerciseRunner\CliRunner`.
  */
-class CliExecuteEvent extends Event
+class CliExecuteEvent extends ExerciseRunnerEvent
 {
     /**
      * @var Collection<int, string>
@@ -23,10 +27,10 @@ class CliExecuteEvent extends Event
      * @param Collection<int, string> $args The arguments that should be/have been passed to the program.
      * @param array<mixed> $parameters The event parameters.
      */
-    public function __construct(string $name, Collection $args, array $parameters = [])
+    public function __construct(string $name, CliContext $context, Collection $args, array $parameters = [])
     {
         $parameters['args'] = $args;
-        parent::__construct($name, $parameters);
+        parent::__construct($name, $context, $parameters);
         $this->args = $args;
     }
 

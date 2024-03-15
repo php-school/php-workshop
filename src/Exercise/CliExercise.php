@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace PhpSchool\PhpWorkshop\Exercise;
 
+use PhpSchool\PhpWorkshop\ExerciseRunner\CliExecutionContext;
+
 /**
  * This interface describes the additional methods a CLI type exercise should implement.
  */

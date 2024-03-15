@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace PhpSchool\PhpWorkshop\ExerciseRunner;
 
 use PhpSchool\PhpWorkshop\Exercise\CustomVerifyingExercise;
+use PhpSchool\PhpWorkshop\ExerciseRunner\Context\RunnerContext;
 use PhpSchool\PhpWorkshop\Input\Input;
 use PhpSchool\PhpWorkshop\Output\OutputInterface;
 use PhpSchool\PhpWorkshop\Result\ResultInterface;
@@ -54,7 +55,7 @@ class CustomVerifyingRunner implements ExerciseRunnerInterface
      * @param Input $input The command line arguments passed to the command.
      * @return ResultInterface The result of the check.
      */
-    public function verify(Input $input): ResultInterface
+    public function verify(RunnerContext $context): ResultInterface
     {
         return $this->exercise->verify();
     }
