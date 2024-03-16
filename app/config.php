@@ -109,6 +109,19 @@ use function PhpSchool\PhpWorkshop\Event\containerListener;
 
 return [
     'appName' => basename($_SERVER['argv'][0] ?? 'phpschool'),
+    'appName' => function (ContainerInterface $c) {
+        if (!isset($_SERVER['argv'][0])) {
+            return 'phpschool';
+        }
+
+        $name = basename($_SERVER['argv'][0]);
+
+        if ($name !== 'phpunit') {
+            return $name;
+        }
+
+        return 'phpschool';
+    },
     'phpschoolGlobalDir' => sprintf('%s/.php-school', getenv('HOME')),
     'currentWorkingDirectory' => function (ContainerInterface $c) {
         return getcwd();
@@ -187,10 +200,19 @@ return [
     //Exercise Runners
     RunnerManager::class => function (ContainerInterface $c) {
         $manager = new RunnerManager();
-        $manager->addFactory(new CliRunnerFactory($c->get(EventDispatcher::class)));
-        $manager->addFactory(new CgiRunnerFactory($c->get(EventDispatcher::class)));
+        $manager->addFactory(new CliRunnerFactory($c->get(EventDispatcher::class), $c->get(\PhpSchool\PhpWorkshop\Process\ProcessFactory::class)));
+        $manager->addFactory(new CgiRunnerFactory($c->get(EventDispatcher::class), $c->get(\PhpSchool\PhpWorkshop\Process\ProcessFactory::class)));
         $manager->addFactory(new CustomVerifyingRunnerFactory());
         return $manager;
+    },
+    \PhpSchool\PhpWorkshop\Process\ProcessFactory::class => function (ContainerInterface $c) {
+        return new \PhpSchool\PhpWorkshop\Process\DockerProcessFactory(
+            $c->get('basePath'),
+            (new \Symfony\Component\Process\ExecutableFinder())->find('docker'),
+            $c->get('appName')
+        );
+
+        return new \PhpSchool\PhpWorkshop\Process\HostProcessFactory();
     },
 
     //commands
@@ -249,7 +271,11 @@ return [
     InitialCodeListener::class => function (ContainerInterface $c) {
         return new InitialCodeListener($c->get('currentWorkingDirectory'), $c->get(LoggerInterface::class));
     },
-    PrepareSolutionListener::class => create(),
+    PrepareSolutionListener::class => function (ContainerInterface $c) {
+        return new PrepareSolutionListener(
+            $c->get(\PhpSchool\PhpWorkshop\Process\ProcessFactory::class)
+        );
+    },
     CodePatchListener::class => function (ContainerInterface $c) {
         return new CodePatchListener(
             $c->get(CodePatcher::class),
@@ -454,13 +480,13 @@ return [
             ],
         ],
         'prepare-solution' => [
-            'cli.verify.start' => [
+            'cli.verify.reference-execute.pre' => [
                 containerListener(PrepareSolutionListener::class),
             ],
             'cli.run.start' => [
                 containerListener(PrepareSolutionListener::class),
             ],
-            'cgi.verify.start' => [
+            'cgi.verify.reference-execute.pre' => [
                 containerListener(PrepareSolutionListener::class),
             ],
             'cgi.run.start' => [

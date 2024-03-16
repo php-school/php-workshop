@@ -5,6 +5,7 @@ namespace PhpSchool\PhpWorkshopTest\ExerciseRunner;
 use Colors\Color;
 use PhpSchool\PhpWorkshop\Check\CodeExistsCheck;
 use PhpSchool\PhpWorkshop\Listener\OutputRunInfoListener;
+use PhpSchool\PhpWorkshop\Process\HostProcessFactory;
 use PhpSchool\PhpWorkshop\Utils\RequestRenderer;
 use PhpSchool\Terminal\Terminal;
 use PhpSchool\PhpWorkshop\Check\CodeParseCheck;
@@ -47,7 +48,7 @@ class CliRunnerTest extends TestCase
     {
         $this->exercise = $this->createMock(CliExerciseInterface::class);
         $this->eventDispatcher = new EventDispatcher(new ResultAggregator());
-        $this->runner = new CliRunner($this->exercise, $this->eventDispatcher);
+        $this->runner = new CliRunner($this->exercise, $this->eventDispatcher, new HostProcessFactory());
 
         $this->exercise
             ->method('getType')
@@ -100,27 +101,6 @@ class CliRunnerTest extends TestCase
             ->expects($this->once())
             ->method('getArgs')
             ->willReturn([[1, 2, 3]]);
-
-        $this->assertInstanceOf(
-            CliResult::class,
-            $res = $this->runner->verify(new Input('app', ['program' => __DIR__ . '/../res/cli/user.php']))
-        );
-
-        $this->assertTrue($res->isSuccessful());
-    }
-
-    public function testSuccessWithSingleSetOfArgsForBC(): void
-    {
-        $solution = SingleFileSolution::fromFile(realpath(__DIR__ . '/../res/cli/solution.php'));
-        $this->exercise
-            ->expects($this->once())
-            ->method('getSolution')
-            ->willReturn($solution);
-
-        $this->exercise
-            ->expects($this->once())
-            ->method('getArgs')
-            ->willReturn([1, 2, 3]);
 
         $this->assertInstanceOf(
             CliResult::class,
@@ -249,7 +229,7 @@ class CliRunnerTest extends TestCase
         $this->exercise
             ->expects($this->once())
             ->method('getArgs')
-            ->willReturn([1, 2, 3]);
+            ->willReturn([[1, 2, 3]]);
 
         $this->assertInstanceOf(
             CliResult::class,

@@ -10,6 +10,8 @@ use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseType;
 use PhpSchool\PhpWorkshop\Exercise\ProvidesSolution;
 use PhpSchool\PhpWorkshop\ExerciseCheck\FileComparisonExerciseCheck;
+use PhpSchool\PhpWorkshop\ExerciseRunner\Context\ExecutionContext;
+use PhpSchool\PhpWorkshop\ExerciseRunner\Environment;
 use PhpSchool\PhpWorkshop\Input\Input;
 use PhpSchool\PhpWorkshop\Result\Failure;
 use PhpSchool\PhpWorkshop\Result\FileComparisonFailure;
@@ -38,17 +40,17 @@ class FileComparisonCheck implements SimpleCheckInterface
      * @param Input $input The command line arguments passed to the command.
      * @return ResultInterface The result of the check.
      */
-    public function check(ExerciseInterface $exercise, Input $input): ResultInterface
+    public function check(ExecutionContext $context): ResultInterface
     {
-        if (!$exercise instanceof FileComparisonExerciseCheck) {
+        if (!$context->exercise instanceof FileComparisonExerciseCheck) {
             throw new InvalidArgumentException();
         }
 
-        foreach ($exercise->getFilesToCompare() as $key => $file) {
+        foreach ($context->exercise->getFilesToCompare() as $key => $file) {
             [$options, $file] = $this->getOptionsAndFile($key, $file);
 
-            $studentFile = Path::join(dirname($input->getRequiredArgument('program')), $file);
-            $referenceFile = Path::join($exercise->getSolution()->getBaseDirectory(), $file);
+            $studentFile = Path::join(dirname($context->input->getRequiredArgument('program')), $file);
+            $referenceFile = Path::join($context->referenceEnvironment->workingDirectory, $file);
 
             if (!file_exists($referenceFile)) {
                 throw SolutionFileDoesNotExistException::fromExpectedFile($file);

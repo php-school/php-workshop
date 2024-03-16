@@ -11,6 +11,8 @@ use PhpParser\NodeFinder;
 use PhpParser\Parser;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseType;
+use PhpSchool\PhpWorkshop\ExerciseRunner\Context\ExecutionContext;
+use PhpSchool\PhpWorkshop\ExerciseRunner\Environment;
 use PhpSchool\PhpWorkshop\Input\Input;
 use PhpSchool\PhpWorkshop\Result\Failure;
 use PhpSchool\PhpWorkshop\Result\ResultInterface;
@@ -37,7 +39,7 @@ class CodeExistsCheck implements SimpleCheckInterface
      * Check solution provided contains code
      * Note: We don't care if it's valid code at this point
      */
-    public function check(ExerciseInterface $exercise, Input $input): ResultInterface
+    public function check(ExecutionContext $context): ResultInterface
     {
         $noopHandler = new class implements ErrorHandler {
             public function handleError(Error $error): void
@@ -45,7 +47,7 @@ class CodeExistsCheck implements SimpleCheckInterface
             }
         };
 
-        $code = (string) file_get_contents($input->getRequiredArgument('program'));
+        $code = (string) file_get_contents($context->input->getRequiredArgument('program'));
         $statements = $this->parser->parse($code, $noopHandler);
 
         $empty = null === $statements || empty($statements);

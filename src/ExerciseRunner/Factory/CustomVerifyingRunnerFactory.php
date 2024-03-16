@@ -8,6 +8,9 @@ use PhpSchool\PhpWorkshop\CommandDefinition;
 use PhpSchool\PhpWorkshop\Exercise\CustomVerifyingExercise;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseType;
+use PhpSchool\PhpWorkshop\ExerciseRunner\Context\CliContext;
+use PhpSchool\PhpWorkshop\ExerciseRunner\Context\ExecutionContext;
+use PhpSchool\PhpWorkshop\ExerciseRunner\Context\RunnerContext;
 use PhpSchool\PhpWorkshop\ExerciseRunner\CustomVerifyingRunner;
 use PhpSchool\PhpWorkshop\ExerciseRunner\ExerciseRunnerInterface;
 
@@ -50,5 +53,17 @@ class CustomVerifyingRunnerFactory implements ExerciseRunnerFactoryInterface
     public function create(ExerciseInterface $exercise): ExerciseRunnerInterface
     {
         return new CustomVerifyingRunner($exercise);
+    }
+    
+    public function wrapContext(ExecutionContext $context): RunnerContext
+    {
+        return new class ($context) implements RunnerContext {
+            public function __construct(private ExecutionContext $context) {}
+            
+            public function getExecutionContext(): ExecutionContext
+            {
+                return $this->context;
+            }
+        };
     }
 }

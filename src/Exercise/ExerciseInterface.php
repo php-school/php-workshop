@@ -5,6 +5,9 @@ declare(strict_types=1);
 namespace PhpSchool\PhpWorkshop\Exercise;
 
 use PhpSchool\PhpWorkshop\ExerciseDispatcher;
+use PhpSchool\PhpWorkshop\ExerciseRunner\Context\RunnerContext;
+use PhpSchool\PhpWorkshop\ExerciseRunner\Environment;
+use PhpSchool\PhpWorkshop\Input\Input;
 
 /**
  * This interface describes all of the methods an exercise
@@ -41,7 +44,7 @@ interface ExerciseInterface
      *
      * @param ExerciseDispatcher $dispatcher
      */
-    public function configure(ExerciseDispatcher $dispatcher): void;
+    public function configure(ExerciseDispatcher $dispatcher, RunnerContext $context): void;
 
     /**
      * A short description of the exercise.

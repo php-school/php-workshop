@@ -11,7 +11,11 @@ use PhpSchool\PhpWorkshop\Exercise\CliExercise;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseType;
 use PhpSchool\PhpWorkshop\ExerciseRunner\CliRunner;
+use PhpSchool\PhpWorkshop\ExerciseRunner\Context\CliContext;
+use PhpSchool\PhpWorkshop\ExerciseRunner\Context\ExecutionContext;
+use PhpSchool\PhpWorkshop\ExerciseRunner\Context\RunnerContext;
 use PhpSchool\PhpWorkshop\ExerciseRunner\ExerciseRunnerInterface;
+use PhpSchool\PhpWorkshop\Process\ProcessFactory;
 
 /**
  * Factory class for `CliRunner`
@@ -29,11 +33,17 @@ class CliRunnerFactory implements ExerciseRunnerFactoryInterface
     private $eventDispatcher;
 
     /**
+* @var ProcessFactory
+    */
+    private $processFactory;
+
+    /**
      * @param EventDispatcher $eventDispatcher
      */
-    public function __construct(EventDispatcher $eventDispatcher)
+    public function __construct(EventDispatcher $eventDispatcher, ProcessFactory $processFactory)
     {
         $this->eventDispatcher = $eventDispatcher;
+        $this->processFactory = $processFactory;
     }
 
     /**
@@ -65,6 +75,11 @@ class CliRunnerFactory implements ExerciseRunnerFactoryInterface
      */
     public function create(ExerciseInterface $exercise): ExerciseRunnerInterface
     {
-        return new CliRunner($exercise, $this->eventDispatcher);
+        return new CliRunner($exercise, $this->eventDispatcher, $this->processFactory);
+    }
+
+    public function wrapContext(ExecutionContext $context): RunnerContext
+    {
+        return new CliContext($context);
     }
 }

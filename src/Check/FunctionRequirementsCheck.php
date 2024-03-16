@@ -12,6 +12,8 @@ use PhpParser\Parser;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseType;
 use PhpSchool\PhpWorkshop\ExerciseCheck\FunctionRequirementsExerciseCheck;
+use PhpSchool\PhpWorkshop\ExerciseRunner\Context\ExecutionContext;
+use PhpSchool\PhpWorkshop\ExerciseRunner\Environment;
 use PhpSchool\PhpWorkshop\Input\Input;
 use PhpSchool\PhpWorkshop\NodeVisitor\FunctionVisitor;
 use PhpSchool\PhpWorkshop\Result\Failure;
@@ -55,16 +57,16 @@ class FunctionRequirementsCheck implements SimpleCheckInterface
      * @param Input $input The command line arguments passed to the command.
      * @return ResultInterface The result of the check.
      */
-    public function check(ExerciseInterface $exercise, Input $input): ResultInterface
+    public function check(ExecutionContext $context): ResultInterface
     {
-        if (!$exercise instanceof FunctionRequirementsExerciseCheck) {
+        if (!$context->exercise instanceof FunctionRequirementsExerciseCheck) {
             throw new InvalidArgumentException();
         }
 
-        $requiredFunctions  = $exercise->getRequiredFunctions();
-        $bannedFunctions    = $exercise->getBannedFunctions();
+        $requiredFunctions  = $context->exercise->getRequiredFunctions();
+        $bannedFunctions    = $context->exercise->getBannedFunctions();
 
-        $code = (string) file_get_contents($input->getRequiredArgument('program'));
+        $code = (string) file_get_contents($context->input->getRequiredArgument('program'));
 
         try {
             $ast = $this->parser->parse($code) ?? [];

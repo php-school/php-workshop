@@ -8,6 +8,8 @@ use PhpParser\Error;
 use PhpParser\Parser;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseType;
+use PhpSchool\PhpWorkshop\ExerciseRunner\Context\ExecutionContext;
+use PhpSchool\PhpWorkshop\ExerciseRunner\Environment;
 use PhpSchool\PhpWorkshop\Input\Input;
 use PhpSchool\PhpWorkshop\Result\Failure;
 use PhpSchool\PhpWorkshop\Result\ResultInterface;
@@ -49,14 +51,14 @@ class CodeParseCheck implements SimpleCheckInterface
      * @param Input $input The command line arguments passed to the command.
      * @return ResultInterface The result of the check.
      */
-    public function check(ExerciseInterface $exercise, Input $input): ResultInterface
+    public function check(ExecutionContext $context): ResultInterface
     {
-        $code = (string) file_get_contents($input->getRequiredArgument('program'));
+        $code = (string) file_get_contents($context->input->getRequiredArgument('program'));
 
         try {
             $this->parser->parse($code);
         } catch (Error $e) {
-            return Failure::fromCheckAndCodeParseFailure($this, $e, $input->getRequiredArgument('program'));
+            return Failure::fromCheckAndCodeParseFailure($this, $e, $context->input->getRequiredArgument('program'));
         }
 
         return Success::fromCheck($this);

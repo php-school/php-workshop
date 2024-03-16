@@ -4,13 +4,14 @@ declare(strict_types=1);
 
 namespace PhpSchool\PhpWorkshop\Event;
 
+use PhpSchool\PhpWorkshop\ExerciseRunner\Context\CgiContext;
 use Psr\Http\Message\RequestInterface;
 
 /**
  * An event to represent events which occur throughout the verification and running process in
  * `\PhpSchool\PhpWorkshop\ExerciseRunner\CgiRunner`.
  */
-class CgiExecuteEvent extends Event
+class CgiExecuteEvent extends ExerciseRunnerEvent
 {
     /**
      * @var RequestInterface
@@ -22,10 +23,10 @@ class CgiExecuteEvent extends Event
      * @param RequestInterface $request The request that will be performed.
      * @param array<mixed> $parameters The event parameters.
      */
-    public function __construct(string $name, RequestInterface $request, array $parameters = [])
+    public function __construct(string $name, CgiContext $context, RequestInterface $request, array $parameters = [])
     {
         $parameters['request'] = $request;
-        parent::__construct($name, $parameters);
+        parent::__construct($name, $context, $parameters);
         $this->request = $request;
     }
 

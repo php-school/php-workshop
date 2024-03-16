@@ -9,6 +9,8 @@ use PhpSchool\PhpWorkshop\ComposerUtil\LockFileParser;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseType;
 use PhpSchool\PhpWorkshop\ExerciseCheck\ComposerExerciseCheck;
+use PhpSchool\PhpWorkshop\ExerciseRunner\Context\ExecutionContext;
+use PhpSchool\PhpWorkshop\ExerciseRunner\Environment;
 use PhpSchool\PhpWorkshop\Input\Input;
 use PhpSchool\PhpWorkshop\Result\ComposerFailure;
 use PhpSchool\PhpWorkshop\Result\Failure;
@@ -39,26 +41,26 @@ class ComposerCheck implements SimpleCheckInterface
      * @return ResultInterface The result of the check.
      * @noinspection SpellCheckingInspection
      */
-    public function check(ExerciseInterface $exercise, Input $input): ResultInterface
+    public function check(ExecutionContext $context): ResultInterface
     {
-        if (!$exercise instanceof ComposerExerciseCheck) {
+        if (!$context->exercise instanceof ComposerExerciseCheck) {
             throw new InvalidArgumentException();
         }
 
-        if (!file_exists(sprintf('%s/composer.json', dirname($input->getRequiredArgument('program'))))) {
+        if (!file_exists(sprintf('%s/composer.json', dirname($context->input->getRequiredArgument('program'))))) {
             return ComposerFailure::fromCheckAndMissingFileOrFolder($this, 'composer.json');
         }
 
-        if (!file_exists(sprintf('%s/composer.lock', dirname($input->getRequiredArgument('program'))))) {
+        if (!file_exists(sprintf('%s/composer.lock', dirname($context->input->getRequiredArgument('program'))))) {
             return ComposerFailure::fromCheckAndMissingFileOrFolder($this, 'composer.lock');
         }
 
-        if (!file_exists(sprintf('%s/vendor', dirname($input->getRequiredArgument('program'))))) {
+        if (!file_exists(sprintf('%s/vendor', dirname($context->input->getRequiredArgument('program'))))) {
             return ComposerFailure::fromCheckAndMissingFileOrFolder($this, 'vendor');
         }
 
-        $lockFile = new LockFileParser(sprintf('%s/composer.lock', dirname($input->getRequiredArgument('program'))));
-        $missingPackages = array_filter($exercise->getRequiredPackages(), function ($package) use ($lockFile) {
+        $lockFile = new LockFileParser(sprintf('%s/composer.lock', dirname($context->input->getRequiredArgument('program'))));
+        $missingPackages = array_filter($context->exercise->getRequiredPackages(), function ($package) use ($lockFile) {
             return !$lockFile->hasInstalledPackage($package);
         });
 

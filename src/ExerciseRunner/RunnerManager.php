@@ -7,6 +7,8 @@ namespace PhpSchool\PhpWorkshop\ExerciseRunner;
 use PhpSchool\PhpWorkshop\CommandDefinition;
 use PhpSchool\PhpWorkshop\Exception\InvalidArgumentException;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
+use PhpSchool\PhpWorkshop\ExerciseRunner\Context\ExecutionContext;
+use PhpSchool\PhpWorkshop\ExerciseRunner\Context\RunnerContext;
 use PhpSchool\PhpWorkshop\ExerciseRunner\Factory\ExerciseRunnerFactoryInterface;
 
 /**
@@ -43,6 +45,11 @@ class RunnerManager
     public function getRunner(ExerciseInterface $exercise): ExerciseRunnerInterface
     {
         return $this->getFactory($exercise)->create($exercise);
+    }
+
+    public function wrapContext(ExecutionContext $executionContext): RunnerContext
+    {
+        return $this->getFactory($executionContext->exercise)->wrapContext($executionContext);
     }
 
     /**

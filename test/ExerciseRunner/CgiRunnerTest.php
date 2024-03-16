@@ -6,6 +6,7 @@ use Colors\Color;
 use GuzzleHttp\Psr7\Request;
 use PhpSchool\PhpWorkshop\Check\CodeExistsCheck;
 use PhpSchool\PhpWorkshop\Listener\OutputRunInfoListener;
+use PhpSchool\PhpWorkshop\Process\HostProcessFactory;
 use PhpSchool\Terminal\Terminal;
 use PhpSchool\PhpWorkshop\Check\CodeParseCheck;
 use PhpSchool\PhpWorkshop\Check\FileExistsCheck;
@@ -47,7 +48,7 @@ class CgiRunnerTest extends TestCase
     {
         $this->exercise = $this->createMock(CgiExerciseInterface::class);
         $this->eventDispatcher = new EventDispatcher(new ResultAggregator());
-        $this->runner = new CgiRunner($this->exercise, $this->eventDispatcher);
+        $this->runner = new CgiRunner($this->exercise, $this->eventDispatcher, new HostProcessFactory());
 
         $this->exercise
             ->method('getType')

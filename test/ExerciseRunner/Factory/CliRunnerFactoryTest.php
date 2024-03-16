@@ -8,6 +8,7 @@ use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseType;
 use PhpSchool\PhpWorkshop\ExerciseRunner\CliRunner;
 use PhpSchool\PhpWorkshop\ExerciseRunner\Factory\CliRunnerFactory;
+use PhpSchool\PhpWorkshop\Process\HostProcessFactory;
 use PhpSchool\PhpWorkshopTest\Asset\CliExerciseImpl;
 use PHPUnit\Framework\TestCase;
 
@@ -26,7 +27,7 @@ class CliRunnerFactoryTest extends TestCase
     public function setUp(): void
     {
         $this->eventDispatcher = $this->createMock(EventDispatcher::class);
-        $this->factory = new CliRunnerFactory($this->eventDispatcher);
+        $this->factory = new CliRunnerFactory($this->eventDispatcher, new HostProcessFactory());
     }
 
     public function testSupports(): void

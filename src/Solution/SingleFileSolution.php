@@ -38,7 +38,7 @@ class SingleFileSolution implements SolutionInterface
      */
     public static function fromFile(string $file): self
     {
-        return new self(InTempSolutionMapper::mapFile($file));
+        return new self($file);
     }
 
     /**

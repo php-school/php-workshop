@@ -5,9 +5,16 @@ declare(strict_types=1);
 namespace PhpSchool\PhpWorkshop\Exercise;
 
 use PhpSchool\PhpWorkshop\ExerciseDispatcher;
+use PhpSchool\PhpWorkshop\ExerciseRunner\CliEnvironment;
+use PhpSchool\PhpWorkshop\ExerciseRunner\CliExecutionContext;
+use PhpSchool\PhpWorkshop\ExerciseRunner\Context\CliContext;
+use PhpSchool\PhpWorkshop\ExerciseRunner\Context\RunnerContext;
+use PhpSchool\PhpWorkshop\ExerciseRunner\Environment;
+use PhpSchool\PhpWorkshop\Input\Input;
 use PhpSchool\PhpWorkshop\Solution\SingleFileSolution;
 use PhpSchool\PhpWorkshop\Solution\SolutionInterface;
 use ReflectionClass;
+use function Sodium\randombytes_uniform;
 
 /**
  * This abstract class implements many of the methods described in `PhpSchool\PhpWorkshop\Exercise\ExerciseInterface`.
@@ -83,7 +90,12 @@ abstract class AbstractExercise
      *
      * @param ExerciseDispatcher $dispatcher
      */
-    public function configure(ExerciseDispatcher $dispatcher): void
+    public function configure(ExerciseDispatcher $dispatcher, RunnerContext $context): void
     {
+    }
+    
+    public function getArgs(): array
+    {
+        return [];
     }
 }

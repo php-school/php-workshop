@@ -7,68 +7,61 @@ namespace PhpSchool\PhpWorkshop\Listener;
 use PhpSchool\PhpWorkshop\Event\ExerciseRunnerEvent;
 use PhpSchool\PhpWorkshop\Exercise\ProvidesSolution;
 use PhpSchool\PhpWorkshop\Exception\RuntimeException;
+use PhpSchool\PhpWorkshop\Process\ProcessFactory;
+use PhpSchool\PhpWorkshop\Utils\ArrayObject;
+use Symfony\Component\Process\ExecutableFinder;
 use Symfony\Component\Process\Process;
+use PhpSchool\PhpWorkshop\Event\CliExecuteEvent;
 
 /**
  * Listener to install composer deps for an exercise solution
  */
 class PrepareSolutionListener
 {
-    /**
-     * Locations for composer executable
-     *
-     * @var array<string>
-     */
-    private static $composerLocations = [
-        'composer',
-        'composer.phar',
-        '/usr/local/bin/composer',
-        __DIR__ . '/../../vendor/bin/composer',
-    ];
+    private ProcessFactory $processFactory;
+
+    public function __construct(ProcessFactory $processFactory)
+    {
+        $this->processFactory = $processFactory;
+    }
 
     /**
      * @param ExerciseRunnerEvent $event
      */
     public function __invoke(ExerciseRunnerEvent $event): void
     {
-        $exercise = $event->getExercise();
-
-        if (!$exercise instanceof ProvidesSolution) {
+        if (!$event->getExercise() instanceof ProvidesSolution) {
             return;
         }
 
-        $solution = $exercise->getSolution();
+        $solution = $event->getExercise()->getSolution();
 
-        if ($solution->hasComposerFile()) {
-            //prepare composer deps
-            //only install if composer.lock file not available
-
-            if (!file_exists(sprintf('%s/vendor', $solution->getBaseDirectory()))) {
-                $process = new Process(
-                    [self::locateComposer(), 'install', '--no-interaction'],
-                    $solution->getBaseDirectory()
-                );
-
-                try {
-                    $process->mustRun();
-                } catch (\Symfony\Component\Process\Exception\RuntimeException $e) {
-                    throw new RuntimeException('Composer dependencies could not be installed', 0, $e);
-                }
-            }
+        if (!$solution->hasComposerFile()) {
+            return;
         }
+
+        $this->runComposerInstallIn(
+            $event->context->getExecutionContext()->referenceEnvironment->workingDirectory
+        );
     }
 
-    /**
-     * @return string
-     */
-    public static function locateComposer(): string
+    private function runComposerInstallIn(string $directory): void
     {
-        foreach (self::$composerLocations as $location) {
-            if (file_exists($location) && is_executable($location)) {
-                return $location;
+        //prepare composer deps
+        //only install if vendor folder not available
+        
+        if (!file_exists(sprintf('%s/vendor', $directory))) {
+            $process = $this->processFactory->composer(
+                $directory,
+                'install',
+                ['--no-interaction']
+            );
+
+            try {
+                $process->mustRun();
+            } catch (\Symfony\Component\Process\Exception\RuntimeException $e) {
+                throw new RuntimeException('Composer dependencies could not be installed', 0, $e);
             }
         }
-
-        throw new RuntimeException('Composer could not be located on the system');
     }
 }
