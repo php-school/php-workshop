@@ -5,6 +5,7 @@ namespace PhpSchool\PhpWorkshopTest\Listener;
 use PhpSchool\PhpWorkshop\Event\ContainerListenerHelper;
 use PhpSchool\PhpWorkshop\Event\Event;
 use PhpSchool\PhpWorkshop\Exception\InvalidArgumentException;
+use PhpSchool\PhpWorkshop\ExerciseRunner\Context\TestContext;
 use PhpSchool\PhpWorkshop\Listener\LazyContainerListener;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;

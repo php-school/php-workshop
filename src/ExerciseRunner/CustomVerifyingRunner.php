@@ -52,7 +52,7 @@ class CustomVerifyingRunner implements ExerciseRunnerInterface
      * Delegate to the exercise for verifying. Verifying could mean checking that a program was installed or that some
      * other arbitrary task was performed.
      *
-     * @param Input $input The command line arguments passed to the command.
+     * @param RunnerContext $context The runner context.
      * @return ResultInterface The result of the check.
      */
     public function verify(RunnerContext $context): ResultInterface
@@ -64,11 +64,11 @@ class CustomVerifyingRunner implements ExerciseRunnerInterface
      * Running a custom verifying exercise does nothing. There is no program required, therefore there is nothing
      * to run.
      *
-     * @param Input $input The command line arguments passed to the command.
+     * @param RunnerContext $context The command line arguments passed to the command.
      * @param OutputInterface $output A wrapper around STDOUT.
      * @return bool If the solution was successfully executed, eg. exit code was 0.
      */
-    public function run(Input $input, OutputInterface $output): bool
+    public function run(RunnerContext $context, OutputInterface $output): bool
     {
         $message  = 'Nothing to run here. This exercise does not require a code solution, ';
         $message .= 'so there is nothing to execute.';

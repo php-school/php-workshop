@@ -6,12 +6,14 @@ use DI\ContainerBuilder;
 use PDO;
 use PhpSchool\PhpWorkshop\Check\CheckRepository;
 use PhpSchool\PhpWorkshop\Check\DatabaseCheck;
+use PhpSchool\PhpWorkshop\Check\SimpleCheckInterface;
 use PhpSchool\PhpWorkshop\Event\EventDispatcher;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseType;
 use PhpSchool\PhpWorkshop\ExerciseCheck\DatabaseExerciseCheck;
 use PhpSchool\PhpWorkshop\ExerciseDispatcher;
 use PhpSchool\PhpWorkshop\ExerciseRunner\CliRunner;
+use PhpSchool\PhpWorkshop\ExerciseRunner\Context\CliContext;
 use PhpSchool\PhpWorkshop\ExerciseRunner\RunnerManager;
 use PhpSchool\PhpWorkshop\Input\Input;
 use PhpSchool\PhpWorkshop\Output\OutputInterface;
@@ -19,27 +21,17 @@ use PhpSchool\PhpWorkshop\Process\HostProcessFactory;
 use PhpSchool\PhpWorkshop\ResultAggregator;
 use PhpSchool\PhpWorkshop\Solution\SingleFileSolution;
 use PhpSchool\PhpWorkshopTest\Asset\DatabaseExerciseInterface;
+use PhpSchool\PhpWorkshopTest\BaseTest;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use ReflectionProperty;
 use RuntimeException;
 
-class DatabaseCheckTest extends TestCase
+class DatabaseCheckTest extends BaseTest
 {
-    /**
-     * @var DatabaseCheck
-     */
-    private $check;
-
-    /**
-     * @var CheckRepository
-     */
-    private $checkRepository;
-
-    /**
-     * @var ExerciseInterface
-     */
-    private $exercise;
+    private DatabaseCheck $check;
+    private CheckRepository $checkRepository;
+    private ExerciseInterface $exercise;
 
     /**
      * @var string
@@ -61,7 +53,10 @@ class DatabaseCheckTest extends TestCase
             '%s/php-school/PhpSchool_PhpWorkshop_Check_DatabaseCheck',
             str_replace('\\', '/', realpath(sys_get_temp_dir()))
         );
+    }
 
+    public function testCheckMeta(): void
+    {
         $this->assertEquals('Database Verification Check', $this->check->getName());
         $this->assertEquals(DatabaseExerciseCheck::class, $this->check->getExerciseInterface());
     }
@@ -82,6 +77,11 @@ class DatabaseCheckTest extends TestCase
             ->expects($this->once())
             ->method('getRunner')
             ->willReturn($runner);
+
+        $runnerManager
+            ->expects($this->once())
+            ->method('wrapContext')
+            ->willReturnCallback(fn ($context) => new CliContext($context));
 
         return $runnerManager;
     }
@@ -121,7 +121,6 @@ class DatabaseCheckTest extends TestCase
         $this->check = new DatabaseCheck();
         $solution = SingleFileSolution::fromFile(realpath(__DIR__ . '/../res/database/solution.php'));
         $this->exercise
-            ->expects($this->once())
             ->method('getSolution')
             ->willReturn($solution);
 
@@ -154,6 +153,7 @@ class DatabaseCheckTest extends TestCase
             $this->checkRepository
         );
 
+
         $dispatcher->verify($this->exercise, new Input('app', ['program' => __DIR__ . '/../res/database/user.php']));
         $this->assertTrue($results->isSuccessful());
     }
@@ -162,7 +162,6 @@ class DatabaseCheckTest extends TestCase
     {
         $solution = SingleFileSolution::fromFile(realpath(__DIR__ . '/../res/database/solution.php'));
         $this->exercise
-            ->expects($this->once())
             ->method('getSolution')
             ->willReturn($solution);
 
@@ -238,7 +237,6 @@ class DatabaseCheckTest extends TestCase
         $solution = SingleFileSolution::fromFile(realpath(__DIR__ . '/../res/database/solution.php'));
 
         $this->exercise
-            ->expects($this->once())
             ->method('getSolution')
             ->willReturn($solution);
 
@@ -283,7 +281,6 @@ class DatabaseCheckTest extends TestCase
         $solution = SingleFileSolution::fromFile(realpath(__DIR__ . '/../res/database/solution-alter-db.php'));
 
         $this->exercise
-            ->expects($this->once())
             ->method('getSolution')
             ->willReturn($solution);
 

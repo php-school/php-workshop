@@ -110,11 +110,6 @@ class CgiRunner implements ExerciseRunnerInterface
         return self::$requiredChecks;
     }
 
-    /**
-     * @param RequestInterface $request
-     * @param string $fileName
-     * @return CgiResultInterface
-     */
     private function checkRequest(CgiContext $context, RequestInterface $request): CgiResultInterface
     {
         $this->setupEnvironment($context->getExecutionContext(), $this->exercise->getSolution());
@@ -132,23 +127,29 @@ class CgiRunner implements ExerciseRunnerInterface
                 'reference'
             );
         } catch (CodeExecutionException $e) {
-            $this->eventDispatcher->dispatch(new Event('cgi.verify.reference-execute.fail', $context, ['exception' => $e]));
+            $this->eventDispatcher->dispatch(
+                new CgiExecuteEvent('cgi.verify.reference-execute.fail', $context, $request, ['exception' => $e])
+            );
             throw new SolutionExecutionException($e->getMessage());
         }
 
         $this->setupStudentEnvironment($context->getExecutionContext());
         try {
             /** @var CgiExecuteEvent $event */
-            $event = $this->eventDispatcher->dispatch(new CgiExecuteEvent('cgi.verify.student-execute.pre', $context, $request));
+            $event = $this->eventDispatcher->dispatch(
+                new CgiExecuteEvent('cgi.verify.student-execute.pre', $context, $request)
+            );
             $userResponse = $this->executePhpFile(
                 $context->getExecutionContext()->studentEnvironment,
                 $context,
-                $context->getExecutionContext()->input->getRequiredArgument('program'),
+                basename($context->getExecutionContext()->getStudentSolutionFilePath()),
                 $event->getRequest(),
                 'student'
             );
         } catch (CodeExecutionException $e) {
-            $this->eventDispatcher->dispatch(new Event('cgi.verify.student-execute.fail', $context, ['exception' => $e]));
+            $this->eventDispatcher->dispatch(
+                new CgiExecuteEvent('cgi.verify.student-execute.fail', $context, $request, ['exception' => $e])
+            );
             return GenericFailure::fromRequestAndCodeExecutionFailure($request, $e);
         } finally {
             $this->cleanupStudentEnvironment($context->getExecutionContext());
@@ -173,7 +174,8 @@ class CgiRunner implements ExerciseRunnerInterface
         foreach ($solution->getFiles() as $file) {
             $filesystem->copy(
                 $file->getAbsolutePath(),
-                Path::join($context->referenceEnvironment->workingDirectory, $file->getRelativePath()))
+                Path::join($context->referenceEnvironment->workingDirectory, $file->getRelativePath())
+            )
             ;
         }
 
@@ -223,12 +225,19 @@ class CgiRunner implements ExerciseRunnerInterface
      * @param string $type
      * @return ResponseInterface
      */
-    private function executePhpFile(Environment $environment, CgiContext $context, string $fileName, RequestInterface $request, string $type): ResponseInterface
-    {
+    private function executePhpFile(
+        Environment $environment,
+        CgiContext $context,
+        string $fileName,
+        RequestInterface $request,
+        string $type
+    ): ResponseInterface {
         $process = $this->getProcess($environment, basename($fileName), $request);
 
         $process->start();
-        $this->eventDispatcher->dispatch(new CgiExecuteEvent(sprintf('cgi.verify.%s.executing', $type), $context, $request));
+        $this->eventDispatcher->dispatch(
+            new CgiExecuteEvent(sprintf('cgi.verify.%s.executing', $type), $context, $request)
+        );
         $process->wait();
 
         if (!$process->isSuccessful()) {
@@ -301,7 +310,7 @@ class CgiRunner implements ExerciseRunnerInterface
      * * cgi.verify.student.executing
      * * cgi.verify.student-execute.fail (if the student's solution fails to execute)
      *
-     * @param Input $input The command line arguments passed to the command.
+     * @param CgiContext $context The runner context.
      * @return CgiResult The result of the check.
      */
     public function verify(RunnerContext $context): ResultInterface
@@ -332,24 +341,28 @@ class CgiRunner implements ExerciseRunnerInterface
      * * cgi.run.student-execute.pre
      * * cgi.run.student.executing
      *
-     * @param Input $input The command line arguments passed to the command.
+     * @param CgiContext $context
      * @param OutputInterface $output A wrapper around STDOUT.
      * @return bool If the solution was successfully executed, eg. exit code was 0.
      */
-    public function run(Input $input, OutputInterface $output): bool
+    public function run(RunnerContext $context, OutputInterface $output): bool
     {
-        $this->eventDispatcher->dispatch(new ExerciseRunnerEvent('cgi.run.start', $this->exercise, $input));
+        $this->eventDispatcher->dispatch(new ExerciseRunnerEvent('cgi.run.start', $context));
         $success = true;
         foreach ($this->exercise->getRequests() as $i => $request) {
             /** @var CgiExecuteEvent $event */
             $event = $this->eventDispatcher->dispatch(
-                new CgiExecuteEvent('cgi.run.student-execute.pre', $request)
+                new CgiExecuteEvent('cgi.run.student-execute.pre', $context, $request)
             );
-            $process = $this->getProcess($input->getRequiredArgument('program'), $event->getRequest());
+            $process = $this->getProcess(
+                $context->getExecutionContext()->studentEnvironment,
+                basename($context->getExecutionContext()->getStudentSolutionFilePath()),
+                $event->getRequest()
+            );
 
             $process->start();
             $this->eventDispatcher->dispatch(
-                new CgiExecuteEvent('cgi.run.student.executing', $request, ['output' => $output])
+                new CgiExecuteEvent('cgi.run.student.executing', $context, $request, ['output' => $output])
             );
             $process->wait(function ($outputType, $outputBuffer) use ($output) {
                 $output->write($outputBuffer);
@@ -363,10 +376,10 @@ class CgiRunner implements ExerciseRunnerInterface
             $output->lineBreak();
 
             $this->eventDispatcher->dispatch(
-                new CgiExecuteEvent('cgi.run.student-execute.post', $request)
+                new CgiExecuteEvent('cgi.run.student-execute.post', $context, $request)
             );
         }
-        $this->eventDispatcher->dispatch(new ExerciseRunnerEvent('cgi.run.finish', $this->exercise, $input));
+        $this->eventDispatcher->dispatch(new ExerciseRunnerEvent('cgi.run.finish', $context));
         return $success;
     }
 }

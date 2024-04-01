@@ -20,6 +20,7 @@ use PhpSchool\PhpWorkshop\Result\Failure;
 use PhpSchool\PhpWorkshop\Result\FunctionRequirementsFailure;
 use PhpSchool\PhpWorkshop\Result\ResultInterface;
 use PhpSchool\PhpWorkshop\Result\Success;
+use PhpSchool\PhpWorkshop\Utils\Path;
 
 /**
  * This check verifies that the student's solution contains usages of some required functions
@@ -27,14 +28,8 @@ use PhpSchool\PhpWorkshop\Result\Success;
  */
 class FunctionRequirementsCheck implements SimpleCheckInterface
 {
-    /**
-     * @var Parser
-     */
-    private $parser;
+    private Parser $parser;
 
-    /**
-     * @param Parser $parser
-     */
     public function __construct(Parser $parser)
     {
         $this->parser = $parser;
@@ -53,8 +48,7 @@ class FunctionRequirementsCheck implements SimpleCheckInterface
      * required functions and that banned functions are not used. The requirements
      * are pulled from the exercise.
      *
-     * @param ExerciseInterface $exercise The exercise to check against.
-     * @param Input $input The command line arguments passed to the command.
+     * @param ExecutionContext $context The current execution context.
      * @return ResultInterface The result of the check.
      */
     public function check(ExecutionContext $context): ResultInterface
@@ -66,12 +60,12 @@ class FunctionRequirementsCheck implements SimpleCheckInterface
         $requiredFunctions  = $context->exercise->getRequiredFunctions();
         $bannedFunctions    = $context->exercise->getBannedFunctions();
 
-        $code = (string) file_get_contents($context->input->getRequiredArgument('program'));
+        $code = (string) file_get_contents($context->getStudentSolutionFilePath());
 
         try {
             $ast = $this->parser->parse($code) ?? [];
         } catch (Error $e) {
-            return Failure::fromCheckAndCodeParseFailure($this, $e, $input->getRequiredArgument('program'));
+            return Failure::fromCheckAndCodeParseFailure($this, $e, $context->getStudentSolutionFilePath());
         }
 
         $visitor    = new FunctionVisitor($requiredFunctions, $bannedFunctions);

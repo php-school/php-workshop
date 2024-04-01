@@ -12,6 +12,7 @@ use PhpSchool\PhpWorkshop\Input\Input;
 use PhpSchool\PhpWorkshop\Result\Failure;
 use PhpSchool\PhpWorkshop\Result\ResultInterface;
 use PhpSchool\PhpWorkshop\Result\Success;
+use PhpSchool\PhpWorkshop\Utils\Path;
 
 /**
  * This check verifies that the student's solution file actually exists.
@@ -29,19 +30,22 @@ class FileExistsCheck implements SimpleCheckInterface
     /**
      * Simply check that the file exists.
      *
-     * @param ExerciseInterface $exercise The exercise to check against.
-     * @param Input $input The command line arguments passed to the command.
+     * @param ExecutionContext $context The current execution context.
      * @return ResultInterface The result of the check.
      */
     public function check(ExecutionContext $context): ResultInterface
     {
-        if (file_exists($context->input->getRequiredArgument('program'))) {
+        if (!$context->hasStudentSolution()) {
+            return Success::fromCheck($this);
+        }
+
+        if (file_exists($context->getStudentSolutionFilePath())) {
             return Success::fromCheck($this);
         }
 
         return Failure::fromCheckAndReason(
             $this,
-            sprintf('File: "%s" does not exist', $context->input->getRequiredArgument('program'))
+            sprintf('File: "%s" does not exist', $context->getStudentSolutionFilePath())
         );
     }
 

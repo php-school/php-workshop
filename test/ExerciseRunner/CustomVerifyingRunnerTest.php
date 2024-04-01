@@ -3,6 +3,7 @@
 namespace PhpSchool\PhpWorkshopTest\ExerciseRunner;
 
 use Colors\Color;
+use PhpSchool\PhpWorkshop\ExerciseRunner\Context\RunnerContext;
 use PhpSchool\Terminal\Terminal;
 use PhpSchool\PhpWorkshop\ExerciseRunner\CustomVerifyingRunner;
 use PhpSchool\PhpWorkshop\Input\Input;
@@ -46,11 +47,17 @@ class CustomVerifyingRunnerTest extends TestCase
 
         $this->expectOutputString($exp);
 
-        $this->runner->run(new Input('app'), $output);
+        $context = $this->createMock(RunnerContext::class);
+
+        $this->runner->run($context, $output);
     }
 
     public function testVerifyProxiesToExercise(): void
     {
-        self::assertEquals($this->exercise->verify(), $this->runner->verify(new Input('app')));
+        $context = $this->createMock(RunnerContext::class);
+
+        $result = $this->runner->verify($context);
+
+        self::assertEquals($this->exercise->verify(), $result);
     }
 }

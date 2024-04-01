@@ -8,7 +8,6 @@ class CgiContext implements RunnerContext
 {
     public function __construct(public ExecutionContext $context)
     {
-
     }
 
     public function addFile(string $relativeFileName, string $content): void

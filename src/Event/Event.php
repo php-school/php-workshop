@@ -28,7 +28,7 @@ class Event implements EventInterface
      * @param string $name The event name.
      * @param array<mixed> $parameters The event parameters.
      */
-    public function __construct(string $name, public RunnerContext $context, array $parameters = [])
+    public function __construct(string $name, array $parameters = [])
     {
         $this->name = $name;
         $this->parameters = $parameters;

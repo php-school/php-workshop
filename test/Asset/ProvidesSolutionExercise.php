@@ -8,6 +8,7 @@ use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseType;
 use PhpSchool\PhpWorkshop\Exercise\ProvidesSolution;
 use PhpSchool\PhpWorkshop\ExerciseDispatcher;
+use PhpSchool\PhpWorkshop\ExerciseRunner\Context\RunnerContext;
 use PhpSchool\PhpWorkshop\Solution\SingleFileSolution;
 use PhpSchool\PhpWorkshop\Solution\SolutionInterface;
 
@@ -28,7 +29,7 @@ class ProvidesSolutionExercise implements ExerciseInterface, ProvidesSolution
         // TODO: Implement getProblem() method.
     }
 
-    public function configure(ExerciseDispatcher $dispatcher): void
+    public function configure(ExerciseDispatcher $dispatcher, RunnerContext $context): void
     {
         // TODO: Implement configure() method.
     }

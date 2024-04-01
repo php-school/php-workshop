@@ -22,7 +22,7 @@ class ExerciseRunnerEvent extends Event
     {
         $parameters['input'] = $context->getExecutionContext()->input;
         $parameters['exercise'] = $context->getExecutionContext()->exercise;
-        parent::__construct($name, $context, $parameters);
+        parent::__construct($name, $parameters);
     }
 
     /**

@@ -14,6 +14,7 @@ use PhpSchool\PhpWorkshop\Input\Input;
 use PhpSchool\PhpWorkshop\Solution\SingleFileSolution;
 use PhpSchool\PhpWorkshop\Solution\SolutionInterface;
 use ReflectionClass;
+
 use function Sodium\randombytes_uniform;
 
 /**
@@ -92,10 +93,5 @@ abstract class AbstractExercise
      */
     public function configure(ExerciseDispatcher $dispatcher, RunnerContext $context): void
     {
-    }
-    
-    public function getArgs(): array
-    {
-        return [];
     }
 }

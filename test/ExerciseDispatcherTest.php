@@ -14,6 +14,9 @@ use PhpSchool\PhpWorkshop\Exception\ExerciseNotConfiguredException;
 use PhpSchool\PhpWorkshop\Exception\InvalidArgumentException;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpSchool\PhpWorkshop\ExerciseDispatcher;
+use PhpSchool\PhpWorkshop\ExerciseRunner\Context\CliContext;
+use PhpSchool\PhpWorkshop\ExerciseRunner\Context\ExecutionContext;
+use PhpSchool\PhpWorkshop\ExerciseRunner\Context\RunnerContext;
 use PhpSchool\PhpWorkshop\ExerciseRunner\ExerciseRunnerInterface;
 use PhpSchool\PhpWorkshop\ExerciseRunner\RunnerManager;
 use PhpSchool\PhpWorkshop\Input\Input;
@@ -173,6 +176,9 @@ class ExerciseDispatcherTest extends TestCase
 
         $runnerManager = $this->createMock(RunnerManager::class);
         $runnerManager->method('getRunner')->with($exercise)->willReturn($runner);
+        $runnerManager->method('wrapContext')
+            ->with($this->isInstanceOf(ExecutionContext::class))
+            ->willReturnCallback(fn ($context) => new CliContext($context));
 
         $exerciseDispatcher = new ExerciseDispatcher(
             $runnerManager,
@@ -184,7 +190,7 @@ class ExerciseDispatcherTest extends TestCase
         $this->expectException(CheckNotApplicableException::class);
         $this->expectExceptionMessage('Check: "Some Check" cannot process exercise: "Some Exercise" with type: "CLI"');
 
-        $exerciseDispatcher->verify($exercise, new Input('app'));
+        $exerciseDispatcher->verify($exercise, new Input('app', ['program' => $this->file]));
     }
 
     public function testVerifyThrowsExceptionIfExerciseDoesNotImplementCorrectInterface(): void
@@ -201,6 +207,9 @@ class ExerciseDispatcherTest extends TestCase
 
         $runnerManager = $this->createMock(RunnerManager::class);
         $runnerManager->method('getRunner')->with($exercise)->willReturn($runner);
+        $runnerManager->method('wrapContext')
+            ->with($this->isInstanceOf(ExecutionContext::class))
+            ->willReturnCallback(fn ($context) => new CliContext($context));
 
         $exerciseDispatcher = new ExerciseDispatcher(
             $runnerManager,
@@ -212,7 +221,7 @@ class ExerciseDispatcherTest extends TestCase
         $this->expectException(ExerciseNotConfiguredException::class);
         $this->expectExceptionMessage('Exercise: "Some Exercise" should implement interface: "LolIDoNotExist"');
 
-        $exerciseDispatcher->verify($exercise, new Input('app'));
+        $exerciseDispatcher->verify($exercise, new Input('app', ['program' => $this->file]));
     }
 
     public function testVerify(): void
@@ -224,14 +233,19 @@ class ExerciseDispatcherTest extends TestCase
         $check->method('canRun')->with($exercise->getType())->willReturn(true);
         $check->method('getPosition')->willReturn(SimpleCheckInterface::CHECK_BEFORE);
         $check->method('getExerciseInterface')->willReturn(ExerciseInterface::class);
-        $check->method('check')->with($exercise, $input)->willReturn(new Success('Success!'));
+        $check->method('check')
+            ->with($this->isInstanceOf(ExecutionContext::class))
+            ->willReturn(new Success('Success!'));
 
         $runner = $this->createMock(ExerciseRunnerInterface::class);
         $runner->method('getRequiredChecks')->willReturn([get_class($check)]);
-        $runner->method('verify')->with($input)->willReturn(new Success('Success!'));
+        $runner->method('verify')->willReturn(new Success('Success!'));
 
         $runnerManager = $this->createMock(RunnerManager::class);
         $runnerManager->method('getRunner')->with($exercise)->willReturn($runner);
+        $runnerManager->method('wrapContext')
+            ->with($this->isInstanceOf(ExecutionContext::class))
+            ->willReturnCallback(fn ($context) => new CliContext($context));
 
         $exerciseDispatcher = new ExerciseDispatcher(
             $runnerManager,
@@ -268,7 +282,7 @@ class ExerciseDispatcherTest extends TestCase
 
         $check1
             ->method('check')
-            ->with($exercise, $input)
+            ->with($this->isInstanceOf(ExecutionContext::class))
             ->willReturn(new Success('Success!'));
 
         $check2 = $this
@@ -279,7 +293,7 @@ class ExerciseDispatcherTest extends TestCase
         $check2
             ->expects($this->never())
             ->method('check')
-            ->with($exercise, $input);
+            ->with($this->isInstanceOf(ExecutionContext::class));
 
         $runner = $this->createMock(ExerciseRunnerInterface::class);
         $runner
@@ -289,7 +303,6 @@ class ExerciseDispatcherTest extends TestCase
 
         $runner
             ->method('verify')
-            ->with($input)
             ->willReturn(new Success('Success!'));
 
         $runnerManager = $this->createMock(RunnerManager::class);
@@ -297,6 +310,9 @@ class ExerciseDispatcherTest extends TestCase
             ->method('getRunner')
             ->with($exercise)
             ->willReturn($runner);
+        $runnerManager->method('wrapContext')
+            ->with($this->isInstanceOf(ExecutionContext::class))
+            ->willReturnCallback(fn ($context) => new CliContext($context));
 
         $exerciseDispatcher = new ExerciseDispatcher(
             $runnerManager,
@@ -319,21 +335,27 @@ class ExerciseDispatcherTest extends TestCase
         $check1->method('canRun')->with($exercise->getType())->willReturn(true);
         $check1->method('getPosition')->willReturn(SimpleCheckInterface::CHECK_BEFORE);
         $check1->method('getExerciseInterface')->willReturn(ExerciseInterface::class);
-        $check1->method('check')->with($exercise, $input)->willReturn(new Success('Success!'));
+        $check1->method('check')
+            ->with($this->isInstanceOf(ExecutionContext::class))
+            ->willReturn(new Success('Success!'));
 
         $check2 = $this->createMock(SimpleCheckInterface::class);
         $check2->method('canRun')->with($exercise->getType())->willReturn(true);
         $check2->method('getPosition')->willReturn(SimpleCheckInterface::CHECK_AFTER);
         $check2->method('getExerciseInterface')->willReturn(ExerciseInterface::class);
-        $check2->method('check')->with($exercise, $input)->willReturn(new Success('Success!'));
-
+        $check2->method('check')
+            ->with($this->isInstanceOf(ExecutionContext::class))
+            ->willReturn(new Success('Success!'));
 
         $runner = $this->createMock(ExerciseRunnerInterface::class);
         $runner->method('getRequiredChecks')->willReturn([get_class($check1), get_class($check2)]);
-        $runner->method('verify')->with($input)->willReturn(new Success('Success!'));
+        $runner->method('verify')->willReturn(new Success('Success!'));
 
         $runnerManager = $this->createMock(RunnerManager::class);
         $runnerManager->method('getRunner')->with($exercise)->willReturn($runner);
+        $runnerManager->method('wrapContext')
+            ->with($this->isInstanceOf(ExecutionContext::class))
+            ->willReturnCallback(fn ($context) => new CliContext($context));
 
         $exerciseDispatcher = new ExerciseDispatcher(
             $runnerManager,
@@ -372,7 +394,7 @@ class ExerciseDispatcherTest extends TestCase
 
         $check1
             ->method('check')
-            ->with($exercise, $input)
+            ->with($this->isInstanceOf(ExecutionContext::class))
             ->willReturn(new Failure('Failure', 'nope'));
 
         $check2 = $this
@@ -395,7 +417,7 @@ class ExerciseDispatcherTest extends TestCase
         $check2
             ->expects($this->never())
             ->method('check')
-            ->with($exercise, $input);
+            ->with($this->isInstanceOf(ExecutionContext::class));
 
         $runner = $this->createMock(ExerciseRunnerInterface::class);
         $runner
@@ -410,6 +432,9 @@ class ExerciseDispatcherTest extends TestCase
 
         $runnerManager = $this->createMock(RunnerManager::class);
         $runnerManager->method('getRunner')->with($exercise)->willReturn($runner);
+        $runnerManager->method('wrapContext')
+            ->with($this->isInstanceOf(ExecutionContext::class))
+            ->willReturnCallback(fn ($context) => new CliContext($context));
 
         $exerciseDispatcher = new ExerciseDispatcher(
             $runnerManager,
@@ -462,10 +487,13 @@ class ExerciseDispatcherTest extends TestCase
 
         $runner = $this->createMock(ExerciseRunnerInterface::class);
         $runner->method('getRequiredChecks')->willReturn([]);
-        $runner->method('verify')->with($input)->willReturn(new Success('Success!'));
+        $runner->method('verify')->willReturn(new Success('Success!'));
 
         $runnerManager = $this->createMock(RunnerManager::class);
         $runnerManager->method('getRunner')->with($exercise)->willReturn($runner);
+        $runnerManager->method('wrapContext')
+            ->with($this->isInstanceOf(ExecutionContext::class))
+            ->willReturnCallback(fn ($context) => new CliContext($context));
 
         $exerciseDispatcher = new ExerciseDispatcher(
             $runnerManager,
@@ -479,7 +507,7 @@ class ExerciseDispatcherTest extends TestCase
 
     public function testVerifyPostExecuteIsStillDispatchedEvenIfRunnerThrowsException(): void
     {
-        $input = new Input('app', ['program' => $this->file]);
+        $input    = new Input('app', ['program' => $this->file]);
         $exercise = new CliExerciseImpl('Some Exercise');
 
         $eventDispatcher = $this->createMock(EventDispatcher::class);
@@ -506,10 +534,13 @@ class ExerciseDispatcherTest extends TestCase
 
         $runner = $this->createMock(ExerciseRunnerInterface::class);
         $runner->method('getRequiredChecks')->willReturn([]);
-        $runner->method('verify')->with($input)->will($this->throwException(new RuntimeException()));
+        $runner->method('verify')->will($this->throwException(new RuntimeException()));
 
         $runnerManager = $this->createMock(RunnerManager::class);
         $runnerManager->method('getRunner')->with($exercise)->willReturn($runner);
+        $runnerManager->method('wrapContext')
+            ->with($this->isInstanceOf(ExecutionContext::class))
+            ->willReturnCallback(fn ($context) => new CliContext($context));
 
         $exerciseDispatcher = new ExerciseDispatcher(
             $runnerManager,
@@ -530,10 +561,13 @@ class ExerciseDispatcherTest extends TestCase
 
         $runner = $this->createMock(ExerciseRunnerInterface::class);
         $runner->method('getRequiredChecks')->willReturn([]);
-        $runner->method('run')->with($input, $output)->willReturn(true);
+        $runner->method('run')->willReturn(true);
 
         $runnerManager = $this->createMock(RunnerManager::class);
         $runnerManager->method('getRunner')->with($exercise)->willReturn($runner);
+        $runnerManager->method('wrapContext')
+            ->with($this->isInstanceOf(ExecutionContext::class))
+            ->willReturnCallback(fn ($context) => new CliContext($context));
 
         $exerciseDispatcher = new ExerciseDispatcher(
             $runnerManager,

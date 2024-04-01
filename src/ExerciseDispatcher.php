@@ -130,7 +130,6 @@ class ExerciseDispatcher
      */
     public function verify(ExerciseInterface $exercise, Input $input): ResultAggregator
     {
-
         $context = ExecutionContext::fromInputAndExercise($input, $exercise);
 
         $runner  = $this->runnerManager->getRunner($exercise);
@@ -186,24 +185,27 @@ class ExerciseDispatcher
      */
     public function run(ExerciseInterface $exercise, Input $input, OutputInterface $output): bool
     {
-        $exercise->configure($this);
+        $context = ExecutionContext::fromInputAndExercise($input, $exercise);
+        $context = $this->runnerManager->wrapContext($context);
+
+        $exercise->configure($this, $context);
 
         /** @var PhpLintCheck $lint */
         $lint = $this->checkRepository->getByClass(PhpLintCheck::class);
-        $result = $lint->check($exercise, $input);
+        $result = $lint->check($context->getExecutionContext());
 
         if ($result instanceof FailureInterface) {
             throw CouldNotRunException::fromFailure($result);
         }
 
-        $this->eventDispatcher->dispatch(new ExerciseRunnerEvent('run.start', $exercise, $input));
+        $this->eventDispatcher->dispatch(new ExerciseRunnerEvent('run.start', $context));
 
         try {
             $exitStatus = $this->runnerManager
                 ->getRunner($exercise)
-                ->run($input, $output);
+                ->run($context, $output);
         } finally {
-            $this->eventDispatcher->dispatch(new ExerciseRunnerEvent('run.finish', $exercise, $input));
+            $this->eventDispatcher->dispatch(new ExerciseRunnerEvent('run.finish', $context));
         }
 
         return $exitStatus;

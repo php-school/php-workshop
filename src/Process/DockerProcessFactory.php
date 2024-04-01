@@ -50,7 +50,15 @@ final class DockerProcessFactory implements ProcessFactory
         }
 
         return new Process(
-            [...$this->baseComposeCommand(), '-v', $composerCache . ':/root/.composer/cache', 'runtime', 'composer', $composerCommand, ...$composerArgs],
+            [
+                ...$this->baseComposeCommand(),
+                '-v',
+                $composerCache . ':/root/.composer/cache',
+                'runtime',
+                'composer',
+                $composerCommand,
+                ...$composerArgs
+            ],
             $this->basePath,
             ['SOLUTION' => $solutionPath],
             null,
@@ -60,8 +68,8 @@ final class DockerProcessFactory implements ProcessFactory
 
     public function phpCli(Environment $environment, string $fileName, Collection $args): Process
     {
-        while(!file_exists($environment->workingDirectory)) {
-            usleep(0.1 * 1000000);
+        while (!file_exists($environment->workingDirectory)) {
+            usleep((int) 0.1 * 1000000);
         }
 
         return new Process(

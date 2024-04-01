@@ -3,6 +3,7 @@
 namespace PhpSchool\PhpWorkshopTest\Exercise;
 
 use PhpSchool\PhpWorkshop\ExerciseDispatcher;
+use PhpSchool\PhpWorkshop\ExerciseRunner\Context\TestContext;
 use PhpSchool\PhpWorkshop\Solution\SolutionFile;
 use PhpSchool\PhpWorkshop\Solution\SolutionInterface;
 use PhpSchool\PhpWorkshopTest\Asset\AbstractExerciseImpl;
@@ -70,6 +71,6 @@ class AbstractExerciseTest extends TestCase
         $dispatcher = $this->createMock(ExerciseDispatcher::class);
 
         $exercise = new AbstractExerciseImpl('Array We Go');
-        $this->assertNull($exercise->configure($dispatcher));
+        $this->assertNull($exercise->configure($dispatcher, TestContext::withoutEnvironment()));
     }
 }

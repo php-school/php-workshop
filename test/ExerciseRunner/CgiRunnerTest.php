@@ -5,6 +5,9 @@ namespace PhpSchool\PhpWorkshopTest\ExerciseRunner;
 use Colors\Color;
 use GuzzleHttp\Psr7\Request;
 use PhpSchool\PhpWorkshop\Check\CodeExistsCheck;
+use PhpSchool\PhpWorkshop\ExerciseRunner\Context\CgiContext;
+use PhpSchool\PhpWorkshop\ExerciseRunner\Context\CliContext;
+use PhpSchool\PhpWorkshop\ExerciseRunner\Context\ExecutionContext;
 use PhpSchool\PhpWorkshop\Listener\OutputRunInfoListener;
 use PhpSchool\PhpWorkshop\Process\HostProcessFactory;
 use PhpSchool\Terminal\Terminal;
@@ -73,7 +76,6 @@ class CgiRunnerTest extends TestCase
     {
         $solution = SingleFileSolution::fromFile(__DIR__ . '/../res/cgi/solution-error.php');
         $this->exercise
-            ->expects($this->once())
             ->method('getSolution')
             ->willReturn($solution);
 
@@ -87,14 +89,17 @@ class CgiRunnerTest extends TestCase
         $regex  = "/^PHP Code failed to execute\. Error: \"PHP Parse error:  syntax error, unexpected end of file in/";
         $this->expectException(SolutionExecutionException::class);
         $this->expectExceptionMessageMatches($regex);
-        $this->runner->verify(new Input('app', ['program' => '']));
+
+        $context = new CgiContext(
+            ExecutionContext::fromInputAndExercise(new Input('app', ['program' => '']), $this->exercise)
+        );
+        $this->runner->verify($context);
     }
 
     public function testVerifyReturnsSuccessIfGetSolutionOutputMatchesUserOutput(): void
     {
         $solution = SingleFileSolution::fromFile(__DIR__ . '/../res/cgi/get-solution.php');
         $this->exercise
-            ->expects($this->once())
             ->method('getSolution')
             ->willReturn($solution);
 
@@ -105,17 +110,22 @@ class CgiRunnerTest extends TestCase
             ->method('getRequests')
             ->willReturn([$request]);
 
-        $this->assertInstanceOf(
-            CgiResult::class,
-            $this->runner->verify(new Input('app', ['program' => realpath(__DIR__ . '/../res/cgi/get-solution.php')]))
+        $context = new CgiContext(
+            ExecutionContext::fromInputAndExercise(
+                new Input('app', ['program' => realpath(__DIR__ . '/../res/cgi/get-solution.php')]),
+                $this->exercise
+            )
         );
+
+        $result = $this->runner->verify($context);
+
+        $this->assertInstanceOf(CgiResult::class, $result);
     }
 
     public function testVerifyReturnsSuccessIfPostSolutionOutputMatchesUserOutput(): void
     {
         $solution = SingleFileSolution::fromFile(__DIR__ . '/../res/cgi/post-solution.php');
         $this->exercise
-            ->expects($this->once())
             ->method('getSolution')
             ->willReturn($solution);
 
@@ -129,21 +139,24 @@ class CgiRunnerTest extends TestCase
             ->method('getRequests')
             ->willReturn([$request]);
 
-        $this->assertInstanceOf(
-            CgiResult::class,
-            $res = $this->runner->verify(
-                new Input('app', ['program' => realpath(__DIR__ . '/../res/cgi/post-solution.php')])
+        $context = new CgiContext(
+            ExecutionContext::fromInputAndExercise(
+                new Input('app', ['program' => realpath(__DIR__ . '/../res/cgi/post-solution.php')]),
+                $this->exercise
             )
         );
 
-        $this->assertTrue($res->isSuccessful());
+        $result = $this->runner->verify($context);
+
+        $this->assertInstanceOf(CgiResult::class, $result);
+
+        $this->assertTrue($result->isSuccessful());
     }
 
     public function testVerifyReturnsSuccessIfPostSolutionOutputMatchesUserOutputWithMultipleParams(): void
     {
         $solution = SingleFileSolution::fromFile(__DIR__ . '/../res/cgi/post-multiple-solution.php');
         $this->exercise
-            ->expects($this->once())
             ->method('getSolution')
             ->willReturn($solution);
 
@@ -157,9 +170,14 @@ class CgiRunnerTest extends TestCase
             ->method('getRequests')
             ->willReturn([$request]);
 
-        $result = $this->runner->verify(
-            new Input('app', ['program' => realpath(__DIR__ . '/../res/cgi/post-multiple-solution.php')])
+        $context = new CgiContext(
+            ExecutionContext::fromInputAndExercise(
+                new Input('app', ['program' => realpath(__DIR__ . '/../res/cgi/post-multiple-solution.php')]),
+                $this->exercise
+            )
         );
+
+        $result = $this->runner->verify($context);
 
         $this->assertInstanceOf(CgiResult::class, $result);
     }
@@ -168,7 +186,6 @@ class CgiRunnerTest extends TestCase
     {
         $solution = SingleFileSolution::fromFile(__DIR__ . '/../res/cgi/get-solution.php');
         $this->exercise
-            ->expects($this->once())
             ->method('getSolution')
             ->willReturn($solution);
 
@@ -179,14 +196,19 @@ class CgiRunnerTest extends TestCase
             ->method('getRequests')
             ->willReturn([$request]);
 
-        $failure = $this->runner->verify(
-            new Input('app', ['program' => realpath(__DIR__ . '/../res/cgi/user-error.php')])
+        $context = new CgiContext(
+            ExecutionContext::fromInputAndExercise(
+                new Input('app', ['program' => realpath(__DIR__ . '/../res/cgi/user-error.php')]),
+                $this->exercise
+            )
         );
 
-        $this->assertInstanceOf(CgiResult::class, $failure);
-        $this->assertCount(1, $failure);
+        $result = $this->runner->verify($context);
 
-        $result = iterator_to_array($failure)[0];
+        $this->assertInstanceOf(CgiResult::class, $result);
+        $this->assertCount(1, $result);
+
+        $result = iterator_to_array($result)[0];
         $this->assertInstanceOf(Failure::class, $result);
 
         $failureMsg  = '/^PHP Code failed to execute. Error: "PHP Parse error:  syntax error, unexpected end of file';
@@ -198,7 +220,6 @@ class CgiRunnerTest extends TestCase
     {
         $solution = SingleFileSolution::fromFile(__DIR__ . '/../res/cgi/get-solution.php');
         $this->exercise
-            ->expects($this->once())
             ->method('getSolution')
             ->willReturn($solution);
 
@@ -209,14 +230,19 @@ class CgiRunnerTest extends TestCase
             ->method('getRequests')
             ->willReturn([$request]);
 
-        $failure = $this->runner->verify(
-            new Input('app', ['program' => realpath(__DIR__ . '/../res/cgi/get-user-wrong.php')])
+        $context = new CgiContext(
+            ExecutionContext::fromInputAndExercise(
+                new Input('app', ['program' => realpath(__DIR__ . '/../res/cgi/get-user-wrong.php')]),
+                $this->exercise
+            )
         );
 
-        $this->assertInstanceOf(CgiResult::class, $failure);
-        $this->assertCount(1, $failure);
+        $result = $this->runner->verify($context);
 
-        $result = iterator_to_array($failure)[0];
+        $this->assertInstanceOf(CgiResult::class, $result);
+        $this->assertCount(1, $result);
+
+        $result = iterator_to_array($result)[0];
         $this->assertInstanceOf(RequestFailure::class, $result);
         $this->assertEquals('10', $result->getExpectedOutput());
         $this->assertEquals('15', $result->getActualOutput());
@@ -228,7 +254,6 @@ class CgiRunnerTest extends TestCase
     {
         $solution = SingleFileSolution::fromFile(__DIR__ . '/../res/cgi/get-solution-header.php');
         $this->exercise
-            ->expects($this->once())
             ->method('getSolution')
             ->willReturn($solution);
 
@@ -239,14 +264,19 @@ class CgiRunnerTest extends TestCase
             ->method('getRequests')
             ->willReturn([$request]);
 
-        $failure = $this->runner->verify(
-            new Input('app', ['program' => realpath(__DIR__ . '/../res/cgi/get-user-header-wrong.php')])
+        $context = new CgiContext(
+            ExecutionContext::fromInputAndExercise(
+                new Input('app', ['program' => realpath(__DIR__ . '/../res/cgi/get-user-header-wrong.php')]),
+                $this->exercise
+            )
         );
 
-        $this->assertInstanceOf(CgiResult::class, $failure);
-        $this->assertCount(1, $failure);
+        $result = $this->runner->verify($context);
 
-        $result = iterator_to_array($failure)[0];
+        $this->assertInstanceOf(CgiResult::class, $result);
+        $this->assertCount(1, $result);
+
+        $result = iterator_to_array($result)[0];
         $this->assertInstanceOf(RequestFailure::class, $result);
 
         $this->assertSame($result->getExpectedOutput(), $result->getActualOutput());
@@ -307,12 +337,16 @@ class CgiRunnerTest extends TestCase
 
         $this->expectOutputString($exp);
 
-        $success = $this->runner->run(
-            new Input('app', ['program' => realpath(__DIR__ . '/../res/cgi/get-solution.php')]),
-            $output
+        $context = new CgiContext(
+            ExecutionContext::fromInputAndExercise(
+                new Input('app', ['program' => realpath(__DIR__ . '/../res/cgi/get-solution.php')]),
+                $this->exercise
+            )
         );
 
-        $this->assertTrue($success);
+        $result = $this->runner->run($context, $output);
+
+        $this->assertTrue($result);
     }
 
     public function testRunPassesOutputAndReturnsFailureIfARequestFails(): void
@@ -346,10 +380,15 @@ class CgiRunnerTest extends TestCase
 
         $this->expectOutputString($exp);
 
-        $success = $this->runner->run(
-            new Input('app', ['program' => 'not-existing-file.php']),
-            $output
+        $context = new CgiContext(
+            ExecutionContext::fromInputAndExercise(
+                new Input('app', ['program' => 'not-existing-file.php']),
+                $this->exercise
+            )
         );
-        $this->assertFalse($success);
+
+        $result = $this->runner->run($context, $output);
+
+        $this->assertFalse($result);
     }
 }

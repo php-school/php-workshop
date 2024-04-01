@@ -36,8 +36,7 @@ class ComposerCheck implements SimpleCheckInterface
      * installed a set of required packages. If they did not a failure is returned, otherwise,
      * a success is returned.
      *
-     * @param ExerciseInterface $exercise The exercise to check against.
-     * @param Input $input The command line arguments passed to the command.
+     * @param ExecutionContext $context The current execution context.
      * @return ResultInterface The result of the check.
      * @noinspection SpellCheckingInspection
      */
@@ -47,19 +46,19 @@ class ComposerCheck implements SimpleCheckInterface
             throw new InvalidArgumentException();
         }
 
-        if (!file_exists(sprintf('%s/composer.json', dirname($context->input->getRequiredArgument('program'))))) {
+        if (!file_exists(sprintf('%s/composer.json', $context->studentEnvironment->workingDirectory))) {
             return ComposerFailure::fromCheckAndMissingFileOrFolder($this, 'composer.json');
         }
 
-        if (!file_exists(sprintf('%s/composer.lock', dirname($context->input->getRequiredArgument('program'))))) {
+        if (!file_exists(sprintf('%s/composer.lock', $context->studentEnvironment->workingDirectory))) {
             return ComposerFailure::fromCheckAndMissingFileOrFolder($this, 'composer.lock');
         }
 
-        if (!file_exists(sprintf('%s/vendor', dirname($context->input->getRequiredArgument('program'))))) {
+        if (!file_exists(sprintf('%s/vendor', $context->studentEnvironment->workingDirectory))) {
             return ComposerFailure::fromCheckAndMissingFileOrFolder($this, 'vendor');
         }
 
-        $lockFile = new LockFileParser(sprintf('%s/composer.lock', dirname($context->input->getRequiredArgument('program'))));
+        $lockFile = new LockFileParser(sprintf('%s/composer.lock', $context->studentEnvironment->workingDirectory));
         $missingPackages = array_filter($context->exercise->getRequiredPackages(), function ($package) use ($lockFile) {
             return !$lockFile->hasInstalledPackage($package);
         });

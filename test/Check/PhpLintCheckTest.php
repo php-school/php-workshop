@@ -4,6 +4,7 @@ namespace PhpSchool\PhpWorkshopTest\Check;
 
 use PhpSchool\PhpWorkshop\Check\SimpleCheckInterface;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseType;
+use PhpSchool\PhpWorkshop\ExerciseRunner\Context\TestContext;
 use PhpSchool\PhpWorkshop\Input\Input;
 use PHPUnit\Framework\TestCase;
 use PhpSchool\PhpWorkshop\Check\PhpLintCheck;
@@ -40,18 +41,24 @@ class PhpLintCheckTest extends TestCase
 
     public function testSuccess(): void
     {
+        $context = TestContext::withEnvironment($this->exercise);
+        $context->importSolution(__DIR__ . '/../res/lint/pass.php');
+
+        $res = $this->check->check($context->getExecutionContext());
+
         $this->assertInstanceOf(
             Success::class,
-            $this->check->check($this->exercise, new Input('app', ['program' => __DIR__ . '/../res/lint/pass.php']))
+            $this->check->check($context->getExecutionContext())
         );
     }
 
     public function testFailure(): void
     {
-        $failure = $this->check->check(
-            $this->exercise,
-            new Input('app', ['program' => __DIR__ . '/../res/lint/fail.php'])
-        );
+        $context = TestContext::withEnvironment($this->exercise,);
+        $context->importSolution(__DIR__ . '/../res/lint/fail.php');
+
+        $failure = $this->check->check($context->getExecutionContext());
+
         $this->assertInstanceOf(Failure::class, $failure);
         $this->assertMatchesRegularExpression(
             "/(PHP )?Parse error:\W+syntax error, unexpected end of file, expecting ['\"][,;]['\"] or ['\"][;,]['\"]/",

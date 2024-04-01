@@ -6,6 +6,8 @@ use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseType;
 use PhpSchool\PhpWorkshop\Exercise\SubmissionPatchable;
 use PhpSchool\PhpWorkshop\ExerciseDispatcher;
+use PhpSchool\PhpWorkshop\ExerciseRunner\Context\RunnerContext;
+use PhpSchool\PhpWorkshop\Markdown\Shorthands\Cli\Run;
 use PhpSchool\PhpWorkshop\Patch;
 
 class PatchableExercise implements ExerciseInterface, SubmissionPatchable
@@ -45,7 +47,7 @@ class PatchableExercise implements ExerciseInterface, SubmissionPatchable
         // TODO: Implement getType() method.
     }
 
-    public function configure(ExerciseDispatcher $dispatcher): void
+    public function configure(ExerciseDispatcher $dispatcher, RunnerContext $context): void
     {
         // TODO: Implement configure() method.
     }

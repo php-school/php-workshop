@@ -3,6 +3,7 @@
 namespace PhpSchool\PhpWorkshopTest\Event;
 
 use PhpSchool\PhpWorkshop\Event\ExerciseRunnerEvent;
+use PhpSchool\PhpWorkshop\ExerciseRunner\Context\TestContext;
 use PhpSchool\PhpWorkshop\Input\Input;
 use PhpSchool\PhpWorkshopTest\Asset\CliExerciseImpl;
 use PHPUnit\Framework\TestCase;
@@ -14,7 +15,11 @@ class ExerciseRunnerEventTest extends TestCase
         $exercise = new CliExerciseImpl();
         $input = new Input('app');
 
-        $event = new ExerciseRunnerEvent('Some Event', $exercise, $input, ['number' => 1]);
+        $event = new ExerciseRunnerEvent(
+            'Some Event',
+            TestContext::withoutEnvironment($exercise, $input),
+            ['number' => 1]
+        );
         self::assertSame($exercise, $event->getExercise());
         self::assertSame($input, $event->getInput());
         self::assertEquals(

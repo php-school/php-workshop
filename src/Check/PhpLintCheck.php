@@ -32,14 +32,13 @@ class PhpLintCheck implements SimpleCheckInterface
     /**
      * Simply check the student's solution can be linted with `php -l`.
      *
-     * @param ExerciseInterface $exercise The exercise to check against.
-     * @param Input $input The command line arguments passed to the command.
+     * @param ExecutionContext $context The current execution context.
      * @return ResultInterface The result of the check.
      */
     public function check(ExecutionContext $context): ResultInterface
     {
         $finder = new ExecutableFinder();
-        $process = new Process([$finder->find('php'), '-l', $context->input->getArgument('program')]);
+        $process = new Process([$finder->find('php'), '-l', $context->getStudentSolutionFilePath()]);
         $process->run();
 
         if ($process->isSuccessful()) {

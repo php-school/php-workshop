@@ -14,6 +14,7 @@ use PhpSchool\PhpWorkshop\Input\Input;
 use PhpSchool\PhpWorkshop\Result\Failure;
 use PhpSchool\PhpWorkshop\Result\ResultInterface;
 use PhpSchool\PhpWorkshop\Result\Success;
+use PhpSchool\PhpWorkshop\Utils\Path;
 
 /**
  * This check attempts to parse a student's solution and returns
@@ -47,18 +48,17 @@ class CodeParseCheck implements SimpleCheckInterface
      * attempts to parse it with `nikic/php-parser`. If any exceptions are thrown
      * by the parser, it is treated as a failure.
      *
-     * @param ExerciseInterface $exercise The exercise to check against.
-     * @param Input $input The command line arguments passed to the command.
+     * @param ExecutionContext $context The current execution context.
      * @return ResultInterface The result of the check.
      */
     public function check(ExecutionContext $context): ResultInterface
     {
-        $code = (string) file_get_contents($context->input->getRequiredArgument('program'));
+        $code = (string) file_get_contents($context->getStudentSolutionFilePath());
 
         try {
             $this->parser->parse($code);
         } catch (Error $e) {
-            return Failure::fromCheckAndCodeParseFailure($this, $e, $context->input->getRequiredArgument('program'));
+            return Failure::fromCheckAndCodeParseFailure($this, $e, $context->getStudentSolutionFilePath());
         }
 
         return Success::fromCheck($this);

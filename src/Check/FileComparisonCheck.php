@@ -36,8 +36,7 @@ class FileComparisonCheck implements SimpleCheckInterface
     /**
      * Simply check that the file exists.
      *
-     * @param ExerciseInterface&ProvidesSolution $exercise The exercise to check against.
-     * @param Input $input The command line arguments passed to the command.
+     * @param ExecutionContext $context The current execution context.
      * @return ResultInterface The result of the check.
      */
     public function check(ExecutionContext $context): ResultInterface
@@ -49,7 +48,7 @@ class FileComparisonCheck implements SimpleCheckInterface
         foreach ($context->exercise->getFilesToCompare() as $key => $file) {
             [$options, $file] = $this->getOptionsAndFile($key, $file);
 
-            $studentFile = Path::join(dirname($context->input->getRequiredArgument('program')), $file);
+            $studentFile = Path::join($context->studentEnvironment->workingDirectory, $file);
             $referenceFile = Path::join($context->referenceEnvironment->workingDirectory, $file);
 
             if (!file_exists($referenceFile)) {

@@ -6,6 +6,7 @@ use PhpSchool\PhpWorkshop\Exercise\CgiExercise;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseType;
 use PhpSchool\PhpWorkshop\ExerciseDispatcher;
+use PhpSchool\PhpWorkshop\ExerciseRunner\Context\RunnerContext;
 use PhpSchool\PhpWorkshop\Solution\SolutionInterface;
 use Psr\Http\Message\RequestInterface;
 
@@ -62,7 +63,7 @@ class CgiExerciseImpl implements ExerciseInterface, CgiExercise
         return ExerciseType::CGI();
     }
 
-    public function configure(ExerciseDispatcher $dispatcher): void
+    public function configure(ExerciseDispatcher $dispatcher, RunnerContext $context): void
     {
     }
 }

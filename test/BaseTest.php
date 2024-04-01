@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace PhpSchool\PhpWorkshopTest;
 
+use PhpSchool\PhpWorkshop\ExerciseRunner\Context\Environment;
 use PhpSchool\PhpWorkshop\Utils\Path;
 use PhpSchool\PhpWorkshop\Utils\System;
 use PHPUnit\Framework\TestCase;
@@ -21,6 +22,25 @@ abstract class BaseTest extends TestCase
         }
 
         return $this->tempDirectory;
+    }
+
+    public function createFileInEnvironment(Environment $environment, string $filename, string $content = null): string
+    {
+        $file = Path::join($environment->workingDirectory, $filename);
+
+        if (file_exists($file)) {
+            return $file;
+        }
+
+        if (!file_exists(dirname($file))) {
+            mkdir(dirname($file), 0777, true);
+        }
+
+        $content !== null
+            ? file_put_contents($file, $content)
+            : touch($file);
+
+        return $file;
     }
 
     public function getTemporaryFile(string $filename, string $content = null): string

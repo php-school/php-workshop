@@ -8,11 +8,10 @@ class CliContext implements RunnerContext
 {
     public function __construct(public ExecutionContext $context)
     {
-
     }
 
     /**
-     * @var array<Collection<string>>
+     * @var array<Collection<int, string>>
      */
     public array $runs = [];
 

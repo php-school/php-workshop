@@ -40,6 +40,7 @@ class PrepareSolutionListener
             return;
         }
 
+
         $this->runComposerInstallIn(
             $event->context->getExecutionContext()->referenceEnvironment->workingDirectory
         );
@@ -49,7 +50,7 @@ class PrepareSolutionListener
     {
         //prepare composer deps
         //only install if vendor folder not available
-        
+
         if (!file_exists(sprintf('%s/vendor', $directory))) {
             $process = $this->processFactory->composer(
                 $directory,

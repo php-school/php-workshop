@@ -4,6 +4,7 @@ namespace PhpSchool\PhpWorkshopTest\Listener;
 
 use PhpSchool\PhpWorkshop\CommandDefinition;
 use PhpSchool\PhpWorkshop\Event\Event;
+use PhpSchool\PhpWorkshop\ExerciseRunner\Context\TestContext;
 use PhpSchool\PhpWorkshop\Listener\CheckExerciseAssignedListener;
 use PhpSchool\PhpWorkshop\UserState\UserState;
 use PHPUnit\Framework\MockObject\MockObject;

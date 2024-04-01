@@ -4,6 +4,9 @@ namespace PhpSchool\PhpWorkshopTest\Event;
 
 use PhpSchool\PhpWorkshop\Event\Event;
 use PhpSchool\PhpWorkshop\Exception\InvalidArgumentException;
+use PhpSchool\PhpWorkshop\ExerciseRunner\Context\CliContext;
+use PhpSchool\PhpWorkshop\ExerciseRunner\Context\ExecutionContext;
+use PhpSchool\PhpWorkshop\ExerciseRunner\Context\TestContext;
 use PHPUnit\Framework\TestCase;
 
 class EventTest extends TestCase

@@ -7,6 +7,7 @@ use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseType;
 use PhpSchool\PhpWorkshop\ExerciseCheck\ComposerExerciseCheck;
 use PhpSchool\PhpWorkshop\ExerciseDispatcher;
+use PhpSchool\PhpWorkshop\ExerciseRunner\Context\RunnerContext;
 
 class ComposerExercise implements ExerciseInterface, ComposerExerciseCheck
 {
@@ -53,7 +54,7 @@ class ComposerExercise implements ExerciseInterface, ComposerExerciseCheck
         return ExerciseType::CLI();
     }
 
-    public function configure(ExerciseDispatcher $dispatcher): void
+    public function configure(ExerciseDispatcher $dispatcher, RunnerContext $context): void
     {
         $dispatcher->requireCheck(ComposerCheck::class);
     }

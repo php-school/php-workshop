@@ -24,8 +24,8 @@ interface SelfCheck
      * The method is passed the absolute file path to the student's solution and should return a result
      * object which indicates the success or not of the check.
      *
-     * @param Input $input The command line arguments passed to the command.
+     * @param ExecutionContext $context The current execution context.
      * @return ResultInterface The result of the check.
      */
-    public function check(ExecutionContext $environment): ResultInterface;
+    public function check(ExecutionContext $context): ResultInterface;
 }

@@ -9,6 +9,7 @@ use PhpParser\ErrorHandler;
 use PhpParser\Node\Stmt\InlineHTML;
 use PhpParser\NodeFinder;
 use PhpParser\Parser;
+use PhpSchool\PhpWorkshop\Event\ExerciseRunnerEvent;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseType;
 use PhpSchool\PhpWorkshop\ExerciseRunner\Context\ExecutionContext;
@@ -17,6 +18,7 @@ use PhpSchool\PhpWorkshop\Input\Input;
 use PhpSchool\PhpWorkshop\Result\Failure;
 use PhpSchool\PhpWorkshop\Result\ResultInterface;
 use PhpSchool\PhpWorkshop\Result\Success;
+use PhpSchool\PhpWorkshop\Utils\Path;
 
 class CodeExistsCheck implements SimpleCheckInterface
 {
@@ -47,7 +49,7 @@ class CodeExistsCheck implements SimpleCheckInterface
             }
         };
 
-        $code = (string) file_get_contents($context->input->getRequiredArgument('program'));
+        $code = (string) file_get_contents($context->getStudentSolutionFilePath());
         $statements = $this->parser->parse($code, $noopHandler);
 
         $empty = null === $statements || empty($statements);
