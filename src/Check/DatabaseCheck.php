@@ -25,37 +25,18 @@ class DatabaseCheck implements ListenableCheckInterface
 {
     use TemporaryDirectoryTrait;
 
-    /**
-     * @var string
-     */
-    private $databaseDirectory;
-
-    /**
-     * @var string
-     */
-    private $userDatabasePath;
-
-    /**
-     * @var string
-     */
-    private $solutionDatabasePath;
-
-    /**
-     * @var string
-     */
-    private $userDsn;
-
-    /**
-     * @var string
-     */
-    private $solutionDsn;
+    private string $databaseDirectory;
+    private string $userDatabasePath;
+    private string $solutionDatabasePath;
+    private string $userDsn;
+    private string $solutionDsn;
 
     /**
      * Setup paths and DSN's.
      */
-    public function __construct()
+    public function __construct(string $databaseDirectory = null)
     {
-        $this->databaseDirectory = $this->getTemporaryPath();
+        $this->databaseDirectory = $databaseDirectory ?? $this->getTemporaryPath();
         $this->userDatabasePath = sprintf('%s/user-db.sqlite', $this->databaseDirectory);
         $this->solutionDatabasePath = sprintf('%s/solution-db.sqlite', $this->databaseDirectory);
         $this->solutionDsn = sprintf('sqlite:%s', $this->solutionDatabasePath);

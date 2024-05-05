@@ -21,10 +21,7 @@ use PhpSchool\PhpWorkshop\Result\Success;
 
 class FileComparisonCheckTest extends BaseTest
 {
-    /**
-     * @var FileComparisonCheck
-     */
-    private $check;
+    private FileComparisonCheck $check;
 
     public function setUp(): void
     {
@@ -50,10 +47,10 @@ class FileComparisonCheckTest extends BaseTest
         $context = TestContext::withEnvironment($exercise);
 
         $exercise->setSolution(new SingleFileSolution(
-            $this->createFileInEnvironment($context->getExecutionContext()->referenceEnvironment, 'solution.php')
+            $this->createFileInEnvironment($context->referenceExecutionDirectory, 'solution.php')
         ));
 
-        $this->check->check($context->getExecutionContext());
+        $this->check->check($context);
     }
 
     public function testFailureIsReturnedIfStudentsFileDoesNotExist(): void
@@ -62,16 +59,16 @@ class FileComparisonCheckTest extends BaseTest
         $context = TestContext::withEnvironment($exercise);
 
         $exercise->setSolution(new SingleFileSolution(
-            $this->createFileInEnvironment($context->getExecutionContext()->referenceEnvironment, 'solution.php')
+            $this->createFileInEnvironment($context->referenceExecutionDirectory, 'solution.php')
         ));
 
         $this->createFileInEnvironment(
-            $context->getExecutionContext()->referenceEnvironment,
+            $context->referenceExecutionDirectory,
             'some-file.txt',
             "name,age\nAydin,33\nMichael,29\n"
         );
 
-        $failure = $this->check->check($context->getExecutionContext());
+        $failure = $this->check->check($context);
 
         $this->assertInstanceOf(Failure::class, $failure);
         $this->assertEquals('File: "some-file.txt" does not exist', $failure->getReason());
@@ -83,22 +80,22 @@ class FileComparisonCheckTest extends BaseTest
         $context = TestContext::withEnvironment($exercise);
 
         $exercise->setSolution(new SingleFileSolution(
-            $this->createFileInEnvironment($context->getExecutionContext()->referenceEnvironment, 'solution.php')
+            $this->createFileInEnvironment($context->referenceExecutionDirectory, 'solution.php')
         ));
 
         $this->createFileInEnvironment(
-            $context->getExecutionContext()->referenceEnvironment,
+            $context->referenceExecutionDirectory,
             'some-file.txt',
             "name,age\nAydin,33\nMichael,29\n"
         );
 
         $this->createFileInEnvironment(
-            $context->getExecutionContext()->studentEnvironment,
+            $context->studentExecutionDirectory,
             'some-file.txt',
             "somegibberish"
         );
 
-        $failure = $this->check->check($context->getExecutionContext());
+        $failure = $this->check->check($context);
 
         $this->assertInstanceOf(FileComparisonFailure::class, $failure);
         $this->assertEquals($failure->getFileName(), 'some-file.txt');
@@ -112,22 +109,22 @@ class FileComparisonCheckTest extends BaseTest
         $context = TestContext::withEnvironment($exercise);
 
         $exercise->setSolution(new SingleFileSolution(
-            $this->createFileInEnvironment($context->getExecutionContext()->referenceEnvironment, 'solution.php')
+            $this->createFileInEnvironment($context->referenceExecutionDirectory, 'solution.php')
         ));
 
         $this->createFileInEnvironment(
-            $context->getExecutionContext()->referenceEnvironment,
+            $context->referenceExecutionDirectory,
             'some-file.txt',
             "name,age\nAydin,33\nMichael,29\n"
         );
 
         $this->createFileInEnvironment(
-            $context->getExecutionContext()->studentEnvironment,
+            $context->studentExecutionDirectory,
             'some-file.txt',
             "name,age\nAydin,33\nMichael,29\n"
         );
 
-        $this->assertInstanceOf(Success::class, $this->check->check($context->getExecutionContext()));
+        $this->assertInstanceOf(Success::class, $this->check->check($context));
     }
 
     public function testFailureIsReturnedIfFileDoNotMatchUsingStrip(): void
@@ -136,22 +133,22 @@ class FileComparisonCheckTest extends BaseTest
         $context = TestContext::withEnvironment($exercise);
 
         $exercise->setSolution(new SingleFileSolution(
-            $this->createFileInEnvironment($context->getExecutionContext()->referenceEnvironment, 'solution.php')
+            $this->createFileInEnvironment($context->referenceExecutionDirectory, 'solution.php')
         ));
 
         $this->createFileInEnvironment(
-            $context->getExecutionContext()->referenceEnvironment,
+            $context->referenceExecutionDirectory,
             'some-file.txt',
             "01:03name,age\n04:05Aydin,33\n17:21Michael,29\n"
         );
 
         $this->createFileInEnvironment(
-            $context->getExecutionContext()->studentEnvironment,
+            $context->studentExecutionDirectory,
             'some-file.txt',
             "01:04name,age\n06:76Aydin,34\n99:00Michael,29\n"
         );
 
-        $failure = $this->check->check($context->getExecutionContext());
+        $failure = $this->check->check($context);
 
         $this->assertInstanceOf(FileComparisonFailure::class, $failure);
         $this->assertEquals($failure->getFileName(), 'some-file.txt');

@@ -8,6 +8,7 @@ use PhpParser\ParserFactory;
 use PhpSchool\PhpWorkshop\Check\SimpleCheckInterface;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseType;
 use PhpSchool\PhpWorkshop\ExerciseRunner\Context\ExecutionContext;
+use PhpSchool\PhpWorkshop\ExerciseRunner\Context\TestContext;
 use PhpSchool\PhpWorkshop\Input\Input;
 use PhpSchool\PhpWorkshopTest\Asset\FunctionRequirementsExercise;
 use PHPUnit\Framework\TestCase;
@@ -47,27 +48,30 @@ class FunctionRequirementsCheckTest extends TestCase
         $exercise = $this->createMock(ExerciseInterface::class);
         $this->expectException(InvalidArgumentException::class);
 
-        $this->check->check(ExecutionContext::fromInputAndExercise(new Input('app'), $exercise));
+        $this->check->check(TestContext::withoutEnvironment($exercise));
     }
 
     public function testFailureIsReturnedIfCodeCouldNotBeParsed(): void
     {
-        $file = __DIR__ . '/../res/function-requirements/fail-invalid-code.php';
-        $failure = $this->check->check(
-            ExecutionContext::fromInputAndExercise(new Input('app', ['program' => $file]), $this->exercise)
-        );
+        $context = TestContext::withEnvironment($this->exercise);
+        $context->importStudentSolution(__DIR__ . '/../res/function-requirements/fail-invalid-code.php');
+        $failure = $this->check->check($context);
 
         $this->assertInstanceOf(Failure::class, $failure);
-        $message = sprintf('File: "%s" could not be parsed. Error: "Syntax error, unexpected T_ECHO on line 4"', $file);
+        $message = sprintf(
+            'File: "%s/solution.php" could not be parsed. Error: "Syntax error, unexpected T_ECHO on line 4"',
+            $context->studentExecutionDirectory
+        );
         $this->assertEquals($message, $failure->getReason());
     }
 
     public function testFailureIsReturnedIfBannedFunctionsAreUsed(): void
     {
-        $file = __DIR__ . '/../res/function-requirements/fail-banned-function.php';
-        $failure = $this->check->check(
-            ExecutionContext::fromInputAndExercise(new Input('app', ['program' => $file]), $this->exercise)
-        );
+        $context = TestContext::withEnvironment($this->exercise);
+        $context->importStudentSolution(__DIR__ . '/../res/function-requirements/fail-banned-function.php');
+        $failure = $this->check->check($context);
+
+        $failure = $this->check->check($context);
 
         $this->assertInstanceOf(FunctionRequirementsFailure::class, $failure);
         $this->assertEquals([['function' => 'file', 'line' => 3]], $failure->getBannedFunctions());
@@ -87,10 +91,9 @@ class FunctionRequirementsCheckTest extends TestCase
             ->method('getRequiredFunctions')
             ->willReturn(['file_get_contents', 'implode']);
 
-        $file = __DIR__ . '/../res/function-requirements/fail-banned-function.php';
-        $failure = $this->check->check(
-            ExecutionContext::fromInputAndExercise(new Input('app', ['program' => $file]), $exercise)
-        );
+        $context = TestContext::withEnvironment($exercise);
+        $context->importStudentSolution(__DIR__ . '/../res/function-requirements/fail-banned-function.php');
+        $failure = $this->check->check($context);
 
         $this->assertInstanceOf(FunctionRequirementsFailure::class, $failure);
         $this->assertEquals(['file_get_contents', 'implode'], $failure->getMissingFunctions());
@@ -110,10 +113,9 @@ class FunctionRequirementsCheckTest extends TestCase
             ->method('getRequiredFunctions')
             ->willReturn(['file_get_contents']);
 
-        $file = __DIR__ . '/../res/function-requirements/success.php';
-        $success = $this->check->check(
-            ExecutionContext::fromInputAndExercise(new Input('app', ['program' => $file]), $exercise)
-        );
+        $context = TestContext::withEnvironment($exercise);
+        $context->importStudentSolution(__DIR__ . '/../res/function-requirements/success.php');
+        $success = $this->check->check($context);
 
         $this->assertInstanceOf(Success::class, $success);
     }

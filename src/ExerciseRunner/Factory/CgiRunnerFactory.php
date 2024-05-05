@@ -78,9 +78,4 @@ class CgiRunnerFactory implements ExerciseRunnerFactoryInterface
     {
         return new CgiRunner($exercise, $this->eventDispatcher, $this->processFactory);
     }
-
-    public function wrapContext(ExecutionContext $context): RunnerContext
-    {
-        return new CgiContext($context);
-    }
 }

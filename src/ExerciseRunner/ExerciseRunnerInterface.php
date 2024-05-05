@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace PhpSchool\PhpWorkshop\ExerciseRunner;
 
 use PhpSchool\PhpWorkshop\ExerciseRunner\Context\CliContext;
+use PhpSchool\PhpWorkshop\ExerciseRunner\Context\ExecutionContext;
 use PhpSchool\PhpWorkshop\ExerciseRunner\Context\RunnerContext;
 use PhpSchool\PhpWorkshop\Input\Input;
 use PhpSchool\PhpWorkshop\Output\OutputInterface;
@@ -40,19 +41,19 @@ interface ExerciseRunnerInterface
      * Other things that could go wrong include the student's solution returning a non-zero
      * exit code, or a notice/warning being exhibited.
      *
-     * @param RunnerContext $context The runner context.
+     * @param ExecutionContext $context The runner context.
      * @return ResultInterface The result of the check.
      */
-    public function verify(RunnerContext $context): ResultInterface;
+    public function verify(ExecutionContext $context): ResultInterface;
 
     /**
      * Run a solution to an exercise. This simply run's the student's solution with the correct input from the exercise
      * (such as the CLI arguments) and prints the output directly. This allows the student to have the environment
      * setup for them including getting a different set of arguments each time (if the exercise supports that).
      *
-     * @param RunnerContext $context
+     * @param ExecutionContext $context
      * @param OutputInterface $output A wrapper around STDOUT.
      * @return bool If the solution was successfully executed, eg. exit code was 0.
      */
-    public function run(RunnerContext $context, OutputInterface $output): bool;
+    public function run(ExecutionContext $context, OutputInterface $output): bool;
 }

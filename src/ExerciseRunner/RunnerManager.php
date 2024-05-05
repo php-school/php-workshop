@@ -47,11 +47,6 @@ class RunnerManager
         return $this->getFactory($exercise)->create($exercise);
     }
 
-    public function wrapContext(ExecutionContext $executionContext): RunnerContext
-    {
-        return $this->getFactory($executionContext->exercise)->wrapContext($executionContext);
-    }
-
     /**
      * @param ExerciseInterface $exercise
      * @return ExerciseRunnerFactoryInterface

@@ -2,20 +2,22 @@
 
 namespace PhpSchool\PhpWorkshopTest\Asset;
 
+use PhpSchool\PhpWorkshop\Environment\CliTestEnvironment;
+use PhpSchool\PhpWorkshop\Event\EventDispatcher;
 use PhpSchool\PhpWorkshop\Exercise\CgiExercise;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseType;
 use PhpSchool\PhpWorkshop\ExerciseDispatcher;
-use PhpSchool\PhpWorkshop\ExerciseRunner\Context\RunnerContext;
+use PhpSchool\PhpWorkshop\Environment\CgiTestEnvironment;
 use PhpSchool\PhpWorkshop\Solution\SolutionInterface;
 use Psr\Http\Message\RequestInterface;
 
 class CgiExerciseImpl implements ExerciseInterface, CgiExercise
 {
-    /**
-     * @var string
-     */
-    private $name;
+    private string $name;
+    private SolutionInterface $solution;
+    private CgiTestEnvironment $environment;
+
 
     public function __construct(string $name = 'my-exercise')
     {
@@ -32,9 +34,14 @@ class CgiExerciseImpl implements ExerciseInterface, CgiExercise
         return $this->name;
     }
 
+    public function setSolution(SolutionInterface $solution): void
+    {
+        $this->solution = $solution;
+    }
+
     public function getSolution(): SolutionInterface
     {
-        // TODO: Implement getSolution() method.
+        return $this->solution;
     }
 
     public function getProblem(): string
@@ -47,23 +54,27 @@ class CgiExerciseImpl implements ExerciseInterface, CgiExercise
         // TODO: Implement tearDown() method.
     }
 
-    /**
-     * This method should return an array of PSR-7 requests, which will be forwarded to the student's
-     * solution.
-     *
-     * @return RequestInterface[] An array of PSR-7 requests.
-     */
-    public function getRequests(): array
-    {
-        return []; // TODO: Implement getRequests() method.
-    }
-
     public function getType(): ExerciseType
     {
         return ExerciseType::CGI();
     }
 
-    public function configure(ExerciseDispatcher $dispatcher, RunnerContext $context): void
+    public function setTestEnvironment(CgiTestEnvironment $environment): void
+    {
+        $this->environment = $environment;
+    }
+
+    public function defineTestEnvironment(): CgiTestEnvironment
+    {
+        return $this->environment;
+    }
+
+    public function getRequiredChecks(): array
+    {
+        return [];
+    }
+
+    public function defineListeners(EventDispatcher $dispatcher): void
     {
     }
 }

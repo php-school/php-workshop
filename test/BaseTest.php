@@ -14,19 +14,21 @@ abstract class BaseTest extends TestCase
 {
     private $tempDirectory;
 
-    public function getTemporaryDirectory(): string
+    public function getTemporaryDirectory($create = true): string
     {
         if (!$this->tempDirectory) {
             $this->tempDirectory = System::tempDir($this->getName());
-            mkdir($this->tempDirectory, 0777, true);
+            if ($create) {
+                mkdir($this->tempDirectory, 0777, true);
+            }
         }
 
         return $this->tempDirectory;
     }
 
-    public function createFileInEnvironment(Environment $environment, string $filename, string $content = null): string
+    public function createFileInEnvironment(string $workingDirectory, string $filename, string $content = null): string
     {
-        $file = Path::join($environment->workingDirectory, $filename);
+        $file = Path::join($workingDirectory, $filename);
 
         if (file_exists($file)) {
             return $file;
@@ -62,7 +64,7 @@ abstract class BaseTest extends TestCase
         return $file;
     }
 
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         if (file_exists(System::tempDir($this->getName()))) {
             (new Filesystem())->remove(System::tempDir($this->getName()));

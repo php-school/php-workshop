@@ -60,12 +60,12 @@ class FunctionRequirementsCheck implements SimpleCheckInterface
         $requiredFunctions  = $context->exercise->getRequiredFunctions();
         $bannedFunctions    = $context->exercise->getBannedFunctions();
 
-        $code = (string) file_get_contents($context->getStudentSolutionFilePath());
+        $code = (string) file_get_contents($context->getEntryPoint());
 
         try {
             $ast = $this->parser->parse($code) ?? [];
         } catch (Error $e) {
-            return Failure::fromCheckAndCodeParseFailure($this, $e, $context->getStudentSolutionFilePath());
+            return Failure::fromCheckAndCodeParseFailure($this, $e, $context->getEntryPoint());
         }
 
         $visitor    = new FunctionVisitor($requiredFunctions, $bannedFunctions);

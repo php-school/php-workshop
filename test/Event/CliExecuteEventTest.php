@@ -2,6 +2,7 @@
 
 namespace PhpSchool\PhpWorkshopTest\Event;
 
+use PhpSchool\PhpWorkshop\Environment\CliTestEnvironment;
 use PhpSchool\PhpWorkshop\Event\CliExecuteEvent;
 use PhpSchool\PhpWorkshop\ExerciseRunner\Context\CliContext;
 use PhpSchool\PhpWorkshop\ExerciseRunner\Context\ExecutionContext;
@@ -16,10 +17,10 @@ class CliExecuteEventTest extends TestCase
 {
     public function testAppendArg(): void
     {
-        $context = new CliContext(new ExecutionContext('', '', new CliExerciseImpl(), new Input('test', [])));
+        $context = new ExecutionContext('', '', new CliExerciseImpl(), new Input('test', []));
 
         $arr = new Collection([1, 2, 3]);
-        $e = new CliExecuteEvent('event', $context, $arr);
+        $e = new CliExecuteEvent('event', $context, new CliTestEnvironment(), $arr);
 
         $e->appendArg('4');
         $this->assertEquals([1, 2, 3, 4], $e->getArgs()->getArrayCopy());
@@ -28,10 +29,10 @@ class CliExecuteEventTest extends TestCase
 
     public function testPrependArg(): void
     {
-        $context = new CliContext(new ExecutionContext('', '', new CliExerciseImpl(), new Input('test', [])));
+        $context = new ExecutionContext('', '', new CliExerciseImpl(), new Input('test', []));
 
         $arr = new Collection([1, 2, 3]);
-        $e = new CliExecuteEvent('event', $context, $arr);
+        $e = new CliExecuteEvent('event', $context, new CliTestEnvironment(), $arr);
 
         $e->prependArg('4');
         $this->assertEquals([4, 1, 2, 3], $e->getArgs()->getArrayCopy());
@@ -40,10 +41,10 @@ class CliExecuteEventTest extends TestCase
 
     public function testGetArgs(): void
     {
-        $context = new CliContext(new ExecutionContext('', '', new CliExerciseImpl(), new Input('test', [])));
+        $context = new ExecutionContext('', '', new CliExerciseImpl(), new Input('test', []));
 
         $arr = new Collection([1, 2, 3]);
-        $e = new CliExecuteEvent('event', $context, $arr);
+        $e = new CliExecuteEvent('event', $context, new CliTestEnvironment(), $arr);
 
         $this->assertSame($arr, $e->getArgs());
     }

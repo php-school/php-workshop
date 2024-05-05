@@ -16,16 +16,10 @@ class EventDispatcher
     /**
      * @var array<string, array<callable>>
      */
-    private $listeners = [];
+    private array $listeners = [];
 
-    /**
-     * @var ResultAggregator
-     */
-    private $resultAggregator;
+    private ResultAggregator $resultAggregator;
 
-    /**
-     * @param ResultAggregator $resultAggregator
-     */
     public function __construct(ResultAggregator $resultAggregator)
     {
         $this->resultAggregator = $resultAggregator;

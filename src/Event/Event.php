@@ -5,9 +5,6 @@ declare(strict_types=1);
 namespace PhpSchool\PhpWorkshop\Event;
 
 use PhpSchool\PhpWorkshop\Exception\InvalidArgumentException;
-use PhpSchool\PhpWorkshop\ExerciseRunner\CliEnvironment;
-use PhpSchool\PhpWorkshop\ExerciseRunner\Context\RunnerContext;
-use PhpSchool\PhpWorkshop\ExerciseRunner\Environment;
 
 /**
  * A generic `PhpSchool\PhpWorkshop\Event\EventInterface` implementation.
@@ -55,13 +52,13 @@ class Event implements EventInterface
     }
 
     /**
-     * Get a parameter by it's name.
+     * Get a parameter by its name.
      *
      * @param string $name The name of the parameter.
      * @return mixed The value.
      * @throws InvalidArgumentException If the parameter by name does not exist.
      */
-    public function getParameter(string $name)
+    public function getParameter(string $name): mixed
     {
         if (!array_key_exists($name, $this->parameters)) {
             throw new InvalidArgumentException(sprintf('Parameter: "%s" does not exist', $name));

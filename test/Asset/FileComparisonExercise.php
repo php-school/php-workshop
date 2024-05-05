@@ -3,11 +3,11 @@
 namespace PhpSchool\PhpWorkshopTest\Asset;
 
 use PhpSchool\PhpWorkshop\Check\ComposerCheck;
+use PhpSchool\PhpWorkshop\Event\EventDispatcher;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseType;
 use PhpSchool\PhpWorkshop\ExerciseCheck\FileComparisonExerciseCheck;
 use PhpSchool\PhpWorkshop\ExerciseDispatcher;
-use PhpSchool\PhpWorkshop\ExerciseRunner\Context\RunnerContext;
 use PhpSchool\PhpWorkshop\Solution\SolutionInterface;
 
 class FileComparisonExercise implements ExerciseInterface, FileComparisonExerciseCheck
@@ -15,12 +15,9 @@ class FileComparisonExercise implements ExerciseInterface, FileComparisonExercis
     /**
      * @var array<string>
      */
-    private $files;
+    private array $files;
 
-    /**
-     * @var SolutionInterface
-     */
-    private $solution;
+    private SolutionInterface $solution;
 
     public function __construct(array $files)
     {
@@ -57,23 +54,22 @@ class FileComparisonExercise implements ExerciseInterface, FileComparisonExercis
         // TODO: Implement tearDown() method.
     }
 
-    public function getArgs(): array
-    {
-        return []; // TODO: Implement getArgs() method.
-    }
-
     public function getType(): ExerciseType
     {
         return ExerciseType::CLI();
     }
 
-    public function configure(ExerciseDispatcher $dispatcher, RunnerContext $context): void
-    {
-        $dispatcher->requireCheck(ComposerCheck::class);
-    }
-
     public function getFilesToCompare(): array
     {
         return $this->files;
+    }
+
+    public function defineListeners(EventDispatcher $dispatcher): void
+    {
+    }
+
+    public function getRequiredChecks(): array
+    {
+        return [ComposerCheck::class];
     }
 }

@@ -46,19 +46,19 @@ class ComposerCheck implements SimpleCheckInterface
             throw new InvalidArgumentException();
         }
 
-        if (!file_exists(sprintf('%s/composer.json', $context->studentEnvironment->workingDirectory))) {
+        if (!file_exists(sprintf('%s/composer.json', $context->studentExecutionDirectory))) {
             return ComposerFailure::fromCheckAndMissingFileOrFolder($this, 'composer.json');
         }
 
-        if (!file_exists(sprintf('%s/composer.lock', $context->studentEnvironment->workingDirectory))) {
+        if (!file_exists(sprintf('%s/composer.lock', $context->studentExecutionDirectory))) {
             return ComposerFailure::fromCheckAndMissingFileOrFolder($this, 'composer.lock');
         }
 
-        if (!file_exists(sprintf('%s/vendor', $context->studentEnvironment->workingDirectory))) {
+        if (!file_exists(sprintf('%s/vendor', $context->studentExecutionDirectory))) {
             return ComposerFailure::fromCheckAndMissingFileOrFolder($this, 'vendor');
         }
 
-        $lockFile = new LockFileParser(sprintf('%s/composer.lock', $context->studentEnvironment->workingDirectory));
+        $lockFile = new LockFileParser(sprintf('%s/composer.lock', $context->studentExecutionDirectory));
         $missingPackages = array_filter($context->exercise->getRequiredPackages(), function ($package) use ($lockFile) {
             return !$lockFile->hasInstalledPackage($package);
         });

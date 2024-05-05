@@ -65,12 +65,4 @@ class AbstractExerciseTest extends TestCase
             ['Array^7-We Go', sprintf('%s/../../exercises/array-we-go/problem/problem.md', $dir)],
         ];
     }
-
-    public function testConfigureDoesNothing(): void
-    {
-        $dispatcher = $this->createMock(ExerciseDispatcher::class);
-
-        $exercise = new AbstractExerciseImpl('Array We Go');
-        $this->assertNull($exercise->configure($dispatcher, TestContext::withoutEnvironment()));
-    }
 }

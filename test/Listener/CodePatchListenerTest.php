@@ -35,7 +35,7 @@ class CodePatchListenerTest extends BaseTest
         $context = TestContext::withEnvironment($exercise);
 
         $this->createFileInEnvironment(
-            $context->getExecutionContext()->studentEnvironment,
+            $context->studentExecutionDirectory,
             'solution.php',
             'ORIGINAL CONTENT'
         );
@@ -51,7 +51,7 @@ class CodePatchListenerTest extends BaseTest
         $listener->patch($event);
 
         self::assertStringEqualsFile(
-            Path::join($context->getExecutionContext()->studentEnvironment->workingDirectory, 'solution.php'),
+            Path::join($context->studentExecutionDirectory, 'solution.php'),
             'MODIFIED CONTENT'
         );
     }
@@ -62,7 +62,7 @@ class CodePatchListenerTest extends BaseTest
         $context = TestContext::withEnvironment($exercise);
 
         $this->createFileInEnvironment(
-            $context->getExecutionContext()->studentEnvironment,
+            $context->studentExecutionDirectory,
             'solution.php',
             'ORIGINAL CONTENT'
         );
@@ -79,7 +79,7 @@ class CodePatchListenerTest extends BaseTest
         $listener->revert($event);
 
         self::assertStringEqualsFile(
-            Path::join($context->getExecutionContext()->studentEnvironment->workingDirectory, 'solution.php'),
+            Path::join($context->studentExecutionDirectory, 'solution.php'),
             'ORIGINAL CONTENT'
         );
     }
@@ -90,14 +90,14 @@ class CodePatchListenerTest extends BaseTest
         $context = TestContext::withEnvironment($exercise);
 
         $this->createFileInEnvironment(
-            $context->getExecutionContext()->studentEnvironment,
+            $context->studentExecutionDirectory,
             'solution.php',
             'ORIGINAL CONTENT'
         );
 
         foreach ($exercise->getSolution()->getFiles() as $file) {
             $this->createFileInEnvironment(
-                $context->getExecutionContext()->referenceEnvironment,
+                $context->referenceExecutionDirectory,
                 $file->getRelativePath(),
                 file_get_contents($file->getAbsolutePath())
             );
@@ -114,12 +114,12 @@ class CodePatchListenerTest extends BaseTest
         $listener->patch($event);
 
         self::assertStringEqualsFile(
-            Path::join($context->getExecutionContext()->studentEnvironment->workingDirectory, 'solution.php'),
+            Path::join($context->studentExecutionDirectory, 'solution.php'),
             'MODIFIED CONTENT'
         );
         self::assertStringEqualsFile(
             Path::join(
-                $context->getExecutionContext()->referenceEnvironment->workingDirectory,
+                $context->referenceExecutionDirectory,
                 $exercise->getSolution()->getEntryPoint()->getRelativePath(),
             ),
             'MODIFIED CONTENT'
@@ -132,7 +132,7 @@ class CodePatchListenerTest extends BaseTest
         $context = TestContext::withEnvironment($exercise);
 
         $this->createFileInEnvironment(
-            $context->getExecutionContext()->studentEnvironment,
+            $context->studentExecutionDirectory,
             'solution.php',
             'ORIGINAL CONTENT'
         );
@@ -143,7 +143,7 @@ class CodePatchListenerTest extends BaseTest
             ->with($exercise, 'ORIGINAL CONTENT')
             ->willReturn('MODIFIED CONTENT');
 
-        $path = Path::join($context->getExecutionContext()->studentEnvironment->workingDirectory, 'solution.php');
+        $path = Path::join($context->studentExecutionDirectory, 'solution.php');
         $logger = $this->createMock(LoggerInterface::class);
         $logger->expects($this->once())
             ->method('debug')
@@ -160,7 +160,7 @@ class CodePatchListenerTest extends BaseTest
         $context = TestContext::withEnvironment($exercise);
 
         $this->createFileInEnvironment(
-            $context->getExecutionContext()->studentEnvironment,
+            $context->studentExecutionDirectory,
             'solution.php',
             'ORIGINAL CONTENT'
         );
@@ -177,7 +177,7 @@ class CodePatchListenerTest extends BaseTest
         $listener->revert($event);
 
         self::assertStringEqualsFile(
-            Path::join($context->getExecutionContext()->studentEnvironment->workingDirectory, 'solution.php'),
+            Path::join($context->studentExecutionDirectory, 'solution.php'),
             'MODIFIED CONTENT'
         );
     }

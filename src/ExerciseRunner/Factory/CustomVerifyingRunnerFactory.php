@@ -54,18 +54,4 @@ class CustomVerifyingRunnerFactory implements ExerciseRunnerFactoryInterface
     {
         return new CustomVerifyingRunner($exercise);
     }
-
-    public function wrapContext(ExecutionContext $context): RunnerContext
-    {
-        return new class ($context) implements RunnerContext {
-            public function __construct(private ExecutionContext $context)
-            {
-            }
-
-            public function getExecutionContext(): ExecutionContext
-            {
-                return $this->context;
-            }
-        };
-    }
 }

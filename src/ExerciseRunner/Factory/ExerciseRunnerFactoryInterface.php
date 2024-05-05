@@ -37,6 +37,4 @@ interface ExerciseRunnerFactoryInterface
      * @return ExerciseRunnerInterface
      */
     public function create(ExerciseInterface $exercise): ExerciseRunnerInterface;
-
-    public function wrapContext(ExecutionContext $context): RunnerContext;
 }

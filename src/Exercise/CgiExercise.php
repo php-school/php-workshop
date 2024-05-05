@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace PhpSchool\PhpWorkshop\Exercise;
 
+use PhpSchool\PhpWorkshop\ExerciseDispatcher;
+use PhpSchool\PhpWorkshop\Environment\CgiTestEnvironment;
 use Psr\Http\Message\RequestInterface;
 
 /**
@@ -12,10 +14,14 @@ use Psr\Http\Message\RequestInterface;
 interface CgiExercise extends ProvidesSolution
 {
     /**
-     * This method should return an array of PSR-7 requests, which will be forwarded to the student's
-     * solution.
+     * This method should return an instance of CgiTestEnvironment which contains PSR-7 requests,
+     * which will be forwarded to the student's solution.
+     * Use like:
      *
-     * @return array<RequestInterface> An array of PSR-7 requests.
+     * ```
+     * return (new CgiTestEnvironment())
+     *     ->withExecution($request1)
+     * ```
      */
-    public function getRequests(): array;
+    public function defineTestEnvironment(): CgiTestEnvironment;
 }

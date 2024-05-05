@@ -9,14 +9,8 @@ use PhpSchool\PhpWorkshop\Utils\System;
 
 class ExecutionContext
 {
-    /**
-     * @var array<string, string>
-     */
-    private array $files = [];
-
-    public Environment $studentEnvironment;
-    public Environment $referenceEnvironment;
-
+    public string $studentExecutionDirectory;
+    public string $referenceExecutionDirectory;
 
     public function __construct(
         string $studentWorkingDirectory,
@@ -24,18 +18,8 @@ class ExecutionContext
         public ExerciseInterface $exercise,
         public Input $input,
     ) {
-        $this->studentEnvironment = new Environment($this, $studentWorkingDirectory);
-        $this->referenceEnvironment = new Environment($this, $referenceWorkingDirectory);
-    }
-
-    public static function fromInputAndExercise(Input $input, ExerciseInterface $exercise): self
-    {
-        return new self(
-            dirname($input->getRequiredArgument('program')),
-            System::randomTempDir(),
-            $exercise,
-            $input
-        );
+        $this->studentExecutionDirectory = $studentWorkingDirectory;
+        $this->referenceExecutionDirectory = $referenceWorkingDirectory;
     }
 
     public function hasStudentSolution(): bool
@@ -43,24 +27,11 @@ class ExecutionContext
         return $this->input->hasArgument('program');
     }
 
-    public function getStudentSolutionFilePath(): string
+    public function getEntryPoint(): string
     {
         return Path::join(
-            $this->studentEnvironment->workingDirectory,
+            $this->studentExecutionDirectory,
             basename($this->input->getRequiredArgument('program'))
         );
-    }
-
-    public function addFile(string $relativeFileName, string $content): void
-    {
-        $this->files[$relativeFileName] = $content;
-    }
-
-    /**
-     * @return array<string, string>
-     */
-    public function getFiles(): array
-    {
-        return $this->files;
     }
 }

@@ -3,13 +3,19 @@
 namespace PhpSchool\PhpWorkshopTest\ExerciseRunner;
 
 use Colors\Color;
+use GuzzleHttp\Psr7\Request;
 use PhpSchool\PhpWorkshop\Check\CodeExistsCheck;
+use PhpSchool\PhpWorkshop\Environment\CgiTestEnvironment;
 use PhpSchool\PhpWorkshop\ExerciseRunner\Context\CliContext;
 use PhpSchool\PhpWorkshop\ExerciseRunner\Context\ExecutionContext;
+use PhpSchool\PhpWorkshop\ExerciseRunner\Context\TestContext;
 use PhpSchool\PhpWorkshop\ExerciseRunner\Context\TestExecutionContext;
+use PhpSchool\PhpWorkshop\Environment\CliTestEnvironment;
 use PhpSchool\PhpWorkshop\Listener\OutputRunInfoListener;
+use PhpSchool\PhpWorkshop\Listener\PrepareReferenceEnvironment;
 use PhpSchool\PhpWorkshop\Process\HostProcessFactory;
 use PhpSchool\PhpWorkshop\Utils\RequestRenderer;
+use PhpSchool\PhpWorkshopTest\Asset\CliExerciseImpl;
 use PhpSchool\Terminal\Terminal;
 use PhpSchool\PhpWorkshop\Check\CodeParseCheck;
 use PhpSchool\PhpWorkshop\Check\FileExistsCheck;
@@ -27,35 +33,26 @@ use PhpSchool\PhpWorkshop\Result\Cli\RequestFailure;
 use PhpSchool\PhpWorkshop\ResultAggregator;
 use PhpSchool\PhpWorkshop\Solution\SingleFileSolution;
 use PhpSchool\PhpWorkshopTest\Asset\CliExerciseInterface;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\Filesystem\Filesystem;
 use Yoast\PHPUnitPolyfills\Polyfills\AssertionRenames;
 
 class CliRunnerTest extends TestCase
 {
     use AssertionRenames;
 
-    /** @var  CliRunner */
-    private $runner;
-
-    /**
-     * @var CliExerciseInterface|\PHPUnit_Framework_MockObject_MockObject
-     */
-    private $exercise;
-
-    /**
-     * @var EventDispatcher
-     */
-    private $eventDispatcher;
+    private CliRunner $runner;
+    private CliExerciseImpl $exercise;
+    private EventDispatcher $eventDispatcher;
 
     public function setUp(): void
     {
-        $this->exercise = $this->createMock(CliExerciseInterface::class);
+        $this->exercise = new CliExerciseImpl();
         $this->eventDispatcher = new EventDispatcher(new ResultAggregator());
         $this->runner = new CliRunner($this->exercise, $this->eventDispatcher, new HostProcessFactory());
 
-        $this->exercise
-            ->method('getType')
-            ->willReturn(ExerciseType::CLI());
+        $this->eventDispatcher->listen('cli.verify.start', new PrepareReferenceEnvironment(new Filesystem()));
 
         $this->assertEquals('CLI Program Runner', $this->runner->getName());
     }
@@ -75,45 +72,31 @@ class CliRunnerTest extends TestCase
     public function testVerifyThrowsExceptionIfSolutionFailsExecution(): void
     {
         $solution = SingleFileSolution::fromFile(realpath(__DIR__ . '/../res/cli/solution-error.php'));
-        $this->exercise
-            ->method('getSolution')
-            ->willReturn($solution);
-
-        $this->exercise
-            ->expects($this->once())
-            ->method('getArgs')
-            ->willReturn([[]]);
+        $this->exercise->setSolution($solution);
+        $this->exercise->setTestEnvironment(
+            (new CliTestEnvironment())->withExecution()
+        );
 
         $regex  = "/^PHP Code failed to execute\\. Error: \"PHP Parse error:  syntax error, unexpected end of file";
         $regex .= ", expecting ['\"][,;]['\"] or ['\"][;,]['\"]/";
         $this->expectException(SolutionExecutionException::class);
         $this->expectExceptionMessageMatches($regex);
 
-        $context = new CliContext(
-            ExecutionContext::fromInputAndExercise(new Input('app', ['program' => '']), $this->exercise)
-        );
+        $context = TestContext::withEnvironment($this->exercise);
+
         $this->runner->verify($context);
     }
 
     public function testVerifyReturnsSuccessIfSolutionOutputMatchesUserOutput(): void
     {
         $solution = SingleFileSolution::fromFile(realpath(__DIR__ . '/../res/cli/solution.php'));
-        $this->exercise
-            ->method('getSolution')
-            ->willReturn($solution);
-
-        $this->exercise
-            ->expects($this->once())
-            ->method('getArgs')
-            ->willReturn([[1, 2, 3]]);
-
-
-        $context = new CliContext(
-            ExecutionContext::fromInputAndExercise(
-                new Input('app', ['program' => __DIR__ . '/../res/cli/user.php']),
-                $this->exercise
-            )
+        $this->exercise->setSolution($solution);
+        $this->exercise->setTestEnvironment(
+            (new CliTestEnvironment())->withExecution([1, 2, 3])
         );
+
+        $context = TestContext::withEnvironment($this->exercise);
+        $context->importStudentSolution(__DIR__ . '/../res/cli/user.php');
 
         $result = $this->runner->verify($context);
 
@@ -125,21 +108,13 @@ class CliRunnerTest extends TestCase
     public function testVerifyReturnsFailureIfUserSolutionFailsToExecute(): void
     {
         $solution = SingleFileSolution::fromFile(realpath(__DIR__ . '/../res/cli/solution.php'));
-        $this->exercise
-            ->method('getSolution')
-            ->willReturn($solution);
-
-        $this->exercise
-            ->expects($this->once())
-            ->method('getArgs')
-            ->willReturn([[1, 2, 3]]);
-
-        $context = new CliContext(
-            ExecutionContext::fromInputAndExercise(
-                new Input('app', ['program' => __DIR__ . '/../res/cli/user-error.php']),
-                $this->exercise
-            )
+        $this->exercise->setSolution($solution);
+        $this->exercise->setTestEnvironment(
+            (new CliTestEnvironment())->withExecution([1, 2, 3])
         );
+
+        $context = TestContext::withEnvironment($this->exercise);
+        $context->importStudentSolution(__DIR__ . '/../res/cli/user-error.php');
 
         $result = $this->runner->verify($context);
 
@@ -157,21 +132,14 @@ class CliRunnerTest extends TestCase
     public function testVerifyReturnsFailureIfSolutionOutputDoesNotMatchUserOutput(): void
     {
         $solution = SingleFileSolution::fromFile(realpath(__DIR__ . '/../res/cli/solution.php'));
-        $this->exercise
-            ->method('getSolution')
-            ->willReturn($solution);
-
-        $this->exercise
-            ->expects($this->once())
-            ->method('getArgs')
-            ->willReturn([[1, 2, 3]]);
-
-        $context = new CliContext(
-            ExecutionContext::fromInputAndExercise(
-                new Input('app', ['program' => __DIR__ . '/../res/cli/user-wrong.php']),
-                $this->exercise
-            )
+        $this->exercise->setSolution($solution);
+        $this->exercise->setTestEnvironment(
+            (new CliTestEnvironment())->withExecution([1, 2, 3])
         );
+
+        $context = TestContext::withEnvironment($this->exercise);
+        $context->importReferenceSolution($solution);
+        $context->importStudentSolution(__DIR__ . '/../res/cli/user-wrong.php');
 
         $result = $this->runner->verify($context);
 
@@ -196,11 +164,6 @@ class CliRunnerTest extends TestCase
             new OutputRunInfoListener($output, new RequestRenderer())
         );
 
-        $this->exercise
-            ->expects($this->once())
-            ->method('getArgs')
-            ->willReturn([[1, 2, 3], [4, 5, 6]]);
-
         $exp  = "\n\e[1m\e[4mArguments\e[0m\e[0m\n";
         $exp .= "1, 2, 3\n";
         $exp .= "\n\e[1m\e[4mOutput\e[0m\e[0m\n\n";
@@ -214,12 +177,14 @@ class CliRunnerTest extends TestCase
 
         $this->expectOutputString($exp);
 
-        $context = new CliContext(
-            ExecutionContext::fromInputAndExercise(
-                new Input('app', ['program' => __DIR__ . '/../res/cli/user.php']),
-                $this->exercise
-            )
+        $this->exercise->setTestEnvironment(
+            (new CliTestEnvironment())
+                ->withExecution([1, 2, 3])
+                ->withExecution([4, 5, 6])
         );
+
+        $context = TestContext::withEnvironment($this->exercise);
+        $context->importStudentSolution(__DIR__ . '/../res/cli/user.php');
 
         $result = $this->runner->run($context, $output);
 
@@ -228,23 +193,19 @@ class CliRunnerTest extends TestCase
 
     public function testRunPassesOutputAndReturnsFailureIfScriptFails(): void
     {
-        $output = new StdOutput(new Color(), $this->createMock(Terminal::class));
+        $this->exercise->setTestEnvironment(
+            (new CliTestEnvironment())
+                ->withExecution([1, 2, 3])
+        );
 
-        $this->exercise
-            ->expects($this->once())
-            ->method('getArgs')
-            ->willReturn([[1, 2, 3]]);
+        $output = new StdOutput(new Color(), $this->createMock(Terminal::class));
 
         $this->expectOutputRegex(
             "/(PHP )?Parse error:\W+syntax error, unexpected end of file, expecting ['\"][,;]['\"] or ['\"][;,]['\"] /"
         );
 
-        $context = new CliContext(
-            ExecutionContext::fromInputAndExercise(
-                new Input('app', ['program' => __DIR__ . '/../res/cli/user-error.php']),
-                $this->exercise
-            )
-        );
+        $context = TestContext::withEnvironment($this->exercise);
+        $context->importStudentSolution(__DIR__ . '/../res/cli/user-error.php');
 
         $result = $this->runner->run($context, $output);
 
@@ -253,6 +214,11 @@ class CliRunnerTest extends TestCase
 
     public function testsArgsAppendedByEventsArePassedToResults(): void
     {
+        $this->exercise->setTestEnvironment(
+            (new CliTestEnvironment())
+                ->withExecution([1, 2, 3])
+        );
+
         $this->eventDispatcher->listen(
             ['cli.verify.student-execute.pre', 'cli.verify.reference-execute.pre'],
             function (CliExecuteEvent $e) {
@@ -261,22 +227,10 @@ class CliRunnerTest extends TestCase
         );
 
         $solution = SingleFileSolution::fromFile(realpath(__DIR__ . '/../res/cli/solution.php'));
-        $this->exercise
-            ->method('getSolution')
-            ->willReturn($solution);
+        $this->exercise->setSolution($solution);
 
-        $this->exercise
-            ->expects($this->once())
-            ->method('getArgs')
-            ->willReturn([[1, 2, 3]]);
-
-
-        $context = new CliContext(
-            ExecutionContext::fromInputAndExercise(
-                new Input('app', ['program' => __DIR__ . '/../res/cli/user.php']),
-                $this->exercise
-            )
-        );
+        $context = TestContext::withEnvironment($this->exercise);
+        $context->importStudentSolution(__DIR__ . '/../res/cli/user.php');
 
         $result = $this->runner->verify($context);
 

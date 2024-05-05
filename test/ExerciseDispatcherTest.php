@@ -14,9 +14,9 @@ use PhpSchool\PhpWorkshop\Exception\ExerciseNotConfiguredException;
 use PhpSchool\PhpWorkshop\Exception\InvalidArgumentException;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpSchool\PhpWorkshop\ExerciseDispatcher;
-use PhpSchool\PhpWorkshop\ExerciseRunner\Context\CliContext;
 use PhpSchool\PhpWorkshop\ExerciseRunner\Context\ExecutionContext;
-use PhpSchool\PhpWorkshop\ExerciseRunner\Context\RunnerContext;
+use PhpSchool\PhpWorkshop\ExerciseRunner\Context\ExecutionContextFactory;
+use PhpSchool\PhpWorkshop\ExerciseRunner\Context\StaticExecutionContextFactory;
 use PhpSchool\PhpWorkshop\ExerciseRunner\ExerciseRunnerInterface;
 use PhpSchool\PhpWorkshop\ExerciseRunner\RunnerManager;
 use PhpSchool\PhpWorkshop\Input\Input;
@@ -31,15 +31,8 @@ use Symfony\Component\Filesystem\Filesystem;
 
 class ExerciseDispatcherTest extends TestCase
 {
-    /**
-     * @var Filesystem
-     */
-    private $filesystem;
-
-    /**
-     * @var string
-     */
-    private $file;
+    private Filesystem $filesystem;
+    private string $file;
 
     public function setUp(): void
     {
@@ -57,7 +50,8 @@ class ExerciseDispatcherTest extends TestCase
             $this->createMock(RunnerManager::class),
             $results,
             $eventDispatcher,
-            new CheckRepository()
+            new CheckRepository(),
+            new ExecutionContextFactory()
         );
 
         $this->assertSame($eventDispatcher, $exerciseDispatcher->getEventDispatcher());
@@ -72,7 +66,8 @@ class ExerciseDispatcherTest extends TestCase
             $this->createMock(RunnerManager::class),
             new ResultAggregator(),
             new EventDispatcher(new ResultAggregator()),
-            new CheckRepository()
+            new CheckRepository(),
+            new ExecutionContextFactory()
         );
         $exerciseDispatcher->requireCheck('NotACheck');
     }
@@ -87,7 +82,8 @@ class ExerciseDispatcherTest extends TestCase
             $this->createMock(RunnerManager::class),
             new ResultAggregator(),
             new EventDispatcher(new ResultAggregator()),
-            new CheckRepository([$check])
+            new CheckRepository([$check]),
+            new ExecutionContextFactory()
         );
 
         $this->expectException(InvalidArgumentException::class);
@@ -105,7 +101,8 @@ class ExerciseDispatcherTest extends TestCase
             $this->createMock(RunnerManager::class),
             new ResultAggregator(),
             new EventDispatcher(new ResultAggregator()),
-            new CheckRepository([$check])
+            new CheckRepository([$check]),
+            new ExecutionContextFactory()
         );
 
         $exerciseDispatcher->requireCheck(get_class($check));
@@ -122,7 +119,8 @@ class ExerciseDispatcherTest extends TestCase
             $this->createMock(RunnerManager::class),
             new ResultAggregator(),
             new EventDispatcher(new ResultAggregator()),
-            new CheckRepository([$check])
+            new CheckRepository([$check]),
+            new ExecutionContextFactory()
         );
 
         $exerciseDispatcher->requireCheck(get_class($check));
@@ -138,7 +136,8 @@ class ExerciseDispatcherTest extends TestCase
             $this->createMock(RunnerManager::class),
             new ResultAggregator(),
             new EventDispatcher(new ResultAggregator()),
-            new CheckRepository([$check])
+            new CheckRepository([$check]),
+            new ExecutionContextFactory()
         );
 
         $this->expectException(InvalidArgumentException::class);
@@ -156,7 +155,8 @@ class ExerciseDispatcherTest extends TestCase
             $this->createMock(RunnerManager::class),
             new ResultAggregator(),
             $eventDispatcher,
-            new CheckRepository([$check])
+            new CheckRepository([$check]),
+            new ExecutionContextFactory()
         );
 
         $exerciseDispatcher->requireCheck(get_class($check));
@@ -176,15 +176,13 @@ class ExerciseDispatcherTest extends TestCase
 
         $runnerManager = $this->createMock(RunnerManager::class);
         $runnerManager->method('getRunner')->with($exercise)->willReturn($runner);
-        $runnerManager->method('wrapContext')
-            ->with($this->isInstanceOf(ExecutionContext::class))
-            ->willReturnCallback(fn ($context) => new CliContext($context));
 
         $exerciseDispatcher = new ExerciseDispatcher(
             $runnerManager,
             new ResultAggregator(),
             new EventDispatcher(new ResultAggregator()),
-            new CheckRepository([$check])
+            new CheckRepository([$check]),
+            new ExecutionContextFactory()
         );
 
         $this->expectException(CheckNotApplicableException::class);
@@ -207,15 +205,13 @@ class ExerciseDispatcherTest extends TestCase
 
         $runnerManager = $this->createMock(RunnerManager::class);
         $runnerManager->method('getRunner')->with($exercise)->willReturn($runner);
-        $runnerManager->method('wrapContext')
-            ->with($this->isInstanceOf(ExecutionContext::class))
-            ->willReturnCallback(fn ($context) => new CliContext($context));
 
         $exerciseDispatcher = new ExerciseDispatcher(
             $runnerManager,
             new ResultAggregator(),
             new EventDispatcher(new ResultAggregator()),
-            new CheckRepository([$check])
+            new CheckRepository([$check]),
+            new ExecutionContextFactory()
         );
 
         $this->expectException(ExerciseNotConfiguredException::class);
@@ -243,15 +239,13 @@ class ExerciseDispatcherTest extends TestCase
 
         $runnerManager = $this->createMock(RunnerManager::class);
         $runnerManager->method('getRunner')->with($exercise)->willReturn($runner);
-        $runnerManager->method('wrapContext')
-            ->with($this->isInstanceOf(ExecutionContext::class))
-            ->willReturnCallback(fn ($context) => new CliContext($context));
 
         $exerciseDispatcher = new ExerciseDispatcher(
             $runnerManager,
             new ResultAggregator(),
             new EventDispatcher(new ResultAggregator()),
-            new CheckRepository([$check])
+            new CheckRepository([$check]),
+            new ExecutionContextFactory()
         );
 
         $result = $exerciseDispatcher->verify($exercise, $input);
@@ -310,15 +304,13 @@ class ExerciseDispatcherTest extends TestCase
             ->method('getRunner')
             ->with($exercise)
             ->willReturn($runner);
-        $runnerManager->method('wrapContext')
-            ->with($this->isInstanceOf(ExecutionContext::class))
-            ->willReturnCallback(fn ($context) => new CliContext($context));
 
         $exerciseDispatcher = new ExerciseDispatcher(
             $runnerManager,
             new ResultAggregator(),
             new EventDispatcher(new ResultAggregator()),
-            new CheckRepository([$check1, $check2])
+            new CheckRepository([$check1, $check2]),
+            new ExecutionContextFactory()
         );
 
         $result = $exerciseDispatcher->verify($exercise, $input);
@@ -353,15 +345,13 @@ class ExerciseDispatcherTest extends TestCase
 
         $runnerManager = $this->createMock(RunnerManager::class);
         $runnerManager->method('getRunner')->with($exercise)->willReturn($runner);
-        $runnerManager->method('wrapContext')
-            ->with($this->isInstanceOf(ExecutionContext::class))
-            ->willReturnCallback(fn ($context) => new CliContext($context));
 
         $exerciseDispatcher = new ExerciseDispatcher(
             $runnerManager,
             new ResultAggregator(),
             new EventDispatcher(new ResultAggregator()),
-            new CheckRepository([$check1, $check2])
+            new CheckRepository([$check1, $check2]),
+            new ExecutionContextFactory()
         );
 
         $result = $exerciseDispatcher->verify($exercise, $input);
@@ -432,15 +422,13 @@ class ExerciseDispatcherTest extends TestCase
 
         $runnerManager = $this->createMock(RunnerManager::class);
         $runnerManager->method('getRunner')->with($exercise)->willReturn($runner);
-        $runnerManager->method('wrapContext')
-            ->with($this->isInstanceOf(ExecutionContext::class))
-            ->willReturnCallback(fn ($context) => new CliContext($context));
 
         $exerciseDispatcher = new ExerciseDispatcher(
             $runnerManager,
             new ResultAggregator(),
             new EventDispatcher(new ResultAggregator()),
-            new CheckRepository([$check1, $check2])
+            new CheckRepository([$check1, $check2]),
+            new ExecutionContextFactory()
         );
 
         $result = $exerciseDispatcher->verify($exercise, $input);
@@ -491,15 +479,13 @@ class ExerciseDispatcherTest extends TestCase
 
         $runnerManager = $this->createMock(RunnerManager::class);
         $runnerManager->method('getRunner')->with($exercise)->willReturn($runner);
-        $runnerManager->method('wrapContext')
-            ->with($this->isInstanceOf(ExecutionContext::class))
-            ->willReturnCallback(fn ($context) => new CliContext($context));
 
         $exerciseDispatcher = new ExerciseDispatcher(
             $runnerManager,
             new ResultAggregator(),
             $eventDispatcher,
-            new CheckRepository()
+            new CheckRepository(),
+            new ExecutionContextFactory()
         );
 
         $exerciseDispatcher->verify($exercise, $input);
@@ -538,15 +524,13 @@ class ExerciseDispatcherTest extends TestCase
 
         $runnerManager = $this->createMock(RunnerManager::class);
         $runnerManager->method('getRunner')->with($exercise)->willReturn($runner);
-        $runnerManager->method('wrapContext')
-            ->with($this->isInstanceOf(ExecutionContext::class))
-            ->willReturnCallback(fn ($context) => new CliContext($context));
 
         $exerciseDispatcher = new ExerciseDispatcher(
             $runnerManager,
             new ResultAggregator(),
             $eventDispatcher,
-            new CheckRepository()
+            new CheckRepository(),
+            new ExecutionContextFactory()
         );
 
         $this->expectException(RuntimeException::class);
@@ -565,15 +549,13 @@ class ExerciseDispatcherTest extends TestCase
 
         $runnerManager = $this->createMock(RunnerManager::class);
         $runnerManager->method('getRunner')->with($exercise)->willReturn($runner);
-        $runnerManager->method('wrapContext')
-            ->with($this->isInstanceOf(ExecutionContext::class))
-            ->willReturnCallback(fn ($context) => new CliContext($context));
 
         $exerciseDispatcher = new ExerciseDispatcher(
             $runnerManager,
             new ResultAggregator(),
             new EventDispatcher(new ResultAggregator()),
-            new CheckRepository([new PhpLintCheck()])
+            new CheckRepository([new PhpLintCheck()]),
+            new ExecutionContextFactory()
         );
 
         $this->assertTrue($exerciseDispatcher->run($exercise, $input, $output));

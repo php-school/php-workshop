@@ -38,14 +38,14 @@ class FileExistsCheckTest extends BaseTest
         $context = TestContext::withEnvironment();
 
         $this->createFileInEnvironment(
-            $context->getExecutionContext()->studentEnvironment,
+            $context->studentExecutionDirectory,
             'solution.php',
             '<?php echo "Hello World";'
         );
 
         $this->assertInstanceOf(
             Success::class,
-            $this->check->check($context->getExecutionContext())
+            $this->check->check($context)
         );
     }
 
@@ -53,12 +53,12 @@ class FileExistsCheckTest extends BaseTest
     {
         $context = TestContext::withoutEnvironment();
 
-        $failure = $this->check->check($context->getExecutionContext());
+        $failure = $this->check->check($context);
         $this->assertInstanceOf(Failure::class, $failure);
         $this->assertEquals(
             sprintf(
                 'File: "%s" does not exist',
-                Path::join($context->studentWorkingDirectory, 'solution.php')
+                Path::join($context->studentExecutionDirectory, 'solution.php')
             ),
             $failure->getReason()
         );

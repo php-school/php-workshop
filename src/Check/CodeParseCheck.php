@@ -53,12 +53,12 @@ class CodeParseCheck implements SimpleCheckInterface
      */
     public function check(ExecutionContext $context): ResultInterface
     {
-        $code = (string) file_get_contents($context->getStudentSolutionFilePath());
+        $code = (string) file_get_contents($context->getEntryPoint());
 
         try {
             $this->parser->parse($code);
         } catch (Error $e) {
-            return Failure::fromCheckAndCodeParseFailure($this, $e, $context->getStudentSolutionFilePath());
+            return Failure::fromCheckAndCodeParseFailure($this, $e, $context->getEntryPoint());
         }
 
         return Success::fromCheck($this);

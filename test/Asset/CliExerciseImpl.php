@@ -2,25 +2,22 @@
 
 namespace PhpSchool\PhpWorkshopTest\Asset;
 
+use PhpSchool\PhpWorkshop\Event\EventDispatcher;
 use PhpSchool\PhpWorkshop\Exercise\CliExercise;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseType;
 use PhpSchool\PhpWorkshop\Exercise\ProvidesSolution;
 use PhpSchool\PhpWorkshop\ExerciseDispatcher;
-use PhpSchool\PhpWorkshop\ExerciseRunner\Context\RunnerContext;
+use PhpSchool\PhpWorkshop\Environment\CliTestEnvironment;
+use PhpSchool\PhpWorkshop\Environment\TestEnvironment;
 use PhpSchool\PhpWorkshop\Solution\SolutionInterface;
 
 class CliExerciseImpl implements ExerciseInterface, CliExercise
 {
-    /**
-     * @var string
-     */
-    private $name;
-
-    /**
-     * @var SolutionInterface
-     */
-    private $solution;
+    private string $name;
+    private SolutionInterface $solution;
+    private string $problem = '';
+    private CliTestEnvironment $environment;
 
     public function __construct(string $name = 'my-exercise')
     {
@@ -47,19 +44,19 @@ class CliExerciseImpl implements ExerciseInterface, CliExercise
         return $this->solution;
     }
 
+    public function setProblem(string $problem): void
+    {
+        $this->problem = $problem;
+    }
+
     public function getProblem(): string
     {
-        // TODO: Implement getProblem() method.
+        return $this->problem;
     }
 
     public function tearDown(): void
     {
         // TODO: Implement tearDown() method.
-    }
-
-    public function getArgs(): array
-    {
-        return []; // TODO: Implement getArgs() method.
     }
 
     public function getType(): ExerciseType
@@ -69,5 +66,24 @@ class CliExerciseImpl implements ExerciseInterface, CliExercise
 
     public function configure(ExerciseDispatcher $dispatcher, RunnerContext $context): void
     {
+    }
+
+    public function setTestEnvironment(CliTestEnvironment $environment): void
+    {
+        $this->environment = $environment;
+    }
+
+    public function defineTestEnvironment(): CliTestEnvironment
+    {
+        return $this->environment;
+    }
+
+    public function defineListeners(EventDispatcher $dispatcher): void
+    {
+    }
+
+    public function getRequiredChecks(): array
+    {
+        return [];
     }
 }

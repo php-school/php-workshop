@@ -54,12 +54,13 @@ class CodePatchListener
      */
     public function patch(ExerciseRunnerEvent $event): void
     {
-        $files = [$event->context->getExecutionContext()->getStudentSolutionFilePath()];
+        $files = [$event->context->getEntryPoint()];
+
 
         $exercise = $event->getExercise();
         if ($exercise instanceof ProvidesSolution) {
             $files[] = Path::join(
-                $event->context->getExecutionContext()->referenceEnvironment->workingDirectory,
+                $event->context->referenceExecutionDirectory,
                 $exercise->getSolution()->getEntryPoint()->getRelativePath()
             );
         }
@@ -87,7 +88,7 @@ class CodePatchListener
 
         //if we're in debug mode leave the students patch for debugging
         if ($event instanceof ExerciseRunnerEvent && $this->debugMode) {
-            unset($this->originalCode[$event->context->getExecutionContext()->getStudentSolutionFilePath()]);
+            unset($this->originalCode[$event->context->getEntryPoint()]);
         }
 
         foreach ($this->originalCode as $fileName => $contents) {

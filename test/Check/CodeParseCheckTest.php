@@ -42,12 +42,12 @@ class CodeParseCheckTest extends BaseTest
         $context = TestContext::withEnvironment();
 
         $this->createFileInEnvironment(
-            $context->getExecutionContext()->studentEnvironment,
+            $context->studentExecutionDirectory,
             'solution.php',
             '<?php $lol'
         );
 
-        $result = $this->check->check($context->getExecutionContext());
+        $result = $this->check->check($context);
         $this->assertInstanceOf(Failure::class, $result);
 
         $this->assertEquals('Code Parse Check', $result->getCheckName());
@@ -55,7 +55,7 @@ class CodeParseCheckTest extends BaseTest
             sprintf(
                 '|^File: "%s" could not be parsed\. Error: "|',
                 preg_quote(
-                    Path::join($context->getExecutionContext()->studentEnvironment->workingDirectory, 'solution.php')
+                    Path::join($context->studentExecutionDirectory, 'solution.php')
                 )
             ),
             $result->getReason()
@@ -67,12 +67,12 @@ class CodeParseCheckTest extends BaseTest
         $context = TestContext::withEnvironment();
 
         $this->createFileInEnvironment(
-            $context->getExecutionContext()->studentEnvironment,
+            $context->studentExecutionDirectory,
             'solution.php',
             '<?php $lol = "lol";'
         );
 
-        $result = $this->check->check($context->getExecutionContext());
+        $result = $this->check->check($context);
         $this->assertInstanceOf(Success::class, $result);
 
         $this->assertEquals('Code Parse Check', $result->getCheckName());

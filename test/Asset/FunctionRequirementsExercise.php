@@ -3,11 +3,11 @@
 namespace PhpSchool\PhpWorkshopTest\Asset;
 
 use PhpSchool\PhpWorkshop\Check\ComposerCheck;
+use PhpSchool\PhpWorkshop\Event\EventDispatcher;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseType;
 use PhpSchool\PhpWorkshop\ExerciseCheck\FunctionRequirementsExerciseCheck;
 use PhpSchool\PhpWorkshop\ExerciseDispatcher;
-use PhpSchool\PhpWorkshop\ExerciseRunner\Context\RunnerContext;
 
 class FunctionRequirementsExercise implements ExerciseInterface, FunctionRequirementsExerciseCheck
 {
@@ -36,19 +36,9 @@ class FunctionRequirementsExercise implements ExerciseInterface, FunctionRequire
         // TODO: Implement tearDown() method.
     }
 
-    public function getArgs(): array
-    {
-        return []; // TODO: Implement getArgs() method.
-    }
-
     public function getType(): ExerciseType
     {
         return ExerciseType::CLI();
-    }
-
-    public function configure(ExerciseDispatcher $dispatcher, RunnerContext $context): void
-    {
-        $dispatcher->requireCheck(ComposerCheck::class);
     }
 
     /**
@@ -65,5 +55,14 @@ class FunctionRequirementsExercise implements ExerciseInterface, FunctionRequire
     public function getBannedFunctions(): array
     {
         return ['file'];
+    }
+
+    public function defineListeners(EventDispatcher $dispatcher): void
+    {
+    }
+
+    public function getRequiredChecks(): array
+    {
+        return [ComposerCheck::class];
     }
 }

@@ -8,10 +8,8 @@ use InvalidArgumentException;
 use PhpSchool\PhpWorkshop\Exception\SolutionFileDoesNotExistException;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseType;
-use PhpSchool\PhpWorkshop\Exercise\ProvidesSolution;
 use PhpSchool\PhpWorkshop\ExerciseCheck\FileComparisonExerciseCheck;
 use PhpSchool\PhpWorkshop\ExerciseRunner\Context\ExecutionContext;
-use PhpSchool\PhpWorkshop\ExerciseRunner\Environment;
 use PhpSchool\PhpWorkshop\Input\Input;
 use PhpSchool\PhpWorkshop\Result\Failure;
 use PhpSchool\PhpWorkshop\Result\FileComparisonFailure;
@@ -48,8 +46,8 @@ class FileComparisonCheck implements SimpleCheckInterface
         foreach ($context->exercise->getFilesToCompare() as $key => $file) {
             [$options, $file] = $this->getOptionsAndFile($key, $file);
 
-            $studentFile = Path::join($context->studentEnvironment->workingDirectory, $file);
-            $referenceFile = Path::join($context->referenceEnvironment->workingDirectory, $file);
+            $studentFile = Path::join($context->studentExecutionDirectory, $file);
+            $referenceFile = Path::join($context->referenceExecutionDirectory, $file);
 
             if (!file_exists($referenceFile)) {
                 throw SolutionFileDoesNotExistException::fromExpectedFile($file);

@@ -105,6 +105,8 @@ abstract class WorkshopExerciseTest extends TestCase
             'program' => $submissionFileAbsolute
         ]);
 
+        //var_dump($input); die();
+
 
         $this->results = $this->container->get(ExerciseDispatcher::class)
             ->verify($exercise, $input);

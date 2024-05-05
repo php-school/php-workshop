@@ -39,13 +39,13 @@ class FileExistsCheck implements SimpleCheckInterface
             return Success::fromCheck($this);
         }
 
-        if (file_exists($context->getStudentSolutionFilePath())) {
+        if (file_exists($context->getEntryPoint())) {
             return Success::fromCheck($this);
         }
 
         return Failure::fromCheckAndReason(
             $this,
-            sprintf('File: "%s" does not exist', $context->getStudentSolutionFilePath())
+            sprintf('File: "%s" does not exist', $context->getEntryPoint())
         );
     }
 

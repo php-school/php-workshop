@@ -2,6 +2,7 @@
 
 namespace PhpSchool\PhpWorkshopTest\Asset;
 
+use PhpSchool\PhpWorkshop\Event\EventDispatcher;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseType;
 use PhpSchool\PhpWorkshop\Exercise\SubmissionPatchable;
@@ -47,8 +48,12 @@ class PatchableExercise implements ExerciseInterface, SubmissionPatchable
         // TODO: Implement getType() method.
     }
 
-    public function configure(ExerciseDispatcher $dispatcher, RunnerContext $context): void
+    public function defineListeners(EventDispatcher $dispatcher): void
     {
-        // TODO: Implement configure() method.
+    }
+
+    public function getRequiredChecks(): array
+    {
+        return [];
     }
 }

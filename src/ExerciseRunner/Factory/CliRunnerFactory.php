@@ -77,9 +77,4 @@ class CliRunnerFactory implements ExerciseRunnerFactoryInterface
     {
         return new CliRunner($exercise, $this->eventDispatcher, $this->processFactory);
     }
-
-    public function wrapContext(ExecutionContext $context): RunnerContext
-    {
-        return new CliContext($context);
-    }
 }

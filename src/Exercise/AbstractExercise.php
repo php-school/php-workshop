@@ -4,18 +4,12 @@ declare(strict_types=1);
 
 namespace PhpSchool\PhpWorkshop\Exercise;
 
+use PhpSchool\PhpWorkshop\Event\EventDispatcher;
 use PhpSchool\PhpWorkshop\ExerciseDispatcher;
-use PhpSchool\PhpWorkshop\ExerciseRunner\CliEnvironment;
-use PhpSchool\PhpWorkshop\ExerciseRunner\CliExecutionContext;
-use PhpSchool\PhpWorkshop\ExerciseRunner\Context\CliContext;
-use PhpSchool\PhpWorkshop\ExerciseRunner\Context\RunnerContext;
-use PhpSchool\PhpWorkshop\ExerciseRunner\Environment;
 use PhpSchool\PhpWorkshop\Input\Input;
 use PhpSchool\PhpWorkshop\Solution\SingleFileSolution;
 use PhpSchool\PhpWorkshop\Solution\SolutionInterface;
 use ReflectionClass;
-
-use function Sodium\randombytes_uniform;
 
 /**
  * This abstract class implements many of the methods described in `PhpSchool\PhpWorkshop\Exercise\ExerciseInterface`.
@@ -67,6 +61,23 @@ abstract class AbstractExercise
     }
 
     /**
+     * Subscribe to events triggered throughout the verification process
+     */
+    public function defineListeners(EventDispatcher $dispatcher): void
+    {
+    }
+
+    /**
+     * This is where the exercise specifies the extra checks it may require.
+     *
+     * @return array<class-string>
+     */
+    public function getRequiredChecks(): array
+    {
+        return [];
+    }
+
+    /**
      * Allows to perform some cleanup after the exercise solution's have been executed, for example
      * remove files, close DB connections.
      *
@@ -83,15 +94,5 @@ abstract class AbstractExercise
     public static function normaliseName(string $name): string
     {
         return (string) preg_replace('/[^A-Za-z\-]+/', '', str_replace(' ', '-', strtolower($name)));
-    }
-
-    /**
-     * This method is implemented as empty by default, if you want to add additional checks or listen
-     * to events, you should override this method.
-     *
-     * @param ExerciseDispatcher $dispatcher
-     */
-    public function configure(ExerciseDispatcher $dispatcher, RunnerContext $context): void
-    {
     }
 }

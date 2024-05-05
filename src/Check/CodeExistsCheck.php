@@ -49,7 +49,7 @@ class CodeExistsCheck implements SimpleCheckInterface
             }
         };
 
-        $code = (string) file_get_contents($context->getStudentSolutionFilePath());
+        $code = (string) file_get_contents($context->getEntryPoint());
         $statements = $this->parser->parse($code, $noopHandler);
 
         $empty = null === $statements || empty($statements);

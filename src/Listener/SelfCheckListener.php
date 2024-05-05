@@ -30,7 +30,7 @@ class SelfCheckListener
         $exercise = $event->getParameter('exercise');
 
         if ($exercise instanceof SelfCheck) {
-            $this->results->add($exercise->check($event->context->getExecutionContext()));
+            $this->results->add($exercise->check($event->context));
         }
     }
 }

@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace PhpSchool\PhpWorkshop\Exercise;
 
+use PhpSchool\PhpWorkshop\Event\EventDispatcher;
 use PhpSchool\PhpWorkshop\ExerciseDispatcher;
-use PhpSchool\PhpWorkshop\ExerciseRunner\Context\RunnerContext;
-use PhpSchool\PhpWorkshop\ExerciseRunner\Environment;
+use PhpSchool\PhpWorkshop\Environment\CliTestEnvironment;
 use PhpSchool\PhpWorkshop\Input\Input;
+use PhpSchool\PhpWorkshop\Environment\TestEnvironment;
 
 /**
- * This interface describes all of the methods an exercise
- * should implement.
+ * This interface describes all the methods an exercise should implement.
  */
 interface ExerciseInterface
 {
@@ -37,14 +37,16 @@ interface ExerciseInterface
     public function getProblem(): string;
 
     /**
-     * This is where the exercise specifies the extra checks it may require. It is also
-     * possible to grab the event dispatcher from the exercise dispatcher and listen to any
-     * events. This method is automatically invoked just before verifying/running an student's solution
-     * to an exercise.
-     *
-     * @param ExerciseDispatcher $dispatcher
+     * Subscribe to events triggered throughout the verification process
      */
-    public function configure(ExerciseDispatcher $dispatcher, RunnerContext $context): void;
+    public function defineListeners(EventDispatcher $dispatcher): void;
+
+    /**
+     * This is where the exercise specifies the extra checks it may require.
+     *
+     * @return array<class-string>
+     */
+    public function getRequiredChecks(): array;
 
     /**
      * A short description of the exercise.

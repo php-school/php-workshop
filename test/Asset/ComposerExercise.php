@@ -3,11 +3,13 @@
 namespace PhpSchool\PhpWorkshopTest\Asset;
 
 use PhpSchool\PhpWorkshop\Check\ComposerCheck;
+use PhpSchool\PhpWorkshop\Event\EventDispatcher;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseType;
 use PhpSchool\PhpWorkshop\ExerciseCheck\ComposerExerciseCheck;
 use PhpSchool\PhpWorkshop\ExerciseDispatcher;
 use PhpSchool\PhpWorkshop\ExerciseRunner\Context\RunnerContext;
+use PhpSchool\PhpWorkshop\Environment\CliTestEnvironment;
 
 class ComposerExercise implements ExerciseInterface, ComposerExerciseCheck
 {
@@ -36,9 +38,9 @@ class ComposerExercise implements ExerciseInterface, ComposerExerciseCheck
         // TODO: Implement tearDown() method.
     }
 
-    public function getArgs(): array
+    public function testEnvironment(): CliTestEnvironment
     {
-        return []; // TODO: Implement getArgs() method.
+        return new CliTestEnvironment();
     }
 
     public function getRequiredPackages(): array
@@ -54,8 +56,12 @@ class ComposerExercise implements ExerciseInterface, ComposerExerciseCheck
         return ExerciseType::CLI();
     }
 
-    public function configure(ExerciseDispatcher $dispatcher, RunnerContext $context): void
+    public function defineListeners(EventDispatcher $dispatcher): void
     {
-        $dispatcher->requireCheck(ComposerCheck::class);
+    }
+
+    public function getRequiredChecks(): array
+    {
+        return [ComposerCheck::class];
     }
 }

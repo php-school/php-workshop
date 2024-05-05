@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace PhpSchool\PhpWorkshop\ExerciseRunner;
 
 use PhpSchool\PhpWorkshop\Exercise\CustomVerifyingExercise;
+use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
+use PhpSchool\PhpWorkshop\ExerciseRunner\Context\ExecutionContext;
 use PhpSchool\PhpWorkshop\ExerciseRunner\Context\RunnerContext;
 use PhpSchool\PhpWorkshop\Input\Input;
 use PhpSchool\PhpWorkshop\Output\OutputInterface;
@@ -52,10 +54,10 @@ class CustomVerifyingRunner implements ExerciseRunnerInterface
      * Delegate to the exercise for verifying. Verifying could mean checking that a program was installed or that some
      * other arbitrary task was performed.
      *
-     * @param RunnerContext $context The runner context.
+     * @param ExecutionContext $context The runner context.
      * @return ResultInterface The result of the check.
      */
-    public function verify(RunnerContext $context): ResultInterface
+    public function verify(ExecutionContext $context): ResultInterface
     {
         return $this->exercise->verify();
     }
@@ -64,11 +66,11 @@ class CustomVerifyingRunner implements ExerciseRunnerInterface
      * Running a custom verifying exercise does nothing. There is no program required, therefore there is nothing
      * to run.
      *
-     * @param RunnerContext $context The command line arguments passed to the command.
+     * @param ExecutionContext $context The runner context.
      * @param OutputInterface $output A wrapper around STDOUT.
      * @return bool If the solution was successfully executed, eg. exit code was 0.
      */
-    public function run(RunnerContext $context, OutputInterface $output): bool
+    public function run(ExecutionContext $context, OutputInterface $output): bool
     {
         $message  = 'Nothing to run here. This exercise does not require a code solution, ';
         $message .= 'so there is nothing to execute.';

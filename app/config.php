@@ -38,6 +38,7 @@ use PhpSchool\PhpWorkshop\Event\EventDispatcher;
 use PhpSchool\PhpWorkshop\ExerciseDispatcher;
 use PhpSchool\PhpWorkshop\ExerciseRenderer;
 use PhpSchool\PhpWorkshop\ExerciseRepository;
+use PhpSchool\PhpWorkshop\ExerciseRunner\Context\ExecutionContextFactory;
 use PhpSchool\PhpWorkshop\ExerciseRunner\Factory\CgiRunnerFactory;
 use PhpSchool\PhpWorkshop\ExerciseRunner\Factory\CliRunnerFactory;
 use PhpSchool\PhpWorkshop\ExerciseRunner\Factory\CustomVerifyingRunnerFactory;
@@ -106,6 +107,7 @@ use function DI\create;
 use function DI\factory;
 use function PhpSchool\PhpWorkshop\canonicalise_path;
 use function PhpSchool\PhpWorkshop\Event\containerListener;
+use PhpSchool\PhpWorkshop\Listener\PrepareReferenceEnvironment;
 
 return [
     'appName' => basename($_SERVER['argv'][0] ?? 'phpschool'),
@@ -145,7 +147,8 @@ return [
             $c->get(RunnerManager::class),
             $c->get(ResultAggregator::class),
             $c->get(EventDispatcher::class),
-            $c->get(CheckRepository::class)
+            $c->get(CheckRepository::class),
+            new ExecutionContextFactory()
         );
     },
     ResultAggregator::class => create(ResultAggregator::class),
@@ -208,8 +211,8 @@ return [
     \PhpSchool\PhpWorkshop\Process\ProcessFactory::class => function (ContainerInterface $c) {
         return new \PhpSchool\PhpWorkshop\Process\DockerProcessFactory(
             $c->get('basePath'),
-            (new \Symfony\Component\Process\ExecutableFinder())->find('docker'),
-            $c->get('appName')
+            $c->get('appName'),
+            '/Users/aydin/Library/Caches/composer',
         );
 
         return new \PhpSchool\PhpWorkshop\Process\HostProcessFactory();
@@ -270,6 +273,10 @@ return [
     //Listeners
     InitialCodeListener::class => function (ContainerInterface $c) {
         return new InitialCodeListener($c->get('currentWorkingDirectory'), $c->get(LoggerInterface::class));
+    },
+
+    PrepareReferenceEnvironment::class => function (ContainerInterface $c) {
+        return new PrepareReferenceEnvironment(new Filesystem());
     },
     PrepareSolutionListener::class => function (ContainerInterface $c) {
         return new PrepareSolutionListener(
@@ -479,6 +486,14 @@ return [
                 containerListener(ConfigureCommandListener::class)
             ],
         ],
+        'prepare-reference-environment' => [
+            'cli.verify.start' => [
+                containerListener(PrepareReferenceEnvironment::class),
+            ],
+            'cgi.verify.start' => [
+                containerListener(PrepareReferenceEnvironment::class),
+            ]
+        ],
         'prepare-solution' => [
             'cli.verify.reference-execute.pre' => [
                 containerListener(PrepareSolutionListener::class),
@@ -494,7 +509,10 @@ return [
             ],
         ],
         'code-patcher' => [
-            'verify.pre.execute' => [
+            'cli.verify.start' => [
+                containerListener(CodePatchListener::class, 'patch'),
+            ],
+            'cgi.verify.start' => [
                 containerListener(CodePatchListener::class, 'patch'),
             ],
             'verify.post.execute' => [

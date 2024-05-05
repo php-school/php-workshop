@@ -39,14 +39,14 @@ class CodeExistsCheckTest extends BaseTest
         $context = TestContext::withEnvironment();
 
         $this->createFileInEnvironment(
-            $context->getExecutionContext()->studentEnvironment,
+            $context->studentExecutionDirectory,
             'solution.php',
             '<?php echo "Hello World";'
         );
 
         $this->assertInstanceOf(
             Success::class,
-            $this->check->check($context->getExecutionContext())
+            $this->check->check($context)
         );
     }
 
@@ -55,12 +55,12 @@ class CodeExistsCheckTest extends BaseTest
         $context = TestContext::withEnvironment();
 
         $this->createFileInEnvironment(
-            $context->getExecutionContext()->studentEnvironment,
+            $context->studentExecutionDirectory,
             'solution.php',
             '<?php'
         );
 
-        $failure = $this->check->check($context->getExecutionContext());
+        $failure = $this->check->check($context);
 
         $this->assertInstanceOf(Failure::class, $failure);
         $this->assertEquals('No code was found', $failure->getReason());
