@@ -4,6 +4,8 @@ namespace PhpSchool\PhpWorkshopTest\Event;
 
 use GuzzleHttp\Psr7\Request;
 use PhpSchool\PhpWorkshop\Event\CgiExecuteEvent;
+use PhpSchool\PhpWorkshop\Exercise\MockExercise;
+use PhpSchool\PhpWorkshop\Input\Input;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\RequestInterface;
 
@@ -12,7 +14,7 @@ class CgiExecuteEventTest extends TestCase
     public function testAddHeader(): void
     {
         $request = new Request('GET', 'https://some.site');
-        $e = new CgiExecuteEvent('event', $request);
+        $e = new CgiExecuteEvent('event', new MockExercise(), new Input('test'), $request);
 
         $e->addHeaderToRequest('Content-Type', 'text/html');
         $this->assertSame(
@@ -28,7 +30,7 @@ class CgiExecuteEventTest extends TestCase
     public function testModifyRequest(): void
     {
         $request = new Request('GET', 'https://some.site');
-        $e = new CgiExecuteEvent('event', $request);
+        $e = new CgiExecuteEvent('event', new MockExercise(), new Input('test'), $request);
 
         $e->modifyRequest(function (RequestInterface $request) {
             return $request
@@ -49,7 +51,7 @@ class CgiExecuteEventTest extends TestCase
     public function testGetRequest(): void
     {
         $request = new Request('GET', 'https://some.site');
-        $e = new CgiExecuteEvent('event', $request);
+        $e = new CgiExecuteEvent('event', new MockExercise(), new Input('test'), $request);
 
         $this->assertSame($request, $e->getRequest());
     }

@@ -4,28 +4,32 @@ declare(strict_types=1);
 
 namespace PhpSchool\PhpWorkshop\Event;
 
+use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
+use PhpSchool\PhpWorkshop\Input\Input;
 use Psr\Http\Message\RequestInterface;
 
 /**
  * An event to represent events which occur throughout the verification and running process in
  * `\PhpSchool\PhpWorkshop\ExerciseRunner\CgiRunner`.
  */
-class CgiExecuteEvent extends Event
+class CgiExecuteEvent extends CgiExerciseRunnerEvent
 {
-    /**
-     * @var RequestInterface
-     */
-    private $request;
+    private RequestInterface $request;
 
     /**
      * @param string $name The event name.
      * @param RequestInterface $request The request that will be performed.
      * @param array<mixed> $parameters The event parameters.
      */
-    public function __construct(string $name, RequestInterface $request, array $parameters = [])
-    {
+    public function __construct(
+        string $name,
+        ExerciseInterface $exercise,
+        Input $input,
+        RequestInterface $request,
+        array $parameters = []
+    ) {
         $parameters['request'] = $request;
-        parent::__construct($name, $parameters);
+        parent::__construct($name, $exercise, $input, $parameters);
         $this->request = $request;
     }
 

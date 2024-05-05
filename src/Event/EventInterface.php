@@ -26,11 +26,11 @@ interface EventInterface
     public function getParameters(): array;
 
     /**
-     * Get a parameter by it's name.
+     * Get a parameter by its name.
      *
      * @param string $name The name of the parameter.
      * @return mixed The value.
      * @throws InvalidArgumentException If the parameter by name does not exist.
      */
-    public function getParameter(string $name);
+    public function getParameter(string $name): mixed;
 }
