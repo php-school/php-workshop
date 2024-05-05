@@ -6,6 +6,7 @@ use Colors\Color;
 use GuzzleHttp\Psr7\Request;
 use PhpSchool\PhpWorkshop\Check\CodeExistsCheck;
 use PhpSchool\PhpWorkshop\Listener\OutputRunInfoListener;
+use PhpSchool\PhpWorkshop\Process\HostProcessFactory;
 use PhpSchool\Terminal\Terminal;
 use PhpSchool\PhpWorkshop\Check\CodeParseCheck;
 use PhpSchool\PhpWorkshop\Check\FileExistsCheck;
@@ -23,6 +24,7 @@ use PhpSchool\PhpWorkshop\ResultAggregator;
 use PhpSchool\PhpWorkshop\Solution\SingleFileSolution;
 use PhpSchool\PhpWorkshop\Utils\RequestRenderer;
 use PhpSchool\PhpWorkshopTest\Asset\CgiExerciseInterface;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Yoast\PHPUnitPolyfills\Polyfills\AssertionRenames;
 
@@ -30,24 +32,18 @@ class CgiRunnerTest extends TestCase
 {
     use AssertionRenames;
 
-    /** @var  CgiRunner */
-    private $runner;
-
+    private CgiRunner $runner;
     /**
-     * @var CgiExerciseInterface
+     * @var CgiExerciseInterface&MockObject
      */
     private $exercise;
-
-    /**
-     * @var EventDispatcher
-     */
-    private $eventDispatcher;
+    private EventDispatcher $eventDispatcher;
 
     public function setUp(): void
     {
         $this->exercise = $this->createMock(CgiExerciseInterface::class);
         $this->eventDispatcher = new EventDispatcher(new ResultAggregator());
-        $this->runner = new CgiRunner($this->exercise, $this->eventDispatcher);
+        $this->runner = new CgiRunner($this->exercise, $this->eventDispatcher, new HostProcessFactory());
 
         $this->exercise
             ->method('getType')

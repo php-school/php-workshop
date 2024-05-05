@@ -17,7 +17,7 @@ class RunnerManager
     /**
      * @var array<ExerciseRunnerFactoryInterface>
      */
-    private $factories = [];
+    private array $factories = [];
 
     /**
      * @param ExerciseRunnerFactoryInterface $factory
