@@ -41,7 +41,12 @@ final class DockerProcessFactory implements ProcessFactory
         }, array_keys($processInput->getEnv()), $processInput->getEnv());
 
         return new Process(
-            [...$this->baseComposeCommand($mounts, $env), 'runtime', $processInput->getExecutable(), ...$processInput->getArgs()],
+            [
+                ...$this->baseComposeCommand($mounts, $env),
+                'runtime',
+                $processInput->getExecutable(),
+                ...$processInput->getArgs()
+            ],
             $this->basePath,
             ['SOLUTION' => $processInput->getWorkingDirectory()],
             $processInput->getInput(),
