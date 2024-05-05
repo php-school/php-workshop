@@ -2,6 +2,8 @@
 
 namespace PhpSchool\PhpWorkshopTest\Asset;
 
+use PhpSchool\PhpWorkshop\Check\FileComparisonCheck;
+use PhpSchool\PhpWorkshop\Event\EventDispatcher;
 use PhpSchool\PhpWorkshop\Exercise\CgiExercise;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseType;
@@ -62,7 +64,12 @@ class CgiExerciseImpl implements ExerciseInterface, CgiExercise
         return ExerciseType::CGI();
     }
 
-    public function configure(ExerciseDispatcher $dispatcher): void
+    public function getRequiredChecks(): array
+    {
+        return [];
+    }
+
+    public function defineListeners(EventDispatcher $dispatcher): void
     {
     }
 }

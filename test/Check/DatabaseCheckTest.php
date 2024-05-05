@@ -131,10 +131,8 @@ class DatabaseCheckTest extends TestCase
 
         $this->exercise
             ->expects($this->once())
-            ->method('configure')
-            ->willReturnCallback(function (ExerciseDispatcher $dispatcher) {
-                $dispatcher->requireCheck(DatabaseCheck::class);
-            });
+            ->method('getRequiredChecks')
+            ->willReturn([DatabaseCheck::class]);
 
         $this->exercise
             ->expects($this->once())
@@ -172,10 +170,8 @@ class DatabaseCheckTest extends TestCase
 
         $this->exercise
             ->expects($this->once())
-            ->method('configure')
-            ->willReturnCallback(function (ExerciseDispatcher $dispatcher) {
-                $dispatcher->requireCheck(DatabaseCheck::class);
-            });
+            ->method('getRequiredChecks')
+            ->willReturn([DatabaseCheck::class]);
 
         $this->exercise
             ->expects($this->once())
@@ -206,13 +202,6 @@ class DatabaseCheckTest extends TestCase
             ->expects($this->once())
             ->method('getArgs')
             ->willReturn([]);
-
-        $this->exercise
-            ->expects($this->once())
-            ->method('configure')
-            ->willReturnCallback(function (ExerciseDispatcher $dispatcher) {
-                $dispatcher->requireCheck(DatabaseCheck::class);
-            });
 
         $this->checkRepository->registerCheck($this->check);
 
@@ -248,10 +237,8 @@ class DatabaseCheckTest extends TestCase
 
         $this->exercise
             ->expects($this->once())
-            ->method('configure')
-            ->willReturnCallback(function (ExerciseDispatcher $dispatcher) {
-                $dispatcher->requireCheck(DatabaseCheck::class);
-            });
+            ->method('getRequiredChecks')
+            ->willReturn([DatabaseCheck::class]);
 
         $this->exercise
             ->expects($this->once())
@@ -296,10 +283,8 @@ class DatabaseCheckTest extends TestCase
 
         $this->exercise
             ->expects($this->once())
-            ->method('configure')
-            ->willReturnCallback(function (ExerciseDispatcher $dispatcher) {
-                $dispatcher->requireCheck(DatabaseCheck::class);
-            });
+            ->method('getRequiredChecks')
+            ->willReturn([DatabaseCheck::class]);
 
         $this->exercise
             ->expects($this->once())

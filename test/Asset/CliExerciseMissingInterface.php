@@ -2,6 +2,8 @@
 
 namespace PhpSchool\PhpWorkshopTest\Asset;
 
+use PhpSchool\PhpWorkshop\Check\FileComparisonCheck;
+use PhpSchool\PhpWorkshop\Event\EventDispatcher;
 use PhpSchool\PhpWorkshop\Exercise\AbstractExercise;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseType;
@@ -30,5 +32,10 @@ class CliExerciseMissingInterface extends AbstractExercise implements ExerciseIn
     public function getType(): ExerciseType
     {
         return ExerciseType::CLI();
+    }
+
+    public function getRequiredChecks(): array
+    {
+        return [];
     }
 }
