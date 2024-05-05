@@ -38,7 +38,9 @@ class DockerProcessFactoryTest extends TestCase
         $input = new ProcessInput('php', [], __DIR__, []);
 
         $process = $factory->create($input);
-        static::assertSame("'/usr/local/bin/docker' 'compose' '-p' 'php8appreciate' '-f' '.docker/runtime/docker-compose.yml' 'run' '--rm' '-w' '/solution' 'runtime' 'php'", $process->getCommandLine());
+        $cmd  = "'/usr/local/bin/docker' 'compose' '-p' 'php8appreciate' '-f' '.docker/runtime/docker-compose.yml'";
+        $cmd .= " 'run' '--rm' '-w' '/solution' 'runtime' 'php'";
+        static::assertSame($cmd, $process->getCommandLine());
         static::assertSame('/docker-dir', $process->getWorkingDirectory());
     }
 
@@ -54,7 +56,9 @@ class DockerProcessFactoryTest extends TestCase
         $input = new ProcessInput('composer', [], __DIR__, []);
 
         $process = $factory->create($input);
-        static::assertSame("'/usr/local/bin/docker' 'compose' '-p' 'php8appreciate' '-f' '.docker/runtime/docker-compose.yml' 'run' '--rm' '-w' '/solution' '-v' '/composer/cache/dir:/root/.composer/cache' 'runtime' 'composer'", $process->getCommandLine());
+        $cmd  = "'/usr/local/bin/docker' 'compose' '-p' 'php8appreciate' '-f' '.docker/runtime/docker-compose.yml'";
+        $cmd .= " 'run' '--rm' '-w' '/solution' '-v' '/composer/cache/dir:/root/.composer/cache' 'runtime' 'composer'";
+        static::assertSame($cmd, $process->getCommandLine());
         static::assertSame('/docker-dir', $process->getWorkingDirectory());
     }
 
@@ -70,7 +74,9 @@ class DockerProcessFactoryTest extends TestCase
         $input = new ProcessInput('php', ['one', 'two'], __DIR__, []);
 
         $process = $factory->create($input);
-        static::assertSame("'/usr/local/bin/docker' 'compose' '-p' 'php8appreciate' '-f' '.docker/runtime/docker-compose.yml' 'run' '--rm' '-w' '/solution' 'runtime' 'php' 'one' 'two'", $process->getCommandLine());
+        $cmd  = "'/usr/local/bin/docker' 'compose' '-p' 'php8appreciate' '-f' '.docker/runtime/docker-compose.yml'";
+        $cmd .= "'run' '--rm' '-w' '/solution' 'runtime' 'php' 'one' 'two'";
+        static::assertSame($cmd, $process->getCommandLine());
         static::assertSame('/docker-dir', $process->getWorkingDirectory());
     }
 
@@ -86,7 +92,9 @@ class DockerProcessFactoryTest extends TestCase
         $input = new ProcessInput('php', ['one', 'two'], __DIR__, ['SOME_VAR' => 'value']);
 
         $process = $factory->create($input);
-        static::assertSame("'/usr/local/bin/docker' 'compose' '-p' 'php8appreciate' '-f' '.docker/runtime/docker-compose.yml' 'run' '--rm' '-e SOME_VAR=value' '-w' '/solution' 'runtime' 'php' 'one' 'two'", $process->getCommandLine());
+        $cmd  = "'/usr/local/bin/docker' 'compose' '-p' 'php8appreciate' '-f' '.docker/runtime/docker-compose.yml'";
+        $cmd .= " 'run' '--rm' '-e SOME_VAR=value' '-w' '/solution' 'runtime' 'php' 'one' 'two'";
+        static::assertSame($cmd, $process->getCommandLine());
         static::assertSame('/docker-dir', $process->getWorkingDirectory());
     }
 
@@ -102,7 +110,9 @@ class DockerProcessFactoryTest extends TestCase
         $input = new ProcessInput('php', [], __DIR__, [], 'someinput');
 
         $process = $factory->create($input);
-        static::assertSame("'/usr/local/bin/docker' 'compose' '-p' 'php8appreciate' '-f' '.docker/runtime/docker-compose.yml' 'run' '--rm' '-w' '/solution' 'runtime' 'php'", $process->getCommandLine());
+        $cmd  = "'/usr/local/bin/docker' 'compose' '-p' 'php8appreciate' '-f' '.docker/runtime/docker-compose.yml'";
+        $cmd .= " 'run' '--rm' '-w' '/solution' 'runtime' 'php'";
+        static::assertSame($cmd, $process->getCommandLine());
         static::assertSame('someinput', $process->getInput());
     }
 
@@ -118,7 +128,9 @@ class DockerProcessFactoryTest extends TestCase
         $input = new ProcessInput('php', ['one', 'two'], __DIR__, ['SOME_VAR' => 'value']);
 
         $process = $factory->create($input);
-        static::assertSame("'/usr/local/bin/docker' 'compose' '-p' 'php8appreciate' '-f' '.docker/runtime/docker-compose.yml' 'run' '--rm' '-e SOME_VAR=value' '-w' '/solution' 'runtime' 'php' 'one' 'two'", $process->getCommandLine());
+        $cmd  = "'/usr/local/bin/docker' 'compose' '-p' 'php8appreciate' '-f' '.docker/runtime/docker-compose.yml'";
+        $cmd .= " 'run' '--rm' '-e SOME_VAR=value' '-w' '/solution' 'runtime' 'php' 'one' 'two'";
+        static::assertSame($cmd, $process->getCommandLine());
         static::assertSame('/docker-dir', $process->getWorkingDirectory());
         static::assertSame(['SOLUTION' => __DIR__], $process->getEnv());
     }
