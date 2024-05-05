@@ -19,6 +19,8 @@ use PhpSchool\PhpWorkshop\Exercise\CgiExercise;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpSchool\PhpWorkshop\Input\Input;
 use PhpSchool\PhpWorkshop\Output\OutputInterface;
+use PhpSchool\PhpWorkshop\Process\ProcessFactory;
+use PhpSchool\PhpWorkshop\Process\ProcessInput;
 use PhpSchool\PhpWorkshop\Result\Cgi\CgiResult;
 use PhpSchool\PhpWorkshop\Result\Cgi\RequestFailure;
 use PhpSchool\PhpWorkshop\Result\Cgi\GenericFailure;
@@ -32,6 +34,8 @@ use RuntimeException;
 use Symfony\Component\Process\ExecutableFinder;
 use Symfony\Component\Process\Process;
 
+use function PHPStan\dumpType;
+
 /**
  * The `CGI` runner. This runner executes solutions as if they were behind a web-server. They populate the `$_SERVER`,
  * `$_GET` & `$_POST` super globals with information based of the request objects returned from the exercise.
@@ -39,24 +43,9 @@ use Symfony\Component\Process\Process;
 class CgiRunner implements ExerciseRunnerInterface
 {
     /**
-     * @var CgiExercise&ExerciseInterface
-     */
-    private $exercise;
-
-    /**
-     * @var EventDispatcher
-     */
-    private $eventDispatcher;
-
-    /**
-     * @var string
-     */
-    private $phpLocation;
-
-    /**
      * @var array<class-string>
      */
-    private static $requiredChecks = [
+    private static array $requiredChecks = [
         FileExistsCheck::class,
         CodeExistsCheck::class,
         PhpLintCheck::class,
@@ -68,26 +57,13 @@ class CgiRunner implements ExerciseRunnerInterface
      * be available. It will check for it's existence in the system's $PATH variable or the same
      * folder that the CLI php binary lives in.
      *
-     * @param CgiExercise $exercise The exercise to be invoked.
-     * @param EventDispatcher $eventDispatcher The event dispatcher.
+     * @param CgiExercise&ExerciseInterface $exercise The exercise to be invoked.
      */
     public function __construct(
-        CgiExercise $exercise,
-        EventDispatcher $eventDispatcher
+        private CgiExercise $exercise,
+        private EventDispatcher $eventDispatcher,
+        private ProcessFactory $processFactory
     ) {
-        $php = (new ExecutableFinder())->find('php-cgi');
-
-        if (null === $php) {
-            throw new RuntimeException(
-                'Could not load php-cgi binary. Please install php using your package manager.'
-            );
-        }
-
-        $this->phpLocation = $php;
-
-        /** @var CgiExercise&ExerciseInterface $exercise */
-        $this->eventDispatcher = $eventDispatcher;
-        $this->exercise = $exercise;
     }
 
     /**
@@ -172,7 +148,7 @@ class CgiRunner implements ExerciseRunnerInterface
      */
     private function executePhpFile(string $fileName, RequestInterface $request, string $type): ResponseInterface
     {
-        $process = $this->getProcess($fileName, $request);
+        $process = $this->getPhpProcess(dirname($fileName), basename($fileName), $request);
 
         $process->start();
         $this->eventDispatcher->dispatch(new CgiExecuteEvent(sprintf('cgi.verify.%s.executing', $type), $request));
@@ -196,47 +172,38 @@ class CgiRunner implements ExerciseRunnerInterface
      * @param RequestInterface $request
      * @return Process
      */
-    private function getProcess(string $fileName, RequestInterface $request): Process
+    private function getPhpProcess(string $workingDirectory, string $fileName, RequestInterface $request): Process
     {
-        $env = $this->getDefaultEnv();
-        $env += [
+        $env = [
             'REQUEST_METHOD'  => $request->getMethod(),
             'SCRIPT_FILENAME' => $fileName,
-            'REDIRECT_STATUS' => 302,
+            'REDIRECT_STATUS' => '302',
             'QUERY_STRING'    => $request->getUri()->getQuery(),
             'REQUEST_URI'     => $request->getUri()->getPath(),
             'XDEBUG_MODE'     => 'off',
         ];
 
-        $cgiBinary = sprintf(
-            '%s -dalways_populate_raw_post_data=-1 -dhtml_errors=0 -dexpose_php=0',
-            $this->phpLocation
-        );
-
         $content                = $request->getBody()->__toString();
-        $cmd                    = sprintf('echo %s | %s', escapeshellarg($content), $cgiBinary);
-        $env['CONTENT_LENGTH']  = $request->getBody()->getSize();
+        $env['CONTENT_LENGTH']  = (string) $request->getBody()->getSize();
         $env['CONTENT_TYPE']    = $request->getHeaderLine('Content-Type');
 
         foreach ($request->getHeaders() as $name => $values) {
             $env[sprintf('HTTP_%s', strtoupper($name))] = implode(", ", $values);
         }
 
-        return Process::fromShellCommandline($cmd, null, $env, null, 10);
-    }
+        $processInput = new ProcessInput(
+            'php-cgi',
+            [
+                '-dalways_populate_raw_post_data=-1',
+                '-dhtml_errors=0',
+                '-dexpose_php=0',
+            ],
+            $workingDirectory,
+            $env,
+            $content
+        );
 
-    /**
-     * We need to reset env entirely, because Symfony inherits it. We do that by setting all
-     * the current env vars to false
-     *
-     * @return array<string, false>
-     */
-    private function getDefaultEnv(): array
-    {
-        $env = array_map(fn () => false, $_ENV);
-        $env + array_map(fn () => false, $_SERVER);
-
-        return $env;
+        return $this->processFactory->create($processInput);
     }
 
     /**
@@ -297,7 +264,11 @@ class CgiRunner implements ExerciseRunnerInterface
             $event = $this->eventDispatcher->dispatch(
                 new CgiExecuteEvent('cgi.run.student-execute.pre', $request)
             );
-            $process = $this->getProcess($input->getRequiredArgument('program'), $event->getRequest());
+            $process = $this->getPhpProcess(
+                dirname($input->getRequiredArgument('program')),
+                $input->getRequiredArgument('program'),
+                $event->getRequest()
+            );
 
             $process->start();
             $this->eventDispatcher->dispatch(

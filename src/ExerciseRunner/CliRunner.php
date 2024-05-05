@@ -18,6 +18,8 @@ use PhpSchool\PhpWorkshop\Exercise\CliExercise;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpSchool\PhpWorkshop\Input\Input;
 use PhpSchool\PhpWorkshop\Output\OutputInterface;
+use PhpSchool\PhpWorkshop\Process\ProcessFactory;
+use PhpSchool\PhpWorkshop\Process\ProcessInput;
 use PhpSchool\PhpWorkshop\Result\Cli\RequestFailure;
 use PhpSchool\PhpWorkshop\Result\Cli\CliResult;
 use PhpSchool\PhpWorkshop\Result\Cli\GenericFailure;
@@ -25,6 +27,7 @@ use PhpSchool\PhpWorkshop\Result\Cli\Success;
 use PhpSchool\PhpWorkshop\Result\Cli\ResultInterface as CliResultInterface;
 use PhpSchool\PhpWorkshop\Result\ResultInterface;
 use PhpSchool\PhpWorkshop\Utils\ArrayObject;
+use PhpSchool\PhpWorkshop\Utils\Collection;
 use RuntimeException;
 use Symfony\Component\Process\ExecutableFinder;
 use Symfony\Component\Process\Process;
@@ -40,24 +43,9 @@ use Symfony\Component\Process\Process;
 class CliRunner implements ExerciseRunnerInterface
 {
     /**
-     * @var CliExercise&ExerciseInterface
-     */
-    private $exercise;
-
-    /**
-     * @var EventDispatcher
-     */
-    private $eventDispatcher;
-
-    /**
-     * @var string
-     */
-    private $phpLocation;
-
-    /**
      * @var array<class-string>
      */
-    private static $requiredChecks = [
+    private static array $requiredChecks = [
         FileExistsCheck::class,
         CodeExistsCheck::class,
         PhpLintCheck::class,
@@ -67,24 +55,13 @@ class CliRunner implements ExerciseRunnerInterface
     /**
      * Requires the exercise instance and an event dispatcher.
      *
-     * @param CliExercise $exercise The exercise to be invoked.
-     * @param EventDispatcher $eventDispatcher The event dispatcher.
+     * @param CliExercise&ExerciseInterface $exercise The exercise to be invoked.
      */
-    public function __construct(CliExercise $exercise, EventDispatcher $eventDispatcher)
-    {
-        $php = (new ExecutableFinder())->find('php');
-
-        if (null === $php) {
-            throw new RuntimeException(
-                'Could not load php binary. Please install php using your package manager.'
-            );
-        }
-
-        $this->phpLocation = $php;
-
-        /** @var CliExercise&ExerciseInterface $exercise */
-        $this->eventDispatcher = $eventDispatcher;
-        $this->exercise = $exercise;
+    public function __construct(
+        private CliExercise $exercise,
+        private EventDispatcher $eventDispatcher,
+        private ProcessFactory $processFactory
+    ) {
     }
 
     /**
@@ -104,59 +81,6 @@ class CliRunner implements ExerciseRunnerInterface
     {
         return self::$requiredChecks;
     }
-
-    /**
-     * @param string $fileName
-     * @param ArrayObject<int, string> $args
-     * @param string $type
-     * @return string
-     */
-    private function executePhpFile(string $fileName, ArrayObject $args, string $type): string
-    {
-        $process = $this->getPhpProcess($fileName, $args);
-
-        $process->start();
-        $this->eventDispatcher->dispatch(new CliExecuteEvent(sprintf('cli.verify.%s.executing', $type), $args));
-        $process->wait();
-
-        if (!$process->isSuccessful()) {
-            throw CodeExecutionException::fromProcess($process);
-        }
-
-        return $process->getOutput();
-    }
-
-    /**
-     * @param string $fileName
-     * @param ArrayObject<int, string> $args
-     *
-     * @return Process
-     */
-    private function getPhpProcess(string $fileName, ArrayObject $args): Process
-    {
-        return new Process(
-            $args->prepend($fileName)->prepend($this->phpLocation)->getArrayCopy(),
-            dirname($fileName),
-            $this->getDefaultEnv() + ['XDEBUG_MODE' => 'off'],
-            null,
-            10
-        );
-    }
-
-    /**
-     * We need to reset env entirely, because Symfony inherits it. We do that by setting all
-     * the current env vars to false
-     *
-     * @return array<string, false>
-     */
-    private function getDefaultEnv(): array
-    {
-        $env = array_map(fn () => false, $_ENV);
-        $env + array_map(fn () => false, $_SERVER);
-
-        return $env;
-    }
-
 
     /**
      * Verifies a solution by invoking PHP from the CLI passing the arguments gathered from the exercise
@@ -272,7 +196,12 @@ class CliRunner implements ExerciseRunnerInterface
 
             $args = $event->getArgs();
 
-            $process = $this->getPhpProcess($input->getRequiredArgument('program'), $args);
+            $process = $this->getPhpProcess(
+                dirname($input->getRequiredArgument('program')),
+                $input->getRequiredArgument('program'),
+                $args
+            );
+
             $process->start();
             $this->eventDispatcher->dispatch(
                 new CliExecuteEvent('cli.run.student.executing', $args, ['output' => $output])
@@ -295,5 +224,33 @@ class CliRunner implements ExerciseRunnerInterface
 
         $this->eventDispatcher->dispatch(new ExerciseRunnerEvent('cli.run.finish', $this->exercise, $input));
         return $success;
+    }
+
+    /**
+     * @param ArrayObject<int, string> $args
+     */
+    private function executePhpFile(string $fileName, ArrayObject $args, string $type): string
+    {
+        $process = $this->getPhpProcess(dirname($fileName), $fileName, $args);
+
+        $process->start();
+        $this->eventDispatcher->dispatch(new CliExecuteEvent(sprintf('cli.verify.%s.executing', $type), $args));
+        $process->wait();
+
+        if (!$process->isSuccessful()) {
+            throw CodeExecutionException::fromProcess($process);
+        }
+
+        return $process->getOutput();
+    }
+
+    /**
+     * @param ArrayObject<int, string> $args
+     */
+    private function getPhpProcess(string $workingDirectory, string $fileName, ArrayObject $args): Process
+    {
+        return $this->processFactory->create(
+            new ProcessInput('php', [$fileName, ...$args->getArrayCopy()], $workingDirectory, [])
+        );
     }
 }

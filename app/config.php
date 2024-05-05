@@ -71,6 +71,8 @@ use PhpSchool\PhpWorkshop\MenuItem\ResetProgress;
 use PhpSchool\PhpWorkshop\Output\OutputInterface;
 use PhpSchool\PhpWorkshop\Output\StdOutput;
 use PhpSchool\PhpWorkshop\Patch;
+use PhpSchool\PhpWorkshop\Process\HostProcessFactory;
+use PhpSchool\PhpWorkshop\Process\ProcessFactory;
 use PhpSchool\PhpWorkshop\Result\Cgi\CgiResult;
 use PhpSchool\PhpWorkshop\Result\Cgi\GenericFailure as CgiGenericFailure;
 use PhpSchool\PhpWorkshop\Result\Cgi\RequestFailure as CgiRequestFailure;
@@ -187,10 +189,14 @@ return [
     //Exercise Runners
     RunnerManager::class => function (ContainerInterface $c) {
         $manager = new RunnerManager();
-        $manager->addFactory(new CliRunnerFactory($c->get(EventDispatcher::class)));
-        $manager->addFactory(new CgiRunnerFactory($c->get(EventDispatcher::class)));
+        $manager->addFactory(new CliRunnerFactory($c->get(EventDispatcher::class), $c->get(ProcessFactory::class)));
+        $manager->addFactory(new CgiRunnerFactory($c->get(EventDispatcher::class), $c->get(ProcessFactory::class)));
         $manager->addFactory(new CustomVerifyingRunnerFactory());
         return $manager;
+    },
+
+    ProcessFactory::class => function (ContainerInterface $c) {
+        return new HostProcessFactory();
     },
 
     //commands

@@ -15,6 +15,7 @@ use PhpSchool\PhpWorkshop\ExerciseRunner\CliRunner;
 use PhpSchool\PhpWorkshop\ExerciseRunner\RunnerManager;
 use PhpSchool\PhpWorkshop\Input\Input;
 use PhpSchool\PhpWorkshop\Output\OutputInterface;
+use PhpSchool\PhpWorkshop\Process\HostProcessFactory;
 use PhpSchool\PhpWorkshop\ResultAggregator;
 use PhpSchool\PhpWorkshop\Solution\SingleFileSolution;
 use PhpSchool\PhpWorkshopTest\Asset\DatabaseExerciseInterface;
@@ -68,8 +69,8 @@ class DatabaseCheckTest extends TestCase
     private function getRunnerManager(ExerciseInterface $exercise, EventDispatcher $eventDispatcher): MockObject
     {
         $runner = $this->getMockBuilder(CliRunner::class)
-            ->setConstructorArgs([$exercise, $eventDispatcher])
-            ->setMethods(['configure', 'getRequiredChecks'])
+            ->setConstructorArgs([$exercise, $eventDispatcher, new HostProcessFactory()])
+            ->onlyMethods(['getRequiredChecks'])
             ->getMock();
 
         $runner
