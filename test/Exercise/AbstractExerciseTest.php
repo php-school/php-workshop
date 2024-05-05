@@ -2,6 +2,7 @@
 
 namespace PhpSchool\PhpWorkshopTest\Exercise;
 
+use PhpSchool\PhpWorkshop\Event\EventDispatcher;
 use PhpSchool\PhpWorkshop\ExerciseDispatcher;
 use PhpSchool\PhpWorkshop\Solution\SolutionFile;
 use PhpSchool\PhpWorkshop\Solution\SolutionInterface;
@@ -65,11 +66,11 @@ class AbstractExerciseTest extends TestCase
         ];
     }
 
-    public function testConfigureDoesNothing(): void
+    public function testDefineListenersDoesNothing(): void
     {
-        $dispatcher = $this->createMock(ExerciseDispatcher::class);
+        $dispatcher = $this->createMock(EventDispatcher::class);
 
         $exercise = new AbstractExerciseImpl('Array We Go');
-        $this->assertNull($exercise->configure($dispatcher));
+        $this->assertNull($exercise->defineListeners($dispatcher));
     }
 }

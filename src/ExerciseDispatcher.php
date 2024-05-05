@@ -129,11 +129,11 @@ class ExerciseDispatcher
      */
     public function verify(ExerciseInterface $exercise, Input $input): ResultAggregator
     {
-        $exercise->configure($this);
-
         $runner = $this->runnerManager->getRunner($exercise);
 
-        foreach ($runner->getRequiredChecks() as $requiredCheck) {
+        $exercise->defineListeners($this->eventDispatcher);
+
+        foreach ([...$runner->getRequiredChecks(), ...$exercise->getRequiredChecks()] as $requiredCheck) {
             $this->requireCheck($requiredCheck);
         }
 
@@ -181,7 +181,7 @@ class ExerciseDispatcher
      */
     public function run(ExerciseInterface $exercise, Input $input, OutputInterface $output): bool
     {
-        $exercise->configure($this);
+        $exercise->defineListeners($this->eventDispatcher);
 
         /** @var PhpLintCheck $lint */
         $lint = $this->checkRepository->getByClass(PhpLintCheck::class);
