@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace PhpSchool\PhpWorkshop\Exercise;
 
+use PhpSchool\PhpWorkshop\Check\FileComparisonCheck;
+use PhpSchool\PhpWorkshop\Event\EventDispatcher;
 use PhpSchool\PhpWorkshop\ExerciseDispatcher;
 use PhpSchool\PhpWorkshop\Solution\SingleFileSolution;
 use PhpSchool\PhpWorkshop\Solution\SolutionInterface;
@@ -78,12 +80,14 @@ abstract class AbstractExercise
     }
 
     /**
-     * This method is implemented as empty by default, if you want to add additional checks or listen
-     * to events, you should override this method.
-     *
-     * @param ExerciseDispatcher $dispatcher
+     * @return list<class-string>
      */
-    public function configure(ExerciseDispatcher $dispatcher): void
+    public function getRequiredChecks(): array
+    {
+        return [];
+    }
+
+    public function defineListeners(EventDispatcher $dispatcher): void
     {
     }
 }
