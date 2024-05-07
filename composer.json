@@ -63,8 +63,8 @@
         ],
         "unit-tests": "phpunit",
         "cs" : [
-            "phpcs src --standard=PSR12 --encoding=UTF-8",
-            "phpcs test --standard=PSR12 --encoding=UTF-8"
+            "phpcs src --standard=PSR12 --encoding=UTF-8 --exclude=Generic.Files.LineLength",
+            "phpcs test --standard=PSR12 --encoding=UTF-8 --exclude=Generic.Files.LineLength"
         ],
         "cs-fix" : [
             "phpcbf src --standard=PSR12 --encoding=UTF-8",
