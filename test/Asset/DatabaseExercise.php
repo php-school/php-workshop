@@ -8,6 +8,7 @@ use PhpSchool\PhpWorkshop\Event\EventDispatcher;
 use PhpSchool\PhpWorkshop\Exercise\CliExercise;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseType;
+use PhpSchool\PhpWorkshop\Exercise\Scenario\CliScenario;
 use PhpSchool\PhpWorkshop\ExerciseCheck\DatabaseExerciseCheck;
 use PhpSchool\PhpWorkshop\Solution\SolutionInterface;
 
@@ -16,7 +17,12 @@ class DatabaseExercise implements ExerciseInterface, DatabaseExerciseCheck, CliE
     private SolutionInterface $solution;
     private ?\Closure $verifier = null;
     private ?\Closure $seeder = null;
-    private array $args = [[]];
+    private CliScenario $scenario;
+
+    public function __construct()
+    {
+        $this->scenario = new CliScenario();
+    }
 
     public function setSeeder(\Closure $seeder): void
     {
@@ -92,13 +98,13 @@ class DatabaseExercise implements ExerciseInterface, DatabaseExerciseCheck, CliE
         return $this->solution;
     }
 
-    public function setArgs(array $args): void
+    public function setScenario(CliScenario $scenario): void
     {
-        $this->args = $args;
+        $this->scenario = $scenario;
     }
 
-    public function getArgs(): array
+    public function defineTestScenario(): CliScenario
     {
-        return $this->args;
+        return $this->scenario;
     }
 }

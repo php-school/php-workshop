@@ -102,13 +102,15 @@ class CliRunner implements ExerciseRunnerInterface
      */
     public function verify(ExecutionContext $context): ResultInterface
     {
+        $scenario = $this->exercise->defineTestScenario();
+
         $this->eventDispatcher->dispatch(new CliExerciseRunnerEvent('cli.verify.start', $this->exercise, $context->getInput()));
         $result = new CliResult(
             array_map(
-                function (array $args) use ($context) {
+                function (Collection $args) use ($context) {
                     return $this->doVerify($context, $args);
                 },
-                $this->preserveOldArgFormat($this->exercise->getArgs())
+                $scenario->getExecutions()
             )
         );
         $this->eventDispatcher->dispatch(new CliExerciseRunnerEvent('cli.verify.finish', $this->exercise, $context->getInput()));
@@ -116,29 +118,10 @@ class CliRunner implements ExerciseRunnerInterface
     }
 
     /**
-     * BC - getArgs only returned 1 set of args in v1 instead of multiple sets of args in v2
-     *
-     * @param array<int, array<string>>|array<int, string> $args
-     * @return array<int, array<string>>
+     * @param Collection<int, string> $args
      */
-    private function preserveOldArgFormat(array $args): array
+    private function doVerify(ExecutionContext $context, Collection $args): CliResultInterface
     {
-        if (isset($args[0]) && !is_array($args[0])) {
-            $args = [$args];
-        } elseif (count($args) === 0) {
-            $args = [[]];
-        }
-
-        return $args;
-    }
-
-    /**
-     * @param array<string> $args
-     */
-    private function doVerify(ExecutionContext $context, array $args): CliResultInterface
-    {
-        //arrays are not pass-by-ref
-        $args = new ArrayObject($args);
 
         try {
             /** @var CliExecuteEvent $event */
@@ -214,12 +197,14 @@ class CliRunner implements ExerciseRunnerInterface
      */
     public function run(ExecutionContext $context, OutputInterface $output): bool
     {
+        $scenario = $this->exercise->defineTestScenario();
+
         $this->eventDispatcher->dispatch(new CliExerciseRunnerEvent('cli.run.start', $this->exercise, $context->getInput()));
         $success = true;
-        foreach ($this->preserveOldArgFormat($this->exercise->getArgs()) as $i => $args) {
+        foreach ($scenario->getExecutions() as $i => $args) {
             /** @var CliExecuteEvent $event */
             $event = $this->eventDispatcher->dispatch(
-                new CliExecuteEvent('cli.run.student-execute.pre', $this->exercise, $context->getInput(), new ArrayObject($args))
+                new CliExecuteEvent('cli.run.student-execute.pre', $this->exercise, $context->getInput(), $args)
             );
 
             $args = $event->getArgs();

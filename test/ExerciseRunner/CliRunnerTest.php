@@ -4,6 +4,7 @@ namespace PhpSchool\PhpWorkshopTest\ExerciseRunner;
 
 use Colors\Color;
 use PhpSchool\PhpWorkshop\Check\CodeExistsCheck;
+use PhpSchool\PhpWorkshop\Exercise\Scenario\CliScenario;
 use PhpSchool\PhpWorkshop\ExerciseRunner\Context\TestContext;
 use PhpSchool\PhpWorkshop\Listener\OutputRunInfoListener;
 use PhpSchool\PhpWorkshop\Process\HostProcessFactory;
@@ -63,6 +64,7 @@ class CliRunnerTest extends TestCase
     {
         $solution = SingleFileSolution::fromFile(realpath(__DIR__ . '/../res/cli/solution-error.php'));
         $this->exercise->setSolution($solution);
+        $this->exercise->setScenario((new CliScenario())->withExecution());
 
         $regex  = "/^PHP Code failed to execute\\. Error: \"PHP Parse error:  syntax error, unexpected end of file";
         $regex .= ", expecting ['\"][,;]['\"] or ['\"][;,]['\"]/";
@@ -77,7 +79,7 @@ class CliRunnerTest extends TestCase
     {
         $solution = SingleFileSolution::fromFile(realpath(__DIR__ . '/../res/cli/solution.php'));
         $this->exercise->setSolution($solution);
-        $this->exercise->setArgs([[1, 2, 3]]);
+        $this->exercise->setScenario((new CliScenario())->withExecution([1, 2, 3]));
 
         $context = TestContext::withDirectories(null, $this->exercise);
         $context->importStudentSolution(__DIR__ . '/../res/cli/user.php');
@@ -92,7 +94,7 @@ class CliRunnerTest extends TestCase
     {
         $solution = SingleFileSolution::fromFile(realpath(__DIR__ . '/../res/cli/solution.php'));
         $this->exercise->setSolution($solution);
-        $this->exercise->setArgs([1, 2, 3]);
+        $this->exercise->setScenario((new CliScenario())->withExecution([1, 2, 3]));
 
         $context = TestContext::withDirectories(null, $this->exercise);
         $context->importStudentSolution(__DIR__ . '/../res/cli/user.php');
@@ -107,7 +109,7 @@ class CliRunnerTest extends TestCase
     {
         $solution = SingleFileSolution::fromFile(realpath(__DIR__ . '/../res/cli/solution.php'));
         $this->exercise->setSolution($solution);
-        $this->exercise->setArgs([[]]);
+        $this->exercise->setScenario((new CliScenario())->withExecution());
 
         $context = TestContext::withDirectories(null, $this->exercise);
         $context->importStudentSolution(__DIR__ . '/../res/cli/user-error.php');
@@ -129,7 +131,7 @@ class CliRunnerTest extends TestCase
     {
         $solution = SingleFileSolution::fromFile(realpath(__DIR__ . '/../res/cli/solution.php'));
         $this->exercise->setSolution($solution);
-        $this->exercise->setArgs([[1, 2, 3]]);
+        $this->exercise->setScenario((new CliScenario())->withExecution([1, 2, 3]));
 
         $context = TestContext::withDirectories(null, $this->exercise);
         $context->importReferenceSolution($solution);
@@ -171,7 +173,11 @@ class CliRunnerTest extends TestCase
 
         $this->expectOutputString($exp);
 
-        $this->exercise->setArgs([[1, 2, 3], [4, 5, 6]]);
+        $this->exercise->setScenario(
+            (new CliScenario())
+                ->withExecution([1, 2, 3])
+                ->withExecution([4, 5, 6])
+        );
 
         $context = TestContext::withDirectories(null, $this->exercise);
         $context->importStudentSolution(__DIR__ . '/../res/cli/user.php');
@@ -185,8 +191,7 @@ class CliRunnerTest extends TestCase
     {
         $output = new StdOutput(new Color(), $this->createMock(Terminal::class));
 
-        $this->exercise->setArgs([[1, 2, 3]]);
-
+        $this->exercise->setScenario((new CliScenario())->withExecution([1, 2, 3]));
 
         $this->expectOutputRegex(
             "/(PHP )?Parse error:\W+syntax error, unexpected end of file, expecting ['\"][,;]['\"] or ['\"][;,]['\"] /"
@@ -211,7 +216,7 @@ class CliRunnerTest extends TestCase
 
         $solution = SingleFileSolution::fromFile(realpath(__DIR__ . '/../res/cli/solution.php'));
         $this->exercise->setSolution($solution);
-        $this->exercise->setArgs([[1, 2, 3]]);
+        $this->exercise->setScenario((new CliScenario())->withExecution([1, 2, 3]));
 
         $context = TestContext::withDirectories(null, $this->exercise);
         $context->importStudentSolution(__DIR__ . '/../res/cli/user.php');

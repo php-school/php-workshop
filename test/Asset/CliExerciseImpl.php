@@ -8,6 +8,7 @@ use PhpSchool\PhpWorkshop\Exercise\CliExercise;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseType;
 use PhpSchool\PhpWorkshop\Exercise\ProvidesSolution;
+use PhpSchool\PhpWorkshop\Exercise\Scenario\CliScenario;
 use PhpSchool\PhpWorkshop\ExerciseDispatcher;
 use PhpSchool\PhpWorkshop\Solution\SolutionInterface;
 
@@ -15,11 +16,12 @@ class CliExerciseImpl implements ExerciseInterface, CliExercise
 {
     private string $name;
     private SolutionInterface $solution;
-    private array $args = [[]];
+    private CliScenario $scenario;
 
     public function __construct(string $name = 'my-exercise')
     {
         $this->name = $name;
+        $this->scenario = new CliScenario();
     }
 
     public function getName(): string
@@ -52,14 +54,14 @@ class CliExerciseImpl implements ExerciseInterface, CliExercise
         // TODO: Implement tearDown() method.
     }
 
-    public function setArgs(array $args): void
+    public function setScenario(CliScenario $scenario): void
     {
-        $this->args = $args;
+        $this->scenario = $scenario;
     }
 
-    public function getArgs(): array
+    public function defineTestScenario(): CliScenario
     {
-        return $this->args;
+        return $this->scenario;
     }
 
     public function getType(): ExerciseType

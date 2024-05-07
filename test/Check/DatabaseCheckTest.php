@@ -9,6 +9,7 @@ use PhpSchool\PhpWorkshop\Check\DatabaseCheck;
 use PhpSchool\PhpWorkshop\Event\EventDispatcher;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseType;
+use PhpSchool\PhpWorkshop\Exercise\Scenario\CliScenario;
 use PhpSchool\PhpWorkshop\ExerciseCheck\DatabaseExerciseCheck;
 use PhpSchool\PhpWorkshop\ExerciseDispatcher;
 use PhpSchool\PhpWorkshop\ExerciseRunner\CliRunner;
@@ -111,8 +112,7 @@ class DatabaseCheckTest extends TestCase
         $this->check = new DatabaseCheck();
         $solution = SingleFileSolution::fromFile(realpath(__DIR__ . '/../res/database/solution.php'));
         $this->exercise->setSolution($solution);
-
-        $this->exercise->setArgs([[1, 2, 3]]);
+        $this->exercise->setScenario((new CliScenario())->withExecution([1, 2, 3]));
         $this->exercise->setVerifier(fn () => true);
 
         $this->checkRepository->registerCheck($this->check);
@@ -139,7 +139,7 @@ class DatabaseCheckTest extends TestCase
     {
         $solution = SingleFileSolution::fromFile(realpath(__DIR__ . '/../res/database/solution.php'));
         $this->exercise->setSolution($solution);
-        $this->exercise->setArgs([[1, 2, 3]]);
+        $this->exercise->setScenario((new CliScenario())->withExecution([1, 2, 3]));
 
         $this->exercise->setVerifier(fn () => true);
         $this->checkRepository->registerCheck($this->check);
@@ -191,7 +191,7 @@ class DatabaseCheckTest extends TestCase
     {
         $solution = SingleFileSolution::fromFile(realpath(__DIR__ . '/../res/database/solution.php'));
         $this->exercise->setSolution($solution);
-        $this->exercise->setArgs([[1, 2, 3]]);
+        $this->exercise->setScenario((new CliScenario())->withExecution([1, 2, 3]));
         $this->exercise->setVerifier(fn () => false);
 
         $this->checkRepository->registerCheck($this->check);
@@ -221,6 +221,7 @@ class DatabaseCheckTest extends TestCase
     {
         $solution = SingleFileSolution::fromFile(realpath(__DIR__ . '/../res/database/solution-alter-db.php'));
         $this->exercise->setSolution($solution);
+        $this->exercise->setScenario((new CliScenario())->withExecution());
 
         $this->exercise->setVerifier(function (PDO $db) {
             $users = $db->query('SELECT * FROM users');

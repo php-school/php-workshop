@@ -7,6 +7,8 @@ use PhpSchool\PhpWorkshop\Event\EventDispatcher;
 use PhpSchool\PhpWorkshop\Exercise\CgiExercise;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseType;
+use PhpSchool\PhpWorkshop\Exercise\Scenario\CgiScenario;
+use PhpSchool\PhpWorkshop\Exercise\Scenario\CliScenario;
 use PhpSchool\PhpWorkshop\ExerciseDispatcher;
 use PhpSchool\PhpWorkshop\Solution\SolutionInterface;
 use Psr\Http\Message\RequestInterface;
@@ -15,12 +17,12 @@ class CgiExerciseImpl implements ExerciseInterface, CgiExercise
 {
     private string $name;
     private SolutionInterface $solution;
-    /** @var array<RequestInterface> */
-    private array $requests = [];
+    private CgiScenario $scenario;
 
     public function __construct(string $name = 'my-exercise')
     {
         $this->name = $name;
+        $this->scenario = new CgiScenario();
     }
 
     public function getName(): string
@@ -53,25 +55,6 @@ class CgiExerciseImpl implements ExerciseInterface, CgiExercise
         // TODO: Implement tearDown() method.
     }
 
-    /**
-     * @param array<RequestInterface> $requests
-     */
-    public function setRequests(array $requests): void
-    {
-        $this->requests = $requests;
-    }
-
-    /**
-     * This method should return an array of PSR-7 requests, which will be forwarded to the student's
-     * solution.
-     *
-     * @return array<RequestInterface> An array of PSR-7 requests.
-     */
-    public function getRequests(): array
-    {
-        return $this->requests;
-    }
-
     public function getType(): ExerciseType
     {
         return ExerciseType::CGI();
@@ -84,5 +67,15 @@ class CgiExerciseImpl implements ExerciseInterface, CgiExercise
 
     public function defineListeners(EventDispatcher $dispatcher): void
     {
+    }
+
+    public function setScenario(CgiScenario $scenario): void
+    {
+        $this->scenario = $scenario;
+    }
+
+    public function defineTestScenario(): CgiScenario
+    {
+        return $this->scenario;
     }
 }

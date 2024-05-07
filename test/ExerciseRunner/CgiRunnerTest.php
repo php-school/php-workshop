@@ -5,6 +5,8 @@ namespace PhpSchool\PhpWorkshopTest\ExerciseRunner;
 use Colors\Color;
 use GuzzleHttp\Psr7\Request;
 use PhpSchool\PhpWorkshop\Check\CodeExistsCheck;
+use PhpSchool\PhpWorkshop\Exercise\Scenario\CgiScenario;
+use PhpSchool\PhpWorkshop\Exercise\Scenario\CliScenario;
 use PhpSchool\PhpWorkshop\ExerciseRunner\Context\TestContext;
 use PhpSchool\PhpWorkshop\Listener\OutputRunInfoListener;
 use PhpSchool\PhpWorkshop\Process\HostProcessFactory;
@@ -64,9 +66,9 @@ class CgiRunnerTest extends TestCase
     {
         $solution = SingleFileSolution::fromFile(__DIR__ . '/../res/cgi/solution-error.php');
         $this->exercise->setSolution($solution);
-        $this->exercise->setRequests([
-            (new Request('GET', 'http://some.site?number=5'))
-        ]);
+        $this->exercise->setScenario(
+            (new CgiScenario())->withExecution((new Request('GET', 'http://some.site?number=5')))
+        );
 
         $regex  = "/^PHP Code failed to execute\. Error: \"PHP Parse error:  syntax error, unexpected end of file in/";
         $this->expectException(SolutionExecutionException::class);
@@ -80,9 +82,9 @@ class CgiRunnerTest extends TestCase
     {
         $solution = SingleFileSolution::fromFile(__DIR__ . '/../res/cgi/get-solution.php');
         $this->exercise->setSolution($solution);
-        $this->exercise->setRequests([
-            (new Request('GET', 'http://some.site?number=5'))
-        ]);
+        $this->exercise->setScenario(
+            (new CgiScenario())->withExecution((new Request('GET', 'http://some.site?number=5')))
+        );
 
         $context = TestContext::withDirectories(null, $this->exercise);
         $context->importStudentSolution(__DIR__ . '/../res/cgi/get-solution.php');
@@ -103,7 +105,7 @@ class CgiRunnerTest extends TestCase
 
         $request->getBody()->write('number=5');
 
-        $this->exercise->setRequests([$request]);
+        $this->exercise->setScenario((new CgiScenario())->withExecution($request));
 
         $context = TestContext::withDirectories(null, $this->exercise);
         $context->importStudentSolution(__DIR__ . '/../res/cgi/post-solution.php');
@@ -124,7 +126,7 @@ class CgiRunnerTest extends TestCase
 
         $request->getBody()->write('number=5&start=4');
 
-        $this->exercise->setRequests([$request]);
+        $this->exercise->setScenario((new CgiScenario())->withExecution($request));
 
         $context = TestContext::withDirectories(null, $this->exercise);
         $context->importStudentSolution(__DIR__ . '/../res/cgi/post-multiple-solution.php');
@@ -142,7 +144,7 @@ class CgiRunnerTest extends TestCase
 
         $request = (new Request('GET', 'http://some.site?number=5'));
 
-        $this->exercise->setRequests([$request]);
+        $this->exercise->setScenario((new CgiScenario())->withExecution($request));
 
         $context = TestContext::withDirectories(null, $this->exercise);
         $context->importStudentSolution(__DIR__ . '/../res/cgi/user-error.php');
@@ -167,7 +169,7 @@ class CgiRunnerTest extends TestCase
 
         $request = (new Request('GET', 'http://some.site?number=5'));
 
-        $this->exercise->setRequests([$request]);
+        $this->exercise->setScenario((new CgiScenario())->withExecution($request));
 
         $context = TestContext::withDirectories(null, $this->exercise);
         $context->importStudentSolution(__DIR__ . '/../res/cgi/get-user-wrong.php');
@@ -192,7 +194,7 @@ class CgiRunnerTest extends TestCase
 
         $request = (new Request('GET', 'http://some.site?number=5'));
 
-        $this->exercise->setRequests([$request]);
+        $this->exercise->setScenario((new CgiScenario())->withExecution($request));
 
         $context = TestContext::withDirectories(null, $this->exercise);
         $context->importStudentSolution(__DIR__ . '/../res/cgi/get-user-header-wrong.php');
@@ -235,7 +237,9 @@ class CgiRunnerTest extends TestCase
             new OutputRunInfoListener($output, new RequestRenderer())
         );
 
-        $this->exercise->setRequests([$request1, $request2]);
+        $this->exercise->setScenario(
+            (new CgiScenario())->withExecution($request1)->withExecution($request2)
+        );
 
         $exp  = "\n\e[1m\e[4mRequest";
         $exp .= "\e[0m\e[0m\n\n";
@@ -280,7 +284,7 @@ class CgiRunnerTest extends TestCase
             new OutputRunInfoListener($output, new RequestRenderer())
         );
 
-        $this->exercise->setRequests([$request1]);
+        $this->exercise->setScenario((new CgiScenario())->withExecution($request1));
 
         $exp = "\n\e[1m\e[4mRequest";
         $exp .= "\e[0m\e[0m\n\n";
