@@ -9,6 +9,7 @@ use PhpSchool\PhpWorkshop\Check\DatabaseCheck;
 use PhpSchool\PhpWorkshop\Event\EventDispatcher;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseType;
+use PhpSchool\PhpWorkshop\Exercise\Scenario\CliScenario;
 use PhpSchool\PhpWorkshop\ExerciseCheck\DatabaseExerciseCheck;
 use PhpSchool\PhpWorkshop\ExerciseDispatcher;
 use PhpSchool\PhpWorkshop\ExerciseRunner\CliRunner;
@@ -18,6 +19,7 @@ use PhpSchool\PhpWorkshop\Output\OutputInterface;
 use PhpSchool\PhpWorkshop\Process\HostProcessFactory;
 use PhpSchool\PhpWorkshop\ResultAggregator;
 use PhpSchool\PhpWorkshop\Solution\SingleFileSolution;
+use PhpSchool\PhpWorkshopTest\Asset\DatabaseExercise;
 use PhpSchool\PhpWorkshopTest\Asset\DatabaseExerciseInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -55,8 +57,7 @@ class DatabaseCheckTest extends TestCase
         $this->checkRepository = $container->get(CheckRepository::class);
 
         $this->check = new DatabaseCheck();
-        $this->exercise = $this->createMock(DatabaseExerciseInterface::class);
-        $this->exercise->method('getType')->willReturn(ExerciseType::CLI());
+        $this->exercise = new DatabaseExercise();
         $this->dbDir = sprintf(
             '%s/php-school/PhpSchool_PhpWorkshop_Check_DatabaseCheck',
             str_replace('\\', '/', realpath(sys_get_temp_dir()))
@@ -120,26 +121,9 @@ class DatabaseCheckTest extends TestCase
         //try to run the check as usual
         $this->check = new DatabaseCheck();
         $solution = SingleFileSolution::fromFile(realpath(__DIR__ . '/../res/database/solution.php'));
-        $this->exercise
-            ->expects($this->once())
-            ->method('getSolution')
-            ->willReturn($solution);
-
-        $this->exercise
-            ->expects($this->once())
-            ->method('getArgs')
-            ->willReturn([1, 2, 3]);
-
-        $this->exercise
-            ->expects($this->once())
-            ->method('getRequiredChecks')
-            ->willReturn([DatabaseCheck::class]);
-
-        $this->exercise
-            ->expects($this->once())
-            ->method('verify')
-            ->with($this->isInstanceOf(PDO::class))
-            ->willReturn(true);
+        $this->exercise->setSolution($solution);
+        $this->exercise->setScenario((new CliScenario())->withExecution([1, 2, 3]));
+        $this->exercise->setVerifier(fn () => true);
 
         $this->checkRepository->registerCheck($this->check);
 
@@ -159,26 +143,8 @@ class DatabaseCheckTest extends TestCase
     public function testSuccessIsReturnedIfDatabaseVerificationPassed(): void
     {
         $solution = SingleFileSolution::fromFile(realpath(__DIR__ . '/../res/database/solution.php'));
-        $this->exercise
-            ->expects($this->once())
-            ->method('getSolution')
-            ->willReturn($solution);
-
-        $this->exercise
-            ->expects($this->once())
-            ->method('getArgs')
-            ->willReturn([[1, 2, 3]]);
-
-        $this->exercise
-            ->expects($this->once())
-            ->method('getRequiredChecks')
-            ->willReturn([DatabaseCheck::class]);
-
-        $this->exercise
-            ->expects($this->once())
-            ->method('verify')
-            ->with($this->isInstanceOf(PDO::class))
-            ->willReturn(true);
+        $this->exercise->setSolution($solution);
+        $this->exercise->setScenario((new CliScenario())->withExecution([1, 2, 3]));
 
         $this->checkRepository->registerCheck($this->check);
 
@@ -199,11 +165,6 @@ class DatabaseCheckTest extends TestCase
 
     public function testRunExercise(): void
     {
-        $this->exercise
-            ->expects($this->once())
-            ->method('getArgs')
-            ->willReturn([]);
-
         $this->checkRepository->registerCheck($this->check);
 
         $results            = new ResultAggregator();
@@ -225,27 +186,9 @@ class DatabaseCheckTest extends TestCase
     public function testFailureIsReturnedIfDatabaseVerificationFails(): void
     {
         $solution = SingleFileSolution::fromFile(realpath(__DIR__ . '/../res/database/solution.php'));
-
-        $this->exercise
-            ->expects($this->once())
-            ->method('getSolution')
-            ->willReturn($solution);
-
-        $this->exercise
-            ->expects($this->once())
-            ->method('getArgs')
-            ->willReturn([1, 2, 3]);
-
-        $this->exercise
-            ->expects($this->once())
-            ->method('getRequiredChecks')
-            ->willReturn([DatabaseCheck::class]);
-
-        $this->exercise
-            ->expects($this->once())
-            ->method('verify')
-            ->with($this->isInstanceOf(PDO::class))
-            ->willReturn(false);
+        $this->exercise->setSolution($solution);
+        $this->exercise->setScenario((new CliScenario())->withExecution([1, 2, 3]));
+        $this->exercise->setVerifier(fn () => false);
 
         $this->checkRepository->registerCheck($this->check);
 
@@ -268,53 +211,32 @@ class DatabaseCheckTest extends TestCase
     public function testAlteringDatabaseInSolutionDoesNotEffectDatabaseInUserSolution(): void
     {
         $solution = SingleFileSolution::fromFile(realpath(__DIR__ . '/../res/database/solution-alter-db.php'));
+        $this->exercise->setSolution($solution);
+        $this->exercise->setScenario((new CliScenario())->withExecution());
 
-        $this->exercise
-            ->expects($this->once())
-            ->method('getSolution')
-            ->willReturn($solution);
+        $this->exercise->setVerifier(function (PDO $db) {
+            $users = $db->query('SELECT * FROM users');
+            $users = $users->fetchAll(PDO::FETCH_ASSOC);
 
-        $this->exercise
-            ->method('getArgs')
-            ->willReturn([]);
+            $this->assertCount(2, $users);
+            $this->assertEquals(
+                [
+                    ['id' => 1, 'name' => 'Jimi Hendrix', 'age' => '27', 'gender' => 'Male'],
+                    ['id' => 2, 'name' => 'Kurt Cobain', 'age' => '27', 'gender' => 'Male'],
+                ],
+                $users
+            );
 
-        $this->exercise
-            ->method('verify')
-            ->willReturn(true);
+            return true;
+        });
 
-        $this->exercise
-            ->expects($this->once())
-            ->method('getRequiredChecks')
-            ->willReturn([DatabaseCheck::class]);
-
-        $this->exercise
-            ->expects($this->once())
-            ->method('seed')
-            ->with($this->isInstanceOf(PDO::class))
-            ->willReturnCallback(function (PDO $db) {
-                $db->exec(
-                    'CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY, name TEXT, age INTEGER, gender TEXT)'
-                );
-                $stmt = $db->prepare('INSERT into users (name, age, gender) VALUES (:name, :age, :gender)');
-                $stmt->execute([':name' => 'Jimi Hendrix', ':age' => 27, ':gender' => 'Male']);
-            });
-
-        $this->exercise
-            ->expects($this->once())
-            ->method('verify')
-            ->with($this->isInstanceOf(PDO::class))
-            ->willReturnCallback(function (PDO $db) {
-                $users = $db->query('SELECT * FROM users');
-                $users = $users->fetchAll(PDO::FETCH_ASSOC);
-
-                $this->assertEquals(
-                    [
-                        ['id' => 1, 'name' => 'Jimi Hendrix', 'age' => '27', 'gender' => 'Male'],
-                        ['id' => 2, 'name' => 'Kurt Cobain', 'age' => '27', 'gender' => 'Male'],
-                    ],
-                    $users
-                );
-            });
+        $this->exercise->setSeeder(function (PDO $db) {
+            $db->exec(
+                'CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY, name TEXT, age INTEGER, gender TEXT)'
+            );
+            $stmt = $db->prepare('INSERT into users (name, age, gender) VALUES (:name, :age, :gender)');
+            $stmt->execute([':name' => 'Jimi Hendrix', ':age' => 27, ':gender' => 'Male']);
+        });
 
         $this->checkRepository->registerCheck($this->check);
 
