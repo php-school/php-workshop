@@ -8,6 +8,7 @@ use PhpSchool\PhpWorkshop\Check\SimpleCheckInterface;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseType;
 use PhpSchool\PhpWorkshop\ExerciseCheck\ComposerExerciseCheck;
+use PhpSchool\PhpWorkshop\ExerciseRunner\Context\TestContext;
 use PhpSchool\PhpWorkshop\Input\Input;
 use PhpSchool\PhpWorkshop\Result\ComposerFailure;
 use PhpSchool\PhpWorkshop\Result\Failure;
@@ -17,20 +18,17 @@ use PHPUnit\Framework\TestCase;
 
 class ComposerCheckTest extends TestCase
 {
-    /**
-     * @var ComposerCheck
-     */
-    private $check;
-
-    /**
-     * @var ExerciseInterface
-     */
-    private $exercise;
+    private ComposerCheck $check;
+    private ComposerExercise $exercise;
 
     public function setUp(): void
     {
         $this->check = new ComposerCheck();
         $this->exercise = new ComposerExercise();
+    }
+
+    public function testCheckMeta(): void
+    {
         $this->assertEquals('Composer Dependency Check', $this->check->getName());
         $this->assertEquals(ComposerExerciseCheck::class, $this->check->getExerciseInterface());
         $this->assertEquals(SimpleCheckInterface::CHECK_BEFORE, $this->check->getPosition());
@@ -44,14 +42,13 @@ class ComposerCheckTest extends TestCase
         $exercise = $this->createMock(ExerciseInterface::class);
         $this->expectException(InvalidArgumentException::class);
 
-        $this->check->check($exercise, new Input('app'));
+        $this->check->check(TestContext::withoutDirectories());
     }
 
     public function testCheckReturnsFailureIfNoComposerFile(): void
     {
         $result = $this->check->check(
-            $this->exercise,
-            new Input('app', ['program' => 'invalid/solution'])
+            TestContext::withoutDirectories(null, $this->exercise)
         );
 
         $this->assertInstanceOf(ComposerFailure::class, $result);
@@ -62,10 +59,10 @@ class ComposerCheckTest extends TestCase
 
     public function testCheckReturnsFailureIfNoComposerLockFile(): void
     {
-        $result = $this->check->check(
-            $this->exercise,
-            new Input('app', ['program' => __DIR__ . '/../res/composer/not-locked/solution.php'])
-        );
+        $context = TestContext::withDirectories(null, $this->exercise);
+        $context->importStudentSolutionFolder(__DIR__ . '/../res/composer/not-locked/');
+
+        $result = $this->check->check($context);
 
         $this->assertInstanceOf(ComposerFailure::class, $result);
         $this->assertSame('Composer Dependency Check', $result->getCheckName());
@@ -75,10 +72,10 @@ class ComposerCheckTest extends TestCase
 
     public function testCheckReturnsFailureIfNoVendorFolder(): void
     {
-        $result = $this->check->check(
-            $this->exercise,
-            new Input('app', ['program' => __DIR__ . '/../res/composer/no-vendor/solution.php'])
-        );
+        $context = TestContext::withDirectories(null, $this->exercise);
+        $context->importStudentSolutionFolder(__DIR__ . '/../res/composer/no-vendor/');
+
+        $result = $this->check->check($context);
 
         $this->assertInstanceOf(ComposerFailure::class, $result);
         $this->assertSame('Composer Dependency Check', $result->getCheckName());
@@ -88,18 +85,18 @@ class ComposerCheckTest extends TestCase
 
     /**
      * @dataProvider dependencyProvider
-     *
-     * @param string $dependency
-     * @param string $solutionFile
      */
-    public function testCheckReturnsFailureIfDependencyNotRequired(string $dependency, string $solutionFile): void
+    public function testCheckReturnsFailureIfDependencyNotRequired(string $dependency, string $solutionFolder): void
     {
         $exercise = $this->createMock(ComposerExercise::class);
         $exercise->expects($this->once())
             ->method('getRequiredPackages')
             ->willReturn([$dependency]);
 
-        $result = $this->check->check($exercise, new Input('app', ['program' => $solutionFile]));
+        $context = TestContext::withDirectories(null, $exercise);
+        $context->importStudentSolutionFolder($solutionFolder);
+
+        $result = $this->check->check($context);
 
         $this->assertInstanceOf(ComposerFailure::class, $result);
         $this->assertSame('Composer Dependency Check', $result->getCheckName());
@@ -113,17 +110,17 @@ class ComposerCheckTest extends TestCase
     public function dependencyProvider(): array
     {
         return [
-            ['klein/klein',           __DIR__ . '/../res/composer/no-klein/solution.php'],
-            ['danielstjules/stringy', __DIR__ . '/../res/composer/no-stringy/solution.php']
+            ['klein/klein',           __DIR__ . '/../res/composer/no-klein'],
+            ['danielstjules/stringy', __DIR__ . '/../res/composer/no-stringy']
         ];
     }
 
     public function testCheckReturnsSuccessIfCorrectLockFile(): void
     {
-        $result = $this->check->check(
-            $this->exercise,
-            new Input('app', ['program' => __DIR__ . '/../res/composer/good-solution/solution.php'])
-        );
+        $context = TestContext::withDirectories(null, $this->exercise);
+        $context->importStudentSolutionFolder(__DIR__ . '/../res/composer/good-solution');
+
+        $result = $this->check->check($context);
 
         $this->assertInstanceOf(Success::class, $result);
         $this->assertSame('Composer Dependency Check', $result->getCheckName());

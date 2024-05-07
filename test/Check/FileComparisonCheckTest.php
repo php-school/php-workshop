@@ -7,24 +7,28 @@ use PhpSchool\PhpWorkshop\Check\SimpleCheckInterface;
 use PhpSchool\PhpWorkshop\Exception\SolutionFileDoesNotExistException;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseType;
 use PhpSchool\PhpWorkshop\ExerciseCheck\FileComparisonExerciseCheck;
+use PhpSchool\PhpWorkshop\ExerciseRunner\Context\TestContext;
 use PhpSchool\PhpWorkshop\Input\Input;
 use PhpSchool\PhpWorkshop\Result\FileComparisonFailure;
 use PhpSchool\PhpWorkshop\Solution\SingleFileSolution;
+use PhpSchool\PhpWorkshop\Solution\SolutionInterface;
 use PhpSchool\PhpWorkshopTest\Asset\FileComparisonExercise;
 use PhpSchool\PhpWorkshopTest\BaseTest;
 use PhpSchool\PhpWorkshop\Result\Failure;
 use PhpSchool\PhpWorkshop\Result\Success;
+use PHPUnit\Framework\TestCase;
 
-class FileComparisonCheckTest extends BaseTest
+class FileComparisonCheckTest extends TestCase
 {
-    /**
-     * @var FileComparisonCheck
-     */
-    private $check;
+    private FileComparisonCheck $check;
 
     public function setUp(): void
     {
         $this->check = new FileComparisonCheck();
+    }
+
+    public function testCheckMeta(): void
+    {
         $this->assertEquals('File Comparison Check', $this->check->getName());
         $this->assertEquals(FileComparisonExerciseCheck::class, $this->check->getExerciseInterface());
         $this->assertEquals(SimpleCheckInterface::CHECK_AFTER, $this->check->getPosition());
@@ -39,19 +43,18 @@ class FileComparisonCheckTest extends BaseTest
         $this->expectExceptionMessage('File: "some-file.txt" does not exist in solution folder');
 
         $exercise = new FileComparisonExercise(['some-file.txt']);
-        $exercise->setSolution(new SingleFileSolution($this->getTemporaryFile('solution/solution.php')));
+        $context = TestContext::withDirectories(null, $exercise);
 
-        $this->check->check($exercise, new Input('app', ['program' => 'my-solution.php']));
+        $this->check->check($context);
     }
 
     public function testFailureIsReturnedIfStudentsFileDoesNotExist(): void
     {
-        $referenceFile = $this->getTemporaryFile('solution/some-file.txt', "name,age\nAydin,33\nMichael,29\n");
-
         $exercise = new FileComparisonExercise(['some-file.txt']);
-        $exercise->setSolution(new SingleFileSolution($this->getTemporaryFile('solution/solution.php')));
+        $context = TestContext::withDirectories(null, $exercise);
+        $context->importReferenceFileFromString("name,age\nAydin,33\nMichael,29\n", 'some-file.txt');
 
-        $failure = $this->check->check($exercise, new Input('app', ['program' => 'my-solution.php']));
+        $failure = $this->check->check($context);
 
         $this->assertInstanceOf(Failure::class, $failure);
         $this->assertEquals('File: "some-file.txt" does not exist', $failure->getReason());
@@ -59,15 +62,12 @@ class FileComparisonCheckTest extends BaseTest
 
     public function testFailureIsReturnedIfStudentFileDosNotMatchReferenceFile(): void
     {
-        $referenceFile = $this->getTemporaryFile('solution/some-file.txt', "name,age\nAydin,33\nMichael,29\n");
-        $studentFile = $this->getTemporaryFile('student/some-file.txt', "somegibberish");
-
         $exercise = new FileComparisonExercise(['some-file.txt']);
-        $exercise->setSolution(new SingleFileSolution($this->getTemporaryFile('solution/solution.php')));
+        $context = TestContext::withDirectories(null, $exercise);
+        $context->importStudentFileFromString("somegibberish", 'some-file.txt');
+        $context->importReferenceFileFromString("name,age\nAydin,33\nMichael,29\n", 'some-file.txt');
 
-        $failure = $this->check->check($exercise, new Input('app', [
-            'program' => $this->getTemporaryFile('student/my-solution.php')
-        ]));
+        $failure = $this->check->check($context);
 
         $this->assertInstanceOf(FileComparisonFailure::class, $failure);
         $this->assertEquals($failure->getFileName(), 'some-file.txt');
@@ -77,37 +77,24 @@ class FileComparisonCheckTest extends BaseTest
 
     public function testSuccessIsReturnedIfFilesMatch(): void
     {
-        $referenceFile = $this->getTemporaryFile('solution/some-file.txt', "name,age\nAydin,33\nMichael,29\n");
-        $studentFile = $this->getTemporaryFile('student/some-file.txt', "name,age\nAydin,33\nMichael,29\n");
-
         $exercise = new FileComparisonExercise(['some-file.txt']);
-        $exercise->setSolution(new SingleFileSolution($this->getTemporaryFile('solution/solution.php')));
+        $context = TestContext::withDirectories(null, $exercise);
 
-        $this->assertInstanceOf(
-            Success::class,
-            $this->check->check($exercise, new Input('app', [
-                'program' => $this->getTemporaryFile('student/my-solution.php')
-            ]))
-        );
+        $context->importStudentFileFromString("name,age\nAydin,33\nMichael,29\n", 'some-file.txt');
+        $context->importReferenceFileFromString("name,age\nAydin,33\nMichael,29\n", 'some-file.txt');
+
+        $this->assertInstanceOf(Success::class, $this->check->check($context));
     }
 
     public function testFailureIsReturnedIfFileDoNotMatchUsingStrip(): void
     {
-        $referenceFile = $this->getTemporaryFile(
-            'solution/some-file.txt',
-            "01:03name,age\n04:05Aydin,33\n17:21Michael,29\n"
-        );
-        $studentFile = $this->getTemporaryFile(
-            'student/some-file.txt',
-            "01:04name,age\n06:76Aydin,34\n99:00Michael,29\n"
-        );
-
         $exercise = new FileComparisonExercise(['some-file.txt' => ['strip' => '/\d{2}:\d{2}/']]);
-        $exercise->setSolution(new SingleFileSolution($this->getTemporaryFile('solution/solution.php')));
+        $context = TestContext::withDirectories(null, $exercise);
 
-        $failure = $this->check->check($exercise, new Input('app', [
-            'program' => $this->getTemporaryFile('student/my-solution.php')
-        ]));
+        $context->importStudentFileFromString("01:04name,age\n06:76Aydin,34\n99:00Michael,29\n", 'some-file.txt');
+        $context->importReferenceFileFromString("01:03name,age\n04:05Aydin,33\n17:21Michael,29\n", 'some-file.txt');
+
+        $failure = $this->check->check($context);
 
         $this->assertInstanceOf(FileComparisonFailure::class, $failure);
         $this->assertEquals($failure->getFileName(), 'some-file.txt');

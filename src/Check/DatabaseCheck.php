@@ -25,30 +25,11 @@ class DatabaseCheck implements ListenableCheckInterface
 {
     use TemporaryDirectoryTrait;
 
-    /**
-     * @var string
-     */
-    private $databaseDirectory;
-
-    /**
-     * @var string
-     */
-    private $userDatabasePath;
-
-    /**
-     * @var string
-     */
-    private $solutionDatabasePath;
-
-    /**
-     * @var string
-     */
-    private $userDsn;
-
-    /**
-     * @var string
-     */
-    private $solutionDsn;
+    private string $databaseDirectory;
+    private string $userDatabasePath;
+    private string $solutionDatabasePath;
+    private string $userDsn;
+    private string $solutionDsn;
 
     /**
      * Setup paths and DSN's.

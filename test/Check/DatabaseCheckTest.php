@@ -26,6 +26,7 @@ use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use ReflectionProperty;
 use RuntimeException;
+use Symfony\Component\Filesystem\Filesystem;
 
 class DatabaseCheckTest extends TestCase
 {
@@ -50,6 +51,12 @@ class DatabaseCheckTest extends TestCase
         );
     }
 
+    public function testCheckMeta(): void
+    {
+        $this->assertEquals('Database Verification Check', $this->check->getName());
+        $this->assertEquals(DatabaseExerciseCheck::class, $this->check->getExerciseInterface());
+    }
+
     private function getRunnerManager(ExerciseInterface $exercise, EventDispatcher $eventDispatcher): MockObject
     {
         $runner = $this->getMockBuilder(CliRunner::class)
@@ -70,12 +77,6 @@ class DatabaseCheckTest extends TestCase
         return $runnerManager;
     }
 
-    public function testCheckMeta(): void
-    {
-        $this->assertEquals('Database Verification Check', $this->check->getName());
-        $this->assertEquals(DatabaseExerciseCheck::class, $this->check->getExerciseInterface());
-    }
-
     public function testIfDatabaseFolderExistsExceptionIsThrown(): void
     {
         $eventDispatcher = new EventDispatcher(new ResultAggregator());
@@ -85,7 +86,6 @@ class DatabaseCheckTest extends TestCase
             $this->fail('Exception was not thrown');
         } catch (RuntimeException $e) {
             $this->assertEquals(sprintf('Database directory: "%s" already exists', $this->dbDir), $e->getMessage());
-            rmdir($this->dbDir);
         }
     }
 
@@ -111,6 +111,7 @@ class DatabaseCheckTest extends TestCase
         $this->check = new DatabaseCheck();
         $solution = SingleFileSolution::fromFile(realpath(__DIR__ . '/../res/database/solution.php'));
         $this->exercise->setSolution($solution);
+
         $this->exercise->setArgs([[1, 2, 3]]);
         $this->exercise->setVerifier(fn () => true);
 
@@ -130,7 +131,7 @@ class DatabaseCheckTest extends TestCase
             new StaticExecutionContextFactory($context)
         );
 
-        $dispatcher->verify($this->exercise, new Input('app', ['program' => __DIR__ . '/../res/database/user.php']));
+        $dispatcher->verify($this->exercise, new Input('app', []));
         $this->assertTrue($results->isSuccessful());
     }
 
@@ -139,8 +140,8 @@ class DatabaseCheckTest extends TestCase
         $solution = SingleFileSolution::fromFile(realpath(__DIR__ . '/../res/database/solution.php'));
         $this->exercise->setSolution($solution);
         $this->exercise->setArgs([[1, 2, 3]]);
-        $this->exercise->setVerifier(fn () => true);
 
+        $this->exercise->setVerifier(fn () => true);
         $this->checkRepository->registerCheck($this->check);
 
         $context = TestContext::withDirectories(null, $this->exercise);
@@ -157,20 +158,16 @@ class DatabaseCheckTest extends TestCase
             new StaticExecutionContextFactory($context)
         );
 
-        $dispatcher->verify($this->exercise, new Input('app', ['program' => __DIR__ . '/../res/database/user.php']));
+        $dispatcher->verify($this->exercise, new Input('app', []));
 
         $this->assertTrue($results->isSuccessful());
     }
 
     public function testRunExercise(): void
     {
-        $this->exercise->setArgs([[]]);
-
         $this->checkRepository->registerCheck($this->check);
 
-        $input = new Input('app', ['program' => __DIR__ . '/../res/database/user-solution-alter-db.php']);
-
-        $context = TestContext::withDirectories($input, $this->exercise);
+        $context = TestContext::withDirectories(null, $this->exercise);
         $context->importStudentSolution(__DIR__ . '/../res/database/user-solution-alter-db.php');
 
         $results            = new ResultAggregator();
@@ -185,7 +182,7 @@ class DatabaseCheckTest extends TestCase
 
         $dispatcher->run(
             $this->exercise,
-            $input,
+            new Input('app', []),
             $this->createMock(OutputInterface::class)
         );
     }
@@ -213,7 +210,7 @@ class DatabaseCheckTest extends TestCase
             new StaticExecutionContextFactory($context)
         );
 
-        $dispatcher->verify($this->exercise, new Input('app', ['program' => __DIR__ . '/../res/database/user.php']));
+        $dispatcher->verify($this->exercise, new Input('app', []));
 
         $this->assertFalse($results->isSuccessful());
         $results = iterator_to_array($results);
@@ -224,7 +221,6 @@ class DatabaseCheckTest extends TestCase
     {
         $solution = SingleFileSolution::fromFile(realpath(__DIR__ . '/../res/database/solution-alter-db.php'));
         $this->exercise->setSolution($solution);
-        $this->exercise->setArgs([[]]);
 
         $this->exercise->setVerifier(function (PDO $db) {
             $users = $db->query('SELECT * FROM users');
@@ -268,7 +264,13 @@ class DatabaseCheckTest extends TestCase
 
         $dispatcher->verify(
             $this->exercise,
-            new Input('app', ['program' => __DIR__ . '/../res/database/user-solution-alter-db.php'])
+            new Input('app')
         );
+    }
+
+    protected function tearDown(): void
+    {
+        $fs = new Filesystem();
+        $fs->remove($this->dbDir);
     }
 }

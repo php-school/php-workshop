@@ -8,6 +8,7 @@ use PhpParser\Error;
 use PhpParser\Parser;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseType;
+use PhpSchool\PhpWorkshop\ExerciseRunner\Context\ExecutionContext;
 use PhpSchool\PhpWorkshop\Input\Input;
 use PhpSchool\PhpWorkshop\Result\Failure;
 use PhpSchool\PhpWorkshop\Result\ResultInterface;
@@ -19,17 +20,8 @@ use PhpSchool\PhpWorkshop\Result\Success;
  */
 class CodeParseCheck implements SimpleCheckInterface
 {
-    /**
-     * @var Parser
-     */
-    private $parser;
-
-    /**
-     * @param Parser $parser
-     */
-    public function __construct(Parser $parser)
+    public function __construct(private Parser $parser)
     {
-        $this->parser = $parser;
     }
 
     /**
@@ -45,18 +37,17 @@ class CodeParseCheck implements SimpleCheckInterface
      * attempts to parse it with `nikic/php-parser`. If any exceptions are thrown
      * by the parser, it is treated as a failure.
      *
-     * @param ExerciseInterface $exercise The exercise to check against.
-     * @param Input $input The command line arguments passed to the command.
+     * @param ExecutionContext $context The current execution context, containing the exercise, input and working directories.
      * @return ResultInterface The result of the check.
      */
-    public function check(ExerciseInterface $exercise, Input $input): ResultInterface
+    public function check(ExecutionContext $context): ResultInterface
     {
-        $code = (string) file_get_contents($input->getRequiredArgument('program'));
+        $code = (string) file_get_contents($context->getEntryPoint());
 
         try {
             $this->parser->parse($code);
         } catch (Error $e) {
-            return Failure::fromCheckAndCodeParseFailure($this, $e, $input->getRequiredArgument('program'));
+            return Failure::fromCheckAndCodeParseFailure($this, $e, $context->getEntryPoint());
         }
 
         return Success::fromCheck($this);
