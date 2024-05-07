@@ -123,7 +123,7 @@ class ExerciseDispatcher
         $this->validateChecks($this->checksToRunAfter, $exercise);
 
         foreach ($this->checksToRunBefore as $check) {
-            $this->results->add($check->check($context->getExercise(), $context->getInput()));
+            $this->results->add($check->check($context));
 
             if (!$this->results->isSuccessful()) {
                 return $this->results;
@@ -139,7 +139,7 @@ class ExerciseDispatcher
         }
 
         foreach ($this->checksToRunAfter as $check) {
-            $this->results->add($check->check($context->getExercise(), $context->getInput()));
+            $this->results->add($check->check($context));
         }
 
         $this->eventDispatcher->dispatch(new ExerciseRunnerEvent('verify.post.check', $exercise, $input));
@@ -167,7 +167,7 @@ class ExerciseDispatcher
 
         /** @var PhpLintCheck $lint */
         $lint = $this->checkRepository->getByClass(PhpLintCheck::class);
-        $result = $lint->check($context->getExercise(), $context->getInput());
+        $result = $lint->check($context);
 
         if ($result instanceof FailureInterface) {
             throw CouldNotRunException::fromFailure($result);

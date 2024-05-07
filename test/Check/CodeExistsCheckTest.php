@@ -6,81 +6,55 @@ use PhpParser\ParserFactory;
 use PhpSchool\PhpWorkshop\Check\CodeExistsCheck;
 use PhpSchool\PhpWorkshop\Check\SimpleCheckInterface;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseType;
+use PhpSchool\PhpWorkshop\ExerciseRunner\Context\TestContext;
 use PhpSchool\PhpWorkshop\Input\Input;
+use PhpSchool\PhpWorkshopTest\BaseTest;
 use PHPUnit\Framework\TestCase;
 use PhpSchool\PhpWorkshop\Check\FileExistsCheck;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpSchool\PhpWorkshop\Result\Failure;
 use PhpSchool\PhpWorkshop\Result\Success;
 
-class CodeExistsCheckTest extends TestCase
+class CodeExistsCheckTest extends BaseTest
 {
-    /**
-     * @var string
-     */
-    private $testDir;
-
-    /**
-     * @var FileExistsCheck
-     */
-    private $check;
-
-    /**
-     * @var ExerciseInterface
-     */
-    private $exercise;
-
-    /**
-     * @var string
-     */
-    private $file;
+    private CodeExistsCheck $check;
 
     public function setUp(): void
     {
-        $this->testDir = sprintf(
-            '%s/%s/%s',
-            str_replace('\\', '/', sys_get_temp_dir()),
-            basename(str_replace('\\', '/', get_class($this))),
-            $this->getName()
-        );
-
-        mkdir($this->testDir, 0777, true);
         $this->check = new CodeExistsCheck((new ParserFactory())->create(ParserFactory::PREFER_PHP7));
-        $this->exercise = $this->createMock(ExerciseInterface::class);
+    }
+
+    public function testCheckMeta(): void
+    {
         $this->assertEquals('Code Exists Check', $this->check->getName());
         $this->assertEquals(ExerciseInterface::class, $this->check->getExerciseInterface());
         $this->assertEquals(SimpleCheckInterface::CHECK_BEFORE, $this->check->getPosition());
 
         $this->assertTrue($this->check->canRun(ExerciseType::CGI()));
         $this->assertTrue($this->check->canRun(ExerciseType::CLI()));
-
-        $this->file = sprintf('%s/submission.php', $this->testDir);
-        touch($this->file);
     }
 
     public function testSuccess(): void
     {
-        file_put_contents($this->file, '<?php echo "Hello World";');
+        $context = new TestContext();
+        $context->createStudentSolutionDirectory();
+        $context->importStudentFileFromString('<?php echo "Hello World";');
 
         $this->assertInstanceOf(
             Success::class,
-            $this->check->check($this->exercise, new Input('app', ['program' => $this->file]))
+            $this->check->check($context)
         );
     }
 
     public function testFailure(): void
     {
-        file_put_contents($this->file, '<?php');
+        $context = new TestContext();
+        $context->createStudentSolutionDirectory();
+        $context->importStudentFileFromString('<?php');
 
-        $failure = $this->check->check($this->exercise, new Input('app', ['program' => $this->file]));
+        $failure = $this->check->check($context);
 
         $this->assertInstanceOf(Failure::class, $failure);
         $this->assertEquals('No code was found', $failure->getReason());
-    }
-
-    public function tearDown(): void
-    {
-        unlink($this->file);
-        rmdir($this->testDir);
     }
 }
