@@ -13,15 +13,9 @@ use PhpSchool\PhpWorkshop\Solution\SolutionInterface;
 
 class CliExerciseImpl implements ExerciseInterface, CliExercise
 {
-    /**
-     * @var string
-     */
-    private $name;
-
-    /**
-     * @var SolutionInterface
-     */
-    private $solution;
+    private string $name;
+    private SolutionInterface $solution;
+    private array $args = [[]];
 
     public function __construct(string $name = 'my-exercise')
     {
@@ -58,9 +52,14 @@ class CliExerciseImpl implements ExerciseInterface, CliExercise
         // TODO: Implement tearDown() method.
     }
 
+    public function setArgs(array $args): void
+    {
+        $this->args = $args;
+    }
+
     public function getArgs(): array
     {
-        return []; // TODO: Implement getArgs() method.
+        return $this->args;
     }
 
     public function getType(): ExerciseType

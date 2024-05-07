@@ -13,10 +13,10 @@ use Psr\Http\Message\RequestInterface;
 
 class CgiExerciseImpl implements ExerciseInterface, CgiExercise
 {
-    /**
-     * @var string
-     */
-    private $name;
+    private string $name;
+    private SolutionInterface $solution;
+    /** @var array<RequestInterface> */
+    private array $requests = [];
 
     public function __construct(string $name = 'my-exercise')
     {
@@ -33,9 +33,14 @@ class CgiExerciseImpl implements ExerciseInterface, CgiExercise
         return $this->name;
     }
 
+    public function setSolution(SolutionInterface $solution): void
+    {
+        $this->solution = $solution;
+    }
+
     public function getSolution(): SolutionInterface
     {
-        // TODO: Implement getSolution() method.
+        return $this->solution;
     }
 
     public function getProblem(): string
@@ -49,14 +54,22 @@ class CgiExerciseImpl implements ExerciseInterface, CgiExercise
     }
 
     /**
+     * @param array<RequestInterface> $requests
+     */
+    public function setRequests(array $requests): void
+    {
+        $this->requests = $requests;
+    }
+
+    /**
      * This method should return an array of PSR-7 requests, which will be forwarded to the student's
      * solution.
      *
-     * @return RequestInterface[] An array of PSR-7 requests.
+     * @return array<RequestInterface> An array of PSR-7 requests.
      */
     public function getRequests(): array
     {
-        return []; // TODO: Implement getRequests() method.
+        return $this->requests;
     }
 
     public function getType(): ExerciseType

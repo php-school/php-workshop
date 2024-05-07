@@ -38,6 +38,7 @@ use PhpSchool\PhpWorkshop\Event\EventDispatcher;
 use PhpSchool\PhpWorkshop\ExerciseDispatcher;
 use PhpSchool\PhpWorkshop\ExerciseRenderer;
 use PhpSchool\PhpWorkshop\ExerciseRepository;
+use PhpSchool\PhpWorkshop\ExerciseRunner\Context\ExecutionContextFactory;
 use PhpSchool\PhpWorkshop\ExerciseRunner\Factory\CgiRunnerFactory;
 use PhpSchool\PhpWorkshop\ExerciseRunner\Factory\CliRunnerFactory;
 use PhpSchool\PhpWorkshop\ExerciseRunner\Factory\CustomVerifyingRunnerFactory;
@@ -134,7 +135,8 @@ return [
             $c->get(RunnerManager::class),
             $c->get(ResultAggregator::class),
             $c->get(EventDispatcher::class),
-            $c->get(CheckRepository::class)
+            $c->get(CheckRepository::class),
+            new ExecutionContextFactory()
         );
     },
     ResultAggregator::class => create(ResultAggregator::class),
