@@ -15,6 +15,7 @@ use PhpSchool\PhpWorkshop\Solution\SolutionInterface;
 class CliExerciseImpl implements ExerciseInterface, CliExercise
 {
     private string $name;
+    private string $problemFile = 'problem-file.md';
     private SolutionInterface $solution;
     private CliScenario $scenario;
 
@@ -46,7 +47,12 @@ class CliExerciseImpl implements ExerciseInterface, CliExercise
 
     public function getProblem(): string
     {
-        // TODO: Implement getProblem() method.
+        return $this->problemFile;
+    }
+
+    public function setProblem(string $problemFile): void
+    {
+        $this->problemFile = $problemFile;
     }
 
     public function tearDown(): void
