@@ -39,6 +39,7 @@ use PhpSchool\PhpWorkshop\ExerciseDispatcher;
 use PhpSchool\PhpWorkshop\ExerciseRenderer;
 use PhpSchool\PhpWorkshop\ExerciseRepository;
 use PhpSchool\PhpWorkshop\ExerciseRunner\Context\ExecutionContextFactory;
+use PhpSchool\PhpWorkshop\ExerciseRunner\EnvironmentManager;
 use PhpSchool\PhpWorkshop\ExerciseRunner\Factory\CgiRunnerFactory;
 use PhpSchool\PhpWorkshop\ExerciseRunner\Factory\CliRunnerFactory;
 use PhpSchool\PhpWorkshop\ExerciseRunner\Factory\CustomVerifyingRunnerFactory;
@@ -188,11 +189,23 @@ return [
     EventDispatcher::class => factory(EventDispatcherFactory::class),
     EventDispatcherFactory::class => create(),
 
+    EnvironmentManager::class => function (ContainerInterface $c) {
+        return new EnvironmentManager($c->get(Filesystem::class));
+    },
+
     //Exercise Runners
     RunnerManager::class => function (ContainerInterface $c) {
         $manager = new RunnerManager();
-        $manager->addFactory(new CliRunnerFactory($c->get(EventDispatcher::class), $c->get(ProcessFactory::class)));
-        $manager->addFactory(new CgiRunnerFactory($c->get(EventDispatcher::class), $c->get(ProcessFactory::class)));
+        $manager->addFactory(new CliRunnerFactory(
+            $c->get(EventDispatcher::class),
+            $c->get(ProcessFactory::class),
+            $c->get(EnvironmentManager::class)
+        ));
+        $manager->addFactory(new CgiRunnerFactory(
+            $c->get(EventDispatcher::class),
+            $c->get(ProcessFactory::class),
+            $c->get(EnvironmentManager::class)
+        ));
         $manager->addFactory(new CustomVerifyingRunnerFactory());
         return $manager;
     },

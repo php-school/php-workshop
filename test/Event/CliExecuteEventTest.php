@@ -16,7 +16,8 @@ class CliExecuteEventTest extends TestCase
 {
     public function testAppendArg(): void
     {
-        $context = TestContext::withoutDirectories();
+
+        $context = new TestContext();
         $scenario = new CliScenario();
 
         $arr = new Collection([1, 2, 3]);
@@ -29,7 +30,7 @@ class CliExecuteEventTest extends TestCase
 
     public function testPrependArg(): void
     {
-        $context = TestContext::withoutDirectories();
+        $context = new TestContext();
         $scenario = new CliScenario();
 
         $arr = new Collection([1, 2, 3]);
@@ -42,7 +43,7 @@ class CliExecuteEventTest extends TestCase
 
     public function testGetters(): void
     {
-        $context = TestContext::withoutDirectories();
+        $context = new TestContext();
         $scenario = new CliScenario();
 
         $arr = new Collection([1, 2, 3]);

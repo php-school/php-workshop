@@ -17,6 +17,18 @@ class ExecutionContext
     ) {
     }
 
+    public static function fromInputAndExercise(Input $input, ExerciseInterface $exercise): ExecutionContext
+    {
+        $program = $input->hasArgument('program') ? dirname($input->getRequiredArgument('program')) : (string) getcwd();
+
+        return new self(
+            $program,
+            System::randomTempDir(),
+            $exercise,
+            $input
+        );
+    }
+
     public function getExercise(): ExerciseInterface
     {
         return $this->exercise;

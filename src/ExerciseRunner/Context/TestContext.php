@@ -3,8 +3,12 @@
 namespace PhpSchool\PhpWorkshop\ExerciseRunner\Context;
 
 use PhpSchool\PhpWorkshop\Exception\RuntimeException;
+use PhpSchool\PhpWorkshop\Exercise\CgiExercise;
+use PhpSchool\PhpWorkshop\Exercise\CliExercise;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpSchool\PhpWorkshop\Exercise\MockExercise;
+use PhpSchool\PhpWorkshop\Exercise\Scenario\ExerciseScenario;
+use PhpSchool\PhpWorkshop\ExerciseRunner\EnvironmentManager;
 use PhpSchool\PhpWorkshop\Input\Input;
 use PhpSchool\PhpWorkshop\Solution\SolutionInterface;
 use PhpSchool\PhpWorkshop\Utils\System;
@@ -13,103 +17,111 @@ use PhpSchool\PhpWorkshop\Utils\Path;
 
 class TestContext extends ExecutionContext
 {
-    public Filesystem $filesystem;
-    public ExerciseInterface $exercise;
+    private Filesystem $filesystem;
+    private EnvironmentManager $environmentManager;
+    private ExerciseInterface $exercise;
+    private bool $studentSolutionDirWasCreated = false;
+    private bool $referenceSolutionDirWasCreated = false;
 
-    private function __construct(
+    public function __construct(
         ExerciseInterface $exercise = null,
-        Input $input = null
+        Input $input = null,
+        string $studentDirectory = null,
     ) {
         $this->exercise = $exercise ?? new MockExercise();
 
         $this->filesystem = new Filesystem();
+        $this->environmentManager = new EnvironmentManager($this->filesystem);
+
+        if ($studentDirectory === null) {
+            $studentDirectory = System::randomTempDir();
+        }
 
         parent::__construct(
-            System::randomTempDir(),
+            $studentDirectory,
             System::randomTempDir(),
             $this->exercise,
             $input ? $input : new Input('test', ['program' => 'solution.php']),
         );
     }
 
+    public function createStudentSolutionDirectory(): void
+    {
+        $this->filesystem->mkdir($this->getStudentExecutionDirectory());
+        $this->studentSolutionDirWasCreated = true;
+    }
+
+    public function createReferenceSolutionDirectory(): void
+    {
+        $this->filesystem->mkdir($this->getReferenceExecutionDirectory());
+        $this->referenceSolutionDirWasCreated = true;
+    }
+
+    /**
+     * This is performed in the Exercise runners, but the reference solution maybe be required for other
+     * tests, eg listeners, so we provide this utility to manually copy the solution to the reference execution directory.
+     */
+    public function importReferenceSolution(): void
+    {
+        if (!$this->referenceSolutionDirWasCreated) {
+            throw new RuntimeException(
+                sprintf('Reference execution directory not created. Call %s::createReferenceSolutionDirectory() first.', self::class)
+            );
+        }
+
+        $scenario = new class extends ExerciseScenario {
+        };
+        if ($this->exercise instanceof CliExercise || $this->exercise instanceof CgiExercise) {
+            $scenario = $this->exercise->defineTestScenario();
+        }
+
+        $this->environmentManager->prepareSolution($this, $scenario);
+    }
+
     public function importStudentFileFromString(string $content, string $filename = 'solution.php'): void
     {
-        if (!$this->filesystem->exists($this->getStudentExecutionDirectory())) {
+        if (!$this->studentSolutionDirWasCreated) {
             throw new RuntimeException(
-                sprintf('Execution directories not created. Use %s::withDirectories() method instead.', self::class)
+                sprintf('Student execution directory not created. Call %s::createStudentSolutionDirectory() first.', self::class)
             );
         }
 
         file_put_contents(Path::join($this->getStudentExecutionDirectory(), $filename), $content);
     }
 
-    public function importStudentSolution(string $file): void
-    {
-        if (!$this->filesystem->exists($this->getStudentExecutionDirectory())) {
-            throw new RuntimeException(
-                sprintf('Execution directories not created. Use %s::withDirectories() method instead.', self::class)
-            );
-        }
-
-        copy($file, Path::join($this->getStudentExecutionDirectory(), 'solution.php'));
-    }
-
-    public function importStudentSolutionFolder(string $folder): void
-    {
-        if (!$this->filesystem->exists($this->getStudentExecutionDirectory())) {
-            throw new RuntimeException(
-                sprintf('Execution directories not created. Use %s::withDirectories() method instead.', self::class)
-            );
-        }
-
-        $this->filesystem->mirror($folder, $this->getStudentExecutionDirectory());
-    }
-
     public function importReferenceFileFromString(string $content, string $filename = 'solution.php'): void
     {
-        if (!$this->filesystem->exists($this->getReferenceExecutionDirectory())) {
+        if (!$this->referenceSolutionDirWasCreated) {
             throw new RuntimeException(
-                sprintf('Execution directories not created. Use %s::withDirectories() method instead.', self::class)
+                sprintf('Reference execution directory not created. Call %s::createReferenceSolutionDirectory() first.', self::class)
             );
         }
 
         file_put_contents(Path::join($this->getReferenceExecutionDirectory(), $filename), $content);
     }
 
-    public function importReferenceSolution(SolutionInterface $solution): void
+    public static function fromExerciseAndStudentSolution(ExerciseInterface $exercise, string $file): self
     {
-        if (!$this->filesystem->exists($this->getReferenceExecutionDirectory())) {
-            throw new RuntimeException(
-                sprintf('Execution directories not created. Use %s::withDirectories() method instead.', self::class)
-            );
+        if (file_exists($file)) {
+            $file = (string) realpath($file);
         }
 
-        foreach ($solution->getFiles() as $file) {
-            $this->filesystem->copy(
-                $file->getAbsolutePath(),
-                Path::join($this->getReferenceExecutionDirectory(), $file->getRelativePath())
-            );
-        }
-    }
-
-    public static function withDirectories(Input $input = null, ExerciseInterface $exercise = null): self
-    {
-        $self = new self($exercise, $input);
-
-        $self->filesystem->mkdir($self->getStudentExecutionDirectory());
-        $self->filesystem->mkdir($self->getReferenceExecutionDirectory());
-
-        return $self;
-    }
-
-    public static function withoutDirectories(Input $input = null, ExerciseInterface $exercise = null): self
-    {
-        return new self($exercise, $input);
+        $input = new Input('test', ['program' => $file]);
+        return new self(
+            exercise: $exercise,
+            input: $input,
+            studentDirectory: dirname($file)
+        );
     }
 
     public function __destruct()
     {
-        $this->filesystem->remove($this->getStudentExecutionDirectory());
-        $this->filesystem->remove($this->getReferenceExecutionDirectory());
+        if ($this->studentSolutionDirWasCreated) {
+            $this->filesystem->remove($this->getStudentExecutionDirectory());
+        }
+
+        if ($this->referenceSolutionDirWasCreated) {
+            $this->filesystem->remove($this->getReferenceExecutionDirectory());
+        }
     }
 }

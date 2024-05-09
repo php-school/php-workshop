@@ -16,7 +16,8 @@ class CgiExecuteEventTest extends TestCase
 {
     public function testAddHeader(): void
     {
-        $context = TestContext::withoutDirectories();
+
+        $context = new TestContext();
         $scenario = new CgiScenario();
 
         $request = new Request('GET', 'https://some.site');
@@ -35,7 +36,7 @@ class CgiExecuteEventTest extends TestCase
 
     public function testModifyRequest(): void
     {
-        $context = TestContext::withoutDirectories();
+        $context = new TestContext();
         $scenario = new CgiScenario();
 
         $request = new Request('GET', 'https://some.site');
@@ -59,7 +60,7 @@ class CgiExecuteEventTest extends TestCase
 
     public function testGetters(): void
     {
-        $context = TestContext::withoutDirectories();
+        $context = new TestContext();
         $scenario = new CgiScenario();
 
         $request = new Request('GET', 'https://some.site');

@@ -11,15 +11,15 @@ use PhpSchool\PhpWorkshop\Check\SimpleCheckInterface;
 use PhpSchool\PhpWorkshop\Event\EventDispatcher;
 use PhpSchool\PhpWorkshop\Event\ExerciseRunnerEvent;
 use PhpSchool\PhpWorkshop\Exception\CheckNotApplicableException;
+use PhpSchool\PhpWorkshop\Exception\CouldNotRunException;
 use PhpSchool\PhpWorkshop\Exception\ExerciseNotConfiguredException;
 use PhpSchool\PhpWorkshop\Exception\InvalidArgumentException;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
-use PhpSchool\PhpWorkshop\ExerciseRunner\Context\ExecutionContextFactory;
+use PhpSchool\PhpWorkshop\ExerciseRunner\Context\ExecutionContext;
 use PhpSchool\PhpWorkshop\ExerciseRunner\RunnerManager;
 use PhpSchool\PhpWorkshop\Input\Input;
 use PhpSchool\PhpWorkshop\Output\OutputInterface;
 use PhpSchool\PhpWorkshop\Result\FailureInterface;
-use PhpSchool\PhpWorkshop\Exception\CouldNotRunException;
 
 /**
  * This class is used to verify/run a student's solution to an exercise. It routes to the correct
@@ -49,7 +49,6 @@ class ExerciseDispatcher
         private ResultAggregator $results,
         private EventDispatcher $eventDispatcher,
         private CheckRepository $checkRepository,
-        private ExecutionContextFactory $executionContextFactory,
     ) {
     }
 
@@ -108,7 +107,7 @@ class ExerciseDispatcher
      */
     public function verify(ExerciseInterface $exercise, Input $input): ResultAggregator
     {
-        $context = $this->executionContextFactory->fromInputAndExercise($input, $exercise);
+        $context = ExecutionContext::fromInputAndExercise($input, $exercise);
         $runner = $this->runnerManager->getRunner($exercise);
 
         $exercise->defineListeners($this->eventDispatcher);
@@ -161,7 +160,7 @@ class ExerciseDispatcher
      */
     public function run(ExerciseInterface $exercise, Input $input, OutputInterface $output): bool
     {
-        $context = $this->executionContextFactory->fromInputAndExercise($input, $exercise);
+        $context = ExecutionContext::fromInputAndExercise($input, $exercise);
 
         $exercise->defineListeners($this->eventDispatcher);
 

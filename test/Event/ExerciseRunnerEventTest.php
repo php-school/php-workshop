@@ -13,7 +13,7 @@ class ExerciseRunnerEventTest extends TestCase
 {
     public function testGetters(): void
     {
-        $context = TestContext::withoutDirectories();
+        $context = new TestContext();
 
         $event = new ExerciseRunnerEvent('Some Event', $context, ['number' => 1]);
         self::assertSame($context, $event->getContext());

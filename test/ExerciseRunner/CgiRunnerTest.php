@@ -6,8 +6,8 @@ use Colors\Color;
 use GuzzleHttp\Psr7\Request;
 use PhpSchool\PhpWorkshop\Check\CodeExistsCheck;
 use PhpSchool\PhpWorkshop\Exercise\Scenario\CgiScenario;
-use PhpSchool\PhpWorkshop\Exercise\Scenario\CliScenario;
 use PhpSchool\PhpWorkshop\ExerciseRunner\Context\TestContext;
+use PhpSchool\PhpWorkshop\ExerciseRunner\EnvironmentManager;
 use PhpSchool\PhpWorkshop\Listener\OutputRunInfoListener;
 use PhpSchool\PhpWorkshop\Process\HostProcessFactory;
 use PhpSchool\PhpWorkshop\Result\Cli\CliResult;
@@ -28,9 +28,9 @@ use PhpSchool\PhpWorkshop\Result\Failure;
 use PhpSchool\PhpWorkshop\ResultAggregator;
 use PhpSchool\PhpWorkshop\Solution\SingleFileSolution;
 use PhpSchool\PhpWorkshop\Utils\RequestRenderer;
-use PhpSchool\PhpWorkshopTest\Asset\CgiExerciseInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\Filesystem\Filesystem;
 use Yoast\PHPUnitPolyfills\Polyfills\AssertionRenames;
 
 class CgiRunnerTest extends TestCase
@@ -45,7 +45,7 @@ class CgiRunnerTest extends TestCase
     {
         $this->exercise = new CgiExerciseImpl();
         $this->eventDispatcher = new EventDispatcher(new ResultAggregator());
-        $this->runner = new CgiRunner($this->exercise, $this->eventDispatcher, new HostProcessFactory());
+        $this->runner = new CgiRunner($this->exercise, $this->eventDispatcher, new HostProcessFactory(), new EnvironmentManager(new Filesystem()));
 
         $this->assertEquals('CGI Program Runner', $this->runner->getName());
     }
@@ -74,8 +74,7 @@ class CgiRunnerTest extends TestCase
         $this->expectException(SolutionExecutionException::class);
         $this->expectExceptionMessageMatches($regex);
 
-        $context = TestContext::withDirectories(null, $this->exercise);
-        $this->runner->verify($context);
+        $this->runner->verify(new TestContext($this->exercise));
     }
 
     public function testVerifyReturnsSuccessIfGetSolutionOutputMatchesUserOutput(): void
@@ -86,9 +85,7 @@ class CgiRunnerTest extends TestCase
             (new CgiScenario())->withExecution((new Request('GET', 'http://some.site?number=5')))
         );
 
-        $context = TestContext::withDirectories(null, $this->exercise);
-        $context->importStudentSolution(__DIR__ . '/../res/cgi/get-solution.php');
-
+        $context = TestContext::fromExerciseAndStudentSolution($this->exercise, __DIR__ . '/../res/cgi/get-solution.php');
         $result = $this->runner->verify($context);
 
         $this->assertInstanceOf(CgiResult::class, $result);
@@ -107,9 +104,7 @@ class CgiRunnerTest extends TestCase
 
         $this->exercise->setScenario((new CgiScenario())->withExecution($request));
 
-        $context = TestContext::withDirectories(null, $this->exercise);
-        $context->importStudentSolution(__DIR__ . '/../res/cgi/post-solution.php');
-
+        $context = TestContext::fromExerciseAndStudentSolution($this->exercise, __DIR__ . '/../res/cgi/post-solution.php');
         $result = $this->runner->verify($context);
 
         $this->assertInstanceOf(CgiResult::class, $result);
@@ -128,9 +123,7 @@ class CgiRunnerTest extends TestCase
 
         $this->exercise->setScenario((new CgiScenario())->withExecution($request));
 
-        $context = TestContext::withDirectories(null, $this->exercise);
-        $context->importStudentSolution(__DIR__ . '/../res/cgi/post-multiple-solution.php');
-
+        $context = TestContext::fromExerciseAndStudentSolution($this->exercise, __DIR__ . '/../res/cgi/post-multiple-solution.php');
         $result = $this->runner->verify($context);
 
         $this->assertInstanceOf(CgiResult::class, $result);
@@ -146,9 +139,7 @@ class CgiRunnerTest extends TestCase
 
         $this->exercise->setScenario((new CgiScenario())->withExecution($request));
 
-        $context = TestContext::withDirectories(null, $this->exercise);
-        $context->importStudentSolution(__DIR__ . '/../res/cgi/user-error.php');
-
+        $context = TestContext::fromExerciseAndStudentSolution($this->exercise, __DIR__ . '/../res/cgi/user-error.php');
         $result = $this->runner->verify($context);
 
         $this->assertInstanceOf(CgiResult::class, $result);
@@ -171,9 +162,7 @@ class CgiRunnerTest extends TestCase
 
         $this->exercise->setScenario((new CgiScenario())->withExecution($request));
 
-        $context = TestContext::withDirectories(null, $this->exercise);
-        $context->importStudentSolution(__DIR__ . '/../res/cgi/get-user-wrong.php');
-
+        $context = TestContext::fromExerciseAndStudentSolution($this->exercise, __DIR__ . '/../res/cgi/get-user-wrong.php');
         $result = $this->runner->verify($context);
 
         $this->assertInstanceOf(CgiResult::class, $result);
@@ -196,9 +185,7 @@ class CgiRunnerTest extends TestCase
 
         $this->exercise->setScenario((new CgiScenario())->withExecution($request));
 
-        $context = TestContext::withDirectories(null, $this->exercise);
-        $context->importStudentSolution(__DIR__ . '/../res/cgi/get-user-header-wrong.php');
-
+        $context = TestContext::fromExerciseAndStudentSolution($this->exercise, __DIR__ . '/../res/cgi/get-user-header-wrong.php');
         $result = $this->runner->verify($context);
 
         $this->assertInstanceOf(CgiResult::class, $result);
@@ -264,9 +251,7 @@ class CgiRunnerTest extends TestCase
 
         $this->expectOutputString($exp);
 
-        $context = TestContext::withDirectories(null, $this->exercise);
-        $context->importStudentSolution(__DIR__ . '/../res/cgi/get-solution.php');
-
+        $context = TestContext::fromExerciseAndStudentSolution($this->exercise, __DIR__ . '/../res/cgi/get-solution.php');
         $result = $this->runner->run($context, $output);
 
         $this->assertTrue($result);
@@ -300,8 +285,7 @@ class CgiRunnerTest extends TestCase
 
         $this->expectOutputString($exp);
 
-        $context = TestContext::withDirectories(null, $this->exercise);
-
+        $context = TestContext::fromExerciseAndStudentSolution($this->exercise, __DIR__ . '/non-existent.php');
         $result = $this->runner->run($context, $output);
 
         $this->assertFalse($result);

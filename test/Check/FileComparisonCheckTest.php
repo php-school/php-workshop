@@ -43,7 +43,7 @@ class FileComparisonCheckTest extends TestCase
         $this->expectExceptionMessage('File: "some-file.txt" does not exist in solution folder');
 
         $exercise = new FileComparisonExercise(['some-file.txt']);
-        $context = TestContext::withDirectories(null, $exercise);
+        $context = new TestContext($exercise);
 
         $this->check->check($context);
     }
@@ -51,7 +51,8 @@ class FileComparisonCheckTest extends TestCase
     public function testFailureIsReturnedIfStudentsFileDoesNotExist(): void
     {
         $exercise = new FileComparisonExercise(['some-file.txt']);
-        $context = TestContext::withDirectories(null, $exercise);
+        $context = new TestContext($exercise);
+        $context->createReferenceSolutionDirectory();
         $context->importReferenceFileFromString("name,age\nAydin,33\nMichael,29\n", 'some-file.txt');
 
         $failure = $this->check->check($context);
@@ -63,7 +64,9 @@ class FileComparisonCheckTest extends TestCase
     public function testFailureIsReturnedIfStudentFileDosNotMatchReferenceFile(): void
     {
         $exercise = new FileComparisonExercise(['some-file.txt']);
-        $context = TestContext::withDirectories(null, $exercise);
+        $context = new TestContext($exercise);
+        $context->createStudentSolutionDirectory();
+        $context->createReferenceSolutionDirectory();
         $context->importStudentFileFromString("somegibberish", 'some-file.txt');
         $context->importReferenceFileFromString("name,age\nAydin,33\nMichael,29\n", 'some-file.txt');
 
@@ -78,8 +81,10 @@ class FileComparisonCheckTest extends TestCase
     public function testSuccessIsReturnedIfFilesMatch(): void
     {
         $exercise = new FileComparisonExercise(['some-file.txt']);
-        $context = TestContext::withDirectories(null, $exercise);
 
+        $context = new TestContext($exercise);
+        $context->createStudentSolutionDirectory();
+        $context->createReferenceSolutionDirectory();
         $context->importStudentFileFromString("name,age\nAydin,33\nMichael,29\n", 'some-file.txt');
         $context->importReferenceFileFromString("name,age\nAydin,33\nMichael,29\n", 'some-file.txt');
 
@@ -89,8 +94,9 @@ class FileComparisonCheckTest extends TestCase
     public function testFailureIsReturnedIfFileDoNotMatchUsingStrip(): void
     {
         $exercise = new FileComparisonExercise(['some-file.txt' => ['strip' => '/\d{2}:\d{2}/']]);
-        $context = TestContext::withDirectories(null, $exercise);
-
+        $context = new TestContext($exercise);
+        $context->createStudentSolutionDirectory();
+        $context->createReferenceSolutionDirectory();
         $context->importStudentFileFromString("01:04name,age\n06:76Aydin,34\n99:00Michael,29\n", 'some-file.txt');
         $context->importReferenceFileFromString("01:03name,age\n04:05Aydin,33\n17:21Michael,29\n", 'some-file.txt');
 

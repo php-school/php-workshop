@@ -36,7 +36,8 @@ class CodeExistsCheckTest extends BaseTest
 
     public function testSuccess(): void
     {
-        $context = TestContext::withDirectories();
+        $context = new TestContext();
+        $context->createStudentSolutionDirectory();
         $context->importStudentFileFromString('<?php echo "Hello World";');
 
         $this->assertInstanceOf(
@@ -47,7 +48,8 @@ class CodeExistsCheckTest extends BaseTest
 
     public function testFailure(): void
     {
-        $context = TestContext::withDirectories();
+        $context = new TestContext();
+        $context->createStudentSolutionDirectory();
         $context->importStudentFileFromString('<?php');
 
         $failure = $this->check->check($context);

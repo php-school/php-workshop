@@ -14,7 +14,7 @@ class CgiExerciseRunnerEventTest extends TestCase
 {
     public function testGetters(): void
     {
-        $context = TestContext::withoutDirectories();
+        $context = new TestContext();
         $scenario = new CgiScenario();
 
         $event = new CgiExerciseRunnerEvent('Some Event', $context, $scenario, ['number' => 1]);

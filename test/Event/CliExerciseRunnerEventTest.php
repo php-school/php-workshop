@@ -15,7 +15,7 @@ class CliExerciseRunnerEventTest extends TestCase
 {
     public function testGetters(): void
     {
-        $context = TestContext::withoutDirectories();
+        $context = new TestContext();
         $scenario = new CliScenario();
 
         $event = new CliExerciseRunnerEvent('Some Event', $context, $scenario, ['number' => 1]);

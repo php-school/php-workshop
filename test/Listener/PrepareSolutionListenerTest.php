@@ -12,7 +12,6 @@ use PhpSchool\PhpWorkshop\Process\HostProcessFactory;
 use PhpSchool\PhpWorkshop\Process\ProcessNotFoundException;
 use PhpSchool\PhpWorkshop\Solution\SolutionInterface;
 use PhpSchool\PhpWorkshopTest\Asset\CliExerciseImpl;
-use PhpSchool\PhpWorkshopTest\Asset\CliExerciseInterface;
 use PHPUnit\Framework\TestCase;
 use ReflectionProperty;
 use RuntimeException;
@@ -27,7 +26,7 @@ class PrepareSolutionListenerTest extends TestCase
     public function testIfSolutionRequiresComposerButComposerCannotBeLocatedExceptionIsThrown(): void
     {
         $exercise = new CliExerciseImpl();
-        $context = TestContext::withDirectories(exercise: $exercise);
+        $context = new TestContext($exercise);
 
         $finder = $this->createMock(ExecutableFinder::class);
         $finder->expects($this->once())->method('find')->with('composer')->willReturn(null);
@@ -49,7 +48,8 @@ class PrepareSolutionListenerTest extends TestCase
     public function testIfSolutionRequiresComposerButVendorDirExistsNothingIsDone(): void
     {
         $exercise = new CliExerciseImpl();
-        $context = TestContext::withDirectories(exercise: $exercise);
+        $context = new TestContext($exercise);
+        $context->createReferenceSolutionDirectory();
 
         mkdir(sprintf('%s/vendor', $context->getReferenceExecutionDirectory()));
         $this->assertFileExists(sprintf('%s/vendor', $context->getReferenceExecutionDirectory()));
@@ -73,14 +73,16 @@ class PrepareSolutionListenerTest extends TestCase
     public function testIfSolutionRequiresComposerComposerInstallIsExecuted(): void
     {
         $exercise = new CliExerciseImpl();
-        $context = TestContext::withDirectories(exercise: $exercise);
-
-        $this->assertFileDoesNotExist(sprintf('%s/vendor', $context->getReferenceExecutionDirectory()));
-        file_put_contents(sprintf('%s/composer.json', $context->getReferenceExecutionDirectory()), json_encode([
-            'require' => [
-                'phpunit/phpunit' => '~5.0'
-            ],
-        ]));
+        $context = new TestContext($exercise);
+        $context->createReferenceSolutionDirectory();
+        $context->importReferenceFileFromString(
+            json_encode([
+                'require' => [
+                    'phpunit/phpunit' => '~5.0'
+                ],
+            ]),
+            'composer.json'
+        );
 
         $solution = $this->createMock(SolutionInterface::class);
         $solution
@@ -99,17 +101,23 @@ class PrepareSolutionListenerTest extends TestCase
     public function testExceptionIsThrownIfDependenciesCannotBeResolved(): void
     {
         $exercise = new CliExerciseImpl();
-        $context = TestContext::withDirectories(exercise: $exercise);
+        $context = new TestContext($exercise);
 
         $this->expectException(\PhpSchool\PhpWorkshop\Exception\RuntimeException::class);
         $this->expectExceptionMessage('Composer dependencies could not be installed');
 
-        $this->assertFileDoesNotExist(sprintf('%s/vendor', $context->getReferenceExecutionDirectory()));
-        file_put_contents(sprintf('%s/composer.json', $context->getStudentExecutionDirectory()), json_encode([
-            'require' => [
-                'phpunit/phpunit' => '1.0'
-            ],
-        ]));
+        $exercise = new CliExerciseImpl();
+        $context = new TestContext($exercise);
+
+        $context->createReferenceSolutionDirectory();
+        $context->importReferenceFileFromString(
+            json_encode([
+                'require' => [
+                    'phpunit/phpunit' => '1.0'
+                ],
+            ]),
+            'composer.json'
+        );
 
         $solution = $this->createMock(SolutionInterface::class);
         $exercise->setSolution($solution);

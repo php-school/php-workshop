@@ -40,12 +40,12 @@ class CustomVerifyingRunnerTest extends TestCase
 
         $this->expectOutputString($exp);
 
-        $this->runner->run(TestContext::withoutDirectories(), $output);
+        $this->runner->run(new TestContext(), $output);
     }
 
     public function testVerifyProxiesToExercise(): void
     {
-        $result = $this->runner->verify(TestContext::withoutDirectories());
+        $result = $this->runner->verify(new TestContext());
 
         self::assertEquals($this->exercise->verify(), $result);
     }

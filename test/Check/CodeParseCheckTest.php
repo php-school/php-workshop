@@ -39,7 +39,8 @@ class CodeParseCheckTest extends TestCase
 
     public function testUnParseableCodeReturnsFailure(): void
     {
-        $context = TestContext::withDirectories();
+        $context = new TestContext();
+        $context->createStudentSolutionDirectory();
         $context->importStudentFileFromString('<?php $lol');
 
         $result = $this->check->check($context);
@@ -59,7 +60,8 @@ class CodeParseCheckTest extends TestCase
 
     public function testParseableCodeReturnsSuccess(): void
     {
-        $context = TestContext::withDirectories();
+        $context = new TestContext();
+        $context->createStudentSolutionDirectory();
         $context->importStudentFileFromString('<?php $lol = "lol";');
 
         $result = $this->check->check($context);

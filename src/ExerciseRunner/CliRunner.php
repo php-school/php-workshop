@@ -63,7 +63,8 @@ class CliRunner implements ExerciseRunnerInterface
     public function __construct(
         private CliExercise $exercise,
         private EventDispatcher $eventDispatcher,
-        private ProcessFactory $processFactory
+        private ProcessFactory $processFactory,
+        private EnvironmentManager $environmentManager,
     ) {
     }
 
@@ -106,6 +107,10 @@ class CliRunner implements ExerciseRunnerInterface
         $scenario = $this->exercise->defineTestScenario();
 
         $this->eventDispatcher->dispatch(new CliExerciseRunnerEvent('cli.verify.start', $context, $scenario));
+
+        $this->environmentManager->prepareStudent($context, $scenario);
+        $this->environmentManager->prepareSolution($context, $scenario);
+
         $result = new CliResult(
             array_map(
                 function (Collection $args) use ($context, $scenario) {
@@ -114,6 +119,9 @@ class CliRunner implements ExerciseRunnerInterface
                 $scenario->getExecutions()
             )
         );
+
+        $this->environmentManager->cleanup($context, $scenario);
+
         $this->eventDispatcher->dispatch(new CliExerciseRunnerEvent('cli.verify.finish', $context, $scenario));
         return $result;
     }
@@ -123,7 +131,6 @@ class CliRunner implements ExerciseRunnerInterface
      */
     private function doVerify(ExecutionContext $context, CliScenario $scenario, Collection $args): CliResultInterface
     {
-
         try {
             /** @var CliExecuteEvent $event */
             $event = $this->eventDispatcher->dispatch(
@@ -203,6 +210,9 @@ class CliRunner implements ExerciseRunnerInterface
         $scenario = $this->exercise->defineTestScenario();
 
         $this->eventDispatcher->dispatch(new CliExerciseRunnerEvent('cli.run.start', $context, $scenario));
+
+        $this->environmentManager->prepareStudent($context, $scenario);
+
         $success = true;
         foreach ($scenario->getExecutions() as $i => $args) {
             /** @var CliExecuteEvent $event */
@@ -237,6 +247,8 @@ class CliRunner implements ExerciseRunnerInterface
                 new CliExecuteEvent('cli.run.student-execute.post', $context, $scenario, $args)
             );
         }
+
+        $this->environmentManager->cleanup($context, $scenario);
 
         $this->eventDispatcher->dispatch(new CliExerciseRunnerEvent('cli.run.finish', $context, $scenario));
         return $success;

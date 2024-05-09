@@ -31,8 +31,12 @@ class CodePatchListenerTest extends TestCase
     public function testPatchUpdatesCode(): void
     {
         $exercise = $this->createMock(ExerciseInterface::class);
-        $context = TestContext::withDirectories(null, $exercise);
+
+        $context = new TestContext($exercise);
+        $context->createStudentSolutionDirectory();
+        $context->createReferenceSolutionDirectory();
         $context->importStudentFileFromString('ORIGINAL CONTENT');
+        $context->importReferenceSolution();
 
         $this->codePatcher
             ->expects($this->once())
@@ -53,8 +57,12 @@ class CodePatchListenerTest extends TestCase
     public function testRevertAfterPatch(): void
     {
         $exercise = $this->createMock(ExerciseInterface::class);
-        $context = TestContext::withDirectories(null, $exercise);
+
+        $context = new TestContext($exercise);
+        $context->createStudentSolutionDirectory();
+        $context->createReferenceSolutionDirectory();
         $context->importStudentFileFromString('ORIGINAL CONTENT');
+        $context->importReferenceSolution();
 
         $this->codePatcher
             ->expects($this->once())
@@ -76,9 +84,12 @@ class CodePatchListenerTest extends TestCase
     public function testPatchesProvidedSolution(): void
     {
         $exercise = new ProvidesSolutionExercise();
-        $context = TestContext::withDirectories(null, $exercise);
+
+        $context = new TestContext($exercise);
+        $context->createStudentSolutionDirectory();
+        $context->createReferenceSolutionDirectory();
         $context->importStudentFileFromString('ORIGINAL CONTENT');
-        $context->importReferenceSolution($exercise->getSolution());
+        $context->importReferenceSolution();
 
         $this->codePatcher
             ->expects($this->exactly(2))
@@ -106,7 +117,10 @@ class CodePatchListenerTest extends TestCase
     public function testFileIsLoggedWhenPatches(): void
     {
         $exercise = $this->createMock(ExerciseInterface::class);
-        $context = TestContext::withDirectories(null, $exercise);
+
+        $context = new TestContext($exercise);
+        $context->createStudentSolutionDirectory();
+        $context->createReferenceSolutionDirectory();
         $context->importStudentFileFromString('ORIGINAL CONTENT');
 
         $this->codePatcher
@@ -129,7 +143,10 @@ class CodePatchListenerTest extends TestCase
     public function testRevertDoesNotRevertStudentSubmissionPatchIfInDebugMode(): void
     {
         $exercise = $this->createMock(ExerciseInterface::class);
-        $context = TestContext::withDirectories(null, $exercise);
+
+        $context = new TestContext($exercise);
+        $context->createStudentSolutionDirectory();
+        $context->createReferenceSolutionDirectory();
         $context->importStudentFileFromString('ORIGINAL CONTENT');
 
         $this->codePatcher

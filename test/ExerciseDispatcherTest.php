@@ -15,7 +15,6 @@ use PhpSchool\PhpWorkshop\Exception\InvalidArgumentException;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpSchool\PhpWorkshop\ExerciseDispatcher;
 use PhpSchool\PhpWorkshop\ExerciseRunner\Context\ExecutionContext;
-use PhpSchool\PhpWorkshop\ExerciseRunner\Context\ExecutionContextFactory;
 use PhpSchool\PhpWorkshop\ExerciseRunner\ExerciseRunnerInterface;
 use PhpSchool\PhpWorkshop\ExerciseRunner\RunnerManager;
 use PhpSchool\PhpWorkshop\Input\Input;
@@ -50,7 +49,6 @@ class ExerciseDispatcherTest extends TestCase
             $results,
             $eventDispatcher,
             new CheckRepository(),
-            new ExecutionContextFactory()
         );
 
         $this->assertSame($eventDispatcher, $exerciseDispatcher->getEventDispatcher());
@@ -66,7 +64,6 @@ class ExerciseDispatcherTest extends TestCase
             new ResultAggregator(),
             new EventDispatcher(new ResultAggregator()),
             new CheckRepository(),
-            new ExecutionContextFactory()
         );
         $exerciseDispatcher->requireCheck('NotACheck');
     }
@@ -82,7 +79,6 @@ class ExerciseDispatcherTest extends TestCase
             new ResultAggregator(),
             new EventDispatcher(new ResultAggregator()),
             new CheckRepository([$check]),
-            new ExecutionContextFactory()
         );
 
         $this->expectException(InvalidArgumentException::class);
@@ -100,8 +96,7 @@ class ExerciseDispatcherTest extends TestCase
             $this->createMock(RunnerManager::class),
             new ResultAggregator(),
             new EventDispatcher(new ResultAggregator()),
-            new CheckRepository([$check]),
-            new ExecutionContextFactory()
+            new CheckRepository([$check])
         );
 
         $exerciseDispatcher->requireCheck(get_class($check));
@@ -119,7 +114,6 @@ class ExerciseDispatcherTest extends TestCase
             new ResultAggregator(),
             new EventDispatcher(new ResultAggregator()),
             new CheckRepository([$check]),
-            new ExecutionContextFactory()
         );
 
         $exerciseDispatcher->requireCheck(get_class($check));
@@ -135,8 +129,7 @@ class ExerciseDispatcherTest extends TestCase
             $this->createMock(RunnerManager::class),
             new ResultAggregator(),
             new EventDispatcher(new ResultAggregator()),
-            new CheckRepository([$check]),
-            new ExecutionContextFactory()
+            new CheckRepository([$check])
         );
 
         $this->expectException(InvalidArgumentException::class);
@@ -155,7 +148,6 @@ class ExerciseDispatcherTest extends TestCase
             new ResultAggregator(),
             $eventDispatcher,
             new CheckRepository([$check]),
-            new ExecutionContextFactory()
         );
 
         $exerciseDispatcher->requireCheck(get_class($check));
@@ -181,7 +173,6 @@ class ExerciseDispatcherTest extends TestCase
             new ResultAggregator(),
             new EventDispatcher(new ResultAggregator()),
             new CheckRepository([$check]),
-            new ExecutionContextFactory()
         );
 
         $this->expectException(CheckNotApplicableException::class);
@@ -210,7 +201,6 @@ class ExerciseDispatcherTest extends TestCase
             new ResultAggregator(),
             new EventDispatcher(new ResultAggregator()),
             new CheckRepository([$check]),
-            new ExecutionContextFactory()
         );
 
         $this->expectException(ExerciseNotConfiguredException::class);
@@ -244,7 +234,6 @@ class ExerciseDispatcherTest extends TestCase
             new ResultAggregator(),
             new EventDispatcher(new ResultAggregator()),
             new CheckRepository([$check]),
-            new ExecutionContextFactory()
         );
 
         $result = $exerciseDispatcher->verify($exercise, $input);
@@ -309,7 +298,6 @@ class ExerciseDispatcherTest extends TestCase
             new ResultAggregator(),
             new EventDispatcher(new ResultAggregator()),
             new CheckRepository([$check1, $check2]),
-            new ExecutionContextFactory()
         );
 
         $result = $exerciseDispatcher->verify($exercise, $input);
@@ -350,7 +338,6 @@ class ExerciseDispatcherTest extends TestCase
             new ResultAggregator(),
             new EventDispatcher(new ResultAggregator()),
             new CheckRepository([$check1, $check2]),
-            new ExecutionContextFactory()
         );
 
         $result = $exerciseDispatcher->verify($exercise, $input);
@@ -427,7 +414,6 @@ class ExerciseDispatcherTest extends TestCase
             new ResultAggregator(),
             new EventDispatcher(new ResultAggregator()),
             new CheckRepository([$check1, $check2]),
-            new ExecutionContextFactory()
         );
 
         $result = $exerciseDispatcher->verify($exercise, $input);
@@ -484,7 +470,6 @@ class ExerciseDispatcherTest extends TestCase
             new ResultAggregator(),
             $eventDispatcher,
             new CheckRepository(),
-            new ExecutionContextFactory()
         );
 
         $exerciseDispatcher->verify($exercise, $input);
@@ -529,7 +514,6 @@ class ExerciseDispatcherTest extends TestCase
             new ResultAggregator(),
             $eventDispatcher,
             new CheckRepository(),
-            new ExecutionContextFactory()
         );
 
         $this->expectException(RuntimeException::class);
@@ -554,7 +538,6 @@ class ExerciseDispatcherTest extends TestCase
             new ResultAggregator(),
             new EventDispatcher(new ResultAggregator()),
             new CheckRepository([new PhpLintCheck()]),
-            new ExecutionContextFactory()
         );
 
         $this->assertTrue($exerciseDispatcher->run($exercise, $input, $output));

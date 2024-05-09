@@ -13,8 +13,10 @@ use PhpSchool\PhpWorkshop\Exercise\Scenario\CliScenario;
 use PhpSchool\PhpWorkshop\ExerciseCheck\DatabaseExerciseCheck;
 use PhpSchool\PhpWorkshop\ExerciseDispatcher;
 use PhpSchool\PhpWorkshop\ExerciseRunner\CliRunner;
+use PhpSchool\PhpWorkshop\ExerciseRunner\Context\ExecutionContextFactory;
 use PhpSchool\PhpWorkshop\ExerciseRunner\Context\StaticExecutionContextFactory;
 use PhpSchool\PhpWorkshop\ExerciseRunner\Context\TestContext;
+use PhpSchool\PhpWorkshop\ExerciseRunner\EnvironmentManager;
 use PhpSchool\PhpWorkshop\ExerciseRunner\RunnerManager;
 use PhpSchool\PhpWorkshop\Input\Input;
 use PhpSchool\PhpWorkshop\Output\OutputInterface;
@@ -60,7 +62,7 @@ class DatabaseCheckTest extends TestCase
     private function getRunnerManager(ExerciseInterface $exercise, EventDispatcher $eventDispatcher): MockObject
     {
         $runner = $this->getMockBuilder(CliRunner::class)
-            ->setConstructorArgs([$exercise, $eventDispatcher, new HostProcessFactory()])
+            ->setConstructorArgs([$exercise, $eventDispatcher, new HostProcessFactory(), new EnvironmentManager(new Filesystem())])
             ->onlyMethods(['getRequiredChecks'])
             ->getMock();
 
@@ -116,10 +118,6 @@ class DatabaseCheckTest extends TestCase
 
         $this->checkRepository->registerCheck($this->check);
 
-        $context = TestContext::withDirectories(null, $this->exercise);
-        $context->importReferenceSolution($solution);
-        $context->importStudentSolution(__DIR__ . '/../res/database/user.php');
-
         $results            = new ResultAggregator();
         $eventDispatcher    = new EventDispatcher($results);
         $dispatcher         = new ExerciseDispatcher(
@@ -127,10 +125,9 @@ class DatabaseCheckTest extends TestCase
             $results,
             $eventDispatcher,
             $this->checkRepository,
-            new StaticExecutionContextFactory($context)
         );
 
-        $dispatcher->verify($this->exercise, new Input('app', []));
+        $dispatcher->verify($this->exercise, new Input('app', ['program' => __DIR__ . '/../res/database/user.php']));
         $this->assertTrue($results->isSuccessful());
     }
 
@@ -143,10 +140,6 @@ class DatabaseCheckTest extends TestCase
         $this->exercise->setVerifier(fn () => true);
         $this->checkRepository->registerCheck($this->check);
 
-        $context = TestContext::withDirectories(null, $this->exercise);
-        $context->importReferenceSolution($solution);
-        $context->importStudentSolution(__DIR__ . '/../res/database/user.php');
-
         $results            = new ResultAggregator();
         $eventDispatcher    = new EventDispatcher($results);
         $dispatcher         = new ExerciseDispatcher(
@@ -154,10 +147,9 @@ class DatabaseCheckTest extends TestCase
             $results,
             $eventDispatcher,
             $this->checkRepository,
-            new StaticExecutionContextFactory($context)
         );
 
-        $dispatcher->verify($this->exercise, new Input('app', []));
+        $dispatcher->verify($this->exercise, new Input('app', ['program' => __DIR__ . '/../res/database/user.php']));
 
         $this->assertTrue($results->isSuccessful());
     }
@@ -166,9 +158,6 @@ class DatabaseCheckTest extends TestCase
     {
         $this->checkRepository->registerCheck($this->check);
 
-        $context = TestContext::withDirectories(null, $this->exercise);
-        $context->importStudentSolution(__DIR__ . '/../res/database/user-solution-alter-db.php');
-
         $results            = new ResultAggregator();
         $eventDispatcher    = new EventDispatcher($results);
         $dispatcher         = new ExerciseDispatcher(
@@ -176,12 +165,11 @@ class DatabaseCheckTest extends TestCase
             $results,
             $eventDispatcher,
             $this->checkRepository,
-            new StaticExecutionContextFactory($context)
         );
 
         $dispatcher->run(
             $this->exercise,
-            new Input('app', []),
+            new Input('app', ['program' => __DIR__ . '/../res/database/user-solution-alter-db.php']),
             $this->createMock(OutputInterface::class)
         );
     }
@@ -195,10 +183,6 @@ class DatabaseCheckTest extends TestCase
 
         $this->checkRepository->registerCheck($this->check);
 
-        $context = TestContext::withDirectories(null, $this->exercise);
-        $context->importReferenceSolution($solution);
-        $context->importStudentSolution(__DIR__ . '/../res/database/user.php');
-
         $results            = new ResultAggregator();
         $eventDispatcher    = new EventDispatcher($results);
         $dispatcher         = new ExerciseDispatcher(
@@ -206,10 +190,9 @@ class DatabaseCheckTest extends TestCase
             $results,
             $eventDispatcher,
             $this->checkRepository,
-            new StaticExecutionContextFactory($context)
         );
 
-        $dispatcher->verify($this->exercise, new Input('app', []));
+        $dispatcher->verify($this->exercise, new Input('app', ['program' => __DIR__ . '/../res/database/user.php']));
 
         $this->assertFalse($results->isSuccessful());
         $results = iterator_to_array($results);
@@ -248,10 +231,6 @@ class DatabaseCheckTest extends TestCase
 
         $this->checkRepository->registerCheck($this->check);
 
-        $context = TestContext::withDirectories(null, $this->exercise);
-        $context->importReferenceSolution($solution);
-        $context->importStudentSolution(__DIR__ . '/../res/database/user-solution-alter-db.php');
-
         $results            = new ResultAggregator();
         $eventDispatcher    = new EventDispatcher($results);
         $dispatcher         = new ExerciseDispatcher(
@@ -259,12 +238,11 @@ class DatabaseCheckTest extends TestCase
             $results,
             $eventDispatcher,
             $this->checkRepository,
-            new StaticExecutionContextFactory($context)
         );
 
         $dispatcher->verify(
             $this->exercise,
-            new Input('app')
+            new Input('app', ['program' => __DIR__ . '/../res/database/user-solution-alter-db.php'])
         );
     }
 

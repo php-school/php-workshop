@@ -39,8 +39,10 @@ class PhpLintCheckTest extends TestCase
 
     public function testSuccess(): void
     {
-        $context = TestContext::withDirectories(null, $this->exercise);
-        $context->importStudentSolution(__DIR__ . '/../res/lint/pass.php');
+        $context = TestContext::fromExerciseAndStudentSolution(
+            $this->exercise,
+            __DIR__ . '/../res/lint/pass.php'
+        );
 
         $res = $this->check->check($context);
 
@@ -52,8 +54,10 @@ class PhpLintCheckTest extends TestCase
 
     public function testFailure(): void
     {
-        $context = TestContext::withDirectories(null, $this->exercise);
-        $context->importStudentSolution(__DIR__ . '/../res/lint/fail.php');
+        $context = TestContext::fromExerciseAndStudentSolution(
+            $this->exercise,
+            __DIR__ . '/../res/lint/fail.php'
+        );
 
         $failure = $this->check->check($context);
 

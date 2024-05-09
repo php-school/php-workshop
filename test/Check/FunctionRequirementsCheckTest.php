@@ -47,18 +47,21 @@ class FunctionRequirementsCheckTest extends TestCase
         $exercise = $this->createMock(ExerciseInterface::class);
         $this->expectException(InvalidArgumentException::class);
 
-        $this->check->check(TestContext::withoutDirectories(null, $exercise));
+        $this->check->check(new TestContext($exercise));
     }
 
     public function testFailureIsReturnedIfCodeCouldNotBeParsed(): void
     {
-        $context = TestContext::withDirectories(null, $this->exercise);
-        $context->importStudentSolution(__DIR__ . '/../res/function-requirements/fail-invalid-code.php');
+        $context = TestContext::fromExerciseAndStudentSolution(
+            $this->exercise,
+            __DIR__ . '/../res/function-requirements/fail-invalid-code.php'
+        );
+
         $failure = $this->check->check($context);
 
         $this->assertInstanceOf(Failure::class, $failure);
         $message = sprintf(
-            'File: "%s/solution.php" could not be parsed. Error: "Syntax error, unexpected T_ECHO on line 4"',
+            'File: "%s/fail-invalid-code.php" could not be parsed. Error: "Syntax error, unexpected T_ECHO on line 4"',
             $context->getStudentExecutionDirectory()
         );
         $this->assertEquals($message, $failure->getReason());
@@ -66,8 +69,11 @@ class FunctionRequirementsCheckTest extends TestCase
 
     public function testFailureIsReturnedIfBannedFunctionsAreUsed(): void
     {
-        $context = TestContext::withDirectories(null, $this->exercise);
-        $context->importStudentSolution(__DIR__ . '/../res/function-requirements/fail-banned-function.php');
+        $context = TestContext::fromExerciseAndStudentSolution(
+            $this->exercise,
+            __DIR__ . '/../res/function-requirements/fail-banned-function.php'
+        );
+
         $failure = $this->check->check($context);
 
         $this->assertInstanceOf(FunctionRequirementsFailure::class, $failure);
@@ -88,8 +94,11 @@ class FunctionRequirementsCheckTest extends TestCase
             ->method('getRequiredFunctions')
             ->willReturn(['file_get_contents', 'implode']);
 
-        $context = TestContext::withDirectories(null, $exercise);
-        $context->importStudentSolution(__DIR__ . '/../res/function-requirements/fail-banned-function.php');
+        $context = TestContext::fromExerciseAndStudentSolution(
+            $exercise,
+            __DIR__ . '/../res/function-requirements/fail-banned-function.php'
+        );
+
         $failure = $this->check->check($context);
 
         $this->assertInstanceOf(FunctionRequirementsFailure::class, $failure);
@@ -110,8 +119,11 @@ class FunctionRequirementsCheckTest extends TestCase
             ->method('getRequiredFunctions')
             ->willReturn(['file_get_contents']);
 
-        $context = TestContext::withDirectories(null, $exercise);
-        $context->importStudentSolution(__DIR__ . '/../res/function-requirements/success.php');
+        $context = TestContext::fromExerciseAndStudentSolution(
+            $exercise,
+            __DIR__ . '/../res/function-requirements/success.php'
+        );
+
         $success = $this->check->check($context);
 
         $this->assertInstanceOf(Success::class, $success);

@@ -34,7 +34,8 @@ class FileExistsCheckTest extends TestCase
 
     public function testSuccess(): void
     {
-        $context = TestContext::withDirectories();
+        $context = new TestContext();
+        $context->createStudentSolutionDirectory();
         $context->importStudentFileFromString('<?php echo "Hello World";');
 
         $this->assertInstanceOf(
@@ -45,7 +46,7 @@ class FileExistsCheckTest extends TestCase
 
     public function testFailure(): void
     {
-        $context = TestContext::withDirectories();
+        $context = new TestContext();
 
         $failure = $this->check->check($context);
         $this->assertInstanceOf(Failure::class, $failure);

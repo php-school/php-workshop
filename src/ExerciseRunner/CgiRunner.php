@@ -65,7 +65,8 @@ class CgiRunner implements ExerciseRunnerInterface
     public function __construct(
         private CgiExercise $exercise,
         private EventDispatcher $eventDispatcher,
-        private ProcessFactory $processFactory
+        private ProcessFactory $processFactory,
+        private EnvironmentManager $environmentManager,
     ) {
     }
 
@@ -109,6 +110,10 @@ class CgiRunner implements ExerciseRunnerInterface
         $scenario = $this->exercise->defineTestScenario();
 
         $this->eventDispatcher->dispatch(new CgiExerciseRunnerEvent('cgi.verify.start', $context, $scenario));
+
+        $this->environmentManager->prepareStudent($context, $scenario);
+        $this->environmentManager->prepareSolution($context, $scenario);
+
         $result = new CgiResult(
             array_map(
                 function (RequestInterface $request) use ($context, $scenario) {
@@ -117,6 +122,9 @@ class CgiRunner implements ExerciseRunnerInterface
                 $scenario->getExecutions()
             )
         );
+
+        $this->environmentManager->cleanup($context, $scenario);
+
         $this->eventDispatcher->dispatch(new CgiExerciseRunnerEvent('cgi.verify.finish', $context, $scenario));
         return $result;
     }
@@ -296,6 +304,9 @@ class CgiRunner implements ExerciseRunnerInterface
         $scenario = $this->exercise->defineTestScenario();
 
         $this->eventDispatcher->dispatch(new CgiExerciseRunnerEvent('cgi.run.start', $context, $scenario));
+
+        $this->environmentManager->prepareStudent($context, $scenario);
+
         $success = true;
         foreach ($scenario->getExecutions() as $i => $request) {
             /** @var CgiExecuteEvent $event */
@@ -333,6 +344,9 @@ class CgiRunner implements ExerciseRunnerInterface
                 new CgiExecuteEvent('cgi.run.student-execute.post', $context, $scenario, $request)
             );
         }
+
+        $this->environmentManager->cleanup($context, $scenario);
+
         $this->eventDispatcher->dispatch(new CgiExerciseRunnerEvent('cgi.run.finish', $context, $scenario));
         return $success;
     }
