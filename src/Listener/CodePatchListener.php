@@ -88,6 +88,7 @@ class CodePatchListener
 
         foreach ($this->originalCode as $fileName => $contents) {
             file_put_contents($fileName, $contents);
+            unset($this->originalCode[$fileName]);
         }
     }
 }

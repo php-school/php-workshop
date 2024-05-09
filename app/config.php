@@ -186,6 +186,10 @@ return [
     EventDispatcher::class => factory(EventDispatcherFactory::class),
     EventDispatcherFactory::class => create(),
 
+    EnvironmentManager::class => function (ContainerInterface $c) {
+        return new EnvironmentManager($c->get(Filesystem::class), $c->get(EventDispatcher::class));
+    },
+
     //Exercise Runners
     RunnerManager::class => function (ContainerInterface $c) {
         $manager = new RunnerManager();
