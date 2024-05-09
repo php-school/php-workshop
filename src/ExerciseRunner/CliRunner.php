@@ -17,6 +17,7 @@ use PhpSchool\PhpWorkshop\Exception\CodeExecutionException;
 use PhpSchool\PhpWorkshop\Exception\SolutionExecutionException;
 use PhpSchool\PhpWorkshop\Exercise\CliExercise;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
+use PhpSchool\PhpWorkshop\Exercise\Scenario\CliScenario;
 use PhpSchool\PhpWorkshop\ExerciseRunner\Context\ExecutionContext;
 use PhpSchool\PhpWorkshop\Input\Input;
 use PhpSchool\PhpWorkshop\Output\OutputInterface;
@@ -104,32 +105,33 @@ class CliRunner implements ExerciseRunnerInterface
     {
         $scenario = $this->exercise->defineTestScenario();
 
-        $this->eventDispatcher->dispatch(new CliExerciseRunnerEvent('cli.verify.start', $this->exercise, $context->getInput()));
+        $this->eventDispatcher->dispatch(new CliExerciseRunnerEvent('cli.verify.start', $context, $scenario));
         $result = new CliResult(
             array_map(
-                function (Collection $args) use ($context) {
-                    return $this->doVerify($context, $args);
+                function (Collection $args) use ($context, $scenario) {
+                    return $this->doVerify($context, $scenario, $args);
                 },
                 $scenario->getExecutions()
             )
         );
-        $this->eventDispatcher->dispatch(new CliExerciseRunnerEvent('cli.verify.finish', $this->exercise, $context->getInput()));
+        $this->eventDispatcher->dispatch(new CliExerciseRunnerEvent('cli.verify.finish', $context, $scenario));
         return $result;
     }
 
     /**
      * @param Collection<int, string> $args
      */
-    private function doVerify(ExecutionContext $context, Collection $args): CliResultInterface
+    private function doVerify(ExecutionContext $context, CliScenario $scenario, Collection $args): CliResultInterface
     {
 
         try {
             /** @var CliExecuteEvent $event */
             $event = $this->eventDispatcher->dispatch(
-                new CliExecuteEvent('cli.verify.reference-execute.pre', $this->exercise, $context->getInput(), $args)
+                new CliExecuteEvent('cli.verify.reference-execute.pre', $context, $scenario, $args)
             );
             $solutionOutput = $this->executePhpFile(
                 $context,
+                $scenario,
                 $context->getReferenceExecutionDirectory(),
                 $this->exercise->getSolution()->getEntryPoint()->getAbsolutePath(),
                 $event->getArgs(),
@@ -139,8 +141,8 @@ class CliRunner implements ExerciseRunnerInterface
             $this->eventDispatcher->dispatch(
                 new CliExecuteEvent(
                     'cli.verify.reference-execute.fail',
-                    $this->exercise,
-                    $context->getInput(),
+                    $context,
+                    $scenario,
                     $args,
                     ['exception' => $e]
                 )
@@ -151,10 +153,11 @@ class CliRunner implements ExerciseRunnerInterface
         try {
             /** @var CliExecuteEvent $event */
             $event = $this->eventDispatcher->dispatch(
-                new CliExecuteEvent('cli.verify.student-execute.pre', $this->exercise, $context->getInput(), $args)
+                new CliExecuteEvent('cli.verify.student-execute.pre', $context, $scenario, $args)
             );
             $userOutput = $this->executePhpFile(
                 $context,
+                $scenario,
                 $context->getStudentExecutionDirectory(),
                 $context->getEntryPoint(),
                 $event->getArgs(),
@@ -164,8 +167,8 @@ class CliRunner implements ExerciseRunnerInterface
             $this->eventDispatcher->dispatch(
                 new CliExecuteEvent(
                     'cli.verify.student-execute.fail',
-                    $this->exercise,
-                    $context->getInput(),
+                    $context,
+                    $scenario,
                     $args,
                     ['exception' => $e]
                 )
@@ -199,12 +202,12 @@ class CliRunner implements ExerciseRunnerInterface
     {
         $scenario = $this->exercise->defineTestScenario();
 
-        $this->eventDispatcher->dispatch(new CliExerciseRunnerEvent('cli.run.start', $this->exercise, $context->getInput()));
+        $this->eventDispatcher->dispatch(new CliExerciseRunnerEvent('cli.run.start', $context, $scenario));
         $success = true;
         foreach ($scenario->getExecutions() as $i => $args) {
             /** @var CliExecuteEvent $event */
             $event = $this->eventDispatcher->dispatch(
-                new CliExecuteEvent('cli.run.student-execute.pre', $this->exercise, $context->getInput(), $args)
+                new CliExecuteEvent('cli.run.student-execute.pre', $context, $scenario, $args)
             );
 
             $args = $event->getArgs();
@@ -217,7 +220,7 @@ class CliRunner implements ExerciseRunnerInterface
 
             $process->start();
             $this->eventDispatcher->dispatch(
-                new CliExecuteEvent('cli.run.student.executing', $this->exercise, $context->getInput(), $args, ['output' => $output])
+                new CliExecuteEvent('cli.run.student.executing', $context, $scenario, $args, ['output' => $output])
             );
             $process->wait(function ($outputType, $outputBuffer) use ($output) {
                 $output->write($outputBuffer);
@@ -231,24 +234,24 @@ class CliRunner implements ExerciseRunnerInterface
             $output->lineBreak();
 
             $this->eventDispatcher->dispatch(
-                new CliExecuteEvent('cli.run.student-execute.post', $this->exercise, $context->getInput(), $args)
+                new CliExecuteEvent('cli.run.student-execute.post', $context, $scenario, $args)
             );
         }
 
-        $this->eventDispatcher->dispatch(new CliExerciseRunnerEvent('cli.run.finish', $this->exercise, $context->getInput()));
+        $this->eventDispatcher->dispatch(new CliExerciseRunnerEvent('cli.run.finish', $context, $scenario));
         return $success;
     }
 
     /**
-     * @param ArrayObject<int, string> $args
+     * @param Collection<int, string> $args
      */
-    private function executePhpFile(ExecutionContext $context, string $workingDirectory, string $fileName, ArrayObject $args, string $type): string
+    private function executePhpFile(ExecutionContext $context, CliScenario $scenario, string $workingDirectory, string $fileName, Collection $args, string $type): string
     {
         $process = $this->getPhpProcess($workingDirectory, $fileName, $args);
 
         $process->start();
         $this->eventDispatcher->dispatch(
-            new CliExecuteEvent(sprintf('cli.verify.%s.executing', $type), $this->exercise, $context->getInput(), $args)
+            new CliExecuteEvent(sprintf('cli.verify.%s.executing', $type), $context, $scenario, $args)
         );
         $process->wait();
 
@@ -260,9 +263,9 @@ class CliRunner implements ExerciseRunnerInterface
     }
 
     /**
-     * @param ArrayObject<int, string> $args
+     * @param Collection<int, string> $args
      */
-    private function getPhpProcess(string $workingDirectory, string $fileName, ArrayObject $args): Process
+    private function getPhpProcess(string $workingDirectory, string $fileName, Collection $args): Process
     {
         return $this->processFactory->create(
             new ProcessInput('php', [$fileName, ...$args->getArrayCopy()], $workingDirectory, [])

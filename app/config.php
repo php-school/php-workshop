@@ -257,7 +257,11 @@ return [
     InitialCodeListener::class => function (ContainerInterface $c) {
         return new InitialCodeListener($c->get('currentWorkingDirectory'), $c->get(LoggerInterface::class));
     },
-    PrepareSolutionListener::class => create(),
+    PrepareSolutionListener::class => function (ContainerInterface $c) {
+        return new PrepareSolutionListener(
+            $c->get(ProcessFactory::class)
+        );
+    },
     CodePatchListener::class => function (ContainerInterface $c) {
         return new CodePatchListener(
             $c->get(CodePatcher::class),
@@ -462,13 +466,13 @@ return [
             ],
         ],
         'prepare-solution' => [
-            'cli.verify.start' => [
+            'cli.verify.reference-execute.pre' => [
                 containerListener(PrepareSolutionListener::class),
             ],
             'cli.run.start' => [
                 containerListener(PrepareSolutionListener::class),
             ],
-            'cgi.verify.start' => [
+            'cgi.verify.reference-execute.pre' => [
                 containerListener(PrepareSolutionListener::class),
             ],
             'cgi.run.start' => [
@@ -476,7 +480,10 @@ return [
             ],
         ],
         'code-patcher' => [
-            'verify.pre.execute' => [
+            'cli.verify.start' => [
+                containerListener(CodePatchListener::class, 'patch'),
+            ],
+            'cgi.verify.start' => [
                 containerListener(CodePatchListener::class, 'patch'),
             ],
             'verify.post.execute' => [

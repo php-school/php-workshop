@@ -2,8 +2,9 @@
 
 namespace PhpSchool\PhpWorkshopTest\Listener;
 
-use PhpSchool\PhpWorkshop\Event\Event;
+use PhpSchool\PhpWorkshop\Event\ExerciseRunnerEvent;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
+use PhpSchool\PhpWorkshop\ExerciseRunner\Context\TestContext;
 use PhpSchool\PhpWorkshop\Input\Input;
 use PhpSchool\PhpWorkshop\Listener\SelfCheckListener;
 use PhpSchool\PhpWorkshop\Result\Success;
@@ -17,13 +18,13 @@ class SelfCheckListenerTest extends TestCase
     {
         $exercise = $this->createMock(SelfCheckExerciseInterface::class);
         $input    = new Input('app', ['program' => 'some-file.php']);
-        $event    = new Event('event', compact('exercise', 'input'));
+        $context  = TestContext::withoutDirectories($input, $exercise);
+        $event    = new ExerciseRunnerEvent('event', $context);
 
         $success = new Success('Success');
         $exercise
             ->expects($this->once())
             ->method('check')
-            ->with($input)
             ->willReturn($success);
 
         $results = new ResultAggregator();
@@ -38,7 +39,8 @@ class SelfCheckListenerTest extends TestCase
     {
         $exercise = $this->createMock(ExerciseInterface::class);
         $input    = new Input('app', ['program' => 'some-file.php']);
-        $event    = new Event('event', compact('exercise', 'input'));
+        $context  = TestContext::withoutDirectories($input, $exercise);
+        $event    = new ExerciseRunnerEvent('event', $context);
 
         $results = new ResultAggregator();
         $listener = new SelfCheckListener($results);
