@@ -124,7 +124,7 @@ class TestContextTest extends TestCase
         $this->expectException(\RuntimeException::class);
 
         $context = TestContext::withoutDirectories();
-        $context->importReferenceSolution(DirectorySolution::fromDirectory('path/to/solution'));
+        $context->importReferenceSolution($this->createMock(DirectorySolution::class));
     }
 
     public function testImportReferenceSolutionFolderCopiesSolutionToExecutionDirectory(): void
