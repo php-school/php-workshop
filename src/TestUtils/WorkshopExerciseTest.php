@@ -29,6 +29,7 @@ use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 use PhpSchool\PhpWorkshop\Input\Input;
 use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\Process\ExecutableFinder;
 use Symfony\Component\Process\Process;
 
 use function PhpSchool\PhpWorkshop\collect;
@@ -114,8 +115,11 @@ abstract class WorkshopExerciseTest extends TestCase
     private function installDeps(ExerciseInterface $exercise, string $directory): void
     {
         if (file_exists("$directory/composer.json") && !file_exists("$directory/vendor")) {
+            $execFinder = new ExecutableFinder();
+            $execFinder->addSuffix('.phar');
+
             $process = new Process(
-                [PrepareSolutionListener::locateComposer(), 'install', '--no-interaction'],
+                [$execFinder->find('composer'), 'install', '--no-interaction'],
                 $directory
             );
             $process->mustRun();

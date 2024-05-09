@@ -17,10 +17,6 @@ class EventDispatcher
      * @var array<string, array<callable>>
      */
     private array $listeners = [];
-
-    /**
-     * @var ResultAggregator
-     */
     private ResultAggregator $resultAggregator;
 
     public function __construct(ResultAggregator $resultAggregator)

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace PhpSchool\PhpWorkshop\Event;
 
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
+use PhpSchool\PhpWorkshop\ExerciseRunner\Context\ExecutionContext;
 use PhpSchool\PhpWorkshop\Input\Input;
 
 /**
@@ -12,30 +13,24 @@ use PhpSchool\PhpWorkshop\Input\Input;
  */
 class ExerciseRunnerEvent extends Event
 {
-    /**
-     * @var ExerciseInterface
-     */
-    private $exercise;
-
-    /**
-     * @var Input
-     */
-    private $input;
+    private ExecutionContext $context;
 
     /**
      * @param string $name
-     * @param ExerciseInterface $exercise
-     * @param Input $input
-     * @param array<mixed> $parameters
+     * @param array<string, mixed> $parameters
      */
-    public function __construct(string $name, ExerciseInterface $exercise, Input $input, array $parameters = [])
+    public function __construct(string $name, ExecutionContext $context, array $parameters = [])
     {
-        $parameters['input'] = $input;
-        $parameters['exercise'] = $exercise;
-        parent::__construct($name, $parameters);
+        $this->context = $context;
 
-        $this->exercise = $exercise;
-        $this->input = $input;
+        $parameters['input'] = $context->getInput();
+        $parameters['exercise'] = $context->getExercise();
+        parent::__construct($name, $parameters);
+    }
+
+    public function getContext(): ExecutionContext
+    {
+        return $this->context;
     }
 
     /**
@@ -43,7 +38,7 @@ class ExerciseRunnerEvent extends Event
      */
     public function getInput(): Input
     {
-        return $this->input;
+        return $this->context->getInput();
     }
 
     /**
@@ -51,6 +46,6 @@ class ExerciseRunnerEvent extends Event
      */
     public function getExercise(): ExerciseInterface
     {
-        return $this->exercise;
+        return $this->context->getExercise();
     }
 }
