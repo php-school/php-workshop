@@ -84,11 +84,11 @@ class Failure implements FailureInterface
     public static function fromCheckAndCodeParseFailure(
         CheckInterface $check,
         ParseErrorException $e,
-        string $file
+        string $file,
     ): self {
         return new self(
             $check->getName(),
-            sprintf('File: "%s" could not be parsed. Error: "%s"', $file, $e->getMessage())
+            sprintf('File: "%s" could not be parsed. Error: "%s"', $file, $e->getMessage()),
         );
     }
 

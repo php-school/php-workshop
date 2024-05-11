@@ -41,7 +41,7 @@ class PrepareSolutionListener
         //only install if vendor folder not available
         if (!file_exists(sprintf('%s/vendor', $event->getContext()->getReferenceExecutionDirectory()))) {
             $process = $this->processFactory->create(
-                new ProcessInput('composer', ['install', '--no-interaction'], $event->getContext()->getReferenceExecutionDirectory(), [])
+                new ProcessInput('composer', ['install', '--no-interaction'], $event->getContext()->getReferenceExecutionDirectory(), []),
             );
 
             try {

@@ -9,9 +9,7 @@ use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseType;
 use PhpSchool\PhpWorkshop\ExerciseCheck\ComposerExerciseCheck;
 use PhpSchool\PhpWorkshop\ExerciseRunner\Context\TestContext;
-use PhpSchool\PhpWorkshop\Input\Input;
 use PhpSchool\PhpWorkshop\Result\ComposerFailure;
-use PhpSchool\PhpWorkshop\Result\Failure;
 use PhpSchool\PhpWorkshop\Result\Success;
 use PhpSchool\PhpWorkshopTest\Asset\ComposerExercise;
 use PHPUnit\Framework\TestCase;
@@ -48,7 +46,7 @@ class ComposerCheckTest extends TestCase
     public function testCheckReturnsFailureIfNoComposerFile(): void
     {
         $result = $this->check->check(
-            new TestContext($this->exercise)
+            new TestContext($this->exercise),
         );
 
         $this->assertInstanceOf(ComposerFailure::class, $result);
@@ -61,7 +59,7 @@ class ComposerCheckTest extends TestCase
     {
         $context = TestContext::fromExerciseAndStudentSolution(
             $this->exercise,
-            __DIR__ . '/../res/composer/not-locked/solution.php'
+            __DIR__ . '/../res/composer/not-locked/solution.php',
         );
 
         $result = $this->check->check($context);
@@ -76,7 +74,7 @@ class ComposerCheckTest extends TestCase
     {
         $context = TestContext::fromExerciseAndStudentSolution(
             $this->exercise,
-            __DIR__ . '/../res/composer/no-vendor/solution.php'
+            __DIR__ . '/../res/composer/no-vendor/solution.php',
         );
 
         $result = $this->check->check($context);
@@ -114,7 +112,7 @@ class ComposerCheckTest extends TestCase
     {
         return [
             ['klein/klein',           __DIR__ . '/../res/composer/no-klein/solution.php'],
-            ['danielstjules/stringy', __DIR__ . '/../res/composer/no-stringy/solution.php']
+            ['danielstjules/stringy', __DIR__ . '/../res/composer/no-stringy/solution.php'],
         ];
     }
 
@@ -122,7 +120,7 @@ class ComposerCheckTest extends TestCase
     {
         $context = TestContext::fromExerciseAndStudentSolution(
             $this->exercise,
-            __DIR__ . '/../res/composer/good-solution/solution.php'
+            __DIR__ . '/../res/composer/good-solution/solution.php',
         );
 
         $result = $this->check->check($context);

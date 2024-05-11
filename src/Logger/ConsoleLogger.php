@@ -37,9 +37,9 @@ class ConsoleLogger extends AbstractLogger implements LoggerInterface
                 '%s - %s - %s',
                 $this->color->fg('yellow', (new \DateTime())->format('H:i:s')),
                 $this->color->bg('red', strtoupper($level)),
-                $this->color->fg('red', $message)
+                $this->color->fg('red', $message),
             ),
-            json_encode($context, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT)
+            json_encode($context, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT),
         ];
 
         $this->output->writeLine(implode("\n", $parts));

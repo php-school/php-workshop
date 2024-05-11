@@ -11,8 +11,7 @@ class CommandDefinitionTest extends TestCase
 {
     public function testGettersSettersWithStringArgs(): void
     {
-        $callable = function () {
-        };
+        $callable = function () {};
         $definition = new CommandDefinition('animal', ['name'], $callable);
 
         $this->assertSame($definition->getName(), 'animal');
@@ -27,8 +26,7 @@ class CommandDefinitionTest extends TestCase
 
     public function testGettersSettersWithObjArgs(): void
     {
-        $callable = function () {
-        };
+        $callable = function () {};
         $definition = new CommandDefinition('animal', [new CommandArgument('name')], $callable);
 
         $this->assertSame($definition->getName(), 'animal');

@@ -4,10 +4,8 @@ declare(strict_types=1);
 
 namespace PhpSchool\PhpWorkshop\Process;
 
-use PhpSchool\PhpWorkshop\Utils\Collection;
 use Symfony\Component\Process\ExecutableFinder;
 use Symfony\Component\Process\Process;
-use PhpSchool\PhpWorkshop\Utils\System;
 
 final class DockerProcessFactory implements ProcessFactory
 {
@@ -20,7 +18,7 @@ final class DockerProcessFactory implements ProcessFactory
         string $basePath,
         string $projectName,
         string $composerCacheDir,
-        ExecutableFinder $executableFinder = null
+        ExecutableFinder $executableFinder = null,
     ) {
         $this->executableFinder = $executableFinder ?? new ExecutableFinder();
         $this->basePath = $basePath;
@@ -45,12 +43,12 @@ final class DockerProcessFactory implements ProcessFactory
                 ...$this->baseComposeCommand($mounts, $env),
                 'runtime',
                 $processInput->getExecutable(),
-                ...$processInput->getArgs()
+                ...$processInput->getArgs(),
             ],
             $this->basePath,
             ['SOLUTION' => $processInput->getWorkingDirectory()],
             $processInput->getInput(),
-            10
+            10,
         );
     }
 
@@ -78,7 +76,7 @@ final class DockerProcessFactory implements ProcessFactory
             ...$env,
             '-w',
             '/solution',
-            ...array_merge(...array_map(fn ($mount) => ['-v', $mount], $mounts)),
+            ...array_merge(...array_map(fn($mount) => ['-v', $mount], $mounts)),
         ];
     }
 }

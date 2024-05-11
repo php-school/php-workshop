@@ -59,7 +59,7 @@ class ResultAggregatorTest extends TestCase
     {
         $results = [
             new Success('Some Check'),
-            new Failure('Some Check', 'nope')
+            new Failure('Some Check', 'nope'),
         ];
 
         $resultAggregator = new ResultAggregator();

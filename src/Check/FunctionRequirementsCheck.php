@@ -9,7 +9,6 @@ use PhpParser\Error;
 use PhpParser\Node\Expr\FuncCall;
 use PhpParser\NodeTraverser;
 use PhpParser\Parser;
-use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseType;
 use PhpSchool\PhpWorkshop\ExerciseCheck\FunctionRequirementsExerciseCheck;
 use PhpSchool\PhpWorkshop\ExerciseRunner\Context\ExecutionContext;
@@ -26,9 +25,7 @@ use PhpSchool\PhpWorkshop\Result\Success;
  */
 class FunctionRequirementsCheck implements SimpleCheckInterface
 {
-    public function __construct(private Parser $parser)
-    {
-    }
+    public function __construct(private Parser $parser) {}
 
     /**
      * Return the check's name.

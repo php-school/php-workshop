@@ -68,8 +68,8 @@ class ResultRendererFactory
                     'Renderer Factory for "%s" produced "%s" instead of expected "%s"',
                     $class,
                     is_object($renderer) ? get_class($renderer) : gettype($renderer),
-                    $class
-                )
+                    $class,
+                ),
             );
         }
 

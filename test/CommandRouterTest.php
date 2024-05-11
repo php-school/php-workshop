@@ -40,7 +40,7 @@ class CommandRouterTest extends TestCase
             [new CommandDefinition('verify', [], $routeCallable)],
             'verify',
             $eventDispatcher,
-            $c
+            $c,
         );
 
         $router->addCommand(new CommandDefinition('run', [], $routeCallable));
@@ -111,8 +111,7 @@ class CommandRouterTest extends TestCase
         $c = $this->createMock(ContainerInterface::class);
         $eventDispatcher = $this->createMock(EventDispatcher::class);
 
-        $router = new CommandRouter([new CommandDefinition('cmd', [], function () {
-        }),], 'cmd', $eventDispatcher, $c);
+        $router = new CommandRouter([new CommandDefinition('cmd', [], function () {}),], 'cmd', $eventDispatcher, $c);
         $router->route(['app', 'not-a-cmd']);
     }
 
@@ -124,11 +123,10 @@ class CommandRouterTest extends TestCase
         $c = $this->createMock(ContainerInterface::class);
         $eventDispatcher = $this->createMock(EventDispatcher::class);
         $router = new CommandRouter(
-            [new CommandDefinition('verify', ['exercise', 'program'], function () {
-            }),],
+            [new CommandDefinition('verify', ['exercise', 'program'], function () {}),],
             'verify',
             $eventDispatcher,
-            $c
+            $c,
         );
         $router->route(['app', 'verify']);
     }
@@ -141,11 +139,10 @@ class CommandRouterTest extends TestCase
         $c = $this->createMock(ContainerInterface::class);
         $eventDispatcher = $this->createMock(EventDispatcher::class);
         $router = new CommandRouter(
-            [new CommandDefinition('verify', ['exercise', 'program'], function () {
-            }),],
+            [new CommandDefinition('verify', ['exercise', 'program'], function () {}),],
             'verify',
             $eventDispatcher,
-            $c
+            $c,
         );
         $router->route(['app', 'verify', 'some-exercise']);
     }
@@ -171,7 +168,7 @@ class CommandRouterTest extends TestCase
             [new CommandDefinition('verify', ['exercise', 'program'], $mock),],
             'verify',
             $eventDispatcher,
-            $c
+            $c,
         );
         $router->route(['app', 'verify', 'some-exercise', 'program.php']);
     }
@@ -187,7 +184,7 @@ class CommandRouterTest extends TestCase
             [new CommandDefinition('verify', ['exercise', 'program'], new \stdClass()),],
             'verify',
             $eventDispatcher,
-            $c
+            $c,
         );
         $router->route(['app', 'verify', 'some-exercise', 'program.php']);
     }
@@ -210,7 +207,7 @@ class CommandRouterTest extends TestCase
             [new CommandDefinition('verify', ['exercise', 'program'], 'some.service'),],
             'verify',
             $eventDispatcher,
-            $c
+            $c,
         );
         $router->route(['app', 'verify', 'some-exercise', 'program.php']);
     }
@@ -239,7 +236,7 @@ class CommandRouterTest extends TestCase
             [new CommandDefinition('verify', ['exercise', 'program'], 'some.service'),],
             'verify',
             $eventDispatcher,
-            $c
+            $c,
         );
         $router->route(['app', 'verify', 'some-exercise', 'program.php']);
     }
@@ -279,7 +276,7 @@ class CommandRouterTest extends TestCase
             [new CommandDefinition('verify', ['exercise', 'program'], 'some.service'),],
             'verify',
             $eventDispatcher,
-            $c
+            $c,
         );
         $router->route(['app', 'verify', 'some-exercise', 'program.php']);
     }
@@ -319,7 +316,7 @@ class CommandRouterTest extends TestCase
             [new CommandDefinition('verify', ['exercise', 'program'], 'some.service'),],
             'verify',
             $eventDispatcher,
-            $c
+            $c,
         );
         $res = $router->route(['app', 'verify', 'some-exercise', 'program.php']);
         $this->assertEquals(10, $res);
@@ -347,7 +344,7 @@ class CommandRouterTest extends TestCase
             [new CommandDefinition('verify', ['exercise', 'program'], $mock),],
             'verify',
             $eventDispatcher,
-            $c
+            $c,
         );
         $router->route(['app', 'verifu', 'some-exercise', 'program.php']);
     }
@@ -365,14 +362,14 @@ class CommandRouterTest extends TestCase
                     $this->callback(function (Input $input) {
                         return $input->getAppName() === 'app'
                             && $input->getArgument('exercise') === 'some-exercise';
-                    })
+                    }),
                 ],
                 [
                     $this->callback(function (Input $input) {
                         return $input->getAppName() === 'app'
                             && $input->getArgument('exercise') === 'some-exercise'
                             && $input->getArgument('program') === 'program.php';
-                    })
+                    }),
                 ],
                 [
                     $this->callback(function (Input $input) {
@@ -380,8 +377,8 @@ class CommandRouterTest extends TestCase
                             && $input->getArgument('exercise') === 'some-exercise'
                             && $input->getArgument('program') === 'program.php'
                             && $input->getArgument('some-other-arg') === 'some-other-arg-value';
-                    })
-                ]
+                    }),
+                ],
             )
             ->willReturnOnConsecutiveCalls(1, null, 1);
 
@@ -394,14 +391,14 @@ class CommandRouterTest extends TestCase
                     [
                         'exercise',
                         new CommandArgument('program', true),
-                        new CommandArgument('some-other-arg', true)
+                        new CommandArgument('some-other-arg', true),
                     ],
-                    $mock
-                )
+                    $mock,
+                ),
             ],
             'verify',
             $eventDispatcher,
-            $c
+            $c,
         );
         $router->route(['app', 'verify', 'some-exercise']);
         $router->route(['app', 'verify', 'some-exercise', 'program.php']);

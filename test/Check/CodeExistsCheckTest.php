@@ -7,10 +7,7 @@ use PhpSchool\PhpWorkshop\Check\CodeExistsCheck;
 use PhpSchool\PhpWorkshop\Check\SimpleCheckInterface;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseType;
 use PhpSchool\PhpWorkshop\ExerciseRunner\Context\TestContext;
-use PhpSchool\PhpWorkshop\Input\Input;
 use PhpSchool\PhpWorkshopTest\BaseTest;
-use PHPUnit\Framework\TestCase;
-use PhpSchool\PhpWorkshop\Check\FileExistsCheck;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpSchool\PhpWorkshop\Result\Failure;
 use PhpSchool\PhpWorkshop\Result\Success;
@@ -42,7 +39,7 @@ class CodeExistsCheckTest extends BaseTest
 
         $this->assertInstanceOf(
             Success::class,
-            $this->check->check($context)
+            $this->check->check($context),
         );
     }
 

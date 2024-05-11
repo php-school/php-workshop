@@ -55,7 +55,7 @@ class CommandRouter
         array $commands,
         string $default,
         EventDispatcher $eventDispatcher,
-        ContainerInterface $container
+        ContainerInterface $container,
     ) {
         foreach ($commands as $command) {
             $this->addCommand($command);

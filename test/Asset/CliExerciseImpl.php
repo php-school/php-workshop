@@ -77,7 +77,5 @@ class CliExerciseImpl implements ExerciseInterface, CliExercise
         return [];
     }
 
-    public function defineListeners(EventDispatcher $dispatcher): void
-    {
-    }
+    public function defineListeners(EventDispatcher $dispatcher): void {}
 }

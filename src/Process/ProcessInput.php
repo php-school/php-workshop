@@ -13,9 +13,8 @@ class ProcessInput
         private array $args,
         private string $workingDirectory,
         private array $env,
-        private ?string $input = null
-    ) {
-    }
+        private ?string $input = null,
+    ) {}
 
     public function getExecutable(): string
     {

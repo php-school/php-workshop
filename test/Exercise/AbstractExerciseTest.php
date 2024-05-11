@@ -3,9 +3,7 @@
 namespace PhpSchool\PhpWorkshopTest\Exercise;
 
 use PhpSchool\PhpWorkshop\Event\EventDispatcher;
-use PhpSchool\PhpWorkshop\ExerciseDispatcher;
 use PhpSchool\PhpWorkshop\Solution\SolutionFile;
-use PhpSchool\PhpWorkshop\Solution\SolutionInterface;
 use PhpSchool\PhpWorkshopTest\Asset\AbstractExerciseImpl;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;

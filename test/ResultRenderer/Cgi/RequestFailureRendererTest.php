@@ -16,7 +16,7 @@ class RequestFailureRendererTest extends AbstractResultRendererTest
             'OUTPUT',
             'OUTPUT',
             ['header1' => 'val', 'header2' => 'val'],
-            ['header1' => 'val']
+            ['header1' => 'val'],
         );
         $renderer = new RequestFailureRenderer($failure);
 
@@ -35,7 +35,7 @@ class RequestFailureRendererTest extends AbstractResultRendererTest
             'EXPECTED OUTPUT',
             'ACTUAL OUTPUT',
             ['header1' => 'val'],
-            ['header1' => 'val']
+            ['header1' => 'val'],
         );
         $renderer = new RequestFailureRenderer($failure);
 
@@ -53,7 +53,7 @@ class RequestFailureRendererTest extends AbstractResultRendererTest
             'EXPECTED OUTPUT',
             'ACTUAL OUTPUT',
             ['header1' => 'val', 'header2' => 'val'],
-            ['header1' => 'val']
+            ['header1' => 'val'],
         );
         $renderer = new RequestFailureRenderer($failure);
 

@@ -19,7 +19,7 @@ class MockLogger extends AbstractLogger implements LoggerInterface
         $this->messages[] = [
             'level' => $level,
             'message' => $message,
-            'context' => $context
+            'context' => $context,
         ];
     }
 

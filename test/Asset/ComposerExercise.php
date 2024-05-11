@@ -7,7 +7,6 @@ use PhpSchool\PhpWorkshop\Event\EventDispatcher;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseType;
 use PhpSchool\PhpWorkshop\ExerciseCheck\ComposerExerciseCheck;
-use PhpSchool\PhpWorkshop\ExerciseDispatcher;
 
 class ComposerExercise implements ExerciseInterface, ComposerExerciseCheck
 {
@@ -45,7 +44,7 @@ class ComposerExercise implements ExerciseInterface, ComposerExerciseCheck
     {
         return [
             'klein/klein',
-            'danielstjules/stringy'
+            'danielstjules/stringy',
         ];
     }
 
@@ -59,7 +58,5 @@ class ComposerExercise implements ExerciseInterface, ComposerExerciseCheck
         return [ComposerCheck::class];
     }
 
-    public function defineListeners(EventDispatcher $dispatcher): void
-    {
-    }
+    public function defineListeners(EventDispatcher $dispatcher): void {}
 }

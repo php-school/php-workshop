@@ -2,7 +2,6 @@
 
 namespace PhpSchool\PhpWorkshopTest\Factory;
 
-use PhpSchool\CliMenu\MenuItem\SelectableItem;
 use PhpSchool\PhpWorkshop\Event\EventInterface;
 use PhpSchool\PhpWorkshop\UserState\Serializer;
 use PhpSchool\PhpWorkshop\UserState\UserState;
@@ -59,7 +58,7 @@ class MenuFactoryTest extends TestCase
             'workshopTitle' => 'TITLE',
             WorkshopType::class => WorkshopType::STANDARD(),
             EventDispatcher::class => $this->createMock(EventDispatcher::class),
-            Terminal::class => $terminal
+            Terminal::class => $terminal,
         ];
 
         $container
@@ -106,13 +105,13 @@ class MenuFactoryTest extends TestCase
                 [
                     self::callback(function ($event) {
                         return $event instanceof EventInterface && $event->getName() === 'exercise.selected';
-                    })
+                    }),
                 ],
                 [
                     self::callback(function ($event) {
                         return $event instanceof EventInterface && $event->getName() === 'exercise.selected.exercise';
-                    })
-                ]
+                    }),
+                ],
             );
 
         $exerciseRenderer = $this->createMock(ExerciseRenderer::class);
@@ -133,7 +132,7 @@ class MenuFactoryTest extends TestCase
             'workshopTitle' => 'TITLE',
             WorkshopType::class => WorkshopType::STANDARD(),
             EventDispatcher::class => $eventDispatcher,
-            Terminal::class => $terminal
+            Terminal::class => $terminal,
         ];
 
         $container

@@ -31,9 +31,9 @@ final class Documentation implements ShorthandInterface
                 new Text('Documentation on '),
                 new Code($callout),
                 new Text(' can be found by pointing your browser here:'),
-                new Newline()
+                new Newline(),
             ],
-            $links
+            $links,
         );
     }
 

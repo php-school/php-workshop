@@ -49,8 +49,7 @@ class ExerciseDispatcher
         private ResultAggregator $results,
         private EventDispatcher $eventDispatcher,
         private CheckRepository $checkRepository,
-    ) {
-    }
+    ) {}
 
     /**
      * Queue a specific check to be run when the exercise is verified. When the exercise is verified
@@ -80,7 +79,7 @@ class ExerciseDispatcher
                     throw InvalidArgumentException::notValidParameter(
                         'position',
                         [SimpleCheckInterface::CHECK_BEFORE, SimpleCheckInterface::CHECK_AFTER],
-                        $check->getPosition()
+                        $check->getPosition(),
                     );
             }
 

@@ -15,7 +15,6 @@ use PhpSchool\PhpWorkshop\Exception\InvalidArgumentException;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpSchool\PhpWorkshop\ExerciseDispatcher;
 use PhpSchool\PhpWorkshop\ExerciseRunner\Context\ExecutionContext;
-use PhpSchool\PhpWorkshop\ExerciseRunner\Context\ExecutionContextFactory;
 use PhpSchool\PhpWorkshop\ExerciseRunner\ExerciseRunnerInterface;
 use PhpSchool\PhpWorkshop\ExerciseRunner\RunnerManager;
 use PhpSchool\PhpWorkshop\Input\Input;
@@ -435,28 +434,28 @@ class ExerciseDispatcherTest extends TestCase
                 [
                     $this->callback(function ($event) {
                         return $event instanceof EventInterface && $event->getName() === 'verify.start';
-                    })
+                    }),
                 ],
                 [
                     $this->callback(function ($event) {
                         return $event instanceof EventInterface && $event->getName() === 'verify.pre.execute';
-                    })
+                    }),
                 ],
                 [
                     $this->callback(function ($event) {
                         return $event instanceof EventInterface && $event->getName() === 'verify.post.execute';
-                    })
+                    }),
                 ],
                 [
                     $this->callback(function ($event) {
                         return $event instanceof EventInterface && $event->getName() === 'verify.post.check';
-                    })
+                    }),
                 ],
                 [
                     $this->callback(function ($event) {
                         return $event instanceof EventInterface && $event->getName() === 'verify.finish';
-                    })
-                ]
+                    }),
+                ],
             );
 
         $runner = $this->createMock(ExerciseRunnerInterface::class);
@@ -489,18 +488,18 @@ class ExerciseDispatcherTest extends TestCase
                 [
                     $this->callback(function ($event) {
                         return $event instanceof EventInterface && $event->getName() === 'verify.start';
-                    })
+                    }),
                 ],
                 [
                     $this->callback(function ($event) {
                         return $event instanceof EventInterface && $event->getName() === 'verify.pre.execute';
-                    })
+                    }),
                 ],
                 [
                     $this->callback(function ($event) {
                         return $event instanceof EventInterface && $event->getName() === 'verify.post.execute';
-                    })
-                ]
+                    }),
+                ],
             );
 
         $runner = $this->createMock(ExerciseRunnerInterface::class);

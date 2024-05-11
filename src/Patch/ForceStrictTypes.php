@@ -22,8 +22,8 @@ class ForceStrictTypes implements Transformer
         $declare = new \PhpParser\Node\Stmt\Declare_([
             new DeclareDeclare(
                 new \PhpParser\Node\Identifier('strict_types'),
-                new LNumber(1)
-            )
+                new LNumber(1),
+            ),
         ]);
 
         return array_merge([$declare], $statements);

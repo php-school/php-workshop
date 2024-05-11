@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace PhpSchool\PhpWorkshop\Listener;
 
-use PhpSchool\PhpWorkshop\Event\Event;
 use PhpSchool\PhpWorkshop\Event\ExerciseRunnerEvent;
 use PhpSchool\PhpWorkshop\ExerciseCheck\SelfCheck;
 use PhpSchool\PhpWorkshop\Input\Input;
@@ -15,9 +14,7 @@ use PhpSchool\PhpWorkshop\ResultAggregator;
  */
 class SelfCheckListener
 {
-    public function __construct(private ResultAggregator $results)
-    {
-    }
+    public function __construct(private ResultAggregator $results) {}
 
     public function __invoke(ExerciseRunnerEvent $event): void
     {

@@ -12,7 +12,7 @@ class ProblemFileDoesNotExistException extends \RuntimeException
     {
         return new self(sprintf(
             'Exercise problem file: "%s" does not exist or is not readable',
-            canonicalise_path($file)
+            canonicalise_path($file),
         ));
     }
 }

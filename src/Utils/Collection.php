@@ -10,6 +10,4 @@ namespace PhpSchool\PhpWorkshop\Utils;
  * @template T
  * @extends ArrayObject<TKey, T>
  */
-class Collection extends ArrayObject
-{
-}
+class Collection extends ArrayObject {}

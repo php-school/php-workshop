@@ -13,7 +13,7 @@ class FunctionRequirementsFailureRendererTest extends AbstractResultRendererTest
         $failure = new FunctionRequirementsFailure(
             $this->createMock(CheckInterface::class),
             [['function' => 'file', 'line' => 3], ['function' => 'explode', 'line' => 5]],
-            ['implode']
+            ['implode'],
         );
         $renderer = new FunctionRequirementsFailureRenderer($failure);
 

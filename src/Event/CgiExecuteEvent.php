@@ -4,10 +4,8 @@ declare(strict_types=1);
 
 namespace PhpSchool\PhpWorkshop\Event;
 
-use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpSchool\PhpWorkshop\Exercise\Scenario\CgiScenario;
 use PhpSchool\PhpWorkshop\ExerciseRunner\Context\ExecutionContext;
-use PhpSchool\PhpWorkshop\Input\Input;
 use Psr\Http\Message\RequestInterface;
 
 /**
@@ -28,7 +26,7 @@ class CgiExecuteEvent extends CgiExerciseRunnerEvent
         ExecutionContext $context,
         CgiScenario $scenario,
         RequestInterface $request,
-        array $parameters = []
+        array $parameters = [],
     ) {
         $parameters['request'] = $request;
         parent::__construct($name, $context, $scenario, $parameters);

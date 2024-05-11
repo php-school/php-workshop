@@ -37,7 +37,7 @@ class ComparisonFailureRenderer implements ResultRendererInterface
             $renderer->style('YOUR OUTPUT:', ['bold', 'yellow']),
             $this->indent($renderer->style(sprintf('"%s"', $this->result->getActualValue()), 'red')),
             $renderer->style('EXPECTED OUTPUT:', ['bold', 'yellow']),
-            $this->indent($renderer->style(sprintf('"%s"', $this->result->getExpectedValue()), 'green'))
+            $this->indent($renderer->style(sprintf('"%s"', $this->result->getExpectedValue()), 'green')),
         );
     }
 
@@ -53,8 +53,8 @@ class ComparisonFailureRenderer implements ResultRendererInterface
                 function ($line) {
                     return sprintf('  %s', $line);
                 },
-                explode("\n", $string)
-            )
+                explode("\n", $string),
+            ),
         );
     }
 }

@@ -181,7 +181,7 @@ class ArrayObjectTest extends TestCase
         $arrayObject = new ArrayObject([
             'z' => 'more test data',
             'a' => 'test data',
-            't' => 'yup moar test data'
+            't' => 'yup moar test data',
         ]);
 
         $expected = [

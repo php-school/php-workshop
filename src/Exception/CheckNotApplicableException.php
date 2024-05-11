@@ -28,8 +28,8 @@ class CheckNotApplicableException extends RuntimeException
                 'Check: "%s" cannot process exercise: "%s" with type: "%s"',
                 $check->getName(),
                 $exercise->getName(),
-                $exercise->getType()
-            )
+                $exercise->getType(),
+            ),
         );
     }
 }

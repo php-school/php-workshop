@@ -7,7 +7,6 @@ namespace PhpSchool\PhpWorkshop\Check;
 use PhpParser\Error;
 use PhpParser\ErrorHandler;
 use PhpParser\Node\Stmt\InlineHTML;
-use PhpParser\NodeFinder;
 use PhpParser\Parser;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseType;
@@ -19,9 +18,7 @@ use PhpSchool\PhpWorkshop\Result\Success;
 
 class CodeExistsCheck implements SimpleCheckInterface
 {
-    public function __construct(private Parser $parser)
-    {
-    }
+    public function __construct(private Parser $parser) {}
 
     public function getName(): string
     {
@@ -36,10 +33,8 @@ class CodeExistsCheck implements SimpleCheckInterface
      */
     public function check(ExecutionContext $context): ResultInterface
     {
-        $noopHandler = new class implements ErrorHandler {
-            public function handleError(Error $error): void
-            {
-            }
+        $noopHandler = new class () implements ErrorHandler {
+            public function handleError(Error $error): void {}
         };
 
         $code = (string) file_get_contents($context->getEntryPoint());

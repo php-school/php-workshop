@@ -61,7 +61,7 @@ class VerifyCommand
         UserState $userState,
         Serializer $userStateSerializer,
         OutputInterface $output,
-        ResultsRenderer $resultsRenderer
+        ResultsRenderer $resultsRenderer,
     ) {
         $this->output = $output;
         $this->exerciseRepository = $exerciseRepository;

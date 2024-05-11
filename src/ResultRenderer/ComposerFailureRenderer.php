@@ -36,7 +36,7 @@ class ComposerFailureRenderer implements ResultRendererInterface
             /** @var string $component */
             $component = $this->result->getMissingComponent();
 
-            $type = str_contains($component, '.') ?  'file' : 'folder';
+            $type = str_contains($component, '.') ? 'file' : 'folder';
 
             return $renderer->center("No $component $type found") . "\n";
         }
@@ -46,7 +46,7 @@ class ComposerFailureRenderer implements ResultRendererInterface
 
             return $renderer->center(sprintf(
                 "Lockfile doesn't include the following packages at any version: \"%s\"\n",
-                implode('", "', $missingPackages)
+                implode('", "', $missingPackages),
             ));
         }
 

@@ -53,7 +53,7 @@ abstract class AbstractResultRendererTest extends TestCase
                 $terminal,
                 $exerciseRepo,
                 new KeyLighter(),
-                $this->getResultRendererFactory()
+                $this->getResultRendererFactory(),
             );
         }
 

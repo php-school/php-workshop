@@ -32,7 +32,7 @@ class CgiResultRendererTest extends AbstractResultRendererTest
             RequestFailureRenderer::class,
             function (RequestFailure $failure) use ($failureRenderer) {
                 return $failureRenderer;
-            }
+            },
         );
 
         $failure = new RequestFailure(
@@ -40,7 +40,7 @@ class CgiResultRendererTest extends AbstractResultRendererTest
             'EXPECTED OUTPUT',
             'ACTUAL OUTPUT',
             ['header1' => 'val', 'header2' => 'val'],
-            ['header1' => 'val']
+            ['header1' => 'val'],
         );
         $result = new CgiResult([$failure]);
         $renderer = new CgiResultRenderer($result, new RequestRenderer());
@@ -70,7 +70,7 @@ class CgiResultRendererTest extends AbstractResultRendererTest
             RequestFailureRenderer::class,
             function (RequestFailure $failure) use ($failureRenderer) {
                 return $failureRenderer;
-            }
+            },
         );
 
         $failure1 = new RequestFailure(
@@ -78,7 +78,7 @@ class CgiResultRendererTest extends AbstractResultRendererTest
             'EXPECTED OUTPUT 1',
             'ACTUAL OUTPUT 1',
             ['header1' => 'val', 'header2' => 'val'],
-            ['header1' => 'val']
+            ['header1' => 'val'],
         );
 
         $failure2 = new RequestFailure(
@@ -86,7 +86,7 @@ class CgiResultRendererTest extends AbstractResultRendererTest
             'EXPECTED OUTPUT 2',
             'ACTUAL OUTPUT 2',
             ['header1' => 'val', 'header2' => 'val'],
-            ['header1' => 'val']
+            ['header1' => 'val'],
         );
         $result = new CgiResult([$failure1, $failure2]);
         $renderer = new CgiResultRenderer($result, new RequestRenderer());
@@ -128,7 +128,7 @@ class CgiResultRendererTest extends AbstractResultRendererTest
             RequestFailureRenderer::class,
             function (RequestFailure $failure) use ($failureRenderer) {
                 return $failureRenderer;
-            }
+            },
         );
 
         $failure = new RequestFailure(
@@ -136,7 +136,7 @@ class CgiResultRendererTest extends AbstractResultRendererTest
             'EXPECTED OUTPUT',
             'ACTUAL OUTPUT',
             ['header1' => 'val', 'header2' => 'val'],
-            ['header1' => 'val']
+            ['header1' => 'val'],
         );
         $result = new CgiResult([$failure, new Success($this->request())]);
         $renderer = new CgiResultRenderer($result, new RequestRenderer());
@@ -166,7 +166,7 @@ class CgiResultRendererTest extends AbstractResultRendererTest
             RequestFailureRenderer::class,
             function (RequestFailure $failure) use ($failureRenderer) {
                 return $failureRenderer;
-            }
+            },
         );
 
         $genericFailureRenderer = $this->createMock(FailureRenderer::class);
@@ -177,7 +177,7 @@ class CgiResultRendererTest extends AbstractResultRendererTest
             FailureRenderer::class,
             function (GenericFailure $failure) use ($genericFailureRenderer) {
                 return $genericFailureRenderer;
-            }
+            },
         );
 
         $failure = new RequestFailure(
@@ -185,7 +185,7 @@ class CgiResultRendererTest extends AbstractResultRendererTest
             'EXPECTED OUTPUT',
             'ACTUAL OUTPUT',
             ['header1' => 'val', 'header2' => 'val'],
-            ['header1' => 'val']
+            ['header1' => 'val'],
         );
 
         $codeExecutionFailure = new GenericFailure($this->request(), 'Code Execution Failure');

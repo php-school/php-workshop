@@ -32,7 +32,7 @@ class InitialCodeListenerTest extends ContainerAwareTest
         $this->assertFileExists($this->getCurrentWorkingDirectory() . '/init-solution.php');
         $this->assertFileEquals(
             $exercise->getInitialCode()->getFiles()[0]->getAbsolutePath(),
-            $this->getCurrentWorkingDirectory() . '/init-solution.php'
+            $this->getCurrentWorkingDirectory() . '/init-solution.php',
         );
 
         $this->assertLoggerHasMessages(
@@ -43,10 +43,10 @@ class InitialCodeListenerTest extends ContainerAwareTest
                     'context' => [
                         'exercise' => 'exercise-with-initial-code',
                         'workingDir' => $this->getCurrentWorkingDirectory(),
-                        'file' => $exercise->getInitialCode()->getFiles()[0]->getAbsolutePath()
-                    ]
-                ]
-            ]
+                        'file' => $exercise->getInitialCode()->getFiles()[0]->getAbsolutePath(),
+                    ],
+                ],
+            ],
         );
     }
 
@@ -71,10 +71,10 @@ class InitialCodeListenerTest extends ContainerAwareTest
                     'context' => [
                         'exercise' => 'exercise-with-initial-code',
                         'workingDir' => $this->getCurrentWorkingDirectory(),
-                        'file' => $exercise->getInitialCode()->getFiles()[0]->getAbsolutePath()
-                    ]
-                ]
-            ]
+                        'file' => $exercise->getInitialCode()->getFiles()[0]->getAbsolutePath(),
+                    ],
+                ],
+            ],
         );
     }
 

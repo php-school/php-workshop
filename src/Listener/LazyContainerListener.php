@@ -34,7 +34,7 @@ class LazyContainerListener
 
         if (!method_exists($service, $this->listener->getMethod())) {
             throw new InvalidArgumentException(
-                sprintf('Method "%s" does not exist on "%s"', $this->listener->getMethod(), get_class($service))
+                sprintf('Method "%s" does not exist on "%s"', $this->listener->getMethod(), get_class($service)),
             );
         }
 
@@ -49,7 +49,7 @@ class LazyContainerListener
         /** @var callable $listener */
         $listener =  [
             $this->container->get($this->listener->getService()),
-            $this->listener->getMethod()
+            $this->listener->getMethod(),
         ];
 
         return $listener;

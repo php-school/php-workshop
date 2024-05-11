@@ -2,10 +2,8 @@
 
 namespace PhpSchool\PhpWorkshop\Event;
 
-use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpSchool\PhpWorkshop\Exercise\Scenario\CliScenario;
 use PhpSchool\PhpWorkshop\ExerciseRunner\Context\ExecutionContext;
-use PhpSchool\PhpWorkshop\Input\Input;
 
 class CliExerciseRunnerEvent extends ExerciseRunnerEvent
 {
@@ -18,7 +16,7 @@ class CliExerciseRunnerEvent extends ExerciseRunnerEvent
         string $name,
         ExecutionContext $context,
         CliScenario $scenario,
-        array $parameters = []
+        array $parameters = [],
     ) {
         $this->scenario = $scenario;
         parent::__construct($name, $context, $parameters);

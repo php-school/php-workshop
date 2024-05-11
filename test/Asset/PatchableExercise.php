@@ -2,12 +2,10 @@
 
 namespace PhpSchool\PhpWorkshopTest\Asset;
 
-use PhpSchool\PhpWorkshop\Check\FileComparisonCheck;
 use PhpSchool\PhpWorkshop\Event\EventDispatcher;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseType;
 use PhpSchool\PhpWorkshop\Exercise\SubmissionPatchable;
-use PhpSchool\PhpWorkshop\ExerciseDispatcher;
 use PhpSchool\PhpWorkshop\Patch;
 
 class PatchableExercise implements ExerciseInterface, SubmissionPatchable
@@ -52,7 +50,5 @@ class PatchableExercise implements ExerciseInterface, SubmissionPatchable
         return [];
     }
 
-    public function defineListeners(EventDispatcher $dispatcher): void
-    {
-    }
+    public function defineListeners(EventDispatcher $dispatcher): void {}
 }

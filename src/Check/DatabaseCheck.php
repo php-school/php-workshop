@@ -66,7 +66,7 @@ class DatabaseCheck implements ListenableCheckInterface
     {
         if (file_exists($this->databaseDirectory)) {
             throw new RuntimeException(
-                sprintf('Database directory: "%s" already exists', $this->databaseDirectory)
+                sprintf('Database directory: "%s" already exists', $this->databaseDirectory),
             );
         }
 
@@ -102,7 +102,7 @@ class DatabaseCheck implements ListenableCheckInterface
             ['cli.verify.student-execute.pre', 'cli.run.student-execute.pre'],
             function (CliExecuteEvent $e) {
                 $e->prependArg($this->userDsn);
-            }
+            },
         );
 
         $eventDispatcher->insertVerifier('verify.finish', function (Event $e) use ($db) {
@@ -121,14 +121,14 @@ class DatabaseCheck implements ListenableCheckInterface
             [
                 'cli.verify.reference-execute.fail',
                 'verify.finish',
-                'run.finish'
+                'run.finish',
             ],
             function () use ($db) {
                 unset($db);
                 $this->unlink($this->userDatabasePath);
                 $this->unlink($this->solutionDatabasePath);
                 rmdir($this->databaseDirectory);
-            }
+            },
         );
     }
 

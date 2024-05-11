@@ -2,12 +2,10 @@
 
 namespace PhpSchool\PhpWorkshopTest\Asset;
 
-use PhpSchool\PhpWorkshop\Check\FileComparisonCheck;
 use PhpSchool\PhpWorkshop\Event\EventDispatcher;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseType;
 use PhpSchool\PhpWorkshop\Exercise\ProvidesInitialCode;
-use PhpSchool\PhpWorkshop\ExerciseDispatcher;
 use PhpSchool\PhpWorkshop\Solution\SingleFileSolution;
 use PhpSchool\PhpWorkshop\Solution\SolutionInterface;
 
@@ -53,7 +51,5 @@ class ExerciseWithInitialCode implements ExerciseInterface, ProvidesInitialCode
         return [];
     }
 
-    public function defineListeners(EventDispatcher $dispatcher): void
-    {
-    }
+    public function defineListeners(EventDispatcher $dispatcher): void {}
 }

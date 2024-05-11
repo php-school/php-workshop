@@ -133,7 +133,7 @@ final class Application
 
         $this->results[] = [
             'resultClass' => $resultClass,
-            'resultRendererClass' => $resultRendererClass
+            'resultRendererClass' => $resultRendererClass,
         ];
     }
 
@@ -181,7 +181,7 @@ final class Application
         foreach ($this->exercises as $exercise) {
             if (false === $container->has($exercise)) {
                 throw new RuntimeException(
-                    sprintf('No DI config found for exercise: "%s". Register a factory.', $exercise)
+                    sprintf('No DI config found for exercise: "%s". Register a factory.', $exercise),
                 );
             }
         }
@@ -191,7 +191,7 @@ final class Application
         foreach ($this->checks as $check) {
             if (false === $container->has($check)) {
                 throw new RuntimeException(
-                    sprintf('No DI config found for check: "%s". Register a factory.', $check)
+                    sprintf('No DI config found for check: "%s". Register a factory.', $check),
                 );
             }
 
@@ -202,8 +202,8 @@ final class Application
                     sprintf(
                         'Check: "%s" does not implement the required interface: "%s".',
                         $check,
-                        CheckInterface::class
-                    )
+                        CheckInterface::class,
+                    ),
                 );
             }
 
@@ -265,8 +265,8 @@ final class Application
                     'Argument%s: "%s" %s missing!',
                     count($e->getMissingArguments()) > 1 ? 's' : '',
                     implode('", "', $e->getMissingArguments()),
-                    count($e->getMissingArguments()) > 1 ? 'are' : 'is'
-                )
+                    count($e->getMissingArguments()) > 1 ? 'are' : 'is',
+                ),
             );
             return 1;
         } catch (\Throwable $e) {
@@ -303,7 +303,7 @@ final class Application
 
         $fwConfig['eventListeners'] = array_merge_recursive(
             $fwConfig['eventListeners'],
-            $diConfig['eventListeners'] ?? []
+            $diConfig['eventListeners'] ?? [],
         );
 
         unset($diConfig['eventListeners']);
@@ -318,7 +318,7 @@ final class Application
                 'workshopLogo'  => $this->logo,
                 'bgColour'      => $this->bgColour,
                 'fgColour'      => $this->fgColour,
-            ]
+            ],
         );
 
         $containerBuilder->useAutowiring(false);

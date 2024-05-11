@@ -72,7 +72,7 @@ class ResultsRenderer
         Terminal $terminal,
         ExerciseRepository $exerciseRepository,
         KeyLighter $keyLighter,
-        ResultRendererFactory $resultRendererFactory
+        ResultRendererFactory $resultRendererFactory,
     ) {
         $this->color = $color;
         $this->terminal = $terminal;
@@ -95,7 +95,7 @@ class ResultsRenderer
         ResultAggregator $results,
         ExerciseInterface $exercise,
         UserState $userState,
-        OutputInterface $output
+        OutputInterface $output,
     ): void {
         $successes  = [];
         $failures   = [];
@@ -120,7 +120,7 @@ class ResultsRenderer
         foreach ($successes as $success) {
             $output->writeLine($this->center($this->style(str_repeat(' ', $longest), ['bg_green'])));
             $output->writeLine(
-                $this->center($this->style(mb_str_pad($success, $longest), ['bg_green', 'white', 'bold']))
+                $this->center($this->style(mb_str_pad($success, $longest), ['bg_green', 'white', 'bold'])),
             );
             $output->writeLine($this->center($this->style(str_repeat(' ', $longest), ['bg_green'])));
             $output->emptyLine();
@@ -143,7 +143,7 @@ class ResultsRenderer
         array $failures,
         int $padLength,
         ExerciseInterface $exercise,
-        OutputInterface $output
+        OutputInterface $output,
     ): void {
         foreach ($failures as [$failure, $message]) {
             $output->writeLine($this->center($this->style(str_repeat(' ', $padLength), ['bg_red'])));
@@ -161,7 +161,7 @@ class ResultsRenderer
         $output->emptyLine();
 
         $output->writeLine(
-            $this->center(sprintf(" Your solution to %s didn't pass. Try again!", $exercise->getName()))
+            $this->center(sprintf(" Your solution to %s didn't pass. Try again!", $exercise->getName())),
         );
         $output->emptyLine();
         $output->emptyLine();
@@ -175,7 +175,7 @@ class ResultsRenderer
     private function renderSuccessInformation(
         ExerciseInterface $exercise,
         UserState $userState,
-        OutputInterface $output
+        OutputInterface $output,
     ): void {
         $output->lineBreak();
         $output->emptyLine();
@@ -195,7 +195,7 @@ class ResultsRenderer
                 $code = $this->keyLighter->highlight(
                     $file->getContents(),
                     $this->keyLighter->languageByExt('.' . $file->getExtension()),
-                    new CliFormatter()
+                    new CliFormatter(),
                 );
 
                 //make sure there is a new line at the end
@@ -251,10 +251,10 @@ class ResultsRenderer
                     '%s%s%s',
                     str_repeat(' ', (int) $start),
                     $string,
-                    str_repeat(' ', (int) ($this->terminal->getWidth() - $stringLength - $start))
+                    str_repeat(' ', (int) ($this->terminal->getWidth() - $stringLength - $start)),
                 ),
-                $style
-            )
+                $style,
+            ),
         );
         $output->writeLine($this->style(str_repeat(' ', $this->terminal->getWidth()), $style));
     }

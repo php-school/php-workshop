@@ -6,15 +6,12 @@ use PhpSchool\PhpWorkshop\CodePatcher;
 use PhpSchool\PhpWorkshop\Event\ExerciseRunnerEvent;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpSchool\PhpWorkshop\ExerciseRunner\Context\TestContext;
-use PhpSchool\PhpWorkshop\Input\Input;
 use PhpSchool\PhpWorkshop\Listener\CodePatchListener;
 use PhpSchool\PhpWorkshop\Utils\Path;
-use PhpSchool\PhpWorkshop\Utils\System;
 use PhpSchool\PhpWorkshopTest\Asset\ProvidesSolutionExercise;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
-use Symfony\Component\Filesystem\Filesystem;
 
 class CodePatchListenerTest extends TestCase
 {
@@ -50,7 +47,7 @@ class CodePatchListenerTest extends TestCase
 
         self::assertStringEqualsFile(
             Path::join($context->getStudentExecutionDirectory(), 'solution.php'),
-            'MODIFIED CONTENT'
+            'MODIFIED CONTENT',
         );
     }
 
@@ -77,7 +74,7 @@ class CodePatchListenerTest extends TestCase
 
         self::assertStringEqualsFile(
             Path::join($context->getStudentExecutionDirectory(), 'solution.php'),
-            'ORIGINAL CONTENT'
+            'ORIGINAL CONTENT',
         );
     }
 
@@ -103,14 +100,14 @@ class CodePatchListenerTest extends TestCase
 
         self::assertStringEqualsFile(
             Path::join($context->getStudentExecutionDirectory(), 'solution.php'),
-            'MODIFIED CONTENT'
+            'MODIFIED CONTENT',
         );
         self::assertStringEqualsFile(
             Path::join(
                 $context->getReferenceExecutionDirectory(),
                 $exercise->getSolution()->getEntryPoint()->getRelativePath(),
             ),
-            'MODIFIED CONTENT'
+            'MODIFIED CONTENT',
         );
     }
 
@@ -162,7 +159,7 @@ class CodePatchListenerTest extends TestCase
 
         self::assertStringEqualsFile(
             Path::join($context->getStudentExecutionDirectory(), 'solution.php'),
-            'MODIFIED CONTENT'
+            'MODIFIED CONTENT',
         );
     }
 }

@@ -104,7 +104,7 @@ class RequestFailure implements FailureInterface
         return [
             'args' => $this->getArgs()->getArrayCopy(),
             'expected_output' => $this->getExpectedOutput(),
-            'actual_output' => $this->getActualOutput()
+            'actual_output' => $this->getActualOutput(),
         ];
     }
 }

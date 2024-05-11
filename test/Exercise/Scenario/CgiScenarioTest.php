@@ -3,7 +3,6 @@
 namespace PhpSchool\PhpWorkshopTest\Exercise\Scenario;
 
 use PhpSchool\PhpWorkshop\Exercise\Scenario\CgiScenario;
-use PhpSchool\PhpWorkshop\Utils\Collection;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\RequestInterface;
 
@@ -25,15 +24,15 @@ class CgiScenarioTest extends TestCase
                 'file1.txt' => 'content1',
                 'file2.txt' => 'content2',
             ],
-            $scenario->getFiles()
+            $scenario->getFiles(),
         );
 
         static::assertEquals(
             [
                 $requestOne,
-                $requestTwo
+                $requestTwo,
             ],
-            $scenario->getExecutions()
+            $scenario->getExecutions(),
         );
     }
 }

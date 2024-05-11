@@ -19,7 +19,7 @@ class ForceStrictTypesTest extends TestCase
 
         self::assertSame(
             "declare (strict_types=1);\necho 'Hello World';",
-            (new Standard())->prettyPrint($ast)
+            (new Standard())->prettyPrint($ast),
         );
     }
 
@@ -33,7 +33,7 @@ class ForceStrictTypesTest extends TestCase
 
         self::assertSame(
             "declare (strict_types=1);\necho 'Hello World';",
-            (new Standard())->prettyPrint($ast)
+            (new Standard())->prettyPrint($ast),
         );
     }
 }

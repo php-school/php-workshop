@@ -3,3 +3,5 @@
 program.php
 .phpunit.result.cache
 /build
+/vendor-bin/**/vendor/
+.php-cs-fixer.cache

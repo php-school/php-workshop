@@ -8,7 +8,6 @@ use PhpParser\ParserFactory;
 use PhpSchool\PhpWorkshop\Check\SimpleCheckInterface;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseType;
 use PhpSchool\PhpWorkshop\ExerciseRunner\Context\TestContext;
-use PhpSchool\PhpWorkshop\Input\Input;
 use PhpSchool\PhpWorkshopTest\Asset\FunctionRequirementsExercise;
 use PHPUnit\Framework\TestCase;
 use PhpSchool\PhpWorkshop\Check\FunctionRequirementsCheck;
@@ -54,7 +53,7 @@ class FunctionRequirementsCheckTest extends TestCase
     {
         $context = TestContext::fromExerciseAndStudentSolution(
             $this->exercise,
-            __DIR__ . '/../res/function-requirements/fail-invalid-code.php'
+            __DIR__ . '/../res/function-requirements/fail-invalid-code.php',
         );
 
         $failure = $this->check->check($context);
@@ -62,7 +61,7 @@ class FunctionRequirementsCheckTest extends TestCase
         $this->assertInstanceOf(Failure::class, $failure);
         $message = sprintf(
             'File: "%s/fail-invalid-code.php" could not be parsed. Error: "Syntax error, unexpected T_ECHO on line 4"',
-            $context->getStudentExecutionDirectory()
+            $context->getStudentExecutionDirectory(),
         );
         $this->assertEquals($message, $failure->getReason());
     }
@@ -71,7 +70,7 @@ class FunctionRequirementsCheckTest extends TestCase
     {
         $context = TestContext::fromExerciseAndStudentSolution(
             $this->exercise,
-            __DIR__ . '/../res/function-requirements/fail-banned-function.php'
+            __DIR__ . '/../res/function-requirements/fail-banned-function.php',
         );
 
         $failure = $this->check->check($context);
@@ -96,7 +95,7 @@ class FunctionRequirementsCheckTest extends TestCase
 
         $context = TestContext::fromExerciseAndStudentSolution(
             $exercise,
-            __DIR__ . '/../res/function-requirements/fail-banned-function.php'
+            __DIR__ . '/../res/function-requirements/fail-banned-function.php',
         );
 
         $failure = $this->check->check($context);
@@ -121,7 +120,7 @@ class FunctionRequirementsCheckTest extends TestCase
 
         $context = TestContext::fromExerciseAndStudentSolution(
             $exercise,
-            __DIR__ . '/../res/function-requirements/success.php'
+            __DIR__ . '/../res/function-requirements/success.php',
         );
 
         $success = $this->check->check($context);

@@ -43,7 +43,7 @@ class LoggerTest extends ContainerAwareTest
 
         $this->assertMatchesRegularExpression(
             $match,
-            file_get_contents($expectedFileName)
+            file_get_contents($expectedFileName),
         );
     }
 
@@ -63,7 +63,7 @@ class LoggerTest extends ContainerAwareTest
 
         $this->assertMatchesRegularExpression(
             $match,
-            file_get_contents($expectedFileName)
+            file_get_contents($expectedFileName),
         );
     }
 
@@ -84,7 +84,7 @@ class LoggerTest extends ContainerAwareTest
 
         $this->assertMatchesRegularExpression(
             $match,
-            file_get_contents($expectedFileName)
+            file_get_contents($expectedFileName),
         );
     }
 
@@ -101,7 +101,7 @@ class LoggerTest extends ContainerAwareTest
         $match .= 'Context\: {"exercise":"my-exercise"}/';
         $this->assertMatchesRegularExpression(
             $match,
-            file_get_contents($expectedFileName)
+            file_get_contents($expectedFileName),
         );
     }
 }

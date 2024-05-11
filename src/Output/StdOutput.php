@@ -67,7 +67,7 @@ class StdOutput implements OutputInterface
             sprintf("In %s line %d:", $file, $exception->getLine()),
             sprintf("[%s (%s)]:", get_class($exception), $exception->getCode()),
             '',
-            $message
+            $message,
         ];
 
         $length = max(array_map('strlen', $lines)) + 2;
@@ -85,11 +85,13 @@ class StdOutput implements OutputInterface
         $this->writeLine(
             implode(
                 "\n",
-                array_map(function ($l) {
-                    return " $l";
-                },
-                explode("\n", $exception->getTraceAsString()))
-            )
+                array_map(
+                    function ($l) {
+                        return " $l";
+                    },
+                    explode("\n", $exception->getTraceAsString()),
+                ),
+            ),
         );
     }
 

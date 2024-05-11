@@ -58,7 +58,7 @@ class HelpCommand
         $this->output->writeLine("    Show the people who made this happen.");
         $this->output->writeLine("");
         $this->output->writeLine(
-            (string) $this->color->__invoke('Having trouble with a PHPSchool exercise?')->yellow()->bold()
+            (string) $this->color->__invoke('Having trouble with a PHPSchool exercise?')->yellow()->bold(),
         );
         $this->output->writeLine("");
         $this->output->writeLine("  A team of expert helper elves is eagerly waiting to assist you in");
@@ -73,7 +73,7 @@ class HelpCommand
         $this->output->writeLine("    https://chat.stackoverflow.com/rooms/11/php");
         $this->output->writeLine("");
         $this->output->writeLine(
-            (string) $this->color->__invoke('Found a bug with PHPSchool or just want to contribute?')->yellow()->bold()
+            (string) $this->color->__invoke('Found a bug with PHPSchool or just want to contribute?')->yellow()->bold(),
         );
         $this->output->writeLine("  The official repository for PHPSchool is:");
         $this->output->writeLine("    https://github.com/php-school/php-workshop");

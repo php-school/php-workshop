@@ -2,7 +2,6 @@
 
 namespace PhpSchool\PhpWorkshopTest\ResultRenderer;
 
-use PhpSchool\PhpWorkshop\Check\CheckInterface;
 use PhpSchool\PhpWorkshop\Result\Failure;
 use PhpSchool\PhpWorkshop\ResultRenderer\FailureRenderer;
 

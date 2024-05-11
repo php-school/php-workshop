@@ -6,7 +6,6 @@ namespace PhpSchool\PhpWorkshop\Check;
 
 use InvalidArgumentException;
 use PhpSchool\PhpWorkshop\ComposerUtil\LockFileParser;
-use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseType;
 use PhpSchool\PhpWorkshop\ExerciseCheck\ComposerExerciseCheck;
 use PhpSchool\PhpWorkshop\ExerciseRunner\Context\ExecutionContext;

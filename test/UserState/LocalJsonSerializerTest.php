@@ -2,7 +2,6 @@
 
 namespace PhpSchool\PhpWorkshopTest\UserState;
 
-use PhpSchool\PhpWorkshop\Exercise\ExerciseType;
 use PhpSchool\PhpWorkshop\ExerciseRepository;
 use PhpSchool\PhpWorkshop\UserState\LocalJsonSerializer;
 use PhpSchool\PhpWorkshop\UserState\UserState;
@@ -44,7 +43,7 @@ class LocalJsonSerializerTest extends BaseTest
         $serializer = new LocalJsonSerializer(
             $this->getTemporaryDirectory(),
             $this->workshopName,
-            $this->exerciseRepository
+            $this->exerciseRepository,
         );
 
         $state = new UserState();
@@ -53,7 +52,7 @@ class LocalJsonSerializerTest extends BaseTest
             'My Workshop' => [
                 'completed_exercises' => [],
                 'current_exercise' => null,
-            ]
+            ],
         ]);
 
         $serializer->serialize($state);
@@ -65,7 +64,7 @@ class LocalJsonSerializerTest extends BaseTest
         $serializer = new LocalJsonSerializer(
             $this->getTemporaryDirectory(),
             $this->workshopName,
-            $this->exerciseRepository
+            $this->exerciseRepository,
         );
 
         $state = new UserState(['exercise1'], 'exercise2');
@@ -75,7 +74,7 @@ class LocalJsonSerializerTest extends BaseTest
             'My Workshop' => [
                 'completed_exercises' => ['exercise1'],
                 'current_exercise' => 'exercise2',
-            ]
+            ],
         ]);
 
         $serializer->serialize($state);
@@ -88,7 +87,7 @@ class LocalJsonSerializerTest extends BaseTest
         $serializer = new LocalJsonSerializer(
             $this->getTemporaryDirectory(),
             $this->workshopName,
-            $this->exerciseRepository
+            $this->exerciseRepository,
         );
 
         $state = $serializer->deSerialize();
@@ -102,7 +101,7 @@ class LocalJsonSerializerTest extends BaseTest
         $serializer = new LocalJsonSerializer(
             $this->getTemporaryDirectory(),
             $this->workshopName,
-            $this->exerciseRepository
+            $this->exerciseRepository,
         );
         $state = $serializer->deSerialize();
         $this->assertFalse($state->isAssignedExercise());
@@ -115,7 +114,7 @@ class LocalJsonSerializerTest extends BaseTest
         $serializer = new LocalJsonSerializer(
             $this->getTemporaryDirectory(),
             $this->workshopName,
-            $this->exerciseRepository
+            $this->exerciseRepository,
         );
         $state = $serializer->deSerialize();
         $this->assertFalse($state->isAssignedExercise());
@@ -131,14 +130,14 @@ class LocalJsonSerializerTest extends BaseTest
         $serializer = new LocalJsonSerializer(
             $this->getTemporaryDirectory(),
             $this->workshopName,
-            $this->exerciseRepository
+            $this->exerciseRepository,
         );
         $state = $serializer->deSerialize();
 
         $this->assertEquals($expected['completed_exercises'], $state->getCompletedExercises());
         $this->assertEquals(
             $expected['current_exercise'],
-            $state->isAssignedExercise() ? $state->getCurrentExercise() : null
+            $state->isAssignedExercise() ? $state->getCurrentExercise() : null,
         );
     }
 
@@ -147,40 +146,40 @@ class LocalJsonSerializerTest extends BaseTest
         return [
             'empty-array' => [
                 [],
-                ['completed_exercises' => [], 'current_exercise' => null]
+                ['completed_exercises' => [], 'current_exercise' => null],
             ],
             'no-data-should-return-defaults' => [
                 ['My Workshop' => []],
-                ['completed_exercises' => [], 'current_exercise' => null]
+                ['completed_exercises' => [], 'current_exercise' => null],
             ],
             'no-current-exercise-set' => [
                 ['My Workshop' => ['completed_exercises' => []]],
-                ['completed_exercises' => [], 'current_exercise' => null]
+                ['completed_exercises' => [], 'current_exercise' => null],
             ],
             'completed-exercise-not-array' => [
                 ['My Workshop' => ['completed_exercises' => null, 'current_exercise' => null]],
-                ['completed_exercises' => [], 'current_exercise' => null]
+                ['completed_exercises' => [], 'current_exercise' => null],
             ],
             'invalid-completed-exercise' => [
                 ['My Workshop' => ['completed_exercises' => [null], 'current_exercise' => null]],
-                ['completed_exercises' => [], 'current_exercise' => null]
+                ['completed_exercises' => [], 'current_exercise' => null],
             ],
             'completed-exercises-no-current-exercise' => [
                 ['My Workshop' => ['completed_exercises' => ['exercise1']]],
-                ['completed_exercises' => [], 'current_exercise' => null]
+                ['completed_exercises' => [], 'current_exercise' => null],
             ],
             'completed-exercise-invalid-current-exercise' => [
                 ['My Workshop' => ['completed_exercises' => ['exercise1'], 'current_exercise' => new \stdClass()]],
-                ['completed_exercises' => ['exercise1'], 'current_exercise' => null]
+                ['completed_exercises' => ['exercise1'], 'current_exercise' => null],
             ],
             'completed-exercise-current-null' => [
                 ['My Workshop' => ['completed_exercises' => ['exercise1'], 'current_exercise' => null]],
-                ['completed_exercises' => ['exercise1'], 'current_exercise' => null]
+                ['completed_exercises' => ['exercise1'], 'current_exercise' => null],
             ],
             'completed-exercise-with-current' => [
                 ['My Workshop' => ['completed_exercises' => ['exercise1'], 'current_exercise' => 'exercise2']],
-                ['completed_exercises' => ['exercise1'], 'current_exercise' => 'exercise2']
-            ]
+                ['completed_exercises' => ['exercise1'], 'current_exercise' => 'exercise2'],
+            ],
         ];
     }
 
@@ -201,8 +200,8 @@ class LocalJsonSerializerTest extends BaseTest
             $this->workshopName,
             new ExerciseRepository([
                 $exercise1,
-                $exercise2
-            ])
+                $exercise2,
+            ]),
         );
 
         $state = $serializer->deSerialize();
@@ -221,7 +220,7 @@ class LocalJsonSerializerTest extends BaseTest
         $this->assertFileExists(Path::join($this->getTemporaryDirectory(), '.phpschool-save.json'));
         $this->assertEquals(
             $expected,
-            json_decode(file_get_contents($this->getTemporaryFile('.phpschool-save.json')), true)
+            json_decode(file_get_contents($this->getTemporaryFile('.phpschool-save.json')), true),
         );
     }
 
@@ -232,7 +231,7 @@ class LocalJsonSerializerTest extends BaseTest
 
         $exercises = [
             $exercise1,
-            $exercise2
+            $exercise2,
         ];
 
         $repo = new ExerciseRepository($exercises);
@@ -279,8 +278,8 @@ class LocalJsonSerializerTest extends BaseTest
             $this->workshopName,
             new ExerciseRepository([
                 $exercise1,
-                $exercise2
-            ])
+                $exercise2,
+            ]),
         );
         $state = $serializer->deSerialize();
 

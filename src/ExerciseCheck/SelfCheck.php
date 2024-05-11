@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace PhpSchool\PhpWorkshop\ExerciseCheck;
 
 use PhpSchool\PhpWorkshop\ExerciseRunner\Context\ExecutionContext;
-use PhpSchool\PhpWorkshop\Input\Input;
 use PhpSchool\PhpWorkshop\Result\ResultInterface;
 
 /**
