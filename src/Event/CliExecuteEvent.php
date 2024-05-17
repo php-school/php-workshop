@@ -4,28 +4,35 @@ declare(strict_types=1);
 
 namespace PhpSchool\PhpWorkshop\Event;
 
+use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
+use PhpSchool\PhpWorkshop\Input\Input;
 use PhpSchool\PhpWorkshop\Utils\ArrayObject;
 
 /**
  * An event to represent events which occur throughout the verification and running process in
  * `\PhpSchool\PhpWorkshop\ExerciseRunner\CliRunner`.
  */
-class CliExecuteEvent extends Event
+class CliExecuteEvent extends CliExerciseRunnerEvent
 {
     /**
      * @var ArrayObject<int, string>
      */
-    private $args;
+    private ArrayObject $args;
 
     /**
      * @param string $name The event name.
      * @param ArrayObject<int, string> $args The arguments that should be/have been passed to the program.
      * @param array<mixed> $parameters The event parameters.
      */
-    public function __construct(string $name, ArrayObject $args, array $parameters = [])
-    {
+    public function __construct(
+        string $name,
+        ExerciseInterface $exercise,
+        Input $input,
+        ArrayObject $args,
+        array $parameters = []
+    ) {
         $parameters['args'] = $args;
-        parent::__construct($name, $parameters);
+        parent::__construct($name, $exercise, $input, $parameters);
         $this->args = $args;
     }
 

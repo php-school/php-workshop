@@ -16,16 +16,13 @@ class EventDispatcher
     /**
      * @var array<string, array<callable>>
      */
-    private $listeners = [];
+    private array $listeners = [];
 
     /**
      * @var ResultAggregator
      */
-    private $resultAggregator;
+    private ResultAggregator $resultAggregator;
 
-    /**
-     * @param ResultAggregator $resultAggregator
-     */
     public function __construct(ResultAggregator $resultAggregator)
     {
         $this->resultAggregator = $resultAggregator;
@@ -33,9 +30,6 @@ class EventDispatcher
 
     /**
      * Dispatch an event. Can be any event object which implements `PhpSchool\PhpWorkshop\Event\EventInterface`.
-     *
-     * @param EventInterface $event
-     * @return EventInterface
      */
     public function dispatch(EventInterface $event): EventInterface
     {
@@ -103,9 +97,6 @@ class EventDispatcher
      * Insert a verifier callback which will execute at the given event name much like normal listeners.
      * A verifier should return an object which implements `PhpSchool\PhpWorkshop\Result\FailureInterface`
      * or `PhpSchool\PhpWorkshop\Result\SuccessInterface`. This result object will be added to the result aggregator.
-     *
-     * @param string $eventName
-     * @param callable $verifier
      */
     public function insertVerifier(string $eventName, callable $verifier): void
     {

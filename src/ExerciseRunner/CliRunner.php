@@ -9,6 +9,7 @@ use PhpSchool\PhpWorkshop\Check\CodeParseCheck;
 use PhpSchool\PhpWorkshop\Check\FileExistsCheck;
 use PhpSchool\PhpWorkshop\Check\PhpLintCheck;
 use PhpSchool\PhpWorkshop\Event\CliExecuteEvent;
+use PhpSchool\PhpWorkshop\Event\CliExerciseRunnerEvent;
 use PhpSchool\PhpWorkshop\Event\Event;
 use PhpSchool\PhpWorkshop\Event\EventDispatcher;
 use PhpSchool\PhpWorkshop\Event\ExerciseRunnerEvent;
@@ -100,7 +101,7 @@ class CliRunner implements ExerciseRunnerInterface
      */
     public function verify(Input $input): ResultInterface
     {
-        $this->eventDispatcher->dispatch(new ExerciseRunnerEvent('cli.verify.start', $this->exercise, $input));
+        $this->eventDispatcher->dispatch(new CliExerciseRunnerEvent('cli.verify.start', $this->exercise, $input));
         $result = new CliResult(
             array_map(
                 function (array $args) use ($input) {
@@ -109,7 +110,7 @@ class CliRunner implements ExerciseRunnerInterface
                 $this->preserveOldArgFormat($this->exercise->getArgs())
             )
         );
-        $this->eventDispatcher->dispatch(new ExerciseRunnerEvent('cli.verify.finish', $this->exercise, $input));
+        $this->eventDispatcher->dispatch(new CliExerciseRunnerEvent('cli.verify.finish', $this->exercise, $input));
         return $result;
     }
 
@@ -142,23 +143,49 @@ class CliRunner implements ExerciseRunnerInterface
 
         try {
             /** @var CliExecuteEvent $event */
-            $event = $this->eventDispatcher->dispatch(new CliExecuteEvent('cli.verify.reference-execute.pre', $args));
+            $event = $this->eventDispatcher->dispatch(
+                new CliExecuteEvent('cli.verify.reference-execute.pre', $this->exercise, $input, $args)
+            );
             $solutionOutput = $this->executePhpFile(
+                $input,
                 $this->exercise->getSolution()->getEntryPoint()->getAbsolutePath(),
                 $event->getArgs(),
                 'reference'
             );
         } catch (CodeExecutionException $e) {
-            $this->eventDispatcher->dispatch(new Event('cli.verify.reference-execute.fail', ['exception' => $e]));
+            $this->eventDispatcher->dispatch(
+                new CliExecuteEvent(
+                    'cli.verify.reference-execute.fail',
+                    $this->exercise,
+                    $input,
+                    $args,
+                    ['exception' => $e]
+                )
+            );
             throw new SolutionExecutionException($e->getMessage());
         }
 
         try {
             /** @var CliExecuteEvent $event */
-            $event = $this->eventDispatcher->dispatch(new CliExecuteEvent('cli.verify.student-execute.pre', $args));
-            $userOutput = $this->executePhpFile($input->getRequiredArgument('program'), $event->getArgs(), 'student');
+            $event = $this->eventDispatcher->dispatch(
+                new CliExecuteEvent('cli.verify.student-execute.pre', $this->exercise, $input, $args)
+            );
+            $userOutput = $this->executePhpFile(
+                $input,
+                $input->getRequiredArgument('program'),
+                $event->getArgs(),
+                'student'
+            );
         } catch (CodeExecutionException $e) {
-            $this->eventDispatcher->dispatch(new Event('cli.verify.student-execute.fail', ['exception' => $e]));
+            $this->eventDispatcher->dispatch(
+                new CliExecuteEvent(
+                    'cli.verify.student-execute.fail',
+                    $this->exercise,
+                    $input,
+                    $args,
+                    ['exception' => $e]
+                )
+            );
             return GenericFailure::fromArgsAndCodeExecutionFailure($args, $e);
         }
         if ($solutionOutput === $userOutput) {
@@ -186,12 +213,12 @@ class CliRunner implements ExerciseRunnerInterface
      */
     public function run(Input $input, OutputInterface $output): bool
     {
-        $this->eventDispatcher->dispatch(new ExerciseRunnerEvent('cli.run.start', $this->exercise, $input));
+        $this->eventDispatcher->dispatch(new CliExerciseRunnerEvent('cli.run.start', $this->exercise, $input));
         $success = true;
         foreach ($this->preserveOldArgFormat($this->exercise->getArgs()) as $i => $args) {
             /** @var CliExecuteEvent $event */
             $event = $this->eventDispatcher->dispatch(
-                new CliExecuteEvent('cli.run.student-execute.pre', new ArrayObject($args))
+                new CliExecuteEvent('cli.run.student-execute.pre', $this->exercise, $input, new ArrayObject($args))
             );
 
             $args = $event->getArgs();
@@ -204,7 +231,7 @@ class CliRunner implements ExerciseRunnerInterface
 
             $process->start();
             $this->eventDispatcher->dispatch(
-                new CliExecuteEvent('cli.run.student.executing', $args, ['output' => $output])
+                new CliExecuteEvent('cli.run.student.executing', $this->exercise, $input, $args, ['output' => $output])
             );
             $process->wait(function ($outputType, $outputBuffer) use ($output) {
                 $output->write($outputBuffer);
@@ -218,23 +245,25 @@ class CliRunner implements ExerciseRunnerInterface
             $output->lineBreak();
 
             $this->eventDispatcher->dispatch(
-                new CliExecuteEvent('cli.run.student-execute.post', $args)
+                new CliExecuteEvent('cli.run.student-execute.post', $this->exercise, $input, $args)
             );
         }
 
-        $this->eventDispatcher->dispatch(new ExerciseRunnerEvent('cli.run.finish', $this->exercise, $input));
+        $this->eventDispatcher->dispatch(new CliExerciseRunnerEvent('cli.run.finish', $this->exercise, $input));
         return $success;
     }
 
     /**
      * @param ArrayObject<int, string> $args
      */
-    private function executePhpFile(string $fileName, ArrayObject $args, string $type): string
+    private function executePhpFile(Input $input, string $fileName, ArrayObject $args, string $type): string
     {
         $process = $this->getPhpProcess(dirname($fileName), $fileName, $args);
 
         $process->start();
-        $this->eventDispatcher->dispatch(new CliExecuteEvent(sprintf('cli.verify.%s.executing', $type), $args));
+        $this->eventDispatcher->dispatch(
+            new CliExecuteEvent(sprintf('cli.verify.%s.executing', $type), $this->exercise, $input, $args)
+        );
         $process->wait();
 
         if (!$process->isSuccessful()) {
