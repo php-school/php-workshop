@@ -71,5 +71,6 @@ class CgiExerciseImpl implements ExerciseInterface, CgiExercise
     public function defineTestScenario(): CgiScenario
     {
         return $this->scenario;
+
     }
 }
