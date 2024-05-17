@@ -160,7 +160,7 @@ class CliRunner implements ExerciseRunnerInterface
                 $context,
                 $scenario,
                 $context->getStudentExecutionDirectory(),
-                $context->getEntryPoint(),
+                basename($context->getEntryPoint()),
                 $event->getArgs(),
                 'student',
             );

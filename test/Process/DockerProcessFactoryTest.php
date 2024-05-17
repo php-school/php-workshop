@@ -93,7 +93,7 @@ class DockerProcessFactoryTest extends TestCase
 
         $process = $factory->create($input);
         $cmd  = "'/usr/local/bin/docker' 'compose' '-p' 'php8appreciate' '-f' '.docker/runtime/docker-compose.yml'";
-        $cmd .= " 'run' '--rm' '-e SOME_VAR=value' '-w' '/solution' 'runtime' 'php' 'one' 'two'";
+        $cmd .= " 'run' '--rm' '-e' 'SOME_VAR=value' '-w' '/solution' 'runtime' 'php' 'one' 'two'";
         static::assertSame($cmd, $process->getCommandLine());
         static::assertSame('/docker-dir', $process->getWorkingDirectory());
     }
@@ -129,7 +129,7 @@ class DockerProcessFactoryTest extends TestCase
 
         $process = $factory->create($input);
         $cmd  = "'/usr/local/bin/docker' 'compose' '-p' 'php8appreciate' '-f' '.docker/runtime/docker-compose.yml'";
-        $cmd .= " 'run' '--rm' '-e SOME_VAR=value' '-w' '/solution' 'runtime' 'php' 'one' 'two'";
+        $cmd .= " 'run' '--rm' '-e' 'SOME_VAR=value' '-w' '/solution' 'runtime' 'php' 'one' 'two'";
         static::assertSame($cmd, $process->getCommandLine());
         static::assertSame('/docker-dir', $process->getWorkingDirectory());
         static::assertSame(['SOLUTION' => __DIR__], $process->getEnv());
