@@ -3,6 +3,9 @@
 namespace PhpSchool\PhpWorkshopTest\Asset;
 
 use PhpSchool\PhpWorkshop\Check\ComposerCheck;
+use PhpSchool\PhpWorkshop\Check\FileComparisonCheck;
+use PhpSchool\PhpWorkshop\Check\FunctionRequirementsCheck;
+use PhpSchool\PhpWorkshop\Event\EventDispatcher;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseType;
 use PhpSchool\PhpWorkshop\ExerciseCheck\FunctionRequirementsExerciseCheck;
@@ -45,11 +48,6 @@ class FunctionRequirementsExercise implements ExerciseInterface, FunctionRequire
         return ExerciseType::CLI();
     }
 
-    public function configure(ExerciseDispatcher $dispatcher): void
-    {
-        $dispatcher->requireCheck(ComposerCheck::class);
-    }
-
     /**
      * @return string[]
      */
@@ -64,5 +62,14 @@ class FunctionRequirementsExercise implements ExerciseInterface, FunctionRequire
     public function getBannedFunctions(): array
     {
         return ['file'];
+    }
+
+    public function getRequiredChecks(): array
+    {
+        return [FunctionRequirementsCheck::class];
+    }
+
+    public function defineListeners(EventDispatcher $dispatcher): void
+    {
     }
 }

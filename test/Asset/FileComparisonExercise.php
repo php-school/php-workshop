@@ -3,6 +3,8 @@
 namespace PhpSchool\PhpWorkshopTest\Asset;
 
 use PhpSchool\PhpWorkshop\Check\ComposerCheck;
+use PhpSchool\PhpWorkshop\Check\FileComparisonCheck;
+use PhpSchool\PhpWorkshop\Event\EventDispatcher;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseType;
 use PhpSchool\PhpWorkshop\ExerciseCheck\FileComparisonExerciseCheck;
@@ -66,13 +68,17 @@ class FileComparisonExercise implements ExerciseInterface, FileComparisonExercis
         return ExerciseType::CLI();
     }
 
-    public function configure(ExerciseDispatcher $dispatcher): void
-    {
-        $dispatcher->requireCheck(ComposerCheck::class);
-    }
-
     public function getFilesToCompare(): array
     {
         return $this->files;
+    }
+
+    public function getRequiredChecks(): array
+    {
+        return [FileComparisonCheck::class];
+    }
+
+    public function defineListeners(EventDispatcher $dispatcher): void
+    {
     }
 }
