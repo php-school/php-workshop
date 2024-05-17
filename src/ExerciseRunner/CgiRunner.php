@@ -104,13 +104,16 @@ class CgiRunner implements ExerciseRunnerInterface
      */
     public function verify(Input $input): ResultInterface
     {
+        $scenario = $this->exercise->defineTestScenario();
+
         $this->eventDispatcher->dispatch(new CgiExerciseRunnerEvent('cgi.verify.start', $this->exercise, $input));
+
         $result = new CgiResult(
             array_map(
                 function (RequestInterface $request) use ($input) {
                     return $this->doVerify($request, $input);
                 },
-                $this->exercise->getRequests()
+                $scenario->getExecutions()
             )
         );
         $this->eventDispatcher->dispatch(new CgiExerciseRunnerEvent('cgi.verify.finish', $this->exercise, $input));
@@ -283,9 +286,12 @@ class CgiRunner implements ExerciseRunnerInterface
      */
     public function run(Input $input, OutputInterface $output): bool
     {
+        $scenario = $this->exercise->defineTestScenario();
+
         $this->eventDispatcher->dispatch(new CgiExerciseRunnerEvent('cgi.run.start', $this->exercise, $input));
+
         $success = true;
-        foreach ($this->exercise->getRequests() as $i => $request) {
+        foreach ($scenario->getExecutions() as $i => $request) {
             /** @var CgiExecuteEvent $event */
             $event = $this->eventDispatcher->dispatch(
                 new CgiExecuteEvent('cgi.run.student-execute.pre', $this->exercise, $input, $request)
