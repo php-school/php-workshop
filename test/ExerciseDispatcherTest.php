@@ -14,6 +14,8 @@ use PhpSchool\PhpWorkshop\Exception\ExerciseNotConfiguredException;
 use PhpSchool\PhpWorkshop\Exception\InvalidArgumentException;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpSchool\PhpWorkshop\ExerciseDispatcher;
+use PhpSchool\PhpWorkshop\ExerciseRunner\Context\ExecutionContext;
+use PhpSchool\PhpWorkshop\ExerciseRunner\Context\ExecutionContextFactory;
 use PhpSchool\PhpWorkshop\ExerciseRunner\ExerciseRunnerInterface;
 use PhpSchool\PhpWorkshop\ExerciseRunner\RunnerManager;
 use PhpSchool\PhpWorkshop\Input\Input;
@@ -28,15 +30,8 @@ use Symfony\Component\Filesystem\Filesystem;
 
 class ExerciseDispatcherTest extends TestCase
 {
-    /**
-     * @var Filesystem
-     */
-    private $filesystem;
-
-    /**
-     * @var string
-     */
-    private $file;
+    private Filesystem $filesystem;
+    private string $file;
 
     public function setUp(): void
     {
@@ -54,7 +49,7 @@ class ExerciseDispatcherTest extends TestCase
             $this->createMock(RunnerManager::class),
             $results,
             $eventDispatcher,
-            new CheckRepository()
+            new CheckRepository(),
         );
 
         $this->assertSame($eventDispatcher, $exerciseDispatcher->getEventDispatcher());
@@ -69,7 +64,7 @@ class ExerciseDispatcherTest extends TestCase
             $this->createMock(RunnerManager::class),
             new ResultAggregator(),
             new EventDispatcher(new ResultAggregator()),
-            new CheckRepository()
+            new CheckRepository(),
         );
         $exerciseDispatcher->requireCheck('NotACheck');
     }
@@ -84,7 +79,7 @@ class ExerciseDispatcherTest extends TestCase
             $this->createMock(RunnerManager::class),
             new ResultAggregator(),
             new EventDispatcher(new ResultAggregator()),
-            new CheckRepository([$check])
+            new CheckRepository([$check]),
         );
 
         $this->expectException(InvalidArgumentException::class);
@@ -102,7 +97,7 @@ class ExerciseDispatcherTest extends TestCase
             $this->createMock(RunnerManager::class),
             new ResultAggregator(),
             new EventDispatcher(new ResultAggregator()),
-            new CheckRepository([$check])
+            new CheckRepository([$check]),
         );
 
         $exerciseDispatcher->requireCheck(get_class($check));
@@ -119,7 +114,7 @@ class ExerciseDispatcherTest extends TestCase
             $this->createMock(RunnerManager::class),
             new ResultAggregator(),
             new EventDispatcher(new ResultAggregator()),
-            new CheckRepository([$check])
+            new CheckRepository([$check]),
         );
 
         $exerciseDispatcher->requireCheck(get_class($check));
@@ -135,7 +130,7 @@ class ExerciseDispatcherTest extends TestCase
             $this->createMock(RunnerManager::class),
             new ResultAggregator(),
             new EventDispatcher(new ResultAggregator()),
-            new CheckRepository([$check])
+            new CheckRepository([$check]),
         );
 
         $this->expectException(InvalidArgumentException::class);
@@ -153,7 +148,7 @@ class ExerciseDispatcherTest extends TestCase
             $this->createMock(RunnerManager::class),
             new ResultAggregator(),
             $eventDispatcher,
-            new CheckRepository([$check])
+            new CheckRepository([$check]),
         );
 
         $exerciseDispatcher->requireCheck(get_class($check));
@@ -178,13 +173,13 @@ class ExerciseDispatcherTest extends TestCase
             $runnerManager,
             new ResultAggregator(),
             new EventDispatcher(new ResultAggregator()),
-            new CheckRepository([$check])
+            new CheckRepository([$check]),
         );
 
         $this->expectException(CheckNotApplicableException::class);
         $this->expectExceptionMessage('Check: "Some Check" cannot process exercise: "Some Exercise" with type: "CLI"');
 
-        $exerciseDispatcher->verify($exercise, new Input('app'));
+        $exerciseDispatcher->verify($exercise, new Input('app', ['program' => $this->file]));
     }
 
     public function testVerifyThrowsExceptionIfExerciseDoesNotImplementCorrectInterface(): void
@@ -206,13 +201,13 @@ class ExerciseDispatcherTest extends TestCase
             $runnerManager,
             new ResultAggregator(),
             new EventDispatcher(new ResultAggregator()),
-            new CheckRepository([$check])
+            new CheckRepository([$check]),
         );
 
         $this->expectException(ExerciseNotConfiguredException::class);
         $this->expectExceptionMessage('Exercise: "Some Exercise" should implement interface: "LolIDoNotExist"');
 
-        $exerciseDispatcher->verify($exercise, new Input('app'));
+        $exerciseDispatcher->verify($exercise, new Input('app', ['program' => $this->file]));
     }
 
     public function testVerify(): void
@@ -228,7 +223,7 @@ class ExerciseDispatcherTest extends TestCase
 
         $runner = $this->createMock(ExerciseRunnerInterface::class);
         $runner->method('getRequiredChecks')->willReturn([get_class($check)]);
-        $runner->method('verify')->with($input)->willReturn(new Success('Success!'));
+        $runner->method('verify')->willReturn(new Success('Success!'));
 
         $runnerManager = $this->createMock(RunnerManager::class);
         $runnerManager->method('getRunner')->with($exercise)->willReturn($runner);
@@ -237,7 +232,7 @@ class ExerciseDispatcherTest extends TestCase
             $runnerManager,
             new ResultAggregator(),
             new EventDispatcher(new ResultAggregator()),
-            new CheckRepository([$check])
+            new CheckRepository([$check]),
         );
 
         $result = $exerciseDispatcher->verify($exercise, $input);
@@ -289,7 +284,6 @@ class ExerciseDispatcherTest extends TestCase
 
         $runner
             ->method('verify')
-            ->with($input)
             ->willReturn(new Success('Success!'));
 
         $runnerManager = $this->createMock(RunnerManager::class);
@@ -302,7 +296,7 @@ class ExerciseDispatcherTest extends TestCase
             $runnerManager,
             new ResultAggregator(),
             new EventDispatcher(new ResultAggregator()),
-            new CheckRepository([$check1, $check2])
+            new CheckRepository([$check1, $check2]),
         );
 
         $result = $exerciseDispatcher->verify($exercise, $input);
@@ -327,10 +321,9 @@ class ExerciseDispatcherTest extends TestCase
         $check2->method('getExerciseInterface')->willReturn(ExerciseInterface::class);
         $check2->method('check')->with($exercise, $input)->willReturn(new Success('Success!'));
 
-
         $runner = $this->createMock(ExerciseRunnerInterface::class);
         $runner->method('getRequiredChecks')->willReturn([get_class($check1), get_class($check2)]);
-        $runner->method('verify')->with($input)->willReturn(new Success('Success!'));
+        $runner->method('verify')->willReturn(new Success('Success!'));
 
         $runnerManager = $this->createMock(RunnerManager::class);
         $runnerManager->method('getRunner')->with($exercise)->willReturn($runner);
@@ -339,7 +332,7 @@ class ExerciseDispatcherTest extends TestCase
             $runnerManager,
             new ResultAggregator(),
             new EventDispatcher(new ResultAggregator()),
-            new CheckRepository([$check1, $check2])
+            new CheckRepository([$check1, $check2]),
         );
 
         $result = $exerciseDispatcher->verify($exercise, $input);
@@ -415,7 +408,7 @@ class ExerciseDispatcherTest extends TestCase
             $runnerManager,
             new ResultAggregator(),
             new EventDispatcher(new ResultAggregator()),
-            new CheckRepository([$check1, $check2])
+            new CheckRepository([$check1, $check2]),
         );
 
         $result = $exerciseDispatcher->verify($exercise, $input);
@@ -462,7 +455,7 @@ class ExerciseDispatcherTest extends TestCase
 
         $runner = $this->createMock(ExerciseRunnerInterface::class);
         $runner->method('getRequiredChecks')->willReturn([]);
-        $runner->method('verify')->with($input)->willReturn(new Success('Success!'));
+        $runner->method('verify')->willReturn(new Success('Success!'));
 
         $runnerManager = $this->createMock(RunnerManager::class);
         $runnerManager->method('getRunner')->with($exercise)->willReturn($runner);
@@ -471,7 +464,7 @@ class ExerciseDispatcherTest extends TestCase
             $runnerManager,
             new ResultAggregator(),
             $eventDispatcher,
-            new CheckRepository()
+            new CheckRepository(),
         );
 
         $exerciseDispatcher->verify($exercise, $input);
@@ -506,7 +499,7 @@ class ExerciseDispatcherTest extends TestCase
 
         $runner = $this->createMock(ExerciseRunnerInterface::class);
         $runner->method('getRequiredChecks')->willReturn([]);
-        $runner->method('verify')->with($input)->will($this->throwException(new RuntimeException()));
+        $runner->method('verify')->will($this->throwException(new RuntimeException()));
 
         $runnerManager = $this->createMock(RunnerManager::class);
         $runnerManager->method('getRunner')->with($exercise)->willReturn($runner);
@@ -515,7 +508,7 @@ class ExerciseDispatcherTest extends TestCase
             $runnerManager,
             new ResultAggregator(),
             $eventDispatcher,
-            new CheckRepository()
+            new CheckRepository(),
         );
 
         $this->expectException(RuntimeException::class);
@@ -530,7 +523,7 @@ class ExerciseDispatcherTest extends TestCase
 
         $runner = $this->createMock(ExerciseRunnerInterface::class);
         $runner->method('getRequiredChecks')->willReturn([]);
-        $runner->method('run')->with($input, $output)->willReturn(true);
+        $runner->method('run')->willReturn(true);
 
         $runnerManager = $this->createMock(RunnerManager::class);
         $runnerManager->method('getRunner')->with($exercise)->willReturn($runner);
@@ -539,7 +532,7 @@ class ExerciseDispatcherTest extends TestCase
             $runnerManager,
             new ResultAggregator(),
             new EventDispatcher(new ResultAggregator()),
-            new CheckRepository([new PhpLintCheck()])
+            new CheckRepository([new PhpLintCheck()]),
         );
 
         $this->assertTrue($exerciseDispatcher->run($exercise, $input, $output));

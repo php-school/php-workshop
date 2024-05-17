@@ -38,10 +38,10 @@ use PhpSchool\PhpWorkshop\Event\EventDispatcher;
 use PhpSchool\PhpWorkshop\ExerciseDispatcher;
 use PhpSchool\PhpWorkshop\ExerciseRenderer;
 use PhpSchool\PhpWorkshop\ExerciseRepository;
+use PhpSchool\PhpWorkshop\ExerciseRunner\EnvironmentManager;
 use PhpSchool\PhpWorkshop\ExerciseRunner\Factory\CgiRunnerFactory;
 use PhpSchool\PhpWorkshop\ExerciseRunner\Factory\CliRunnerFactory;
 use PhpSchool\PhpWorkshop\ExerciseRunner\Factory\CustomVerifyingRunnerFactory;
-use PhpSchool\PhpWorkshop\ExerciseRunner\Factory\ServerRunnerFactory;
 use PhpSchool\PhpWorkshop\ExerciseRunner\RunnerManager;
 use PhpSchool\PhpWorkshop\Factory\EventDispatcherFactory;
 use PhpSchool\PhpWorkshop\Factory\MenuFactory;
@@ -134,7 +134,7 @@ return [
             $c->get(RunnerManager::class),
             $c->get(ResultAggregator::class),
             $c->get(EventDispatcher::class),
-            $c->get(CheckRepository::class)
+            $c->get(CheckRepository::class),
         );
     },
     ResultAggregator::class => create(ResultAggregator::class),
@@ -193,8 +193,16 @@ return [
     //Exercise Runners
     RunnerManager::class => function (ContainerInterface $c) {
         $manager = new RunnerManager();
-        $manager->addFactory(new CliRunnerFactory($c->get(EventDispatcher::class), $c->get(ProcessFactory::class)));
-        $manager->addFactory(new CgiRunnerFactory($c->get(EventDispatcher::class), $c->get(ProcessFactory::class)));
+        $manager->addFactory(new CliRunnerFactory(
+            $c->get(EventDispatcher::class),
+            $c->get(ProcessFactory::class),
+            $c->get(EnvironmentManager::class)
+        ));
+        $manager->addFactory(new CgiRunnerFactory(
+            $c->get(EventDispatcher::class),
+            $c->get(ProcessFactory::class),
+            $c->get(EnvironmentManager::class)
+        ));
         $manager->addFactory(new CustomVerifyingRunnerFactory());
         return $manager;
     },

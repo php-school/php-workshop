@@ -6,6 +6,8 @@ use Colors\Color;
 use PhpSchool\PhpWorkshop\Check\CodeExistsCheck;
 use PhpSchool\PhpWorkshop\Exercise\Scenario\CliScenario;
 use PhpSchool\PhpWorkshop\ExerciseRunner\Context\TestContext;
+use PhpSchool\PhpWorkshop\ExerciseRunner\Context\ExecutionContext;
+use PhpSchool\PhpWorkshop\ExerciseRunner\EnvironmentManager;
 use PhpSchool\PhpWorkshop\Listener\OutputRunInfoListener;
 use PhpSchool\PhpWorkshop\Process\HostProcessFactory;
 use PhpSchool\PhpWorkshop\Utils\RequestRenderer;
@@ -26,9 +28,9 @@ use PhpSchool\PhpWorkshop\Result\Cli\GenericFailure;
 use PhpSchool\PhpWorkshop\Result\Cli\RequestFailure;
 use PhpSchool\PhpWorkshop\ResultAggregator;
 use PhpSchool\PhpWorkshop\Solution\SingleFileSolution;
-use PhpSchool\PhpWorkshopTest\Asset\CliExerciseInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\Filesystem\Filesystem;
 use Yoast\PHPUnitPolyfills\Polyfills\AssertionRenames;
 
 class CliRunnerTest extends TestCase
@@ -43,7 +45,7 @@ class CliRunnerTest extends TestCase
     {
         $this->exercise = new CliExerciseImpl();
         $this->eventDispatcher = new EventDispatcher(new ResultAggregator());
-        $this->runner = new CliRunner($this->exercise, $this->eventDispatcher, new HostProcessFactory());
+        $this->runner = new CliRunner($this->exercise, $this->eventDispatcher, new HostProcessFactory(), new EnvironmentManager(new Filesystem(), $this->eventDispatcher));
 
         $this->assertEquals('CLI Program Runner', $this->runner->getName());
     }
@@ -63,7 +65,6 @@ class CliRunnerTest extends TestCase
     public function testVerifyThrowsExceptionIfSolutionFailsExecution(): void
     {
         $solution = SingleFileSolution::fromFile(realpath(__DIR__ . '/../res/cli/solution-error.php'));
-
         $this->exercise->setSolution($solution);
         $this->exercise->setScenario((new CliScenario())->withExecution());
 
@@ -71,7 +72,8 @@ class CliRunnerTest extends TestCase
         $regex .= ", expecting ['\"][,;]['\"] or ['\"][;,]['\"]/";
         $this->expectException(SolutionExecutionException::class);
         $this->expectExceptionMessageMatches($regex);
-        $this->runner->verify(new Input('app', ['program' => '']));
+
+        $this->runner->verify(new TestContext($this->exercise));
     }
 
     public function testVerifyReturnsSuccessIfSolutionOutputMatchesUserOutput(): void
@@ -80,12 +82,11 @@ class CliRunnerTest extends TestCase
         $this->exercise->setSolution($solution);
         $this->exercise->setScenario((new CliScenario())->withExecution([1, 2, 3]));
 
-        $this->assertInstanceOf(
-            CliResult::class,
-            $res = $this->runner->verify(new Input('app', ['program' => __DIR__ . '/../res/cli/user.php']))
-        );
+        $context = TestContext::fromExerciseAndStudentSolution($this->exercise, __DIR__ . '/../res/cli/user.php');
+        $result = $this->runner->verify($context);
 
-        $this->assertTrue($res->isSuccessful());
+        $this->assertInstanceOf(CliResult::class, $result);
+        $this->assertTrue($result->isSuccessful());
     }
 
     public function testSuccessWithSingleSetOfArgsForBC(): void
@@ -94,12 +95,11 @@ class CliRunnerTest extends TestCase
         $this->exercise->setSolution($solution);
         $this->exercise->setScenario((new CliScenario())->withExecution([1, 2, 3]));
 
-        $this->assertInstanceOf(
-            CliResult::class,
-            $res = $this->runner->verify(new Input('app', ['program' => __DIR__ . '/../res/cli/user.php']))
-        );
+        $context = TestContext::fromExerciseAndStudentSolution($this->exercise, __DIR__ . '/../res/cli/user.php');
+        $result = $this->runner->verify($context);
 
-        $this->assertTrue($res->isSuccessful());
+        $this->assertInstanceOf(CliResult::class, $result);
+        $this->assertTrue($result->isSuccessful());
     }
 
     public function testVerifyReturnsFailureIfUserSolutionFailsToExecute(): void
@@ -108,15 +108,16 @@ class CliRunnerTest extends TestCase
         $this->exercise->setSolution($solution);
         $this->exercise->setScenario((new CliScenario())->withExecution());
 
-        $failure = $this->runner->verify(new Input('app', ['program' => __DIR__ . '/../res/cli/user-error.php']));
+        $context = TestContext::fromExerciseAndStudentSolution($this->exercise, __DIR__ . '/../res/cli/user-error.php');
+        $result = $this->runner->verify($context);
 
         $failureMsg  = '/^PHP Code failed to execute. Error: "PHP Parse error:  syntax error, ';
         $failureMsg .= "unexpected end of file, expecting ['\"][,;]['\"] or ['\"][;,]['\"]/";
 
-        $this->assertInstanceOf(CliResult::class, $failure);
-        $this->assertCount(1, $failure);
+        $this->assertInstanceOf(CliResult::class, $result);
+        $this->assertCount(1, $result);
 
-        $result = iterator_to_array($failure)[0];
+        $result = iterator_to_array($result)[0];
         $this->assertInstanceOf(GenericFailure::class, $result);
         $this->assertMatchesRegularExpression($failureMsg, $result->getReason());
     }
@@ -127,12 +128,13 @@ class CliRunnerTest extends TestCase
         $this->exercise->setSolution($solution);
         $this->exercise->setScenario((new CliScenario())->withExecution([1, 2, 3]));
 
-        $failure = $this->runner->verify(new Input('app', ['program' => __DIR__ . '/../res/cli/user-wrong.php']));
+        $context = TestContext::fromExerciseAndStudentSolution($this->exercise, __DIR__ . '/../res/cli/user-wrong.php');
+        $result = $this->runner->verify($context);
 
-        $this->assertInstanceOf(CliResult::class, $failure);
-        $this->assertCount(1, $failure);
+        $this->assertInstanceOf(CliResult::class, $result);
+        $this->assertCount(1, $result);
 
-        $result = iterator_to_array($failure)[0];
+        $result = iterator_to_array($result)[0];
         $this->assertInstanceOf(RequestFailure::class, $result);
 
         $this->assertEquals('6', $result->getExpectedOutput());
@@ -163,14 +165,10 @@ class CliRunnerTest extends TestCase
 
         $this->expectOutputString($exp);
 
-        $this->exercise->setScenario(
-            (new CliScenario())
-                ->withExecution([1, 2, 3])
-                ->withExecution([4, 5, 6])
-        );
+        $this->exercise->setScenario((new CliScenario())->withExecution([1, 2, 3])->withExecution([4, 5, 6]));
 
-
-        $result = $this->runner->run(new Input('app', ['program' => __DIR__ . '/../res/cli/user.php']), $output);
+        $context = TestContext::fromExerciseAndStudentSolution($this->exercise, __DIR__ . '/../res/cli/user.php');
+        $result = $this->runner->run($context, $output);
 
         $this->assertTrue($result);
     }
@@ -178,14 +176,17 @@ class CliRunnerTest extends TestCase
     public function testRunPassesOutputAndReturnsFailureIfScriptFails(): void
     {
         $output = new StdOutput(new Color(), $this->createMock(Terminal::class));
+
         $this->exercise->setScenario((new CliScenario())->withExecution([1, 2, 3]));
 
         $this->expectOutputRegex(
             "/(PHP )?Parse error:\W+syntax error, unexpected end of file, expecting ['\"][,;]['\"] or ['\"][;,]['\"] /"
         );
 
-        $success = $this->runner->run(new Input('app', ['program' => __DIR__ . '/../res/cli/user-error.php']), $output);
-        $this->assertFalse($success);
+        $context = TestContext::fromExerciseAndStudentSolution($this->exercise, __DIR__ . '/../res/cli/user-error.php');
+        $result = $this->runner->run($context, $output);
+
+        $this->assertFalse($result);
     }
 
     public function testsArgsAppendedByEventsArePassedToResults(): void
@@ -201,12 +202,11 @@ class CliRunnerTest extends TestCase
         $this->exercise->setSolution($solution);
         $this->exercise->setScenario((new CliScenario())->withExecution([1, 2, 3]));
 
-        $this->assertInstanceOf(
-            CliResult::class,
-            $res = $this->runner->verify(new Input('app', ['program' => __DIR__ . '/../res/cli/user.php']))
-        );
+        $context = TestContext::fromExerciseAndStudentSolution($this->exercise, __DIR__ . '/../res/cli/user.php');
+        $result = $this->runner->verify($context);
 
-        $this->assertTrue($res->isSuccessful());
-        $this->assertEquals([1, 2, 3, 4], $res->getResults()[0]->getArgs()->getArrayCopy());
+        $this->assertInstanceOf(CliResult::class, $result);
+        $this->assertTrue($result->isSuccessful());
+        $this->assertEquals([1, 2, 3, 4], $result->getResults()[0]->getArgs()->getArrayCopy());
     }
 }

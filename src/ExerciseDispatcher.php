@@ -14,6 +14,7 @@ use PhpSchool\PhpWorkshop\Exception\CheckNotApplicableException;
 use PhpSchool\PhpWorkshop\Exception\ExerciseNotConfiguredException;
 use PhpSchool\PhpWorkshop\Exception\InvalidArgumentException;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
+use PhpSchool\PhpWorkshop\ExerciseRunner\Context\ExecutionContext;
 use PhpSchool\PhpWorkshop\ExerciseRunner\RunnerManager;
 use PhpSchool\PhpWorkshop\Input\Input;
 use PhpSchool\PhpWorkshop\Output\OutputInterface;
@@ -29,49 +30,26 @@ class ExerciseDispatcher
     /**
      * @var array<SimpleCheckInterface>
      */
-    private $checksToRunBefore = [];
+    private array $checksToRunBefore = [];
 
     /**
      * @var array<SimpleCheckInterface>
      */
-    private $checksToRunAfter = [];
+    private array $checksToRunAfter = [];
 
-    /**
-     * @var RunnerManager
-     */
-    private $runnerManager;
-
-    /**
-     * @var ResultAggregator
-     */
-    private $results;
-
-    /**
-     * @var EventDispatcher
-     */
-    private $eventDispatcher;
-
-    /**
-     * @var CheckRepository
-     */
-    private $checkRepository;
 
     /**
      * @param RunnerManager $runnerManager Factory capable of building an exercise runner based on the exercise type.
-     * @param ResultAggregator $resultAggregator
+     * @param ResultAggregator $results
      * @param EventDispatcher $eventDispatcher
      * @param CheckRepository $checkRepository
      */
     public function __construct(
-        RunnerManager $runnerManager,
-        ResultAggregator $resultAggregator,
-        EventDispatcher $eventDispatcher,
-        CheckRepository $checkRepository
+        private RunnerManager $runnerManager,
+        private ResultAggregator $results,
+        private EventDispatcher $eventDispatcher,
+        private CheckRepository $checkRepository,
     ) {
-        $this->runnerManager = $runnerManager;
-        $this->results = $resultAggregator;
-        $this->eventDispatcher = $eventDispatcher;
-        $this->checkRepository = $checkRepository;
     }
 
     /**
@@ -129,6 +107,8 @@ class ExerciseDispatcher
      */
     public function verify(ExerciseInterface $exercise, Input $input): ResultAggregator
     {
+        $context = ExecutionContext::fromInputAndExercise($input, $exercise);
+
         $runner = $this->runnerManager->getRunner($exercise);
 
         $exercise->defineListeners($this->eventDispatcher);
@@ -143,7 +123,7 @@ class ExerciseDispatcher
         $this->validateChecks($this->checksToRunAfter, $exercise);
 
         foreach ($this->checksToRunBefore as $check) {
-            $this->results->add($check->check($exercise, $input));
+            $this->results->add($check->check($context->getExercise(), $context->getInput()));
 
             if (!$this->results->isSuccessful()) {
                 return $this->results;
@@ -153,13 +133,13 @@ class ExerciseDispatcher
         $this->eventDispatcher->dispatch(new ExerciseRunnerEvent('verify.pre.execute', $exercise, $input));
 
         try {
-            $this->results->add($runner->verify($input));
+            $this->results->add($runner->verify($context));
         } finally {
             $this->eventDispatcher->dispatch(new ExerciseRunnerEvent('verify.post.execute', $exercise, $input));
         }
 
         foreach ($this->checksToRunAfter as $check) {
-            $this->results->add($check->check($exercise, $input));
+            $this->results->add($check->check($context->getExercise(), $context->getInput()));
         }
 
         $this->eventDispatcher->dispatch(new ExerciseRunnerEvent('verify.post.check', $exercise, $input));
@@ -181,11 +161,13 @@ class ExerciseDispatcher
      */
     public function run(ExerciseInterface $exercise, Input $input, OutputInterface $output): bool
     {
+        $context = ExecutionContext::fromInputAndExercise($input, $exercise);
+
         $exercise->defineListeners($this->eventDispatcher);
 
         /** @var PhpLintCheck $lint */
         $lint = $this->checkRepository->getByClass(PhpLintCheck::class);
-        $result = $lint->check($exercise, $input);
+        $result = $lint->check($context->getExercise(), $context->getInput());
 
         if ($result instanceof FailureInterface) {
             throw CouldNotRunException::fromFailure($result);
@@ -196,7 +178,7 @@ class ExerciseDispatcher
         try {
             $exitStatus = $this->runnerManager
                 ->getRunner($exercise)
-                ->run($input, $output);
+                ->run($context, $output);
         } finally {
             $this->eventDispatcher->dispatch(new ExerciseRunnerEvent('run.finish', $exercise, $input));
         }

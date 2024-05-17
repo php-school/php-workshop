@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace PhpSchool\PhpWorkshop\ExerciseRunner;
 
 use PhpSchool\PhpWorkshop\Exercise\CustomVerifyingExercise;
+use PhpSchool\PhpWorkshop\ExerciseRunner\Context\ExecutionContext;
 use PhpSchool\PhpWorkshop\Input\Input;
 use PhpSchool\PhpWorkshop\Output\OutputInterface;
 use PhpSchool\PhpWorkshop\Result\ResultInterface;
@@ -14,17 +15,8 @@ use PhpSchool\PhpWorkshop\Result\ResultInterface;
  */
 class CustomVerifyingRunner implements ExerciseRunnerInterface
 {
-    /**
-     * @var CustomVerifyingExercise
-     */
-    private $exercise;
-
-    /**
-     * @param CustomVerifyingExercise $exercise
-     */
-    public function __construct(CustomVerifyingExercise $exercise)
+    public function __construct(private CustomVerifyingExercise $exercise)
     {
-        $this->exercise = $exercise;
     }
 
     /**
@@ -51,10 +43,10 @@ class CustomVerifyingRunner implements ExerciseRunnerInterface
      * Delegate to the exercise for verifying. Verifying could mean checking that a program was installed or that some
      * other arbitrary task was performed.
      *
-     * @param Input $input The command line arguments passed to the command.
+     * @param ExecutionContext $context The current execution context, containing the exercise, input and working directories.
      * @return ResultInterface The result of the check.
      */
-    public function verify(Input $input): ResultInterface
+    public function verify(ExecutionContext $context): ResultInterface
     {
         return $this->exercise->verify();
     }
@@ -63,11 +55,11 @@ class CustomVerifyingRunner implements ExerciseRunnerInterface
      * Running a custom verifying exercise does nothing. There is no program required, therefore there is nothing
      * to run.
      *
-     * @param Input $input The command line arguments passed to the command.
+     * @param ExecutionContext $context The current execution context, containing the exercise, input and working directories.
      * @param OutputInterface $output A wrapper around STDOUT.
      * @return bool If the solution was successfully executed, eg. exit code was 0.
      */
-    public function run(Input $input, OutputInterface $output): bool
+    public function run(ExecutionContext $context, OutputInterface $output): bool
     {
         $message  = 'Nothing to run here. This exercise does not require a code solution, ';
         $message .= 'so there is nothing to execute.';

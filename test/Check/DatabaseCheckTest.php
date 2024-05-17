@@ -13,6 +13,10 @@ use PhpSchool\PhpWorkshop\Exercise\Scenario\CliScenario;
 use PhpSchool\PhpWorkshop\ExerciseCheck\DatabaseExerciseCheck;
 use PhpSchool\PhpWorkshop\ExerciseDispatcher;
 use PhpSchool\PhpWorkshop\ExerciseRunner\CliRunner;
+use PhpSchool\PhpWorkshop\ExerciseRunner\Context\ExecutionContextFactory;
+use PhpSchool\PhpWorkshop\ExerciseRunner\Context\StaticExecutionContextFactory;
+use PhpSchool\PhpWorkshop\ExerciseRunner\Context\TestContext;
+use PhpSchool\PhpWorkshop\ExerciseRunner\EnvironmentManager;
 use PhpSchool\PhpWorkshop\ExerciseRunner\RunnerManager;
 use PhpSchool\PhpWorkshop\Input\Input;
 use PhpSchool\PhpWorkshop\Output\OutputInterface;
@@ -20,33 +24,18 @@ use PhpSchool\PhpWorkshop\Process\HostProcessFactory;
 use PhpSchool\PhpWorkshop\ResultAggregator;
 use PhpSchool\PhpWorkshop\Solution\SingleFileSolution;
 use PhpSchool\PhpWorkshopTest\Asset\DatabaseExercise;
-use PhpSchool\PhpWorkshopTest\Asset\DatabaseExerciseInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use ReflectionProperty;
 use RuntimeException;
+use Symfony\Component\Filesystem\Filesystem;
 
 class DatabaseCheckTest extends TestCase
 {
-    /**
-     * @var DatabaseCheck
-     */
-    private $check;
-
-    /**
-     * @var CheckRepository
-     */
-    private $checkRepository;
-
-    /**
-     * @var ExerciseInterface
-     */
-    private $exercise;
-
-    /**
-     * @var string
-     */
-    private $dbDir;
+    private DatabaseCheck $check;
+    private CheckRepository $checkRepository;
+    private ExerciseInterface $exercise;
+    private string $dbDir;
 
     public function setUp(): void
     {
@@ -62,7 +51,10 @@ class DatabaseCheckTest extends TestCase
             '%s/php-school/PhpSchool_PhpWorkshop_Check_DatabaseCheck',
             str_replace('\\', '/', realpath(sys_get_temp_dir()))
         );
+    }
 
+    public function testCheckMeta(): void
+    {
         $this->assertEquals('Database Verification Check', $this->check->getName());
         $this->assertEquals(DatabaseExerciseCheck::class, $this->check->getExerciseInterface());
     }
@@ -70,7 +62,7 @@ class DatabaseCheckTest extends TestCase
     private function getRunnerManager(ExerciseInterface $exercise, EventDispatcher $eventDispatcher): MockObject
     {
         $runner = $this->getMockBuilder(CliRunner::class)
-            ->setConstructorArgs([$exercise, $eventDispatcher, new HostProcessFactory()])
+            ->setConstructorArgs([$exercise, $eventDispatcher, new HostProcessFactory(), new EnvironmentManager(new Filesystem(), $eventDispatcher)])
             ->onlyMethods(['getRequiredChecks'])
             ->getMock();
 
@@ -96,7 +88,6 @@ class DatabaseCheckTest extends TestCase
             $this->fail('Exception was not thrown');
         } catch (RuntimeException $e) {
             $this->assertEquals(sprintf('Database directory: "%s" already exists', $this->dbDir), $e->getMessage());
-            rmdir($this->dbDir);
         }
     }
 
@@ -133,7 +124,7 @@ class DatabaseCheckTest extends TestCase
             $this->getRunnerManager($this->exercise, $eventDispatcher),
             $results,
             $eventDispatcher,
-            $this->checkRepository
+            $this->checkRepository,
         );
 
         $dispatcher->verify($this->exercise, new Input('app', ['program' => __DIR__ . '/../res/database/user.php']));
@@ -146,6 +137,7 @@ class DatabaseCheckTest extends TestCase
         $this->exercise->setSolution($solution);
         $this->exercise->setScenario((new CliScenario())->withExecution([1, 2, 3]));
 
+        $this->exercise->setVerifier(fn () => true);
         $this->checkRepository->registerCheck($this->check);
 
         $results            = new ResultAggregator();
@@ -154,9 +146,8 @@ class DatabaseCheckTest extends TestCase
             $this->getRunnerManager($this->exercise, $eventDispatcher),
             $results,
             $eventDispatcher,
-            $this->checkRepository
+            $this->checkRepository,
         );
-
 
         $dispatcher->verify($this->exercise, new Input('app', ['program' => __DIR__ . '/../res/database/user.php']));
 
@@ -173,7 +164,7 @@ class DatabaseCheckTest extends TestCase
             $this->getRunnerManager($this->exercise, $eventDispatcher),
             $results,
             $eventDispatcher,
-            $this->checkRepository
+            $this->checkRepository,
         );
 
         $dispatcher->run(
@@ -198,7 +189,7 @@ class DatabaseCheckTest extends TestCase
             $this->getRunnerManager($this->exercise, $eventDispatcher),
             $results,
             $eventDispatcher,
-            $this->checkRepository
+            $this->checkRepository,
         );
 
         $dispatcher->verify($this->exercise, new Input('app', ['program' => __DIR__ . '/../res/database/user.php']));
@@ -246,12 +237,18 @@ class DatabaseCheckTest extends TestCase
             $this->getRunnerManager($this->exercise, $eventDispatcher),
             $results,
             $eventDispatcher,
-            $this->checkRepository
+            $this->checkRepository,
         );
 
         $dispatcher->verify(
             $this->exercise,
             new Input('app', ['program' => __DIR__ . '/../res/database/user-solution-alter-db.php'])
         );
+    }
+
+    protected function tearDown(): void
+    {
+        $fs = new Filesystem();
+        $fs->remove($this->dbDir);
     }
 }
