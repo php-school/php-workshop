@@ -57,7 +57,7 @@ abstract class WorkshopExerciseTest extends TestCase
 
     public function tearDown(): void
     {
-        (new Filesystem())->remove(System::tempDir());
+        // (new Filesystem())->remove(System::tempDir());
     }
 
     /**

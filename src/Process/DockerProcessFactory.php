@@ -34,9 +34,11 @@ final class DockerProcessFactory implements ProcessFactory
             $mounts[] = $this->composerCacheDir . ':/root/.composer/cache';
         }
 
-        $env = array_map(function ($key, $value) {
-            return sprintf('-e %s=%s', $key, $value);
-        }, array_keys($processInput->getEnv()), $processInput->getEnv());
+        $env = [];
+        foreach ($processInput->getEnv() as $key => $value) {
+            $env[] = '-e';
+            $env[] = $key . '=' . $value;
+        }
 
         return new Process(
             [
