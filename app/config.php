@@ -70,6 +70,7 @@ use PhpSchool\PhpWorkshop\MenuItem\ResetProgress;
 use PhpSchool\PhpWorkshop\Output\OutputInterface;
 use PhpSchool\PhpWorkshop\Output\StdOutput;
 use PhpSchool\PhpWorkshop\Patch;
+use PhpSchool\PhpWorkshop\Process\DockerProcessFactory;
 use PhpSchool\PhpWorkshop\Process\HostProcessFactory;
 use PhpSchool\PhpWorkshop\Process\ProcessFactory;
 use PhpSchool\PhpWorkshop\Result\Cgi\CgiResult;
@@ -208,7 +209,16 @@ return [
     },
 
     ProcessFactory::class => function (ContainerInterface $c) {
-        return new HostProcessFactory();
+        $processFactory = $_ENV['process_factory'] ?? null;
+
+        return match ($processFactory) {
+            'docker' => new DockerProcessFactory(
+                $c->get('basePath'),
+                $c->get('appName'),
+                $c->get('phpschoolGlobalDir') . '/composer-cache',
+            ),
+            default => new HostProcessFactory(),
+        };
     },
 
     //commands
