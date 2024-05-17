@@ -117,7 +117,7 @@ class ExerciseDispatcher
             $this->requireCheck($requiredCheck);
         }
 
-        $this->eventDispatcher->dispatch(new ExerciseRunnerEvent('verify.start', $exercise, $input));
+        $this->eventDispatcher->dispatch(new ExerciseRunnerEvent('verify.start', $context));
 
         $this->validateChecks($this->checksToRunBefore, $exercise);
         $this->validateChecks($this->checksToRunAfter, $exercise);
@@ -130,22 +130,22 @@ class ExerciseDispatcher
             }
         }
 
-        $this->eventDispatcher->dispatch(new ExerciseRunnerEvent('verify.pre.execute', $exercise, $input));
+        $this->eventDispatcher->dispatch(new ExerciseRunnerEvent('verify.pre.execute', $context));
 
         try {
             $this->results->add($runner->verify($context));
         } finally {
-            $this->eventDispatcher->dispatch(new ExerciseRunnerEvent('verify.post.execute', $exercise, $input));
+            $this->eventDispatcher->dispatch(new ExerciseRunnerEvent('verify.post.execute', $context));
         }
 
         foreach ($this->checksToRunAfter as $check) {
             $this->results->add($check->check($context));
         }
 
-        $this->eventDispatcher->dispatch(new ExerciseRunnerEvent('verify.post.check', $exercise, $input));
+        $this->eventDispatcher->dispatch(new ExerciseRunnerEvent('verify.post.check', $context));
         $exercise->tearDown();
 
-        $this->eventDispatcher->dispatch(new ExerciseRunnerEvent('verify.finish', $exercise, $input));
+        $this->eventDispatcher->dispatch(new ExerciseRunnerEvent('verify.finish', $context));
         return $this->results;
     }
 
@@ -173,14 +173,14 @@ class ExerciseDispatcher
             throw CouldNotRunException::fromFailure($result);
         }
 
-        $this->eventDispatcher->dispatch(new ExerciseRunnerEvent('run.start', $exercise, $input));
+        $this->eventDispatcher->dispatch(new ExerciseRunnerEvent('run.start', $context));
 
         try {
             $exitStatus = $this->runnerManager
                 ->getRunner($exercise)
                 ->run($context, $output);
         } finally {
-            $this->eventDispatcher->dispatch(new ExerciseRunnerEvent('run.finish', $exercise, $input));
+            $this->eventDispatcher->dispatch(new ExerciseRunnerEvent('run.finish', $context));
         }
 
         return $exitStatus;

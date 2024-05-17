@@ -4,6 +4,9 @@ namespace PhpSchool\PhpWorkshopTest\Event;
 
 use PhpSchool\PhpWorkshop\Event\CliExerciseRunnerEvent;
 use PhpSchool\PhpWorkshop\Exercise\MockExercise;
+use PhpSchool\PhpWorkshop\Exercise\Scenario\CgiScenario;
+use PhpSchool\PhpWorkshop\Exercise\Scenario\CliScenario;
+use PhpSchool\PhpWorkshop\ExerciseRunner\Context\TestContext;
 use PhpSchool\PhpWorkshop\Input\Input;
 use PhpSchool\PhpWorkshopTest\Asset\CliExerciseImpl;
 use PHPUnit\Framework\TestCase;
@@ -12,16 +15,18 @@ class CliExerciseRunnerEventTest extends TestCase
 {
     public function testGetters(): void
     {
-        $exercise = new MockExercise();
-        $input = new Input('app');
+        $context = new TestContext();
+        $scenario = new CliScenario();
 
-        $event = new CliExerciseRunnerEvent('Some Event', $exercise, $input, ['number' => 1]);
-        self::assertSame($exercise, $event->getExercise());
-        self::assertSame($input, $event->getInput());
+        $event = new CliExerciseRunnerEvent('Some Event', $context, $scenario, ['number' => 1]);
+        self::assertSame($context->getExercise(), $event->getExercise());
+        self::assertSame($context->getInput(), $event->getInput());
+        $this->assertSame($context, $event->getContext());
+        $this->assertSame($scenario, $event->getScenario());
         self::assertEquals(
             [
-                'exercise' => $exercise,
-                'input' => $input,
+                'exercise' => $context->getExercise(),
+                'input' => $context->getInput(),
                 'number' => 1
             ],
             $event->getParameters()

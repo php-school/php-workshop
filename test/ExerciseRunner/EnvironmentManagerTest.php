@@ -78,7 +78,7 @@ class EnvironmentManagerTest extends TestCase
         static::assertFileExists($context->getStudentExecutionDirectory());
         static::assertFileExists($context->getReferenceExecutionDirectory());
 
-        $eventDispatcher->dispatch(new ExerciseRunnerEvent($eventName, $exercise, new Input('app', ['program' => ''])));
+        $eventDispatcher->dispatch(new ExerciseRunnerEvent($eventName, $context));
 
         static::assertFileExists($context->getStudentExecutionDirectory());
         static::assertFileNotExists($context->getReferenceExecutionDirectory() . '/file.txt');

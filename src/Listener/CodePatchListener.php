@@ -8,6 +8,7 @@ use PhpSchool\PhpWorkshop\CodePatcher;
 use PhpSchool\PhpWorkshop\Event\EventInterface;
 use PhpSchool\PhpWorkshop\Event\ExerciseRunnerEvent;
 use PhpSchool\PhpWorkshop\Exercise\ProvidesSolution;
+use PhpSchool\PhpWorkshop\Utils\Path;
 use Psr\Log\LoggerInterface;
 use RuntimeException;
 
@@ -53,11 +54,14 @@ class CodePatchListener
      */
     public function patch(ExerciseRunnerEvent $event): void
     {
-        $files = [$event->getInput()->getArgument('program')];
+        $files = [$event->getContext()->getEntryPoint()];
 
         $exercise = $event->getExercise();
         if ($exercise instanceof ProvidesSolution) {
-            $files[] = $exercise->getSolution()->getEntryPoint()->getAbsolutePath();
+            $files[] = Path::join(
+                $event->getContext()->getReferenceExecutionDirectory(),
+                $exercise->getSolution()->getEntryPoint()->getRelativePath()
+            );
         }
 
         foreach (array_filter($files) as $fileName) {
@@ -83,7 +87,7 @@ class CodePatchListener
 
         //if we're in debug mode leave the students patch for debugging
         if ($event instanceof ExerciseRunnerEvent && $this->debugMode) {
-            unset($this->originalCode[$event->getInput()->getArgument('program')]);
+            unset($this->originalCode[$event->getContext()->getEntryPoint()]);
         }
 
         foreach ($this->originalCode as $fileName => $contents) {
