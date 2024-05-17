@@ -8,7 +8,6 @@ use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseType;
 use PhpSchool\PhpWorkshop\Exercise\Scenario\CgiScenario;
 use PhpSchool\PhpWorkshop\Solution\SolutionInterface;
-use Psr\Http\Message\RequestInterface;
 
 class CgiExerciseImpl implements ExerciseInterface, CgiExercise
 {
@@ -62,9 +61,7 @@ class CgiExerciseImpl implements ExerciseInterface, CgiExercise
         return [];
     }
 
-    public function defineListeners(EventDispatcher $dispatcher): void
-    {
-    }
+    public function defineListeners(EventDispatcher $dispatcher): void {}
 
     public function setScenario(CgiScenario $scenario): void
     {

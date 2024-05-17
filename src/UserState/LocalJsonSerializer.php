@@ -44,7 +44,7 @@ class LocalJsonSerializer implements Serializer
     public function __construct(
         string $saveFileDirectory,
         string $workshopName,
-        ExerciseRepository $exerciseRepository
+        ExerciseRepository $exerciseRepository,
     ) {
         $this->workshopName         = $workshopName;
         $this->path                 = $saveFileDirectory;
@@ -129,7 +129,7 @@ class LocalJsonSerializer implements Serializer
 
         return new UserState(
             $json['completed_exercises'],
-            $json['current_exercise']
+            $json['current_exercise'],
         );
     }
 
@@ -172,7 +172,7 @@ class LocalJsonSerializer implements Serializer
 
         $userState = new UserState(
             $data['completed_exercises'],
-            is_string($data['current_exercise']) ? $data['current_exercise'] : null
+            is_string($data['current_exercise']) ? $data['current_exercise'] : null,
         );
 
         $this->serialize($userState);

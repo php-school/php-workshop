@@ -84,7 +84,7 @@ class ComparisonFailure implements FailureInterface
     {
         return [
             'expected_value' => $this->getExpectedValue(),
-            'actual_value' => $this->getActualValue()
+            'actual_value' => $this->getActualValue(),
         ];
     }
 }

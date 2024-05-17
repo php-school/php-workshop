@@ -38,11 +38,11 @@ class FunctionRequirementsFailureRenderer implements ResultRendererInterface
                 "  %s\n%s\n",
                 $renderer->style(
                     "Some functions were used which should not be used in this exercise",
-                    ['bold', 'underline', 'yellow']
+                    ['bold', 'underline', 'yellow'],
                 ),
                 implode("\n", array_map(function (array $call) {
                     return sprintf('    %s on line %s', $call['function'], $call['line']);
-                }, $bannedFunctions))
+                }, $bannedFunctions)),
             );
         }
 
@@ -51,11 +51,11 @@ class FunctionRequirementsFailureRenderer implements ResultRendererInterface
                 "  %s\n%s\n",
                 $renderer->style(
                     "Some function requirements were missing. You should use the functions",
-                    ['bold', 'underline', 'yellow']
+                    ['bold', 'underline', 'yellow'],
                 ),
                 implode("\n", array_map(function ($function) {
                     return sprintf('    %s', $function);
-                }, $missingFunctions))
+                }, $missingFunctions)),
             );
         }
 

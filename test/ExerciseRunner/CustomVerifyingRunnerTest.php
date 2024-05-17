@@ -6,7 +6,6 @@ use Colors\Color;
 use PhpSchool\PhpWorkshop\ExerciseRunner\Context\TestContext;
 use PhpSchool\Terminal\Terminal;
 use PhpSchool\PhpWorkshop\ExerciseRunner\CustomVerifyingRunner;
-use PhpSchool\PhpWorkshop\Input\Input;
 use PhpSchool\PhpWorkshop\Output\StdOutput;
 use PhpSchool\PhpWorkshopTest\Asset\CustomVerifyingExerciseImpl;
 use PHPUnit\Framework\TestCase;

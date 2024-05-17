@@ -2,8 +2,6 @@
 
 namespace PhpSchool\PhpWorkshop\Exercise;
 
-use PhpSchool\PhpWorkshop\ExerciseDispatcher;
-
 class MockExercise extends AbstractExercise implements ExerciseInterface
 {
     public function getName(): string

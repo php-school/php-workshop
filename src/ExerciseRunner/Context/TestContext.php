@@ -12,7 +12,6 @@ use PhpSchool\PhpWorkshop\Exercise\Scenario\ExerciseScenario;
 use PhpSchool\PhpWorkshop\ExerciseRunner\EnvironmentManager;
 use PhpSchool\PhpWorkshop\Input\Input;
 use PhpSchool\PhpWorkshop\ResultAggregator;
-use PhpSchool\PhpWorkshop\Solution\SolutionInterface;
 use PhpSchool\PhpWorkshop\Utils\System;
 use Symfony\Component\Filesystem\Filesystem;
 use PhpSchool\PhpWorkshop\Utils\Path;
@@ -63,12 +62,11 @@ class TestContext extends ExecutionContext
     {
         if (!$this->referenceSolutionDirWasCreated) {
             throw new RuntimeException(
-                sprintf('Reference execution directory not created. Call %s::createReferenceSolutionDirectory() first.', self::class)
+                sprintf('Reference execution directory not created. Call %s::createReferenceSolutionDirectory() first.', self::class),
             );
         }
 
-        $scenario = new class extends ExerciseScenario {
-        };
+        $scenario = new class () extends ExerciseScenario {};
         if ($this->exercise instanceof CliExercise || $this->exercise instanceof CgiExercise) {
             $scenario = $this->exercise->defineTestScenario();
         }
@@ -80,7 +78,7 @@ class TestContext extends ExecutionContext
     {
         if (!$this->studentSolutionDirWasCreated) {
             throw new RuntimeException(
-                sprintf('Student execution directory not created. Call %s::createStudentSolutionDirectory() first.', self::class)
+                sprintf('Student execution directory not created. Call %s::createStudentSolutionDirectory() first.', self::class),
             );
         }
 
@@ -91,7 +89,7 @@ class TestContext extends ExecutionContext
     {
         if (!$this->referenceSolutionDirWasCreated) {
             throw new RuntimeException(
-                sprintf('Reference execution directory not created. Call %s::createReferenceSolutionDirectory() first.', self::class)
+                sprintf('Reference execution directory not created. Call %s::createReferenceSolutionDirectory() first.', self::class),
             );
         }
 
@@ -108,7 +106,7 @@ class TestContext extends ExecutionContext
         return new self(
             exercise: $exercise,
             input: $input,
-            studentDirectory: dirname($file)
+            studentDirectory: dirname($file),
         );
     }
 

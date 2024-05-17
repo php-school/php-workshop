@@ -44,9 +44,9 @@ class ComposerFailureTest extends TestCase
                 'is_missing_component' => true,
                 'is_missing_packages' => false,
                 'missing_component' => 'composer.json',
-                'missing_packages' => []
+                'missing_packages' => [],
             ],
-            $failure->toArray()
+            $failure->toArray(),
         );
     }
 
@@ -72,9 +72,9 @@ class ComposerFailureTest extends TestCase
                 'is_missing_component' => false,
                 'is_missing_packages' => true,
                 'missing_component' => null,
-                'missing_packages' => ['some/package']
+                'missing_packages' => ['some/package'],
             ],
-            $failure->toArray()
+            $failure->toArray(),
         );
     }
 }

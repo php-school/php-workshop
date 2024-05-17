@@ -2,7 +2,6 @@
 
 namespace PhpSchool\PhpWorkshopTest;
 
-use PhpSchool\CliMdRenderer\CliRenderer;
 use PhpSchool\CliMdRenderer\CliRendererFactory;
 use League\CommonMark\DocParser;
 use League\CommonMark\Environment;

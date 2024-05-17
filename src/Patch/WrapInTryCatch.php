@@ -31,8 +31,8 @@ class WrapInTryCatch implements Transformer
         $this->exceptionClass = $exceptionClass;
         $this->statements = $statements ?: [
             new Echo_([
-                new MethodCall(new Variable('e'), 'getMessage')
-            ])
+                new MethodCall(new Variable('e'), 'getMessage'),
+            ]),
         ];
     }
 
@@ -49,10 +49,10 @@ class WrapInTryCatch implements Transformer
                     new Catch_(
                         [new Name($this->exceptionClass)],
                         new Variable('e'),
-                        $this->statements
-                    )
-                ]
-            )
+                        $this->statements,
+                    ),
+                ],
+            ),
         ];
     }
 }

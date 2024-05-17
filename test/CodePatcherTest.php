@@ -10,7 +10,6 @@ use PhpParser\Node\Stmt\DeclareDeclare;
 use PhpParser\Node\Stmt\TryCatch;
 use PhpParser\ParserFactory;
 use PhpParser\PrettyPrinter\Standard;
-use PhpParser\PrettyPrinterAbstract;
 use PhpSchool\PhpWorkshop\CodePatcher;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpSchool\PhpWorkshop\Patch;
@@ -31,7 +30,7 @@ class CodePatcherTest extends TestCase
             (new ParserFactory())->create(ParserFactory::PREFER_PHP7),
             new Standard(),
             new NullLogger(),
-            $patch
+            $patch,
         );
         $exercise = $this->createMock(ExerciseInterface::class);
 
@@ -44,7 +43,7 @@ class CodePatcherTest extends TestCase
         $patcher = new CodePatcher(
             (new ParserFactory())->create(ParserFactory::PREFER_PHP7),
             new Standard(),
-            new NullLogger()
+            new NullLogger(),
         );
         $exercise = $this->createMock(ExerciseInterface::class);
 
@@ -60,7 +59,7 @@ class CodePatcherTest extends TestCase
         $patcher = new CodePatcher(
             (new ParserFactory())->create(ParserFactory::PREFER_PHP7),
             new Standard(),
-            new NullLogger()
+            new NullLogger(),
         );
         $exercise = $this->createMock(PatchableExercise::class);
 
@@ -79,35 +78,35 @@ class CodePatcherTest extends TestCase
             'only-before-insertion' => [
                 '<?php $original = true;',
                 (new Patch())->withInsertion(new Insertion(Insertion::TYPE_BEFORE, '$before = "here";')),
-                "<?php\n\n\$before = \"here\";\n\$original = true;"
+                "<?php\n\n\$before = \"here\";\n\$original = true;",
             ],
             'only-after-insertion' => [
                 '<?php $original = true;',
                 (new Patch())->withInsertion(new Insertion(Insertion::TYPE_AFTER, '$after = "here";')),
-                "<?php\n\n\$original = true;\n\$after = \"here\";"
+                "<?php\n\n\$original = true;\n\$after = \"here\";",
             ],
             'before-and-after-insertion' => [
                 '<?php $original = true;',
                 (new Patch())
                     ->withInsertion(new Insertion(Insertion::TYPE_BEFORE, '$before = "here";'))
                     ->withInsertion(new Insertion(Insertion::TYPE_AFTER, '$after = "here";')),
-                "<?php\n\n\$before = \"here\";\n\$original = true;\n\$after = \"here\";"
+                "<?php\n\n\$before = \"here\";\n\$original = true;\n\$after = \"here\";",
             ],
             'not-parseable-before-insertion' => [
                 '<?php $original = true;',
                 (new Patch())->withInsertion(new Insertion(Insertion::TYPE_BEFORE, '$before = "here"')),
                 //no semicolon at the end
-                "<?php\n\n\$original = true;"
+                "<?php\n\n\$original = true;",
             ],
             'include-open-php-tag-before-insertion' => [
                 '<?php $original = true;',
                 (new Patch())->withInsertion(new Insertion(Insertion::TYPE_BEFORE, '<?php $before = "here";')),
-                "<?php\n\n\$before = \"here\";\n\$original = true;"
+                "<?php\n\n\$before = \"here\";\n\$original = true;",
             ],
             'include-open-php-tag-before-insertion2' => [
                 '<?php $original = true;',
                 (new Patch())->withInsertion(new Insertion(Insertion::TYPE_BEFORE, '    <?php $before = "here";')),
-                "<?php\n\n\$before = \"here\";\n\$original = true;"
+                "<?php\n\n\$before = \"here\";\n\$original = true;",
             ],
             'transformer-closure' => [
                 '<?php $original = true;',
@@ -116,11 +115,11 @@ class CodePatcherTest extends TestCase
                         return [
                             new TryCatch(
                                 $statements,
-                                [new Catch_([new Name(\Exception::class)], new Variable('e'), [])]
-                            )
+                                [new Catch_([new Name(\Exception::class)], new Variable('e'), [])],
+                            ),
                         ];
                     }),
-                "<?php\n\ntry {\n    \$original = true;\n} catch (Exception \$e) {\n}"
+                "<?php\n\ntry {\n    \$original = true;\n} catch (Exception \$e) {\n}",
             ],
             'transformer-with-before-insertion' => [
                 '<?php $original = true;',
@@ -130,27 +129,27 @@ class CodePatcherTest extends TestCase
                         return [
                             new TryCatch(
                                 $statements,
-                                [new Catch_([new Name(\Exception::class)], new Variable('e'), [])]
-                            )
+                                [new Catch_([new Name(\Exception::class)], new Variable('e'), [])],
+                            ),
                         ];
                     }),
-                "<?php\n\ntry {\n    \$before = \"here\";\n    \$original = true;\n} catch (Exception \$e) {\n}"
+                "<?php\n\ntry {\n    \$before = \"here\";\n    \$original = true;\n} catch (Exception \$e) {\n}",
             ],
             'transformer-class' => [
                 '<?php $original = true;',
                 (new Patch())
-                    ->withTransformer(new class implements Patch\Transformer {
+                    ->withTransformer(new class () implements Patch\Transformer {
                         public function transform(array $statements): array
                         {
                             return [
                                 new TryCatch(
                                     $statements,
-                                    [new Catch_([new Name(\Exception::class)], new Variable('e'), [])]
-                                )
+                                    [new Catch_([new Name(\Exception::class)], new Variable('e'), [])],
+                                ),
                             ];
                         }
                     }),
-                "<?php\n\ntry {\n    \$original = true;\n} catch (Exception \$e) {\n}"
+                "<?php\n\ntry {\n    \$original = true;\n} catch (Exception \$e) {\n}",
             ],
         ];
     }
@@ -163,7 +162,7 @@ class CodePatcherTest extends TestCase
         $patcher = new CodePatcher(
             (new ParserFactory())->create(ParserFactory::PREFER_PHP7),
             new Standard(),
-            new NullLogger()
+            new NullLogger(),
         );
 
         $exercise = $this->createMock(PatchableExercise::class);
@@ -175,7 +174,7 @@ class CodePatcherTest extends TestCase
 
         $this->assertEquals(
             "<?php\n\ndeclare (strict_types=1);\n\$before = \"here\";\n\$original = true;",
-            $patcher->patch($exercise, $code)
+            $patcher->patch($exercise, $code),
         );
     }
 
@@ -187,15 +186,15 @@ class CodePatcherTest extends TestCase
                 return [
                     new TryCatch(
                         $statements,
-                        [new Catch_([new Name(\Exception::class)], new Variable('e'), [])]
-                    )
+                        [new Catch_([new Name(\Exception::class)], new Variable('e'), [])],
+                    ),
                 ];
             });
 
         $patcher = new CodePatcher(
             (new ParserFactory())->create(ParserFactory::PREFER_PHP7),
             new Standard(),
-            new NullLogger()
+            new NullLogger(),
         );
 
         $exercise = $this->createMock(PatchableExercise::class);
@@ -207,7 +206,7 @@ class CodePatcherTest extends TestCase
 
         $this->assertEquals(
             "<?php\n\ndeclare (strict_types=1);\ntry {\n    \$original = true;\n} catch (Exception \$e) {\n}",
-            $patcher->patch($exercise, $code)
+            $patcher->patch($exercise, $code),
         );
     }
 
@@ -219,15 +218,15 @@ class CodePatcherTest extends TestCase
                 return [new \PhpParser\Node\Stmt\Declare_([
                     new DeclareDeclare(
                         new \PhpParser\Node\Identifier('strict_types'),
-                        new LNumber(1)
-                    )
+                        new LNumber(1),
+                    ),
                 ])];
             });
 
         $patcher = new CodePatcher(
             (new ParserFactory())->create(ParserFactory::PREFER_PHP7),
             new Standard(),
-            new NullLogger()
+            new NullLogger(),
         );
 
         $exercise = $this->createMock(PatchableExercise::class);
@@ -239,7 +238,7 @@ class CodePatcherTest extends TestCase
 
         $this->assertEquals(
             "<?php\n\ndeclare (strict_types=1);",
-            $patcher->patch($exercise, $code)
+            $patcher->patch($exercise, $code),
         );
     }
 
@@ -251,8 +250,8 @@ class CodePatcherTest extends TestCase
                 return array_merge([new \PhpParser\Node\Stmt\Declare_([
                     new DeclareDeclare(
                         new \PhpParser\Node\Identifier('strict_types'),
-                        new LNumber(1)
-                    )
+                        new LNumber(1),
+                    ),
                 ])], $statements);
             })
             ->withInsertion(new Insertion(Insertion::TYPE_BEFORE, '$before = "here";'));
@@ -260,7 +259,7 @@ class CodePatcherTest extends TestCase
         $patcher = new CodePatcher(
             (new ParserFactory())->create(ParserFactory::PREFER_PHP7),
             new Standard(),
-            new NullLogger()
+            new NullLogger(),
         );
 
         $exercise = $this->createMock(PatchableExercise::class);
@@ -272,7 +271,7 @@ class CodePatcherTest extends TestCase
 
         $this->assertEquals(
             "<?php\n\ndeclare (strict_types=1);\n\$before = \"here\";\n\$original = true;",
-            $patcher->patch($exercise, $code)
+            $patcher->patch($exercise, $code),
         );
     }
 
@@ -281,7 +280,7 @@ class CodePatcherTest extends TestCase
         $patcher = new CodePatcher(
             (new ParserFactory())->create(ParserFactory::PREFER_PHP7),
             new Standard(),
-            $logger = $this->createMock(LoggerInterface::class)
+            $logger = $this->createMock(LoggerInterface::class),
         );
 
         $exercise = $this->createMock(PatchableExercise::class);
@@ -298,12 +297,12 @@ class CodePatcherTest extends TestCase
             ->method('critical')
             ->with(
                 'Code Insertion could not be parsed: Syntax error, unexpected EOF on line 1',
-                ['code' => '$before = "here"']
+                ['code' => '$before = "here"'],
             );
 
         $this->assertEquals(
             "<?php\n\n\$original = true;",
-            $patcher->patch($exercise, '<?php $original = true;')
+            $patcher->patch($exercise, '<?php $original = true;'),
         );
     }
 }

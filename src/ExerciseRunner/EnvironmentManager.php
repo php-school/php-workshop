@@ -11,9 +11,7 @@ use Symfony\Component\Filesystem\Filesystem;
 
 class EnvironmentManager
 {
-    public function __construct(private Filesystem $filesystem, private EventDispatcher $eventDispatcher)
-    {
-    }
+    public function __construct(private Filesystem $filesystem, private EventDispatcher $eventDispatcher) {}
 
     public function prepareStudent(ExecutionContext $context, ExerciseScenario $scenario): void
     {
@@ -43,7 +41,7 @@ class EnvironmentManager
         foreach ($solution->getFiles() as $file) {
             $this->filesystem->copy(
                 $file->getAbsolutePath(),
-                Path::join($context->getReferenceExecutionDirectory(), $file->getRelativePath())
+                Path::join($context->getReferenceExecutionDirectory(), $file->getRelativePath()),
             );
         }
 
@@ -61,7 +59,7 @@ class EnvironmentManager
         foreach ($scenario->getFiles() as $fileName => $content) {
             $this->filesystem->dumpFile(
                 Path::join($dir, $fileName),
-                $content
+                $content,
             );
         }
     }

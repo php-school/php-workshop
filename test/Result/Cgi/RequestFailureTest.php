@@ -23,7 +23,7 @@ class RequestFailureTest extends TestCase
             'Expected Output',
             'Actual Output',
             [],
-            []
+            [],
         );
 
         $this->assertEquals('Expected Output', $requestFailure->getExpectedOutput());
@@ -41,7 +41,7 @@ class RequestFailureTest extends TestCase
             'Output',
             'Output',
             ['header1' => 'some-value'],
-            ['header2' => 'some-value']
+            ['header2' => 'some-value'],
         );
 
         $this->assertEquals(['header1' => 'some-value'], $requestFailure->getExpectedHeaders());
@@ -59,7 +59,7 @@ class RequestFailureTest extends TestCase
             'Expected Output',
             'Actual Output',
             ['header1' => 'some-value'],
-            ['header2' => 'some-value']
+            ['header2' => 'some-value'],
         );
 
         $this->assertTrue($requestFailure->headersDifferent());

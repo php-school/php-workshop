@@ -151,7 +151,7 @@ class CodePatcher
         } catch (Error $e) {
             $this->logger->critical(
                 'Code Insertion could not be parsed: ' . $e->getMessage(),
-                ['code' => $codeInsertion->getCode()]
+                ['code' => $codeInsertion->getCode()],
             );
             return $statements;
         }

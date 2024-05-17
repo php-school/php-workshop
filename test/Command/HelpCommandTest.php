@@ -20,7 +20,7 @@ class HelpCommandTest extends TestCase
         $command = new HelpCommand(
             'learnyouphp',
             new StdOutput($color, $this->createMock(Terminal::class)),
-            $color
+            $color,
         );
 
         $command->__invoke();

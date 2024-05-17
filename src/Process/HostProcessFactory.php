@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace PhpSchool\PhpWorkshop\Process;
 
-use PhpSchool\PhpWorkshop\Utils\Collection;
 use Symfony\Component\Process\ExecutableFinder;
 use Symfony\Component\Process\Process;
 
@@ -40,8 +39,8 @@ final class HostProcessFactory implements ProcessFactory
      */
     private function getDefaultEnv(): array
     {
-        $env = array_map(fn () => false, $_ENV);
-        $env + array_map(fn () => false, $_SERVER);
+        $env = array_map(fn() => false, $_ENV);
+        $env + array_map(fn() => false, $_SERVER);
 
         return $env;
     }

@@ -10,7 +10,6 @@ use PhpSchool\PhpWorkshop\ExerciseRunner\Context\TestContext;
 use PhpSchool\PhpWorkshop\ExerciseRunner\EnvironmentManager;
 use PhpSchool\PhpWorkshop\Listener\OutputRunInfoListener;
 use PhpSchool\PhpWorkshop\Process\HostProcessFactory;
-use PhpSchool\PhpWorkshop\Result\Cli\CliResult;
 use PhpSchool\PhpWorkshopTest\Asset\CgiExerciseImpl;
 use PhpSchool\Terminal\Terminal;
 use PhpSchool\PhpWorkshop\Check\CodeParseCheck;
@@ -18,9 +17,7 @@ use PhpSchool\PhpWorkshop\Check\FileExistsCheck;
 use PhpSchool\PhpWorkshop\Check\PhpLintCheck;
 use PhpSchool\PhpWorkshop\Event\EventDispatcher;
 use PhpSchool\PhpWorkshop\Exception\SolutionExecutionException;
-use PhpSchool\PhpWorkshop\Exercise\ExerciseType;
 use PhpSchool\PhpWorkshop\ExerciseRunner\CgiRunner;
-use PhpSchool\PhpWorkshop\Input\Input;
 use PhpSchool\PhpWorkshop\Output\StdOutput;
 use PhpSchool\PhpWorkshop\Result\Cgi\RequestFailure;
 use PhpSchool\PhpWorkshop\Result\Cgi\CgiResult;
@@ -28,7 +25,6 @@ use PhpSchool\PhpWorkshop\Result\Failure;
 use PhpSchool\PhpWorkshop\ResultAggregator;
 use PhpSchool\PhpWorkshop\Solution\SingleFileSolution;
 use PhpSchool\PhpWorkshop\Utils\RequestRenderer;
-use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Filesystem\Filesystem;
 use Yoast\PHPUnitPolyfills\Polyfills\AssertionRenames;
@@ -67,7 +63,7 @@ class CgiRunnerTest extends TestCase
         $solution = SingleFileSolution::fromFile(__DIR__ . '/../res/cgi/solution-error.php');
         $this->exercise->setSolution($solution);
         $this->exercise->setScenario(
-            (new CgiScenario())->withExecution((new Request('GET', 'http://some.site?number=5')))
+            (new CgiScenario())->withExecution((new Request('GET', 'http://some.site?number=5'))),
         );
 
         $regex  = "/^PHP Code failed to execute\. Error: \"PHP Parse error:  syntax error, unexpected end of file in/";
@@ -82,7 +78,7 @@ class CgiRunnerTest extends TestCase
         $solution = SingleFileSolution::fromFile(__DIR__ . '/../res/cgi/get-solution.php');
         $this->exercise->setSolution($solution);
         $this->exercise->setScenario(
-            (new CgiScenario())->withExecution((new Request('GET', 'http://some.site?number=5')))
+            (new CgiScenario())->withExecution((new Request('GET', 'http://some.site?number=5'))),
         );
 
         $context = TestContext::fromExerciseAndStudentSolution($this->exercise, __DIR__ . '/../res/cgi/get-solution.php');
@@ -198,16 +194,16 @@ class CgiRunnerTest extends TestCase
         $this->assertEquals(
             [
                 'Pragma'        => 'cache',
-                'Content-type'  => 'text/html; charset=UTF-8'
+                'Content-type'  => 'text/html; charset=UTF-8',
             ],
-            $result->getExpectedHeaders()
+            $result->getExpectedHeaders(),
         );
         $this->assertEquals(
             [
                 'Pragma'        => 'no-cache',
-                'Content-type'  => 'text/html; charset=UTF-8'
+                'Content-type'  => 'text/html; charset=UTF-8',
             ],
-            $result->getActualHeaders()
+            $result->getActualHeaders(),
         );
     }
 
@@ -221,11 +217,11 @@ class CgiRunnerTest extends TestCase
 
         $this->eventDispatcher->listen(
             'cgi.run.student-execute.pre',
-            new OutputRunInfoListener($output, new RequestRenderer())
+            new OutputRunInfoListener($output, new RequestRenderer()),
         );
 
         $this->exercise->setScenario(
-            (new CgiScenario())->withExecution($request1)->withExecution($request2)
+            (new CgiScenario())->withExecution($request1)->withExecution($request2),
         );
 
         $exp  = "\n\e[1m\e[4mRequest";
@@ -266,7 +262,7 @@ class CgiRunnerTest extends TestCase
 
         $this->eventDispatcher->listen(
             'cgi.run.student-execute.pre',
-            new OutputRunInfoListener($output, new RequestRenderer())
+            new OutputRunInfoListener($output, new RequestRenderer()),
         );
 
         $this->exercise->setScenario((new CgiScenario())->withExecution($request1));

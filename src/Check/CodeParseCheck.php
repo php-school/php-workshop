@@ -20,9 +20,7 @@ use PhpSchool\PhpWorkshop\Result\Success;
  */
 class CodeParseCheck implements SimpleCheckInterface
 {
-    public function __construct(private Parser $parser)
-    {
-    }
+    public function __construct(private Parser $parser) {}
 
     /**
      * Return the check's name

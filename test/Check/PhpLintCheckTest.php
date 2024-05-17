@@ -4,9 +4,7 @@ namespace PhpSchool\PhpWorkshopTest\Check;
 
 use PhpSchool\PhpWorkshop\Check\SimpleCheckInterface;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseType;
-use PhpSchool\PhpWorkshop\ExerciseCheck\FunctionRequirementsExerciseCheck;
 use PhpSchool\PhpWorkshop\ExerciseRunner\Context\TestContext;
-use PhpSchool\PhpWorkshop\Input\Input;
 use PHPUnit\Framework\TestCase;
 use PhpSchool\PhpWorkshop\Check\PhpLintCheck;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
@@ -41,14 +39,14 @@ class PhpLintCheckTest extends TestCase
     {
         $context = TestContext::fromExerciseAndStudentSolution(
             $this->exercise,
-            __DIR__ . '/../res/lint/pass.php'
+            __DIR__ . '/../res/lint/pass.php',
         );
 
         $res = $this->check->check($context);
 
         $this->assertInstanceOf(
             Success::class,
-            $this->check->check($context)
+            $this->check->check($context),
         );
     }
 
@@ -56,7 +54,7 @@ class PhpLintCheckTest extends TestCase
     {
         $context = TestContext::fromExerciseAndStudentSolution(
             $this->exercise,
-            __DIR__ . '/../res/lint/fail.php'
+            __DIR__ . '/../res/lint/fail.php',
         );
 
         $failure = $this->check->check($context);
@@ -64,7 +62,7 @@ class PhpLintCheckTest extends TestCase
         $this->assertInstanceOf(Failure::class, $failure);
         $this->assertMatchesRegularExpression(
             "/(PHP )?Parse error:\W+syntax error, unexpected end of file, expecting ['\"][,;]['\"] or ['\"][;,]['\"]/",
-            $failure->getReason()
+            $failure->getReason(),
         );
     }
 }

@@ -22,8 +22,8 @@ class InvalidArgumentException extends \InvalidArgumentException
             sprintf(
                 'Expected: "%s" Received: "%s"',
                 $expected,
-                is_object($actual) ? get_class($actual) : gettype($actual)
-            )
+                is_object($actual) ? get_class($actual) : gettype($actual),
+            ),
         );
     }
 
@@ -42,8 +42,8 @@ class InvalidArgumentException extends \InvalidArgumentException
                 'Parameter: "%s" can only be one of: "%s" Received: "%s"',
                 $parameterName,
                 self::stringify($allowedValues),
-                self::stringify($actualValue)
-            )
+                self::stringify($actualValue),
+            ),
         );
     }
 
@@ -58,8 +58,8 @@ class InvalidArgumentException extends \InvalidArgumentException
             sprintf(
                 '"%s" is required to implement "%s", but it does not',
                 get_class($object),
-                $requiredInterface
-            )
+                $requiredInterface,
+            ),
         );
     }
 

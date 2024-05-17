@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace PhpSchool\PhpWorkshop\Listener;
 
-use PhpSchool\PhpWorkshop\Event\EventInterface;
 use PhpSchool\PhpWorkshop\Utils\System;
 use Symfony\Component\Filesystem\Filesystem;
 

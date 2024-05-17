@@ -65,7 +65,7 @@ class CgiResult implements ResultGroupInterface, IteratorAggregate
         return count(
             array_filter($this->results, function ($result) {
                 return $result instanceof FailureInterface;
-            })
+            }),
         ) === 0;
     }
 

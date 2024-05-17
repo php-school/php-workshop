@@ -2,15 +2,12 @@
 
 namespace PhpSchool\PhpWorkshopTest\Listener;
 
-use PhpSchool\PhpWorkshop\Event\Event;
 use PhpSchool\PhpWorkshop\Event\ExerciseRunnerEvent;
 use PhpSchool\PhpWorkshop\ExerciseRunner\Context\TestContext;
-use PhpSchool\PhpWorkshop\ExerciseRunner\Context\ExecutionContext;
 use PhpSchool\PhpWorkshop\Input\Input;
 use PhpSchool\PhpWorkshop\Listener\RealPathListener;
 use PhpSchool\PhpWorkshopTest\Asset\CliExerciseImpl;
 use PhpSchool\PhpWorkshopTest\BaseTest;
-use PHPUnit\Framework\TestCase;
 
 class RealPathListenerTest extends BaseTest
 {

@@ -8,11 +8,9 @@ use PhpSchool\PhpWorkshop\Check\SimpleCheckInterface;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseType;
 use PhpSchool\PhpWorkshop\ExerciseRunner\Context\TestContext;
-use PhpSchool\PhpWorkshop\Input\Input;
 use PhpSchool\PhpWorkshop\Result\Failure;
 use PhpSchool\PhpWorkshop\Result\Success;
 use PhpSchool\PhpWorkshop\Utils\Path;
-use PhpSchool\PhpWorkshopTest\BaseTest;
 use PHPUnit\Framework\TestCase;
 use Yoast\PHPUnitPolyfills\Polyfills\AssertionRenames;
 
@@ -51,10 +49,10 @@ class CodeParseCheckTest extends TestCase
             sprintf(
                 '|^File: "%s" could not be parsed\. Error: "|',
                 preg_quote(
-                    Path::join($context->getStudentExecutionDirectory(), 'solution.php')
-                )
+                    Path::join($context->getStudentExecutionDirectory(), 'solution.php'),
+                ),
             ),
-            $result->getReason()
+            $result->getReason(),
         );
     }
 

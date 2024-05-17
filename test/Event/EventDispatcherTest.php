@@ -144,11 +144,9 @@ class EventDispatcherTest extends TestCase
 
     public function testRemoveListener(): void
     {
-        $listener = function () {
-        };
+        $listener = function () {};
 
-        $listener2 = function () {
-        };
+        $listener2 = function () {};
 
         $this->eventDispatcher->listen('some-event', $listener);
         $this->eventDispatcher->listen('some-event', $listener2);
@@ -168,10 +166,8 @@ class EventDispatcherTest extends TestCase
     {
         $container = $this->createMock(ContainerInterface::class);
 
-        $myListener = new class {
-            public function __invoke()
-            {
-            }
+        $myListener = new class () {
+            public function __invoke() {}
         };
 
         $container->expects($this->any())
@@ -181,7 +177,7 @@ class EventDispatcherTest extends TestCase
 
         $lazy = new LazyContainerListener(
             $container,
-            new ContainerListenerHelper('my-listener')
+            new ContainerListenerHelper('my-listener'),
         );
 
         $this->eventDispatcher->listen('some-event', $lazy);
@@ -197,10 +193,8 @@ class EventDispatcherTest extends TestCase
     {
         $container = $this->createMock(ContainerInterface::class);
 
-        $myListener = new class {
-            public function myMethod()
-            {
-            }
+        $myListener = new class () {
+            public function myMethod() {}
         };
 
         $container->expects($this->any())
@@ -210,7 +204,7 @@ class EventDispatcherTest extends TestCase
 
         $lazy = new LazyContainerListener(
             $container,
-            new ContainerListenerHelper('my-listener', 'myMethod')
+            new ContainerListenerHelper('my-listener', 'myMethod'),
         );
 
         $this->eventDispatcher->listen('some-event', $lazy);

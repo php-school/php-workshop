@@ -5,7 +5,6 @@ namespace PhpSchool\PhpWorkshopTest\Check;
 use PhpSchool\PhpWorkshop\Check\SimpleCheckInterface;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseType;
 use PhpSchool\PhpWorkshop\ExerciseRunner\Context\TestContext;
-use PhpSchool\PhpWorkshop\Input\Input;
 use PhpSchool\PhpWorkshop\Utils\Path;
 use PHPUnit\Framework\TestCase;
 use PhpSchool\PhpWorkshop\Check\FileExistsCheck;
@@ -40,7 +39,7 @@ class FileExistsCheckTest extends TestCase
 
         $this->assertInstanceOf(
             Success::class,
-            $this->check->check($context)
+            $this->check->check($context),
         );
     }
 
@@ -53,9 +52,9 @@ class FileExistsCheckTest extends TestCase
         $this->assertEquals(
             sprintf(
                 'File: "%s" does not exist',
-                Path::join($context->getStudentExecutionDirectory(), 'solution.php')
+                Path::join($context->getStudentExecutionDirectory(), 'solution.php'),
             ),
-            $failure->getReason()
+            $failure->getReason(),
         );
     }
 }

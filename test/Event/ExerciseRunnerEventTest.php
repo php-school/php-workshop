@@ -3,10 +3,7 @@
 namespace PhpSchool\PhpWorkshopTest\Event;
 
 use PhpSchool\PhpWorkshop\Event\ExerciseRunnerEvent;
-use PhpSchool\PhpWorkshop\Exercise\Scenario\CliScenario;
 use PhpSchool\PhpWorkshop\ExerciseRunner\Context\TestContext;
-use PhpSchool\PhpWorkshop\Input\Input;
-use PhpSchool\PhpWorkshopTest\Asset\CliExerciseImpl;
 use PHPUnit\Framework\TestCase;
 
 class ExerciseRunnerEventTest extends TestCase
@@ -23,9 +20,9 @@ class ExerciseRunnerEventTest extends TestCase
             [
                 'exercise' => $context->getExercise(),
                 'input' => $context->getInput(),
-                'number' => 1
+                'number' => 1,
             ],
-            $event->getParameters()
+            $event->getParameters(),
         );
     }
 }

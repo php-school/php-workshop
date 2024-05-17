@@ -3,10 +3,7 @@
 namespace PhpSchool\PhpWorkshopTest\ExerciseRunner\Context;
 
 use PhpSchool\PhpWorkshop\Exercise\MockExercise;
-use PhpSchool\PhpWorkshop\Exercise\TemporaryDirectoryTrait;
 use PhpSchool\PhpWorkshop\ExerciseRunner\Context\TestContext;
-use PhpSchool\PhpWorkshop\Solution\DirectorySolution;
-use PhpSchool\PhpWorkshop\Utils\System;
 use PHPUnit\Framework\TestCase;
 
 class TestContextTest extends TestCase

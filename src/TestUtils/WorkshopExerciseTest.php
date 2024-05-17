@@ -13,7 +13,6 @@ use PhpSchool\PhpWorkshop\Exercise\ProvidesSolution;
 use PhpSchool\PhpWorkshop\ExerciseCheck\ComposerExerciseCheck;
 use PhpSchool\PhpWorkshop\ExerciseDispatcher;
 use PhpSchool\PhpWorkshop\ExerciseRepository;
-use PhpSchool\PhpWorkshop\Listener\PrepareSolutionListener;
 use PhpSchool\PhpWorkshop\Result\Cgi\CgiResult;
 use PhpSchool\PhpWorkshop\Result\Cli\CliResult;
 use PhpSchool\PhpWorkshop\Result\Failure;
@@ -21,7 +20,6 @@ use PhpSchool\PhpWorkshop\Result\FailureInterface;
 use PhpSchool\PhpWorkshop\Result\ResultGroupInterface;
 use PhpSchool\PhpWorkshop\Result\ResultInterface;
 use PhpSchool\PhpWorkshop\ResultAggregator;
-use PhpSchool\PhpWorkshop\Utils\ArrayObject;
 use PhpSchool\PhpWorkshop\Utils\Collection;
 use PhpSchool\PhpWorkshop\Utils\System;
 use PHPUnit\Framework\ExpectationFailedException;
@@ -83,7 +81,7 @@ abstract class WorkshopExerciseTest extends TestCase
             '%s/test/solutions/%s/%s',
             rtrim($this->container->get('basePath'), '/'),
             AbstractExercise::normaliseName($exercise->getName()),
-            $submissionFile
+            $submissionFile,
         );
 
         if (!file_exists($submissionFileAbsolute)) {
@@ -91,8 +89,8 @@ abstract class WorkshopExerciseTest extends TestCase
                 sprintf(
                     'Submission file "%s" does not exist in "%s"',
                     $submissionFile,
-                    dirname($submissionFileAbsolute)
-                )
+                    dirname($submissionFileAbsolute),
+                ),
             );
         }
 
@@ -101,7 +99,7 @@ abstract class WorkshopExerciseTest extends TestCase
         }
 
         $input = new Input($this->container->get('appName'), [
-            'program' => $submissionFileAbsolute
+            'program' => $submissionFileAbsolute,
         ]);
 
         $this->results = $this->container->get(ExerciseDispatcher::class)
@@ -120,7 +118,7 @@ abstract class WorkshopExerciseTest extends TestCase
 
             $process = new Process(
                 [$execFinder->find('composer'), 'install', '--no-interaction'],
-                $directory
+                $directory,
             );
             $process->mustRun();
         }
@@ -136,7 +134,7 @@ abstract class WorkshopExerciseTest extends TestCase
                 return sprintf(
                     '  * %s%s',
                     get_class($failure),
-                    $failure instanceof Failure ? ": {$failure->getReason()}" : ''
+                    $failure instanceof Failure ? ": {$failure->getReason()}" : '',
                 );
             });
 
@@ -175,7 +173,7 @@ abstract class WorkshopExerciseTest extends TestCase
                 return sprintf(
                     '  * %s%s',
                     get_class($failure),
-                    $failure instanceof Failure ? ": {$failure->getReason()}" : ''
+                    $failure instanceof Failure ? ": {$failure->getReason()}" : '',
                 );
             });
 
@@ -246,7 +244,7 @@ abstract class WorkshopExerciseTest extends TestCase
             '%s/test/solutions/%s/%s',
             rtrim($this->container->get('basePath'), '/'),
             AbstractExercise::normaliseName($this->getExercise()->getName()),
-            $file
+            $file,
         );
 
         (new Filesystem())->remove($path);

@@ -73,7 +73,7 @@ class ExerciseRendererTest extends TestCase
 
         $markdownRenderer = new MarkdownRenderer(
             new DocParser(Environment::createCommonMarkEnvironment()),
-            (new CliRendererFactory())->__invoke()
+            (new CliRendererFactory())->__invoke(),
         );
 
         $color = new Color();
@@ -86,7 +86,7 @@ class ExerciseRendererTest extends TestCase
             $userStateSerializer,
             $markdownRenderer,
             $color,
-            new StdOutput($color, $this->createMock(Terminal::class))
+            new StdOutput($color, $this->createMock(Terminal::class)),
         );
 
         $this->expectOutputString(file_get_contents(__DIR__ . '/res/exercise-help-expected.txt'));

@@ -29,8 +29,8 @@ class MissingArgumentException extends RuntimeException
             sprintf(
                 'Command: "%s" is missing the following arguments: "%s"',
                 $commandName,
-                implode('", "', $missingArguments)
-            )
+                implode('", "', $missingArguments),
+            ),
         );
     }
 

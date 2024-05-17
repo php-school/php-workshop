@@ -59,7 +59,7 @@ class RunnerManager
         }
 
         throw new InvalidArgumentException(
-            sprintf('Exercise Type: "%s" not supported', $exercise->getType()->getValue())
+            sprintf('Exercise Type: "%s" not supported', $exercise->getType()->getValue()),
         );
     }
 }

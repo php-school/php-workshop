@@ -4,10 +4,8 @@ declare(strict_types=1);
 
 namespace PhpSchool\PhpWorkshop\Event;
 
-use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpSchool\PhpWorkshop\Exercise\Scenario\CliScenario;
 use PhpSchool\PhpWorkshop\ExerciseRunner\Context\ExecutionContext;
-use PhpSchool\PhpWorkshop\Input\Input;
 use PhpSchool\PhpWorkshop\Utils\Collection;
 
 /**
@@ -31,7 +29,7 @@ class CliExecuteEvent extends CliExerciseRunnerEvent
         ExecutionContext $context,
         CliScenario $scenario,
         Collection $args,
-        array $parameters = []
+        array $parameters = [],
     ) {
         $parameters['args'] = $args;
         parent::__construct($name, $context, $scenario, $parameters);

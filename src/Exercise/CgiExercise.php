@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace PhpSchool\PhpWorkshop\Exercise;
 
 use PhpSchool\PhpWorkshop\Exercise\Scenario\CgiScenario;
-use Psr\Http\Message\RequestInterface;
 
 /**
  * This interface describes the additional methods a CGI type exercise should implement.

@@ -37,9 +37,7 @@ class CustomVerifyingRunnerFactory implements ExerciseRunnerFactoryInterface
      *
      * @param CommandDefinition $commandDefinition
      */
-    public function configureInput(CommandDefinition $commandDefinition): void
-    {
-    }
+    public function configureInput(CommandDefinition $commandDefinition): void {}
 
     /**
      * Create and return an instance of the runner.

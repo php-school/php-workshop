@@ -22,14 +22,14 @@ class CreditsCommandTest extends TestCase
                 '@AydinHassan' => 'Aydin Hassan',
                 '@mikeymike'   => 'Michael Woodward',
                 '@shakeyShane' => 'Shane Osbourne',
-                '@chris3ailey' => 'Chris Bailey'
+                '@chris3ailey' => 'Chris Bailey',
             ],
             [
                 '@AydinHassan' => 'Aydin Hassan',
                 '@mikeymike'   => 'Michael Woodward',
             ],
             new StdOutput($color, $this->createMock(Terminal::class)),
-            $color
+            $color,
         );
 
         $command->__invoke();
@@ -47,11 +47,11 @@ class CreditsCommandTest extends TestCase
                 '@AydinHassan' => 'Aydin Hassan',
                 '@mikeymike'   => 'Michael Woodward',
                 '@shakeyShane' => 'Shane Osbourne',
-                '@chris3ailey' => 'Chris Bailey'
+                '@chris3ailey' => 'Chris Bailey',
             ],
             [],
             new StdOutput($color, $this->createMock(Terminal::class)),
-            $color
+            $color,
         );
 
         $command->__invoke();
@@ -68,7 +68,7 @@ class CreditsCommandTest extends TestCase
             [],
             [],
             new StdOutput($color, $this->createMock(Terminal::class)),
-            $color
+            $color,
         );
 
         $command->__invoke();

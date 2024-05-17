@@ -23,8 +23,8 @@ class CodeExecutionException extends RuntimeException
         return new self(
             sprintf(
                 'PHP Code failed to execute. Error: "%s"',
-                trim($process->getErrorOutput() ?: $process->getOutput())
-            )
+                trim($process->getErrorOutput() ?: $process->getOutput()),
+            ),
         );
     }
 }

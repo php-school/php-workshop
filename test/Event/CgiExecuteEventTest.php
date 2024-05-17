@@ -4,11 +4,8 @@ namespace PhpSchool\PhpWorkshopTest\Event;
 
 use GuzzleHttp\Psr7\Request;
 use PhpSchool\PhpWorkshop\Event\CgiExecuteEvent;
-use PhpSchool\PhpWorkshop\Exercise\MockExercise;
 use PhpSchool\PhpWorkshop\Exercise\Scenario\CgiScenario;
-use PhpSchool\PhpWorkshop\ExerciseRunner\Context\ExecutionContext;
 use PhpSchool\PhpWorkshop\ExerciseRunner\Context\TestContext;
-use PhpSchool\PhpWorkshop\Input\Input;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\RequestInterface;
 
@@ -28,7 +25,7 @@ class CgiExecuteEventTest extends TestCase
                 'Host' => ['some.site'],
                 'Content-Type' => ['text/html'],
             ],
-            $e->getRequest()->getHeaders()
+            $e->getRequest()->getHeaders(),
         );
         $this->assertNotSame($request, $e->getRequest());
     }
@@ -51,7 +48,7 @@ class CgiExecuteEventTest extends TestCase
                 'Host' => ['some.site'],
                 'Content-Type' => ['text/html'],
             ],
-            $e->getRequest()->getHeaders()
+            $e->getRequest()->getHeaders(),
         );
         $this->assertSame('POST', $e->getRequest()->getMethod());
         $this->assertNotSame($request, $e->getRequest());

@@ -15,9 +15,7 @@ use PhpSchool\PhpWorkshop\Result\ResultInterface;
  */
 class CustomVerifyingRunner implements ExerciseRunnerInterface
 {
-    public function __construct(private CustomVerifyingExercise $exercise)
-    {
-    }
+    public function __construct(private CustomVerifyingExercise $exercise) {}
 
     /**
      * Get the name of the exercise runner.

@@ -67,7 +67,7 @@ class FailureTest extends TestCase
         $this->assertInstanceOf(ResultInterface::class, $failure);
         $this->assertEquals(
             'File: "exercise.php" could not be parsed. Error: "Something went wrong yo on unknown line"',
-            $failure->getReason()
+            $failure->getReason(),
         );
         $this->assertEquals('Some Check', $failure->getCheckName());
     }

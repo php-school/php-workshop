@@ -20,7 +20,7 @@ class CurrentContext
             throw InvalidArgumentException::notValidParameter(
                 'context',
                 [self::CONTEXT_CLI, self::CONTEXT_CLOUD],
-                $context
+                $context,
             );
         }
         $this->context = $context;

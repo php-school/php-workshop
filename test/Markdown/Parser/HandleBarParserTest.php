@@ -46,7 +46,7 @@ class HandleBarParserTest extends TestCase
             ['{{cloud wut}}'],
             ['{{ cloud wut}}'],
             ['{{ cloud wut }}'],
-            ['{{ cloud wut }}']
+            ['{{ cloud wut }}'],
         ];
     }
 
@@ -69,7 +69,7 @@ class HandleBarParserTest extends TestCase
                 true,
                 true,
                 true,
-                ['appendChild']
+                ['appendChild'],
             );
             $container->expects($this->once())
                 ->method('appendChild')
@@ -83,7 +83,7 @@ class HandleBarParserTest extends TestCase
             $context->expects($this->never())->method('getContainer');
         }
 
-        $shorthand = new class implements ShorthandInterface {
+        $shorthand = new class () implements ShorthandInterface {
             public $args = [];
             public function __invoke(array $callArgs): array
             {
@@ -127,7 +127,7 @@ class HandleBarParserTest extends TestCase
             [
                 '{{ test   "argument 1"   \'a really long argument two\' arg3}}',
                 true,
-                ['argument 1', 'a really long argument two', 'arg3']
+                ['argument 1', 'a really long argument two', 'arg3'],
             ],
         ];
     }
@@ -147,7 +147,7 @@ class HandleBarParserTest extends TestCase
             true,
             true,
             true,
-            ['appendChild']
+            ['appendChild'],
         );
         $container->expects($this->once())
             ->method('appendChild')

@@ -3,19 +3,13 @@
 namespace PhpSchool\PhpWorkshopTest\Listener;
 
 use PhpSchool\PhpWorkshop\Event\ExerciseRunnerEvent;
-use PhpSchool\PhpWorkshop\Exercise\CliExercise;
-use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpSchool\PhpWorkshop\ExerciseRunner\Context\TestContext;
-use PhpSchool\PhpWorkshop\Input\Input;
 use PhpSchool\PhpWorkshop\Listener\PrepareSolutionListener;
 use PhpSchool\PhpWorkshop\Process\HostProcessFactory;
 use PhpSchool\PhpWorkshop\Process\ProcessNotFoundException;
 use PhpSchool\PhpWorkshop\Solution\SolutionInterface;
 use PhpSchool\PhpWorkshopTest\Asset\CliExerciseImpl;
 use PHPUnit\Framework\TestCase;
-use ReflectionProperty;
-use RuntimeException;
-use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Process\ExecutableFinder;
 use Yoast\PHPUnitPolyfills\Polyfills\AssertionRenames;
 
@@ -78,10 +72,10 @@ class PrepareSolutionListenerTest extends TestCase
         $context->importReferenceFileFromString(
             json_encode([
                 'require' => [
-                    'phpunit/phpunit' => '~5.0'
+                    'phpunit/phpunit' => '~5.0',
                 ],
             ]),
-            'composer.json'
+            'composer.json',
         );
 
         $solution = $this->createMock(SolutionInterface::class);
@@ -113,10 +107,10 @@ class PrepareSolutionListenerTest extends TestCase
         $context->importReferenceFileFromString(
             json_encode([
                 'require' => [
-                    'phpunit/phpunit' => '1.0'
+                    'phpunit/phpunit' => '1.0',
                 ],
             ]),
-            'composer.json'
+            'composer.json',
         );
 
         $solution = $this->createMock(SolutionInterface::class);

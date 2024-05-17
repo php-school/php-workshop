@@ -8,14 +8,10 @@ use PhpSchool\PhpWorkshop\Check\CheckRepository;
 use PhpSchool\PhpWorkshop\Check\DatabaseCheck;
 use PhpSchool\PhpWorkshop\Event\EventDispatcher;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
-use PhpSchool\PhpWorkshop\Exercise\ExerciseType;
 use PhpSchool\PhpWorkshop\Exercise\Scenario\CliScenario;
 use PhpSchool\PhpWorkshop\ExerciseCheck\DatabaseExerciseCheck;
 use PhpSchool\PhpWorkshop\ExerciseDispatcher;
 use PhpSchool\PhpWorkshop\ExerciseRunner\CliRunner;
-use PhpSchool\PhpWorkshop\ExerciseRunner\Context\ExecutionContextFactory;
-use PhpSchool\PhpWorkshop\ExerciseRunner\Context\StaticExecutionContextFactory;
-use PhpSchool\PhpWorkshop\ExerciseRunner\Context\TestContext;
 use PhpSchool\PhpWorkshop\ExerciseRunner\EnvironmentManager;
 use PhpSchool\PhpWorkshop\ExerciseRunner\RunnerManager;
 use PhpSchool\PhpWorkshop\Input\Input;
@@ -49,7 +45,7 @@ class DatabaseCheckTest extends TestCase
         $this->exercise = new DatabaseExercise();
         $this->dbDir = sprintf(
             '%s/php-school/PhpSchool_PhpWorkshop_Check_DatabaseCheck',
-            str_replace('\\', '/', realpath(sys_get_temp_dir()))
+            str_replace('\\', '/', realpath(sys_get_temp_dir())),
         );
     }
 
@@ -114,7 +110,7 @@ class DatabaseCheckTest extends TestCase
         $solution = SingleFileSolution::fromFile(realpath(__DIR__ . '/../res/database/solution.php'));
         $this->exercise->setSolution($solution);
         $this->exercise->setScenario((new CliScenario())->withExecution([1, 2, 3]));
-        $this->exercise->setVerifier(fn () => true);
+        $this->exercise->setVerifier(fn() => true);
 
         $this->checkRepository->registerCheck($this->check);
 
@@ -137,7 +133,7 @@ class DatabaseCheckTest extends TestCase
         $this->exercise->setSolution($solution);
         $this->exercise->setScenario((new CliScenario())->withExecution([1, 2, 3]));
 
-        $this->exercise->setVerifier(fn () => true);
+        $this->exercise->setVerifier(fn() => true);
         $this->checkRepository->registerCheck($this->check);
 
         $results            = new ResultAggregator();
@@ -170,7 +166,7 @@ class DatabaseCheckTest extends TestCase
         $dispatcher->run(
             $this->exercise,
             new Input('app', ['program' => __DIR__ . '/../res/database/user-solution-alter-db.php']),
-            $this->createMock(OutputInterface::class)
+            $this->createMock(OutputInterface::class),
         );
     }
 
@@ -179,7 +175,7 @@ class DatabaseCheckTest extends TestCase
         $solution = SingleFileSolution::fromFile(realpath(__DIR__ . '/../res/database/solution.php'));
         $this->exercise->setSolution($solution);
         $this->exercise->setScenario((new CliScenario())->withExecution([1, 2, 3]));
-        $this->exercise->setVerifier(fn () => false);
+        $this->exercise->setVerifier(fn() => false);
 
         $this->checkRepository->registerCheck($this->check);
 
@@ -215,7 +211,7 @@ class DatabaseCheckTest extends TestCase
                     ['id' => 1, 'name' => 'Jimi Hendrix', 'age' => '27', 'gender' => 'Male'],
                     ['id' => 2, 'name' => 'Kurt Cobain', 'age' => '27', 'gender' => 'Male'],
                 ],
-                $users
+                $users,
             );
 
             return true;
@@ -223,7 +219,7 @@ class DatabaseCheckTest extends TestCase
 
         $this->exercise->setSeeder(function (PDO $db) {
             $db->exec(
-                'CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY, name TEXT, age INTEGER, gender TEXT)'
+                'CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY, name TEXT, age INTEGER, gender TEXT)',
             );
             $stmt = $db->prepare('INSERT into users (name, age, gender) VALUES (:name, :age, :gender)');
             $stmt->execute([':name' => 'Jimi Hendrix', ':age' => 27, ':gender' => 'Male']);
@@ -242,7 +238,7 @@ class DatabaseCheckTest extends TestCase
 
         $dispatcher->verify(
             $this->exercise,
-            new Input('app', ['program' => __DIR__ . '/../res/database/user-solution-alter-db.php'])
+            new Input('app', ['program' => __DIR__ . '/../res/database/user-solution-alter-db.php']),
         );
     }
 

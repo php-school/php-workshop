@@ -38,7 +38,7 @@ class ConfigureCommandListener
     public function __construct(
         UserState $userState,
         ExerciseRepository $exerciseRepository,
-        RunnerManager $runnerManager
+        RunnerManager $runnerManager,
     ) {
         $this->userState = $userState;
         $this->exerciseRepository = $exerciseRepository;
@@ -58,7 +58,7 @@ class ConfigureCommandListener
         }
 
         $currentExercise = $this->exerciseRepository->findByName(
-            $this->userState->getCurrentExercise()
+            $this->userState->getCurrentExercise(),
         );
 
         $this->runnerManager->configureInput($currentExercise, $command);

@@ -50,7 +50,7 @@ class DirectorySolution implements SolutionInterface
             new RecursiveCallbackFilterIterator($dir, function (SplFileInfo $current) use ($exclusions) {
                 return !in_array($current->getBasename(), $exclusions, true);
             }),
-            RecursiveIteratorIterator::SELF_FIRST
+            RecursiveIteratorIterator::SELF_FIRST,
         );
 
         $files = [];
@@ -64,7 +64,7 @@ class DirectorySolution implements SolutionInterface
 
         if (!in_array($entryPoint, $files, true)) {
             throw new InvalidArgumentException(
-                sprintf('Entry point: "%s" does not exist in: "%s"', $entryPoint, $directory)
+                sprintf('Entry point: "%s" does not exist in: "%s"', $entryPoint, $directory),
             );
         }
 

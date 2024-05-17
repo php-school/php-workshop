@@ -29,13 +29,13 @@ class CliResultRendererTest extends AbstractResultRendererTest
             RequestFailureRenderer::class,
             function (RequestFailure $failure) use ($failureRenderer) {
                 return $failureRenderer;
-            }
+            },
         );
 
         $failure = new RequestFailure(
             new ArrayObject(),
             'EXPECTED OUTPUT',
-            'ACTUAL OUTPUT'
+            'ACTUAL OUTPUT',
         );
         $result = new CliResult([$failure]);
         $renderer = new CliResultRenderer($result);
@@ -59,13 +59,13 @@ class CliResultRendererTest extends AbstractResultRendererTest
             RequestFailureRenderer::class,
             function (RequestFailure $failure) use ($failureRenderer) {
                 return $failureRenderer;
-            }
+            },
         );
 
         $failure = new RequestFailure(
             new ArrayObject(['one', 'two', 'three']),
             'EXPECTED OUTPUT',
-            'ACTUAL OUTPUT'
+            'ACTUAL OUTPUT',
         );
         $result = new CliResult([$failure]);
         $renderer = new CliResultRenderer($result);

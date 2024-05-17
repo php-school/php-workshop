@@ -14,10 +14,7 @@ use PhpSchool\PhpWorkshop\Output\NullOutput;
 use PhpSchool\PhpWorkshop\Output\OutputInterface;
 use PhpSchool\PhpWorkshopTest\Asset\MockEventDispatcher;
 use Psr\Log\LoggerInterface;
-use Psr\Log\NullLogger;
 use PhpSchool\PhpWorkshop\Logger\ConsoleLogger;
-use PhpSchool\PhpWorkshop\Logger\Logger;
-use PHPUnit\Framework\TestCase;
 
 class ApplicationTest extends BaseTest
 {
@@ -66,9 +63,9 @@ LOCAL;
                     'entry1',
                     'entry2',
                     'entry3',
-                ]
+                ],
             ],
-            $eventListeners
+            $eventListeners,
         );
     }
 
@@ -139,8 +136,8 @@ LOCAL;
                     static function () use ($exception) {
                         throw $exception;
                     },
-                ]
-            ]
+                ],
+            ],
         ]);
 
         $commandRouter = $container->get(CommandRouter::class);

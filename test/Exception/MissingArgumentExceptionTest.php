@@ -12,7 +12,7 @@ class MissingArgumentExceptionTest extends TestCase
         $e = new MissingArgumentException('some-route', ['arg1', 'arg2']);
         $this->assertEquals(
             'Command: "some-route" is missing the following arguments: "arg1", "arg2"',
-            $e->getMessage()
+            $e->getMessage(),
         );
 
         $this->assertSame(['arg1', 'arg2'], $e->getMissingArguments());

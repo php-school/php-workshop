@@ -43,7 +43,7 @@ class ComposerFailure implements FailureInterface
             throw InvalidArgumentException::notValidParameter(
                 'missingComponent',
                 self::$validComponents,
-                $missingComponent
+                $missingComponent,
             );
         }
         $this->missingComponent = $missingComponent;
@@ -99,7 +99,7 @@ class ComposerFailure implements FailureInterface
             'is_missing_component' => $this->isMissingComponent(),
             'is_missing_packages' => $this->isMissingPackages(),
             'missing_component' => $this->getMissingComponent(),
-            'missing_packages' => $this->getMissingPackages()
+            'missing_packages' => $this->getMissingPackages(),
         ];
     }
 }

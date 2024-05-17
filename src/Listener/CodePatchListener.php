@@ -10,7 +10,6 @@ use PhpSchool\PhpWorkshop\Event\ExerciseRunnerEvent;
 use PhpSchool\PhpWorkshop\Exercise\ProvidesSolution;
 use PhpSchool\PhpWorkshop\Utils\Path;
 use Psr\Log\LoggerInterface;
-use RuntimeException;
 
 /**
  * Listener which patches internal and student's solutions
@@ -60,7 +59,7 @@ class CodePatchListener
         if ($exercise instanceof ProvidesSolution) {
             $files[] = Path::join(
                 $event->getContext()->getReferenceExecutionDirectory(),
-                $exercise->getSolution()->getEntryPoint()->getRelativePath()
+                $exercise->getSolution()->getEntryPoint()->getRelativePath(),
             );
         }
 
@@ -71,7 +70,7 @@ class CodePatchListener
 
             file_put_contents(
                 $fileName,
-                $this->codePatcher->patch($event->getExercise(), $this->originalCode[$fileName])
+                $this->codePatcher->patch($event->getExercise(), $this->originalCode[$fileName]),
             );
         }
     }

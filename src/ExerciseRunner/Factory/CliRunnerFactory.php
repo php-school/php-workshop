@@ -25,9 +25,7 @@ class CliRunnerFactory implements ExerciseRunnerFactoryInterface
      */
     private static string $type = ExerciseType::CLI;
 
-    public function __construct(private EventDispatcher $eventDispatcher, private ProcessFactory $processFactory, private EnvironmentManager $environmentManager)
-    {
-    }
+    public function __construct(private EventDispatcher $eventDispatcher, private ProcessFactory $processFactory, private EnvironmentManager $environmentManager) {}
 
     /**
      * Whether the factory supports this exercise type.
