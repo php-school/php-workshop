@@ -6,6 +6,7 @@ namespace PhpSchool\PhpWorkshop\Check;
 
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseType;
+use PhpSchool\PhpWorkshop\ExerciseRunner\Context\ExecutionContext;
 use PhpSchool\PhpWorkshop\Input\Input;
 use PhpSchool\PhpWorkshop\Result\Failure;
 use PhpSchool\PhpWorkshop\Result\ResultInterface;
@@ -27,19 +28,18 @@ class FileExistsCheck implements SimpleCheckInterface
     /**
      * Simply check that the file exists.
      *
-     * @param ExerciseInterface $exercise The exercise to check against.
-     * @param Input $input The command line arguments passed to the command.
+     * @param ExecutionContext $context The current execution context, containing the exercise, input and working directories.
      * @return ResultInterface The result of the check.
      */
-    public function check(ExerciseInterface $exercise, Input $input): ResultInterface
+    public function check(ExecutionContext $context): ResultInterface
     {
-        if (file_exists($input->getRequiredArgument('program'))) {
+        if (file_exists($context->getEntryPoint())) {
             return Success::fromCheck($this);
         }
 
         return Failure::fromCheckAndReason(
             $this,
-            sprintf('File: "%s" does not exist', $input->getRequiredArgument('program'))
+            sprintf('File: "%s" does not exist', $context->getEntryPoint())
         );
     }
 

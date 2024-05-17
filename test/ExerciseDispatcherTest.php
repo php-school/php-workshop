@@ -219,7 +219,9 @@ class ExerciseDispatcherTest extends TestCase
         $check->method('canRun')->with($exercise->getType())->willReturn(true);
         $check->method('getPosition')->willReturn(SimpleCheckInterface::CHECK_BEFORE);
         $check->method('getExerciseInterface')->willReturn(ExerciseInterface::class);
-        $check->method('check')->with($exercise, $input)->willReturn(new Success('Success!'));
+        $check->method('check')
+            ->with($this->isInstanceOf(ExecutionContext::class))
+            ->willReturn(new Success('Success!'));
 
         $runner = $this->createMock(ExerciseRunnerInterface::class);
         $runner->method('getRequiredChecks')->willReturn([get_class($check)]);
@@ -263,7 +265,7 @@ class ExerciseDispatcherTest extends TestCase
 
         $check1
             ->method('check')
-            ->with($exercise, $input)
+            ->with($this->isInstanceOf(ExecutionContext::class))
             ->willReturn(new Success('Success!'));
 
         $check2 = $this
@@ -274,7 +276,7 @@ class ExerciseDispatcherTest extends TestCase
         $check2
             ->expects($this->never())
             ->method('check')
-            ->with($exercise, $input);
+            ->with($this->isInstanceOf(ExecutionContext::class));
 
         $runner = $this->createMock(ExerciseRunnerInterface::class);
         $runner
@@ -313,13 +315,17 @@ class ExerciseDispatcherTest extends TestCase
         $check1->method('canRun')->with($exercise->getType())->willReturn(true);
         $check1->method('getPosition')->willReturn(SimpleCheckInterface::CHECK_BEFORE);
         $check1->method('getExerciseInterface')->willReturn(ExerciseInterface::class);
-        $check1->method('check')->with($exercise, $input)->willReturn(new Success('Success!'));
+        $check1->method('check')
+            ->with($this->isInstanceOf(ExecutionContext::class))
+            ->willReturn(new Success('Success!'));
 
         $check2 = $this->createMock(SimpleCheckInterface::class);
         $check2->method('canRun')->with($exercise->getType())->willReturn(true);
         $check2->method('getPosition')->willReturn(SimpleCheckInterface::CHECK_AFTER);
         $check2->method('getExerciseInterface')->willReturn(ExerciseInterface::class);
-        $check2->method('check')->with($exercise, $input)->willReturn(new Success('Success!'));
+        $check2->method('check')
+            ->with($this->isInstanceOf(ExecutionContext::class))
+            ->willReturn(new Success('Success!'));
 
         $runner = $this->createMock(ExerciseRunnerInterface::class);
         $runner->method('getRequiredChecks')->willReturn([get_class($check1), get_class($check2)]);
@@ -365,7 +371,7 @@ class ExerciseDispatcherTest extends TestCase
 
         $check1
             ->method('check')
-            ->with($exercise, $input)
+            ->with($this->isInstanceOf(ExecutionContext::class))
             ->willReturn(new Failure('Failure', 'nope'));
 
         $check2 = $this
@@ -388,7 +394,7 @@ class ExerciseDispatcherTest extends TestCase
         $check2
             ->expects($this->never())
             ->method('check')
-            ->with($exercise, $input);
+            ->with($this->isInstanceOf(ExecutionContext::class));
 
         $runner = $this->createMock(ExerciseRunnerInterface::class);
         $runner
