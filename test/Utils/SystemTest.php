@@ -33,4 +33,9 @@ class SystemTest extends TestCase
         $expect = sprintf('%s/php-school/%s', realpath(sys_get_temp_dir()), 'test');
         self::assertSame($expect, System::tempDir('test'));
     }
+
+    public function testRandomTempDir(): void
+    {
+        self::assertTrue(str_starts_with(System::randomTempDir(), realpath(sys_get_temp_dir()) . '/php-school'));
+    }
 }
