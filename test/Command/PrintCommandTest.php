@@ -3,9 +3,8 @@
 namespace PhpSchool\PhpWorkshopTest\Command;
 
 use PhpSchool\PhpWorkshop\Command\PrintCommand;
-use PhpSchool\PhpWorkshop\Exercise\ExerciseType;
 use PhpSchool\PhpWorkshop\UserState\UserState;
-use PhpSchool\PhpWorkshopTest\Asset\CliExerciseInterface;
+use PhpSchool\PhpWorkshopTest\Asset\CliExerciseImpl;
 use PHPUnit\Framework\TestCase;
 use PhpSchool\PhpWorkshop\ExerciseRepository;
 use PhpSchool\PhpWorkshop\MarkdownRenderer;
@@ -18,23 +17,13 @@ class PrintCommandTest extends TestCase
         $file = tempnam(sys_get_temp_dir(), 'pws');
         file_put_contents($file, '### Exercise 1');
 
-        $exercise = $this->createMock(CliExerciseInterface::class);
-        $exercise
-            ->method('getProblem')
-            ->willReturn($file);
-
-        $exercise
-            ->method('getType')
-            ->willReturn(ExerciseType::CLI());
-
-        $exercise
-            ->method('getName')
-            ->willReturn('some-exercise');
+        $exercise = new CliExerciseImpl();
+        $exercise->setProblem($file);
 
         $repo = new ExerciseRepository([$exercise]);
 
         $state = new UserState();
-        $state->setCurrentExercise('some-exercise');
+        $state->setCurrentExercise('my-exercise');
 
         $output = $this->createMock(OutputInterface::class);
         $renderer = $this->createMock(MarkdownRenderer::class);

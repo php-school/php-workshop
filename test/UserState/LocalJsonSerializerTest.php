@@ -8,7 +8,7 @@ use PhpSchool\PhpWorkshop\UserState\LocalJsonSerializer;
 use PhpSchool\PhpWorkshop\UserState\UserState;
 use PhpSchool\PhpWorkshop\Utils\Path;
 use PhpSchool\PhpWorkshop\Utils\System;
-use PhpSchool\PhpWorkshopTest\Asset\CliExerciseInterface;
+use PhpSchool\PhpWorkshopTest\Asset\CliExerciseImpl;
 use PhpSchool\PhpWorkshopTest\BaseTest;
 use Yoast\PHPUnitPolyfills\Polyfills\AssertionRenames;
 
@@ -16,25 +16,10 @@ class LocalJsonSerializerTest extends BaseTest
 {
     use AssertionRenames;
 
-    /**
-     * @var string
-     */
-    private $tmpDir;
-
-    /**
-     * @var string
-     */
-    private $tmpFile;
-
-    /**
-     * @var string
-     */
-    private $workshopName = 'My Workshop';
-
-    /**
-     * @var ExerciseRepository
-     */
-    private $exerciseRepository;
+    private string $tmpDir;
+    private string $tmpFile;
+    private string $workshopName = 'My Workshop';
+    private ExerciseRepository $exerciseRepository;
 
     public function setUp(): void
     {
@@ -201,12 +186,8 @@ class LocalJsonSerializerTest extends BaseTest
 
     public function testOldDataWillBeMigratedWhenInCorrectWorkshop(): void
     {
-        $exercise1 = $this->createMock(CliExerciseInterface::class);
-        $exercise2 = $this->createMock(CliExerciseInterface::class);
-        $exercise1->method('getType')->willReturn(ExerciseType::CLI());
-        $exercise2->method('getType')->willReturn(ExerciseType::CLI());
-        $exercise1->method('getName')->willReturn('Exercise 1');
-        $exercise2->method('getName')->willReturn('Exercise 2');
+        $exercise1 = new CliExerciseImpl('Exercise 1');
+        $exercise2 = new CliExerciseImpl('Exercise 2');
 
         $oldData = [
             'current_exercise' => 'Exercise 3',
@@ -246,12 +227,8 @@ class LocalJsonSerializerTest extends BaseTest
 
     public function testOldDataWillNotBeMigratedWhenNotInCorrectWorkshop(): void
     {
-        $exercise1 = $this->createMock(CliExerciseInterface::class);
-        $exercise2 = $this->createMock(CliExerciseInterface::class);
-        $exercise1->method('getType')->willReturn(ExerciseType::CLI());
-        $exercise2->method('getType')->willReturn(ExerciseType::CLI());
-        $exercise1->method('getName')->willReturn('Exercise 1');
-        $exercise2->method('getName')->willReturn('Exercise 2');
+        $exercise1 = new CliExerciseImpl('Exercise 1');
+        $exercise2 = new CliExerciseImpl('Exercise 2');
 
         $exercises = [
             $exercise1,
@@ -279,12 +256,8 @@ class LocalJsonSerializerTest extends BaseTest
 
     public function testOldDataWillNotBeMigratedWhenNotInCorrectWorkshopWithOtherWorkshop(): void
     {
-        $exercise1 = $this->createMock(CliExerciseInterface::class);
-        $exercise2 = $this->createMock(CliExerciseInterface::class);
-        $exercise1->method('getType')->willReturn(ExerciseType::CLI());
-        $exercise2->method('getType')->willReturn(ExerciseType::CLI());
-        $exercise1->method('getName')->willReturn('Exercise 1');
-        $exercise2->method('getName')->willReturn('Exercise 2');
+        $exercise1 = new CliExerciseImpl('Exercise 1');
+        $exercise2 = new CliExerciseImpl('Exercise 2');
 
         $oldData = [
             'current_exercise' => 'Exercise 3',
