@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace PhpSchool\PhpWorkshop\Check;
 
-use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseType;
+use PhpSchool\PhpWorkshop\ExerciseRunner\Context\ExecutionContext;
 use PhpSchool\PhpWorkshop\Input\Input;
 use PhpSchool\PhpWorkshop\Result\ResultInterface;
 
@@ -46,11 +46,10 @@ interface SimpleCheckInterface extends CheckInterface
      * successful then an instance of `PhpSchool\PhpWorkshop\Result\FailureInterface`
      * should be returned.
      *
-     * @param ExerciseInterface $exercise The exercise to check against.
-     * @param Input $input The command line arguments passed to the command.
+     * @param ExecutionContext $context The current execution context, containing the exercise, input and working directories.
      * @return ResultInterface The result of the check.
      */
-    public function check(ExerciseInterface $exercise, Input $input): ResultInterface;
+    public function check(ExecutionContext $context): ResultInterface;
 
     /**
      * Either `static::CHECK_BEFORE` | `static::CHECK_AFTER`.

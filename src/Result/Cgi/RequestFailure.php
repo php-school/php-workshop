@@ -49,7 +49,7 @@ class RequestFailure implements FailureInterface
         string $expectedOutput,
         string $actualOutput,
         array $expectedHeaders,
-        array $actualHeaders
+        array $actualHeaders,
     ) {
         $this->request = $request;
         $this->expectedOutput = $expectedOutput;

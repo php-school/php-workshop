@@ -4,9 +4,7 @@ declare(strict_types=1);
 
 namespace PhpSchool\PhpWorkshop\Exercise;
 
-use PhpSchool\PhpWorkshop\Check\FileComparisonCheck;
 use PhpSchool\PhpWorkshop\Event\EventDispatcher;
-use PhpSchool\PhpWorkshop\ExerciseDispatcher;
 use PhpSchool\PhpWorkshop\Solution\SingleFileSolution;
 use PhpSchool\PhpWorkshop\Solution\SolutionInterface;
 use ReflectionClass;
@@ -41,9 +39,9 @@ abstract class AbstractExercise
                 sprintf(
                     '%s/../../exercises/%s/solution/solution.php',
                     dirname((string) (new ReflectionClass(static::class))->getFileName()),
-                    self::normaliseName($this->getName())
-                )
-            )
+                    self::normaliseName($this->getName()),
+                ),
+            ),
         );
     }
 
@@ -66,9 +64,7 @@ abstract class AbstractExercise
      *
      * @return void
      */
-    public function tearDown(): void
-    {
-    }
+    public function tearDown(): void {}
 
     /**
      * @param string $name
@@ -87,7 +83,5 @@ abstract class AbstractExercise
         return [];
     }
 
-    public function defineListeners(EventDispatcher $dispatcher): void
-    {
-    }
+    public function defineListeners(EventDispatcher $dispatcher): void {}
 }

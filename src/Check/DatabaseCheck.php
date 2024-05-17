@@ -25,30 +25,11 @@ class DatabaseCheck implements ListenableCheckInterface
 {
     use TemporaryDirectoryTrait;
 
-    /**
-     * @var string
-     */
-    private $databaseDirectory;
-
-    /**
-     * @var string
-     */
-    private $userDatabasePath;
-
-    /**
-     * @var string
-     */
-    private $solutionDatabasePath;
-
-    /**
-     * @var string
-     */
-    private $userDsn;
-
-    /**
-     * @var string
-     */
-    private $solutionDsn;
+    private string $databaseDirectory;
+    private string $userDatabasePath;
+    private string $solutionDatabasePath;
+    private string $userDsn;
+    private string $solutionDsn;
 
     /**
      * Setup paths and DSN's.
@@ -85,7 +66,7 @@ class DatabaseCheck implements ListenableCheckInterface
     {
         if (file_exists($this->databaseDirectory)) {
             throw new RuntimeException(
-                sprintf('Database directory: "%s" already exists', $this->databaseDirectory)
+                sprintf('Database directory: "%s" already exists', $this->databaseDirectory),
             );
         }
 
@@ -121,7 +102,7 @@ class DatabaseCheck implements ListenableCheckInterface
             ['cli.verify.student-execute.pre', 'cli.run.student-execute.pre'],
             function (CliExecuteEvent $e) {
                 $e->prependArg($this->userDsn);
-            }
+            },
         );
 
         $eventDispatcher->insertVerifier('verify.finish', function (Event $e) use ($db) {
@@ -140,14 +121,14 @@ class DatabaseCheck implements ListenableCheckInterface
             [
                 'cli.verify.reference-execute.fail',
                 'verify.finish',
-                'run.finish'
+                'run.finish',
             ],
             function () use ($db) {
                 unset($db);
                 $this->unlink($this->userDatabasePath);
                 $this->unlink($this->solutionDatabasePath);
                 rmdir($this->databaseDirectory);
-            }
+            },
         );
     }
 

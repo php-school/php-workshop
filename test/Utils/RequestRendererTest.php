@@ -35,7 +35,7 @@ class RequestRendererTest extends TestCase
             ->withHeader('Content-Type', 'application/json');
 
         $request->getBody()->write(
-            json_encode(['data' => 'test', 'other_data' => 'test2'])
+            json_encode(['data' => 'test', 'other_data' => 'test2']),
         );
 
         $expected  = "URL:     /endpoint\n";
@@ -55,7 +55,7 @@ class RequestRendererTest extends TestCase
             ->withHeader('Content-Type', 'application/x-www-form-urlencoded');
 
         $request->getBody()->write(
-            http_build_query(['data' => 'test', 'other_data' => 'test2'])
+            http_build_query(['data' => 'test', 'other_data' => 'test2']),
         );
 
         $expected  = "URL:     /endpoint\n";

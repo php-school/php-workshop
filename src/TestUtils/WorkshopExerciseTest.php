@@ -13,7 +13,6 @@ use PhpSchool\PhpWorkshop\Exercise\ProvidesSolution;
 use PhpSchool\PhpWorkshop\ExerciseCheck\ComposerExerciseCheck;
 use PhpSchool\PhpWorkshop\ExerciseDispatcher;
 use PhpSchool\PhpWorkshop\ExerciseRepository;
-use PhpSchool\PhpWorkshop\Listener\PrepareSolutionListener;
 use PhpSchool\PhpWorkshop\Result\Cgi\CgiResult;
 use PhpSchool\PhpWorkshop\Result\Cli\CliResult;
 use PhpSchool\PhpWorkshop\Result\Failure;
@@ -21,7 +20,6 @@ use PhpSchool\PhpWorkshop\Result\FailureInterface;
 use PhpSchool\PhpWorkshop\Result\ResultGroupInterface;
 use PhpSchool\PhpWorkshop\Result\ResultInterface;
 use PhpSchool\PhpWorkshop\ResultAggregator;
-use PhpSchool\PhpWorkshop\Utils\ArrayObject;
 use PhpSchool\PhpWorkshop\Utils\Collection;
 use PhpSchool\PhpWorkshop\Utils\System;
 use PHPUnit\Framework\ExpectationFailedException;
@@ -29,6 +27,7 @@ use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 use PhpSchool\PhpWorkshop\Input\Input;
 use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\Process\ExecutableFinder;
 use Symfony\Component\Process\Process;
 
 use function PhpSchool\PhpWorkshop\collect;
@@ -82,7 +81,7 @@ abstract class WorkshopExerciseTest extends TestCase
             '%s/test/solutions/%s/%s',
             rtrim($this->container->get('basePath'), '/'),
             AbstractExercise::normaliseName($exercise->getName()),
-            $submissionFile
+            $submissionFile,
         );
 
         if (!file_exists($submissionFileAbsolute)) {
@@ -90,8 +89,8 @@ abstract class WorkshopExerciseTest extends TestCase
                 sprintf(
                     'Submission file "%s" does not exist in "%s"',
                     $submissionFile,
-                    dirname($submissionFileAbsolute)
-                )
+                    dirname($submissionFileAbsolute),
+                ),
             );
         }
 
@@ -100,7 +99,7 @@ abstract class WorkshopExerciseTest extends TestCase
         }
 
         $input = new Input($this->container->get('appName'), [
-            'program' => $submissionFileAbsolute
+            'program' => $submissionFileAbsolute,
         ]);
 
         $this->results = $this->container->get(ExerciseDispatcher::class)
@@ -114,9 +113,12 @@ abstract class WorkshopExerciseTest extends TestCase
     private function installDeps(ExerciseInterface $exercise, string $directory): void
     {
         if (file_exists("$directory/composer.json") && !file_exists("$directory/vendor")) {
+            $execFinder = new ExecutableFinder();
+            $execFinder->addSuffix('.phar');
+
             $process = new Process(
-                [PrepareSolutionListener::locateComposer(), 'install', '--no-interaction'],
-                $directory
+                [$execFinder->find('composer'), 'install', '--no-interaction'],
+                $directory,
             );
             $process->mustRun();
         }
@@ -132,7 +134,7 @@ abstract class WorkshopExerciseTest extends TestCase
                 return sprintf(
                     '  * %s%s',
                     get_class($failure),
-                    $failure instanceof Failure ? ": {$failure->getReason()}" : ''
+                    $failure instanceof Failure ? ": {$failure->getReason()}" : '',
                 );
             });
 
@@ -171,7 +173,7 @@ abstract class WorkshopExerciseTest extends TestCase
                 return sprintf(
                     '  * %s%s',
                     get_class($failure),
-                    $failure instanceof Failure ? ": {$failure->getReason()}" : ''
+                    $failure instanceof Failure ? ": {$failure->getReason()}" : '',
                 );
             });
 
@@ -242,7 +244,7 @@ abstract class WorkshopExerciseTest extends TestCase
             '%s/test/solutions/%s/%s',
             rtrim($this->container->get('basePath'), '/'),
             AbstractExercise::normaliseName($this->getExercise()->getName()),
-            $file
+            $file,
         );
 
         (new Filesystem())->remove($path);

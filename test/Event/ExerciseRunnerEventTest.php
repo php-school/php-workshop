@@ -3,27 +3,26 @@
 namespace PhpSchool\PhpWorkshopTest\Event;
 
 use PhpSchool\PhpWorkshop\Event\ExerciseRunnerEvent;
-use PhpSchool\PhpWorkshop\Input\Input;
-use PhpSchool\PhpWorkshopTest\Asset\CliExerciseImpl;
+use PhpSchool\PhpWorkshop\ExerciseRunner\Context\TestContext;
 use PHPUnit\Framework\TestCase;
 
 class ExerciseRunnerEventTest extends TestCase
 {
     public function testGetters(): void
     {
-        $exercise = new CliExerciseImpl();
-        $input = new Input('app');
+        $context = new TestContext();
 
-        $event = new ExerciseRunnerEvent('Some Event', $exercise, $input, ['number' => 1]);
-        self::assertSame($exercise, $event->getExercise());
-        self::assertSame($input, $event->getInput());
+        $event = new ExerciseRunnerEvent('Some Event', $context, ['number' => 1]);
+        self::assertSame($context, $event->getContext());
+        self::assertSame($context->getExercise(), $event->getExercise());
+        self::assertSame($context->getInput(), $event->getInput());
         self::assertEquals(
             [
-                'exercise' => $exercise,
-                'input' => $input,
-                'number' => 1
+                'exercise' => $context->getExercise(),
+                'input' => $context->getInput(),
+                'number' => 1,
             ],
-            $event->getParameters()
+            $event->getParameters(),
         );
     }
 }

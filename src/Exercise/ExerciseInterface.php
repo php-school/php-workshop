@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace PhpSchool\PhpWorkshop\Exercise;
 
 use PhpSchool\PhpWorkshop\Event\EventDispatcher;
-use PhpSchool\PhpWorkshop\ExerciseDispatcher;
 
 /**
  * This interface describes all of the methods an exercise

@@ -66,7 +66,7 @@ class FunctionRequirementsFailure implements FailureInterface
     {
         return [
             'banned_functions' => $this->getBannedFunctions(),
-            'missing_functions' => $this->getMissingFunctions()
+            'missing_functions' => $this->getMissingFunctions(),
         ];
     }
 }

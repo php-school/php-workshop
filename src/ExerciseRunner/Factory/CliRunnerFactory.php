@@ -11,7 +11,9 @@ use PhpSchool\PhpWorkshop\Exercise\CliExercise;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseType;
 use PhpSchool\PhpWorkshop\ExerciseRunner\CliRunner;
+use PhpSchool\PhpWorkshop\ExerciseRunner\EnvironmentManager;
 use PhpSchool\PhpWorkshop\ExerciseRunner\ExerciseRunnerInterface;
+use PhpSchool\PhpWorkshop\Process\ProcessFactory;
 
 /**
  * Factory class for `CliRunner`
@@ -21,20 +23,9 @@ class CliRunnerFactory implements ExerciseRunnerFactoryInterface
     /**
      * @var string
      */
-    private static $type = ExerciseType::CLI;
+    private static string $type = ExerciseType::CLI;
 
-    /**
-     * @var EventDispatcher
-     */
-    private $eventDispatcher;
-
-    /**
-     * @param EventDispatcher $eventDispatcher
-     */
-    public function __construct(EventDispatcher $eventDispatcher)
-    {
-        $this->eventDispatcher = $eventDispatcher;
-    }
+    public function __construct(private EventDispatcher $eventDispatcher, private ProcessFactory $processFactory, private EnvironmentManager $environmentManager) {}
 
     /**
      * Whether the factory supports this exercise type.
@@ -65,6 +56,6 @@ class CliRunnerFactory implements ExerciseRunnerFactoryInterface
      */
     public function create(ExerciseInterface $exercise): ExerciseRunnerInterface
     {
-        return new CliRunner($exercise, $this->eventDispatcher);
+        return new CliRunner($exercise, $this->eventDispatcher, $this->processFactory, $this->environmentManager);
     }
 }

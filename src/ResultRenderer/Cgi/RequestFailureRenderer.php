@@ -41,7 +41,7 @@ class RequestFailureRenderer implements ResultRendererInterface
                 $renderer->style('YOUR HEADERS:', ['bold', 'yellow']),
                 $this->headers($this->result->getActualHeaders(), $renderer),
                 $renderer->style('EXPECTED HEADERS:', ['bold', 'yellow']),
-                $this->headers($this->result->getExpectedHeaders(), $renderer, false)
+                $this->headers($this->result->getExpectedHeaders(), $renderer, false),
             );
         }
 
@@ -55,7 +55,7 @@ class RequestFailureRenderer implements ResultRendererInterface
                 $renderer->style('YOUR OUTPUT:', ['bold', 'yellow']),
                 $renderer->style(sprintf('"%s"', $this->result->getActualOutput()), 'red'),
                 $renderer->style('EXPECTED OUTPUT:', ['bold', 'yellow']),
-                $renderer->style(sprintf('"%s"', $this->result->getExpectedOutput()), 'green')
+                $renderer->style(sprintf('"%s"', $this->result->getExpectedOutput()), 'green'),
             );
         }
 

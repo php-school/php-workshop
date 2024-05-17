@@ -54,7 +54,7 @@ class GenericFailure extends Failure implements FailureInterface
      */
     public static function fromRequestAndCodeExecutionFailure(
         RequestInterface $request,
-        CodeExecutionException $e
+        CodeExecutionException $e,
     ): self {
         return new self($request, $e->getMessage());
     }

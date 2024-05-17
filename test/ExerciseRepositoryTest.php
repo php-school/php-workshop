@@ -3,12 +3,9 @@
 namespace PhpSchool\PhpWorkshopTest;
 
 use PhpSchool\PhpWorkshop\Exception\InvalidArgumentException;
-use PhpSchool\PhpWorkshop\Exercise\ExerciseType;
 use PhpSchool\PhpWorkshopTest\Asset\CliExerciseImpl;
-use PhpSchool\PhpWorkshopTest\Asset\CliExerciseInterface;
 use PhpSchool\PhpWorkshopTest\Asset\CliExerciseMissingInterface;
 use PHPUnit\Framework\TestCase;
-use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpSchool\PhpWorkshop\ExerciseRepository;
 
 class ExerciseRepositoryTest extends TestCase

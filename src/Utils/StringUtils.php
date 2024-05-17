@@ -57,9 +57,9 @@ class StringUtils
             str_replace(
                 array_keys(self::$pluraliseSearchReplace),
                 array_values(self::$pluraliseSearchReplace),
-                $string
+                $string,
             ),
-            $args
+            $args,
         );
     }
 }

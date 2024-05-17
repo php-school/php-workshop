@@ -4,9 +4,6 @@ declare(strict_types=1);
 
 namespace PhpSchool\PhpWorkshop\Markdown\Parser;
 
-use League\CommonMark\Delimiter\Delimiter;
-use League\CommonMark\Inline\Element\Code;
-use League\CommonMark\Inline\Element\Text;
 use League\CommonMark\InlineParserContext;
 use League\CommonMark\Inline\Parser\InlineParserInterface;
 use PhpSchool\PhpWorkshop\Markdown\Shorthands\ShorthandInterface;
@@ -27,7 +24,7 @@ final class HandleBarParser implements InlineParserInterface
             array_map(function (ShorthandInterface $shorthand) {
                 return $shorthand->getCode();
             }, $shorthands),
-            $shorthands
+            $shorthands,
         ) ?: [];
     }
 

@@ -68,7 +68,7 @@ class ExerciseRenderer
         Serializer $userStateSerializer,
         MarkdownRenderer $markdownRenderer,
         Color $color,
-        OutputInterface $output
+        OutputInterface $output,
     ) {
         $this->appName = $appName;
         $this->exerciseRepository = $exerciseRepository;
@@ -133,7 +133,7 @@ class ExerciseRenderer
             " %s %s: %s\n",
             $this->color->__invoke("»")->bold()->__toString(),
             $text,
-            $cmd
+            $cmd,
         );
     }
 }

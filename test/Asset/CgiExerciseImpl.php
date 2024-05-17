@@ -2,25 +2,23 @@
 
 namespace PhpSchool\PhpWorkshopTest\Asset;
 
-use PhpSchool\PhpWorkshop\Check\FileComparisonCheck;
 use PhpSchool\PhpWorkshop\Event\EventDispatcher;
 use PhpSchool\PhpWorkshop\Exercise\CgiExercise;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseType;
-use PhpSchool\PhpWorkshop\ExerciseDispatcher;
+use PhpSchool\PhpWorkshop\Exercise\Scenario\CgiScenario;
 use PhpSchool\PhpWorkshop\Solution\SolutionInterface;
-use Psr\Http\Message\RequestInterface;
 
 class CgiExerciseImpl implements ExerciseInterface, CgiExercise
 {
-    /**
-     * @var string
-     */
-    private $name;
+    private string $name;
+    private SolutionInterface $solution;
+    private CgiScenario $scenario;
 
     public function __construct(string $name = 'my-exercise')
     {
         $this->name = $name;
+        $this->scenario = new CgiScenario();
     }
 
     public function getName(): string
@@ -33,9 +31,14 @@ class CgiExerciseImpl implements ExerciseInterface, CgiExercise
         return $this->name;
     }
 
+    public function setSolution(SolutionInterface $solution): void
+    {
+        $this->solution = $solution;
+    }
+
     public function getSolution(): SolutionInterface
     {
-        // TODO: Implement getSolution() method.
+        return $this->solution;
     }
 
     public function getProblem(): string
@@ -48,17 +51,6 @@ class CgiExerciseImpl implements ExerciseInterface, CgiExercise
         // TODO: Implement tearDown() method.
     }
 
-    /**
-     * This method should return an array of PSR-7 requests, which will be forwarded to the student's
-     * solution.
-     *
-     * @return RequestInterface[] An array of PSR-7 requests.
-     */
-    public function getRequests(): array
-    {
-        return []; // TODO: Implement getRequests() method.
-    }
-
     public function getType(): ExerciseType
     {
         return ExerciseType::CGI();
@@ -69,7 +61,16 @@ class CgiExerciseImpl implements ExerciseInterface, CgiExercise
         return [];
     }
 
-    public function defineListeners(EventDispatcher $dispatcher): void
+    public function defineListeners(EventDispatcher $dispatcher): void {}
+
+    public function setScenario(CgiScenario $scenario): void
     {
+        $this->scenario = $scenario;
+    }
+
+    public function defineTestScenario(): CgiScenario
+    {
+        return $this->scenario;
+
     }
 }

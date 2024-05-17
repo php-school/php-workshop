@@ -9,9 +9,9 @@ use PhpParser\Error;
 use PhpParser\Node\Expr\FuncCall;
 use PhpParser\NodeTraverser;
 use PhpParser\Parser;
-use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseType;
 use PhpSchool\PhpWorkshop\ExerciseCheck\FunctionRequirementsExerciseCheck;
+use PhpSchool\PhpWorkshop\ExerciseRunner\Context\ExecutionContext;
 use PhpSchool\PhpWorkshop\Input\Input;
 use PhpSchool\PhpWorkshop\NodeVisitor\FunctionVisitor;
 use PhpSchool\PhpWorkshop\Result\Failure;
@@ -25,18 +25,7 @@ use PhpSchool\PhpWorkshop\Result\Success;
  */
 class FunctionRequirementsCheck implements SimpleCheckInterface
 {
-    /**
-     * @var Parser
-     */
-    private $parser;
-
-    /**
-     * @param Parser $parser
-     */
-    public function __construct(Parser $parser)
-    {
-        $this->parser = $parser;
-    }
+    public function __construct(private Parser $parser) {}
 
     /**
      * Return the check's name.
@@ -51,12 +40,12 @@ class FunctionRequirementsCheck implements SimpleCheckInterface
      * required functions and that banned functions are not used. The requirements
      * are pulled from the exercise.
      *
-     * @param ExerciseInterface $exercise The exercise to check against.
-     * @param Input $input The command line arguments passed to the command.
+     * @param ExecutionContext $context The current execution context, containing the exercise, input and working directories.
      * @return ResultInterface The result of the check.
      */
-    public function check(ExerciseInterface $exercise, Input $input): ResultInterface
+    public function check(ExecutionContext $context): ResultInterface
     {
+        $exercise = $context->getExercise();
         if (!$exercise instanceof FunctionRequirementsExerciseCheck) {
             throw new InvalidArgumentException();
         }
@@ -64,12 +53,12 @@ class FunctionRequirementsCheck implements SimpleCheckInterface
         $requiredFunctions  = $exercise->getRequiredFunctions();
         $bannedFunctions    = $exercise->getBannedFunctions();
 
-        $code = (string) file_get_contents($input->getRequiredArgument('program'));
+        $code = (string) file_get_contents($context->getEntryPoint());
 
         try {
             $ast = $this->parser->parse($code) ?? [];
         } catch (Error $e) {
-            return Failure::fromCheckAndCodeParseFailure($this, $e, $input->getRequiredArgument('program'));
+            return Failure::fromCheckAndCodeParseFailure($this, $e, $context->getEntryPoint());
         }
 
         $visitor    = new FunctionVisitor($requiredFunctions, $bannedFunctions);

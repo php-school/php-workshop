@@ -11,47 +11,47 @@ class PathTest extends TestCase
     {
         $this->assertEquals(
             '/some/path/some-folder/file.txt',
-            Path::join('/some/path', 'some-folder/file.txt')
+            Path::join('/some/path', 'some-folder/file.txt'),
         );
 
         $this->assertEquals(
             '/some/path/some-folder/file.txt',
-            Path::join('/some/path/', 'some-folder/file.txt')
+            Path::join('/some/path/', 'some-folder/file.txt'),
         );
 
         $this->assertEquals(
             '/some/path/some-folder/file.txt',
-            Path::join('/some/path', '/some-folder/file.txt')
+            Path::join('/some/path', '/some-folder/file.txt'),
         );
 
         $this->assertEquals(
             '/some/path/some-folder/file.txt',
-            Path::join('/some/path/', '/some-folder/file.txt')
+            Path::join('/some/path/', '/some-folder/file.txt'),
         );
 
         $this->assertEquals(
             '/some/path/some-folder/file.txt',
-            Path::join('/some/path//', '//some-folder/file.txt')
+            Path::join('/some/path//', '//some-folder/file.txt'),
         );
 
         $this->assertEquals(
             '/some/path/some-folder/file.txt',
-            Path::join('/some/path/', 'some-folder', 'file.txt')
+            Path::join('/some/path/', 'some-folder', 'file.txt'),
         );
 
         $this->assertEquals(
             '/some/path/some-folder/file.txt',
-            Path::join('/some/path/', '/some-folder/', '/file.txt')
+            Path::join('/some/path/', '/some-folder/', '/file.txt'),
         );
 
         $this->assertEquals(
             '/some/path',
-            Path::join('/some/path/')
+            Path::join('/some/path/'),
         );
 
         $this->assertEquals(
             '/some/path',
-            Path::join('/some/path/', '')
+            Path::join('/some/path/', ''),
         );
     }
 }

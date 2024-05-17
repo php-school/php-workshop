@@ -21,7 +21,7 @@ class CliScenarioTest extends TestCase
                 'file1.txt' => 'content1',
                 'file2.txt' => 'content2',
             ],
-            $scenario->getFiles()
+            $scenario->getFiles(),
         );
 
         static::assertEquals(
@@ -30,9 +30,9 @@ class CliScenarioTest extends TestCase
                 ['arg3', 'arg4'],
             ],
             array_map(
-                fn (Collection $collection) => $collection->getArrayCopy(),
-                $scenario->getExecutions()
-            )
+                fn(Collection $collection) => $collection->getArrayCopy(),
+                $scenario->getExecutions(),
+            ),
         );
     }
 }

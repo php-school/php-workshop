@@ -47,7 +47,7 @@ class ResultAggregator implements IteratorAggregate
                     return !$result->isSuccessful();
                 }
                 return $result instanceof FailureInterface;
-            })
+            }),
         ) === 0;
     }
 

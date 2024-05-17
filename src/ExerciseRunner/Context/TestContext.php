@@ -2,13 +2,16 @@
 
 namespace PhpSchool\PhpWorkshop\ExerciseRunner\Context;
 
+use PhpSchool\PhpWorkshop\Event\EventDispatcher;
 use PhpSchool\PhpWorkshop\Exception\RuntimeException;
 use PhpSchool\PhpWorkshop\Exercise\CgiExercise;
 use PhpSchool\PhpWorkshop\Exercise\CliExercise;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpSchool\PhpWorkshop\Exercise\MockExercise;
+use PhpSchool\PhpWorkshop\Exercise\Scenario\ExerciseScenario;
+use PhpSchool\PhpWorkshop\ExerciseRunner\EnvironmentManager;
 use PhpSchool\PhpWorkshop\Input\Input;
-use PhpSchool\PhpWorkshop\Solution\SolutionInterface;
+use PhpSchool\PhpWorkshop\ResultAggregator;
 use PhpSchool\PhpWorkshop\Utils\System;
 use Symfony\Component\Filesystem\Filesystem;
 use PhpSchool\PhpWorkshop\Utils\Path;
@@ -16,6 +19,7 @@ use PhpSchool\PhpWorkshop\Utils\Path;
 class TestContext extends ExecutionContext
 {
     private Filesystem $filesystem;
+    private EnvironmentManager $environmentManager;
     private ExerciseInterface $exercise;
     private bool $studentSolutionDirWasCreated = false;
     private bool $referenceSolutionDirWasCreated = false;
@@ -28,6 +32,7 @@ class TestContext extends ExecutionContext
         $this->exercise = $exercise ?? new MockExercise();
 
         $this->filesystem = new Filesystem();
+        $this->environmentManager = new EnvironmentManager($this->filesystem, new EventDispatcher(new ResultAggregator()));
 
         if ($studentDirectory === null) {
             $studentDirectory = System::randomTempDir();
@@ -53,11 +58,27 @@ class TestContext extends ExecutionContext
         $this->referenceSolutionDirWasCreated = true;
     }
 
+    public function importReferenceSolution(): void
+    {
+        if (!$this->referenceSolutionDirWasCreated) {
+            throw new RuntimeException(
+                sprintf('Reference execution directory not created. Call %s::createReferenceSolutionDirectory() first.', self::class),
+            );
+        }
+
+        $scenario = new class () extends ExerciseScenario {};
+        if ($this->exercise instanceof CliExercise || $this->exercise instanceof CgiExercise) {
+            $scenario = $this->exercise->defineTestScenario();
+        }
+
+        $this->environmentManager->prepareReference($this, $scenario);
+    }
+
     public function importStudentFileFromString(string $content, string $filename = 'solution.php'): void
     {
         if (!$this->studentSolutionDirWasCreated) {
             throw new RuntimeException(
-                sprintf('Student execution directory not created. Call %s::createStudentSolutionDirectory() first.', self::class)
+                sprintf('Student execution directory not created. Call %s::createStudentSolutionDirectory() first.', self::class),
             );
         }
 
@@ -68,7 +89,7 @@ class TestContext extends ExecutionContext
     {
         if (!$this->referenceSolutionDirWasCreated) {
             throw new RuntimeException(
-                sprintf('Reference execution directory not created. Call %s::createReferenceSolutionDirectory() first.', self::class)
+                sprintf('Reference execution directory not created. Call %s::createReferenceSolutionDirectory() first.', self::class),
             );
         }
 
@@ -85,7 +106,7 @@ class TestContext extends ExecutionContext
         return new self(
             exercise: $exercise,
             input: $input,
-            studentDirectory: dirname($file)
+            studentDirectory: dirname($file),
         );
     }
 

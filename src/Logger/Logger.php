@@ -37,9 +37,9 @@ class Logger extends AbstractLogger implements LoggerInterface
                 (new \DateTime())->format('d-m-y H:i:s'),
                 $level,
                 $message,
-                json_encode($context)
+                json_encode($context),
             ),
-            FILE_APPEND
+            FILE_APPEND,
         );
     }
 }

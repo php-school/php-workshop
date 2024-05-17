@@ -53,7 +53,7 @@ class CommandDefinition
             throw InvalidArgumentException::notValidParameter(
                 'argument',
                 ['string', CommandArgument::class],
-                $argument
+                $argument,
             );
         }
 
@@ -69,7 +69,7 @@ class CommandDefinition
         $previousArgument = end($this->args);
         if ($previousArgument->isOptional() && $argument->isRequired()) {
             throw new InvalidArgumentException(sprintf(
-                'A required argument cannot follow an optional argument'
+                'A required argument cannot follow an optional argument',
             ));
         }
 

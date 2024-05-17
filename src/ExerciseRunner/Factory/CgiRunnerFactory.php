@@ -11,8 +11,9 @@ use PhpSchool\PhpWorkshop\Exercise\CgiExercise;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseType;
 use PhpSchool\PhpWorkshop\ExerciseRunner\CgiRunner;
+use PhpSchool\PhpWorkshop\ExerciseRunner\EnvironmentManager;
 use PhpSchool\PhpWorkshop\ExerciseRunner\ExerciseRunnerInterface;
-use PhpSchool\PhpWorkshop\Utils\RequestRenderer;
+use PhpSchool\PhpWorkshop\Process\ProcessFactory;
 
 /**
  * Factory class for `CgiRunner`
@@ -22,20 +23,9 @@ class CgiRunnerFactory implements ExerciseRunnerFactoryInterface
     /**
      * @var string
      */
-    private static $type = ExerciseType::CGI;
+    private static string $type = ExerciseType::CGI;
 
-    /**
-     * @var EventDispatcher
-     */
-    private $eventDispatcher;
-
-    /**
-     * @param EventDispatcher $eventDispatcher
-     */
-    public function __construct(EventDispatcher $eventDispatcher)
-    {
-        $this->eventDispatcher = $eventDispatcher;
-    }
+    public function __construct(private EventDispatcher $eventDispatcher, private ProcessFactory $processFactory, private EnvironmentManager $environmentManager) {}
 
     /**
      * Whether the factory supports this exercise type.
@@ -66,6 +56,6 @@ class CgiRunnerFactory implements ExerciseRunnerFactoryInterface
      */
     public function create(ExerciseInterface $exercise): ExerciseRunnerInterface
     {
-        return new CgiRunner($exercise, $this->eventDispatcher);
+        return new CgiRunner($exercise, $this->eventDispatcher, $this->processFactory, $this->environmentManager);
     }
 }

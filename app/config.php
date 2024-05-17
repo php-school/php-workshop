@@ -38,10 +38,10 @@ use PhpSchool\PhpWorkshop\Event\EventDispatcher;
 use PhpSchool\PhpWorkshop\ExerciseDispatcher;
 use PhpSchool\PhpWorkshop\ExerciseRenderer;
 use PhpSchool\PhpWorkshop\ExerciseRepository;
+use PhpSchool\PhpWorkshop\ExerciseRunner\EnvironmentManager;
 use PhpSchool\PhpWorkshop\ExerciseRunner\Factory\CgiRunnerFactory;
 use PhpSchool\PhpWorkshop\ExerciseRunner\Factory\CliRunnerFactory;
 use PhpSchool\PhpWorkshop\ExerciseRunner\Factory\CustomVerifyingRunnerFactory;
-use PhpSchool\PhpWorkshop\ExerciseRunner\Factory\ServerRunnerFactory;
 use PhpSchool\PhpWorkshop\ExerciseRunner\RunnerManager;
 use PhpSchool\PhpWorkshop\Factory\EventDispatcherFactory;
 use PhpSchool\PhpWorkshop\Factory\MenuFactory;
@@ -58,7 +58,6 @@ use PhpSchool\PhpWorkshop\Listener\TearDownListener;
 use PhpSchool\PhpWorkshop\Logger\ConsoleLogger;
 use PhpSchool\PhpWorkshop\Logger\Logger;
 use PhpSchool\PhpWorkshop\Markdown\CurrentContext;
-use PhpSchool\PhpWorkshop\Markdown\Parser\ContextSpecificBlockParser;
 use PhpSchool\PhpWorkshop\Markdown\ProblemFileExtension;
 use PhpSchool\PhpWorkshop\Markdown\Renderer\ContextSpecificRenderer;
 use PhpSchool\PhpWorkshop\Markdown\Shorthands\Cli\AppName;
@@ -71,6 +70,8 @@ use PhpSchool\PhpWorkshop\MenuItem\ResetProgress;
 use PhpSchool\PhpWorkshop\Output\OutputInterface;
 use PhpSchool\PhpWorkshop\Output\StdOutput;
 use PhpSchool\PhpWorkshop\Patch;
+use PhpSchool\PhpWorkshop\Process\HostProcessFactory;
+use PhpSchool\PhpWorkshop\Process\ProcessFactory;
 use PhpSchool\PhpWorkshop\Result\Cgi\CgiResult;
 use PhpSchool\PhpWorkshop\Result\Cgi\GenericFailure as CgiGenericFailure;
 use PhpSchool\PhpWorkshop\Result\Cgi\RequestFailure as CgiRequestFailure;
@@ -102,6 +103,7 @@ use PhpSchool\Terminal\Terminal;
 use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Filesystem\Filesystem;
+
 use function DI\create;
 use function DI\factory;
 use function PhpSchool\PhpWorkshop\canonicalise_path;
@@ -132,7 +134,7 @@ return [
             $c->get(RunnerManager::class),
             $c->get(ResultAggregator::class),
             $c->get(EventDispatcher::class),
-            $c->get(CheckRepository::class)
+            $c->get(CheckRepository::class),
         );
     },
     ResultAggregator::class => create(ResultAggregator::class),
@@ -145,7 +147,7 @@ return [
             $c->get(ComposerCheck::class),
             $c->get(FunctionRequirementsCheck::class),
             $c->get(DatabaseCheck::class),
-            $c->get(FileComparisonCheck::class)
+            $c->get(FileComparisonCheck::class),
         ]);
     },
     CommandRouter::class => function (ContainerInterface $c) {
@@ -156,16 +158,16 @@ return [
                 new CommandDefinition('print', [], PrintCommand::class),
                 new CommandDefinition('verify', [], VerifyCommand::class),
                 new CommandDefinition('run', [], RunCommand::class),
-                new CommandDefinition('credits', [], CreditsCommand::class)
+                new CommandDefinition('credits', [], CreditsCommand::class),
             ],
             'menu',
             $c->get(EventDispatcher::class),
-            $c
+            $c,
         );
     },
 
     Color::class => function () {
-        $colors = new Color;
+        $colors = new Color();
         $colors->setForceStyle(true);
         return $colors;
     },
@@ -177,20 +179,36 @@ return [
         return new ExerciseRepository(
             array_map(function ($exerciseClass) use ($c) {
                 return $c->get($exerciseClass);
-            }, $c->get('exercises'))
+            }, $c->get('exercises')),
         );
     },
 
     EventDispatcher::class => factory(EventDispatcherFactory::class),
     EventDispatcherFactory::class => create(),
 
+    EnvironmentManager::class => function (ContainerInterface $c) {
+        return new EnvironmentManager($c->get(Filesystem::class), $c->get(EventDispatcher::class));
+    },
+
     //Exercise Runners
     RunnerManager::class => function (ContainerInterface $c) {
         $manager = new RunnerManager();
-        $manager->addFactory(new CliRunnerFactory($c->get(EventDispatcher::class)));
-        $manager->addFactory(new CgiRunnerFactory($c->get(EventDispatcher::class)));
+        $manager->addFactory(new CliRunnerFactory(
+            $c->get(EventDispatcher::class),
+            $c->get(ProcessFactory::class),
+            $c->get(EnvironmentManager::class),
+        ));
+        $manager->addFactory(new CgiRunnerFactory(
+            $c->get(EventDispatcher::class),
+            $c->get(ProcessFactory::class),
+            $c->get(EnvironmentManager::class),
+        ));
         $manager->addFactory(new CustomVerifyingRunnerFactory());
         return $manager;
+    },
+
+    ProcessFactory::class => function (ContainerInterface $c) {
+        return new HostProcessFactory();
     },
 
     //commands
@@ -204,7 +222,7 @@ return [
             $c->get(ExerciseRepository::class),
             $c->get(UserState::class),
             $c->get(MarkdownRenderer::class),
-            $c->get(OutputInterface::class)
+            $c->get(OutputInterface::class),
         );
     },
 
@@ -215,7 +233,7 @@ return [
             $c->get(UserState::class),
             $c->get(Serializer::class),
             $c->get(OutputInterface::class),
-            $c->get(ResultsRenderer::class)
+            $c->get(ResultsRenderer::class),
         );
     },
 
@@ -224,7 +242,7 @@ return [
             $c->get(ExerciseRepository::class),
             $c->get(ExerciseDispatcher::class),
             $c->get(UserState::class),
-            $c->get(OutputInterface::class)
+            $c->get(OutputInterface::class),
         );
     },
 
@@ -233,7 +251,7 @@ return [
             $c->get('coreContributors'),
             $c->get('appContributors'),
             $c->get(OutputInterface::class),
-            $c->get(Color::class)
+            $c->get(Color::class),
         );
     },
 
@@ -241,7 +259,7 @@ return [
         return new HelpCommand(
             $c->get('appName'),
             $c->get(OutputInterface::class),
-            $c->get(Color::class)
+            $c->get(Color::class),
         );
     },
 
@@ -249,12 +267,16 @@ return [
     InitialCodeListener::class => function (ContainerInterface $c) {
         return new InitialCodeListener($c->get('currentWorkingDirectory'), $c->get(LoggerInterface::class));
     },
-    PrepareSolutionListener::class => create(),
+    PrepareSolutionListener::class => function (ContainerInterface $c) {
+        return new PrepareSolutionListener(
+            $c->get(ProcessFactory::class),
+        );
+    },
     CodePatchListener::class => function (ContainerInterface $c) {
         return new CodePatchListener(
             $c->get(CodePatcher::class),
             $c->get(LoggerInterface::class),
-            $c->get('debugMode')
+            $c->get('debugMode'),
         );
     },
     SelfCheckListener::class => function (ContainerInterface $c) {
@@ -267,7 +289,7 @@ return [
         return new ConfigureCommandListener(
             $c->get(UserState::class),
             $c->get(ExerciseRepository::class),
-            $c->get(RunnerManager::class)
+            $c->get(RunnerManager::class),
         );
     },
     RealPathListener::class => create(),
@@ -298,14 +320,14 @@ return [
     //Utils
     Filesystem::class   => create(),
     Parser::class       => function () {
-        $parserFactory = new ParserFactory;
+        $parserFactory = new ParserFactory();
         return $parserFactory->create(ParserFactory::PREFER_PHP7);
     },
     CodePatcher::class  => function (ContainerInterface $c) {
         $patch = (new Patch())
             ->withInsertion(new Insertion(Insertion::TYPE_BEFORE, 'ini_set("display_errors", "1");'))
             ->withInsertion(new Insertion(Insertion::TYPE_BEFORE, 'error_reporting(E_ALL);'))
-            ->withInsertion(new Insertion(Insertion ::TYPE_BEFORE, 'date_default_timezone_set("Europe/London");'));
+            ->withInsertion(new Insertion(Insertion::TYPE_BEFORE, 'date_default_timezone_set("Europe/London");'));
 
         return new CodePatcher($c->get(Parser::class), new Standard(), $c->get(LoggerInterface::class), $patch);
     },
@@ -325,7 +347,7 @@ return [
             $c->get(Serializer::class),
             $c->get(MarkdownRenderer::class),
             $c->get(Color::class),
-            $c->get(OutputInterface::class)
+            $c->get(OutputInterface::class),
         );
     },
     ContextSpecificRenderer::class => function (ContainerInterface $c) {
@@ -342,7 +364,7 @@ return [
 
         $environment = new Environment([
             'renderer' => [
-               'width' => $terminal->getWidth()
+                'width' => $terminal->getWidth(),
             ],
         ]);
 
@@ -355,8 +377,8 @@ return [
                     new Documentation(),
                     new Run($c->get('appName')),
                     new Verify($c->get('appName')),
-                    $c->get(Context::class)
-                ]
+                    $c->get(Context::class),
+                ],
             ));
 
         return $environment;
@@ -364,20 +386,20 @@ return [
     MarkdownRenderer::class => function (ContainerInterface $c) {
         return new MarkdownRenderer(
             new DocParser($c->get(Environment::class)),
-            $c->get(ElementRendererInterface::class)
+            $c->get(ElementRendererInterface::class),
         );
     },
     ElementRendererInterface::class => function (ContainerInterface $c) {
         return new CliRenderer(
             $c->get(Environment::class),
-            $c->get(Color::class)
+            $c->get(Color::class),
         );
     },
     Serializer::class => function (ContainerInterface $c) {
         return new LocalJsonSerializer(
             getenv('HOME'),
             $c->get('workshopTitle'),
-            $c->get(ExerciseRepository::class)
+            $c->get(ExerciseRepository::class),
         );
     },
     UserState::class => function (ContainerInterface $c) {
@@ -387,7 +409,7 @@ return [
         return new ResetProgress($c->get(Serializer::class));
     },
     ResultRendererFactory::class => function (ContainerInterface $c) {
-        $factory = new ResultRendererFactory;
+        $factory = new ResultRendererFactory();
         $factory->registerRenderer(FunctionRequirementsFailure::class, FunctionRequirementsFailureRenderer::class);
         $factory->registerRenderer(Failure::class, FailureRenderer::class);
         $factory->registerRenderer(
@@ -395,7 +417,7 @@ return [
             CgiResultRenderer::class,
             function (CgiResult $result) use ($c) {
                 return new CgiResultRenderer($result, $c->get(RequestRenderer::class));
-            }
+            },
         );
         $factory->registerRenderer(CgiGenericFailure::class, FailureRenderer::class);
         $factory->registerRenderer(CgiRequestFailure::class, CgiRequestFailureRenderer::class);
@@ -417,12 +439,12 @@ return [
             $c->get(Terminal::class),
             $c->get(ExerciseRepository::class),
             $c->get(KeyLighter::class),
-            $c->get(ResultRendererFactory::class)
+            $c->get(ResultRendererFactory::class),
         );
     },
 
     KeyLighter::class => function () {
-        $keylighter = new KeyLighter;
+        $keylighter = new KeyLighter();
         $keylighter->init();
         return $keylighter;
     },
@@ -431,36 +453,36 @@ return [
         '@AydinHassan' => 'Aydin Hassan',
         '@mikeymike'   => 'Michael Woodward',
         '@shakeyShane' => 'Shane Osbourne',
-        '@chris3ailey' => 'Chris Bailey'
+        '@chris3ailey' => 'Chris Bailey',
     ],
     'appContributors' => [],
     'eventListeners'  => [
         'realpath-student-submission' => [
             'verify.start' => [
-                containerListener(RealPathListener::class)
+                containerListener(RealPathListener::class),
             ],
             'run.start' => [
-                containerListener(RealPathListener::class)
+                containerListener(RealPathListener::class),
             ],
         ],
         'check-exercise-assigned' => [
             'route.pre.resolve.args' => [
-                containerListener(CheckExerciseAssignedListener::class)
+                containerListener(CheckExerciseAssignedListener::class),
             ],
         ],
         'configure-command-arguments' => [
             'route.pre.resolve.args' => [
-                containerListener(ConfigureCommandListener::class)
+                containerListener(ConfigureCommandListener::class),
             ],
         ],
         'prepare-solution' => [
-            'cli.verify.start' => [
+            'cli.verify.reference-execute.pre' => [
                 containerListener(PrepareSolutionListener::class),
             ],
             'cli.run.start' => [
                 containerListener(PrepareSolutionListener::class),
             ],
-            'cgi.verify.start' => [
+            'cgi.verify.reference-execute.pre' => [
                 containerListener(PrepareSolutionListener::class),
             ],
             'cgi.run.start' => [
@@ -468,7 +490,10 @@ return [
             ],
         ],
         'code-patcher' => [
-            'verify.pre.execute' => [
+            'cli.verify.start' => [
+                containerListener(CodePatchListener::class, 'patch'),
+            ],
+            'cgi.verify.start' => [
                 containerListener(CodePatchListener::class, 'patch'),
             ],
             'verify.post.execute' => [
@@ -486,26 +511,26 @@ return [
         ],
         'self-check' => [
             'verify.post.check' => [
-                containerListener(SelfCheckListener::class)
+                containerListener(SelfCheckListener::class),
             ],
         ],
         'create-initial-code' => [
             'exercise.selected' => [
-                containerListener(InitialCodeListener::class)
-            ]
+                containerListener(InitialCodeListener::class),
+            ],
         ],
         'cleanup-filesystem' => [
             'application.tear-down' => [
-                containerListener(TearDownListener::class, 'cleanupTempDir')
-            ]
+                containerListener(TearDownListener::class, 'cleanupTempDir'),
+            ],
         ],
         'decorate-run-output' => [
             'cli.run.student-execute.pre' => [
-                containerListener(OutputRunInfoListener::class)
+                containerListener(OutputRunInfoListener::class),
             ],
             'cgi.run.student-execute.pre' => [
-                containerListener(OutputRunInfoListener::class)
-            ]
+                containerListener(OutputRunInfoListener::class),
+            ],
         ],
     ],
 ];

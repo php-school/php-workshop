@@ -7,27 +7,21 @@ use PhpSchool\PhpWorkshop\Event\EventDispatcher;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseType;
 use PhpSchool\PhpWorkshop\ExerciseRunner\CgiRunner;
+use PhpSchool\PhpWorkshop\ExerciseRunner\EnvironmentManager;
 use PhpSchool\PhpWorkshop\ExerciseRunner\Factory\CgiRunnerFactory;
-use PhpSchool\PhpWorkshop\Utils\RequestRenderer;
+use PhpSchool\PhpWorkshop\Process\HostProcessFactory;
 use PhpSchool\PhpWorkshopTest\Asset\CgiExerciseImpl;
 use PHPUnit\Framework\TestCase;
 
 class CgiRunnerFactoryTest extends TestCase
 {
-    /**
-     * @var EventDispatcher
-     */
-    private $eventDispatcher;
-
-    /**
-     * @var CgiRunnerFactory
-     */
-    private $factory;
+    private EventDispatcher $eventDispatcher;
+    private CgiRunnerFactory $factory;
 
     public function setUp(): void
     {
         $this->eventDispatcher = $this->createMock(EventDispatcher::class);
-        $this->factory = new CgiRunnerFactory($this->eventDispatcher);
+        $this->factory = new CgiRunnerFactory($this->eventDispatcher, new HostProcessFactory(), $this->createMock(EnvironmentManager::class));
     }
 
     public function testSupports(): void

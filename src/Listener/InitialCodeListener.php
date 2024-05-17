@@ -7,7 +7,6 @@ namespace PhpSchool\PhpWorkshop\Listener;
 use PhpSchool\PhpWorkshop\Event\Event;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpSchool\PhpWorkshop\Exercise\ProvidesInitialCode;
-use PhpSchool\PhpWorkshop\Solution\SolutionFile;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -60,8 +59,8 @@ class InitialCodeListener
                 [
                     'exercise' => $exercise->getName(),
                     'workingDir' => $this->workingDirectory,
-                    'file' => $file->getAbsolutePath()
-                ]
+                    'file' => $file->getAbsolutePath(),
+                ],
             );
         }
     }

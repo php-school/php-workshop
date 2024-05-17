@@ -21,7 +21,7 @@ class WrapInTryCatchTest extends TestCase
 
         self::assertSame(
             "try {\n    echo 'Hello World';\n} catch (Exception \$e) {\n    echo \$e->getMessage();\n}",
-            (new Standard())->prettyPrint($ast)
+            (new Standard())->prettyPrint($ast),
         );
     }
 
@@ -35,7 +35,7 @@ class WrapInTryCatchTest extends TestCase
 
         self::assertSame(
             "try {\n    echo 'Hello World';\n} catch (RuntimeException \$e) {\n    echo \$e->getMessage();\n}",
-            (new Standard())->prettyPrint($ast)
+            (new Standard())->prettyPrint($ast),
         );
     }
 
@@ -49,7 +49,7 @@ class WrapInTryCatchTest extends TestCase
 
         self::assertSame(
             "try {\n    echo 'Hello World';\n} catch (RuntimeException \$e) {\n    echo 'You caught me!';\n}",
-            (new Standard())->prettyPrint($ast)
+            (new Standard())->prettyPrint($ast),
         );
     }
 }

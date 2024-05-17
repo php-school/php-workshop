@@ -78,12 +78,12 @@ class EventDispatcherFactory
 
                         return $carry->set(
                             $event,
-                            array_merge($carry->get($event, []), $listeners)
+                            array_merge($carry->get($event, []), $listeners),
                         );
                     }, $carry);
             }, new Collection());
 
-            return $mergedListeners->getArrayCopy();
+        return $mergedListeners->getArrayCopy();
     }
 
     /**
@@ -97,26 +97,26 @@ class EventDispatcherFactory
         string $eventName,
         array $listeners,
         ContainerInterface $container,
-        EventDispatcher $dispatcher
+        EventDispatcher $dispatcher,
     ): void {
         array_walk($listeners, function ($listener) use ($eventName, $dispatcher, $container) {
             if ($listener instanceof ContainerListenerHelper) {
                 if (!$container->has($listener->getService())) {
                     throw new InvalidArgumentException(
-                        sprintf('Container has no entry named: "%s"', $listener->getService())
+                        sprintf('Container has no entry named: "%s"', $listener->getService()),
                     );
                 }
 
                 $dispatcher->listen(
                     $eventName,
-                    new LazyContainerListener($container, $listener)
+                    new LazyContainerListener($container, $listener),
                 );
                 return;
             }
 
             if (!is_callable($listener)) {
                 throw new InvalidArgumentException(
-                    'Listener must be a callable or a container entry for a callable service.'
+                    'Listener must be a callable or a container entry for a callable service.',
                 );
             }
             $dispatcher->listen($eventName, $listener);

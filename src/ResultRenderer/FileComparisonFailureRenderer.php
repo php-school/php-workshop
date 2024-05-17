@@ -39,7 +39,7 @@ class FileComparisonFailureRenderer implements ResultRendererInterface
             $this->indent($renderer->style(sprintf('"%s"', $this->result->getActualValue()), 'red')),
             $renderer->style('EXPECTED OUTPUT FOR: ', ['bold', 'yellow']),
             $renderer->style($this->result->getFileName(), ['bold', 'green']),
-            $this->indent($renderer->style(sprintf('"%s"', $this->result->getExpectedValue()), 'green'))
+            $this->indent($renderer->style(sprintf('"%s"', $this->result->getExpectedValue()), 'green')),
         );
     }
 
@@ -55,8 +55,8 @@ class FileComparisonFailureRenderer implements ResultRendererInterface
                 function ($line) {
                     return sprintf('  %s', $line);
                 },
-                explode("\n", $string)
-            )
+                explode("\n", $string),
+            ),
         );
     }
 }

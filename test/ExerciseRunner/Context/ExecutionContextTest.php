@@ -19,7 +19,7 @@ class ExecutionContextTest extends TestCase
             '/student-dir',
             '/reference-dir',
             $exercise,
-            $input
+            $input,
         );
 
         static::assertSame($exercise, $context->getExercise());
@@ -36,7 +36,7 @@ class ExecutionContextTest extends TestCase
             '/student-dir',
             '/reference-dir',
             $exercise,
-            $input
+            $input,
         );
 
         static::assertTrue($context->hasStudentSolution());
@@ -47,7 +47,7 @@ class ExecutionContextTest extends TestCase
             '/student-dir',
             '/reference-dir',
             $exercise,
-            $input
+            $input,
         );
 
         static::assertFalse($context->hasStudentSolution());
@@ -61,7 +61,7 @@ class ExecutionContextTest extends TestCase
             '/student-dir',
             '/reference-dir',
             $exercise,
-            $input
+            $input,
         );
 
         static::assertSame('/student-dir/solution.php', $context->getEntryPoint());
@@ -77,7 +77,7 @@ class ExecutionContextTest extends TestCase
             '/student-dir',
             '/reference-dir',
             $exercise,
-            $input
+            $input,
         );
 
         $context->getEntryPoint();

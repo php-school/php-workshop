@@ -3,7 +3,6 @@
 namespace PhpSchool\PhpWorkshopTest\Command;
 
 use Colors\Color;
-use PhpSchool\PhpWorkshop\Exercise\TemporaryDirectoryTrait;
 use PhpSchool\PhpWorkshopTest\BaseTest;
 use PhpSchool\Terminal\Terminal;
 use PhpSchool\PhpWorkshop\Command\RunCommand;
@@ -13,7 +12,6 @@ use PhpSchool\PhpWorkshop\Input\Input;
 use PhpSchool\PhpWorkshop\Output\StdOutput;
 use PhpSchool\PhpWorkshop\UserState\UserState;
 use PhpSchool\PhpWorkshopTest\Asset\CliExerciseImpl;
-use PHPUnit\Framework\TestCase;
 
 class RunCommandTest extends BaseTest
 {

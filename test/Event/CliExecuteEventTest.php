@@ -3,15 +3,20 @@
 namespace PhpSchool\PhpWorkshopTest\Event;
 
 use PhpSchool\PhpWorkshop\Event\CliExecuteEvent;
-use PhpSchool\PhpWorkshop\Utils\ArrayObject;
+use PhpSchool\PhpWorkshop\Exercise\Scenario\CliScenario;
+use PhpSchool\PhpWorkshop\ExerciseRunner\Context\TestContext;
+use PhpSchool\PhpWorkshop\Utils\Collection;
 use PHPUnit\Framework\TestCase;
 
 class CliExecuteEventTest extends TestCase
 {
     public function testAppendArg(): void
     {
-        $arr = new ArrayObject([1, 2, 3]);
-        $e = new CliExecuteEvent('event', $arr);
+        $context = new TestContext();
+        $scenario = new CliScenario();
+
+        $arr = new Collection([1, 2, 3]);
+        $e = new CliExecuteEvent('event', $context, $scenario, $arr);
 
         $e->appendArg('4');
         $this->assertEquals([1, 2, 3, 4], $e->getArgs()->getArrayCopy());
@@ -20,19 +25,27 @@ class CliExecuteEventTest extends TestCase
 
     public function testPrependArg(): void
     {
-        $arr = new ArrayObject([1, 2, 3]);
-        $e = new CliExecuteEvent('event', $arr);
+        $context = new TestContext();
+        $scenario = new CliScenario();
+
+        $arr = new Collection([1, 2, 3]);
+        $e = new CliExecuteEvent('event', $context, $scenario, $arr);
 
         $e->prependArg('4');
         $this->assertEquals([4, 1, 2, 3], $e->getArgs()->getArrayCopy());
         $this->assertNotSame($arr, $e->getArgs());
     }
 
-    public function testGetArgs(): void
+    public function testGetters(): void
     {
-        $arr = new ArrayObject([1, 2, 3]);
-        $e = new CliExecuteEvent('event', $arr);
+        $context = new TestContext();
+        $scenario = new CliScenario();
+
+        $arr = new Collection([1, 2, 3]);
+        $e = new CliExecuteEvent('event', $context, $scenario, $arr);
 
         $this->assertSame($arr, $e->getArgs());
+        $this->assertSame($context, $e->getContext());
+        $this->assertSame($scenario, $e->getScenario());
     }
 }

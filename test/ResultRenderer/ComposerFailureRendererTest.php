@@ -17,7 +17,7 @@ class ComposerFailureRendererTest extends AbstractResultRendererTest
     {
         $failure = new ComposerFailure(
             $this->createMock(CheckInterface::class),
-            $file
+            $file,
         );
         $renderer = new ComposerFailureRenderer($failure);
 
@@ -40,7 +40,7 @@ class ComposerFailureRendererTest extends AbstractResultRendererTest
         $failure = new ComposerFailure(
             $this->createMock(CheckInterface::class),
             null,
-            ['some/package']
+            ['some/package'],
         );
         $renderer = new ComposerFailureRenderer($failure);
 
@@ -54,7 +54,7 @@ class ComposerFailureRendererTest extends AbstractResultRendererTest
         $failure = new ComposerFailure(
             $this->createMock(CheckInterface::class),
             null,
-            ['some/package', 'some-other/package']
+            ['some/package', 'some-other/package'],
         );
         $renderer = new ComposerFailureRenderer($failure);
 

@@ -2,30 +2,24 @@
 
 namespace PhpSchool\PhpWorkshopTest\Asset;
 
-use PhpSchool\PhpWorkshop\Check\FileComparisonCheck;
 use PhpSchool\PhpWorkshop\Event\EventDispatcher;
 use PhpSchool\PhpWorkshop\Exercise\CliExercise;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseType;
-use PhpSchool\PhpWorkshop\Exercise\ProvidesSolution;
-use PhpSchool\PhpWorkshop\ExerciseDispatcher;
+use PhpSchool\PhpWorkshop\Exercise\Scenario\CliScenario;
 use PhpSchool\PhpWorkshop\Solution\SolutionInterface;
 
 class CliExerciseImpl implements ExerciseInterface, CliExercise
 {
-    /**
-     * @var string
-     */
-    private $name;
-
-    /**
-     * @var SolutionInterface
-     */
-    private $solution;
+    private string $name;
+    private string $problemFile = 'problem-file.md';
+    private SolutionInterface $solution;
+    private CliScenario $scenario;
 
     public function __construct(string $name = 'my-exercise')
     {
         $this->name = $name;
+        $this->scenario = new CliScenario();
     }
 
     public function getName(): string
@@ -50,7 +44,12 @@ class CliExerciseImpl implements ExerciseInterface, CliExercise
 
     public function getProblem(): string
     {
-        // TODO: Implement getProblem() method.
+        return $this->problemFile;
+    }
+
+    public function setProblem(string $problemFile): void
+    {
+        $this->problemFile = $problemFile;
     }
 
     public function tearDown(): void
@@ -58,9 +57,14 @@ class CliExerciseImpl implements ExerciseInterface, CliExercise
         // TODO: Implement tearDown() method.
     }
 
-    public function getArgs(): array
+    public function setScenario(CliScenario $scenario): void
     {
-        return []; // TODO: Implement getArgs() method.
+        $this->scenario = $scenario;
+    }
+
+    public function defineTestScenario(): CliScenario
+    {
+        return $this->scenario;
     }
 
     public function getType(): ExerciseType
@@ -73,7 +77,6 @@ class CliExerciseImpl implements ExerciseInterface, CliExercise
         return [];
     }
 
-    public function defineListeners(EventDispatcher $dispatcher): void
-    {
-    }
+
+    public function defineListeners(EventDispatcher $dispatcher): void {}
 }

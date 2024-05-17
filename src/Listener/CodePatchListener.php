@@ -8,8 +8,8 @@ use PhpSchool\PhpWorkshop\CodePatcher;
 use PhpSchool\PhpWorkshop\Event\EventInterface;
 use PhpSchool\PhpWorkshop\Event\ExerciseRunnerEvent;
 use PhpSchool\PhpWorkshop\Exercise\ProvidesSolution;
+use PhpSchool\PhpWorkshop\Utils\Path;
 use Psr\Log\LoggerInterface;
-use RuntimeException;
 
 /**
  * Listener which patches internal and student's solutions
@@ -53,11 +53,14 @@ class CodePatchListener
      */
     public function patch(ExerciseRunnerEvent $event): void
     {
-        $files = [$event->getInput()->getArgument('program')];
+        $files = [$event->getContext()->getEntryPoint()];
 
         $exercise = $event->getExercise();
         if ($exercise instanceof ProvidesSolution) {
-            $files[] = $exercise->getSolution()->getEntryPoint()->getAbsolutePath();
+            $files[] = Path::join(
+                $event->getContext()->getReferenceExecutionDirectory(),
+                $exercise->getSolution()->getEntryPoint()->getRelativePath(),
+            );
         }
 
         foreach (array_filter($files) as $fileName) {
@@ -67,7 +70,7 @@ class CodePatchListener
 
             file_put_contents(
                 $fileName,
-                $this->codePatcher->patch($event->getExercise(), $this->originalCode[$fileName])
+                $this->codePatcher->patch($event->getExercise(), $this->originalCode[$fileName]),
             );
         }
     }
@@ -83,11 +86,12 @@ class CodePatchListener
 
         //if we're in debug mode leave the students patch for debugging
         if ($event instanceof ExerciseRunnerEvent && $this->debugMode) {
-            unset($this->originalCode[$event->getInput()->getArgument('program')]);
+            unset($this->originalCode[$event->getContext()->getEntryPoint()]);
         }
 
         foreach ($this->originalCode as $fileName => $contents) {
             file_put_contents($fileName, $contents);
+            unset($this->originalCode[$fileName]);
         }
     }
 }

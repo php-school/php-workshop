@@ -78,7 +78,7 @@ class MenuFactory
                     $exerciseRenderer->__invoke($menu);
                 },
                 $userState->completedExercise($exercise->getName()),
-                $this->isExerciseDisabled($exercise, $userState, $workshopType)
+                $this->isExerciseDisabled($exercise, $userState, $workshopType),
             );
         }
         /** @var HelpCommand $helpCommand */
@@ -178,7 +178,7 @@ class MenuFactory
     {
         $eventDispatcher->dispatch(new Event('exercise.selected', ['exercise' => $exercise]));
         $eventDispatcher->dispatch(
-            new Event(sprintf('exercise.selected.%s', AbstractExercise::normaliseName($exercise->getName())))
+            new Event(sprintf('exercise.selected.%s', AbstractExercise::normaliseName($exercise->getName()))),
         );
     }
 }

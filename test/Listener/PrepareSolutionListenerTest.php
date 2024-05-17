@@ -3,166 +3,127 @@
 namespace PhpSchool\PhpWorkshopTest\Listener;
 
 use PhpSchool\PhpWorkshop\Event\ExerciseRunnerEvent;
-use PhpSchool\PhpWorkshop\Exercise\CliExercise;
-use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
-use PhpSchool\PhpWorkshop\Input\Input;
+use PhpSchool\PhpWorkshop\ExerciseRunner\Context\TestContext;
 use PhpSchool\PhpWorkshop\Listener\PrepareSolutionListener;
+use PhpSchool\PhpWorkshop\Process\HostProcessFactory;
+use PhpSchool\PhpWorkshop\Process\ProcessNotFoundException;
 use PhpSchool\PhpWorkshop\Solution\SolutionInterface;
-use PhpSchool\PhpWorkshopTest\Asset\CliExerciseInterface;
+use PhpSchool\PhpWorkshopTest\Asset\CliExerciseImpl;
 use PHPUnit\Framework\TestCase;
-use ReflectionProperty;
-use RuntimeException;
-use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\Process\ExecutableFinder;
 use Yoast\PHPUnitPolyfills\Polyfills\AssertionRenames;
 
 class PrepareSolutionListenerTest extends TestCase
 {
     use AssertionRenames;
 
-    /**
-     * @var string
-     */
-    private $file;
-
-    /**
-     * @var PrepareSolutionListener
-     */
-    private $listener;
-
-    /**
-     * @var Filesystem
-     */
-    private $filesystem;
-
-    public function setUp(): void
-    {
-        $this->filesystem = new Filesystem();
-        $this->listener = new PrepareSolutionListener();
-        $this->file = sprintf('%s/%s/submission.php', str_replace('\\', '/', sys_get_temp_dir()), $this->getName());
-
-        mkdir(dirname($this->file), 0775, true);
-        touch($this->file);
-    }
-
-    /**
-     * @runInSeparateProcess
-     */
     public function testIfSolutionRequiresComposerButComposerCannotBeLocatedExceptionIsThrown(): void
     {
-        $refProp = new ReflectionProperty(PrepareSolutionListener::class, 'composerLocations');
-        $refProp->setAccessible(true);
-        $refProp->setValue($this->listener, []);
+        $exercise = new CliExerciseImpl();
+        $context = new TestContext($exercise);
+
+        $finder = $this->createMock(ExecutableFinder::class);
+        $finder->expects($this->once())->method('find')->with('composer')->willReturn(null);
 
         $solution = $this->createMock(SolutionInterface::class);
-        $exercise = $this->createMock(CliExerciseInterface::class);
-        $exercise
-            ->method('getSolution')
-            ->willReturn($solution);
-
         $solution
             ->expects($this->once())
             ->method('hasComposerFile')
             ->willReturn(true);
 
-        $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage('Composer could not be located on the system');
-        $event = new ExerciseRunnerEvent('event', $exercise, new Input('app'));
-        $this->listener->__invoke($event);
+        $exercise->setSolution($solution);
+
+        $this->expectException(ProcessNotFoundException::class);
+        $this->expectExceptionMessage('Could not find executable: "composer"');
+        $event = new ExerciseRunnerEvent('event', $context);
+        (new PrepareSolutionListener(new HostProcessFactory($finder)))->__invoke($event);
     }
 
     public function testIfSolutionRequiresComposerButVendorDirExistsNothingIsDone(): void
     {
-        mkdir(sprintf('%s/vendor', dirname($this->file)));
-        $this->assertFileExists(sprintf('%s/vendor', dirname($this->file)));
+        $exercise = new CliExerciseImpl();
+        $context = new TestContext($exercise);
+        $context->createReferenceSolutionDirectory();
+
+        mkdir(sprintf('%s/vendor', $context->getReferenceExecutionDirectory()));
+        $this->assertFileExists(sprintf('%s/vendor', $context->getReferenceExecutionDirectory()));
 
         $solution = $this->createMock(SolutionInterface::class);
-        $exercise = $this->createMock(CliExerciseInterface::class);
-        $exercise
-            ->method('getSolution')
-            ->willReturn($solution);
-
         $solution
             ->expects($this->once())
             ->method('hasComposerFile')
             ->willReturn(true);
 
-        $solution
-            ->method('getBaseDirectory')
-            ->willReturn(dirname($this->file));
+        $exercise->setSolution($solution);
 
-        $event = new ExerciseRunnerEvent('event', $exercise, new Input('app'));
-        $this->listener->__invoke($event);
+        $event = new ExerciseRunnerEvent('event', $context);
+        (new PrepareSolutionListener(new HostProcessFactory()))->__invoke($event);
 
-        $this->assertFileExists(sprintf('%s/vendor', dirname($this->file)));
+        $this->assertFileExists(sprintf('%s/vendor', $context->getReferenceExecutionDirectory()));
         //check for non existence of lock file, composer generates this when updating if it doesn't exist
-        $this->assertFileDoesNotExist(sprintf('%s/composer.lock', dirname($this->file)));
+        $this->assertFileDoesNotExist(sprintf('%s/composer.lock', $context->getReferenceExecutionDirectory()));
     }
 
     public function testIfSolutionRequiresComposerComposerInstallIsExecuted(): void
     {
-        $this->assertFileDoesNotExist(sprintf('%s/vendor', dirname($this->file)));
-        file_put_contents(sprintf('%s/composer.json', dirname($this->file)), json_encode([
-            'require' => [
-                'phpunit/phpunit' => '~5.0'
-            ],
-        ]));
+        $exercise = new CliExerciseImpl();
+        $context = new TestContext($exercise);
+        $context->createReferenceSolutionDirectory();
+        $context->importReferenceFileFromString(
+            json_encode([
+                'require' => [
+                    'phpunit/phpunit' => '~5.0',
+                ],
+            ]),
+            'composer.json',
+        );
 
         $solution = $this->createMock(SolutionInterface::class);
-        $exercise = $this->createMock(CliExerciseInterface::class);
-        $exercise
-            ->method('getSolution')
-            ->willReturn($solution);
-
         $solution
             ->expects($this->once())
             ->method('hasComposerFile')
             ->willReturn(true);
 
-        $solution
-            ->method('getBaseDirectory')
-            ->willReturn(dirname($this->file));
+        $exercise->setSolution($solution);
 
-        $event = new ExerciseRunnerEvent('event', $exercise, new Input('app'));
-        $this->listener->__invoke($event);
+        $event = new ExerciseRunnerEvent('event', $context);
+        (new PrepareSolutionListener(new HostProcessFactory()))->__invoke($event);
 
-        $this->assertFileExists(sprintf('%s/vendor', dirname($this->file)));
+        $this->assertFileExists(sprintf('%s/vendor', $context->getReferenceExecutionDirectory()));
     }
 
     public function testExceptionIsThrownIfDependenciesCannotBeResolved(): void
     {
+        $exercise = new CliExerciseImpl();
+        $context = new TestContext($exercise);
+
         $this->expectException(\PhpSchool\PhpWorkshop\Exception\RuntimeException::class);
         $this->expectExceptionMessage('Composer dependencies could not be installed');
 
-        $this->assertFileDoesNotExist(sprintf('%s/vendor', dirname($this->file)));
-        file_put_contents(sprintf('%s/composer.json', dirname($this->file)), json_encode([
-            'require' => [
-                'phpunit/phpunit' => '1.0'
-            ],
-        ]));
+        $exercise = new CliExerciseImpl();
+        $context = new TestContext($exercise);
+
+        $context->createReferenceSolutionDirectory();
+        $context->importReferenceFileFromString(
+            json_encode([
+                'require' => [
+                    'phpunit/phpunit' => '1.0',
+                ],
+            ]),
+            'composer.json',
+        );
 
         $solution = $this->createMock(SolutionInterface::class);
-        $exercise = $this->createMock(CliExerciseInterface::class);
-        $exercise
-            ->method('getSolution')
-            ->willReturn($solution);
+        $exercise->setSolution($solution);
 
         $solution
             ->expects($this->once())
             ->method('hasComposerFile')
             ->willReturn(true);
 
-        $solution
-            ->method('getBaseDirectory')
-            ->willReturn(dirname($this->file));
+        $event = new ExerciseRunnerEvent('event', $context);
+        (new PrepareSolutionListener(new HostProcessFactory()))->__invoke($event);
 
-        $event = new ExerciseRunnerEvent('event', $exercise, new Input('app'));
-        $this->listener->__invoke($event);
-
-        $this->assertFileExists(sprintf('%s/vendor', dirname($this->file)));
-    }
-
-    public function tearDown(): void
-    {
-        $this->filesystem->remove(dirname($this->file));
+        $this->assertFileExists(sprintf('%s/vendor', $context->getReferenceExecutionDirectory()));
     }
 }

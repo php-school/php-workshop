@@ -64,9 +64,9 @@ abstract class ContainerAwareTest extends BaseTest
                 [
                     'level' => $message['level'],
                     'message' => $message['message'],
-                    'context' => $message['context']
+                    'context' => $message['context'],
                 ],
-                $logged
+                $logged,
             );
         }
     }

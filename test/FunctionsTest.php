@@ -40,8 +40,8 @@ class FunctionsTest extends TestCase
             ['camelCase', 'camel-case'],
             [
                 'educationIsThePassportToTheFutureForTomorrowBelongsToThoseWhoPrepareForItToday',
-                'education-is-the-passport-to-the-future-for-tomorrow-belongs-to-those-who-prepare-for-it-today'
-            ]
+                'education-is-the-passport-to-the-future-for-tomorrow-belongs-to-those-who-prepare-for-it-today',
+            ],
         ];
     }
 

@@ -14,8 +14,7 @@ class ExecutionContext
         private string $referenceExecutionDirectory,
         private ExerciseInterface $exercise,
         private Input $input,
-    ) {
-    }
+    ) {}
 
     public static function fromInputAndExercise(Input $input, ExerciseInterface $exercise): ExecutionContext
     {
@@ -25,7 +24,7 @@ class ExecutionContext
             $program,
             System::randomTempDir(),
             $exercise,
-            $input
+            $input,
         );
     }
 
@@ -52,7 +51,7 @@ class ExecutionContext
 
         return Path::join(
             $this->studentExecutionDirectory,
-            basename($this->input->getRequiredArgument('program'))
+            basename($this->input->getRequiredArgument('program')),
         );
     }
 

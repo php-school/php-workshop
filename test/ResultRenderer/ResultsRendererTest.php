@@ -11,7 +11,6 @@ use PhpSchool\PhpWorkshopTest\Asset\CliExerciseImpl;
 use PhpSchool\PhpWorkshopTest\BaseTest;
 use PhpSchool\Terminal\Terminal;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
-use PhpSchool\PhpWorkshop\Exercise\ProvidesSolution;
 use PhpSchool\PhpWorkshop\ExerciseRepository;
 use PhpSchool\PhpWorkshop\Factory\ResultRendererFactory;
 use PhpSchool\PhpWorkshop\Output\StdOutput;
@@ -21,7 +20,6 @@ use PhpSchool\PhpWorkshop\ResultAggregator;
 use PhpSchool\PhpWorkshop\ResultRenderer\FailureRenderer;
 use PhpSchool\PhpWorkshop\ResultRenderer\ResultsRenderer;
 use PhpSchool\PhpWorkshop\Solution\SingleFileSolution;
-use PHPUnit\Framework\TestCase;
 
 use function PhpSchool\PhpWorkshop\camel_case_to_kebab_case;
 
@@ -44,7 +42,7 @@ class ResultsRendererTest extends BaseTest
             $terminal,
             new ExerciseRepository([]),
             new KeyLighter(),
-            $resultRendererFactory
+            $resultRendererFactory,
         );
 
 
@@ -66,7 +64,7 @@ class ResultsRendererTest extends BaseTest
             $terminal,
             new ExerciseRepository([]),
             new KeyLighter(),
-            new ResultRendererFactory()
+            new ResultRendererFactory(),
         );
 
         $this->assertSame("\e[33m──────────\e[0m", $renderer->lineBreak());
@@ -91,7 +89,7 @@ class ResultsRendererTest extends BaseTest
             $terminal,
             $exerciseRepo,
             new KeyLighter(),
-            $resultRendererFactory
+            $resultRendererFactory,
         );
 
         $resultSet = new ResultAggregator();
@@ -104,7 +102,7 @@ class ResultsRendererTest extends BaseTest
             $resultSet,
             $this->createMock(ExerciseInterface::class),
             new UserState(['exercise1']),
-            new StdOutput($color, $terminal)
+            new StdOutput($color, $terminal),
         );
     }
 
@@ -132,7 +130,7 @@ class ResultsRendererTest extends BaseTest
             $terminal,
             $exerciseRepo,
             new KeyLighter(),
-            $resultRendererFactory
+            $resultRendererFactory,
         );
 
         $resultSet = new ResultAggregator();
@@ -145,7 +143,7 @@ class ResultsRendererTest extends BaseTest
             $resultSet,
             $exercise,
             new UserState(['exercise1']),
-            new StdOutput($color, $terminal)
+            new StdOutput($color, $terminal),
         );
     }
 
@@ -181,7 +179,7 @@ class ResultsRendererTest extends BaseTest
             $terminal,
             $exerciseRepo,
             $syntaxHighlighter,
-            $resultRendererFactory
+            $resultRendererFactory,
         );
 
         $resultSet = new ResultAggregator();
@@ -194,7 +192,7 @@ class ResultsRendererTest extends BaseTest
             $resultSet,
             $exercise,
             new UserState(['exercise1']),
-            new StdOutput($color, $terminal)
+            new StdOutput($color, $terminal),
         );
     }
 
@@ -205,12 +203,12 @@ class ResultsRendererTest extends BaseTest
 
         $resultRendererFactory = new ResultRendererFactory();
         $resultRendererFactory->registerRenderer(Failure::class, FailureRenderer::class, function (Failure $failure) {
-             $renderer = $this->createMock(FailureRenderer::class);
-             $renderer
-                 ->method('render')
-                 ->with($this->isInstanceOf(ResultsRenderer::class))
-                 ->willReturn($failure->getReason() . "\n");
-             return $renderer;
+            $renderer = $this->createMock(FailureRenderer::class);
+            $renderer
+                ->method('render')
+                ->with($this->isInstanceOf(ResultsRenderer::class))
+                ->willReturn($failure->getReason() . "\n");
+            return $renderer;
         });
 
         $terminal = $this->createMock(Terminal::class);
@@ -225,7 +223,7 @@ class ResultsRendererTest extends BaseTest
             $terminal,
             $exerciseRepo,
             new KeyLighter(),
-            $resultRendererFactory
+            $resultRendererFactory,
         );
 
         $resultSet = new ResultAggregator();
@@ -239,7 +237,7 @@ class ResultsRendererTest extends BaseTest
             $resultSet,
             $this->createMock(ExerciseInterface::class),
             new UserState(),
-            new StdOutput($color, $terminal)
+            new StdOutput($color, $terminal),
         );
     }
 
@@ -270,7 +268,7 @@ class ResultsRendererTest extends BaseTest
             $terminal,
             $exerciseRepo,
             new KeyLighter(),
-            $resultRendererFactory
+            $resultRendererFactory,
         );
 
         $resultSet = new ResultAggregator();
@@ -285,7 +283,7 @@ class ResultsRendererTest extends BaseTest
             $resultSet,
             $this->createMock(ExerciseInterface::class),
             new UserState(),
-            new StdOutput($color, $terminal)
+            new StdOutput($color, $terminal),
         );
     }
 
@@ -315,7 +313,7 @@ class ResultsRendererTest extends BaseTest
             $terminal,
             $exerciseRepo,
             new KeyLighter(),
-            $resultRendererFactory
+            $resultRendererFactory,
         );
 
         $resultSet = new ResultAggregator();
@@ -328,7 +326,7 @@ class ResultsRendererTest extends BaseTest
             $resultSet,
             $this->createMock(ExerciseInterface::class),
             new UserState(),
-            new StdOutput($color, $terminal)
+            new StdOutput($color, $terminal),
         );
     }
 

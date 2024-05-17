@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace PhpSchool\PhpWorkshop\Command;
 
-use PhpSchool\PhpWorkshop\Exception\InvalidArgumentException;
 use PhpSchool\PhpWorkshop\Exception\ProblemFileDoesNotExistException;
 use PhpSchool\PhpWorkshop\ExerciseRepository;
 use PhpSchool\PhpWorkshop\MarkdownRenderer;
@@ -53,7 +52,7 @@ class PrintCommand
         ExerciseRepository $exerciseRepository,
         UserState $userState,
         MarkdownRenderer $markdownRenderer,
-        OutputInterface $output
+        OutputInterface $output,
     ) {
         $this->appName = $appName;
         $this->markdownRenderer = $markdownRenderer;

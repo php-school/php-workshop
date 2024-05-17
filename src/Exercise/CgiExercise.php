@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace PhpSchool\PhpWorkshop\Exercise;
 
-use Psr\Http\Message\RequestInterface;
+use PhpSchool\PhpWorkshop\Exercise\Scenario\CgiScenario;
 
 /**
  * This interface describes the additional methods a CGI type exercise should implement.
@@ -12,10 +12,15 @@ use Psr\Http\Message\RequestInterface;
 interface CgiExercise extends ProvidesSolution
 {
     /**
-     * This method should return an array of PSR-7 requests, which will be forwarded to the student's
-     * solution.
+     * This method should return an instance of CgiScenario which contains PSR-7 requests,
+     * which will be forwarded to the student's solution.
      *
-     * @return array<RequestInterface> An array of PSR-7 requests.
+     * Use like so:
+     *
+     * ```
+     * return (new CgiScenario())
+     *     ->withExecution($request1)
+     * ```
      */
-    public function getRequests(): array;
+    public function defineTestScenario(): CgiScenario;
 }

@@ -53,7 +53,7 @@ class CodeInsertion
     {
         if (!in_array($type, $this->types, true)) {
             throw new InvalidArgumentException(
-                sprintf('Value "%s" is not an element of the valid values: %s', $type, implode(', ', $this->types))
+                sprintf('Value "%s" is not an element of the valid values: %s', $type, implode(', ', $this->types)),
             );
         }
 

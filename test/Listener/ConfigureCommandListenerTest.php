@@ -18,8 +18,7 @@ class ConfigureCommandListenerTest extends TestCase
      */
     public function testInputIsConfiguredForCorrectCommands(string $commandName): void
     {
-        $command = new CommandDefinition($commandName, [], function () {
-        });
+        $command = new CommandDefinition($commandName, [], function () {});
 
         $state    = new UserState([], 'Exercise 1');
         $exercise = new CliExerciseImpl('Exercise 1');
@@ -45,8 +44,7 @@ class ConfigureCommandListenerTest extends TestCase
      */
     public function testInputIsNotConfiguredForCorrectCommands(string $commandName): void
     {
-        $command = new CommandDefinition($commandName, [], function () {
-        });
+        $command = new CommandDefinition($commandName, [], function () {});
 
         $state    = new UserState([], 'Exercise 1');
         $exercise = new CliExerciseImpl('Exercise 1');

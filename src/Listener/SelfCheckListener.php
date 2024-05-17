@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace PhpSchool\PhpWorkshop\Listener;
 
-use PhpSchool\PhpWorkshop\Event\Event;
+use PhpSchool\PhpWorkshop\Event\ExerciseRunnerEvent;
 use PhpSchool\PhpWorkshop\ExerciseCheck\SelfCheck;
 use PhpSchool\PhpWorkshop\Input\Input;
 use PhpSchool\PhpWorkshop\ResultAggregator;
@@ -14,30 +14,16 @@ use PhpSchool\PhpWorkshop\ResultAggregator;
  */
 class SelfCheckListener
 {
-    /**
-     * @var ResultAggregator
-     */
-    private $results;
+    public function __construct(private ResultAggregator $results) {}
 
-    /**
-     * @param ResultAggregator $results
-     */
-    public function __construct(ResultAggregator $results)
+    public function __invoke(ExerciseRunnerEvent $event): void
     {
-        $this->results = $results;
-    }
-
-    /**
-     * @param Event $event
-     */
-    public function __invoke(Event $event): void
-    {
-        $exercise = $event->getParameter('exercise');
+        $exercise = $event->getContext()->getExercise();
 
         if ($exercise instanceof SelfCheck) {
             /** @var Input $input */
             $input = $event->getParameter('input');
-            $this->results->add($exercise->check($input));
+            $this->results->add($exercise->check($event->getContext()));
         }
     }
 }

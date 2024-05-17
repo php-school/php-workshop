@@ -17,7 +17,7 @@ class RunnerManager
     /**
      * @var array<ExerciseRunnerFactoryInterface>
      */
-    private $factories = [];
+    private array $factories = [];
 
     /**
      * @param ExerciseRunnerFactoryInterface $factory
@@ -59,7 +59,7 @@ class RunnerManager
         }
 
         throw new InvalidArgumentException(
-            sprintf('Exercise Type: "%s" not supported', $exercise->getType()->getValue())
+            sprintf('Exercise Type: "%s" not supported', $exercise->getType()->getValue()),
         );
     }
 }

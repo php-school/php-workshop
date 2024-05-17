@@ -16,7 +16,7 @@ class FileComparisonFailureRendererTest extends AbstractResultRendererTest
             $this->createMock(CheckInterface::class),
             'some-file.text',
             'EXPECTED OUTPUT',
-            'ACTUAL OUTPUT'
+            'ACTUAL OUTPUT',
         );
         $renderer = new FileComparisonFailureRenderer($failure);
 
