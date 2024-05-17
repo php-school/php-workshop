@@ -2,6 +2,8 @@
 
 namespace PhpSchool\PhpWorkshopTest\Asset;
 
+use PhpSchool\PhpWorkshop\Check\FileComparisonCheck;
+use PhpSchool\PhpWorkshop\Event\EventDispatcher;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseType;
 use PhpSchool\PhpWorkshop\Exercise\ProvidesInitialCode;
@@ -41,13 +43,17 @@ class ExerciseWithInitialCode implements ExerciseInterface, ProvidesInitialCode
         // TODO: Implement getType() method.
     }
 
-    public function configure(ExerciseDispatcher $dispatcher): void
-    {
-        // TODO: Implement configure() method.
-    }
-
     public function getInitialCode(): SolutionInterface
     {
         return SingleFileSolution::fromFile(__DIR__ . '/initial-code/init-solution.php');
+    }
+
+    public function getRequiredChecks(): array
+    {
+        return [];
+    }
+
+    public function defineListeners(EventDispatcher $dispatcher): void
+    {
     }
 }

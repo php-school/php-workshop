@@ -15,6 +15,7 @@ use PhpSchool\PhpWorkshop\ExerciseRunner\CliRunner;
 use PhpSchool\PhpWorkshop\ExerciseRunner\RunnerManager;
 use PhpSchool\PhpWorkshop\Input\Input;
 use PhpSchool\PhpWorkshop\Output\OutputInterface;
+use PhpSchool\PhpWorkshop\Process\HostProcessFactory;
 use PhpSchool\PhpWorkshop\ResultAggregator;
 use PhpSchool\PhpWorkshop\Solution\SingleFileSolution;
 use PhpSchool\PhpWorkshopTest\Asset\DatabaseExerciseInterface;
@@ -68,8 +69,8 @@ class DatabaseCheckTest extends TestCase
     private function getRunnerManager(ExerciseInterface $exercise, EventDispatcher $eventDispatcher): MockObject
     {
         $runner = $this->getMockBuilder(CliRunner::class)
-            ->setConstructorArgs([$exercise, $eventDispatcher])
-            ->setMethods(['configure', 'getRequiredChecks'])
+            ->setConstructorArgs([$exercise, $eventDispatcher, new HostProcessFactory()])
+            ->onlyMethods(['getRequiredChecks'])
             ->getMock();
 
         $runner
@@ -131,10 +132,8 @@ class DatabaseCheckTest extends TestCase
 
         $this->exercise
             ->expects($this->once())
-            ->method('configure')
-            ->willReturnCallback(function (ExerciseDispatcher $dispatcher) {
-                $dispatcher->requireCheck(DatabaseCheck::class);
-            });
+            ->method('getRequiredChecks')
+            ->willReturn([DatabaseCheck::class]);
 
         $this->exercise
             ->expects($this->once())
@@ -172,10 +171,8 @@ class DatabaseCheckTest extends TestCase
 
         $this->exercise
             ->expects($this->once())
-            ->method('configure')
-            ->willReturnCallback(function (ExerciseDispatcher $dispatcher) {
-                $dispatcher->requireCheck(DatabaseCheck::class);
-            });
+            ->method('getRequiredChecks')
+            ->willReturn([DatabaseCheck::class]);
 
         $this->exercise
             ->expects($this->once())
@@ -206,13 +203,6 @@ class DatabaseCheckTest extends TestCase
             ->expects($this->once())
             ->method('getArgs')
             ->willReturn([]);
-
-        $this->exercise
-            ->expects($this->once())
-            ->method('configure')
-            ->willReturnCallback(function (ExerciseDispatcher $dispatcher) {
-                $dispatcher->requireCheck(DatabaseCheck::class);
-            });
 
         $this->checkRepository->registerCheck($this->check);
 
@@ -248,10 +238,8 @@ class DatabaseCheckTest extends TestCase
 
         $this->exercise
             ->expects($this->once())
-            ->method('configure')
-            ->willReturnCallback(function (ExerciseDispatcher $dispatcher) {
-                $dispatcher->requireCheck(DatabaseCheck::class);
-            });
+            ->method('getRequiredChecks')
+            ->willReturn([DatabaseCheck::class]);
 
         $this->exercise
             ->expects($this->once())
@@ -296,10 +284,8 @@ class DatabaseCheckTest extends TestCase
 
         $this->exercise
             ->expects($this->once())
-            ->method('configure')
-            ->willReturnCallback(function (ExerciseDispatcher $dispatcher) {
-                $dispatcher->requireCheck(DatabaseCheck::class);
-            });
+            ->method('getRequiredChecks')
+            ->willReturn([DatabaseCheck::class]);
 
         $this->exercise
             ->expects($this->once())

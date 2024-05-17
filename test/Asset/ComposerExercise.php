@@ -3,6 +3,7 @@
 namespace PhpSchool\PhpWorkshopTest\Asset;
 
 use PhpSchool\PhpWorkshop\Check\ComposerCheck;
+use PhpSchool\PhpWorkshop\Event\EventDispatcher;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseType;
 use PhpSchool\PhpWorkshop\ExerciseCheck\ComposerExerciseCheck;
@@ -53,8 +54,12 @@ class ComposerExercise implements ExerciseInterface, ComposerExerciseCheck
         return ExerciseType::CLI();
     }
 
-    public function configure(ExerciseDispatcher $dispatcher): void
+    public function getRequiredChecks(): array
     {
-        $dispatcher->requireCheck(ComposerCheck::class);
+        return [ComposerCheck::class];
+    }
+
+    public function defineListeners(EventDispatcher $dispatcher): void
+    {
     }
 }

@@ -5,6 +5,7 @@ namespace PhpSchool\PhpWorkshopTest\ExerciseRunner;
 use Colors\Color;
 use PhpSchool\PhpWorkshop\Check\CodeExistsCheck;
 use PhpSchool\PhpWorkshop\Listener\OutputRunInfoListener;
+use PhpSchool\PhpWorkshop\Process\HostProcessFactory;
 use PhpSchool\PhpWorkshop\Utils\RequestRenderer;
 use PhpSchool\Terminal\Terminal;
 use PhpSchool\PhpWorkshop\Check\CodeParseCheck;
@@ -23,6 +24,7 @@ use PhpSchool\PhpWorkshop\Result\Cli\RequestFailure;
 use PhpSchool\PhpWorkshop\ResultAggregator;
 use PhpSchool\PhpWorkshop\Solution\SingleFileSolution;
 use PhpSchool\PhpWorkshopTest\Asset\CliExerciseInterface;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Yoast\PHPUnitPolyfills\Polyfills\AssertionRenames;
 
@@ -30,24 +32,18 @@ class CliRunnerTest extends TestCase
 {
     use AssertionRenames;
 
-    /** @var  CliRunner */
-    private $runner;
-
+    private CliRunner $runner;
     /**
-     * @var CliExerciseInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var CliExerciseInterface&MockObject
      */
-    private $exercise;
-
-    /**
-     * @var EventDispatcher
-     */
-    private $eventDispatcher;
+    private CliExerciseInterface $exercise;
+    private EventDispatcher $eventDispatcher;
 
     public function setUp(): void
     {
         $this->exercise = $this->createMock(CliExerciseInterface::class);
         $this->eventDispatcher = new EventDispatcher(new ResultAggregator());
-        $this->runner = new CliRunner($this->exercise, $this->eventDispatcher);
+        $this->runner = new CliRunner($this->exercise, $this->eventDispatcher, new HostProcessFactory());
 
         $this->exercise
             ->method('getType')
