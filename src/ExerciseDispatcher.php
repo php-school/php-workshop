@@ -125,6 +125,8 @@ class ExerciseDispatcher
             $this->results->add($check->check($context));
 
             if (!$this->results->isSuccessful()) {
+                $exercise->tearDown();
+                $this->eventDispatcher->dispatch(new ExerciseRunnerEvent('verify.finish', $context));
                 return $this->results;
             }
         }
