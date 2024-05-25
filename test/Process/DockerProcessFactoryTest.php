@@ -39,7 +39,7 @@ class DockerProcessFactoryTest extends TestCase
 
         $process = $factory->create($input);
         $cmd  = "'/usr/local/bin/docker' 'compose' '-p' 'php8appreciate' '-f' '.docker/runtime/docker-compose.yml'";
-        $cmd .= " 'run' '--rm' '-w' '/solution' 'runtime' 'php'";
+        $cmd .= " 'run' '--user' '" . getmyuid() . ":" . getmygid() . "' '--rm' '-e' 'COMPOSER_HOME=/tmp/composer' '-w' '/solution' 'runtime' 'php'";
         static::assertSame($cmd, $process->getCommandLine());
         static::assertSame('/docker-dir', $process->getWorkingDirectory());
     }
@@ -57,7 +57,7 @@ class DockerProcessFactoryTest extends TestCase
 
         $process = $factory->create($input);
         $cmd  = "'/usr/local/bin/docker' 'compose' '-p' 'php8appreciate' '-f' '.docker/runtime/docker-compose.yml'";
-        $cmd .= " 'run' '--rm' '-w' '/solution' '-v' '/composer/cache/dir:/root/.composer/cache' 'runtime' 'composer'";
+        $cmd .= " 'run' '--user' '" . getmyuid() . ":" . getmygid() . "' '--rm' '-e' 'COMPOSER_HOME=/tmp/composer' '-w' '/solution' '-v' '/composer/cache/dir:/tmp/composer' 'runtime' 'composer'";
         static::assertSame($cmd, $process->getCommandLine());
         static::assertSame('/docker-dir', $process->getWorkingDirectory());
     }
@@ -75,7 +75,7 @@ class DockerProcessFactoryTest extends TestCase
 
         $process = $factory->create($input);
         $cmd  = "'/usr/local/bin/docker' 'compose' '-p' 'php8appreciate' '-f' '.docker/runtime/docker-compose.yml'";
-        $cmd .= " 'run' '--rm' '-w' '/solution' 'runtime' 'php' 'one' 'two'";
+        $cmd .= " 'run' '--user' '" . getmyuid() . ":" . getmygid() . "' '--rm' '-e' 'COMPOSER_HOME=/tmp/composer' '-w' '/solution' 'runtime' 'php' 'one' 'two'";
         static::assertSame($cmd, $process->getCommandLine());
         static::assertSame('/docker-dir', $process->getWorkingDirectory());
     }
@@ -93,7 +93,7 @@ class DockerProcessFactoryTest extends TestCase
 
         $process = $factory->create($input);
         $cmd  = "'/usr/local/bin/docker' 'compose' '-p' 'php8appreciate' '-f' '.docker/runtime/docker-compose.yml'";
-        $cmd .= " 'run' '--rm' '-e' 'SOME_VAR=value' '-w' '/solution' 'runtime' 'php' 'one' 'two'";
+        $cmd .= " 'run' '--user' '" . getmyuid() . ":" . getmygid() . "' '--rm' '-e' 'SOME_VAR=value' '-e' 'COMPOSER_HOME=/tmp/composer' '-w' '/solution' 'runtime' 'php' 'one' 'two'";
         static::assertSame($cmd, $process->getCommandLine());
         static::assertSame('/docker-dir', $process->getWorkingDirectory());
     }
@@ -111,7 +111,7 @@ class DockerProcessFactoryTest extends TestCase
 
         $process = $factory->create($input);
         $cmd  = "'/usr/local/bin/docker' 'compose' '-p' 'php8appreciate' '-f' '.docker/runtime/docker-compose.yml'";
-        $cmd .= " 'run' '--rm' '-w' '/solution' 'runtime' 'php'";
+        $cmd .= " 'run' '--user' '" . getmyuid() . ":" . getmygid() . "' '--rm' '-e' 'COMPOSER_HOME=/tmp/composer' '-w' '/solution' 'runtime' 'php'";
         static::assertSame($cmd, $process->getCommandLine());
         static::assertSame('someinput', $process->getInput());
     }
@@ -129,9 +129,9 @@ class DockerProcessFactoryTest extends TestCase
 
         $process = $factory->create($input);
         $cmd  = "'/usr/local/bin/docker' 'compose' '-p' 'php8appreciate' '-f' '.docker/runtime/docker-compose.yml'";
-        $cmd .= " 'run' '--rm' '-e' 'SOME_VAR=value' '-w' '/solution' 'runtime' 'php' 'one' 'two'";
+        $cmd .= " 'run' '--user' '" . getmyuid() . ":" . getmygid() . "' '--rm' '-e' 'SOME_VAR=value' '-e' 'COMPOSER_HOME=/tmp/composer' '-w' '/solution' 'runtime' 'php' 'one' 'two'";
         static::assertSame($cmd, $process->getCommandLine());
         static::assertSame('/docker-dir', $process->getWorkingDirectory());
-        static::assertSame(['SOLUTION' => __DIR__], $process->getEnv());
+        static::assertSame(['SOLUTION' => __DIR__, 'UID' => getmyuid(), 'GID' => getmygid()], $process->getEnv());
     }
 }
