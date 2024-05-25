@@ -57,7 +57,7 @@ final class DockerProcessFactory implements ProcessFactory
                 'GID' => getmygid(),
             ],
             $processInput->getInput(),
-            10,
+            30,
         );
     }
 
