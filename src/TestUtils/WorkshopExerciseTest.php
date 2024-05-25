@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace PhpSchool\PhpWorkshop\TestUtils;
 
+use DI\Container;
 use PhpSchool\PhpWorkshop\Application;
 use PhpSchool\PhpWorkshop\Exception\InvalidArgumentException;
+use PhpSchool\PhpWorkshop\Exception\RuntimeException;
 use PhpSchool\PhpWorkshop\Exercise\AbstractExercise;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseType;
@@ -20,10 +22,10 @@ use PhpSchool\PhpWorkshop\Result\ResultGroupInterface;
 use PhpSchool\PhpWorkshop\Result\ResultInterface;
 use PhpSchool\PhpWorkshop\ResultAggregator;
 use PhpSchool\PhpWorkshop\Utils\Collection;
+use PhpSchool\PhpWorkshop\Utils\Path;
 use PhpSchool\PhpWorkshop\Utils\System;
 use PHPUnit\Framework\ExpectationFailedException;
 use PHPUnit\Framework\TestCase;
-use Psr\Container\ContainerInterface;
 use PhpSchool\PhpWorkshop\Input\Input;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Process\ExecutableFinder;
@@ -33,30 +35,33 @@ use function PhpSchool\PhpWorkshop\collect;
 
 abstract class WorkshopExerciseTest extends TestCase
 {
-    /**
-     * @var Application
-     */
-    protected $app;
+    private Application $app;
+    private Container $container;
+    private ResultAggregator $results;
 
-    /**
-     * @var ContainerInterface
-     */
-    protected $container;
+    private Filesystem $filesystem;
+    private string $executionDirectory;
 
-    /**
-     * @var ResultAggregator
-     */
-    protected $results;
+    public const SINGLE_FILE_SOLUTION = 'single-file-solution';
+    public const DIRECTORY_SOLUTION = 'directory-solution';
 
     public function setUp(): void
     {
         $this->app = $this->getApplication();
-        $this->container = $this->app->configure();
+        $container = $this->app->configure();
+
+        if (!$container instanceof Container) {
+            throw new RuntimeException(sprintf('Expected the application container to be a "%s"', Container::class));
+        }
+
+        $this->container = $container;
+        $this->filesystem = new Filesystem();
+        $this->executionDirectory = System::randomTempDir();
     }
 
     public function tearDown(): void
     {
-        (new Filesystem())->remove(System::tempDir());
+        $this->filesystem->remove($this->executionDirectory);
     }
 
     /**
@@ -74,8 +79,12 @@ abstract class WorkshopExerciseTest extends TestCase
         return $exerciseRepository->findByClassName($this->getExerciseClass());
     }
 
-    public function runExercise(string $submissionFile): void
+    public function runExercise(string $submissionFile, string $type = self::SINGLE_FILE_SOLUTION): void
     {
+        //we copy the test solution to a random directory
+        //so we can properly cleanup. It also saves us from patch crashes.
+        $this->filesystem->mkdir($this->executionDirectory);
+
         $exercise = $this->getExercise();
 
         /** @var string $basePath */
@@ -98,6 +107,14 @@ abstract class WorkshopExerciseTest extends TestCase
             );
         }
 
+        if ($type === self::SINGLE_FILE_SOLUTION) {
+            $this->filesystem->copy($submissionFileAbsolute, Path::join($this->executionDirectory, $submissionFile));
+        } else {
+            $this->filesystem->mirror(dirname($submissionFileAbsolute), $this->executionDirectory);
+        }
+
+        $submissionFileAbsolute = Path::join($this->executionDirectory, basename($submissionFile));
+
         if ($exercise instanceof ComposerExerciseCheck) {
             $this->installDeps($exercise, dirname($submissionFileAbsolute));
         }
@@ -110,16 +127,15 @@ abstract class WorkshopExerciseTest extends TestCase
         ]);
 
         /** @var ExerciseDispatcher $exerciseDispatcher */
-        $exerciseDispatcher = $this->container->get(ExerciseDispatcher::class);
-
+        $exerciseDispatcher = $this->container->make(ExerciseDispatcher::class);
         $this->results = $exerciseDispatcher->verify($exercise, $input);
     }
 
     /**
-     * @param ExerciseInterface&ComposerExerciseCheck $exercise
+     * @param ComposerExerciseCheck $exercise
      * @param string $directory
      */
-    private function installDeps(ExerciseInterface $exercise, string $directory): void
+    private function installDeps(ComposerExerciseCheck $exercise, string $directory): void
     {
         if (file_exists("$directory/composer.json") && !file_exists("$directory/vendor")) {
             $execFinder = new ExecutableFinder();
@@ -233,7 +249,12 @@ abstract class WorkshopExerciseTest extends TestCase
         }
 
         $result = $results->values()->get(0);
-        $this->assertInstanceOf(ResultGroupInterface::class, $result);
+
+        if (!$result instanceof ResultGroupInterface) {
+            throw new RuntimeException(
+                sprintf('No output result found for exercise type: "%s"', $exerciseType->getValue()),
+            );
+        }
 
         return $result;
     }
@@ -255,20 +276,5 @@ abstract class WorkshopExerciseTest extends TestCase
         $failures->each(function ($failure) use ($matcher) {
             $this->assertTrue($matcher($failure));
         });
-    }
-
-    public function removeSolutionAsset(string $file): void
-    {
-        /** @var string $basePath */
-        $basePath = $this->container->get('basePath');
-
-        $path = sprintf(
-            '%s/test/solutions/%s/%s',
-            rtrim($basePath, '/'),
-            AbstractExercise::normaliseName($this->getExercise()->getName()),
-            $file,
-        );
-
-        (new Filesystem())->remove($path);
     }
 }
