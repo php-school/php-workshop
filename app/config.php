@@ -207,7 +207,7 @@ return [
     },
 
     ProcessFactory::class => function (ContainerInterface $c) {
-        $processFactory = $_ENV['process_factory'] ?? null;
+        $processFactory = getenv('PROCESS_FACTORY');
 
         return match ($processFactory) {
             'docker' => new DockerProcessFactory(
