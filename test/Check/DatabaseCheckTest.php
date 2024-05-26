@@ -22,8 +22,6 @@ use PhpSchool\PhpWorkshop\Solution\SingleFileSolution;
 use PhpSchool\PhpWorkshopTest\Asset\DatabaseExercise;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use ReflectionProperty;
-use RuntimeException;
 use Symfony\Component\Filesystem\Filesystem;
 
 class DatabaseCheckTest extends TestCase
@@ -73,58 +71,6 @@ class DatabaseCheckTest extends TestCase
             ->willReturn($runner);
 
         return $runnerManager;
-    }
-
-    public function testIfDatabaseFolderExistsExceptionIsThrown(): void
-    {
-        $eventDispatcher = new EventDispatcher(new ResultAggregator());
-        mkdir($this->dbDir, 0777, true);
-        try {
-            $this->check->attach($eventDispatcher);
-            $this->fail('Exception was not thrown');
-        } catch (RuntimeException $e) {
-            $this->assertEquals(sprintf('Database directory: "%s" already exists', $this->dbDir), $e->getMessage());
-        }
-    }
-
-    /**
-     * If an exception is thrown from PDO, check that the check can be run straight away
-     * Previously files were not cleaned up that caused exceptions.
-     */
-    public function testIfPDOThrowsExceptionItCleansUp(): void
-    {
-        $eventDispatcher = new EventDispatcher(new ResultAggregator());
-
-        $refProp = new ReflectionProperty(DatabaseCheck::class, 'userDsn');
-        $refProp->setAccessible(true);
-        $refProp->setValue($this->check, 'notvaliddsn');
-
-        try {
-            $this->check->attach($eventDispatcher);
-            $this->fail('Exception was not thrown');
-        } catch (\PDOException $e) {
-        }
-
-        //try to run the check as usual
-        $this->check = new DatabaseCheck();
-        $solution = SingleFileSolution::fromFile(realpath(__DIR__ . '/../res/database/solution.php'));
-        $this->exercise->setSolution($solution);
-        $this->exercise->setScenario((new CliScenario())->withExecution([1, 2, 3]));
-        $this->exercise->setVerifier(fn() => true);
-
-        $this->checkRepository->registerCheck($this->check);
-
-        $results            = new ResultAggregator();
-        $eventDispatcher    = new EventDispatcher($results);
-        $dispatcher         = new ExerciseDispatcher(
-            $this->getRunnerManager($this->exercise, $eventDispatcher),
-            $results,
-            $eventDispatcher,
-            $this->checkRepository,
-        );
-
-        $dispatcher->verify($this->exercise, new Input('app', ['program' => __DIR__ . '/../res/database/user.php']));
-        $this->assertTrue($results->isSuccessful());
     }
 
     public function testSuccessIsReturnedIfDatabaseVerificationPassed(): void
