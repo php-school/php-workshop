@@ -102,6 +102,8 @@ class CgiRunner implements ExerciseRunnerInterface
     {
         $scenario = $this->exercise->defineTestScenario();
 
+        $this->eventDispatcher->dispatch(new CgiExerciseRunnerEvent('cgi.verify.prepare', $context, $scenario));
+
         $this->environmentManager->prepareStudent($context, $scenario);
         $this->environmentManager->prepareReference($context, $scenario);
 
