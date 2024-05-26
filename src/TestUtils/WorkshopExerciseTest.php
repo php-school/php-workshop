@@ -21,6 +21,7 @@ use PhpSchool\PhpWorkshop\Result\ResultGroupInterface;
 use PhpSchool\PhpWorkshop\Result\ResultInterface;
 use PhpSchool\PhpWorkshop\ResultAggregator;
 use PhpSchool\PhpWorkshop\Utils\Collection;
+use PhpSchool\PhpWorkshop\Utils\Path;
 use PhpSchool\PhpWorkshop\Utils\System;
 use PHPUnit\Framework\ExpectationFailedException;
 use PHPUnit\Framework\TestCase;
@@ -34,30 +35,27 @@ use function PhpSchool\PhpWorkshop\collect;
 
 abstract class WorkshopExerciseTest extends TestCase
 {
-    /**
-     * @var Application
-     */
-    protected $app;
+    private Application $app;
+    private ContainerInterface $container;
+    private ResultAggregator $results;
 
-    /**
-     * @var ContainerInterface
-     */
-    protected $container;
+    private Filesystem $filesystem;
+    private string $executionDirectory;
 
-    /**
-     * @var ResultAggregator
-     */
-    protected $results;
+    public const SINGLE_FILE_SOLUTION = 'single-file-solution';
+    public const DIRECTORY_SOLUTION = 'directory-solution';
 
     public function setUp(): void
     {
         $this->app = $this->getApplication();
         $this->container = $this->app->configure();
+        $this->filesystem = new Filesystem();
+        $this->executionDirectory = System::randomTempDir();
     }
 
     public function tearDown(): void
     {
-        (new Filesystem())->remove(System::tempDir());
+        $this->filesystem->remove($this->executionDirectory);
     }
 
     /**
@@ -73,8 +71,12 @@ abstract class WorkshopExerciseTest extends TestCase
             ->findByClassName($this->getExerciseClass());
     }
 
-    public function runExercise(string $submissionFile): void
+    public function runExercise(string $submissionFile, string $type = self::SINGLE_FILE_SOLUTION): void
     {
+        //we copy the test solution to a random directory
+        //so we can properly cleanup. It also saves us from patch crashes.
+        $this->filesystem->mkdir($this->executionDirectory);
+
         $exercise = $this->getExercise();
 
         $submissionFileAbsolute = sprintf(
@@ -94,6 +96,14 @@ abstract class WorkshopExerciseTest extends TestCase
             );
         }
 
+        if ($type === self::SINGLE_FILE_SOLUTION) {
+            $this->filesystem->copy($submissionFileAbsolute, Path::join($this->executionDirectory, $submissionFile));
+        } else {
+            $this->filesystem->mirror(dirname($submissionFileAbsolute), $this->executionDirectory);
+        }
+
+        $submissionFileAbsolute = Path::join($this->executionDirectory, basename($submissionFile));
+
         if ($exercise instanceof ComposerExerciseCheck) {
             $this->installDeps($exercise, dirname($submissionFileAbsolute));
         }
@@ -102,7 +112,7 @@ abstract class WorkshopExerciseTest extends TestCase
             'program' => $submissionFileAbsolute,
         ]);
 
-        $this->results = $this->container->get(ExerciseDispatcher::class)
+        $this->results = $this->container->make(ExerciseDispatcher::class)
             ->verify($exercise, $input);
     }
 
@@ -236,17 +246,5 @@ abstract class WorkshopExerciseTest extends TestCase
         $failures->each(function ($failure) use ($matcher) {
             $this->assertTrue($matcher($failure));
         });
-    }
-
-    public function removeSolutionAsset(string $file): void
-    {
-        $path = sprintf(
-            '%s/test/solutions/%s/%s',
-            rtrim($this->container->get('basePath'), '/'),
-            AbstractExercise::normaliseName($this->getExercise()->getName()),
-            $file,
-        );
-
-        (new Filesystem())->remove($path);
     }
 }

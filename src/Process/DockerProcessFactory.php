@@ -31,12 +31,17 @@ final class DockerProcessFactory implements ProcessFactory
         $mounts = [];
         if ($processInput->getExecutable() === 'composer') {
             //we need to mount a volume for composer cache
-            $mounts[] = $this->composerCacheDir . ':/root/.composer/cache';
+            $mounts[] = $this->composerCacheDir . ':/tmp/composer';
         }
 
-        $env = array_map(function ($key, $value) {
-            return sprintf('-e %s=%s', $key, $value);
-        }, array_keys($processInput->getEnv()), $processInput->getEnv());
+        $env = [];
+        foreach ($processInput->getEnv() as $key => $value) {
+            $env[] = '-e';
+            $env[] = $key . '=' . $value;
+        }
+
+        $env[]  = '-e';
+        $env[]  = 'COMPOSER_HOME=/tmp/composer';
 
         return new Process(
             [
@@ -46,9 +51,13 @@ final class DockerProcessFactory implements ProcessFactory
                 ...$processInput->getArgs(),
             ],
             $this->basePath,
-            ['SOLUTION' => $processInput->getWorkingDirectory()],
+            [
+                'SOLUTION' => $processInput->getWorkingDirectory(),
+                'UID' => getmyuid(),
+                'GID' => getmygid(),
+            ],
             $processInput->getInput(),
-            10,
+            30,
         );
     }
 
@@ -72,6 +81,8 @@ final class DockerProcessFactory implements ProcessFactory
             '-f',
             '.docker/runtime/docker-compose.yml',
             'run',
+            '--user',
+            getmyuid() . ':' . getmygid(),
             '--rm',
             ...$env,
             '-w',
