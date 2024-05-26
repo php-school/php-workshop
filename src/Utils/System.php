@@ -19,6 +19,11 @@ class System
         return $realpath;
     }
 
+    public static function randomTempPath(string $ext): string
+    {
+        return Path::join(self::realpath(sys_get_temp_dir()), 'php-school', bin2hex(random_bytes(4)) . '.' . $ext);
+    }
+
     public static function tempDir(string $path = ''): string
     {
         return Path::join(self::realpath(sys_get_temp_dir()), 'php-school', $path);

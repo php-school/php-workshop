@@ -5,15 +5,18 @@ declare(strict_types=1);
 namespace PhpSchool\PhpWorkshop\Check;
 
 use PDO;
-use PDOException;
+use PhpSchool\PhpWorkshop\Event\CgiExerciseRunnerEvent;
 use PhpSchool\PhpWorkshop\Event\CliExecuteEvent;
+use PhpSchool\PhpWorkshop\Event\CliExerciseRunnerEvent;
 use PhpSchool\PhpWorkshop\Event\Event;
 use PhpSchool\PhpWorkshop\Event\EventDispatcher;
-use PhpSchool\PhpWorkshop\Exercise\TemporaryDirectoryTrait;
+use PhpSchool\PhpWorkshop\Event\ExerciseRunnerEvent;
 use PhpSchool\PhpWorkshop\ExerciseCheck\DatabaseExerciseCheck;
 use PhpSchool\PhpWorkshop\Result\Failure;
 use PhpSchool\PhpWorkshop\Result\Success;
-use RuntimeException;
+use PhpSchool\PhpWorkshop\Utils\Path;
+use PhpSchool\PhpWorkshop\Utils\System;
+use Symfony\Component\Filesystem\Filesystem;
 
 /**
  * This check sets up a database and a `PDO` object. It prepends the database DSN as a CLI argument to the student's
@@ -23,24 +26,12 @@ use RuntimeException;
  */
 class DatabaseCheck implements ListenableCheckInterface
 {
-    use TemporaryDirectoryTrait;
+    private Filesystem $filesystem;
+    private ?string $dbContent = null;
 
-    private string $databaseDirectory;
-    private string $userDatabasePath;
-    private string $solutionDatabasePath;
-    private string $userDsn;
-    private string $solutionDsn;
-
-    /**
-     * Setup paths and DSN's.
-     */
-    public function __construct()
+    public function __construct(Filesystem $filesystem = null)
     {
-        $this->databaseDirectory = $this->getTemporaryPath();
-        $this->userDatabasePath = sprintf('%s/user-db.sqlite', $this->databaseDirectory);
-        $this->solutionDatabasePath = sprintf('%s/solution-db.sqlite', $this->databaseDirectory);
-        $this->solutionDsn = sprintf('sqlite:%s', $this->solutionDatabasePath);
-        $this->userDsn = sprintf('sqlite:%s', $this->userDatabasePath);
+        $this->filesystem = $filesystem ? $filesystem : new Filesystem();
     }
 
     /**
@@ -64,78 +55,69 @@ class DatabaseCheck implements ListenableCheckInterface
      */
     public function attach(EventDispatcher $eventDispatcher): void
     {
-        if (file_exists($this->databaseDirectory)) {
-            throw new RuntimeException(
-                sprintf('Database directory: "%s" already exists', $this->databaseDirectory),
-            );
-        }
+        $eventDispatcher->listen(['verify.start', 'run.start'], function (Event $e) {
+            $path = System::randomTempPath('sqlite');
 
-        mkdir($this->databaseDirectory, 0777, true);
+            $this->filesystem->touch($path);
 
-        try {
-            $db = new PDO($this->userDsn);
-            $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-        } catch (PDOException $e) {
-            rmdir($this->databaseDirectory);
-            throw $e;
-        }
+            try {
+                $db = $this->getPDO($path);
 
-        $eventDispatcher->listen('verify.start', function (Event $e) use ($db) {
-            /** @var DatabaseExerciseCheck $exercise */
-            $exercise = $e->getParameter('exercise');
-            $exercise->seed($db);
-            //make a copy - so solution can modify without effecting database user has access to
-            copy($this->userDatabasePath, $this->solutionDatabasePath);
+                /** @var DatabaseExerciseCheck $exercise */
+                $exercise = $e->getParameter('exercise');
+                $exercise->seed($db);
+
+                $this->dbContent = (string) file_get_contents($path);
+            } finally {
+                unset($db);
+
+                $this->filesystem->remove($path);
+            }
         });
 
-        $eventDispatcher->listen('run.start', function (Event $e) use ($db) {
-            /** @var DatabaseExerciseCheck $exercise */
-            $exercise = $e->getParameter('exercise');
-            $exercise->seed($db);
-        });
+        $eventDispatcher->listen(
+            ['cli.verify.prepare', 'cgi.verify.prepare'],
+            function (CliExerciseRunnerEvent|CgiExerciseRunnerEvent $e) {
+                $e->getScenario()->withFile('db.sqlite', (string) $this->dbContent);
 
-        $eventDispatcher->listen('cli.verify.reference-execute.pre', function (CliExecuteEvent $e) {
-            $e->prependArg($this->solutionDsn);
-        });
+                $this->dbContent = null;
+            },
+        );
+
+        $eventDispatcher->listen(
+            'cli.verify.reference-execute.pre',
+            fn(CliExecuteEvent $e) => $e->prependArg('sqlite:db.sqlite'),
+        );
 
         $eventDispatcher->listen(
             ['cli.verify.student-execute.pre', 'cli.run.student-execute.pre'],
-            function (CliExecuteEvent $e) {
-                $e->prependArg($this->userDsn);
-            },
+            fn(CliExecuteEvent $e) => $e->prependArg('sqlite:db.sqlite'),
         );
 
-        $eventDispatcher->insertVerifier('verify.finish', function (Event $e) use ($db) {
-            /** @var DatabaseExerciseCheck $exercise */
-            $exercise = $e->getParameter('exercise');
-            $verifyResult = $exercise->verify($db);
+        $eventDispatcher->insertVerifier('verify.finish', function (ExerciseRunnerEvent $e) {
+            $db = $this->getPDO(Path::join($e->getContext()->getStudentExecutionDirectory(), 'db.sqlite'));
 
-            if (false === $verifyResult) {
-                return Failure::fromNameAndReason($this->getName(), 'Database verification failed');
-            }
+            try {
+                /** @var DatabaseExerciseCheck $exercise */
+                $exercise = $e->getParameter('exercise');
+                $verifyResult = $exercise->verify($db);
 
-            return new Success('Database Verification Check');
-        });
+                if (false === $verifyResult) {
+                    return Failure::fromNameAndReason($this->getName(), 'Database verification failed');
+                }
 
-        $eventDispatcher->listen(
-            [
-                'cli.verify.reference-execute.fail',
-                'verify.finish',
-                'run.finish',
-            ],
-            function () use ($db) {
+                return new Success('Database Verification Check');
+            } finally {
                 unset($db);
-                $this->unlink($this->userDatabasePath);
-                $this->unlink($this->solutionDatabasePath);
-                rmdir($this->databaseDirectory);
-            },
-        );
+            }
+        });
     }
 
-    private function unlink(string $file): void
+    private function getPDO(string $path): PDO
     {
-        if (file_exists($file)) {
-            unlink($file);
-        }
+        $db = new PDO('sqlite:' . $path);
+        $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+        return $db;
     }
 }
