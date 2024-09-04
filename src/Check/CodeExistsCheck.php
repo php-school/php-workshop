@@ -33,7 +33,7 @@ class CodeExistsCheck implements SimpleCheckInterface
      */
     public function check(ExecutionContext $context): ResultInterface
     {
-        $noopHandler = new class () implements ErrorHandler {
+        $noopHandler = new class implements ErrorHandler {
             public function handleError(Error $error): void {}
         };
 

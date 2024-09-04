@@ -13,7 +13,7 @@ class LazyContainerListenerTest extends TestCase
 {
     public function testExceptionIsThrownIfServiceMethodDoesNotExist(): void
     {
-        $myListener = new class () {
+        $myListener = new class {
             public function __invoke() {}
         };
 
@@ -39,7 +39,7 @@ class LazyContainerListenerTest extends TestCase
 
     public function testThatUnderlyingListenerIsCalled(): void
     {
-        $myListener = new class () {
+        $myListener = new class {
             public $called = false;
             public function __invoke()
             {
@@ -66,7 +66,7 @@ class LazyContainerListenerTest extends TestCase
 
     public function testWrappedReturnsUnderlyingListener(): void
     {
-        $myListener = new class () {
+        $myListener = new class {
             public function __invoke() {}
         };
 

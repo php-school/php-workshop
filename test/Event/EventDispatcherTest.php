@@ -166,7 +166,7 @@ class EventDispatcherTest extends TestCase
     {
         $container = $this->createMock(ContainerInterface::class);
 
-        $myListener = new class () {
+        $myListener = new class {
             public function __invoke() {}
         };
 
@@ -193,7 +193,7 @@ class EventDispatcherTest extends TestCase
     {
         $container = $this->createMock(ContainerInterface::class);
 
-        $myListener = new class () {
+        $myListener = new class {
             public function myMethod() {}
         };
 
