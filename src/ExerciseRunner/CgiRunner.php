@@ -102,6 +102,8 @@ class CgiRunner implements ExerciseRunnerInterface
     {
         $scenario = $this->exercise->defineTestScenario();
 
+        $this->eventDispatcher->dispatch(new CgiExerciseRunnerEvent('cgi.verify.prepare', $context, $scenario));
+
         $this->environmentManager->prepareStudent($context, $scenario);
         $this->environmentManager->prepareReference($context, $scenario);
 
@@ -157,7 +159,7 @@ class CgiRunner implements ExerciseRunnerInterface
                 $context,
                 $scenario,
                 $context->getStudentExecutionDirectory(),
-                $context->getEntryPoint(),
+                basename($context->getEntryPoint()),
                 $event->getRequest(),
                 'student',
             );
@@ -213,7 +215,7 @@ class CgiRunner implements ExerciseRunnerInterface
         RequestInterface $request,
         string $type,
     ): ResponseInterface {
-        $process = $this->getPhpProcess($workingDirectory, $fileName, $request);
+        $process = $this->getPhpProcess($workingDirectory, $fileName, $request, $scenario->getExposedPorts());
 
         $process->start();
         $this->eventDispatcher->dispatch(
@@ -227,6 +229,7 @@ class CgiRunner implements ExerciseRunnerInterface
 
         //if no status line, pre-pend 200 OK
         $output = $process->getOutput();
+        $error = $process->getErrorOutput();
         if (!preg_match('/^HTTP\/([1-9]\d*\.\d) ([1-5]\d{2})(\s+(.+))?\\r\\n/', $output)) {
             $output = "HTTP/1.0 200 OK\r\n" . $output;
         }
@@ -235,11 +238,9 @@ class CgiRunner implements ExerciseRunnerInterface
     }
 
     /**
-     * @param string $fileName
-     * @param RequestInterface $request
-     * @return Process
+     * @param list<int> $exposedPorts
      */
-    private function getPhpProcess(string $workingDirectory, string $fileName, RequestInterface $request): Process
+    private function getPhpProcess(string $workingDirectory, string $fileName, RequestInterface $request, array $exposedPorts): Process
     {
         $env = [
             'REQUEST_METHOD'  => $request->getMethod(),
@@ -267,6 +268,7 @@ class CgiRunner implements ExerciseRunnerInterface
             ],
             $workingDirectory,
             $env,
+            $exposedPorts,
             $content,
         );
 
@@ -308,6 +310,7 @@ class CgiRunner implements ExerciseRunnerInterface
                 $context->getStudentExecutionDirectory(),
                 $context->getEntryPoint(),
                 $event->getRequest(),
+                $scenario->getExposedPorts(),
             );
 
             $process->start();

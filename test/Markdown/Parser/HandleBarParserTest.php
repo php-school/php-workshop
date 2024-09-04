@@ -83,7 +83,7 @@ class HandleBarParserTest extends TestCase
             $context->expects($this->never())->method('getContainer');
         }
 
-        $shorthand = new class () implements ShorthandInterface {
+        $shorthand = new class implements ShorthandInterface {
             public $args = [];
             public function __invoke(array $callArgs): array
             {

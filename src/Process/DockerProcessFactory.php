@@ -31,33 +31,51 @@ final class DockerProcessFactory implements ProcessFactory
         $mounts = [];
         if ($processInput->getExecutable() === 'composer') {
             //we need to mount a volume for composer cache
-            $mounts[] = $this->composerCacheDir . ':/root/.composer/cache';
+            $mounts[] = $this->composerCacheDir . ':/tmp/composer';
         }
 
-        $env = array_map(function ($key, $value) {
-            return sprintf('-e %s=%s', $key, $value);
-        }, array_keys($processInput->getEnv()), $processInput->getEnv());
+        $env = [];
+        foreach ($processInput->getEnv() as $key => $value) {
+            $env[] = '-e';
+            $env[] = $key . '=' . $value;
+        }
 
-        return new Process(
+        $ports = [];
+        foreach ($processInput->getExposedPorts() as $port) {
+            $ports[] = '-p';
+            $ports[] = $port . ':' . $port;
+        }
+
+        $env[]  = '-e';
+        $env[]  = 'COMPOSER_HOME=/tmp/composer';
+
+        $p = new Process(
             [
-                ...$this->baseComposeCommand($mounts, $env),
+                ...$this->baseComposeCommand($mounts, $env, $ports),
                 'runtime',
                 $processInput->getExecutable(),
                 ...$processInput->getArgs(),
             ],
             $this->basePath,
-            ['SOLUTION' => $processInput->getWorkingDirectory()],
+            [
+                'SOLUTION' => $processInput->getWorkingDirectory(),
+                'UID' => getmyuid(),
+                'GID' => getmygid(),
+            ],
             $processInput->getInput(),
-            10,
+            30,
         );
+
+        return $p;
     }
 
     /**
      * @param array<string> $mounts
      * @param array<string> $env
+     * @param list<string> $ports
      * @return array<string>
      */
-    private function baseComposeCommand(array $mounts, array $env): array
+    private function baseComposeCommand(array $mounts, array $env, array $ports): array
     {
         $dockerPath = $this->executableFinder->find('docker');
         if ($dockerPath === null) {
@@ -72,8 +90,11 @@ final class DockerProcessFactory implements ProcessFactory
             '-f',
             '.docker/runtime/docker-compose.yml',
             'run',
+            '--user',
+            getmyuid() . ':' . getmygid(),
             '--rm',
             ...$env,
+            ...$ports,
             '-w',
             '/solution',
             ...array_merge(...array_map(fn($mount) => ['-v', $mount], $mounts)),

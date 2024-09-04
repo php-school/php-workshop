@@ -138,7 +138,7 @@ class CodePatcherTest extends TestCase
             'transformer-class' => [
                 '<?php $original = true;',
                 (new Patch())
-                    ->withTransformer(new class () implements Patch\Transformer {
+                    ->withTransformer(new class implements Patch\Transformer {
                         public function transform(array $statements): array
                         {
                             return [

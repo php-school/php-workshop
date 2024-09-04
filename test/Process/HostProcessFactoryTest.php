@@ -21,7 +21,7 @@ class HostProcessFactoryTest extends TestCase
             ->willReturn(null);
 
         $factory = new HostProcessFactory($finder);
-        $input = new ProcessInput('composer', [], __DIR__, []);
+        $input = new ProcessInput('composer', [], __DIR__, [], []);
 
         $factory->create($input);
     }
@@ -35,7 +35,7 @@ class HostProcessFactoryTest extends TestCase
             ->willReturn('/usr/local/bin/composer');
 
         $factory = new HostProcessFactory($finder);
-        $input = new ProcessInput('composer', [], __DIR__, []);
+        $input = new ProcessInput('composer', [], __DIR__, [], []);
 
         $process = $factory->create($input);
         static::assertSame("'/usr/local/bin/composer'", $process->getCommandLine());
@@ -50,7 +50,7 @@ class HostProcessFactoryTest extends TestCase
             ->willReturn('/usr/local/bin/composer');
 
         $factory = new HostProcessFactory($finder);
-        $input = new ProcessInput('composer', ['one', 'two'], __DIR__, []);
+        $input = new ProcessInput('composer', ['one', 'two'], __DIR__, [], []);
 
         $process = $factory->create($input);
         static::assertSame("'/usr/local/bin/composer' 'one' 'two'", $process->getCommandLine());
@@ -65,7 +65,7 @@ class HostProcessFactoryTest extends TestCase
             ->willReturn('/usr/local/bin/composer');
 
         $factory = new HostProcessFactory($finder);
-        $input = new ProcessInput('composer', ['one', 'two'], __DIR__, ['SOME_VAR' => 'value']);
+        $input = new ProcessInput('composer', ['one', 'two'], __DIR__, ['SOME_VAR' => 'value'], []);
 
         $process = $factory->create($input);
         static::assertSame(['SOME_VAR' => 'value'], $process->getEnv());
@@ -80,7 +80,7 @@ class HostProcessFactoryTest extends TestCase
             ->willReturn('/usr/local/bin/composer');
 
         $factory = new HostProcessFactory($finder);
-        $input = new ProcessInput('composer', [], __DIR__, [], 'someinput');
+        $input = new ProcessInput('composer', [], __DIR__, [], [], 'someinput');
 
         $process = $factory->create($input);
         static::assertSame('someinput', $process->getInput());
