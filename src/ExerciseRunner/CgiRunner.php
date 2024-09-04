@@ -215,7 +215,7 @@ class CgiRunner implements ExerciseRunnerInterface
         RequestInterface $request,
         string $type,
     ): ResponseInterface {
-        $process = $this->getPhpProcess($workingDirectory, $fileName, $request);
+        $process = $this->getPhpProcess($workingDirectory, $fileName, $request, $scenario->getExposedPorts());
 
         $process->start();
         $this->eventDispatcher->dispatch(
@@ -238,11 +238,9 @@ class CgiRunner implements ExerciseRunnerInterface
     }
 
     /**
-     * @param string $fileName
-     * @param RequestInterface $request
-     * @return Process
+     * @param list<int> $exposedPorts
      */
-    private function getPhpProcess(string $workingDirectory, string $fileName, RequestInterface $request): Process
+    private function getPhpProcess(string $workingDirectory, string $fileName, RequestInterface $request, array $exposedPorts): Process
     {
         $env = [
             'REQUEST_METHOD'  => $request->getMethod(),
@@ -270,6 +268,7 @@ class CgiRunner implements ExerciseRunnerInterface
             ],
             $workingDirectory,
             $env,
+            $exposedPorts,
             $content,
         );
 
@@ -311,6 +310,7 @@ class CgiRunner implements ExerciseRunnerInterface
                 $context->getStudentExecutionDirectory(),
                 $context->getEntryPoint(),
                 $event->getRequest(),
+                $scenario->getExposedPorts(),
             );
 
             $process->start();
