@@ -224,6 +224,7 @@ class CliRunner implements ExerciseRunnerInterface
                 $context->getStudentExecutionDirectory(),
                 $context->getEntryPoint(),
                 $args,
+                $scenario->getExposedPorts(),
             );
 
             $process->start();
@@ -233,6 +234,7 @@ class CliRunner implements ExerciseRunnerInterface
             $process->wait(function ($outputType, $outputBuffer) use ($output) {
                 $output->write($outputBuffer);
             });
+
             $output->emptyLine();
 
             if (!$process->isSuccessful()) {
@@ -256,7 +258,7 @@ class CliRunner implements ExerciseRunnerInterface
      */
     private function executePhpFile(ExecutionContext $context, CliScenario $scenario, string $workingDirectory, string $fileName, Collection $args, string $type): string
     {
-        $process = $this->getPhpProcess($workingDirectory, $fileName, $args);
+        $process = $this->getPhpProcess($workingDirectory, $fileName, $args, $scenario->getExposedPorts());
 
         $process->start();
         $this->eventDispatcher->dispatch(
@@ -273,11 +275,12 @@ class CliRunner implements ExerciseRunnerInterface
 
     /**
      * @param Collection<int, string> $args
+     * @param list<int> $exposedPorts
      */
-    private function getPhpProcess(string $workingDirectory, string $fileName, Collection $args): Process
+    private function getPhpProcess(string $workingDirectory, string $fileName, Collection $args, array $exposedPorts): Process
     {
         return $this->processFactory->create(
-            new ProcessInput('php', [$fileName, ...$args->getArrayCopy()], $workingDirectory, []),
+            new ProcessInput('php', [$fileName, ...$args->getArrayCopy()], $workingDirectory, [], $exposedPorts),
         );
     }
 }
