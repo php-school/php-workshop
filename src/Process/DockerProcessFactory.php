@@ -40,12 +40,18 @@ final class DockerProcessFactory implements ProcessFactory
             $env[] = $key . '=' . $value;
         }
 
+        $ports = [];
+        foreach ($processInput->getExposedPorts() as $port) {
+            $ports[] = '-p';
+            $ports[] = $port . ':' . $port;
+        }
+
         $env[]  = '-e';
         $env[]  = 'COMPOSER_HOME=/tmp/composer';
 
-        return new Process(
+        $p = new Process(
             [
-                ...$this->baseComposeCommand($mounts, $env),
+                ...$this->baseComposeCommand($mounts, $env, $ports),
                 'runtime',
                 $processInput->getExecutable(),
                 ...$processInput->getArgs(),
@@ -59,14 +65,17 @@ final class DockerProcessFactory implements ProcessFactory
             $processInput->getInput(),
             30,
         );
+
+        return $p;
     }
 
     /**
      * @param array<string> $mounts
      * @param array<string> $env
+     * @param list<string> $ports
      * @return array<string>
      */
-    private function baseComposeCommand(array $mounts, array $env): array
+    private function baseComposeCommand(array $mounts, array $env, array $ports): array
     {
         $dockerPath = $this->executableFinder->find('docker');
         if ($dockerPath === null) {
@@ -85,6 +94,7 @@ final class DockerProcessFactory implements ProcessFactory
             getmyuid() . ':' . getmygid(),
             '--rm',
             ...$env,
+            ...$ports,
             '-w',
             '/solution',
             ...array_merge(...array_map(fn($mount) => ['-v', $mount], $mounts)),

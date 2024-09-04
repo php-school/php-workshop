@@ -9,6 +9,11 @@ abstract class ExerciseScenario
      */
     private array $files = [];
 
+    /**
+     * @var list<int>
+     */
+    private array $exposedPorts = [];
+
     public function withFile(string $relativeFileName, string $content): static
     {
         $this->files[$relativeFileName] = $content;
@@ -22,5 +27,20 @@ abstract class ExerciseScenario
     public function getFiles(): array
     {
         return $this->files;
+    }
+
+    public function exposePort(int $port): static
+    {
+        $this->exposedPorts = [$port];
+
+        return $this;
+    }
+
+    /**
+     * @return list<int>
+     */
+    public function getExposedPorts(): array
+    {
+        return $this->exposedPorts;
     }
 }

@@ -21,7 +21,7 @@ class DockerProcessFactoryTest extends TestCase
             ->willReturn(null);
 
         $factory = new DockerProcessFactory('/docker-dir', 'php8appreciate', '/composer/cache/dir', $finder);
-        $input = new ProcessInput('composer', [], __DIR__, []);
+        $input = new ProcessInput('composer', [], __DIR__, [], []);
 
         $factory->create($input);
     }
@@ -35,7 +35,7 @@ class DockerProcessFactoryTest extends TestCase
             ->willReturn('/usr/local/bin/docker');
 
         $factory = new DockerProcessFactory('/docker-dir', 'php8appreciate', '/composer/cache/dir', $finder);
-        $input = new ProcessInput('php', [], __DIR__, []);
+        $input = new ProcessInput('php', [], __DIR__, [], []);
 
         $process = $factory->create($input);
         $cmd  = "'/usr/local/bin/docker' 'compose' '-p' 'php8appreciate' '-f' '.docker/runtime/docker-compose.yml'";
@@ -53,7 +53,7 @@ class DockerProcessFactoryTest extends TestCase
             ->willReturn('/usr/local/bin/docker');
 
         $factory = new DockerProcessFactory('/docker-dir', 'php8appreciate', '/composer/cache/dir', $finder);
-        $input = new ProcessInput('composer', [], __DIR__, []);
+        $input = new ProcessInput('composer', [], __DIR__, [], []);
 
         $process = $factory->create($input);
         $cmd  = "'/usr/local/bin/docker' 'compose' '-p' 'php8appreciate' '-f' '.docker/runtime/docker-compose.yml'";
@@ -71,7 +71,7 @@ class DockerProcessFactoryTest extends TestCase
             ->willReturn('/usr/local/bin/docker');
 
         $factory = new DockerProcessFactory('/docker-dir', 'php8appreciate', '/composer/cache/dir', $finder);
-        $input = new ProcessInput('php', ['one', 'two'], __DIR__, []);
+        $input = new ProcessInput('php', ['one', 'two'], __DIR__, [], []);
 
         $process = $factory->create($input);
         $cmd  = "'/usr/local/bin/docker' 'compose' '-p' 'php8appreciate' '-f' '.docker/runtime/docker-compose.yml'";
@@ -89,7 +89,7 @@ class DockerProcessFactoryTest extends TestCase
             ->willReturn('/usr/local/bin/docker');
 
         $factory = new DockerProcessFactory('/docker-dir', 'php8appreciate', '/composer/cache/dir', $finder);
-        $input = new ProcessInput('php', ['one', 'two'], __DIR__, ['SOME_VAR' => 'value']);
+        $input = new ProcessInput('php', ['one', 'two'], __DIR__, ['SOME_VAR' => 'value'], []);
 
         $process = $factory->create($input);
         $cmd  = "'/usr/local/bin/docker' 'compose' '-p' 'php8appreciate' '-f' '.docker/runtime/docker-compose.yml'";
@@ -107,7 +107,7 @@ class DockerProcessFactoryTest extends TestCase
             ->willReturn('/usr/local/bin/docker');
 
         $factory = new DockerProcessFactory('/composer-dir', 'php8appreciate', '/composer/cache/dir', $finder);
-        $input = new ProcessInput('php', [], __DIR__, [], 'someinput');
+        $input = new ProcessInput('php', [], __DIR__, [], [], 'someinput');
 
         $process = $factory->create($input);
         $cmd  = "'/usr/local/bin/docker' 'compose' '-p' 'php8appreciate' '-f' '.docker/runtime/docker-compose.yml'";
@@ -125,7 +125,7 @@ class DockerProcessFactoryTest extends TestCase
             ->willReturn('/usr/local/bin/docker');
 
         $factory = new DockerProcessFactory('/docker-dir', 'php8appreciate', '/composer/cache/dir', $finder);
-        $input = new ProcessInput('php', ['one', 'two'], __DIR__, ['SOME_VAR' => 'value']);
+        $input = new ProcessInput('php', ['one', 'two'], __DIR__, ['SOME_VAR' => 'value'], []);
 
         $process = $factory->create($input);
         $cmd  = "'/usr/local/bin/docker' 'compose' '-p' 'php8appreciate' '-f' '.docker/runtime/docker-compose.yml'";
