@@ -34,7 +34,7 @@ class PatchTest extends TestCase
     public function testWithTransformerWithTransformer(): void
     {
         $patch = new Patch();
-        $transformer = new class () implements Patch\Transformer {
+        $transformer = new class implements Patch\Transformer {
             public function transform(array $ast): array
             {
                 return $ast;
@@ -49,7 +49,7 @@ class PatchTest extends TestCase
 
     public function testWithTransformerMultiple(): void
     {
-        $transformer1 = new class () implements Patch\Transformer {
+        $transformer1 = new class implements Patch\Transformer {
             public function transform(array $ast): array
             {
                 return $ast;

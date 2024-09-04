@@ -66,7 +66,7 @@ class TestContext extends ExecutionContext
             );
         }
 
-        $scenario = new class () extends ExerciseScenario {};
+        $scenario = new class extends ExerciseScenario {};
         if ($this->exercise instanceof CliExercise || $this->exercise instanceof CgiExercise) {
             $scenario = $this->exercise->defineTestScenario();
         }
