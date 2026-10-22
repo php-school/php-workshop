@@ -125,8 +125,14 @@ abstract class WorkshopExerciseTest extends TestCase
             $execFinder = new ExecutableFinder();
             $execFinder->addSuffix('.phar');
 
+            $composer = $execFinder->find('composer');
+
+            if ($composer === null) {
+                $this->fail('Composer could not be found, it is required to install the exercise dependencies');
+            }
+
             $process = new Process(
-                [$execFinder->find('composer'), 'install', '--no-interaction'],
+                [$composer, 'install', '--no-interaction'],
                 $directory,
             );
             $process->mustRun();
