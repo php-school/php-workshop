@@ -157,7 +157,7 @@ class CgiRunner implements ExerciseRunnerInterface
                 $context,
                 $scenario,
                 $context->getStudentExecutionDirectory(),
-                $context->getEntryPoint(),
+                basename($context->getEntryPoint()),
                 $event->getRequest(),
                 'student',
             );
@@ -227,6 +227,7 @@ class CgiRunner implements ExerciseRunnerInterface
 
         //if no status line, pre-pend 200 OK
         $output = $process->getOutput();
+        $error = $process->getErrorOutput();
         if (!preg_match('/^HTTP\/([1-9]\d*\.\d) ([1-5]\d{2})(\s+(.+))?\\r\\n/', $output)) {
             $output = "HTTP/1.0 200 OK\r\n" . $output;
         }
