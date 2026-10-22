@@ -4,10 +4,8 @@ declare(strict_types=1);
 
 namespace PhpSchool\PhpWorkshop\TestUtils;
 
-use DI\Container;
 use PhpSchool\PhpWorkshop\Application;
 use PhpSchool\PhpWorkshop\Exception\InvalidArgumentException;
-use PhpSchool\PhpWorkshop\Exception\RuntimeException;
 use PhpSchool\PhpWorkshop\Exercise\AbstractExercise;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseType;
@@ -25,6 +23,7 @@ use PhpSchool\PhpWorkshop\Utils\Collection;
 use PhpSchool\PhpWorkshop\Utils\System;
 use PHPUnit\Framework\ExpectationFailedException;
 use PHPUnit\Framework\TestCase;
+use Psr\Container\ContainerInterface;
 use PhpSchool\PhpWorkshop\Input\Input;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Process\ExecutableFinder;
@@ -40,7 +39,7 @@ abstract class WorkshopExerciseTest extends TestCase
     protected $app;
 
     /**
-     * @var Container
+     * @var ContainerInterface
      */
     protected $container;
 
@@ -52,13 +51,7 @@ abstract class WorkshopExerciseTest extends TestCase
     public function setUp(): void
     {
         $this->app = $this->getApplication();
-        $container = $this->app->configure();
-
-        if (!$container instanceof Container) {
-            throw new RuntimeException(sprintf('Expected the application container to be a "%s"', Container::class));
-        }
-
-        $this->container = $container;
+        $this->container = $this->app->configure();
     }
 
     public function tearDown(): void
@@ -118,21 +111,22 @@ abstract class WorkshopExerciseTest extends TestCase
 
         /** @var ExerciseDispatcher $exerciseDispatcher */
         $exerciseDispatcher = $this->container->get(ExerciseDispatcher::class);
+
         $this->results = $exerciseDispatcher->verify($exercise, $input);
     }
 
     /**
-     * @param ComposerExerciseCheck $exercise
+     * @param ExerciseInterface&ComposerExerciseCheck $exercise
      * @param string $directory
      */
-    private function installDeps(ComposerExerciseCheck $exercise, string $directory): void
+    private function installDeps(ExerciseInterface $exercise, string $directory): void
     {
         if (file_exists("$directory/composer.json") && !file_exists("$directory/vendor")) {
             $execFinder = new ExecutableFinder();
             $execFinder->addSuffix('.phar');
 
             $process = new Process(
-                [$execFinder->find('composer') ?? 'composer', 'install', '--no-interaction'],
+                [$execFinder->find('composer'), 'install', '--no-interaction'],
                 $directory,
             );
             $process->mustRun();
@@ -233,12 +227,7 @@ abstract class WorkshopExerciseTest extends TestCase
         }
 
         $result = $results->values()->get(0);
-
-        if (!$result instanceof ResultGroupInterface) {
-            throw new RuntimeException(
-                sprintf('No output result found for exercise type: "%s"', $exerciseType->getValue()),
-            );
-        }
+        $this->assertInstanceOf(ResultGroupInterface::class, $result);
 
         return $result;
     }
