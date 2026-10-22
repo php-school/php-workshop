@@ -169,19 +169,12 @@ class ArrayObject implements IteratorAggregate, Countable
      */
     public function implode(string $glue): string
     {
-        return implode(
-            $glue,
-            array_map(
-                static function ($item): string {
-                    if (is_scalar($item) || $item instanceof Stringable) {
-                        return (string) $item;
-                    }
-
-                    throw InvalidArgumentException::typeMisMatch('string', $item);
-                },
-                $this->array,
-            ),
-        );
+        return implode($glue, array_map(
+            fn($item): string => is_scalar($item) || $item instanceof Stringable
+                ? (string) $item
+                : throw InvalidArgumentException::typeMisMatch('string', $item),
+            $this->array,
+        ));
     }
 
     /**
