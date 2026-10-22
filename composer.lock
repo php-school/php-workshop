@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "b8c2955fb0f99676be426a5edb7fb5ce",
+    "content-hash": "e56e46a1cfc2be6b0655246c48614d85",
     "packages": [
         {
             "name": "beberlei/assert",
@@ -1253,16 +1253,16 @@
         },
         {
             "name": "php-school/cli-md-renderer",
-            "version": "2.0.0",
+            "version": "2.0.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/php-school/cli-md-renderer.git",
-                "reference": "6254a3d486f9dcf120a06fd10fcd85b3ff2bc8fb"
+                "reference": "6b7cfa63b268866aa78da3612cf75c7a6e78f1b2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/php-school/cli-md-renderer/zipball/6254a3d486f9dcf120a06fd10fcd85b3ff2bc8fb",
-                "reference": "6254a3d486f9dcf120a06fd10fcd85b3ff2bc8fb",
+                "url": "https://api.github.com/repos/php-school/cli-md-renderer/zipball/6b7cfa63b268866aa78da3612cf75c7a6e78f1b2",
+                "reference": "6b7cfa63b268866aa78da3612cf75c7a6e78f1b2",
                 "shasum": ""
             },
             "require": {
@@ -1295,9 +1295,9 @@
             ],
             "description": "A CLI Markdown Render for league/commonmark compatible AST",
             "support": {
-                "source": "https://github.com/php-school/cli-md-renderer/tree/2.0.0"
+                "source": "https://github.com/php-school/cli-md-renderer/tree/2.0.1"
             },
-            "time": "2026-10-22T12:41:24+00:00"
+            "time": "2026-10-22T19:29:37+00:00"
         },
         {
             "name": "php-school/cli-menu",
