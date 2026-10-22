@@ -2,6 +2,7 @@
 
 namespace PhpSchool\PhpWorkshopTest;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 use function PhpSchool\PhpWorkshop\any;
@@ -10,15 +11,13 @@ use function PhpSchool\PhpWorkshop\mb_str_pad;
 
 class FunctionsTest extends TestCase
 {
-    /**
-     * @dataProvider mbStrPadProvider
-     */
+    #[DataProvider('mbStrPadProvider')]
     public function testMbStrPad(string $string, int $pad, string $expected): void
     {
         self::assertSame(mb_str_pad($string, $pad), $expected);
     }
 
-    public function mbStrPadProvider(): array
+    public static function mbStrPadProvider(): array
     {
         return [
             ['hello', 10, 'hello     '],
@@ -26,15 +25,13 @@ class FunctionsTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider camelCaseToKebabCaseProvider
-     */
+    #[DataProvider('camelCaseToKebabCaseProvider')]
     public function testCamelCaseToKebabCase(string $string, string $expected): void
     {
         self::assertSame(camel_case_to_kebab_case($string), $expected);
     }
 
-    public function camelCaseToKebabCaseProvider(): array
+    public static function camelCaseToKebabCaseProvider(): array
     {
         return [
             ['camelCase', 'camel-case'],

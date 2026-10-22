@@ -2,6 +2,7 @@
 
 namespace PhpSchool\PhpWorkshopTest\Exception;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use Countable;
 use PhpSchool\PhpWorkshop\Exception\InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
@@ -32,9 +33,7 @@ class InvalidArgumentExceptionTest extends TestCase
         self::assertEquals('"stdClass" is required to implement "Countable", but it does not', $e->getMessage());
     }
 
-    /**
-     * @dataProvider stringifyProvider
-     */
+    #[DataProvider('stringifyProvider')]
     public function testStringify($value, string $expected): void
     {
         $rM = new \ReflectionMethod(InvalidArgumentException::class, 'stringify');
@@ -42,7 +41,7 @@ class InvalidArgumentExceptionTest extends TestCase
         $this->assertEquals($rM->invoke(null, $value), $expected);
     }
 
-    public function stringifyProvider(): array
+    public static function stringifyProvider(): array
     {
         return [
             [new \stdClass(), 'stdClass'],

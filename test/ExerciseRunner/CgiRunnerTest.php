@@ -27,12 +27,9 @@ use PhpSchool\PhpWorkshop\Solution\SingleFileSolution;
 use PhpSchool\PhpWorkshop\Utils\RequestRenderer;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Filesystem\Filesystem;
-use Yoast\PHPUnitPolyfills\Polyfills\AssertionRenames;
 
 class CgiRunnerTest extends TestCase
 {
-    use AssertionRenames;
-
     private CgiRunner $runner;
     private $exercise;
     private EventDispatcher $eventDispatcher;

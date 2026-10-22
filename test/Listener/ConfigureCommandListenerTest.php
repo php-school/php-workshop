@@ -2,6 +2,7 @@
 
 namespace PhpSchool\PhpWorkshopTest\Listener;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use PhpSchool\PhpWorkshop\CommandDefinition;
 use PhpSchool\PhpWorkshop\Event\Event;
 use PhpSchool\PhpWorkshop\ExerciseRepository;
@@ -13,9 +14,7 @@ use PHPUnit\Framework\TestCase;
 
 class ConfigureCommandListenerTest extends TestCase
 {
-    /**
-     * @dataProvider configurableCommands
-     */
+    #[DataProvider('configurableCommands')]
     public function testInputIsConfiguredForCorrectCommands(string $commandName): void
     {
         $command = new CommandDefinition($commandName, [], function () {});
@@ -31,7 +30,7 @@ class ConfigureCommandListenerTest extends TestCase
         (new ConfigureCommandListener($state, $repo, $runnerManager))->__invoke($event);
     }
 
-    public function configurableCommands(): array
+    public static function configurableCommands(): array
     {
         return [
             ['verify'],
@@ -39,9 +38,7 @@ class ConfigureCommandListenerTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider nonConfigurableCommands
-     */
+    #[DataProvider('nonConfigurableCommands')]
     public function testInputIsNotConfiguredForCorrectCommands(string $commandName): void
     {
         $command = new CommandDefinition($commandName, [], function () {});
@@ -57,7 +54,7 @@ class ConfigureCommandListenerTest extends TestCase
         (new ConfigureCommandListener($state, $repo, $runnerManager))->__invoke($event);
     }
 
-    public function nonConfigurableCommands(): array
+    public static function nonConfigurableCommands(): array
     {
         return [
             ['print'],

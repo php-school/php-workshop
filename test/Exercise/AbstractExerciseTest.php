@@ -2,6 +2,7 @@
 
 namespace PhpSchool\PhpWorkshopTest\Exercise;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use PhpSchool\PhpWorkshop\Event\EventDispatcher;
 use PhpSchool\PhpWorkshop\Solution\SolutionFile;
 use PhpSchool\PhpWorkshopTest\Asset\AbstractExerciseImpl;
@@ -16,9 +17,7 @@ class AbstractExerciseTest extends TestCase
         $this->assertNull($exercise->tearDown());
     }
 
-    /**
-     * @dataProvider solutionProvider
-     */
+    #[DataProvider('solutionProvider')]
     public function testGetSolution(string $name): void
     {
         $exercise   = new AbstractExerciseImpl($name);
@@ -35,7 +34,7 @@ class AbstractExerciseTest extends TestCase
         rmdir(__DIR__ . '/../../exercises');
     }
 
-    public function solutionProvider(): array
+    public static function solutionProvider(): array
     {
         return [
             ['Array We Go!'],
@@ -44,16 +43,14 @@ class AbstractExerciseTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider problemProvider
-     */
+    #[DataProvider('problemProvider')]
     public function testGetProblem(string $name, string $path): void
     {
         $exercise = new AbstractExerciseImpl($name);
         $this->assertSame($path, $exercise->getProblem());
     }
 
-    public function problemProvider(): array
+    public static function problemProvider(): array
     {
         $reflector  = new ReflectionClass(AbstractExerciseImpl::class);
         $dir        = dirname($reflector->getFileName());

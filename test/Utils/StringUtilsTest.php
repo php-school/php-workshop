@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace PhpSchool\PhpWorkshopTest\Utils;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use PhpSchool\PhpWorkshop\Utils\StringUtils;
 use PHPUnit\Framework\TestCase;
 use PhpSchool\PhpWorkshop\Exception\RuntimeException;
@@ -30,16 +31,14 @@ class StringUtilsTest extends TestCase
         StringUtils::canonicalisePath('/path/to/../../../');
     }
 
-    /**
-     * @dataProvider pluraliseMultipleProvider
-     */
+    #[DataProvider('pluraliseMultipleProvider')]
     public function testPluraliseWithMultipleValues(string $string, string $expected): void
     {
         $props = ['propOne', 'propTwo'];
         $this->assertEquals($expected, StringUtils::pluralise($string, $props, implode('" & "', $props)));
     }
 
-    public function pluraliseMultipleProvider(): array
+    public static function pluraliseMultipleProvider(): array
     {
         return [
             [
@@ -52,16 +51,14 @@ class StringUtilsTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider pluraliseSingularProvider
-     */
+    #[DataProvider('pluraliseSingularProvider')]
     public function testPluraliseWithSingularValues(string $string, string $expected): void
     {
         $props = ['propOne'];
         $this->assertEquals($expected, StringUtils::pluralise($string, $props, implode('" & "', $props)));
     }
 
-    public function pluraliseSingularProvider(): array
+    public static function pluraliseSingularProvider(): array
     {
         return [
             ['Property "%s" should not have changed type', 'Property "propOne" should not have changed type'],

@@ -11,12 +11,9 @@ use PhpSchool\PhpWorkshop\Solution\SolutionInterface;
 use PhpSchool\PhpWorkshopTest\Asset\CliExerciseImpl;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Process\ExecutableFinder;
-use Yoast\PHPUnitPolyfills\Polyfills\AssertionRenames;
 
 class PrepareSolutionListenerTest extends TestCase
 {
-    use AssertionRenames;
-
     public function testIfSolutionRequiresComposerButComposerCannotBeLocatedExceptionIsThrown(): void
     {
         $exercise = new CliExerciseImpl();

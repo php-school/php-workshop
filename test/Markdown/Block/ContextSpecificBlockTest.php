@@ -28,7 +28,7 @@ class ContextSpecificBlockTest extends TestCase
     {
         $block = new ContextSpecificBlock('cli');
 
-        static::assertTrue($block->canContain($this->getMockForAbstractClass(AbstractBlock::class)));
+        static::assertTrue($block->canContain($this->createMock(AbstractBlock::class)));
         static::assertFalse($block->isCode());
     }
 

@@ -12,8 +12,8 @@ class TestContextTest extends TestCase
     {
         $context = new TestContext();
 
-        static::assertFileNotExists($context->getStudentExecutionDirectory());
-        static::assertFileNotExists($context->getReferenceExecutionDirectory());
+        static::assertFileDoesNotExist($context->getStudentExecutionDirectory());
+        static::assertFileDoesNotExist($context->getReferenceExecutionDirectory());
     }
 
     public function testCreateDirectories(): void
@@ -106,7 +106,7 @@ class TestContextTest extends TestCase
 
         unset($context);
 
-        static::assertFileNotExists($studentExecutionDirectory);
-        static::assertFileNotExists($referenceExecutionDirectory);
+        static::assertFileDoesNotExist($studentExecutionDirectory);
+        static::assertFileDoesNotExist($referenceExecutionDirectory);
     }
 }
