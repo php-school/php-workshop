@@ -2,7 +2,7 @@
 
 namespace PhpSchool\PhpWorkshopTest\Markdown\Shorthands\Cli;
 
-use League\CommonMark\Inline\Element\Text;
+use League\CommonMark\Node\Inline\Text;
 use PhpSchool\PhpWorkshop\Exception\RuntimeException;
 use PhpSchool\PhpWorkshop\Markdown\Shorthands\Cli\Run;
 use PHPUnit\Framework\TestCase;
@@ -26,6 +26,6 @@ class RunTest extends TestCase
         $result = $context->__invoke(['solution.php']);
         self::assertCount(1, $result);
         self::assertInstanceOf(Text::class, $result[0]);
-        self::assertEquals('learnyouphp run solution.php', $result[0]->getContent());
+        self::assertEquals('learnyouphp run solution.php', $result[0]->getLiteral());
     }
 }

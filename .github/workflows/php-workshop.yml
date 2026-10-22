@@ -29,9 +29,6 @@ jobs:
 
       - name: Install Dependencies
         run: composer update --prefer-dist
-        env:
-          # league/commonmark 1 has security advisories; remove once on commonmark 2
-          COMPOSER_NO_SECURITY_BLOCKING: 1
 
       - name: Run phpunit tests
         run: vendor/bin/phpunit --stop-on-error

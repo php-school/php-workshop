@@ -2,10 +2,10 @@
 
 namespace PhpSchool\PhpWorkshopTest\Markdown\Shorthands\Cli;
 
-use League\CommonMark\Inline\Element\Code;
-use League\CommonMark\Inline\Element\Emphasis;
-use League\CommonMark\Inline\Element\Strong;
-use League\CommonMark\Inline\Element\Text;
+use League\CommonMark\Extension\CommonMark\Node\Inline\Code;
+use League\CommonMark\Extension\CommonMark\Node\Inline\Emphasis;
+use League\CommonMark\Extension\CommonMark\Node\Inline\Strong;
+use League\CommonMark\Node\Inline\Text;
 use PhpSchool\PhpWorkshop\Markdown\Shorthands\Cli\AppName;
 use PHPUnit\Framework\TestCase;
 
@@ -18,7 +18,7 @@ class AppNameTest extends TestCase
         $result = $short->__invoke([]);
         self::assertCount(1, $result);
         self::assertInstanceOf(Text::class, $result[0]);
-        self::assertEquals('learnyouphp', $result[0]->getContent());
+        self::assertEquals('learnyouphp', $result[0]->getLiteral());
     }
 
     public function testShorthandCode(): void
@@ -28,7 +28,7 @@ class AppNameTest extends TestCase
         $result = $short->__invoke(['`']);
         self::assertCount(1, $result);
         self::assertInstanceOf(Code::class, $result[0]);
-        self::assertEquals('learnyouphp', $result[0]->getContent());
+        self::assertEquals('learnyouphp', $result[0]->getLiteral());
     }
 
     public function testShorthandBold(): void
@@ -40,7 +40,7 @@ class AppNameTest extends TestCase
         self::assertInstanceOf(Strong::class, $result[0]);
         self::assertCount(1, $result[0]->children());
         self::assertInstanceOf(Text::class, $result[0]->children()[0]);
-        self::assertEquals('learnyouphp', $result[0]->children()[0]->getContent());
+        self::assertEquals('learnyouphp', $result[0]->children()[0]->getLiteral());
     }
 
     public function testShorthandItalic(): void
@@ -52,6 +52,6 @@ class AppNameTest extends TestCase
         self::assertInstanceOf(Emphasis::class, $result[0]);
         self::assertCount(1, $result[0]->children());
         self::assertInstanceOf(Text::class, $result[0]->children()[0]);
-        self::assertEquals('learnyouphp', $result[0]->children()[0]->getContent());
+        self::assertEquals('learnyouphp', $result[0]->children()[0]->getLiteral());
     }
 }

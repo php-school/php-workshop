@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace PhpSchool\PhpWorkshop\Markdown;
 
-use League\CommonMark\ConfigurableEnvironmentInterface;
+use League\CommonMark\Environment\EnvironmentBuilderInterface;
 use League\CommonMark\Extension\ExtensionInterface;
 use PhpSchool\PhpWorkshop\Markdown\Block\ContextSpecificBlock;
 use PhpSchool\PhpWorkshop\Markdown\Renderer\ContextSpecificRenderer;
@@ -35,11 +35,11 @@ final class ProblemFileExtension implements ExtensionInterface
         $this->shorthandExpanders = $shorthandExpanders;
     }
 
-    public function register(ConfigurableEnvironmentInterface $environment): void
+    public function register(EnvironmentBuilderInterface $environment): void
     {
         $environment
-            ->addBlockParser(new ContextSpecificBlockParser())
-            ->addInlineParser(new HandleBarParser($this->shorthandExpanders))
-            ->addBlockRenderer(ContextSpecificBlock::class, $this->contextSpecificRenderer);
+            ->addBlockStartParser(new ContextSpecificBlockParser(), 100)
+            ->addInlineParser(new HandleBarParser($this->shorthandExpanders), 100)
+            ->addRenderer(ContextSpecificBlock::class, $this->contextSpecificRenderer, 100);
     }
 }

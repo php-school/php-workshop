@@ -2,10 +2,14 @@
 
 namespace PhpSchool\PhpWorkshopTest\Markdown\Block;
 
-use League\CommonMark\Block\Element\AbstractBlock;
-use League\CommonMark\Cursor;
+use League\CommonMark\Parser\MarkdownParser;
+use PhpSchool\PhpWorkshop\Factory\MarkdownEnvironmentFactory;
+use PhpSchool\PhpWorkshop\Markdown\Renderer\ContextSpecificRenderer;
+use League\CommonMark\Node\Block\Document;
+use League\CommonMark\Node\Block\Paragraph;
 use PhpSchool\PhpWorkshop\Exception\InvalidArgumentException;
 use PhpSchool\PhpWorkshop\Markdown\Block\ContextSpecificBlock;
+use PhpSchool\PhpWorkshop\Markdown\CurrentContext;
 use PHPUnit\Framework\TestCase;
 
 class ContextSpecificBlockTest extends TestCase
@@ -24,22 +28,20 @@ class ContextSpecificBlockTest extends TestCase
         static::assertEquals('cli', $block->getType());
     }
 
-    public function testConfig(): void
+    public function testBlockContainsFollowingBlocksUntilEndTag(): void
     {
-        $block = new ContextSpecificBlock('cli');
+        $markdown = "Before\n\n{{ cli }}\nSome line\n\n* Item 1\n* Item 2\n{{ cli }}\n\nAfter\n";
 
-        static::assertTrue($block->canContain($this->createMock(AbstractBlock::class)));
-        static::assertFalse($block->isCode());
-    }
+        $document = (new MarkdownParser((new MarkdownEnvironmentFactory())->create(80, new ContextSpecificRenderer(CurrentContext::cli()), [])))->parse($markdown);
 
-    public function testMatchesNextLine(): void
-    {
-        $block = new ContextSpecificBlock('cli');
-
-        static::assertTrue($block->matchesNextLine(new Cursor('Some line')));
-        static::assertTrue($block->matchesNextLine(new Cursor('* Item 1')));
-        static::assertTrue($block->matchesNextLine(new Cursor('* Item 2')));
-
-        static::assertFalse($block->matchesNextLine(new Cursor('{{ cli }}')));
+        $blocks = $document->children();
+        static::assertCount(3, $blocks);
+        static::assertInstanceOf(Paragraph::class, $blocks[0]);
+        static::assertInstanceOf(ContextSpecificBlock::class, $blocks[1]);
+        static::assertSame('cli', $blocks[1]->getType());
+        static::assertCount(2, $blocks[1]->children());
+        static::assertInstanceOf(Paragraph::class, $blocks[1]->children()[0]);
+        static::assertInstanceOf(Paragraph::class, $blocks[2]);
+        static::assertInstanceOf(Document::class, $blocks[1]->parent());
     }
 }

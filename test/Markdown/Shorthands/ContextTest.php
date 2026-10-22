@@ -2,7 +2,7 @@
 
 namespace PhpSchool\PhpWorkshopTest\Markdown\Shorthands;
 
-use League\CommonMark\Inline\Element\Text;
+use League\CommonMark\Node\Inline\Text;
 use PhpSchool\PhpWorkshop\Markdown\CurrentContext;
 use PhpSchool\PhpWorkshop\Markdown\Shorthands\Context;
 use PHPUnit\Framework\TestCase;
@@ -36,6 +36,6 @@ class ContextTest extends TestCase
         $result = $context->__invoke(['cli', 'some content']);
         self::assertCount(1, $result);
         self::assertInstanceOf(Text::class, $result[0]);
-        self::assertEquals('some content', $result[0]->getContent());
+        self::assertEquals('some content', $result[0]->getLiteral());
     }
 }
