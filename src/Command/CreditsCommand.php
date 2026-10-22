@@ -53,7 +53,7 @@ class CreditsCommand
      */
     private function writeContributors(array $contributors): void
     {
-        $nameColumnSize = max(array_map('strlen', array_values($contributors)));
+        $nameColumnSize = max(0, ...array_values(array_map('strlen', $contributors)));
         $columns        = sprintf('%s  GitHub Username', str_pad('Name', (int) $nameColumnSize));
 
         $this->output->writeLine($columns);

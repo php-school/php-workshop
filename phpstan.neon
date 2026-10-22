@@ -1,8 +1,14 @@
 parameters:
     stubFiles:
         - stubs/Colors/Color.stub
+        - stubs/Kadet/KeyLighter.stub
     treatPhpDocTypesAsCertain: false
     ignoreErrors:
+        -
+            # public helper for downstream workshops, not used within the framework itself
+            identifier: trait.unused
+            path: src/Exercise/TemporaryDirectoryTrait.php
+
         -
             message: '#Call to an undefined method PhpParser\\Node\\Expr\|PhpParser\\Node\\Name\:\:__toString\(\)#'
             path: src/Check/FunctionRequirementsCheck.php

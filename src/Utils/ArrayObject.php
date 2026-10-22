@@ -7,6 +7,8 @@ namespace PhpSchool\PhpWorkshop\Utils;
 use ArrayIterator;
 use Countable;
 use IteratorAggregate;
+use PhpSchool\PhpWorkshop\Exception\InvalidArgumentException;
+use Stringable;
 
 /**
  *
@@ -37,8 +39,10 @@ class ArrayObject implements IteratorAggregate, Countable
      * Run a callable function over each item in the array using the result
      * to construct a new instance of `ArrayObject`.
      *
-     * @param callable $callback
-     * @return static
+     * @template TMapped
+     *
+     * @param callable(T): TMapped $callback
+     * @return static<TKey, TMapped>
      */
     public function map(callable $callback): self
     {
@@ -74,7 +78,7 @@ class ArrayObject implements IteratorAggregate, Countable
      * @template TFlatMapReturn of array
      *
      * @param  callable(T): TFlatMapReturn $callback
-     * @return static<int|string, mixed>
+     * @return static<array-key, mixed>
      */
     public function flatMap(callable $callback): self
     {
@@ -85,7 +89,7 @@ class ArrayObject implements IteratorAggregate, Countable
      * Collapse an array of arrays into a single array returning a new instance of `ArrayObject`
      * with the collapsed items.
      *
-     * @return static
+     * @return static<array-key, mixed>
      */
     public function collapse(): self
     {
@@ -165,7 +169,19 @@ class ArrayObject implements IteratorAggregate, Countable
      */
     public function implode(string $glue): string
     {
-        return implode($glue, $this->array);
+        return implode(
+            $glue,
+            array_map(
+                static function ($item): string {
+                    if (is_scalar($item) || $item instanceof Stringable) {
+                        return (string) $item;
+                    }
+
+                    throw InvalidArgumentException::typeMisMatch('string', $item);
+                },
+                $this->array,
+            ),
+        );
     }
 
     /**

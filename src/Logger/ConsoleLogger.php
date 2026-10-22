@@ -29,6 +29,8 @@ class ConsoleLogger extends AbstractLogger implements LoggerInterface
 
     /**
      * @param string $level
+     * @param string|\Stringable $message
+     * @param array<mixed> $context
      */
     public function log($level, $message, array $context = []): void
     {
@@ -37,7 +39,7 @@ class ConsoleLogger extends AbstractLogger implements LoggerInterface
                 '%s - %s - %s',
                 $this->color->fg('yellow', (new \DateTime())->format('H:i:s')),
                 $this->color->bg('red', strtoupper($level)),
-                $this->color->fg('red', $message),
+                $this->color->fg('red', (string) $message),
             ),
             json_encode($context, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT),
         ];

@@ -7,6 +7,8 @@ namespace PhpSchool\PhpWorkshop\ResultRenderer;
 use Colors\Color;
 use Kadet\Highlighter\Formatter\CliFormatter;
 use Kadet\Highlighter\KeyLighter;
+use Kadet\Highlighter\Language\Language;
+use PhpSchool\PhpWorkshop\Exception\RuntimeException;
 use PhpSchool\Terminal\Terminal;
 use PhpSchool\CliMenu\Util\StringUtil;
 use PhpSchool\PhpWorkshop\Exercise\ProvidesSolution;
@@ -115,7 +117,7 @@ class ResultsRenderer
         $output->emptyLine();
 
         $messages = array_merge($successes, array_column($failures, 1));
-        $longest = max(array_map('mb_strlen', $messages)) + 4;
+        $longest = max(0, ...array_values(array_map('mb_strlen', $messages))) + 4;
 
         foreach ($successes as $success) {
             $output->writeLine($this->center($this->style(str_repeat(' ', $longest), ['bg_green'])));
@@ -192,11 +194,15 @@ class ResultsRenderer
                 $output->writeLine($this->style($file->getRelativePath(), ['bold', 'cyan', 'underline']));
                 $output->emptyLine();
 
-                $code = $this->keyLighter->highlight(
-                    $file->getContents(),
-                    $this->keyLighter->languageByExt('.' . $file->getExtension()),
-                    new CliFormatter(),
-                );
+                $language = $this->keyLighter->languageByExt('.' . $file->getExtension());
+
+                if (!$language instanceof Language) {
+                    throw new RuntimeException(
+                        sprintf('Could not find a language to highlight file: "%s"', $file->getRelativePath()),
+                    );
+                }
+
+                $code = $this->keyLighter->highlight($file->getContents(), $language, new CliFormatter());
 
                 //make sure there is a new line at the end
                 $code = rtrim($code, "\n") . "\n";

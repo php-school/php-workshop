@@ -39,8 +39,11 @@ final class HostProcessFactory implements ProcessFactory
      */
     private function getDefaultEnv(): array
     {
-        $env = array_map(fn() => false, $_ENV);
-        $env + array_map(fn() => false, $_SERVER);
+        $env = [];
+
+        foreach (array_keys($_ENV) as $name) {
+            $env[(string) $name] = false;
+        }
 
         return $env;
     }

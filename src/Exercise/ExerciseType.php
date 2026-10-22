@@ -31,7 +31,7 @@ class ExerciseType extends Enum
      *
      * @var array<string, class-string>
      */
-    private static $exerciseTypeToExerciseInterfaceMap = [
+    private const EXERCISE_TYPE_TO_EXERCISE_INTERFACE_MAP = [
         self::CLI => CliExercise::class,
         self::CGI => CgiExercise::class,
         self::CUSTOM => CustomVerifyingExercise::class,
@@ -45,6 +45,6 @@ class ExerciseType extends Enum
      */
     public function getExerciseInterface(): string
     {
-        return self::$exerciseTypeToExerciseInterfaceMap[$this->getKey()];
+        return self::EXERCISE_TYPE_TO_EXERCISE_INTERFACE_MAP[$this->getKey()];
     }
 }
