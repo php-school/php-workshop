@@ -12,10 +12,7 @@ use PhpSchool\PhpWorkshop\Markdown\CurrentContext;
 
 final class ContextSpecificRenderer implements NodeRendererInterface
 {
-    /**
-     * @var CurrentContext
-     */
-    private $currentContext;
+    private CurrentContext $currentContext;
 
     public function __construct(CurrentContext $currentContext)
     {
