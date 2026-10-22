@@ -10,6 +10,38 @@ use Symfony\Component\Process\ExecutableFinder;
 
 class DockerProcessFactoryTest extends TestCase
 {
+    private function factory(): DockerProcessFactory
+    {
+        $finder = $this->createMock(ExecutableFinder::class);
+        $finder->expects($this->once())
+            ->method('find')
+            ->with('docker')
+            ->willReturn('/usr/local/bin/docker');
+
+        return new DockerProcessFactory('/docker-dir', 'PHP8Appreciate', '/composer/cache/dir', $finder);
+    }
+
+    /**
+     * @param list<string> $network
+     * @param list<string> $extra env and mount args
+     * @param list<string> $command
+     */
+    private function expectedCommand(array $network, array $extra, array $command): string
+    {
+        $parts = [
+            '/usr/local/bin/docker', 'run', '--rm', '-i', '--init', '--user', getmyuid() . ':' . getmygid(),
+            ...$network,
+            '--read-only', '--tmpfs', '/tmp:rw,nosuid,nodev,size=64m', '--cap-drop', 'ALL',
+            '--security-opt', 'no-new-privileges', '--pids-limit', '64', '--memory', '256m', '--memory-swap', '256m',
+            '--cpus', '1',
+            ...$extra,
+            '-w', '/solution', 'php8appreciate-runtime', 'timeout', '-s', 'KILL', '30',
+            ...$command,
+        ];
+
+        return implode(' ', array_map(fn($p) => "'$p'", $parts));
+    }
+
     public function testCreateThrowsExceptionIfDockerNotFound(): void
     {
         static::expectException(ProcessNotFoundException::class);
@@ -26,112 +58,71 @@ class DockerProcessFactoryTest extends TestCase
         $factory->create($input);
     }
 
-    public function testCreate(): void
+    public function testCreateIsIsolatedWithNoNetwork(): void
     {
-        $finder = $this->createMock(ExecutableFinder::class);
-        $finder->expects($this->once())
-            ->method('find')
-            ->with('docker')
-            ->willReturn('/usr/local/bin/docker');
+        $process = $this->factory()->create(new ProcessInput('php', ['one', 'two'], __DIR__, [], []));
 
-        $factory = new DockerProcessFactory('/docker-dir', 'php8appreciate', '/composer/cache/dir', $finder);
-        $input = new ProcessInput('php', [], __DIR__, [], []);
-
-        $process = $factory->create($input);
-        $cmd  = "'/usr/local/bin/docker' 'compose' '-p' 'php8appreciate' '-f' '.docker/runtime/docker-compose.yml'";
-        $cmd .= " 'run' '--user' '" . getmyuid() . ":" . getmygid() . "' '--rm' '-e' 'COMPOSER_HOME=/tmp/composer' '-w' '/solution' 'runtime' 'php'";
-        static::assertSame($cmd, $process->getCommandLine());
+        $expected = $this->expectedCommand(
+            ['--network', 'none'],
+            ['-e', 'COMPOSER_HOME=/tmp/composer', '-v', __DIR__ . ':/solution'],
+            ['php', 'one', 'two'],
+        );
+        static::assertSame($expected, $process->getCommandLine());
         static::assertSame('/docker-dir', $process->getWorkingDirectory());
+        static::assertSame(35.0, $process->getTimeout());
     }
 
-    public function testCreateMountsComposerCacheDirIfExecutableIsComposer(): void
+    public function testComposerGetsNetworkCacheAndNoPluginsOrScripts(): void
     {
-        $finder = $this->createMock(ExecutableFinder::class);
-        $finder->expects($this->once())
-            ->method('find')
-            ->with('docker')
-            ->willReturn('/usr/local/bin/docker');
+        $process = $this->factory()->create(new ProcessInput('composer', ['install'], __DIR__, [], []));
 
-        $factory = new DockerProcessFactory('/docker-dir', 'php8appreciate', '/composer/cache/dir', $finder);
-        $input = new ProcessInput('composer', [], __DIR__, [], []);
-
-        $process = $factory->create($input);
-        $cmd  = "'/usr/local/bin/docker' 'compose' '-p' 'php8appreciate' '-f' '.docker/runtime/docker-compose.yml'";
-        $cmd .= " 'run' '--user' '" . getmyuid() . ":" . getmygid() . "' '--rm' '-e' 'COMPOSER_HOME=/tmp/composer' '-w' '/solution' '-v' '/composer/cache/dir:/tmp/composer' 'runtime' 'composer'";
-        static::assertSame($cmd, $process->getCommandLine());
-        static::assertSame('/docker-dir', $process->getWorkingDirectory());
+        $expected = $this->expectedCommand(
+            ['--network', 'bridge'],
+            ['-e', 'COMPOSER_HOME=/tmp/composer', '-v', __DIR__ . ':/solution', '-v', '/composer/cache/dir:/tmp/composer'],
+            ['composer', 'install', '--no-plugins', '--no-scripts'],
+        );
+        static::assertSame($expected, $process->getCommandLine());
     }
 
-    public function testCreateWithArgs(): void
+    public function testExposedPortsArePublishedOnLoopbackOnly(): void
     {
-        $finder = $this->createMock(ExecutableFinder::class);
-        $finder->expects($this->once())
-            ->method('find')
-            ->with('docker')
-            ->willReturn('/usr/local/bin/docker');
+        $process = $this->factory()->create(new ProcessInput('php', [], __DIR__, [], [8000]));
 
-        $factory = new DockerProcessFactory('/docker-dir', 'php8appreciate', '/composer/cache/dir', $finder);
-        $input = new ProcessInput('php', ['one', 'two'], __DIR__, [], []);
-
-        $process = $factory->create($input);
-        $cmd  = "'/usr/local/bin/docker' 'compose' '-p' 'php8appreciate' '-f' '.docker/runtime/docker-compose.yml'";
-        $cmd .= " 'run' '--user' '" . getmyuid() . ":" . getmygid() . "' '--rm' '-e' 'COMPOSER_HOME=/tmp/composer' '-w' '/solution' 'runtime' 'php' 'one' 'two'";
-        static::assertSame($cmd, $process->getCommandLine());
-        static::assertSame('/docker-dir', $process->getWorkingDirectory());
+        $expected = $this->expectedCommand(
+            ['--network', 'bridge', '-p', '127.0.0.1:8000:8000'],
+            ['-e', 'COMPOSER_HOME=/tmp/composer', '-v', __DIR__ . ':/solution'],
+            ['php'],
+        );
+        static::assertSame($expected, $process->getCommandLine());
     }
 
     public function testCreateWithEnv(): void
     {
-        $finder = $this->createMock(ExecutableFinder::class);
-        $finder->expects($this->once())
-            ->method('find')
-            ->with('docker')
-            ->willReturn('/usr/local/bin/docker');
+        $process = $this->factory()->create(new ProcessInput('php', [], __DIR__, ['SOME_VAR' => 'value'], []));
 
-        $factory = new DockerProcessFactory('/docker-dir', 'php8appreciate', '/composer/cache/dir', $finder);
-        $input = new ProcessInput('php', ['one', 'two'], __DIR__, ['SOME_VAR' => 'value'], []);
-
-        $process = $factory->create($input);
-        $cmd  = "'/usr/local/bin/docker' 'compose' '-p' 'php8appreciate' '-f' '.docker/runtime/docker-compose.yml'";
-        $cmd .= " 'run' '--user' '" . getmyuid() . ":" . getmygid() . "' '--rm' '-e' 'SOME_VAR=value' '-e' 'COMPOSER_HOME=/tmp/composer' '-w' '/solution' 'runtime' 'php' 'one' 'two'";
-        static::assertSame($cmd, $process->getCommandLine());
-        static::assertSame('/docker-dir', $process->getWorkingDirectory());
+        $expected = $this->expectedCommand(
+            ['--network', 'none'],
+            ['-e', 'SOME_VAR=value', '-e', 'COMPOSER_HOME=/tmp/composer', '-v', __DIR__ . ':/solution'],
+            ['php'],
+        );
+        static::assertSame($expected, $process->getCommandLine());
     }
 
     public function testWithInput(): void
     {
-        $finder = $this->createMock(ExecutableFinder::class);
-        $finder->expects($this->once())
-            ->method('find')
-            ->with('docker')
-            ->willReturn('/usr/local/bin/docker');
+        $process = $this->factory()->create(new ProcessInput('php', [], __DIR__, [], [], 'someinput'));
 
-        $factory = new DockerProcessFactory('/composer-dir', 'php8appreciate', '/composer/cache/dir', $finder);
-        $input = new ProcessInput('php', [], __DIR__, [], [], 'someinput');
-
-        $process = $factory->create($input);
-        $cmd  = "'/usr/local/bin/docker' 'compose' '-p' 'php8appreciate' '-f' '.docker/runtime/docker-compose.yml'";
-        $cmd .= " 'run' '--user' '" . getmyuid() . ":" . getmygid() . "' '--rm' '-e' 'COMPOSER_HOME=/tmp/composer' '-w' '/solution' 'runtime' 'php'";
-        static::assertSame($cmd, $process->getCommandLine());
         static::assertSame('someinput', $process->getInput());
     }
 
-    public function testSolutionDirectoryIsPassedAsEnvVar(): void
+    public function testCreateBuildProcess(): void
     {
-        $finder = $this->createMock(ExecutableFinder::class);
-        $finder->expects($this->once())
-            ->method('find')
-            ->with('docker')
-            ->willReturn('/usr/local/bin/docker');
+        $process = $this->factory()->createBuildProcess();
 
-        $factory = new DockerProcessFactory('/docker-dir', 'php8appreciate', '/composer/cache/dir', $finder);
-        $input = new ProcessInput('php', ['one', 'two'], __DIR__, ['SOME_VAR' => 'value'], []);
-
-        $process = $factory->create($input);
-        $cmd  = "'/usr/local/bin/docker' 'compose' '-p' 'php8appreciate' '-f' '.docker/runtime/docker-compose.yml'";
-        $cmd .= " 'run' '--user' '" . getmyuid() . ":" . getmygid() . "' '--rm' '-e' 'SOME_VAR=value' '-e' 'COMPOSER_HOME=/tmp/composer' '-w' '/solution' 'runtime' 'php' 'one' 'two'";
-        static::assertSame($cmd, $process->getCommandLine());
+        static::assertSame(
+            "'/usr/local/bin/docker' 'build' '-t' 'php8appreciate-runtime' '.docker/runtime'",
+            $process->getCommandLine(),
+        );
         static::assertSame('/docker-dir', $process->getWorkingDirectory());
-        static::assertSame(['SOLUTION' => __DIR__, 'UID' => (string) getmyuid(), 'GID' => (string) getmygid()], $process->getEnv());
     }
 }
