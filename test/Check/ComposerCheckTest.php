@@ -2,6 +2,7 @@
 
 namespace PhpSchool\PhpWorkshopTest\Check;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use InvalidArgumentException;
 use PhpSchool\PhpWorkshop\Check\ComposerCheck;
 use PhpSchool\PhpWorkshop\Check\SimpleCheckInterface;
@@ -85,9 +86,7 @@ class ComposerCheckTest extends TestCase
         $this->assertSame('vendor', $result->getMissingComponent());
     }
 
-    /**
-     * @dataProvider dependencyProvider
-     */
+    #[DataProvider('dependencyProvider')]
     public function testCheckReturnsFailureIfDependencyNotRequired(string $dependency, string $solutionFile): void
     {
         $exercise = $this->createMock(ComposerExercise::class);
@@ -108,7 +107,7 @@ class ComposerCheckTest extends TestCase
     /**
      * @return array
      */
-    public function dependencyProvider(): array
+    public static function dependencyProvider(): array
     {
         return [
             ['klein/klein',           __DIR__ . '/../res/composer/no-klein/solution.php'],

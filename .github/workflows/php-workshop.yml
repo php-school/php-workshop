@@ -34,9 +34,7 @@ jobs:
           COMPOSER_NO_SECURITY_BLOCKING: 1
 
       - name: Run phpunit tests
-        run: |
-          mkdir -p build/logs
-          vendor/bin/phpunit --coverage-clover ./build/logs/clover.xml
+        run: vendor/bin/phpunit
 
       - name: Run phpcs
         run: composer cs

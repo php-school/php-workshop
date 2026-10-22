@@ -2,6 +2,7 @@
 
 namespace PhpSchool\PhpWorkshopTest\Command;
 
+use PhpSchool\PhpWorkshopTest\Asset\CallableStub;
 use PhpSchool\CliMenu\CliMenu;
 use PhpSchool\PhpWorkshop\Command\MenuCommandInvoker;
 use PHPUnit\Framework\TestCase;
@@ -15,9 +16,7 @@ class MenuCommandInvokerTest extends TestCase
             ->expects($this->once())
             ->method('close');
 
-        $command = $this->getMockBuilder('stdClass')
-            ->setMethods(['__invoke'])
-            ->getMock();
+        $command = $this->createMock(CallableStub::class);
 
         $command
             ->expects($this->once())

@@ -332,7 +332,7 @@ class ResultsRendererTest extends BaseTest
 
     private function getExpectedOutput(): string
     {
-        $name = camel_case_to_kebab_case($this->getName());
+        $name = camel_case_to_kebab_case($this->name());
         return file_get_contents(sprintf('%s/../res/exercise-renderer/%s.txt', __DIR__, $name));
     }
 }

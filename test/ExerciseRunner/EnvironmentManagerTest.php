@@ -2,6 +2,7 @@
 
 namespace PhpSchool\PhpWorkshopTest\ExerciseRunner;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use PhpSchool\PhpWorkshop\Event\EventDispatcher;
 use PhpSchool\PhpWorkshop\Event\ExerciseRunnerEvent;
 use PhpSchool\PhpWorkshop\Exercise\Scenario\CliScenario;
@@ -51,9 +52,7 @@ class EnvironmentManagerTest extends TestCase
         static::assertStringEqualsFile($context->getReferenceExecutionDirectory() . '/file2.txt', 'content2');
     }
 
-    /**
-     * @dataProvider finishEvents
-     */
+    #[DataProvider('finishEvents')]
     public function testFileAreCleanedUpOnlyWhenFinishEventIsDispatched(string $eventName): void
     {
         $exercise = new CliExerciseImpl();
@@ -78,15 +77,15 @@ class EnvironmentManagerTest extends TestCase
         $eventDispatcher->dispatch(new ExerciseRunnerEvent($eventName, $context));
 
         static::assertFileExists($context->getStudentExecutionDirectory());
-        static::assertFileNotExists($context->getReferenceExecutionDirectory() . '/file.txt');
-        static::assertFileNotExists($context->getReferenceExecutionDirectory() . '/file2.txt');
-        static::assertFileNotExists($context->getReferenceExecutionDirectory());
+        static::assertFileDoesNotExist($context->getReferenceExecutionDirectory() . '/file.txt');
+        static::assertFileDoesNotExist($context->getReferenceExecutionDirectory() . '/file2.txt');
+        static::assertFileDoesNotExist($context->getReferenceExecutionDirectory());
     }
 
     /**
      * @return array<array{0: string}>
      */
-    public function finishEvents(): array
+    public static function finishEvents(): array
     {
         return [
             ['run.finish'],

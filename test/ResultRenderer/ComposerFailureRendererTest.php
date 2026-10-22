@@ -4,15 +4,14 @@ declare(strict_types=1);
 
 namespace PhpSchool\PhpWorkshopTest\ResultRenderer;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use PhpSchool\PhpWorkshop\Check\CheckInterface;
 use PhpSchool\PhpWorkshop\Result\ComposerFailure;
 use PhpSchool\PhpWorkshop\ResultRenderer\ComposerFailureRenderer;
 
 class ComposerFailureRendererTest extends AbstractResultRendererTest
 {
-    /**
-     * @dataProvider missingFileProvider
-     */
+    #[DataProvider('missingFileProvider')]
     public function testRenderWithMissingFiles(string $file, string $message): void
     {
         $failure = new ComposerFailure(
@@ -26,7 +25,7 @@ class ComposerFailureRendererTest extends AbstractResultRendererTest
         $this->assertEquals($expected, $renderer->render($this->getRenderer()));
     }
 
-    public function missingFileProvider(): array
+    public static function missingFileProvider(): array
     {
         return [
             ['composer.json', '           No composer.json file found'],

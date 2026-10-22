@@ -8,6 +8,7 @@ use Psr\Container\ContainerInterface;
 use PhpSchool\PhpWorkshop\Exception\InvalidArgumentException;
 use PhpSchool\PhpWorkshop\Factory\EventDispatcherFactory;
 use PhpSchool\PhpWorkshop\ResultAggregator;
+use PhpSchool\PhpWorkshopTest\Asset\CallableStub;
 use PHPUnit\Framework\TestCase;
 
 use function PhpSchool\PhpWorkshop\Event\containerListener;
@@ -29,14 +30,10 @@ class EventDispatcherFactoryTest extends TestCase
         $c = $this->createMock(ContainerInterface::class);
 
         $c->method('get')
-            ->withConsecutive(
-                [ResultAggregator::class],
-                ['eventListeners'],
-            )
-            ->willReturnOnConsecutiveCalls(
-                new ResultAggregator(),
-                new \stdClass(),
-            );
+            ->willReturnMap([
+                [ResultAggregator::class, new ResultAggregator()],
+                ['eventListeners', new \stdClass()],
+            ]);
 
         $c->method('has')->with('eventListeners')->willReturn(true);
 
@@ -51,14 +48,10 @@ class EventDispatcherFactoryTest extends TestCase
         $c = $this->createMock(ContainerInterface::class);
 
         $c->method('get')
-            ->withConsecutive(
-                [ResultAggregator::class],
-                ['eventListeners'],
-            )
-            ->willReturnOnConsecutiveCalls(
-                new ResultAggregator(),
-                ['my-group' => new \stdClass()],
-            );
+            ->willReturnMap([
+                [ResultAggregator::class, new ResultAggregator()],
+                ['eventListeners', ['my-group' => new \stdClass()]],
+            ]);
 
         $c->method('has')->with('eventListeners')->willReturn(true);
 
@@ -79,14 +72,10 @@ class EventDispatcherFactoryTest extends TestCase
         $c = $this->createMock(ContainerInterface::class);
 
         $c->method('get')
-            ->withConsecutive(
-                [ResultAggregator::class],
-                ['eventListeners'],
-            )
-            ->willReturnOnConsecutiveCalls(
-                new ResultAggregator(),
-                $eventConfig,
-            );
+            ->willReturnMap([
+                [ResultAggregator::class, new ResultAggregator()],
+                ['eventListeners', $eventConfig],
+            ]);
 
         $c->method('has')->with('eventListeners')->willReturn(true);
 
@@ -107,14 +96,10 @@ class EventDispatcherFactoryTest extends TestCase
         $c = $this->createMock(ContainerInterface::class);
 
         $c->method('get')
-            ->withConsecutive(
-                [ResultAggregator::class],
-                ['eventListeners'],
-            )
-            ->willReturnOnConsecutiveCalls(
-                new ResultAggregator(),
-                $eventConfig,
-            );
+            ->willReturnMap([
+                [ResultAggregator::class, new ResultAggregator()],
+                ['eventListeners', $eventConfig],
+            ]);
 
         $c->method('has')->with('eventListeners')->willReturn(true);
 
@@ -135,24 +120,16 @@ class EventDispatcherFactoryTest extends TestCase
         $c = $this->createMock(ContainerInterface::class);
 
         $c->method('get')
-            ->withConsecutive(
-                [ResultAggregator::class],
-                ['eventListeners'],
-            )
-            ->willReturnOnConsecutiveCalls(
-                new ResultAggregator(),
-                $eventConfig,
-            );
+            ->willReturnMap([
+                [ResultAggregator::class, new ResultAggregator()],
+                ['eventListeners', $eventConfig],
+            ]);
 
         $c->method('has')
-            ->withConsecutive(
-                ['eventListeners'],
-                ['nonExistingContainerEntry'],
-            )
-            ->willReturnOnConsecutiveCalls(
-                true,
-                false,
-            );
+            ->willReturnMap([
+                ['eventListeners', true],
+                ['nonExistingContainerEntry', false],
+            ]);
 
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Container has no entry named: "nonExistingContainerEntry"');
@@ -173,14 +150,10 @@ class EventDispatcherFactoryTest extends TestCase
         $c = $this->createMock(ContainerInterface::class);
 
         $c->method('get')
-            ->withConsecutive(
-                [ResultAggregator::class],
-                ['eventListeners'],
-            )
-            ->willReturnOnConsecutiveCalls(
-                new ResultAggregator(),
-                $eventConfig,
-            );
+            ->willReturnMap([
+                [ResultAggregator::class, new ResultAggregator()],
+                ['eventListeners', $eventConfig],
+            ]);
 
         $c->method('has')->with('eventListeners')->willReturn(true);
 
@@ -199,31 +172,24 @@ class EventDispatcherFactoryTest extends TestCase
     {
         $eventConfig = [
             'my-group' => [
-                'someEvent' => [containerListener('containerEntry')],
+                'someEvent' => [containerListener('containerEntry')()],
             ],
         ];
 
         $c = $this->createMock(ContainerInterface::class);
 
-        $c->method('get')
-            ->withConsecutive(
-                [ResultAggregator::class],
-                ['eventListeners'],
-            )
-            ->willReturnOnConsecutiveCalls(
-                new ResultAggregator(),
-                $eventConfig,
-            );
+        $c->expects($this->exactly(2))
+            ->method('get')
+            ->willReturnMap([
+                [ResultAggregator::class, new ResultAggregator()],
+                ['eventListeners', $eventConfig],
+            ]);
 
         $c->method('has')
-            ->withConsecutive(
-                ['eventListeners'],
-                ['containerEntry'],
-            )
-            ->willReturnOnConsecutiveCalls(
-                true,
-                true,
-            );
+            ->willReturnMap([
+                ['eventListeners', true],
+                ['containerEntry', true],
+            ]);
 
         $dispatcher = (new EventDispatcherFactory())->__invoke($c);
         $this->assertArrayHasKey('someEvent', $dispatcher->getListeners());
@@ -233,33 +199,28 @@ class EventDispatcherFactoryTest extends TestCase
     {
         $eventConfig = [
             'my-group' => [
-                'someEvent' => [containerListener('containerEntry')],
+                'someEvent' => [containerListener('containerEntry')()],
             ],
         ];
 
+        $listener = $this->createMock(CallableStub::class);
+        $listener->expects($this->once())->method('__invoke');
+
         $c = $this->createMock(ContainerInterface::class);
 
-        $c->method('get')
-            ->withConsecutive(
-                [ResultAggregator::class],
-                ['eventListeners'],
-                ['containerEntry'],
-            )
-            ->willReturnOnConsecutiveCalls(
-                new ResultAggregator(),
-                $eventConfig,
-                function () {},
-            );
+        $c->expects($this->exactly(3))
+            ->method('get')
+            ->willReturnMap([
+                [ResultAggregator::class, new ResultAggregator()],
+                ['eventListeners', $eventConfig],
+                ['containerEntry', $listener],
+            ]);
 
         $c->method('has')
-            ->withConsecutive(
-                ['eventListeners'],
-                ['containerEntry'],
-            )
-            ->willReturnOnConsecutiveCalls(
-                true,
-                true,
-            );
+            ->willReturnMap([
+                ['eventListeners', true],
+                ['containerEntry', true],
+            ]);
 
         $dispatcher = (new EventDispatcherFactory())->__invoke($c);
         $this->assertArrayHasKey('someEvent', $dispatcher->getListeners());
@@ -278,26 +239,17 @@ class EventDispatcherFactoryTest extends TestCase
         $c = $this->createMock(ContainerInterface::class);
 
         $c->method('get')
-            ->withConsecutive(
-                [ResultAggregator::class],
-                ['eventListeners'],
-                ['containerEntry'],
-            )
-            ->willReturnOnConsecutiveCalls(
-                new ResultAggregator(),
-                $eventConfig,
-                new \stdClass(),
-            );
+            ->willReturnMap([
+                [ResultAggregator::class, new ResultAggregator()],
+                ['eventListeners', $eventConfig],
+                ['containerEntry', new \stdClass()],
+            ]);
 
         $c->method('has')
-            ->withConsecutive(
-                ['eventListeners'],
-                ['containerEntry'],
-            )
-            ->willReturnOnConsecutiveCalls(
-                true,
-                true,
-            );
+            ->willReturnMap([
+                ['eventListeners', true],
+                ['containerEntry', true],
+            ]);
 
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Method "notHere" does not exist on "stdClass"');

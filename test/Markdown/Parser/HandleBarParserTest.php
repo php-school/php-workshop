@@ -2,7 +2,8 @@
 
 namespace PhpSchool\PhpWorkshopTest\Markdown\Parser;
 
-use League\CommonMark\Block\Element\AbstractBlock;
+use PhpSchool\PhpWorkshopTest\Asset\BlockStub;
+use PHPUnit\Framework\Attributes\DataProvider;
 use League\CommonMark\Cursor;
 use League\CommonMark\Inline\Element\Text;
 use League\CommonMark\InlineParserContext;
@@ -20,9 +21,7 @@ class HandleBarParserTest extends TestCase
         static::assertEquals(['{'], $parser->getCharacters());
     }
 
-    /**
-     * @dataProvider noShorthandsProvider
-     */
+    #[DataProvider('noShorthandsProvider')]
     public function testParseWithNoShortHands(string $content): void
     {
         $cursor  = new Cursor($content);
@@ -38,7 +37,7 @@ class HandleBarParserTest extends TestCase
         static::assertFalse($parser->parse($context));
     }
 
-    public function noShorthandsProvider(): array
+    public static function noShorthandsProvider(): array
     {
         return [
             ['some content'],
@@ -50,9 +49,7 @@ class HandleBarParserTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider parseProvider
-     */
+    #[DataProvider('parseProvider')]
     public function testWithShorthand(string $content, bool $expectedParseResult, array $expectedArgs): void
     {
         $cursor  = new Cursor($content);
@@ -62,15 +59,7 @@ class HandleBarParserTest extends TestCase
             ->willReturn($cursor);
 
         if ($expectedParseResult) {
-            $container = static::getMockForAbstractClass(
-                AbstractBlock::class,
-                [],
-                '',
-                true,
-                true,
-                true,
-                ['appendChild'],
-            );
+            $container = $this->getMockBuilder(BlockStub::class)->onlyMethods(['appendChild'])->getMock();
             $container->expects($this->once())
                 ->method('appendChild')
                 ->with(static::callback(function (Text $text) {
@@ -103,7 +92,7 @@ class HandleBarParserTest extends TestCase
         static::assertEquals($expectedArgs, $shorthand->args);
     }
 
-    public function parseProvider(): array
+    public static function parseProvider(): array
     {
         return [
             ['some content', false, []],
@@ -140,15 +129,7 @@ class HandleBarParserTest extends TestCase
             ->method('getCursor')
             ->willReturn($cursor);
 
-        $container = static::getMockForAbstractClass(
-            AbstractBlock::class,
-            [],
-            '',
-            true,
-            true,
-            true,
-            ['appendChild'],
-        );
+        $container = $this->getMockBuilder(BlockStub::class)->onlyMethods(['appendChild'])->getMock();
         $container->expects($this->once())
             ->method('appendChild')
             ->with(static::callback(function (Text $text) {

@@ -14,8 +14,8 @@ class ContextSpecificRendererTest extends TestCase
 {
     public function testRenderWithWrongBlock(): void
     {
-        $htmlRenderer = $this->getMockForAbstractClass(ElementRendererInterface::class);
-        $block = $this->getMockForAbstractClass(AbstractBlock::class);
+        $htmlRenderer = $this->createMock(ElementRendererInterface::class);
+        $block = $this->createMock(AbstractBlock::class);
 
         $currentContext = CurrentContext::cli();
         $renderer = new ContextSpecificRenderer($currentContext);
@@ -26,7 +26,7 @@ class ContextSpecificRendererTest extends TestCase
 
     public function testRenderIgnoresContextsNotMatchingTheCurrentContext(): void
     {
-        $htmlRenderer = $this->getMockForAbstractClass(ElementRendererInterface::class);
+        $htmlRenderer = $this->createMock(ElementRendererInterface::class);
         $block = new ContextSpecificBlock('cloud');
 
         $currentContext = CurrentContext::cli();
@@ -40,7 +40,7 @@ class ContextSpecificRendererTest extends TestCase
     {
         $paragraph = new Paragraph();
         $paragraph->addLine('Some content');
-        $htmlRenderer = $this->getMockForAbstractClass(ElementRendererInterface::class);
+        $htmlRenderer = $this->createMock(ElementRendererInterface::class);
         $htmlRenderer->expects($this->any())
             ->method('renderBlocks')
             ->with([$paragraph])

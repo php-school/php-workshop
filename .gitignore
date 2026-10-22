@@ -5,3 +5,4 @@ program.php
 /build
 /vendor-bin/**/vendor/
 .php-cs-fixer.cache
+.phpunit.cache

@@ -18,6 +18,31 @@ use PhpSchool\PhpWorkshop\Logger\ConsoleLogger;
 
 class ApplicationTest extends BaseTest
 {
+    private mixed $originalErrorHandler;
+
+    public function setUp(): void
+    {
+        $this->originalErrorHandler = $this->currentErrorHandler();
+    }
+
+    public function tearDown(): void
+    {
+        //Application::configure() installs an error handler, remove any that were added during the test
+        while ($this->currentErrorHandler() !== $this->originalErrorHandler) {
+            restore_error_handler();
+        }
+
+        parent::tearDown();
+    }
+
+    private function currentErrorHandler(): mixed
+    {
+        $handler = set_error_handler(static fn() => false);
+        restore_error_handler();
+
+        return $handler;
+    }
+
     public function testEventListenersFromLocalAndWorkshopConfigAreMerged(): void
     {
         $frameworkFileContent = <<<'FRAME'
@@ -41,8 +66,8 @@ FRAME;
         ];
 LOCAL;
 
-        $localFile = $this->getTemporaryFile(uniqid($this->getName(), true), $localFileContent);
-        $frameworkFile = $this->getTemporaryFile(uniqid($this->getName(), true), $frameworkFileContent);
+        $localFile = $this->getTemporaryFile(uniqid($this->name(), true), $localFileContent);
+        $frameworkFile = $this->getTemporaryFile(uniqid($this->name(), true), $frameworkFileContent);
 
         $app = new Application('Test App', $localFile);
 
@@ -111,7 +136,7 @@ LOCAL;
             throw new RuntimeException('We failed somewhere...');
         }));
 
-        $_SERVER['argv'] = [$this->getName(), 'Failure'];
+        $_SERVER['argv'] = [$this->name(), 'Failure'];
 
         $application->run();
 

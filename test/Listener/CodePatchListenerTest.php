@@ -88,11 +88,19 @@ class CodePatchListenerTest extends TestCase
         $context->importStudentFileFromString('ORIGINAL CONTENT');
         $context->importReferenceSolution();
 
+        $matcher = $this->exactly(2);
         $this->codePatcher
-            ->expects($this->exactly(2))
+            ->expects($matcher)
             ->method('patch')
-            ->withConsecutive([$exercise, 'ORIGINAL CONTENT'], [$exercise, "<?php\n\necho 'Hello World';\n"])
-            ->willReturn('MODIFIED CONTENT');
+            ->willReturnCallback(function ($patchedExercise, string $code) use ($matcher, $exercise) {
+                $this->assertSame($exercise, $patchedExercise);
+                match ($matcher->numberOfInvocations()) {
+                    1 => $this->assertSame('ORIGINAL CONTENT', $code),
+                    2 => $this->assertSame("<?php\n\necho 'Hello World';\n", $code),
+                };
+
+                return 'MODIFIED CONTENT';
+            });
 
         $listener   = new CodePatchListener($this->codePatcher, new NullLogger(), false);
         $event      = new ExerciseRunnerEvent('event', $context);

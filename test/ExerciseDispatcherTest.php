@@ -35,7 +35,7 @@ class ExerciseDispatcherTest extends TestCase
     public function setUp(): void
     {
         $this->filesystem = new Filesystem();
-        $this->file = sprintf('%s/%s/submission.php', str_replace('\\', '/', sys_get_temp_dir()), $this->getName());
+        $this->file = sprintf('%s/%s/submission.php', str_replace('\\', '/', sys_get_temp_dir()), $this->name());
         mkdir(dirname($this->file), 0775, true);
         touch($this->file);
     }
@@ -353,7 +353,7 @@ class ExerciseDispatcherTest extends TestCase
 
         $check1 = $this
             ->getMockBuilder(SimpleCheckInterface::class)
-            ->setMockClassName('SimpleCheckMock1')
+            ->setMockClassName('SimpleCheckMock3')
             ->getMock();
 
         $check1
@@ -375,7 +375,7 @@ class ExerciseDispatcherTest extends TestCase
 
         $check2 = $this
             ->getMockBuilder(SimpleCheckInterface::class)
-            ->setMockClassName('SimpleCheckMock2')
+            ->setMockClassName('SimpleCheckMock4')
             ->getMock();
 
         $check2
@@ -427,36 +427,21 @@ class ExerciseDispatcherTest extends TestCase
         $exercise = new CliExerciseImpl('Some Exercise');
 
         $eventDispatcher = $this->createMock(EventDispatcher::class);
+        $matcher = $this->exactly(5);
         $eventDispatcher
-            ->expects($this->exactly(5))
+            ->expects($matcher)
             ->method('dispatch')
-            ->withConsecutive(
-                [
-                    $this->callback(function ($event) {
-                        return $event instanceof EventInterface && $event->getName() === 'verify.start';
-                    }),
-                ],
-                [
-                    $this->callback(function ($event) {
-                        return $event instanceof EventInterface && $event->getName() === 'verify.pre.execute';
-                    }),
-                ],
-                [
-                    $this->callback(function ($event) {
-                        return $event instanceof EventInterface && $event->getName() === 'verify.post.execute';
-                    }),
-                ],
-                [
-                    $this->callback(function ($event) {
-                        return $event instanceof EventInterface && $event->getName() === 'verify.post.check';
-                    }),
-                ],
-                [
-                    $this->callback(function ($event) {
-                        return $event instanceof EventInterface && $event->getName() === 'verify.finish';
-                    }),
-                ],
-            );
+            ->willReturnCallback(function (EventInterface $event) use ($matcher) {
+                match ($matcher->numberOfInvocations()) {
+                    1 => $this->assertSame('verify.start', $event->getName()),
+                    2 => $this->assertSame('verify.pre.execute', $event->getName()),
+                    3 => $this->assertSame('verify.post.execute', $event->getName()),
+                    4 => $this->assertSame('verify.post.check', $event->getName()),
+                    5 => $this->assertSame('verify.finish', $event->getName()),
+                };
+
+                return $event;
+            });
 
         $runner = $this->createMock(ExerciseRunnerInterface::class);
         $runner->method('getRequiredChecks')->willReturn([]);
@@ -481,26 +466,19 @@ class ExerciseDispatcherTest extends TestCase
         $exercise = new CliExerciseImpl('Some Exercise');
 
         $eventDispatcher = $this->createMock(EventDispatcher::class);
+        $matcher = $this->exactly(3);
         $eventDispatcher
-            ->expects($this->exactly(3))
+            ->expects($matcher)
             ->method('dispatch')
-            ->withConsecutive(
-                [
-                    $this->callback(function ($event) {
-                        return $event instanceof EventInterface && $event->getName() === 'verify.start';
-                    }),
-                ],
-                [
-                    $this->callback(function ($event) {
-                        return $event instanceof EventInterface && $event->getName() === 'verify.pre.execute';
-                    }),
-                ],
-                [
-                    $this->callback(function ($event) {
-                        return $event instanceof EventInterface && $event->getName() === 'verify.post.execute';
-                    }),
-                ],
-            );
+            ->willReturnCallback(function (EventInterface $event) use ($matcher) {
+                match ($matcher->numberOfInvocations()) {
+                    1 => $this->assertSame('verify.start', $event->getName()),
+                    2 => $this->assertSame('verify.pre.execute', $event->getName()),
+                    3 => $this->assertSame('verify.post.execute', $event->getName()),
+                };
+
+                return $event;
+            });
 
         $runner = $this->createMock(ExerciseRunnerInterface::class);
         $runner->method('getRequiredChecks')->willReturn([]);

@@ -12,12 +12,9 @@ use PhpSchool\PhpWorkshop\Result\Failure;
 use PhpSchool\PhpWorkshop\Result\Success;
 use PhpSchool\PhpWorkshop\Utils\Path;
 use PHPUnit\Framework\TestCase;
-use Yoast\PHPUnitPolyfills\Polyfills\AssertionRenames;
 
 class CodeParseCheckTest extends TestCase
 {
-    use AssertionRenames;
-
     private CodeParseCheck $check;
 
     public function setUp(): void

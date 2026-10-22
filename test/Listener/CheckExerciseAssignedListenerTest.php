@@ -2,6 +2,7 @@
 
 namespace PhpSchool\PhpWorkshopTest\Listener;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use PhpSchool\PhpWorkshop\CommandDefinition;
 use PhpSchool\PhpWorkshop\Event\Event;
 use PhpSchool\PhpWorkshop\Listener\CheckExerciseAssignedListener;
@@ -11,11 +12,10 @@ use PHPUnit\Framework\TestCase;
 
 class CheckExerciseAssignedListenerTest extends TestCase
 {
-    /**
-     * @dataProvider commandsThatRequireAssignedExercise
-     */
-    public function testExceptionIsThrownIfNoExerciseAssigned(CommandDefinition $command): void
+    #[DataProvider('commandsThatRequireAssignedExercise')]
+    public function testExceptionIsThrownIfNoExerciseAssigned(string $commandName): void
     {
+        $command = $this->command($commandName);
         $state = new UserState();
 
         $this->expectException(\RuntimeException::class);
@@ -25,11 +25,10 @@ class CheckExerciseAssignedListenerTest extends TestCase
         $listener->__invoke(new Event('some-event', ['command' => $command]));
     }
 
-    /**
-     * @dataProvider commandsThatRequireAssignedExercise
-     */
-    public function testExceptionIsNotThrownIfExerciseAssigned(CommandDefinition $command): void
+    #[DataProvider('commandsThatRequireAssignedExercise')]
+    public function testExceptionIsNotThrownIfExerciseAssigned(string $commandName): void
     {
+        $command = $this->command($commandName);
         $state = new UserState(['exercise1'], 'exercise1');
         $listener = new CheckExerciseAssignedListener($state);
         $listener->__invoke(new Event('some-event', ['command' => $command]));
@@ -37,20 +36,19 @@ class CheckExerciseAssignedListenerTest extends TestCase
         $this->assertTrue($state->isAssignedExercise());
     }
 
-    public function commandsThatRequireAssignedExercise(): array
+    public static function commandsThatRequireAssignedExercise(): array
     {
         return [
-            [$this->command('verify')],
-            [$this->command('run')],
-            [$this->command('print')],
+            ['verify'],
+            ['run'],
+            ['print'],
         ];
     }
 
-    /**
-     * @dataProvider commandsThatDoNotRequireAssignedExercise
-     */
-    public function testExceptionIsNotThrownIfCommandDoesNotRequireAssignedExercise(CommandDefinition $command): void
+    #[DataProvider('commandsThatDoNotRequireAssignedExercise')]
+    public function testExceptionIsNotThrownIfCommandDoesNotRequireAssignedExercise(string $commandName): void
     {
+        $command = $this->command($commandName);
         $state = new UserState(['exercise1'], 'exercise1');
         $listener = new CheckExerciseAssignedListener($state);
         $listener->__invoke(new Event('some-event', ['command' => $command]));
@@ -58,12 +56,12 @@ class CheckExerciseAssignedListenerTest extends TestCase
         $this->assertTrue($state->isAssignedExercise());
     }
 
-    public function commandsThatDoNotRequireAssignedExercise(): array
+    public static function commandsThatDoNotRequireAssignedExercise(): array
     {
         return [
-            [$this->command('help')],
-            [$this->command('credits')],
-            [$this->command('menu')],
+            ['help'],
+            ['credits'],
+            ['menu'],
         ];
     }
 

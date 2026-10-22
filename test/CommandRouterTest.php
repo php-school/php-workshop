@@ -2,6 +2,7 @@
 
 namespace PhpSchool\PhpWorkshopTest;
 
+use PhpSchool\PhpWorkshopTest\Asset\CallableStub;
 use Psr\Container\ContainerInterface;
 use InvalidArgumentException;
 use PhpSchool\PhpWorkshop\CommandArgument;
@@ -68,9 +69,7 @@ class CommandRouterTest extends TestCase
     {
         $args = ['app'];
 
-        $mock = $this->getMockBuilder('stdClass')
-            ->setMethods(['__invoke'])
-            ->getMock();
+        $mock = $this->createMock(CallableStub::class);
 
         $mock->expects($this->once())
             ->method('__invoke')
@@ -87,9 +86,7 @@ class CommandRouterTest extends TestCase
     {
         $server = $_SERVER;
         $_SERVER['argv'] = ['app'];
-        $mock = $this->getMockBuilder('stdClass')
-            ->setMethods(['__invoke'])
-            ->getMock();
+        $mock = $this->createMock(CallableStub::class);
 
         $mock->expects($this->once())
             ->method('__invoke')
@@ -149,9 +146,7 @@ class CommandRouterTest extends TestCase
 
     public function testRouteCommandWithArgs(): void
     {
-        $mock = $this->getMockBuilder('stdClass')
-            ->setMethods(['__invoke'])
-            ->getMock();
+        $mock = $this->createMock(CallableStub::class);
 
         $mock->expects($this->once())
             ->method('__invoke')
@@ -245,9 +240,7 @@ class CommandRouterTest extends TestCase
     {
         $c = $this->createMock(ContainerInterface::class);
 
-        $mock = $this->getMockBuilder('stdClass')
-            ->setMethods(['__invoke'])
-            ->getMock();
+        $mock = $this->createMock(CallableStub::class);
 
         $mock->expects($this->once())
             ->method('__invoke')
@@ -285,9 +278,7 @@ class CommandRouterTest extends TestCase
     {
         $c = $this->createMock(ContainerInterface::class);
 
-        $mock = $this->getMockBuilder('stdClass')
-            ->setMethods(['__invoke'])
-            ->getMock();
+        $mock = $this->createMock(CallableStub::class);
 
         $mock->expects($this->once())
             ->method('__invoke')
@@ -324,9 +315,7 @@ class CommandRouterTest extends TestCase
 
     public function testRouteCommandSpeltIncorrectlyStillRoutes(): void
     {
-        $mock = $this->getMockBuilder('stdClass')
-            ->setMethods(['__invoke'])
-            ->getMock();
+        $mock = $this->createMock(CallableStub::class);
 
         $mock->expects($this->once())
             ->method('__invoke')
@@ -351,36 +340,25 @@ class CommandRouterTest extends TestCase
 
     public function testRouteCommandWithOptionalArgument(): void
     {
-        $mock = $this->getMockBuilder('stdClass')
-            ->setMethods(['__invoke'])
-            ->getMock();
+        $mock = $this->createMock(CallableStub::class);
 
-        $mock->expects($this->exactly(3))
+        $matcher = $this->exactly(3);
+        $mock->expects($matcher)
             ->method('__invoke')
-            ->withConsecutive(
-                [
-                    $this->callback(function (Input $input) {
-                        return $input->getAppName() === 'app'
-                            && $input->getArgument('exercise') === 'some-exercise';
-                    }),
-                ],
-                [
-                    $this->callback(function (Input $input) {
-                        return $input->getAppName() === 'app'
-                            && $input->getArgument('exercise') === 'some-exercise'
-                            && $input->getArgument('program') === 'program.php';
-                    }),
-                ],
-                [
-                    $this->callback(function (Input $input) {
-                        return $input->getAppName() === 'app'
-                            && $input->getArgument('exercise') === 'some-exercise'
-                            && $input->getArgument('program') === 'program.php'
-                            && $input->getArgument('some-other-arg') === 'some-other-arg-value';
-                    }),
-                ],
-            )
-            ->willReturnOnConsecutiveCalls(1, null, 1);
+            ->willReturnCallback(function (Input $input) use ($matcher) {
+                $this->assertSame('app', $input->getAppName());
+                $this->assertSame('some-exercise', $input->getArgument('exercise'));
+
+                if ($matcher->numberOfInvocations() >= 2) {
+                    $this->assertSame('program.php', $input->getArgument('program'));
+                }
+
+                if ($matcher->numberOfInvocations() === 3) {
+                    $this->assertSame('some-other-arg-value', $input->getArgument('some-other-arg'));
+                }
+
+                return $matcher->numberOfInvocations() === 2 ? null : 1;
+            });
 
         $c = $this->createMock(ContainerInterface::class);
         $eventDispatcher = $this->createMock(EventDispatcher::class);

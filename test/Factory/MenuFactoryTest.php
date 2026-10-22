@@ -98,21 +98,18 @@ class MenuFactoryTest extends TestCase
             ->willReturn(70);
 
         $eventDispatcher = $this->createMock(EventDispatcher::class);
+        $matcher = self::exactly(2);
         $eventDispatcher
-            ->expects(self::exactly(2))
+            ->expects($matcher)
             ->method('dispatch')
-            ->withConsecutive(
-                [
-                    self::callback(function ($event) {
-                        return $event instanceof EventInterface && $event->getName() === 'exercise.selected';
-                    }),
-                ],
-                [
-                    self::callback(function ($event) {
-                        return $event instanceof EventInterface && $event->getName() === 'exercise.selected.exercise';
-                    }),
-                ],
-            );
+            ->willReturnCallback(function (EventInterface $event) use ($matcher) {
+                match ($matcher->numberOfInvocations()) {
+                    1 => self::assertSame('exercise.selected', $event->getName()),
+                    2 => self::assertSame('exercise.selected.exercise', $event->getName()),
+                };
+
+                return $event;
+            });
 
         $exerciseRenderer = $this->createMock(ExerciseRenderer::class);
         $exerciseRenderer->expects(self::once())

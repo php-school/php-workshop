@@ -2,6 +2,7 @@
 
 namespace PhpSchool\PhpWorkshopTest\UserState;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use PhpSchool\PhpWorkshop\ExerciseRepository;
 use PhpSchool\PhpWorkshop\UserState\LocalJsonSerializer;
 use PhpSchool\PhpWorkshop\UserState\UserState;
@@ -9,12 +10,9 @@ use PhpSchool\PhpWorkshop\Utils\Path;
 use PhpSchool\PhpWorkshop\Utils\System;
 use PhpSchool\PhpWorkshopTest\Asset\CliExerciseImpl;
 use PhpSchool\PhpWorkshopTest\BaseTest;
-use Yoast\PHPUnitPolyfills\Polyfills\AssertionRenames;
 
 class LocalJsonSerializerTest extends BaseTest
 {
-    use AssertionRenames;
-
     private string $tmpDir;
     private string $tmpFile;
     private string $workshopName = 'My Workshop';
@@ -27,9 +25,9 @@ class LocalJsonSerializerTest extends BaseTest
 
     public function testIfDirNotExistsItIsCreated(): void
     {
-        self::assertFileDoesNotExist(System::tempDir($this->getName()));
-        new LocalJsonSerializer(System::tempDir($this->getName()), $this->workshopName, $this->exerciseRepository);
-        $this->assertFileExists(System::tempDir($this->getName()));
+        self::assertFileDoesNotExist(System::tempDir($this->name()));
+        new LocalJsonSerializer(System::tempDir($this->name()), $this->workshopName, $this->exerciseRepository);
+        $this->assertFileExists(System::tempDir($this->name()));
     }
 
     public function testConstructWhenFileExists(): void
@@ -121,9 +119,7 @@ class LocalJsonSerializerTest extends BaseTest
         $this->assertEmpty($state->getCompletedExercises());
     }
 
-    /**
-     * @dataProvider deserializerProvider
-     */
+    #[DataProvider('deserializerProvider')]
     public function testDeserialize(array $data, array $expected): void
     {
         $this->getTemporaryFile('.phpschool-save.json', json_encode($data));
@@ -141,7 +137,7 @@ class LocalJsonSerializerTest extends BaseTest
         );
     }
 
-    public function deserializerProvider(): array
+    public static function deserializerProvider(): array
     {
         return [
             'empty-array' => [
