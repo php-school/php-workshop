@@ -29,6 +29,7 @@ class EventDispatcherFactory
         $dispatcher = new EventDispatcher($results);
 
         //add listeners from config
+        /** @var array<string, array<string, list<ContainerListenerHelper|callable>>> $eventListeners */
         $eventListeners = $container->has('eventListeners') ? $container->get('eventListeners') : [];
 
         if (!is_array($eventListeners)) {
@@ -51,25 +52,25 @@ class EventDispatcherFactory
     }
 
     /**
-     * @param array<mixed> $listeners
-     * @return array<string, array<mixed>>
+     * @param array<string, array<string, list<ContainerListenerHelper|callable>>> $listeners
+     * @return array<string, list<ContainerListenerHelper|callable>>
      */
     private function mergeListenerGroups(array $listeners): array
     {
         $listeners = new Collection($listeners);
 
-        /** @var Collection<string, array<ContainerListenerHelper|callable>> $mergedListeners */
+        /** @var Collection<string, list<ContainerListenerHelper|callable>> $mergedListeners */
         $mergedListeners = $listeners
             ->keys()
             ->reduce(function (Collection $carry, string $listenerGroup) use ($listeners): Collection {
-                /** @var array<string, array<ContainerListenerHelper|callable>> $groupListeners */
+                /** @var array<string, list<ContainerListenerHelper|callable>> $groupListeners */
                 $groupListeners = $listeners->get($listenerGroup);
                 $events = new Collection($groupListeners);
 
                 return $events
                     ->keys()
                     ->reduce(function (Collection $carry, string $event) use ($events) {
-                        /** @var Collection<string, array<ContainerListenerHelper|callable>> $carry */
+                        /** @var Collection<string, list<ContainerListenerHelper|callable>> $carry */
                         $listeners = $events->get($event);
 
                         if (!is_array($listeners)) {
@@ -88,7 +89,7 @@ class EventDispatcherFactory
 
     /**
      * @param string $eventName
-     * @param array<mixed> $listeners
+     * @param list<ContainerListenerHelper|callable> $listeners
      * @param ContainerInterface $container
      * @param EventDispatcher $dispatcher
      * @throws InvalidArgumentException
