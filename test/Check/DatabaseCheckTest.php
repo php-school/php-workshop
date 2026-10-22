@@ -16,7 +16,6 @@ use PhpSchool\PhpWorkshop\ExerciseRunner\EnvironmentManager;
 use PhpSchool\PhpWorkshop\ExerciseRunner\RunnerManager;
 use PhpSchool\PhpWorkshop\Input\Input;
 use PhpSchool\PhpWorkshop\Output\BufferedOutput;
-use PhpSchool\PhpWorkshop\Output\OutputInterface;
 use PhpSchool\PhpWorkshop\Process\HostProcessFactory;
 use PhpSchool\PhpWorkshop\ResultAggregator;
 use PhpSchool\PhpWorkshop\Solution\SingleFileSolution;
