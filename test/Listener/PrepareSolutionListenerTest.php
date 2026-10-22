@@ -72,7 +72,7 @@ class PrepareSolutionListenerTest extends TestCase
         $context->importReferenceFileFromString(
             json_encode([
                 'require' => [
-                    'phpunit/phpunit' => '~5.0',
+                    'psr/log' => '^3.0',
                 ],
             ]),
             'composer.json',

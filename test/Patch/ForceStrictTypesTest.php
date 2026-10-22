@@ -11,7 +11,7 @@ class ForceStrictTypesTest extends TestCase
 {
     public function testStrictTypesDeclareIsAppended(): void
     {
-        $parser = (new ParserFactory())->create(ParserFactory::PREFER_PHP7);
+        $parser = (new ParserFactory())->createForNewestSupportedVersion();
         $ast = $parser->parse("<?php echo 'Hello World';");
 
         $transformer = new ForceStrictTypes();
@@ -25,7 +25,7 @@ class ForceStrictTypesTest extends TestCase
 
     public function testStrictTypesDeclareIsNotAppendedIfItAlreadyExists(): void
     {
-        $parser = (new ParserFactory())->create(ParserFactory::PREFER_PHP7);
+        $parser = (new ParserFactory())->createForNewestSupportedVersion();
         $ast = $parser->parse("<?php declare (strict_types=1);\necho 'Hello World';");
         $transformer = new ForceStrictTypes();
 

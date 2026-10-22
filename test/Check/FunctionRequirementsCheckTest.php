@@ -26,7 +26,7 @@ class FunctionRequirementsCheckTest extends TestCase
     public function setUp(): void
     {
         $parserFactory = new ParserFactory();
-        $this->parser = $parserFactory->create(ParserFactory::PREFER_PHP7);
+        $this->parser = $parserFactory->createForNewestSupportedVersion();
         $this->check = new FunctionRequirementsCheck($this->parser);
         $this->exercise = new FunctionRequirementsExercise();
     }

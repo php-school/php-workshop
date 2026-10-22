@@ -322,7 +322,6 @@ final class Application
         );
 
         $containerBuilder->useAutowiring(false);
-        $containerBuilder->useAnnotations(false);
 
         return $containerBuilder->build();
     }
