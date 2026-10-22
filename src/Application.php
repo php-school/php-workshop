@@ -11,6 +11,7 @@ use PhpSchool\PhpWorkshop\Check\CheckRepository;
 use PhpSchool\PhpWorkshop\Event\Event;
 use PhpSchool\PhpWorkshop\Event\EventDispatcher;
 use PhpSchool\PhpWorkshop\Exception\InvalidArgumentException;
+use PhpSchool\PhpWorkshop\Event\ContainerListenerHelper;
 use PhpSchool\PhpWorkshop\Exception\MissingArgumentException;
 use PhpSchool\PhpWorkshop\Factory\ResultRendererFactory;
 use PhpSchool\PhpWorkshop\Output\OutputInterface;
@@ -292,9 +293,9 @@ final class Application
     private function getContainer(bool $debugMode): Container
     {
         $containerBuilder = new ContainerBuilder();
-        /** @var array{eventListeners?: array<mixed>} $diConfig */
+        /** @var array{eventListeners?: array<string, array<string, list<callable|ContainerListenerHelper>>>} $diConfig */
         $diConfig = require $this->diConfigFile;
-        /** @var array{eventListeners: array<mixed>} $fwConfig */
+        /** @var array{eventListeners: array<string, array<string, list<callable|ContainerListenerHelper>>>} $fwConfig */
         $fwConfig = require $this->frameworkConfigLocation;
 
         $fwConfig['eventListeners'] = array_merge_recursive(
