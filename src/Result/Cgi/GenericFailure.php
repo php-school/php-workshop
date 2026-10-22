@@ -74,7 +74,7 @@ class GenericFailure extends Failure implements FailureInterface
      *    request: array{
      *        method: string,
      *        uri: string,
-     *        headers: array<string, array<string>>,
+     *        headers: array<array<string>>,
      *        body: string
      *    },
      *    reason: ?string

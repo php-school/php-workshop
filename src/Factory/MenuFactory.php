@@ -30,6 +30,8 @@ use PhpSchool\PhpWorkshop\WorkshopType;
  */
 class MenuFactory
 {
+    private ?ExerciseInterface $previousExercise = null;
+
     /**
      * @param ContainerInterface $c
      * @return CliMenu
@@ -154,19 +156,17 @@ class MenuFactory
      */
     private function isExerciseDisabled(ExerciseInterface $exercise, UserState $userState, WorkshopType $type): bool
     {
-        static $previous = null;
-
-        if (null === $previous || !$type->isTutorialMode()) {
-            $previous = $exercise;
+        if (null === $this->previousExercise || !$type->isTutorialMode()) {
+            $this->previousExercise = $exercise;
             return false;
         }
 
-        if (in_array($previous->getName(), $userState->getCompletedExercises(), true)) {
-            $previous = $exercise;
+        if (in_array($this->previousExercise->getName(), $userState->getCompletedExercises(), true)) {
+            $this->previousExercise = $exercise;
             return false;
         }
 
-        $previous = $exercise;
+        $this->previousExercise = $exercise;
         return true;
     }
 

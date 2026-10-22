@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace PhpSchool\PhpWorkshop;
 
 use Closure;
+use PhpParser\Node\Stmt;
 use PhpSchool\PhpWorkshop\Patch\Transformer;
 
 /**
@@ -21,7 +22,7 @@ use PhpSchool\PhpWorkshop\Patch\Transformer;
 final class Patch
 {
     /**
-     * @var array<CodeInsertion|Closure|Transformer>
+     * @var array<CodeInsertion|Closure(array<Stmt>): array<Stmt>|Transformer>
      */
     private $modifications = [];
 
@@ -41,7 +42,7 @@ final class Patch
     /**
      * Add a new transformer (`Closure` OR `Transformer`). `Patch` is immutable so a new instance is returned.
      *
-     * @param Closure|Transformer $closure
+     * @param Closure(array<Stmt>): array<Stmt>|Transformer $closure
      * @return self
      */
     public function withTransformer($closure): self
@@ -55,7 +56,7 @@ final class Patch
      * Retrieve all the modifications including insertions (`CodeInsertion`'s)
      * & transformers (`Closure`'s OR `Transformer`'s)
      *
-     * @return array<CodeInsertion|Closure|Transformer>
+     * @return array<CodeInsertion|Closure(array<Stmt>): array<Stmt>|Transformer>
      */
     public function getModifiers(): array
     {

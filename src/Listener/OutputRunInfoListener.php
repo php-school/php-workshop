@@ -33,7 +33,7 @@ class OutputRunInfoListener
                 $args = $event->getArgs();
 
                 if (count($args)) {
-                    $glue = max(array_map('strlen', $args->getArrayCopy())) > 30 ? "\n" : ', ';
+                    $glue = max(0, ...array_values(array_map('strlen', $args->getArrayCopy()))) > 30 ? "\n" : ', ';
                     $this->output->writeTitle('Arguments');
                     $this->output->write(implode($glue, $args->getArrayCopy()));
                     $this->output->emptyLine();

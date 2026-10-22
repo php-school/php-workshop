@@ -76,7 +76,7 @@ class FunctionRequirementsCheck implements SimpleCheckInterface
 
         $missingFunctions = [];
         if (!$visitor->hasMetFunctionRequirements()) {
-            $missingFunctions = $visitor->getMissingRequirements();
+            $missingFunctions = array_values($visitor->getMissingRequirements());
         }
 
         if (!empty($bannedFunctions) || !empty($missingFunctions)) {

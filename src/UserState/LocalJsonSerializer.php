@@ -113,24 +113,13 @@ class LocalJsonSerializer implements Serializer
             return new UserState();
         }
 
-        if (!is_array($json['completed_exercises'])) {
-            $json['completed_exercises'] = [];
-        }
+        $completedExercises = is_array($json['completed_exercises'])
+            ? array_filter($json['completed_exercises'], 'is_string')
+            : [];
 
-        foreach ($json['completed_exercises'] as $i => $exercise) {
-            if (!is_string($exercise)) {
-                unset($json['completed_exercises'][$i]);
-            }
-        }
+        $currentExercise = is_string($json['current_exercise']) ? $json['current_exercise'] : null;
 
-        if (null !== $json['current_exercise'] && !is_string($json['current_exercise'])) {
-            $json['current_exercise'] = null;
-        }
-
-        return new UserState(
-            $json['completed_exercises'],
-            $json['current_exercise'],
-        );
+        return new UserState($completedExercises, $currentExercise);
     }
 
     /**
@@ -159,8 +148,18 @@ class LocalJsonSerializer implements Serializer
             return null;
         }
 
-        $completedExercises = $data['completed_exercises'];
+        if (!is_array($data['completed_exercises'])) {
+            unlink($legacySaveFile);
+            return null;
+        }
+
+        $completedExercises = array_filter($data['completed_exercises'], 'is_string');
         $availableExercises = $this->exerciseRepository->getAllNames();
+
+        //non string entries mean this is not a valid save file for this workshop
+        if (count($completedExercises) !== count($data['completed_exercises'])) {
+            return null;
+        }
 
         //check to see if this old data represents THIS workshop
         //if not we bail
@@ -171,7 +170,7 @@ class LocalJsonSerializer implements Serializer
         }
 
         $userState = new UserState(
-            $data['completed_exercises'],
+            $completedExercises,
             is_string($data['current_exercise']) ? $data['current_exercise'] : null,
         );
 

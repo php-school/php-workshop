@@ -37,7 +37,7 @@ class PhpLintCheck implements SimpleCheckInterface
     public function check(ExecutionContext $context): ResultInterface
     {
         $finder = new ExecutableFinder();
-        $process = new Process([$finder->find('php'), '-l', $context->getEntryPoint()]);
+        $process = new Process([$finder->find('php') ?? 'php', '-l', $context->getEntryPoint()]);
         $process->run();
 
         if ($process->isSuccessful()) {

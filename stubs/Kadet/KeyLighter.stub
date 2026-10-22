@@ -1,0 +1,19 @@
+<?php
+
+namespace Kadet\Highlighter;
+
+/**
+ * Typing for the untyped php-school/keylighter library.
+ */
+class KeyLighter
+{
+    /**
+     * @param string $source
+     * @param mixed $language
+     * @param mixed $formatter
+     * @return string
+     */
+    public function highlight($source, $language, $formatter = null)
+    {
+    }
+}

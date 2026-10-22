@@ -10,7 +10,6 @@ use PhpSchool\PhpWorkshop\Event\EventDispatcher;
 use PhpSchool\PhpWorkshop\Event\ContainerListenerHelper;
 use PhpSchool\PhpWorkshop\Exception\InvalidArgumentException;
 use PhpSchool\PhpWorkshop\ResultAggregator;
-use PhpSchool\PhpWorkshop\Utils\Collection;
 
 /**
  * Create an EventDispatcher populating with listeners from the config
@@ -51,44 +50,35 @@ class EventDispatcherFactory
     }
 
     /**
-     * @param array<int, array<string, array<ContainerListenerHelper|callable>>> $listeners
-     * @return array<string, array<ContainerListenerHelper|callable>>
+     * Merge the listener groups (group name => event name => listeners) in to a single array of event name => listeners.
+     *
+     * @param array<mixed> $listeners
+     * @return array<string, array<mixed>>
      */
     private function mergeListenerGroups(array $listeners): array
     {
-        $listeners = new Collection($listeners);
+        $mergedListeners = [];
 
-        /** @var Collection<string, array<ContainerListenerHelper|callable>> $mergedListeners */
-        $mergedListeners = $listeners
-            ->keys()
-            ->reduce(function (Collection $carry, string $listenerGroup) use ($listeners): Collection {
-                /** @var array<string, array<ContainerListenerHelper|callable>> $groupListeners */
-                $groupListeners = $listeners->get($listenerGroup);
-                $events = new Collection($groupListeners);
+        foreach ($listeners as $events) {
+            if (!is_array($events)) {
+                throw InvalidArgumentException::typeMisMatch('array', $events);
+            }
 
-                return $events
-                    ->keys()
-                    ->reduce(function (Collection $carry, string $event) use ($events) {
-                        /** @var Collection<string, array<ContainerListenerHelper|callable>> $carry */
-                        $listeners = $events->get($event);
+            foreach ($events as $event => $eventListeners) {
+                if (!is_array($eventListeners)) {
+                    throw InvalidArgumentException::typeMisMatch('array', $eventListeners);
+                }
 
-                        if (!is_array($listeners)) {
-                            throw InvalidArgumentException::typeMisMatch('array', $listeners);
-                        }
+                $mergedListeners[(string) $event] = array_merge($mergedListeners[(string) $event] ?? [], $eventListeners);
+            }
+        }
 
-                        return $carry->set(
-                            $event,
-                            array_merge($carry->get($event, []), $listeners),
-                        );
-                    }, $carry);
-            }, new Collection());
-
-        return $mergedListeners->getArrayCopy();
+        return $mergedListeners;
     }
 
     /**
      * @param string $eventName
-     * @param array<int, ContainerListenerHelper|callable> $listeners
+     * @param array<mixed> $listeners
      * @param ContainerInterface $container
      * @param EventDispatcher $dispatcher
      * @throws InvalidArgumentException
