@@ -15,6 +15,7 @@ use PhpSchool\PhpWorkshop\ExerciseRunner\CliRunner;
 use PhpSchool\PhpWorkshop\ExerciseRunner\EnvironmentManager;
 use PhpSchool\PhpWorkshop\ExerciseRunner\RunnerManager;
 use PhpSchool\PhpWorkshop\Input\Input;
+use PhpSchool\PhpWorkshop\Output\BufferedOutput;
 use PhpSchool\PhpWorkshop\Output\OutputInterface;
 use PhpSchool\PhpWorkshop\Process\HostProcessFactory;
 use PhpSchool\PhpWorkshop\ResultAggregator;
@@ -151,6 +152,12 @@ class DatabaseCheckTest extends TestCase
 
     public function testRunExercise(): void
     {
+        $this->exercise->setSeeder(function (PDO $db) {
+            $db->exec('CREATE TABLE users (id INTEGER PRIMARY KEY, name TEXT)');
+            $db->exec("INSERT INTO users (name) VALUES ('Jimi Hendrix')");
+        });
+        $this->exercise->setScenario((new CliScenario())->withExecution([]));
+
         $this->checkRepository->registerCheck($this->check);
 
         $results            = new ResultAggregator();
@@ -164,9 +171,11 @@ class DatabaseCheckTest extends TestCase
 
         $dispatcher->run(
             $this->exercise,
-            new Input('app', ['program' => __DIR__ . '/../res/database/user-solution-alter-db.php']),
-            $this->createMock(OutputInterface::class),
+            new Input('app', ['program' => __DIR__ . '/../res/database/user-read-db.php']),
+            $output = new BufferedOutput(),
         );
+
+        $this->assertStringContainsString('Jimi Hendrix', $output->fetch());
     }
 
     public function testFailureIsReturnedIfDatabaseVerificationFails(): void
