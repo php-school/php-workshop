@@ -163,7 +163,13 @@ class ExerciseDispatcher
     {
         $context = ExecutionContext::fromInputAndExercise($input, $exercise);
 
+        $runner = $this->runnerManager->getRunner($exercise);
+
         $exercise->defineListeners($this->eventDispatcher);
+
+        foreach ([...$runner->getRequiredChecks(), ...$exercise->getRequiredChecks()] as $requiredCheck) {
+            $this->requireCheck($requiredCheck);
+        }
 
         /** @var PhpLintCheck $lint */
         $lint = $this->checkRepository->getByClass(PhpLintCheck::class);
@@ -176,9 +182,7 @@ class ExerciseDispatcher
         $this->eventDispatcher->dispatch(new ExerciseRunnerEvent('run.start', $context));
 
         try {
-            $exitStatus = $this->runnerManager
-                ->getRunner($exercise)
-                ->run($context, $output);
+            $exitStatus = $runner->run($context, $output);
         } finally {
             $this->eventDispatcher->dispatch(new ExerciseRunnerEvent('run.finish', $context));
         }
