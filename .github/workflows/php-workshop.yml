@@ -23,11 +23,15 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php }}
-          tools: php-cs-fixer,composer:v2
+          tools: php-cs-fixer:3.56.1,composer:v2
           coverage: none
 
       - name: Install Dependencies
-        run: composer update --prefer-dist
+        # PHPStan 1.11+ reports new errors; keep 1.10 until the PHPStan 2 upgrade
+        run: composer update --prefer-dist --with phpstan/phpstan:~1.10.67
+        env:
+          # league/commonmark 1 has security advisories; remove once on commonmark 2
+          COMPOSER_NO_SECURITY_BLOCKING: 1
 
       - name: Run phpunit tests
         run: |
