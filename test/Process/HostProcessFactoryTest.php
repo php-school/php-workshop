@@ -77,7 +77,7 @@ class HostProcessFactoryTest extends TestCase
 
         try {
             $process = (new HostProcessFactory())->create(
-                new ProcessInput('php', ['-r', 'echo json_encode([getenv("PHPSCHOOL_SECRET"), getenv("PATH") !== false]);'], __DIR__, []),
+                new ProcessInput('php', ['-r', 'echo json_encode([getenv("PHPSCHOOL_SECRET"), getenv("PATH") !== false]);'], __DIR__, [], []),
             );
             $process->mustRun();
 
