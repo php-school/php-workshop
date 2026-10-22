@@ -7,8 +7,15 @@ namespace PhpSchool\PhpWorkshop\Process;
 use Symfony\Component\Process\ExecutableFinder;
 use Symfony\Component\Process\Process;
 
+/**
+ * Runs processes in a throwaway container built from the workshop's `.docker/runtime/Dockerfile`.
+ *
+ * The workshop only supplies the image. All isolation flags are set here so a workshop cannot loosen them.
+ */
 final class DockerProcessFactory implements ProcessFactory
 {
+    private const TIMEOUT = 30;
+
     private ExecutableFinder $executableFinder;
     private string $basePath;
     private string $projectName;
@@ -26,78 +33,109 @@ final class DockerProcessFactory implements ProcessFactory
         $this->composerCacheDir = $composerCacheDir;
     }
 
-    public function create(ProcessInput $processInput): Process
+    public function getImageName(): string
     {
-        $mounts = [];
-        if ($processInput->getExecutable() === 'composer') {
-            //we need to mount a volume for composer cache
-            $mounts[] = $this->composerCacheDir . ':/tmp/composer';
-        }
-
-        $env = [];
-        foreach ($processInput->getEnv() as $key => $value) {
-            $env[] = '-e';
-            $env[] = $key . '=' . $value;
-        }
-
-        $ports = [];
-        foreach ($processInput->getExposedPorts() as $port) {
-            $ports[] = '-p';
-            $ports[] = $port . ':' . $port;
-        }
-
-        $env[]  = '-e';
-        $env[]  = 'COMPOSER_HOME=/tmp/composer';
-
-        $p = new Process(
-            [
-                ...$this->baseComposeCommand($mounts, $env, $ports),
-                'runtime',
-                $processInput->getExecutable(),
-                ...$processInput->getArgs(),
-            ],
-            $this->basePath,
-            [
-                'SOLUTION' => $processInput->getWorkingDirectory(),
-                'UID' => getmyuid(),
-                'GID' => getmygid(),
-            ],
-            $processInput->getInput(),
-            30,
-        );
-
-        return $p;
+        return strtolower($this->projectName) . '-runtime';
     }
 
     /**
-     * @param array<string> $mounts
-     * @param array<string> $env
-     * @param list<string> $ports
-     * @return array<string>
+     * The process that builds the runtime image. Run it once on install/deploy, not per request.
      */
-    private function baseComposeCommand(array $mounts, array $env, array $ports): array
+    public function createBuildProcess(): Process
+    {
+        return new Process(
+            [$this->findDocker(), 'build', '-t', $this->getImageName(), '.docker/runtime'],
+            $this->basePath,
+            null,
+            null,
+            300,
+        );
+    }
+
+    public function create(ProcessInput $processInput): Process
+    {
+        $isComposer = $processInput->getExecutable() === 'composer';
+
+        $args = $processInput->getArgs();
+        $mounts = [$processInput->getWorkingDirectory() . ':/solution'];
+        $env = ['COMPOSER_HOME' => '/tmp/composer'];
+
+        if ($isComposer) {
+            //we need to mount a volume for composer cache, and never run package plugins or scripts
+            $mounts[] = $this->composerCacheDir . ':/tmp/composer';
+            $args = [...$args, '--no-plugins', '--no-scripts'];
+        }
+
+        $network = ['--network', 'none'];
+        if ($isComposer) {
+            //composer needs to download packages
+            $network = ['--network', 'bridge'];
+        } elseif (count($processInput->getExposedPorts()) > 0) {
+            $network = ['--network', 'bridge'];
+            foreach ($processInput->getExposedPorts() as $port) {
+                $network[] = '-p';
+                $network[] = '127.0.0.1:' . $port . ':' . $port;
+            }
+        }
+
+        $envArgs = [];
+        foreach ([...$processInput->getEnv(), ...$env] as $key => $value) {
+            $envArgs[] = '-e';
+            $envArgs[] = $key . '=' . $value;
+        }
+
+        return new Process(
+            [
+                $this->findDocker(),
+                'run',
+                '--rm',
+                '-i',
+                '--init',
+                '--user',
+                getmyuid() . ':' . getmygid(),
+                ...$network,
+                '--read-only',
+                '--tmpfs',
+                '/tmp:rw,nosuid,nodev,size=64m',
+                '--cap-drop',
+                'ALL',
+                '--security-opt',
+                'no-new-privileges',
+                '--pids-limit',
+                '64',
+                '--memory',
+                '256m',
+                '--memory-swap',
+                '256m',
+                '--cpus',
+                '1',
+                ...$envArgs,
+                ...array_merge(...array_map(fn($mount) => ['-v', $mount], $mounts)),
+                '-w',
+                '/solution',
+                $this->getImageName(),
+                //the docker client being killed does not stop the container, so enforce the timeout inside it too
+                'timeout',
+                '-s',
+                'KILL',
+                (string) self::TIMEOUT,
+                $processInput->getExecutable(),
+                ...$args,
+            ],
+            $this->basePath,
+            null,
+            $processInput->getInput(),
+            self::TIMEOUT + 5,
+        );
+    }
+
+    private function findDocker(): string
     {
         $dockerPath = $this->executableFinder->find('docker');
         if ($dockerPath === null) {
             throw ProcessNotFoundException::fromExecutable('docker');
         }
 
-        return [
-            $dockerPath,
-            'compose',
-            '-p',
-            $this->projectName,
-            '-f',
-            '.docker/runtime/docker-compose.yml',
-            'run',
-            '--user',
-            getmyuid() . ':' . getmygid(),
-            '--rm',
-            ...$env,
-            ...$ports,
-            '-w',
-            '/solution',
-            ...array_merge(...array_map(fn($mount) => ['-v', $mount], $mounts)),
-        ];
+        return $dockerPath;
     }
 }
