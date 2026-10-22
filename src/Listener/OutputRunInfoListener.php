@@ -30,12 +30,12 @@ class OutputRunInfoListener
     {
         switch (get_class($event)) {
             case CliExecuteEvent::class:
-                $args = $event->getArgs();
+                $args = $event->getArgs()->getArrayCopy();
 
-                if (count($args)) {
-                    $glue = max(0, ...array_values(array_map('strlen', $args->getArrayCopy()))) > 30 ? "\n" : ', ';
+                if ($args !== []) {
+                    $glue = max(array_map('strlen', $args)) > 30 ? "\n" : ', ';
                     $this->output->writeTitle('Arguments');
-                    $this->output->write(implode($glue, $args->getArrayCopy()));
+                    $this->output->write(implode($glue, $args));
                     $this->output->emptyLine();
                 }
 
