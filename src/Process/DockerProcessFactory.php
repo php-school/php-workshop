@@ -53,8 +53,8 @@ final class DockerProcessFactory implements ProcessFactory
             $this->basePath,
             [
                 'SOLUTION' => $processInput->getWorkingDirectory(),
-                'UID' => getmyuid(),
-                'GID' => getmygid(),
+                'UID' => (string) getmyuid(),
+                'GID' => (string) getmygid(),
             ],
             $processInput->getInput(),
             30,

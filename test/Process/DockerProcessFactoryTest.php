@@ -132,6 +132,6 @@ class DockerProcessFactoryTest extends TestCase
         $cmd .= " 'run' '--user' '" . getmyuid() . ":" . getmygid() . "' '--rm' '-e' 'SOME_VAR=value' '-e' 'COMPOSER_HOME=/tmp/composer' '-w' '/solution' 'runtime' 'php' 'one' 'two'";
         static::assertSame($cmd, $process->getCommandLine());
         static::assertSame('/docker-dir', $process->getWorkingDirectory());
-        static::assertSame(['SOLUTION' => __DIR__, 'UID' => getmyuid(), 'GID' => getmygid()], $process->getEnv());
+        static::assertSame(['SOLUTION' => __DIR__, 'UID' => (string) getmyuid(), 'GID' => (string) getmygid()], $process->getEnv());
     }
 }
