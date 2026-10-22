@@ -30,7 +30,7 @@ class Failure implements FailureInterface
      * @param string $name The name of the check that produced this result.
      * @param string|null $reason The reason (if any) of the failure.
      */
-    public function __construct(string $name, string $reason = null)
+    public function __construct(string $name, ?string $reason = null)
     {
         $this->name = $name;
         $this->reason = $reason;
@@ -43,7 +43,7 @@ class Failure implements FailureInterface
      * @param string|null $reason The reason (if any) of the failure.
      * @return self The result.
      */
-    public static function fromNameAndReason(string $name, string $reason = null): self
+    public static function fromNameAndReason(string $name, ?string $reason = null): self
     {
         return new self($name, $reason);
     }
@@ -55,7 +55,7 @@ class Failure implements FailureInterface
      * @param string|null $reason The reason (if any) of the failure.
      * @return self The result.
      */
-    public static function fromCheckAndReason(CheckInterface $check, string $reason = null): self
+    public static function fromCheckAndReason(CheckInterface $check, ?string $reason = null): self
     {
         return new self($check->getName(), $reason);
     }

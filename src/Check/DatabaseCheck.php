@@ -29,7 +29,7 @@ class DatabaseCheck implements ListenableCheckInterface
     private Filesystem $filesystem;
     private ?string $dbContent = null;
 
-    public function __construct(Filesystem $filesystem = null)
+    public function __construct(?Filesystem $filesystem = null)
     {
         $this->filesystem = $filesystem ? $filesystem : new Filesystem();
     }

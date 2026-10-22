@@ -54,7 +54,7 @@ class CodePatcher
      * @param LoggerInterface $logger
      * @param Patch|null $defaultPatch
      */
-    public function __construct(Parser $parser, Standard $printer, LoggerInterface $logger, Patch $defaultPatch = null)
+    public function __construct(Parser $parser, Standard $printer, LoggerInterface $logger, ?Patch $defaultPatch = null)
     {
         $this->parser = $parser;
         $this->printer = $printer;

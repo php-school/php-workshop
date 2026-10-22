@@ -26,7 +26,7 @@ class WrapInTryCatch implements Transformer
      * @param string $exceptionClass
      * @param array<Stmt>|null $statements
      */
-    public function __construct(string $exceptionClass = \Exception::class, array $statements = null)
+    public function __construct(string $exceptionClass = \Exception::class, ?array $statements = null)
     {
         $this->exceptionClass = $exceptionClass;
         $this->statements = $statements ?: [

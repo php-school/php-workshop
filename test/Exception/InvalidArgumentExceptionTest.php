@@ -38,7 +38,6 @@ class InvalidArgumentExceptionTest extends TestCase
     public function testStringify($value, string $expected): void
     {
         $rM = new \ReflectionMethod(InvalidArgumentException::class, 'stringify');
-        $rM->setAccessible(true);
 
         $this->assertEquals($rM->invoke(null, $value), $expected);
     }
