@@ -205,6 +205,8 @@ class CliRunner implements ExerciseRunnerInterface
     {
         $scenario = $this->exercise->defineTestScenario();
 
+        $this->eventDispatcher->dispatch(new CliExerciseRunnerEvent('cli.run.prepare', $context, $scenario));
+
         $this->environmentManager->prepareStudent($context, $scenario);
 
         $this->eventDispatcher->dispatch(new CliExerciseRunnerEvent('cli.run.start', $context, $scenario));

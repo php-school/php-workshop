@@ -31,7 +31,7 @@ class DatabaseCheck implements ListenableCheckInterface
 
     public function __construct(?Filesystem $filesystem = null)
     {
-        $this->filesystem = $filesystem ? $filesystem : new Filesystem();
+        $this->filesystem = $filesystem ?? new Filesystem();
     }
 
     /**
@@ -76,7 +76,7 @@ class DatabaseCheck implements ListenableCheckInterface
         });
 
         $eventDispatcher->listen(
-            ['cli.verify.prepare', 'cgi.verify.prepare'],
+            ['cli.verify.prepare', 'cgi.verify.prepare', 'cli.run.prepare', 'cgi.run.prepare'],
             function (CliExerciseRunnerEvent|CgiExerciseRunnerEvent $e) {
                 $e->getScenario()->withFile('db.sqlite', (string) $this->dbContent);
 
