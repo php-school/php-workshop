@@ -7,19 +7,22 @@ namespace PhpSchool\PhpWorkshop\Markdown;
 use League\CommonMark\Environment\EnvironmentBuilderInterface;
 use League\CommonMark\Extension\ExtensionInterface;
 use PhpSchool\PhpWorkshop\Markdown\Block\ContextSpecificBlock;
+use PhpSchool\PhpWorkshop\Markdown\Renderer\ContextSpecificRenderer;
 use PhpSchool\PhpWorkshop\Markdown\Parser\ContextSpecificBlockParser;
 use PhpSchool\PhpWorkshop\Markdown\Parser\HandleBarParser;
-use PhpSchool\PhpWorkshop\Markdown\Renderer\ContextSpecificRenderer;
 use PhpSchool\PhpWorkshop\Markdown\Shorthands\ShorthandInterface;
 
 final class ProblemFileExtension implements ExtensionInterface
 {
-    private ContextSpecificRenderer $contextSpecificRenderer;
+    /**
+     * @var ContextSpecificRenderer
+     */
+    private $contextSpecificRenderer;
 
     /**
      * @var array<string, ShorthandInterface>
      */
-    private array $shorthandExpanders;
+    private $shorthandExpanders;
 
     /**
      * @param array<string, ShorthandInterface> $shorthandExpanders
