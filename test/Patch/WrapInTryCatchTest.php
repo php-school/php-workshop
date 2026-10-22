@@ -13,7 +13,7 @@ class WrapInTryCatchTest extends TestCase
 {
     public function testStatementsAreWrappedInTryCatch(): void
     {
-        $parser = (new ParserFactory())->create(ParserFactory::PREFER_PHP7);
+        $parser = (new ParserFactory())->createForNewestSupportedVersion();
         $ast = $parser->parse("<?php echo 'Hello World';");
 
         $transformer = new WrapInTryCatch();
@@ -27,7 +27,7 @@ class WrapInTryCatchTest extends TestCase
 
     public function testStatementsAreWrappedInTryCatchWithCustomExceptionClass(): void
     {
-        $parser = (new ParserFactory())->create(ParserFactory::PREFER_PHP7);
+        $parser = (new ParserFactory())->createForNewestSupportedVersion();
         $ast = $parser->parse("<?php echo 'Hello World';");
 
         $transformer = new WrapInTryCatch(\RuntimeException::class);
@@ -41,7 +41,7 @@ class WrapInTryCatchTest extends TestCase
 
     public function testStatementsAreWrappedInTryCatchWithStatements(): void
     {
-        $parser = (new ParserFactory())->create(ParserFactory::PREFER_PHP7);
+        $parser = (new ParserFactory())->createForNewestSupportedVersion();
         $ast = $parser->parse("<?php echo 'Hello World';");
 
         $transformer = new WrapInTryCatch(\RuntimeException::class, [new Echo_([new String_('You caught me!')])]);

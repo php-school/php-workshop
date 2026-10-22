@@ -21,6 +21,8 @@ class Logger extends AbstractLogger implements LoggerInterface
 
     /**
      * @param string $level
+     * @param string|\Stringable $message
+     * @param array<mixed> $context
      */
     public function log($level, $message, array $context = []): void
     {
@@ -36,7 +38,7 @@ class Logger extends AbstractLogger implements LoggerInterface
                 "Time: %s, Level: %s, Message: %s, Context: %s\n\n",
                 (new \DateTime())->format('d-m-y H:i:s'),
                 $level,
-                $message,
+                (string) $message,
                 json_encode($context),
             ),
             FILE_APPEND,

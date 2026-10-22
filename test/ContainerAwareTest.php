@@ -30,7 +30,6 @@ abstract class ContainerAwareTest extends BaseTest
         $containerBuilder->addDefinitions(require $containerConfig);
 
         $containerBuilder->useAutowiring(false);
-        $containerBuilder->useAnnotations(false);
 
         $this->container = $containerBuilder->build();
     }
