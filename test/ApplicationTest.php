@@ -47,10 +47,8 @@ LOCAL;
         $app = new Application('Test App', $localFile);
 
         $rm = new \ReflectionMethod($app, 'getContainer');
-        $rm->setAccessible(true);
 
         $rp = new \ReflectionProperty(Application::class, 'frameworkConfigLocation');
-        $rp->setAccessible(true);
         $rp->setValue($app, $frameworkFile);
 
         $container = $rm->invoke($app, false);

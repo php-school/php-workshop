@@ -96,7 +96,6 @@ class DatabaseCheckTest extends TestCase
         $eventDispatcher = new EventDispatcher(new ResultAggregator());
 
         $refProp = new ReflectionProperty(DatabaseCheck::class, 'userDsn');
-        $refProp->setAccessible(true);
         $refProp->setValue($this->check, 'notvaliddsn');
 
         try {
