@@ -2,7 +2,6 @@
 
 namespace PhpSchool\PhpWorkshopTest\Event;
 
-use PhpSchool\PhpWorkshopTest\ConsecutiveCalls;
 use PhpSchool\PhpWorkshopTest\Asset\CallableStub;
 use PhpSchool\PhpWorkshop\Event\ContainerListenerHelper;
 use PhpSchool\PhpWorkshop\Event\Event;
@@ -15,8 +14,6 @@ use Psr\Container\ContainerInterface;
 
 class EventDispatcherTest extends TestCase
 {
-    use ConsecutiveCalls;
-
     /**
      * @var ResultAggregator
      */
@@ -107,9 +104,17 @@ class EventDispatcherTest extends TestCase
         $e2 = new Event('some-event', ['arg1' => 1, 'arg2' => 2]);
         $mockCallback1 = $this->createMock(CallableStub::class);
 
-        $mockCallback1->expects($this->exactly(2))
+        $matcher = $this->exactly(2);
+        $mockCallback1->expects($matcher)
             ->method('__invoke')
-            ->willReturnCallback($this->consecutive([[$e1], [$e2]], fn() => true));
+            ->willReturnCallback(function (Event $event) use ($matcher, $e1, $e2) {
+                match ($matcher->numberOfInvocations()) {
+                    1 => $this->assertSame($e1, $event),
+                    2 => $this->assertSame($e2, $event),
+                };
+
+                return true;
+            });
 
         $this->eventDispatcher->listen(['some-event', 'second-event'], $mockCallback1);
         $this->eventDispatcher->dispatch($e1);

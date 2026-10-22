@@ -17,8 +17,6 @@ use RuntimeException;
 
 class CommandRouterTest extends TestCase
 {
-    use ConsecutiveCalls;
-
     public function testInvalidDefaultThrowsException(): void
     {
         $this->expectException(InvalidArgumentException::class);
@@ -344,29 +342,23 @@ class CommandRouterTest extends TestCase
     {
         $mock = $this->createMock(CallableStub::class);
 
-        $mock->expects($this->exactly(3))
+        $matcher = $this->exactly(3);
+        $mock->expects($matcher)
             ->method('__invoke')
-            ->willReturnCallback($this->consecutive([[
-                $this->callback(function (Input $input) {
-                    return $input->getAppName() === 'app'
-                        && $input->getArgument('exercise') === 'some-exercise';
-                }),
-            ],
-                [
-                    $this->callback(function (Input $input) {
-                        return $input->getAppName() === 'app'
-                            && $input->getArgument('exercise') === 'some-exercise'
-                            && $input->getArgument('program') === 'program.php';
-                    }),
-                ],
-                [
-                    $this->callback(function (Input $input) {
-                        return $input->getAppName() === 'app'
-                            && $input->getArgument('exercise') === 'some-exercise'
-                            && $input->getArgument('program') === 'program.php'
-                            && $input->getArgument('some-other-arg') === 'some-other-arg-value';
-                    }),
-                ]], fn(int $i) => [1, null, 1][$i]));
+            ->willReturnCallback(function (Input $input) use ($matcher) {
+                $this->assertSame('app', $input->getAppName());
+                $this->assertSame('some-exercise', $input->getArgument('exercise'));
+
+                if ($matcher->numberOfInvocations() >= 2) {
+                    $this->assertSame('program.php', $input->getArgument('program'));
+                }
+
+                if ($matcher->numberOfInvocations() === 3) {
+                    $this->assertSame('some-other-arg-value', $input->getArgument('some-other-arg'));
+                }
+
+                return $matcher->numberOfInvocations() === 2 ? null : 1;
+            });
 
         $c = $this->createMock(ContainerInterface::class);
         $eventDispatcher = $this->createMock(EventDispatcher::class);

@@ -2,7 +2,6 @@
 
 namespace PhpSchool\PhpWorkshopTest\Factory;
 
-use PhpSchool\PhpWorkshopTest\ConsecutiveCalls;
 use PhpSchool\PhpWorkshop\Event\EventInterface;
 use PhpSchool\PhpWorkshop\UserState\Serializer;
 use PhpSchool\PhpWorkshop\UserState\UserState;
@@ -22,8 +21,6 @@ use PHPUnit\Framework\TestCase;
 
 class MenuFactoryTest extends TestCase
 {
-    use ConsecutiveCalls;
-
     public function testFactoryReturnsInstance(): void
     {
         $container = $this->createMock(ContainerInterface::class);
@@ -101,19 +98,18 @@ class MenuFactoryTest extends TestCase
             ->willReturn(70);
 
         $eventDispatcher = $this->createMock(EventDispatcher::class);
+        $matcher = self::exactly(2);
         $eventDispatcher
-            ->expects(self::exactly(2))
+            ->expects($matcher)
             ->method('dispatch')
-            ->willReturnCallback($this->consecutive([[
-                self::callback(function ($event) {
-                    return $event instanceof EventInterface && $event->getName() === 'exercise.selected';
-                }),
-            ],
-                [
-                    self::callback(function ($event) {
-                        return $event instanceof EventInterface && $event->getName() === 'exercise.selected.exercise';
-                    }),
-                ]], fn(int $i, EventInterface $event) => $event));
+            ->willReturnCallback(function (EventInterface $event) use ($matcher) {
+                match ($matcher->numberOfInvocations()) {
+                    1 => self::assertSame('exercise.selected', $event->getName()),
+                    2 => self::assertSame('exercise.selected.exercise', $event->getName()),
+                };
+
+                return $event;
+            });
 
         $exerciseRenderer = $this->createMock(ExerciseRenderer::class);
         $exerciseRenderer->expects(self::once())
