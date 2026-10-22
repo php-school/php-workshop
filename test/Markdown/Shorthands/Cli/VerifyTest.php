@@ -26,6 +26,6 @@ class VerifyTest extends TestCase
         $result = $shorthand->__invoke(['solution.php']);
         self::assertCount(1, $result);
         self::assertInstanceOf(Text::class, $result[0]);
-        self::assertEquals('learnyouphp verify solution.php', $result[0]->getContent());
+        self::assertEquals('learnyouphp verify solution.php', $result[0]->getLiteral());
     }
 }

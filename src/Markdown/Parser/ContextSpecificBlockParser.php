@@ -15,11 +15,17 @@ final class ContextSpecificBlockParser implements BlockStartParserInterface
 {
     public const TYPES = [CurrentContext::CONTEXT_CLI, CurrentContext::CONTEXT_CLOUD];
 
+    /**
+     * @return non-empty-string
+     */
     public static function getParserRegex(): string
     {
         return '/^{{\s?(' . implode('|', self::TYPES) . ')\s?}}/';
     }
 
+    /**
+     * @return non-empty-string
+     */
     public static function getEndBlockRegex(string $type): string
     {
         if (!in_array($type, self::TYPES, true)) {
