@@ -40,10 +40,16 @@ final class ContextSpecificBlockContinueParser extends AbstractBlockContinuePars
 
     public function tryContinue(Cursor $cursor, BlockContinueParserInterface $activeBlockParser): BlockContinue
     {
-        $cursor->advanceToNextNonSpaceOrTab();
+        //only skip the indentation to look for the closing tag, the contents keep theirs
+        if ($cursor->getNextNonSpaceCharacter() === '{') {
+            $state = $cursor->saveState();
+            $cursor->advanceToNextNonSpaceOrTab();
 
-        if ($cursor->match(ContextSpecificBlockParser::getEndBlockRegex($this->block->getType())) !== null) {
-            return BlockContinue::finished();
+            if ($cursor->match(ContextSpecificBlockParser::getEndBlockRegex($this->block->getType())) !== null) {
+                return BlockContinue::finished();
+            }
+
+            $cursor->restoreState($state);
         }
 
         return BlockContinue::at($cursor);

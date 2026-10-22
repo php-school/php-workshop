@@ -36,4 +36,11 @@ class MarkdownRendererTest extends TestCase
         $this->assertStringContainsString("\e[3mem\e[0m", $output);
         $this->assertStringContainsString("\e[3mem2\e[0m", $output);
     }
+
+    public function testIndentationIsKeptInsideContextSpecificBlocks(): void
+    {
+        $markdown = "{{ cli }}\n```\nfunction a() {\n    return 1;\n}\n```\n{{ cli }}";
+
+        $this->assertStringContainsString('        return 1;', $this->renderer()->render($markdown));
+    }
 }
