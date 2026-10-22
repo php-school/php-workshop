@@ -75,15 +75,3 @@ function any(array $values, callable $cb): bool
         return $carry || $cb($value);
     }, false);
 }
-
-/**
- * The arguments the current script was invoked with (`$argv`), ignoring anything that is not a string.
- *
- * @return list<string>
- */
-function cli_arguments(): array
-{
-    $argv = $_SERVER['argv'] ?? [];
-
-    return is_array($argv) ? array_values(array_filter($argv, 'is_string')) : [];
-}

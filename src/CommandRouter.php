@@ -101,7 +101,8 @@ class CommandRouter
     public function route(?array $args = null): int
     {
         if (null === $args) {
-            $args = cli_arguments();
+            /** @var list<string> $args */
+            $args = $_SERVER['argv'] ?? [];
         }
 
         $appName = array_shift($args) ?? '';
