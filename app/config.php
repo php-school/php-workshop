@@ -7,12 +7,10 @@ use Faker\Factory as FakerFactory;
 use Faker\Generator as FakerGenerator;
 use Kadet\Highlighter\KeyLighter;
 use League\CommonMark\Parser\MarkdownParser;
-use League\CommonMark\Extension\CommonMark\Delimiter\Processor\EmphasisDelimiterProcessor;
 use League\CommonMark\Environment\Environment;
 use PhpParser\Parser;
 use PhpParser\ParserFactory;
 use PhpParser\PrettyPrinter\Standard;
-use PhpSchool\CliMdRenderer\CliExtension;
 use PhpSchool\CliMdRenderer\CliRenderer;
 use PhpSchool\CliMenu\Terminal\TerminalFactory;
 use PhpSchool\PhpWorkshop\Check\CheckRepository;
@@ -44,6 +42,7 @@ use PhpSchool\PhpWorkshop\ExerciseRunner\Factory\CliRunnerFactory;
 use PhpSchool\PhpWorkshop\ExerciseRunner\Factory\CustomVerifyingRunnerFactory;
 use PhpSchool\PhpWorkshop\ExerciseRunner\RunnerManager;
 use PhpSchool\PhpWorkshop\Factory\EventDispatcherFactory;
+use PhpSchool\PhpWorkshop\Factory\MarkdownEnvironmentFactory;
 use PhpSchool\PhpWorkshop\Factory\MenuFactory;
 use PhpSchool\PhpWorkshop\Factory\ResultRendererFactory;
 use PhpSchool\PhpWorkshop\Listener\CheckExerciseAssignedListener;
@@ -58,7 +57,6 @@ use PhpSchool\PhpWorkshop\Listener\TearDownListener;
 use PhpSchool\PhpWorkshop\Logger\ConsoleLogger;
 use PhpSchool\PhpWorkshop\Logger\Logger;
 use PhpSchool\PhpWorkshop\Markdown\CurrentContext;
-use PhpSchool\PhpWorkshop\Markdown\ProblemFileExtension;
 use PhpSchool\PhpWorkshop\Markdown\Renderer\ContextSpecificRenderer;
 use PhpSchool\PhpWorkshop\Markdown\Shorthands\Cli\AppName;
 use PhpSchool\PhpWorkshop\Markdown\Shorthands\Cli\Run;
@@ -369,31 +367,17 @@ return [
         return CurrentContext::cli();
     },
     Environment::class => function (ContainerInterface $c) {
-        $terminal = $c->get(Terminal::class);
-
-        $environment = new Environment([
-            'renderer' => [
-                'width' => $terminal->getWidth(),
+        return (new MarkdownEnvironmentFactory())->create(
+            $c->get(Terminal::class)->getWidth(),
+            $c->get(ContextSpecificRenderer::class),
+            [
+                new AppName($c->get('appName')),
+                new Documentation(),
+                new Run($c->get('appName')),
+                new Verify($c->get('appName')),
+                $c->get(Context::class),
             ],
-        ]);
-
-        $environment
-            ->addExtension(new CliExtension())
-            //bold and italics, which CliExtension does not parse on its own
-            ->addDelimiterProcessor(new EmphasisDelimiterProcessor('*'))
-            ->addDelimiterProcessor(new EmphasisDelimiterProcessor('_'))
-            ->addExtension(new ProblemFileExtension(
-                $c->get(ContextSpecificRenderer::class),
-                [
-                    new AppName($c->get('appName')),
-                    new Documentation(),
-                    new Run($c->get('appName')),
-                    new Verify($c->get('appName')),
-                    $c->get(Context::class),
-                ],
-            ));
-
-        return $environment;
+        );
     },
     MarkdownRenderer::class => function (ContainerInterface $c) {
         return new MarkdownRenderer(

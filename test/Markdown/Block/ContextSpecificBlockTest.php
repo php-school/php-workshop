@@ -2,12 +2,14 @@
 
 namespace PhpSchool\PhpWorkshopTest\Markdown\Block;
 
+use League\CommonMark\Parser\MarkdownParser;
+use PhpSchool\PhpWorkshop\Factory\MarkdownEnvironmentFactory;
+use PhpSchool\PhpWorkshop\Markdown\Renderer\ContextSpecificRenderer;
 use League\CommonMark\Node\Block\Document;
 use League\CommonMark\Node\Block\Paragraph;
 use PhpSchool\PhpWorkshop\Exception\InvalidArgumentException;
 use PhpSchool\PhpWorkshop\Markdown\Block\ContextSpecificBlock;
 use PhpSchool\PhpWorkshop\Markdown\CurrentContext;
-use PhpSchool\PhpWorkshopTest\Asset\MarkdownFactory;
 use PHPUnit\Framework\TestCase;
 
 class ContextSpecificBlockTest extends TestCase
@@ -30,7 +32,7 @@ class ContextSpecificBlockTest extends TestCase
     {
         $markdown = "Before\n\n{{ cli }}\nSome line\n\n* Item 1\n* Item 2\n{{ cli }}\n\nAfter\n";
 
-        $document = MarkdownFactory::parser(CurrentContext::cli())->parse($markdown);
+        $document = new MarkdownParser((new MarkdownEnvironmentFactory())->create(80, new ContextSpecificRenderer(CurrentContext::cli()), []))->parse($markdown);
 
         $blocks = $document->children();
         static::assertCount(3, $blocks);

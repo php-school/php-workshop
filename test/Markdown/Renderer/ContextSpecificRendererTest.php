@@ -2,6 +2,10 @@
 
 namespace PhpSchool\PhpWorkshopTest\Markdown\Renderer;
 
+use League\CommonMark\Parser\MarkdownParser;
+use PhpSchool\PhpWorkshop\Factory\MarkdownEnvironmentFactory;
+use PhpSchool\CliMdRenderer\CliRenderer;
+use Colors\Color;
 use League\CommonMark\Node\Block\Paragraph;
 use League\CommonMark\Node\Node;
 use League\CommonMark\Renderer\ChildNodeRendererInterface;
@@ -9,7 +13,6 @@ use PhpSchool\PhpWorkshop\Markdown\Block\ContextSpecificBlock;
 use PhpSchool\PhpWorkshop\Markdown\CurrentContext;
 use PhpSchool\PhpWorkshop\Markdown\Renderer\ContextSpecificRenderer;
 use PhpSchool\PhpWorkshop\MarkdownRenderer;
-use PhpSchool\PhpWorkshopTest\Asset\MarkdownFactory;
 use PHPUnit\Framework\TestCase;
 
 class ContextSpecificRendererTest extends TestCase
@@ -56,9 +59,12 @@ class ContextSpecificRendererTest extends TestCase
         $markdown = "Intro\n\n{{ cli }}\nCLI ONLY\n{{ cli }}\n\n{{ cloud }}\nCLOUD ONLY\n{{ cloud }}\n\nOutro\n";
 
         $render = function (CurrentContext $context) use ($markdown): string {
+            $color = new Color();
+            $color->setForceStyle(true);
+
             return (new MarkdownRenderer(
-                MarkdownFactory::parser($context),
-                MarkdownFactory::renderer($context),
+                new MarkdownParser((new MarkdownEnvironmentFactory())->create(80, new ContextSpecificRenderer($context), [])),
+                new CliRenderer((new MarkdownEnvironmentFactory())->create(80, new ContextSpecificRenderer($context), []), $color),
             ))->render($markdown);
         };
 

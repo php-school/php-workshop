@@ -2,6 +2,9 @@
 
 namespace PhpSchool\PhpWorkshopTest\Markdown\Parser;
 
+use League\CommonMark\Parser\MarkdownParser;
+use PhpSchool\PhpWorkshop\Factory\MarkdownEnvironmentFactory;
+use PhpSchool\PhpWorkshop\Markdown\Renderer\ContextSpecificRenderer;
 use League\CommonMark\Node\Block\Paragraph;
 use League\CommonMark\Node\Inline\Text;
 use League\CommonMark\Parser\Cursor;
@@ -11,7 +14,6 @@ use PhpSchool\PhpWorkshop\Markdown\CurrentContext;
 use PhpSchool\PhpWorkshop\Markdown\Parser\HandleBarParser;
 use PhpSchool\PhpWorkshop\Markdown\Shorthands\Context;
 use PhpSchool\PhpWorkshop\Markdown\Shorthands\ShorthandInterface;
-use PhpSchool\PhpWorkshopTest\Asset\MarkdownFactory;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
@@ -149,7 +151,7 @@ class HandleBarParserTest extends TestCase
 
     public function testShorthandsAreReplacedInParsedMarkdown(): void
     {
-        $parser = MarkdownFactory::parser(CurrentContext::cli(), [new Context(CurrentContext::cli())]);
+        $parser = new MarkdownParser((new MarkdownEnvironmentFactory())->create(80, new ContextSpecificRenderer(CurrentContext::cli()), [new Context(CurrentContext::cli())]));
 
         $document = $parser->parse("Hello {{ context cli 'CLI ONLY' }} and {{ context cloud 'CLOUD ONLY' }} {{ unknown }}");
         $paragraph = $document->firstChild();

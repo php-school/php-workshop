@@ -2,9 +2,12 @@
 
 namespace PhpSchool\PhpWorkshopTest;
 
+use League\CommonMark\Parser\MarkdownParser;
+use PhpSchool\PhpWorkshop\Factory\MarkdownEnvironmentFactory;
+use PhpSchool\PhpWorkshop\Markdown\Renderer\ContextSpecificRenderer;
+use PhpSchool\CliMdRenderer\CliRenderer;
 use Colors\Color;
 use PhpSchool\PhpWorkshop\Markdown\CurrentContext;
-use PhpSchool\PhpWorkshopTest\Asset\MarkdownFactory;
 use PhpSchool\CliMenu\CliMenu;
 use PhpSchool\CliMenu\MenuItem\MenuItemInterface;
 use PhpSchool\PhpWorkshop\UserState\Serializer;
@@ -70,13 +73,13 @@ class ExerciseRendererTest extends TestCase
         }
         file_put_contents($problemFile, '### Exercise Content');
 
-        $markdownRenderer = new MarkdownRenderer(
-            MarkdownFactory::parser(CurrentContext::cli()),
-            MarkdownFactory::renderer(CurrentContext::cli()),
-        );
-
         $color = new Color();
         $color->setForceStyle(true);
+
+        $markdownRenderer = new MarkdownRenderer(
+            new MarkdownParser((new MarkdownEnvironmentFactory())->create(80, new ContextSpecificRenderer(CurrentContext::cli()), [])),
+            new CliRenderer((new MarkdownEnvironmentFactory())->create(80, new ContextSpecificRenderer(CurrentContext::cli()), []), $color),
+        );
 
         $exerciseRenderer = new ExerciseRenderer(
             'phpschool',
