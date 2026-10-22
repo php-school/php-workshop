@@ -29,7 +29,7 @@ class UserState
      * @param array<string> $completedExercises An array of exercise names.
      * @param string|null $currentExercise Can be null in-case the student did not start an exercise yet.
      */
-    public function __construct(array $completedExercises = [], string $currentExercise = null)
+    public function __construct(array $completedExercises = [], ?string $currentExercise = null)
     {
         $this->currentExercise = $currentExercise;
         $this->completedExercises = $completedExercises;

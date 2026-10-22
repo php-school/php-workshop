@@ -25,9 +25,9 @@ class TestContext extends ExecutionContext
     private bool $referenceSolutionDirWasCreated = false;
 
     public function __construct(
-        ExerciseInterface $exercise = null,
-        Input $input = null,
-        string $studentDirectory = null,
+        ?ExerciseInterface $exercise = null,
+        ?Input $input = null,
+        ?string $studentDirectory = null,
     ) {
         $this->exercise = $exercise ?? new MockExercise();
 

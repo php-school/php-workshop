@@ -18,7 +18,7 @@ final class DockerProcessFactory implements ProcessFactory
         string $basePath,
         string $projectName,
         string $composerCacheDir,
-        ExecutableFinder $executableFinder = null,
+        ?ExecutableFinder $executableFinder = null,
     ) {
         $this->executableFinder = $executableFinder ?? new ExecutableFinder();
         $this->basePath = $basePath;

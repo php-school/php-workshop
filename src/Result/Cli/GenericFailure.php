@@ -27,7 +27,7 @@ class GenericFailure extends Failure implements FailureInterface
      * @param ArrayObject<int, string> $args The arguments that caused the failure.
      * @param string|null $reason The reason (if any) of the failure.
      */
-    public function __construct(ArrayObject $args, string $reason = null)
+    public function __construct(ArrayObject $args, ?string $reason = null)
     {
         $this->args = $args;
         parent::__construct(self::$name, $reason);
@@ -40,7 +40,7 @@ class GenericFailure extends Failure implements FailureInterface
      * @param string|null $reason The reason (if any) of the failure.
      * @return self The result.
      */
-    public static function fromArgsAndReason(ArrayObject $args, string $reason = null): self
+    public static function fromArgsAndReason(ArrayObject $args, ?string $reason = null): self
     {
         return new self($args, $reason);
     }

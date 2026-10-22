@@ -34,7 +34,7 @@ class ComposerFailure implements FailureInterface
      * @param CheckInterface $check The check that produced this result.
      * @param array<string> $missingPackages
      */
-    public function __construct(CheckInterface $check, string $missingComponent = null, array $missingPackages = [])
+    public function __construct(CheckInterface $check, ?string $missingComponent = null, array $missingPackages = [])
     {
         $this->check = $check;
         $this->missingPackages = $missingPackages;

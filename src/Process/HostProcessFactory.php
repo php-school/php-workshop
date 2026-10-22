@@ -11,7 +11,7 @@ final class HostProcessFactory implements ProcessFactory
 {
     private ExecutableFinder $executableFinder;
 
-    public function __construct(ExecutableFinder $executableFinder = null)
+    public function __construct(?ExecutableFinder $executableFinder = null)
     {
         $this->executableFinder = $executableFinder ?? new ExecutableFinder();
     }

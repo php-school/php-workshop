@@ -29,7 +29,7 @@ class ResultRendererFactory
      * @param class-string $rendererClass
      * @param callable|null $factory
      */
-    public function registerRenderer(string $resultClass, string $rendererClass, callable $factory = null): void
+    public function registerRenderer(string $resultClass, string $rendererClass, ?callable $factory = null): void
     {
         if (!$this->isImplementationNameOfClass($resultClass, ResultInterface::class)) {
             throw new InvalidArgumentException();
