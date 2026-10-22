@@ -62,6 +62,9 @@ abstract class WorkshopExerciseTest extends TestCase
     public function tearDown(): void
     {
         $this->filesystem->remove($this->executionDirectory);
+
+        //configure() in setUp installs a global error handler
+        restore_error_handler();
     }
 
     /**
