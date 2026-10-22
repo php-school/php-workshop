@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace PhpSchool\PhpWorkshop\Markdown\Shorthands\Cloud;
 
-use League\CommonMark\Inline\Element\Text;
+use League\CommonMark\Node\Inline\Text;
 use PhpSchool\PhpWorkshop\Markdown\Shorthands\ShorthandInterface;
 
 final class Verify implements ShorthandInterface

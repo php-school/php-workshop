@@ -2,7 +2,7 @@
 
 namespace PhpSchool\PhpWorkshopTest\Markdown\Shorthands;
 
-use League\CommonMark\Inline\Element\Text;
+use League\CommonMark\Node\Inline\Text;
 use PhpSchool\PhpWorkshop\Markdown\CurrentContext;
 use PhpSchool\PhpWorkshop\Markdown\Shorthands\Context;
 use PHPUnit\Framework\TestCase;
