@@ -27,7 +27,7 @@ class CodePatcherTest extends TestCase
             ->withInsertion(new Insertion(Insertion::TYPE_BEFORE, 'ini_set("display_errors", 1);'));
 
         $patcher = new CodePatcher(
-            (new ParserFactory())->create(ParserFactory::PREFER_PHP7),
+            (new ParserFactory())->createForNewestSupportedVersion(),
             new Standard(),
             new NullLogger(),
             $patch,
@@ -41,7 +41,7 @@ class CodePatcherTest extends TestCase
     public function testPatcherDoesNotApplyPatchIfNotPatchableExercise(): void
     {
         $patcher = new CodePatcher(
-            (new ParserFactory())->create(ParserFactory::PREFER_PHP7),
+            (new ParserFactory())->createForNewestSupportedVersion(),
             new Standard(),
             new NullLogger(),
         );
@@ -57,7 +57,7 @@ class CodePatcherTest extends TestCase
     public function testPatcher(string $code, Patch $patch, string $expectedResult): void
     {
         $patcher = new CodePatcher(
-            (new ParserFactory())->create(ParserFactory::PREFER_PHP7),
+            (new ParserFactory())->createForNewestSupportedVersion(),
             new Standard(),
             new NullLogger(),
         );
@@ -160,7 +160,7 @@ class CodePatcherTest extends TestCase
         $patch = (new Patch())->withInsertion(new Insertion(Insertion::TYPE_BEFORE, '$before = "here";'));
 
         $patcher = new CodePatcher(
-            (new ParserFactory())->create(ParserFactory::PREFER_PHP7),
+            (new ParserFactory())->createForNewestSupportedVersion(),
             new Standard(),
             new NullLogger(),
         );
@@ -192,7 +192,7 @@ class CodePatcherTest extends TestCase
             });
 
         $patcher = new CodePatcher(
-            (new ParserFactory())->create(ParserFactory::PREFER_PHP7),
+            (new ParserFactory())->createForNewestSupportedVersion(),
             new Standard(),
             new NullLogger(),
         );
@@ -224,7 +224,7 @@ class CodePatcherTest extends TestCase
             });
 
         $patcher = new CodePatcher(
-            (new ParserFactory())->create(ParserFactory::PREFER_PHP7),
+            (new ParserFactory())->createForNewestSupportedVersion(),
             new Standard(),
             new NullLogger(),
         );
@@ -257,7 +257,7 @@ class CodePatcherTest extends TestCase
             ->withInsertion(new Insertion(Insertion::TYPE_BEFORE, '$before = "here";'));
 
         $patcher = new CodePatcher(
-            (new ParserFactory())->create(ParserFactory::PREFER_PHP7),
+            (new ParserFactory())->createForNewestSupportedVersion(),
             new Standard(),
             new NullLogger(),
         );
@@ -278,7 +278,7 @@ class CodePatcherTest extends TestCase
     public function testExceptionIsLoggedIfCodeIsNotParseable(): void
     {
         $patcher = new CodePatcher(
-            (new ParserFactory())->create(ParserFactory::PREFER_PHP7),
+            (new ParserFactory())->createForNewestSupportedVersion(),
             new Standard(),
             $logger = $this->createMock(LoggerInterface::class),
         );

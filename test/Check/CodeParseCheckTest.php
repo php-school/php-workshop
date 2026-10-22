@@ -22,7 +22,7 @@ class CodeParseCheckTest extends TestCase
 
     public function setUp(): void
     {
-        $this->check = new CodeParseCheck((new ParserFactory())->create(ParserFactory::PREFER_PHP7));
+        $this->check = new CodeParseCheck((new ParserFactory())->createForNewestSupportedVersion());
     }
 
     public function testCheckMeta(): void

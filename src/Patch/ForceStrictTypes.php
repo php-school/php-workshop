@@ -2,7 +2,7 @@
 
 namespace PhpSchool\PhpWorkshop\Patch;
 
-use PhpParser\Node\Scalar\LNumber;
+use PhpParser\Node\Scalar\Int_;
 use PhpParser\Node\Stmt;
 use PhpParser\Node\Stmt\Declare_;
 use PhpParser\Node\Stmt\DeclareDeclare;
@@ -22,7 +22,7 @@ class ForceStrictTypes implements Transformer
         $declare = new \PhpParser\Node\Stmt\Declare_([
             new DeclareDeclare(
                 new \PhpParser\Node\Identifier('strict_types'),
-                new LNumber(1),
+                new Int_(1),
             ),
         ]);
 

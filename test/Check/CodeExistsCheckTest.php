@@ -18,7 +18,7 @@ class CodeExistsCheckTest extends BaseTest
 
     public function setUp(): void
     {
-        $this->check = new CodeExistsCheck((new ParserFactory())->create(ParserFactory::PREFER_PHP7));
+        $this->check = new CodeExistsCheck((new ParserFactory())->createForNewestSupportedVersion());
     }
 
     public function testCheckMeta(): void

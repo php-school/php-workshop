@@ -330,8 +330,7 @@ return [
     //Utils
     Filesystem::class   => create(),
     Parser::class       => function () {
-        $parserFactory = new ParserFactory();
-        return $parserFactory->create(ParserFactory::PREFER_PHP7);
+        return (new ParserFactory())->createForNewestSupportedVersion();
     },
     CodePatcher::class  => function (ContainerInterface $c) {
         $patch = (new Patch())
