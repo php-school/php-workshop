@@ -10,10 +10,7 @@ use PhpSchool\PhpWorkshop\Markdown\Parser\ContextSpecificBlockParser;
 
 final class ContextSpecificBlock extends AbstractBlock
 {
-    /**
-     * @var string
-     */
-    private $type;
+    private string $type;
 
     public function __construct(string $type)
     {
