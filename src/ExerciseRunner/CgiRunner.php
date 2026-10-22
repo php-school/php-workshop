@@ -102,6 +102,8 @@ class CgiRunner implements ExerciseRunnerInterface
     {
         $scenario = $this->exercise->defineTestScenario();
 
+        $this->eventDispatcher->dispatch(new CgiExerciseRunnerEvent('cgi.verify.prepare', $context, $scenario));
+
         $this->environmentManager->prepareStudent($context, $scenario);
         $this->environmentManager->prepareReference($context, $scenario);
 
@@ -294,6 +296,8 @@ class CgiRunner implements ExerciseRunnerInterface
     public function run(ExecutionContext $context, OutputInterface $output): bool
     {
         $scenario = $this->exercise->defineTestScenario();
+
+        $this->eventDispatcher->dispatch(new CgiExerciseRunnerEvent('cgi.run.prepare', $context, $scenario));
 
         $this->environmentManager->prepareStudent($context, $scenario);
 
