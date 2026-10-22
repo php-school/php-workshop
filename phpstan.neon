@@ -1,4 +1,6 @@
 parameters:
+    stubFiles:
+        - stubs/Colors/Color.stub
     treatPhpDocTypesAsCertain: false
     ignoreErrors:
         -
