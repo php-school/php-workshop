@@ -15,6 +15,6 @@ class VerifyTest extends TestCase
         $result = $shorthand->__invoke([]);
         self::assertCount(1, $result);
         self::assertInstanceOf(Text::class, $result[0]);
-        self::assertEquals('Click the Verify button in the bottom right', $result[0]->getContent());
+        self::assertEquals('Click the Verify button in the bottom right', $result[0]->getLiteral());
     }
 }

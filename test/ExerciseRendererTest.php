@@ -2,10 +2,9 @@
 
 namespace PhpSchool\PhpWorkshopTest;
 
-use PhpSchool\CliMdRenderer\CliRendererFactory;
 use Colors\Color;
-use League\CommonMark\DocParser;
-use League\CommonMark\Environment;
+use PhpSchool\PhpWorkshop\Markdown\CurrentContext;
+use PhpSchool\PhpWorkshopTest\Asset\MarkdownFactory;
 use PhpSchool\CliMenu\CliMenu;
 use PhpSchool\CliMenu\MenuItem\MenuItemInterface;
 use PhpSchool\PhpWorkshop\UserState\Serializer;
@@ -72,8 +71,8 @@ class ExerciseRendererTest extends TestCase
         file_put_contents($problemFile, '### Exercise Content');
 
         $markdownRenderer = new MarkdownRenderer(
-            new DocParser(Environment::createCommonMarkEnvironment()),
-            (new CliRendererFactory())->__invoke(),
+            MarkdownFactory::parser(CurrentContext::cli()),
+            MarkdownFactory::renderer(CurrentContext::cli()),
         );
 
         $color = new Color();

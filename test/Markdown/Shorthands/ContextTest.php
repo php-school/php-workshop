@@ -36,6 +36,6 @@ class ContextTest extends TestCase
         $result = $context->__invoke(['cli', 'some content']);
         self::assertCount(1, $result);
         self::assertInstanceOf(Text::class, $result[0]);
-        self::assertEquals('some content', $result[0]->getContent());
+        self::assertEquals('some content', $result[0]->getLiteral());
     }
 }

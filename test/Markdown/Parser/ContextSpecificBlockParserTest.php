@@ -2,10 +2,14 @@
 
 namespace PhpSchool\PhpWorkshopTest\Markdown\Parser;
 
-use League\CommonMark\ContextInterface;
-use League\CommonMark\Cursor;
+use League\CommonMark\Node\Block\AbstractBlock;
+use League\CommonMark\Parser\Block\BlockContinue;
+use League\CommonMark\Parser\Block\BlockContinueParserInterface;
+use League\CommonMark\Parser\Cursor;
+use League\CommonMark\Parser\MarkdownParserStateInterface;
 use PhpSchool\PhpWorkshop\Exception\InvalidArgumentException;
 use PhpSchool\PhpWorkshop\Markdown\Block\ContextSpecificBlock;
+use PhpSchool\PhpWorkshop\Markdown\Parser\ContextSpecificBlockContinueParser;
 use PhpSchool\PhpWorkshop\Markdown\Parser\ContextSpecificBlockParser;
 use PHPUnit\Framework\TestCase;
 
@@ -29,36 +33,76 @@ class ContextSpecificBlockParserTest extends TestCase
         static::assertEquals('/^{{\s?(cli)\s?}}/', ContextSpecificBlockParser::getEndBlockRegex('cli'));
     }
 
-    public function testParseReturnsFalseWhenIncorrectCharacter(): void
+    public function testTryStartReturnsNoneWhenIncorrectCharacter(): void
     {
-        $block = new ContextSpecificBlockParser();
+        $parser = new ContextSpecificBlockParser();
 
-        $context = $this->createMock(ContextInterface::class);
-
-        static::assertFalse($block->parse($context, new Cursor('some text')));
+        static::assertNull($parser->tryStart(
+            new Cursor('some text'),
+            $this->createMock(MarkdownParserStateInterface::class),
+        ));
     }
 
-    public function testParseReturnsFalseWhenNotMatchingRegex(): void
+    public function testTryStartReturnsNoneWhenNotMatchingRegex(): void
     {
-        $block = new ContextSpecificBlockParser();
+        $parser = new ContextSpecificBlockParser();
 
-        $context = $this->createMock(ContextInterface::class);
-
-        static::assertFalse($block->parse($context, new Cursor('{ something else')));
+        static::assertNull($parser->tryStart(
+            new Cursor('{ something else'),
+            $this->createMock(MarkdownParserStateInterface::class),
+        ));
+        static::assertNull($parser->tryStart(
+            new Cursor('{{ unknown }}'),
+            $this->createMock(MarkdownParserStateInterface::class),
+        ));
     }
 
-    public function testParseAddsBlockWithCorrectType(): void
+    public function testTryStartCreatesBlockWithCorrectType(): void
     {
-        $block = new ContextSpecificBlockParser();
+        $parser = new ContextSpecificBlockParser();
 
-        $context = $this->createMock(ContextInterface::class);
-        $context->expects($this->once())
-            ->method('addBlock')
-            ->with(static::callback(function (ContextSpecificBlock $block) {
-                static::assertEquals('cloud', $block->getType());
-                return true;
-            }));
+        $start = $parser->tryStart(
+            new Cursor('{{ cloud }}'),
+            $this->createMock(MarkdownParserStateInterface::class),
+        );
 
-        static::assertTrue($block->parse($context, new Cursor('{{ cloud }}')));
+        static::assertNotNull($start);
+        $parsers = [...$start->getBlockParsers()];
+        static::assertCount(1, $parsers);
+        static::assertInstanceOf(ContextSpecificBlockContinueParser::class, $parsers[0]);
+        static::assertInstanceOf(ContextSpecificBlock::class, $parsers[0]->getBlock());
+        static::assertSame('cloud', $parsers[0]->getBlock()->getType());
+    }
+
+    public function testContinueParserIsAContainerAcceptingAnyBlock(): void
+    {
+        $parser = new ContextSpecificBlockContinueParser('cli');
+
+        static::assertTrue($parser->isContainer());
+        static::assertTrue($parser->canContain($this->createMock(AbstractBlock::class)));
+    }
+
+    public function testTryContinueContinuesOnContentLines(): void
+    {
+        $parser = new ContextSpecificBlockContinueParser('cli');
+        $active = $this->createMock(BlockContinueParserInterface::class);
+
+        foreach (['Some line', '* Item 1', '* Item 2', '{{ cloud }}'] as $line) {
+            $result = $parser->tryContinue(new Cursor($line), $active);
+            static::assertNotNull($result);
+            static::assertFalse($result->isFinalize(), $line);
+        }
+    }
+
+    public function testTryContinueFinishesOnEndTag(): void
+    {
+        $parser = new ContextSpecificBlockContinueParser('cli');
+        $active = $this->createMock(BlockContinueParserInterface::class);
+
+        foreach (['{{ cli }}', '{{cli}}', '  {{ cli }}'] as $line) {
+            $result = $parser->tryContinue(new Cursor($line), $active);
+            static::assertInstanceOf(BlockContinue::class, $result);
+            static::assertTrue($result->isFinalize(), $line);
+        }
     }
 }

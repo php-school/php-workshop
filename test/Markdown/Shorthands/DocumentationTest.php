@@ -27,11 +27,11 @@ class DocumentationTest extends TestCase
         static::assertCount(5, $nodes);
 
         static::assertInstanceOf(Text::class, $nodes[0]);
-        static::assertEquals('Documentation on ', $nodes[0]->getContent());
+        static::assertEquals('Documentation on ', $nodes[0]->getLiteral());
         static::assertInstanceOf(Code::class, $nodes[1]);
-        static::assertEquals('DateTime', $nodes[1]->getContent());
+        static::assertEquals('DateTime', $nodes[1]->getLiteral());
         static::assertInstanceOf(Text::class, $nodes[2]);
-        static::assertEquals(' can be found by pointing your browser here:', $nodes[2]->getContent());
+        static::assertEquals(' can be found by pointing your browser here:', $nodes[2]->getLiteral());
         static::assertInstanceOf(Newline::class, $nodes[3]);
         static::assertInstanceOf(Link::class, $nodes[4]);
         static::assertEquals('https://php.net/manual/en/class.datetime.php', $nodes[4]->getUrl());
@@ -45,11 +45,11 @@ class DocumentationTest extends TestCase
         static::assertCount(6, $nodes);
 
         static::assertInstanceOf(Text::class, $nodes[0]);
-        static::assertEquals('Documentation on ', $nodes[0]->getContent());
+        static::assertEquals('Documentation on ', $nodes[0]->getLiteral());
         static::assertInstanceOf(Code::class, $nodes[1]);
-        static::assertEquals('DateTime', $nodes[1]->getContent());
+        static::assertEquals('DateTime', $nodes[1]->getLiteral());
         static::assertInstanceOf(Text::class, $nodes[2]);
-        static::assertEquals(' can be found by pointing your browser here:', $nodes[2]->getContent());
+        static::assertEquals(' can be found by pointing your browser here:', $nodes[2]->getLiteral());
         static::assertInstanceOf(Newline::class, $nodes[3]);
         static::assertInstanceOf(Link::class, $nodes[4]);
         static::assertEquals('https://php.net/manual/en/class.datetime.php', $nodes[4]->getUrl());

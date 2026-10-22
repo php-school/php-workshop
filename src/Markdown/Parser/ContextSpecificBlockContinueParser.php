@@ -38,7 +38,7 @@ final class ContextSpecificBlockContinueParser extends AbstractBlockContinuePars
         return true;
     }
 
-    public function tryContinue(Cursor $cursor, BlockContinueParserInterface $activeBlockParser): ?BlockContinue
+    public function tryContinue(Cursor $cursor, BlockContinueParserInterface $activeBlockParser): BlockContinue
     {
         $cursor->advanceToNextNonSpaceOrTab();
 

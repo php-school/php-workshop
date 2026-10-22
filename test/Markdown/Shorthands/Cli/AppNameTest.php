@@ -18,7 +18,7 @@ class AppNameTest extends TestCase
         $result = $short->__invoke([]);
         self::assertCount(1, $result);
         self::assertInstanceOf(Text::class, $result[0]);
-        self::assertEquals('learnyouphp', $result[0]->getContent());
+        self::assertEquals('learnyouphp', $result[0]->getLiteral());
     }
 
     public function testShorthandCode(): void
@@ -28,7 +28,7 @@ class AppNameTest extends TestCase
         $result = $short->__invoke(['`']);
         self::assertCount(1, $result);
         self::assertInstanceOf(Code::class, $result[0]);
-        self::assertEquals('learnyouphp', $result[0]->getContent());
+        self::assertEquals('learnyouphp', $result[0]->getLiteral());
     }
 
     public function testShorthandBold(): void
@@ -40,7 +40,7 @@ class AppNameTest extends TestCase
         self::assertInstanceOf(Strong::class, $result[0]);
         self::assertCount(1, $result[0]->children());
         self::assertInstanceOf(Text::class, $result[0]->children()[0]);
-        self::assertEquals('learnyouphp', $result[0]->children()[0]->getContent());
+        self::assertEquals('learnyouphp', $result[0]->children()[0]->getLiteral());
     }
 
     public function testShorthandItalic(): void
@@ -52,6 +52,6 @@ class AppNameTest extends TestCase
         self::assertInstanceOf(Emphasis::class, $result[0]);
         self::assertCount(1, $result[0]->children());
         self::assertInstanceOf(Text::class, $result[0]->children()[0]);
-        self::assertEquals('learnyouphp', $result[0]->children()[0]->getContent());
+        self::assertEquals('learnyouphp', $result[0]->children()[0]->getLiteral());
     }
 }
