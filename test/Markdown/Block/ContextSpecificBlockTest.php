@@ -32,7 +32,7 @@ class ContextSpecificBlockTest extends TestCase
     {
         $markdown = "Before\n\n{{ cli }}\nSome line\n\n* Item 1\n* Item 2\n{{ cli }}\n\nAfter\n";
 
-        $document = new MarkdownParser((new MarkdownEnvironmentFactory())->create(80, new ContextSpecificRenderer(CurrentContext::cli()), []))->parse($markdown);
+        $document = (new MarkdownParser((new MarkdownEnvironmentFactory())->create(80, new ContextSpecificRenderer(CurrentContext::cli()), [])))->parse($markdown);
 
         $blocks = $document->children();
         static::assertCount(3, $blocks);
