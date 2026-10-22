@@ -11,7 +11,7 @@ use PhpSchool\PhpWorkshop\Check\CheckRepository;
 use PhpSchool\PhpWorkshop\Event\Event;
 use PhpSchool\PhpWorkshop\Event\EventDispatcher;
 use PhpSchool\PhpWorkshop\Exception\InvalidArgumentException;
-use PhpSchool\PhpWorkshop\Event\ContainerListenerHelper;
+use PhpSchool\PhpWorkshop\Factory\EventDispatcherFactory;
 use PhpSchool\PhpWorkshop\Exception\MissingArgumentException;
 use PhpSchool\PhpWorkshop\Factory\ResultRendererFactory;
 use PhpSchool\PhpWorkshop\Output\OutputInterface;
@@ -26,6 +26,8 @@ use function sprintf;
 /**
  * This is the main application class, this takes care of bootstrapping, routing and
  * output.
+ *
+ * @phpstan-import-type ListenerGroups from EventDispatcherFactory
  */
 final class Application
 {
@@ -293,9 +295,9 @@ final class Application
     private function getContainer(bool $debugMode): Container
     {
         $containerBuilder = new ContainerBuilder();
-        /** @var array{eventListeners?: array<string, array<string, list<callable|ContainerListenerHelper>>>} $diConfig */
+        /** @var array{eventListeners?: ListenerGroups} $diConfig */
         $diConfig = require $this->diConfigFile;
-        /** @var array{eventListeners: array<string, array<string, list<callable|ContainerListenerHelper>>>} $fwConfig */
+        /** @var array{eventListeners: ListenerGroups} $fwConfig */
         $fwConfig = require $this->frameworkConfigLocation;
 
         $fwConfig['eventListeners'] = array_merge_recursive(
