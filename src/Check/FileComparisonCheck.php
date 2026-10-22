@@ -78,16 +78,17 @@ class FileComparisonCheck implements SimpleCheckInterface
 
     /**
      * @param int|string $key
-     * @param string|array{strip: string} $file
+     * @param string|array<string, string> $file
      * @return array{0: array{strip?: string}, 1:string}
      */
     private function getOptionsAndFile($key, $file): array
     {
-        if (is_array($file)) {
-            return [$file, (string) $key];
+        if (!is_array($file) && is_int($key)) {
+            return [[], $file];
         }
-
-        return [[], $file];
+        /** @var array{strip?: string} $file */
+        /** @var string $key */
+        return [$file, $key];
     }
 
     /**
