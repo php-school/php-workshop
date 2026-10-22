@@ -3,15 +3,3 @@ parameters:
         - stubs/Colors/Color.stub
         - stubs/Kadet/KeyLighter.stub
     treatPhpDocTypesAsCertain: false
-    ignoreErrors:
-        -
-            # public helper for downstream workshops, not used within the framework itself
-            identifier: trait.unused
-            path: src/Exercise/TemporaryDirectoryTrait.php
-
-        -
-            message: '#Class PHPUnit\\Framework\\TestCase not found#'
-            path: src/TestUtils/WorkshopExerciseTest.php
-
-    excludePaths:
-        - src/TestUtils/WorkshopExerciseTest.php
