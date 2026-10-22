@@ -8,12 +8,9 @@ use PhpSchool\PhpWorkshop\Listener\TearDownListener;
 use PhpSchool\PhpWorkshop\Utils\System;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Filesystem\Filesystem;
-use Yoast\PHPUnitPolyfills\Polyfills\AssertionRenames;
 
 class TearDownListenerTest extends TestCase
 {
-    use AssertionRenames;
-
     public function testCleansUpTempDir(): void
     {
         $tempDir = System::tempDir();

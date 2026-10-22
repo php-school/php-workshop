@@ -2,6 +2,7 @@
 
 namespace PhpSchool\PhpWorkshopTest;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use PhpParser\Node\Expr\Variable;
 use PhpParser\Node\Name;
 use PhpParser\Node\Scalar\LNumber;
@@ -51,9 +52,7 @@ class CodePatcherTest extends TestCase
         $this->assertEquals($code, $patcher->patch($exercise, $code));
     }
 
-    /**
-     * @dataProvider codeProvider
-     */
+    #[DataProvider('codeProvider')]
     public function testPatcher(string $code, Patch $patch, string $expectedResult): void
     {
         $patcher = new CodePatcher(
@@ -72,7 +71,7 @@ class CodePatcherTest extends TestCase
         $this->assertEquals($expectedResult, $result);
     }
 
-    public function codeProvider(): array
+    public static function codeProvider(): array
     {
         return [
             'only-before-insertion' => [

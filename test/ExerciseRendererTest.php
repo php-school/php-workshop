@@ -60,7 +60,7 @@ class ExerciseRendererTest extends TestCase
             ->expects($this->once())
             ->method('serialize')
             ->with($userState);
-        $problemFile = sprintf('%s/%s/problem.md', sys_get_temp_dir(), $this->getName());
+        $problemFile = sprintf('%s/%s/problem.md', sys_get_temp_dir(), $this->name());
         $exercise2
             ->expects($this->once())
             ->method('getProblem')

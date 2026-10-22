@@ -46,7 +46,7 @@ class ResetProgressTest extends TestCase
             ->with('OK');
 
         $subMenu = $this->getMockBuilder(CliMenu::class)
-            ->setMethods(['confirm'])
+            ->onlyMethods(['confirm'])
             ->setConstructorArgs(['Sub Menu', [], $terminal])
             ->getMock();
 

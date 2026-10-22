@@ -16,7 +16,7 @@ abstract class BaseTest extends TestCase
     public function getTemporaryDirectory(): string
     {
         if (!$this->tempDirectory) {
-            $this->tempDirectory = System::tempDir($this->getName());
+            $this->tempDirectory = System::tempDir($this->name());
             mkdir($this->tempDirectory, 0777, true);
         }
 
@@ -44,8 +44,8 @@ abstract class BaseTest extends TestCase
 
     public function tearDown(): void
     {
-        if (file_exists(System::tempDir($this->getName()))) {
-            (new Filesystem())->remove(System::tempDir($this->getName()));
+        if (file_exists(System::tempDir($this->name()))) {
+            (new Filesystem())->remove(System::tempDir($this->name()));
         }
     }
 }

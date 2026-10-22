@@ -2,6 +2,8 @@
 
 namespace PhpSchool\PhpWorkshopTest\Event;
 
+use PhpSchool\PhpWorkshopTest\ConsecutiveCalls;
+use PhpSchool\PhpWorkshopTest\Asset\CallableStub;
 use PhpSchool\PhpWorkshop\Event\ContainerListenerHelper;
 use PhpSchool\PhpWorkshop\Event\Event;
 use PhpSchool\PhpWorkshop\Event\EventDispatcher;
@@ -13,6 +15,8 @@ use Psr\Container\ContainerInterface;
 
 class EventDispatcherTest extends TestCase
 {
+    use ConsecutiveCalls;
+
     /**
      * @var ResultAggregator
      */
@@ -32,18 +36,14 @@ class EventDispatcherTest extends TestCase
     public function testOnlyAppropriateListenersAreCalledForEvent(): void
     {
         $e = new Event('some-event', ['arg1' => 1, 'arg2' => 2]);
-        $mockCallback1 = $this->getMockBuilder('stdClass')
-            ->setMethods(['__invoke'])
-            ->getMock();
+        $mockCallback1 = $this->createMock(CallableStub::class);
 
         $mockCallback1->expects($this->exactly(2))
             ->method('__invoke')
             ->with($e)
             ->willReturn(true);
 
-        $mockCallback2 = $this->getMockBuilder('stdClass')
-            ->setMethods(['doNotInvokeMe'])
-            ->getMock();
+        $mockCallback2 = $this->createMock(CallableStub::class);
 
         $mockCallback2->expects($this->never())
             ->method('doNotInvokeMe');
@@ -65,9 +65,7 @@ class EventDispatcherTest extends TestCase
         $e = new Event('some-event', ['arg1' => 1, 'arg2' => 2]);
         $result = $this->createMock(ResultInterface::class);
 
-        $mockCallback1 = $this->getMockBuilder('stdClass')
-            ->setMethods(['__invoke'])
-            ->getMock();
+        $mockCallback1 = $this->createMock(CallableStub::class);
 
         $mockCallback1->expects($this->exactly(2))
             ->method('__invoke')
@@ -88,9 +86,7 @@ class EventDispatcherTest extends TestCase
     public function testVerifyReturnIsSkippedIfNotInstanceOfResult(): void
     {
         $e = new Event('some-event', ['arg1' => 1, 'arg2' => 2]);
-        $mockCallback1 = $this->getMockBuilder('stdClass')
-            ->setMethods(['__invoke'])
-            ->getMock();
+        $mockCallback1 = $this->createMock(CallableStub::class);
 
         $mockCallback1->expects($this->once())
             ->method('__invoke')
@@ -109,14 +105,11 @@ class EventDispatcherTest extends TestCase
     {
         $e1 = new Event('some-event', ['arg1' => 1, 'arg2' => 2]);
         $e2 = new Event('some-event', ['arg1' => 1, 'arg2' => 2]);
-        $mockCallback1 = $this->getMockBuilder('stdClass')
-            ->setMethods(['__invoke'])
-            ->getMock();
+        $mockCallback1 = $this->createMock(CallableStub::class);
 
         $mockCallback1->expects($this->exactly(2))
             ->method('__invoke')
-            ->withConsecutive([$e1], [$e2])
-            ->willReturn(true);
+            ->willReturnCallback($this->consecutive([[$e1], [$e2]], fn() => true));
 
         $this->eventDispatcher->listen(['some-event', 'second-event'], $mockCallback1);
         $this->eventDispatcher->dispatch($e1);

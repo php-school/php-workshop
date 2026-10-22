@@ -27,12 +27,9 @@ use PhpSchool\PhpWorkshop\ResultAggregator;
 use PhpSchool\PhpWorkshop\Solution\SingleFileSolution;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Filesystem\Filesystem;
-use Yoast\PHPUnitPolyfills\Polyfills\AssertionRenames;
 
 class CliRunnerTest extends TestCase
 {
-    use AssertionRenames;
-
     private CliRunner $runner;
     private CliExerciseImpl $exercise;
     private EventDispatcher $eventDispatcher;

@@ -29,13 +29,15 @@ use Symfony\Component\Filesystem\Filesystem;
 
 class ExerciseDispatcherTest extends TestCase
 {
+    use ConsecutiveCalls;
+
     private Filesystem $filesystem;
     private string $file;
 
     public function setUp(): void
     {
         $this->filesystem = new Filesystem();
-        $this->file = sprintf('%s/%s/submission.php', str_replace('\\', '/', sys_get_temp_dir()), $this->getName());
+        $this->file = sprintf('%s/%s/submission.php', str_replace('\\', '/', sys_get_temp_dir()), $this->name());
         mkdir(dirname($this->file), 0775, true);
         touch($this->file);
     }
@@ -353,7 +355,7 @@ class ExerciseDispatcherTest extends TestCase
 
         $check1 = $this
             ->getMockBuilder(SimpleCheckInterface::class)
-            ->setMockClassName('SimpleCheckMock1')
+            ->setMockClassName('SimpleCheckMock3')
             ->getMock();
 
         $check1
@@ -375,7 +377,7 @@ class ExerciseDispatcherTest extends TestCase
 
         $check2 = $this
             ->getMockBuilder(SimpleCheckInterface::class)
-            ->setMockClassName('SimpleCheckMock2')
+            ->setMockClassName('SimpleCheckMock4')
             ->getMock();
 
         $check2
@@ -430,12 +432,11 @@ class ExerciseDispatcherTest extends TestCase
         $eventDispatcher
             ->expects($this->exactly(5))
             ->method('dispatch')
-            ->withConsecutive(
-                [
-                    $this->callback(function ($event) {
-                        return $event instanceof EventInterface && $event->getName() === 'verify.start';
-                    }),
-                ],
+            ->willReturnCallback($this->consecutive([[
+                $this->callback(function ($event) {
+                    return $event instanceof EventInterface && $event->getName() === 'verify.start';
+                }),
+            ],
                 [
                     $this->callback(function ($event) {
                         return $event instanceof EventInterface && $event->getName() === 'verify.pre.execute';
@@ -455,8 +456,7 @@ class ExerciseDispatcherTest extends TestCase
                     $this->callback(function ($event) {
                         return $event instanceof EventInterface && $event->getName() === 'verify.finish';
                     }),
-                ],
-            );
+                ]], fn(int $i, EventInterface $event) => $event));
 
         $runner = $this->createMock(ExerciseRunnerInterface::class);
         $runner->method('getRequiredChecks')->willReturn([]);
@@ -484,12 +484,11 @@ class ExerciseDispatcherTest extends TestCase
         $eventDispatcher
             ->expects($this->exactly(3))
             ->method('dispatch')
-            ->withConsecutive(
-                [
-                    $this->callback(function ($event) {
-                        return $event instanceof EventInterface && $event->getName() === 'verify.start';
-                    }),
-                ],
+            ->willReturnCallback($this->consecutive([[
+                $this->callback(function ($event) {
+                    return $event instanceof EventInterface && $event->getName() === 'verify.start';
+                }),
+            ],
                 [
                     $this->callback(function ($event) {
                         return $event instanceof EventInterface && $event->getName() === 'verify.pre.execute';
@@ -499,8 +498,7 @@ class ExerciseDispatcherTest extends TestCase
                     $this->callback(function ($event) {
                         return $event instanceof EventInterface && $event->getName() === 'verify.post.execute';
                     }),
-                ],
-            );
+                ]], fn(int $i, EventInterface $event) => $event));
 
         $runner = $this->createMock(ExerciseRunnerInterface::class);
         $runner->method('getRequiredChecks')->willReturn([]);
