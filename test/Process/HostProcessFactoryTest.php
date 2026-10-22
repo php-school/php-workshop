@@ -68,7 +68,23 @@ class HostProcessFactoryTest extends TestCase
         $input = new ProcessInput('composer', ['one', 'two'], __DIR__, ['SOME_VAR' => 'value']);
 
         $process = $factory->create($input);
-        static::assertSame(['SOME_VAR' => 'value'], $process->getEnv());
+        static::assertSame('value', $process->getEnv()['SOME_VAR']);
+    }
+
+    public function testInheritedEnvIsRemovedExceptAllowed(): void
+    {
+        putenv('PHPSCHOOL_SECRET=secret');
+
+        try {
+            $process = (new HostProcessFactory())->create(
+                new ProcessInput('php', ['-r', 'echo json_encode([getenv("PHPSCHOOL_SECRET"), getenv("PATH") !== false]);'], __DIR__, []),
+            );
+            $process->mustRun();
+
+            static::assertSame('[false,true]', $process->getOutput());
+        } finally {
+            putenv('PHPSCHOOL_SECRET');
+        }
     }
 
     public function testWithInput(): void
