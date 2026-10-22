@@ -54,14 +54,10 @@ class StdOutput implements OutputInterface
     public function printException(Throwable $exception): void
     {
         $message = $exception->getMessage();
-        if (strpos($message, $this->workshopBasePath) !== null) {
-            $message = str_replace($this->workshopBasePath, '', $message);
-        }
+        $message = str_replace($this->workshopBasePath, '', $message);
 
         $file = $exception->getFile();
-        if (strpos($file, $this->workshopBasePath) !== null) {
-            $file = str_replace($this->workshopBasePath, '', $file);
-        }
+        $file = str_replace($this->workshopBasePath, '', $file);
 
         $lines = [
             sprintf("In %s line %d:", $file, $exception->getLine()),

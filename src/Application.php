@@ -241,7 +241,7 @@ final class Application
      */
     public function run(): int
     {
-        $args = $_SERVER['argv'] ?? [];
+        $args = cli_arguments();
 
         $debug = any($args, function (string $arg) {
             return $arg === '--debug';
@@ -270,13 +270,6 @@ final class Application
             );
             return 1;
         } catch (\Throwable $e) {
-            $message = $e->getMessage();
-            $basePath = canonicalise_path(is_string($path  = $container->get('basePath')) ? $path : '');
-
-            if (strpos($message, $basePath) !== null) {
-                $message = str_replace($basePath, '', $message);
-            }
-
             $this->tearDown($container);
 
             /** @var OutputInterface $output */
@@ -292,18 +285,43 @@ final class Application
     }
 
     /**
+     * @return array<mixed>
+     */
+    private function loadConfig(string $file): array
+    {
+        $config = require $file;
+
+        if (!is_array($config)) {
+            throw new RuntimeException(sprintf('Config file "%s" was expected to return an array.', $file));
+        }
+
+        return $config;
+    }
+
+    /**
+     * @param array<mixed> $config
+     * @return array<mixed>
+     */
+    private function getEventListenerConfig(array $config): array
+    {
+        $listeners = $config['eventListeners'] ?? [];
+
+        return is_array($listeners) ? $listeners : [];
+    }
+
+    /**
      * @param bool $debugMode
      * @return Container
      */
     private function getContainer(bool $debugMode): Container
     {
         $containerBuilder = new ContainerBuilder();
-        $diConfig = require $this->diConfigFile;
-        $fwConfig = require $this->frameworkConfigLocation;
+        $diConfig = $this->loadConfig($this->diConfigFile);
+        $fwConfig = $this->loadConfig($this->frameworkConfigLocation);
 
         $fwConfig['eventListeners'] = array_merge_recursive(
-            $fwConfig['eventListeners'],
-            $diConfig['eventListeners'] ?? [],
+            $this->getEventListenerConfig($fwConfig),
+            $this->getEventListenerConfig($diConfig),
         );
 
         unset($diConfig['eventListeners']);
