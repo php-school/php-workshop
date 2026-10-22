@@ -47,7 +47,7 @@ class CgiExecuteEvent extends CgiExerciseRunnerEvent
     /**
      * Modify the request via a callback. The callback should return the newly modified request.
      *
-     * @param callable $callback
+     * @param callable(RequestInterface): RequestInterface $callback
      */
     public function modifyRequest(callable $callback): void
     {

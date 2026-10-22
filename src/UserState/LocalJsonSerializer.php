@@ -117,11 +117,7 @@ class LocalJsonSerializer implements Serializer
             $json['completed_exercises'] = [];
         }
 
-        foreach ($json['completed_exercises'] as $i => $exercise) {
-            if (!is_string($exercise)) {
-                unset($json['completed_exercises'][$i]);
-            }
-        }
+        $json['completed_exercises'] = array_filter($json['completed_exercises'], 'is_string');
 
         if (null !== $json['current_exercise'] && !is_string($json['current_exercise'])) {
             $json['current_exercise'] = null;
@@ -159,7 +155,9 @@ class LocalJsonSerializer implements Serializer
             return null;
         }
 
-        $completedExercises = $data['completed_exercises'];
+        $completedExercises = is_array($data['completed_exercises'])
+            ? array_filter($data['completed_exercises'], 'is_string')
+            : [];
         $availableExercises = $this->exerciseRepository->getAllNames();
 
         //check to see if this old data represents THIS workshop
@@ -171,7 +169,7 @@ class LocalJsonSerializer implements Serializer
         }
 
         $userState = new UserState(
-            $data['completed_exercises'],
+            $completedExercises,
             is_string($data['current_exercise']) ? $data['current_exercise'] : null,
         );
 

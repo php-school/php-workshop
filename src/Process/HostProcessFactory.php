@@ -35,7 +35,7 @@ final class HostProcessFactory implements ProcessFactory
     }
 
     /**
-     * @return array<string, false>
+     * @return array<false>
      */
     private function getDefaultEnv(): array
     {

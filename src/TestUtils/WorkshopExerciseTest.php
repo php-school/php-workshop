@@ -9,7 +9,6 @@ use PhpSchool\PhpWorkshop\Exception\InvalidArgumentException;
 use PhpSchool\PhpWorkshop\Exercise\AbstractExercise;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseType;
-use PhpSchool\PhpWorkshop\Exercise\ProvidesSolution;
 use PhpSchool\PhpWorkshop\ExerciseCheck\ComposerExerciseCheck;
 use PhpSchool\PhpWorkshop\ExerciseDispatcher;
 use PhpSchool\PhpWorkshop\ExerciseRepository;
@@ -69,17 +68,22 @@ abstract class WorkshopExerciseTest extends TestCase
 
     protected function getExercise(): ExerciseInterface
     {
-        return $this->container->get(ExerciseRepository::class)
-            ->findByClassName($this->getExerciseClass());
+        /** @var ExerciseRepository $exerciseRepository */
+        $exerciseRepository = $this->container->get(ExerciseRepository::class);
+
+        return $exerciseRepository->findByClassName($this->getExerciseClass());
     }
 
     public function runExercise(string $submissionFile): void
     {
         $exercise = $this->getExercise();
 
+        /** @var string $basePath */
+        $basePath = $this->container->get('basePath');
+
         $submissionFileAbsolute = sprintf(
             '%s/test/solutions/%s/%s',
-            rtrim($this->container->get('basePath'), '/'),
+            rtrim($basePath, '/'),
             AbstractExercise::normaliseName($exercise->getName()),
             $submissionFile,
         );
@@ -98,16 +102,21 @@ abstract class WorkshopExerciseTest extends TestCase
             $this->installDeps($exercise, dirname($submissionFileAbsolute));
         }
 
-        $input = new Input($this->container->get('appName'), [
+        /** @var string $appName */
+        $appName = $this->container->get('appName');
+
+        $input = new Input($appName, [
             'program' => $submissionFileAbsolute,
         ]);
 
-        $this->results = $this->container->get(ExerciseDispatcher::class)
-            ->verify($exercise, $input);
+        /** @var ExerciseDispatcher $exerciseDispatcher */
+        $exerciseDispatcher = $this->container->get(ExerciseDispatcher::class);
+
+        $this->results = $exerciseDispatcher->verify($exercise, $input);
     }
 
     /**
-     * @param ExerciseInterface&ProvidesSolution $exercise
+     * @param ExerciseInterface&ComposerExerciseCheck $exercise
      * @param string $directory
      */
     private function installDeps(ExerciseInterface $exercise, string $directory): void
@@ -130,7 +139,7 @@ abstract class WorkshopExerciseTest extends TestCase
             ->filter(function (ResultInterface $result) {
                 return $result instanceof FailureInterface;
             })
-            ->map(function (FailureInterface $failure) {
+            ->map(function (ResultInterface $failure) {
                 return sprintf(
                     '  * %s%s',
                     get_class($failure),
@@ -169,7 +178,7 @@ abstract class WorkshopExerciseTest extends TestCase
             ->filter(function (ResultInterface $result) {
                 return $result instanceof FailureInterface;
             })
-            ->map(function (FailureInterface $failure) {
+            ->map(function (ResultInterface $failure) {
                 return sprintf(
                     '  * %s%s',
                     get_class($failure),
@@ -197,6 +206,7 @@ abstract class WorkshopExerciseTest extends TestCase
     public function getOutputResult(): ResultGroupInterface
     {
         $exerciseType = $this->getExercise()->getType();
+        $results = collect([]);
 
         if ($exerciseType->equals(ExerciseType::CLI())) {
             $results = collect($this->results->getIterator()->getArrayCopy())
@@ -216,7 +226,10 @@ abstract class WorkshopExerciseTest extends TestCase
             $this->assertCount(1, $results);
         }
 
-        return $results->values()->get(0);
+        $result = $results->values()->get(0);
+        $this->assertInstanceOf(ResultGroupInterface::class, $result);
+
+        return $result;
     }
 
     public function assertResultsHasFailureAndMatches(string $resultClass, callable $matcher): void
@@ -240,9 +253,12 @@ abstract class WorkshopExerciseTest extends TestCase
 
     public function removeSolutionAsset(string $file): void
     {
+        /** @var string $basePath */
+        $basePath = $this->container->get('basePath');
+
         $path = sprintf(
             '%s/test/solutions/%s/%s',
-            rtrim($this->container->get('basePath'), '/'),
+            rtrim($basePath, '/'),
             AbstractExercise::normaliseName($this->getExercise()->getName()),
             $file,
         );

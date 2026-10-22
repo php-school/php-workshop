@@ -14,6 +14,10 @@ use PhpSchool\PhpWorkshop\Utils\Collection;
 
 /**
  * Create an EventDispatcher populating with listeners from the config
+ *
+ * @phpstan-type Listeners list<ContainerListenerHelper|callable>
+ * @phpstan-type EventListeners array<string, Listeners>
+ * @phpstan-type ListenerGroups array<string, EventListeners>
  */
 class EventDispatcherFactory
 {
@@ -29,6 +33,7 @@ class EventDispatcherFactory
         $dispatcher = new EventDispatcher($results);
 
         //add listeners from config
+        /** @var ListenerGroups $eventListeners */
         $eventListeners = $container->has('eventListeners') ? $container->get('eventListeners') : [];
 
         if (!is_array($eventListeners)) {
@@ -51,25 +56,25 @@ class EventDispatcherFactory
     }
 
     /**
-     * @param array<int, array<string, array<ContainerListenerHelper|callable>>> $listeners
-     * @return array<string, array<ContainerListenerHelper|callable>>
+     * @param ListenerGroups $listeners
+     * @return EventListeners
      */
     private function mergeListenerGroups(array $listeners): array
     {
         $listeners = new Collection($listeners);
 
-        /** @var Collection<string, array<ContainerListenerHelper|callable>> $mergedListeners */
+        /** @var Collection<string, Listeners> $mergedListeners */
         $mergedListeners = $listeners
             ->keys()
             ->reduce(function (Collection $carry, string $listenerGroup) use ($listeners): Collection {
-                /** @var array<string, array<ContainerListenerHelper|callable>> $groupListeners */
+                /** @var EventListeners $groupListeners */
                 $groupListeners = $listeners->get($listenerGroup);
                 $events = new Collection($groupListeners);
 
                 return $events
                     ->keys()
                     ->reduce(function (Collection $carry, string $event) use ($events) {
-                        /** @var Collection<string, array<ContainerListenerHelper|callable>> $carry */
+                        /** @var Collection<string, Listeners> $carry */
                         $listeners = $events->get($event);
 
                         if (!is_array($listeners)) {
@@ -88,7 +93,7 @@ class EventDispatcherFactory
 
     /**
      * @param string $eventName
-     * @param array<int, ContainerListenerHelper|callable> $listeners
+     * @param Listeners $listeners
      * @param ContainerInterface $container
      * @param EventDispatcher $dispatcher
      * @throws InvalidArgumentException

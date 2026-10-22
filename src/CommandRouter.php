@@ -101,10 +101,11 @@ class CommandRouter
     public function route(?array $args = null): int
     {
         if (null === $args) {
+            /** @var list<string> $args */
             $args = $_SERVER['argv'] ?? [];
         }
 
-        $appName = array_shift($args);
+        $appName = array_shift($args) ?? '';
 
         if (empty($args)) {
             return $this->resolveCallable($this->commands[$this->defaultCommand], new Input($appName));
@@ -226,6 +227,8 @@ class CommandRouter
         $this->eventDispatcher->dispatch(new Event\Event('route.pre.invoke'));
         $this->eventDispatcher->dispatch(new Event\Event(sprintf('route.pre.invoke.%s', $command->getName())));
 
-        return $callable($input);
+        $return = $callable($input);
+
+        return is_int($return) ? $return : null;
     }
 }

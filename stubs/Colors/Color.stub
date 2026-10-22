@@ -1,0 +1,64 @@
+<?php
+
+namespace Colors;
+
+/**
+ * Typing for the untyped kevinlebrun/colors.php library, so that the chained style calls can be analysed.
+ *
+ * @method static black()
+ * @method static red()
+ * @method static green()
+ * @method static yellow()
+ * @method static blue()
+ * @method static magenta()
+ * @method static cyan()
+ * @method static white()
+ * @method static bold()
+ * @method static italic()
+ * @method static underline()
+ * @method static bg_red()
+ */
+class Color
+{
+    /**
+     * @param string $string
+     * @return static
+     */
+    public function __invoke($string)
+    {
+    }
+
+    /**
+     * @return string
+     */
+    public function __toString()
+    {
+    }
+
+    /**
+     * @param string $style
+     * @param string|null $text
+     * @return ($text is null ? static : string)
+     */
+    public function apply($style, $text = null)
+    {
+    }
+
+    /**
+     * @param string $color
+     * @param string|null $text
+     * @return ($text is null ? static : string)
+     */
+    public function fg($color, $text = null)
+    {
+    }
+
+    /**
+     * @param string $color
+     * @param string|null $text
+     * @return ($text is null ? static : string)
+     */
+    public function bg($color, $text = null)
+    {
+    }
+}

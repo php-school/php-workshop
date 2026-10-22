@@ -7,6 +7,7 @@ namespace PhpSchool\PhpWorkshop\Check;
 use InvalidArgumentException;
 use PhpParser\Error;
 use PhpParser\Node\Expr\FuncCall;
+use PhpParser\Node\Name;
 use PhpParser\NodeTraverser;
 use PhpParser\Parser;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseType;
@@ -70,13 +71,16 @@ class FunctionRequirementsCheck implements SimpleCheckInterface
         $bannedFunctions = [];
         if ($visitor->hasUsedBannedFunctions()) {
             $bannedFunctions = array_map(function (FuncCall $node) {
-                return ['function' => $node->name->__toString(), 'line' => $node->getLine()];
+                return [
+                    'function' => $node->name instanceof Name ? $node->name->toString() : '',
+                    'line' => $node->getLine(),
+                ];
             }, $visitor->getBannedUsages());
         }
 
         $missingFunctions = [];
         if (!$visitor->hasMetFunctionRequirements()) {
-            $missingFunctions = $visitor->getMissingRequirements();
+            $missingFunctions = array_values($visitor->getMissingRequirements());
         }
 
         if (!empty($bannedFunctions) || !empty($missingFunctions)) {

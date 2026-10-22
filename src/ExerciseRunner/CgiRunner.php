@@ -194,7 +194,7 @@ class CgiRunner implements ExerciseRunnerInterface
     {
         $headers = [];
         foreach ($response->getHeaders() as $name => $values) {
-            $headers[$name] = implode(", ", $values);
+            $headers[(string) $name] = implode(", ", $values);
         }
         return $headers;
     }

@@ -86,7 +86,7 @@ class FileComparisonCheck implements SimpleCheckInterface
         if (!is_array($file) && is_int($key)) {
             return [[], $file];
         }
-        /** @var array $file */
+        /** @var array{strip?: string} $file */
         /** @var string $key */
         return [$file, $key];
     }

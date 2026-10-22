@@ -154,6 +154,7 @@ class MenuFactory
      */
     private function isExerciseDisabled(ExerciseInterface $exercise, UserState $userState, WorkshopType $type): bool
     {
+        /** @var ExerciseInterface|null $previous */
         static $previous = null;
 
         if (null === $previous || !$type->isTutorialMode()) {

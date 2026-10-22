@@ -1,13 +1,5 @@
 parameters:
+    stubFiles:
+        - stubs/Colors/Color.stub
+        - stubs/Kadet/KeyLighter.stub
     treatPhpDocTypesAsCertain: false
-    ignoreErrors:
-        -
-            message: '#Call to an undefined method PhpParser\\Node\\Expr\|PhpParser\\Node\\Name\:\:__toString\(\)#'
-            path: src/Check/FunctionRequirementsCheck.php
-
-        -
-            message: '#Class PHPUnit\\Framework\\TestCase not found#'
-            path: src/TestUtils/WorkshopExerciseTest.php
-
-    excludePaths:
-        - src/TestUtils/WorkshopExerciseTest.php
