@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace PhpSchool\PhpWorkshop;
 
-use League\CommonMark\DocParser;
+use League\CommonMark\Parser\MarkdownParserInterface;
 use PhpSchool\CliMdRenderer\CliRenderer;
 
 /**
@@ -14,7 +14,7 @@ use PhpSchool\CliMdRenderer\CliRenderer;
 class MarkdownRenderer
 {
     /**
-     * @var DocParser
+     * @var MarkdownParserInterface
      */
     private $docParser;
 
@@ -24,13 +24,13 @@ class MarkdownRenderer
     private $cliRenderer;
 
     /**
-     * Should be constructed with an instance of `DocParser` with parses the markdown to an AST.
+     * Should be constructed with an instance of `MarkdownParserInterface` with parses the markdown to an AST.
      * `CliRenderer` renders the AST to a string formatted for the console.
      *
-     * @param DocParser $docParser
+     * @param MarkdownParserInterface $docParser
      * @param CliRenderer $cliRenderer
      */
-    public function __construct(DocParser $docParser, CliRenderer $cliRenderer)
+    public function __construct(MarkdownParserInterface $docParser, CliRenderer $cliRenderer)
     {
         $this->docParser = $docParser;
         $this->cliRenderer = $cliRenderer;

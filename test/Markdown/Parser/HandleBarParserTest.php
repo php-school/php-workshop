@@ -5,7 +5,7 @@ namespace PhpSchool\PhpWorkshopTest\Markdown\Parser;
 use PhpSchool\PhpWorkshopTest\Asset\BlockStub;
 use PHPUnit\Framework\Attributes\DataProvider;
 use League\CommonMark\Cursor;
-use League\CommonMark\Inline\Element\Text;
+use League\CommonMark\Node\Inline\Text;
 use League\CommonMark\InlineParserContext;
 use PhpSchool\PhpWorkshop\Markdown\CurrentContext;
 use PhpSchool\PhpWorkshop\Markdown\Parser\HandleBarParser;

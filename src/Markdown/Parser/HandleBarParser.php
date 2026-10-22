@@ -4,8 +4,9 @@ declare(strict_types=1);
 
 namespace PhpSchool\PhpWorkshop\Markdown\Parser;
 
-use League\CommonMark\InlineParserContext;
-use League\CommonMark\Inline\Parser\InlineParserInterface;
+use League\CommonMark\Parser\Inline\InlineParserInterface;
+use League\CommonMark\Parser\Inline\InlineParserMatch;
+use League\CommonMark\Parser\InlineParserContext;
 use PhpSchool\PhpWorkshop\Markdown\Shorthands\ShorthandInterface;
 
 final class HandleBarParser implements InlineParserInterface
@@ -28,26 +29,17 @@ final class HandleBarParser implements InlineParserInterface
         ) ?: [];
     }
 
-    public function getCharacters(): array
+    public function getMatchDefinition(): InlineParserMatch
     {
-        return ['{'];
+        return InlineParserMatch::regex('{{\\s?.*?\\s?}}');
     }
 
     public function parse(InlineParserContext $inlineContext): bool
     {
-        if ($inlineContext->getCursor()->peek(1) !== '{') {
-            return false;
-        }
-
-        $cursor = $inlineContext->getCursor();
-
-        $handle = $cursor->match('/{{\s?.*?\s?}}/m');
-
-        if (null === $handle) {
-            return false;
-        }
+        $handle = $inlineContext->getFullMatch();
 
         $content = trim(str_replace(['{', '}'], '', $handle));
+
         $parsedArgs = $this->parseArgs($content);
         $shorthand = array_shift($parsedArgs);
 
@@ -60,6 +52,8 @@ final class HandleBarParser implements InlineParserInterface
         }
 
         $nodes = $this->shorthands[$shorthand]($parsedArgs);
+
+        $inlineContext->getCursor()->advanceBy($inlineContext->getFullMatchLength());
 
         foreach ($nodes as $node) {
             $inlineContext->getContainer()->appendChild($node);

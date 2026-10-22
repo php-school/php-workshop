@@ -2,10 +2,10 @@
 
 namespace PhpSchool\PhpWorkshopTest\Markdown\Shorthands;
 
-use League\CommonMark\Inline\Element\Code;
-use League\CommonMark\Inline\Element\Link;
-use League\CommonMark\Inline\Element\Newline;
-use League\CommonMark\Inline\Element\Text;
+use League\CommonMark\Extension\CommonMark\Node\Inline\Code;
+use League\CommonMark\Extension\CommonMark\Node\Inline\Link;
+use League\CommonMark\Node\Inline\Newline;
+use League\CommonMark\Node\Inline\Text;
 use PhpSchool\PhpWorkshop\Markdown\Shorthands\Documentation;
 use PHPUnit\Framework\TestCase;
 

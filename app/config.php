@@ -6,9 +6,9 @@ use Colors\Color;
 use Faker\Factory as FakerFactory;
 use Faker\Generator as FakerGenerator;
 use Kadet\Highlighter\KeyLighter;
-use League\CommonMark\DocParser;
-use League\CommonMark\ElementRendererInterface;
-use League\CommonMark\Environment;
+use League\CommonMark\Parser\MarkdownParser;
+use League\CommonMark\Extension\CommonMark\Delimiter\Processor\EmphasisDelimiterProcessor;
+use League\CommonMark\Environment\Environment;
 use PhpParser\Parser;
 use PhpParser\ParserFactory;
 use PhpParser\PrettyPrinter\Standard;
@@ -379,6 +379,9 @@ return [
 
         $environment
             ->addExtension(new CliExtension())
+            //bold and italics, which CliExtension does not parse on its own
+            ->addDelimiterProcessor(new EmphasisDelimiterProcessor('*'))
+            ->addDelimiterProcessor(new EmphasisDelimiterProcessor('_'))
             ->addExtension(new ProblemFileExtension(
                 $c->get(ContextSpecificRenderer::class),
                 [
@@ -394,11 +397,11 @@ return [
     },
     MarkdownRenderer::class => function (ContainerInterface $c) {
         return new MarkdownRenderer(
-            new DocParser($c->get(Environment::class)),
-            $c->get(ElementRendererInterface::class),
+            new MarkdownParser($c->get(Environment::class)),
+            $c->get(CliRenderer::class),
         );
     },
-    ElementRendererInterface::class => function (ContainerInterface $c) {
+    CliRenderer::class => function (ContainerInterface $c) {
         return new CliRenderer(
             $c->get(Environment::class),
             $c->get(Color::class),

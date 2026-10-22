@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace PhpSchool\PhpWorkshop\Markdown\Shorthands\Cli;
 
-use League\CommonMark\Inline\Element\Text;
+use League\CommonMark\Node\Inline\Text;
 use PhpSchool\PhpWorkshop\Exception\RuntimeException;
 use PhpSchool\PhpWorkshop\Markdown\Shorthands\ShorthandInterface;
 

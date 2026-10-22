@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace PhpSchool\PhpWorkshop\Markdown\Shorthands\Cli;
 
-use League\CommonMark\Inline\Element\Code;
-use League\CommonMark\Inline\Element\Emphasis;
-use League\CommonMark\Inline\Element\Strong;
-use League\CommonMark\Inline\Element\Text;
+use League\CommonMark\Extension\CommonMark\Node\Inline\Code;
+use League\CommonMark\Extension\CommonMark\Node\Inline\Emphasis;
+use League\CommonMark\Extension\CommonMark\Node\Inline\Strong;
+use League\CommonMark\Node\Inline\Text;
 use PhpSchool\PhpWorkshop\Markdown\Shorthands\ShorthandInterface;
 
 final class AppName implements ShorthandInterface
