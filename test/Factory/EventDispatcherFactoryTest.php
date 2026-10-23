@@ -6,12 +6,11 @@ use DI\ContainerBuilder;
 use PhpSchool\PhpWorkshop\Event\Event;
 use Psr\Container\ContainerInterface;
 use PhpSchool\PhpWorkshop\Exception\InvalidArgumentException;
+use PhpSchool\PhpWorkshop\Event\ContainerListenerHelper;
 use PhpSchool\PhpWorkshop\Factory\EventDispatcherFactory;
 use PhpSchool\PhpWorkshop\ResultAggregator;
 use PhpSchool\PhpWorkshopTest\Asset\CallableStub;
 use PHPUnit\Framework\TestCase;
-
-use function PhpSchool\PhpWorkshop\Event\containerListener;
 
 class EventDispatcherFactoryTest extends TestCase
 {
@@ -113,7 +112,7 @@ class EventDispatcherFactoryTest extends TestCase
     {
         $eventConfig = [
             'my-group' => [
-                'someEvent' => [containerListener('nonExistingContainerEntry')()],
+                'someEvent' => [new ContainerListenerHelper('nonExistingContainerEntry')],
             ],
         ];
 
@@ -172,7 +171,7 @@ class EventDispatcherFactoryTest extends TestCase
     {
         $eventConfig = [
             'my-group' => [
-                'someEvent' => [containerListener('containerEntry')()],
+                'someEvent' => [new ContainerListenerHelper('containerEntry')],
             ],
         ];
 
@@ -199,7 +198,7 @@ class EventDispatcherFactoryTest extends TestCase
     {
         $eventConfig = [
             'my-group' => [
-                'someEvent' => [containerListener('containerEntry')()],
+                'someEvent' => [new ContainerListenerHelper('containerEntry')],
             ],
         ];
 
@@ -232,7 +231,7 @@ class EventDispatcherFactoryTest extends TestCase
     {
         $eventConfig = [
             'my-group' => [
-                'someEvent' => [containerListener('containerEntry', 'notHere')()],
+                'someEvent' => [new ContainerListenerHelper('containerEntry', 'notHere')],
             ],
         ];
 
