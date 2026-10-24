@@ -49,6 +49,8 @@ class CodePatchListener
     }
 
     /**
+     * Patches the student's solution and, if the exercise provides one, the reference solution.
+     *
      * @param ExerciseRunnerEvent $event
      */
     public function patch(ExerciseRunnerEvent $event): void
@@ -63,6 +65,25 @@ class CodePatchListener
             );
         }
 
+        $this->patchFiles($event, $files);
+    }
+
+    /**
+     * Patches only the student's solution. A run only executes the student's code, so the reference solution is
+     * never copied and there is nothing else to patch.
+     *
+     * @param ExerciseRunnerEvent $event
+     */
+    public function patchStudent(ExerciseRunnerEvent $event): void
+    {
+        $this->patchFiles($event, [$event->getContext()->getEntryPoint()]);
+    }
+
+    /**
+     * @param array<string> $files
+     */
+    private function patchFiles(ExerciseRunnerEvent $event, array $files): void
+    {
         foreach (array_filter($files) as $fileName) {
             $this->logger->debug("Patching file: $fileName");
 

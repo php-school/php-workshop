@@ -9,6 +9,10 @@ use PhpSchool\PhpWorkshop\ExerciseRunner\Context\TestContext;
 use PhpSchool\PhpWorkshop\ExerciseRunner\EnvironmentManager;
 use PhpSchool\PhpWorkshop\Listener\OutputRunInfoListener;
 use PhpSchool\PhpWorkshop\Process\HostProcessFactory;
+use Symfony\Component\Process\Process;
+use PhpSchool\PhpWorkshop\Output\NullOutput;
+use PhpSchool\PhpWorkshop\Process\ProcessInput;
+use PhpSchool\PhpWorkshop\Process\ProcessFactory;
 use PhpSchool\PhpWorkshop\Utils\RequestRenderer;
 use PhpSchool\PhpWorkshopTest\Asset\CliExerciseImpl;
 use PhpSchool\Terminal\Terminal;
@@ -164,6 +168,30 @@ class CliRunnerTest extends TestCase
         $result = $this->runner->run($context, $output);
 
         $this->assertTrue($result);
+    }
+
+    public function testRunPassesTheEntryPointRelativeToTheWorkingDirectory(): void
+    {
+        //the sandbox mounts the working directory at a different path, so a host path would not exist in there
+        $processFactory = new class implements ProcessFactory {
+            /** @var array<ProcessInput> */
+            public array $inputs = [];
+
+            public function create(ProcessInput $processInput): Process
+            {
+                $this->inputs[] = $processInput;
+
+                return (new HostProcessFactory())->create($processInput);
+            }
+        };
+        $runner = new CliRunner($this->exercise, $this->eventDispatcher, $processFactory, new EnvironmentManager(new Filesystem(), $this->eventDispatcher));
+
+        $this->exercise->setScenario((new CliScenario())->withExecution([1, 2, 3]));
+
+        $context = TestContext::fromExerciseAndStudentSolution($this->exercise, __DIR__ . '/../res/cli/user.php');
+        $runner->run($context, new NullOutput());
+
+        $this->assertSame('user.php', $processFactory->inputs[0]->getArgs()[0]);
     }
 
     public function testRunPassesOutputAndReturnsFailureIfScriptFails(): void
