@@ -20,17 +20,22 @@ final class DockerProcessFactory implements ProcessFactory
     private string $basePath;
     private string $projectName;
     private string $composerCacheDir;
+    private string $portsNetwork;
 
     public function __construct(
         string $basePath,
         string $projectName,
         string $composerCacheDir,
         ?ExecutableFinder $executableFinder = null,
+        string $portsNetwork = 'bridge',
     ) {
         $this->executableFinder = $executableFinder ?? new ExecutableFinder();
         $this->basePath = $basePath;
         $this->projectName = $projectName;
         $this->composerCacheDir = $composerCacheDir;
+        //for exercises that expose ports, eg a server the check connects to. Pass a network without internet access
+        //to stop student code reaching out, the published ports still work
+        $this->portsNetwork = $portsNetwork;
     }
 
     public function getImageName(): string
@@ -71,7 +76,7 @@ final class DockerProcessFactory implements ProcessFactory
             //composer needs to download packages
             $network = ['--network', 'bridge'];
         } elseif (count($processInput->getExposedPorts()) > 0) {
-            $network = ['--network', 'bridge'];
+            $network = ['--network', $this->portsNetwork];
             foreach ($processInput->getExposedPorts() as $port) {
                 $network[] = '-p';
                 $network[] = '127.0.0.1:' . $port . ':' . $port;

@@ -10,7 +10,7 @@ use Symfony\Component\Process\ExecutableFinder;
 
 class DockerProcessFactoryTest extends TestCase
 {
-    private function factory(): DockerProcessFactory
+    private function factory(string $portsNetwork = 'bridge'): DockerProcessFactory
     {
         $finder = $this->createMock(ExecutableFinder::class);
         $finder->expects($this->once())
@@ -18,7 +18,7 @@ class DockerProcessFactoryTest extends TestCase
             ->with('docker')
             ->willReturn('/usr/local/bin/docker');
 
-        return new DockerProcessFactory('/docker-dir', 'PHP8Appreciate', '/composer/cache/dir', $finder);
+        return new DockerProcessFactory('/docker-dir', 'PHP8Appreciate', '/composer/cache/dir', $finder, $portsNetwork);
     }
 
     /**
@@ -90,6 +90,18 @@ class DockerProcessFactoryTest extends TestCase
 
         $expected = $this->expectedCommand(
             ['--network', 'bridge', '-p', '127.0.0.1:8000:8000'],
+            ['-e', 'COMPOSER_HOME=/tmp/composer', '-v', __DIR__ . ':/solution'],
+            ['php'],
+        );
+        static::assertSame($expected, $process->getCommandLine());
+    }
+
+    public function testExposedPortsUseTheGivenNetwork(): void
+    {
+        $process = $this->factory('php-school-sandbox')->create(new ProcessInput('php', [], __DIR__, [], [8000]));
+
+        $expected = $this->expectedCommand(
+            ['--network', 'php-school-sandbox', '-p', '127.0.0.1:8000:8000'],
             ['-e', 'COMPOSER_HOME=/tmp/composer', '-v', __DIR__ . ':/solution'],
             ['php'],
         );
