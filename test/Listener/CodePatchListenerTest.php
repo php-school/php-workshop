@@ -119,6 +119,30 @@ class CodePatchListenerTest extends TestCase
         );
     }
 
+    public function testPatchStudentOnlyPatchesTheStudentSolution(): void
+    {
+        //a run never copies the reference solution, so there is only the student's file
+        $exercise = new ProvidesSolutionExercise();
+
+        $context = new TestContext($exercise);
+        $context->createStudentSolutionDirectory();
+        $context->importStudentFileFromString('ORIGINAL CONTENT');
+
+        $this->codePatcher
+            ->expects($this->once())
+            ->method('patch')
+            ->with($exercise, 'ORIGINAL CONTENT')
+            ->willReturn('MODIFIED CONTENT');
+
+        $listener = new CodePatchListener($this->codePatcher, new NullLogger(), false);
+        $listener->patchStudent(new ExerciseRunnerEvent('run.start', $context));
+
+        self::assertStringEqualsFile(
+            Path::join($context->getStudentExecutionDirectory(), 'solution.php'),
+            'MODIFIED CONTENT',
+        );
+    }
+
     public function testFileIsLoggedWhenPatches(): void
     {
         $exercise = $this->createMock(ExerciseInterface::class);

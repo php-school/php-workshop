@@ -507,7 +507,7 @@ return [
                 containerListener(CodePatchListener::class, 'revert'),
             ],
             'run.start' => [
-                containerListener(CodePatchListener::class, 'patch'),
+                containerListener(CodePatchListener::class, 'patchStudent'),
             ],
             'run.finish' => [
                 containerListener(CodePatchListener::class, 'revert'),

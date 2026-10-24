@@ -222,7 +222,7 @@ class CliRunner implements ExerciseRunnerInterface
 
             $process = $this->getPhpProcess(
                 $context->getStudentExecutionDirectory(),
-                $context->getEntryPoint(),
+                basename($context->getEntryPoint()),
                 $args,
                 $scenario->getExposedPorts(),
             );

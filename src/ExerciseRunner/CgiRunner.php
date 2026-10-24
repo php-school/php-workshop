@@ -310,7 +310,7 @@ class CgiRunner implements ExerciseRunnerInterface
             );
             $process = $this->getPhpProcess(
                 $context->getStudentExecutionDirectory(),
-                $context->getEntryPoint(),
+                basename($context->getEntryPoint()),
                 $event->getRequest(),
                 $scenario->getExposedPorts(),
             );
