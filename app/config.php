@@ -52,6 +52,7 @@ use PhpSchool\PhpWorkshop\Listener\InitialCodeListener;
 use PhpSchool\PhpWorkshop\Listener\OutputRunInfoListener;
 use PhpSchool\PhpWorkshop\Listener\PrepareSolutionListener;
 use PhpSchool\PhpWorkshop\Listener\RealPathListener;
+use PhpSchool\PhpWorkshop\Listener\RemoveStudentSymlinksListener;
 use PhpSchool\PhpWorkshop\Listener\SelfCheckListener;
 use PhpSchool\PhpWorkshop\Listener\TearDownListener;
 use PhpSchool\PhpWorkshop\Logger\ConsoleLogger;
@@ -301,6 +302,7 @@ return [
         );
     },
     RealPathListener::class => create(),
+    RemoveStudentSymlinksListener::class => create(),
     TearDownListener::class => function (ContainerInterface $c) {
         return new TearDownListener($c->get(Filesystem::class));
     },
@@ -483,6 +485,15 @@ return [
             ],
             'cgi.run.start' => [
                 containerListener(PrepareSolutionListener::class),
+            ],
+        ],
+        //before the code patcher and the checks touch the student's files on the host
+        'remove-student-symlinks' => [
+            'verify.post.execute' => [
+                containerListener(RemoveStudentSymlinksListener::class),
+            ],
+            'run.finish' => [
+                containerListener(RemoveStudentSymlinksListener::class),
             ],
         ],
         'code-patcher' => [
