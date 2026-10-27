@@ -5,10 +5,10 @@ namespace PhpSchool\PhpWorkshopTest\Process;
 use PhpSchool\PhpWorkshop\Process\ProcessInput;
 use PhpSchool\PhpWorkshop\Process\ProcessNotFoundException;
 use Symfony\Component\Process\ExecutableFinder;
-use PhpSchool\PhpWorkshop\Process\HostProcessFactory;
+use PhpSchool\PhpWorkshop\Process\HostSandbox;
 use PHPUnit\Framework\TestCase;
 
-class HostProcessFactoryTest extends TestCase
+class HostSandboxTest extends TestCase
 {
     public function testCreateThrowsExceptionIfExecutableNotFound(): void
     {
@@ -20,7 +20,7 @@ class HostProcessFactoryTest extends TestCase
             ->with('composer')
             ->willReturn(null);
 
-        $factory = new HostProcessFactory($finder);
+        $factory = new HostSandbox($finder);
         $input = new ProcessInput('composer', [], __DIR__, [], []);
 
         $factory->create($input);
@@ -34,10 +34,10 @@ class HostProcessFactoryTest extends TestCase
             ->with('composer')
             ->willReturn('/usr/local/bin/composer');
 
-        $factory = new HostProcessFactory($finder);
+        $factory = new HostSandbox($finder);
         $input = new ProcessInput('composer', [], __DIR__, [], []);
 
-        $process = $factory->create($input);
+        $process = $factory->create($input)->process;
         static::assertSame("'/usr/local/bin/composer'", $process->getCommandLine());
     }
 
@@ -49,10 +49,10 @@ class HostProcessFactoryTest extends TestCase
             ->with('composer')
             ->willReturn('/usr/local/bin/composer');
 
-        $factory = new HostProcessFactory($finder);
+        $factory = new HostSandbox($finder);
         $input = new ProcessInput('composer', ['one', 'two'], __DIR__, [], []);
 
-        $process = $factory->create($input);
+        $process = $factory->create($input)->process;
         static::assertSame("'/usr/local/bin/composer' 'one' 'two'", $process->getCommandLine());
     }
 
@@ -64,10 +64,10 @@ class HostProcessFactoryTest extends TestCase
             ->with('composer')
             ->willReturn('/usr/local/bin/composer');
 
-        $factory = new HostProcessFactory($finder);
+        $factory = new HostSandbox($finder);
         $input = new ProcessInput('composer', ['one', 'two'], __DIR__, ['SOME_VAR' => 'value'], []);
 
-        $process = $factory->create($input);
+        $process = $factory->create($input)->process;
         static::assertSame('value', $process->getEnv()['SOME_VAR']);
     }
 
@@ -76,7 +76,7 @@ class HostProcessFactoryTest extends TestCase
         putenv('PHPSCHOOL_SECRET=secret');
 
         try {
-            $process = (new HostProcessFactory())->create(
+            $process = (new HostSandbox())->create(
                 new ProcessInput('php', ['-r', 'echo json_encode([getenv("PHPSCHOOL_SECRET"), getenv("PATH") !== false]);'], __DIR__, [], []),
             );
             $process->mustRun();
@@ -95,10 +95,10 @@ class HostProcessFactoryTest extends TestCase
             ->with('composer')
             ->willReturn('/usr/local/bin/composer');
 
-        $factory = new HostProcessFactory($finder);
+        $factory = new HostSandbox($finder);
         $input = new ProcessInput('composer', [], __DIR__, [], [], 'someinput');
 
-        $process = $factory->create($input);
+        $process = $factory->create($input)->process;
         static::assertSame('someinput', $process->getInput());
     }
 }

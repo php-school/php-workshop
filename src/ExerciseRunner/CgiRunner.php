@@ -21,8 +21,9 @@ use PhpSchool\PhpWorkshop\Exercise\Scenario\CgiScenario;
 use PhpSchool\PhpWorkshop\ExerciseRunner\Context\ExecutionContext;
 use PhpSchool\PhpWorkshop\Input\Input;
 use PhpSchool\PhpWorkshop\Output\OutputInterface;
-use PhpSchool\PhpWorkshop\Process\ProcessFactory;
+use PhpSchool\PhpWorkshop\Process\Sandbox;
 use PhpSchool\PhpWorkshop\Process\ProcessInput;
+use PhpSchool\PhpWorkshop\Process\SandboxExecution;
 use PhpSchool\PhpWorkshop\Result\Cgi\CgiResult;
 use PhpSchool\PhpWorkshop\Result\Cgi\RequestFailure;
 use PhpSchool\PhpWorkshop\Result\Cgi\GenericFailure;
@@ -31,7 +32,6 @@ use PhpSchool\PhpWorkshop\Result\Cgi\ResultInterface as CgiResultInterface;
 use PhpSchool\PhpWorkshop\Result\ResultInterface;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
-use Symfony\Component\Process\Process;
 
 /**
  * The `CGI` runner. This runner executes solutions as if they were behind a web-server. They populate the `$_SERVER`,
@@ -59,7 +59,7 @@ class CgiRunner implements ExerciseRunnerInterface
     public function __construct(
         private CgiExercise $exercise,
         private EventDispatcher $eventDispatcher,
-        private ProcessFactory $processFactory,
+        private Sandbox $sandbox,
         private EnvironmentManager $environmentManager,
     ) {}
 
@@ -215,21 +215,21 @@ class CgiRunner implements ExerciseRunnerInterface
         RequestInterface $request,
         string $type,
     ): ResponseInterface {
-        $process = $this->getPhpProcess($workingDirectory, $fileName, $request, $scenario->getExposedPorts());
+        $execution = $this->getPhpExecution($workingDirectory, $fileName, $request, $scenario->getExposedPorts());
 
-        $process->start();
+        $execution->start();
         $this->eventDispatcher->dispatch(
             new CgiExecuteEvent(sprintf('cgi.verify.%s.executing', $type), $context, $scenario, $request),
         );
-        $process->wait();
+        $execution->wait();
 
-        if (!$process->isSuccessful()) {
-            throw CodeExecutionException::fromProcess($process);
+        if (!$execution->isSuccessful()) {
+            throw CodeExecutionException::fromExecution($execution);
         }
 
         //if no status line, pre-pend 200 OK
-        $output = $process->getOutput();
-        $error = $process->getErrorOutput();
+        $output = $execution->getOutput();
+        $error = $execution->getErrorOutput();
         if (!preg_match('/^HTTP\/([1-9]\d*\.\d) ([1-5]\d{2})(\s+(.+))?\\r\\n/', $output)) {
             $output = "HTTP/1.0 200 OK\r\n" . $output;
         }
@@ -240,7 +240,7 @@ class CgiRunner implements ExerciseRunnerInterface
     /**
      * @param list<int> $exposedPorts
      */
-    private function getPhpProcess(string $workingDirectory, string $fileName, RequestInterface $request, array $exposedPorts): Process
+    private function getPhpExecution(string $workingDirectory, string $fileName, RequestInterface $request, array $exposedPorts): SandboxExecution
     {
         $env = [
             'REQUEST_METHOD'  => $request->getMethod(),
@@ -272,7 +272,7 @@ class CgiRunner implements ExerciseRunnerInterface
             $content,
         );
 
-        return $this->processFactory->create($processInput);
+        return $this->sandbox->create($processInput);
     }
 
     /**
@@ -308,14 +308,14 @@ class CgiRunner implements ExerciseRunnerInterface
             $event = $this->eventDispatcher->dispatch(
                 new CgiExecuteEvent('cgi.run.student-execute.pre', $context, $scenario, $request),
             );
-            $process = $this->getPhpProcess(
+            $execution = $this->getPhpExecution(
                 $context->getStudentExecutionDirectory(),
                 basename($context->getEntryPoint()),
                 $event->getRequest(),
                 $scenario->getExposedPorts(),
             );
 
-            $process->start();
+            $execution->start();
             $this->eventDispatcher->dispatch(
                 new CgiExecuteEvent(
                     'cgi.run.student.executing',
@@ -325,12 +325,12 @@ class CgiRunner implements ExerciseRunnerInterface
                     ['output' => $output],
                 ),
             );
-            $process->wait(function ($outputType, $outputBuffer) use ($output) {
+            $execution->wait(function ($outputType, $outputBuffer) use ($output) {
                 $output->write($outputBuffer);
             });
             $output->emptyLine();
 
-            if (!$process->isSuccessful()) {
+            if (!$execution->isSuccessful()) {
                 $success = false;
             }
 

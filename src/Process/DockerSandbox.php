@@ -12,7 +12,7 @@ use Symfony\Component\Process\Process;
  *
  * The workshop only supplies the image. All isolation flags are set here so a workshop cannot loosen them.
  */
-final class DockerProcessFactory implements ProcessFactory
+final class DockerSandbox implements Sandbox
 {
     private const TIMEOUT = 30;
 
@@ -57,7 +57,7 @@ final class DockerProcessFactory implements ProcessFactory
         );
     }
 
-    public function create(ProcessInput $processInput): Process
+    public function create(ProcessInput $processInput): DockerExecution
     {
         $isComposer = $processInput->getExecutable() === 'composer';
 
@@ -89,7 +89,8 @@ final class DockerProcessFactory implements ProcessFactory
             $envArgs[] = $key . '=' . $value;
         }
 
-        return new Process(
+        //no steps around it yet, create/cp/rm come when files are copied in instead of mounted
+        return new DockerExecution(new Process(
             [
                 $this->findDocker(),
                 'run',
@@ -131,7 +132,7 @@ final class DockerProcessFactory implements ProcessFactory
             null,
             $processInput->getInput(),
             self::TIMEOUT + 5,
-        );
+        ));
     }
 
     private function findDocker(): string

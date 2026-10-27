@@ -4,7 +4,7 @@ namespace PhpSchool\PhpWorkshopTest\Exception;
 
 use PhpSchool\PhpWorkshop\Exception\CodeExecutionException;
 use PHPUnit\Framework\TestCase;
-use Symfony\Component\Process\Process;
+use PhpSchool\PhpWorkshop\Process\SandboxExecution;
 
 class CodeExecutionExceptionTest extends TestCase
 {
@@ -16,20 +16,20 @@ class CodeExecutionExceptionTest extends TestCase
 
     public function testFromProcessUsesErrorOutputIfNotEmpty(): void
     {
-        $process = $this->createMock(Process::class);
+        $process = $this->createMock(SandboxExecution::class);
 
         $process
             ->expects($this->once())
             ->method('getErrorOutput')
             ->willReturn('Error Output');
 
-        $e = CodeExecutionException::fromProcess($process);
+        $e = CodeExecutionException::fromExecution($process);
         $this->assertEquals('PHP Code failed to execute. Error: "Error Output"', $e->getMessage());
     }
 
     public function testFromProcessUsesStdOutputIfErrorOutputEmpty(): void
     {
-        $process = $this->createMock(Process::class);
+        $process = $this->createMock(SandboxExecution::class);
         $process
             ->expects($this->once())
             ->method('getErrorOutput')
@@ -40,7 +40,7 @@ class CodeExecutionExceptionTest extends TestCase
             ->method('getOutput')
             ->willReturn('Std Output');
 
-        $e = CodeExecutionException::fromProcess($process);
+        $e = CodeExecutionException::fromExecution($process);
         $this->assertEquals('PHP Code failed to execute. Error: "Std Output"', $e->getMessage());
     }
 }

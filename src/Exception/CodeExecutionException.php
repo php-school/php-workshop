@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace PhpSchool\PhpWorkshop\Exception;
 
 use RuntimeException;
-use Symfony\Component\Process\Process;
+use PhpSchool\PhpWorkshop\Process\SandboxExecution;
 
 /**
  * Represents the situation where some PHP code could not be executed successfully.
@@ -13,17 +13,16 @@ use Symfony\Component\Process\Process;
 class CodeExecutionException extends RuntimeException
 {
     /**
-     * Static constructor to create an instance from a failed `Symfony\Component\Process\Process` instance.
+     * Static constructor to create an instance from a failed sandbox execution.
      *
-     * @param Process $process The `Symfony\Component\Process\Process` instance which failed.
      * @return self
      */
-    public static function fromProcess(Process $process): self
+    public static function fromExecution(SandboxExecution $execution): self
     {
         return new self(
             sprintf(
                 'PHP Code failed to execute. Error: "%s"',
-                trim($process->getErrorOutput() ?: $process->getOutput()),
+                trim($execution->getErrorOutput() ?: $execution->getOutput()),
             ),
         );
     }

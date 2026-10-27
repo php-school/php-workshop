@@ -9,7 +9,7 @@ use PhpSchool\PhpWorkshop\Exercise\Scenario\CgiScenario;
 use PhpSchool\PhpWorkshop\ExerciseRunner\Context\TestContext;
 use PhpSchool\PhpWorkshop\ExerciseRunner\EnvironmentManager;
 use PhpSchool\PhpWorkshop\Listener\OutputRunInfoListener;
-use PhpSchool\PhpWorkshop\Process\HostProcessFactory;
+use PhpSchool\PhpWorkshop\Process\HostSandbox;
 use PhpSchool\PhpWorkshopTest\Asset\CgiExerciseImpl;
 use PhpSchool\Terminal\Terminal;
 use PhpSchool\PhpWorkshop\Check\CodeParseCheck;
@@ -38,7 +38,7 @@ class CgiRunnerTest extends TestCase
     {
         $this->exercise = new CgiExerciseImpl();
         $this->eventDispatcher = new EventDispatcher(new ResultAggregator());
-        $this->runner = new CgiRunner($this->exercise, $this->eventDispatcher, new HostProcessFactory(), new EnvironmentManager(new Filesystem(), $this->eventDispatcher));
+        $this->runner = new CgiRunner($this->exercise, $this->eventDispatcher, new HostSandbox(), new EnvironmentManager(new Filesystem(), $this->eventDispatcher));
 
         $this->assertEquals('CGI Program Runner', $this->runner->getName());
     }

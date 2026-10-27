@@ -7,7 +7,7 @@ namespace PhpSchool\PhpWorkshop\Process;
 use Symfony\Component\Process\ExecutableFinder;
 use Symfony\Component\Process\Process;
 
-final class HostProcessFactory implements ProcessFactory
+final class HostSandbox implements Sandbox
 {
     /**
      * Inherited env vars that are kept, everything else is unset so we don't leak secrets to the process
@@ -22,7 +22,7 @@ final class HostProcessFactory implements ProcessFactory
     }
 
 
-    public function create(ProcessInput $processInput): Process
+    public function create(ProcessInput $processInput): HostExecution
     {
         $executablePath = $this->executableFinder->find($processInput->getExecutable());
 
@@ -30,13 +30,13 @@ final class HostProcessFactory implements ProcessFactory
             throw ProcessNotFoundException::fromExecutable($processInput->getExecutable());
         }
 
-        return new Process(
+        return new HostExecution(new Process(
             [$executablePath, ...$processInput->getArgs()],
             $processInput->getWorkingDirectory(),
             array_merge($this->getDefaultEnv(), $processInput->getEnv()),
             $processInput->getInput(),
             10,
-        );
+        ));
     }
 
     /**

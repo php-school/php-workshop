@@ -8,11 +8,11 @@ use PhpSchool\PhpWorkshop\Exercise\Scenario\CliScenario;
 use PhpSchool\PhpWorkshop\ExerciseRunner\Context\TestContext;
 use PhpSchool\PhpWorkshop\ExerciseRunner\EnvironmentManager;
 use PhpSchool\PhpWorkshop\Listener\OutputRunInfoListener;
-use PhpSchool\PhpWorkshop\Process\HostProcessFactory;
-use Symfony\Component\Process\Process;
+use PhpSchool\PhpWorkshop\Process\HostSandbox;
+use PhpSchool\PhpWorkshop\Process\SandboxExecution;
 use PhpSchool\PhpWorkshop\Output\NullOutput;
 use PhpSchool\PhpWorkshop\Process\ProcessInput;
-use PhpSchool\PhpWorkshop\Process\ProcessFactory;
+use PhpSchool\PhpWorkshop\Process\Sandbox;
 use PhpSchool\PhpWorkshop\Utils\RequestRenderer;
 use PhpSchool\PhpWorkshopTest\Asset\CliExerciseImpl;
 use PhpSchool\Terminal\Terminal;
@@ -42,7 +42,7 @@ class CliRunnerTest extends TestCase
     {
         $this->exercise = new CliExerciseImpl();
         $this->eventDispatcher = new EventDispatcher(new ResultAggregator());
-        $this->runner = new CliRunner($this->exercise, $this->eventDispatcher, new HostProcessFactory(), new EnvironmentManager(new Filesystem(), $this->eventDispatcher));
+        $this->runner = new CliRunner($this->exercise, $this->eventDispatcher, new HostSandbox(), new EnvironmentManager(new Filesystem(), $this->eventDispatcher));
 
         $this->assertEquals('CLI Program Runner', $this->runner->getName());
     }
@@ -173,25 +173,25 @@ class CliRunnerTest extends TestCase
     public function testRunPassesTheEntryPointRelativeToTheWorkingDirectory(): void
     {
         //the sandbox mounts the working directory at a different path, so a host path would not exist in there
-        $processFactory = new class implements ProcessFactory {
+        $sandbox = new class implements Sandbox {
             /** @var array<ProcessInput> */
             public array $inputs = [];
 
-            public function create(ProcessInput $processInput): Process
+            public function create(ProcessInput $processInput): SandboxExecution
             {
                 $this->inputs[] = $processInput;
 
-                return (new HostProcessFactory())->create($processInput);
+                return (new HostSandbox())->create($processInput);
             }
         };
-        $runner = new CliRunner($this->exercise, $this->eventDispatcher, $processFactory, new EnvironmentManager(new Filesystem(), $this->eventDispatcher));
+        $runner = new CliRunner($this->exercise, $this->eventDispatcher, $sandbox, new EnvironmentManager(new Filesystem(), $this->eventDispatcher));
 
         $this->exercise->setScenario((new CliScenario())->withExecution([1, 2, 3]));
 
         $context = TestContext::fromExerciseAndStudentSolution($this->exercise, __DIR__ . '/../res/cli/user.php');
         $runner->run($context, new NullOutput());
 
-        $this->assertSame('user.php', $processFactory->inputs[0]->getArgs()[0]);
+        $this->assertSame('user.php', $sandbox->inputs[0]->getArgs()[0]);
     }
 
     public function testRunPassesOutputAndReturnsFailureIfScriptFails(): void
