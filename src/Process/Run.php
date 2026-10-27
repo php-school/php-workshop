@@ -20,8 +20,8 @@ final class Run
      */
     public function __construct(
         public readonly Process $process,
-        public readonly array $before = [],
-        public readonly array $after = [],
+        private array $before = [],
+        private array $after = [],
     ) {}
 
     public function start(): void
