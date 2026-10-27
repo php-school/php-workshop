@@ -89,6 +89,7 @@ final class DockerSandbox implements Sandbox
             $envArgs[] = $key . '=' . $value;
         }
 
+        //no steps around it yet, create/cp/rm come when files are copied in instead of mounted
         return new DockerExecution(new Process(
             [
                 $this->findDocker(),
