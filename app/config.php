@@ -30,6 +30,7 @@ use PhpSchool\PhpWorkshop\Command\MenuCommand;
 use PhpSchool\PhpWorkshop\Command\PrintCommand;
 use PhpSchool\PhpWorkshop\Command\RunCommand;
 use PhpSchool\PhpWorkshop\Command\VerifyCommand;
+use PhpSchool\PhpWorkshop\Command\WarmCacheCommand;
 use PhpSchool\PhpWorkshop\CommandDefinition;
 use PhpSchool\PhpWorkshop\CommandRouter;
 use PhpSchool\PhpWorkshop\Event\EventDispatcher;
@@ -161,6 +162,7 @@ return [
                 new CommandDefinition('verify', [], VerifyCommand::class),
                 new CommandDefinition('run', [], RunCommand::class),
                 new CommandDefinition('credits', [], CreditsCommand::class),
+                new CommandDefinition('warm-cache', [], WarmCacheCommand::class),
             ],
             'menu',
             $c->get(EventDispatcher::class),
@@ -222,6 +224,10 @@ return [
     },
 
     //commands
+    WarmCacheCommand::class => function (ContainerInterface $c) {
+        return new WarmCacheCommand($c->get(ReferencePackages::class));
+    },
+
     MenuCommand::class => function (ContainerInterface $c) {
         return new MenuCommand($c->get('menu'));
     },
