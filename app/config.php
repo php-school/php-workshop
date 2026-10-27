@@ -208,7 +208,7 @@ return [
     },
 
     Sandbox::class => function (ContainerInterface $c) {
-        $sandbox = getenv('PROCESS_FACTORY');
+        $sandbox = getenv('SANDBOX');
 
         return match ($sandbox) {
             'docker' => new DockerSandbox(
