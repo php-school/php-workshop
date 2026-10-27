@@ -69,9 +69,9 @@ use PhpSchool\PhpWorkshop\MenuItem\ResetProgress;
 use PhpSchool\PhpWorkshop\Output\OutputInterface;
 use PhpSchool\PhpWorkshop\Output\StdOutput;
 use PhpSchool\PhpWorkshop\Patch;
-use PhpSchool\PhpWorkshop\Process\DockerProcessFactory;
-use PhpSchool\PhpWorkshop\Process\HostProcessFactory;
-use PhpSchool\PhpWorkshop\Process\ProcessFactory;
+use PhpSchool\PhpWorkshop\Process\DockerSandbox;
+use PhpSchool\PhpWorkshop\Process\HostSandbox;
+use PhpSchool\PhpWorkshop\Process\Sandbox;
 use PhpSchool\PhpWorkshop\Result\Cgi\CgiResult;
 use PhpSchool\PhpWorkshop\Result\Cgi\GenericFailure as CgiGenericFailure;
 use PhpSchool\PhpWorkshop\Result\Cgi\RequestFailure as CgiRequestFailure;
@@ -195,28 +195,28 @@ return [
         $manager = new RunnerManager();
         $manager->addFactory(new CliRunnerFactory(
             $c->get(EventDispatcher::class),
-            $c->get(ProcessFactory::class),
+            $c->get(Sandbox::class),
             $c->get(EnvironmentManager::class),
         ));
         $manager->addFactory(new CgiRunnerFactory(
             $c->get(EventDispatcher::class),
-            $c->get(ProcessFactory::class),
+            $c->get(Sandbox::class),
             $c->get(EnvironmentManager::class),
         ));
         $manager->addFactory(new CustomVerifyingRunnerFactory());
         return $manager;
     },
 
-    ProcessFactory::class => function (ContainerInterface $c) {
-        $processFactory = getenv('PROCESS_FACTORY');
+    Sandbox::class => function (ContainerInterface $c) {
+        $sandbox = getenv('PROCESS_FACTORY');
 
-        return match ($processFactory) {
-            'docker' => new DockerProcessFactory(
+        return match ($sandbox) {
+            'docker' => new DockerSandbox(
                 $c->get('basePath'),
                 $c->get('appName'),
                 $c->get('phpschoolGlobalDir') . '/composer-cache',
             ),
-            default => new HostProcessFactory(),
+            default => new HostSandbox(),
         };
     },
 
@@ -278,7 +278,7 @@ return [
     },
     PrepareSolutionListener::class => function (ContainerInterface $c) {
         return new PrepareSolutionListener(
-            $c->get(ProcessFactory::class),
+            $c->get(Sandbox::class),
         );
     },
     CodePatchListener::class => function (ContainerInterface $c) {

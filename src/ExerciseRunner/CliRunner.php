@@ -20,8 +20,9 @@ use PhpSchool\PhpWorkshop\Exercise\Scenario\CliScenario;
 use PhpSchool\PhpWorkshop\ExerciseRunner\Context\ExecutionContext;
 use PhpSchool\PhpWorkshop\Input\Input;
 use PhpSchool\PhpWorkshop\Output\OutputInterface;
-use PhpSchool\PhpWorkshop\Process\ProcessFactory;
+use PhpSchool\PhpWorkshop\Process\Sandbox;
 use PhpSchool\PhpWorkshop\Process\ProcessInput;
+use PhpSchool\PhpWorkshop\Process\Run;
 use PhpSchool\PhpWorkshop\Result\Cli\RequestFailure;
 use PhpSchool\PhpWorkshop\Result\Cli\CliResult;
 use PhpSchool\PhpWorkshop\Result\Cli\GenericFailure;
@@ -29,7 +30,6 @@ use PhpSchool\PhpWorkshop\Result\Cli\Success;
 use PhpSchool\PhpWorkshop\Result\Cli\ResultInterface as CliResultInterface;
 use PhpSchool\PhpWorkshop\Result\ResultInterface;
 use PhpSchool\PhpWorkshop\Utils\Collection;
-use Symfony\Component\Process\Process;
 
 /**
  * The `CLI` runner. This runner executes solutions as PHP CLI scripts, passing the arguments
@@ -59,7 +59,7 @@ class CliRunner implements ExerciseRunnerInterface
     public function __construct(
         private CliExercise $exercise,
         private EventDispatcher $eventDispatcher,
-        private ProcessFactory $processFactory,
+        private Sandbox $sandbox,
         private EnvironmentManager $environmentManager,
     ) {}
 
@@ -220,24 +220,24 @@ class CliRunner implements ExerciseRunnerInterface
 
             $args = $event->getArgs();
 
-            $process = $this->getPhpProcess(
+            $run = $this->getPhpRun(
                 $context->getStudentExecutionDirectory(),
                 basename($context->getEntryPoint()),
                 $args,
                 $scenario->getExposedPorts(),
             );
 
-            $process->start();
+            $run->start();
             $this->eventDispatcher->dispatch(
                 new CliExecuteEvent('cli.run.student.executing', $context, $scenario, $args, ['output' => $output]),
             );
-            $process->wait(function ($outputType, $outputBuffer) use ($output) {
+            $run->wait(function ($outputType, $outputBuffer) use ($output) {
                 $output->write($outputBuffer);
             });
 
             $output->emptyLine();
 
-            if (!$process->isSuccessful()) {
+            if (!$run->isSuccessful()) {
                 $success = false;
             }
 
@@ -258,28 +258,28 @@ class CliRunner implements ExerciseRunnerInterface
      */
     private function executePhpFile(ExecutionContext $context, CliScenario $scenario, string $workingDirectory, string $fileName, Collection $args, string $type): string
     {
-        $process = $this->getPhpProcess($workingDirectory, $fileName, $args, $scenario->getExposedPorts());
+        $run = $this->getPhpRun($workingDirectory, $fileName, $args, $scenario->getExposedPorts());
 
-        $process->start();
+        $run->start();
         $this->eventDispatcher->dispatch(
             new CliExecuteEvent(sprintf('cli.verify.%s.executing', $type), $context, $scenario, $args),
         );
-        $process->wait();
+        $run->wait();
 
-        if (!$process->isSuccessful()) {
-            throw CodeExecutionException::fromProcess($process);
+        if (!$run->isSuccessful()) {
+            throw CodeExecutionException::fromProcess($run->process);
         }
 
-        return $process->getOutput();
+        return $run->getOutput();
     }
 
     /**
      * @param Collection<int, string> $args
      * @param list<int> $exposedPorts
      */
-    private function getPhpProcess(string $workingDirectory, string $fileName, Collection $args, array $exposedPorts): Process
+    private function getPhpRun(string $workingDirectory, string $fileName, Collection $args, array $exposedPorts): Run
     {
-        return $this->processFactory->create(
+        return $this->sandbox->create(
             new ProcessInput('php', [$fileName, ...$args->getArrayCopy()], $workingDirectory, [], $exposedPorts),
         );
     }

@@ -9,7 +9,7 @@ use PhpSchool\PhpWorkshop\Exercise\ExerciseType;
 use PhpSchool\PhpWorkshop\ExerciseRunner\CliRunner;
 use PhpSchool\PhpWorkshop\ExerciseRunner\EnvironmentManager;
 use PhpSchool\PhpWorkshop\ExerciseRunner\Factory\CliRunnerFactory;
-use PhpSchool\PhpWorkshop\Process\HostProcessFactory;
+use PhpSchool\PhpWorkshop\Process\HostSandbox;
 use PhpSchool\PhpWorkshopTest\Asset\CliExerciseImpl;
 use PHPUnit\Framework\TestCase;
 
@@ -21,7 +21,7 @@ class CliRunnerFactoryTest extends TestCase
     public function setUp(): void
     {
         $this->eventDispatcher = $this->createMock(EventDispatcher::class);
-        $this->factory = new CliRunnerFactory($this->eventDispatcher, new HostProcessFactory(), $this->createMock(EnvironmentManager::class));
+        $this->factory = new CliRunnerFactory($this->eventDispatcher, new HostSandbox(), $this->createMock(EnvironmentManager::class));
     }
 
     public function testSupports(): void

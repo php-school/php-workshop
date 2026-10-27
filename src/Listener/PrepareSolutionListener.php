@@ -7,7 +7,7 @@ namespace PhpSchool\PhpWorkshop\Listener;
 use PhpSchool\PhpWorkshop\Event\ExerciseRunnerEvent;
 use PhpSchool\PhpWorkshop\Exercise\ProvidesSolution;
 use PhpSchool\PhpWorkshop\Exception\RuntimeException;
-use PhpSchool\PhpWorkshop\Process\ProcessFactory;
+use PhpSchool\PhpWorkshop\Process\Sandbox;
 use PhpSchool\PhpWorkshop\Process\ProcessInput;
 
 /**
@@ -15,9 +15,9 @@ use PhpSchool\PhpWorkshop\Process\ProcessInput;
  */
 class PrepareSolutionListener
 {
-    public function __construct(private ProcessFactory $processFactory)
+    public function __construct(private Sandbox $sandbox)
     {
-        $this->processFactory = $processFactory;
+        $this->sandbox = $sandbox;
     }
 
     /**
@@ -40,7 +40,7 @@ class PrepareSolutionListener
         //prepare composer deps
         //only install if vendor folder not available
         if (!file_exists(sprintf('%s/vendor', $event->getContext()->getReferenceExecutionDirectory()))) {
-            $process = $this->processFactory->create(
+            $process = $this->sandbox->create(
                 new ProcessInput('composer', ['install', '--no-interaction'], $event->getContext()->getReferenceExecutionDirectory(), [], []),
             );
 

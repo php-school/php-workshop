@@ -2,15 +2,15 @@
 
 namespace PhpSchool\PhpWorkshopTest\Process;
 
-use PhpSchool\PhpWorkshop\Process\DockerProcessFactory;
+use PhpSchool\PhpWorkshop\Process\DockerSandbox;
 use PhpSchool\PhpWorkshop\Process\ProcessInput;
 use PhpSchool\PhpWorkshop\Process\ProcessNotFoundException;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Process\ExecutableFinder;
 
-class DockerProcessFactoryTest extends TestCase
+class DockerSandboxTest extends TestCase
 {
-    private function factory(string $portsNetwork = 'bridge'): DockerProcessFactory
+    private function factory(string $portsNetwork = 'bridge'): DockerSandbox
     {
         $finder = $this->createMock(ExecutableFinder::class);
         $finder->expects($this->once())
@@ -18,7 +18,7 @@ class DockerProcessFactoryTest extends TestCase
             ->with('docker')
             ->willReturn('/usr/local/bin/docker');
 
-        return new DockerProcessFactory('/docker-dir', 'PHP8Appreciate', '/composer/cache/dir', $finder, $portsNetwork);
+        return new DockerSandbox('/docker-dir', 'PHP8Appreciate', '/composer/cache/dir', $finder, $portsNetwork);
     }
 
     /**
@@ -52,7 +52,7 @@ class DockerProcessFactoryTest extends TestCase
             ->with('docker')
             ->willReturn(null);
 
-        $factory = new DockerProcessFactory('/docker-dir', 'php8appreciate', '/composer/cache/dir', $finder);
+        $factory = new DockerSandbox('/docker-dir', 'php8appreciate', '/composer/cache/dir', $finder);
         $input = new ProcessInput('composer', [], __DIR__, [], []);
 
         $factory->create($input);
@@ -60,7 +60,7 @@ class DockerProcessFactoryTest extends TestCase
 
     public function testCreateIsIsolatedWithNoNetwork(): void
     {
-        $process = $this->factory()->create(new ProcessInput('php', ['one', 'two'], __DIR__, [], []));
+        $process = $this->factory()->create(new ProcessInput('php', ['one', 'two'], __DIR__, [], []))->process;
 
         $expected = $this->expectedCommand(
             ['--network', 'none'],
@@ -74,7 +74,7 @@ class DockerProcessFactoryTest extends TestCase
 
     public function testComposerGetsNetworkCacheAndNoPluginsOrScripts(): void
     {
-        $process = $this->factory()->create(new ProcessInput('composer', ['install'], __DIR__, [], []));
+        $process = $this->factory()->create(new ProcessInput('composer', ['install'], __DIR__, [], []))->process;
 
         $expected = $this->expectedCommand(
             ['--network', 'bridge'],
@@ -86,7 +86,7 @@ class DockerProcessFactoryTest extends TestCase
 
     public function testExposedPortsArePublishedOnLoopbackOnly(): void
     {
-        $process = $this->factory()->create(new ProcessInput('php', [], __DIR__, [], [8000]));
+        $process = $this->factory()->create(new ProcessInput('php', [], __DIR__, [], [8000]))->process;
 
         $expected = $this->expectedCommand(
             ['--network', 'bridge', '-p', '127.0.0.1:8000:8000'],
@@ -98,7 +98,7 @@ class DockerProcessFactoryTest extends TestCase
 
     public function testExposedPortsUseTheGivenNetwork(): void
     {
-        $process = $this->factory('php-school-sandbox')->create(new ProcessInput('php', [], __DIR__, [], [8000]));
+        $process = $this->factory('php-school-sandbox')->create(new ProcessInput('php', [], __DIR__, [], [8000]))->process;
 
         $expected = $this->expectedCommand(
             ['--network', 'php-school-sandbox', '-p', '127.0.0.1:8000:8000'],
@@ -110,7 +110,7 @@ class DockerProcessFactoryTest extends TestCase
 
     public function testCreateWithEnv(): void
     {
-        $process = $this->factory()->create(new ProcessInput('php', [], __DIR__, ['SOME_VAR' => 'value'], []));
+        $process = $this->factory()->create(new ProcessInput('php', [], __DIR__, ['SOME_VAR' => 'value'], []))->process;
 
         $expected = $this->expectedCommand(
             ['--network', 'none'],
@@ -122,7 +122,7 @@ class DockerProcessFactoryTest extends TestCase
 
     public function testWithInput(): void
     {
-        $process = $this->factory()->create(new ProcessInput('php', [], __DIR__, [], [], 'someinput'));
+        $process = $this->factory()->create(new ProcessInput('php', [], __DIR__, [], [], 'someinput'))->process;
 
         static::assertSame('someinput', $process->getInput());
     }

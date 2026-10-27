@@ -5,7 +5,7 @@ namespace PhpSchool\PhpWorkshopTest\Listener;
 use PhpSchool\PhpWorkshop\Event\ExerciseRunnerEvent;
 use PhpSchool\PhpWorkshop\ExerciseRunner\Context\TestContext;
 use PhpSchool\PhpWorkshop\Listener\PrepareSolutionListener;
-use PhpSchool\PhpWorkshop\Process\HostProcessFactory;
+use PhpSchool\PhpWorkshop\Process\HostSandbox;
 use PhpSchool\PhpWorkshop\Process\ProcessNotFoundException;
 use PhpSchool\PhpWorkshop\Solution\SolutionInterface;
 use PhpSchool\PhpWorkshopTest\Asset\CliExerciseImpl;
@@ -33,7 +33,7 @@ class PrepareSolutionListenerTest extends TestCase
         $this->expectException(ProcessNotFoundException::class);
         $this->expectExceptionMessage('Could not find executable: "composer"');
         $event = new ExerciseRunnerEvent('event', $context);
-        (new PrepareSolutionListener(new HostProcessFactory($finder)))->__invoke($event);
+        (new PrepareSolutionListener(new HostSandbox($finder)))->__invoke($event);
     }
 
     public function testIfSolutionRequiresComposerButVendorDirExistsNothingIsDone(): void
@@ -54,7 +54,7 @@ class PrepareSolutionListenerTest extends TestCase
         $exercise->setSolution($solution);
 
         $event = new ExerciseRunnerEvent('event', $context);
-        (new PrepareSolutionListener(new HostProcessFactory()))->__invoke($event);
+        (new PrepareSolutionListener(new HostSandbox()))->__invoke($event);
 
         $this->assertFileExists(sprintf('%s/vendor', $context->getReferenceExecutionDirectory()));
         //check for non existence of lock file, composer generates this when updating if it doesn't exist
@@ -84,7 +84,7 @@ class PrepareSolutionListenerTest extends TestCase
         $exercise->setSolution($solution);
 
         $event = new ExerciseRunnerEvent('event', $context);
-        (new PrepareSolutionListener(new HostProcessFactory()))->__invoke($event);
+        (new PrepareSolutionListener(new HostSandbox()))->__invoke($event);
 
         $this->assertFileExists(sprintf('%s/vendor', $context->getReferenceExecutionDirectory()));
     }
@@ -119,7 +119,7 @@ class PrepareSolutionListenerTest extends TestCase
             ->willReturn(true);
 
         $event = new ExerciseRunnerEvent('event', $context);
-        (new PrepareSolutionListener(new HostProcessFactory()))->__invoke($event);
+        (new PrepareSolutionListener(new HostSandbox()))->__invoke($event);
 
         $this->assertFileExists(sprintf('%s/vendor', $context->getReferenceExecutionDirectory()));
     }
