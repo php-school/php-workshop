@@ -57,7 +57,7 @@ final class DockerSandbox implements Sandbox
         );
     }
 
-    public function create(ProcessInput $processInput): Run
+    public function create(ProcessInput $processInput): DockerExecution
     {
         $isComposer = $processInput->getExecutable() === 'composer';
 
@@ -89,7 +89,7 @@ final class DockerSandbox implements Sandbox
             $envArgs[] = $key . '=' . $value;
         }
 
-        return new Run(new Process(
+        return new DockerExecution(new Process(
             [
                 $this->findDocker(),
                 'run',

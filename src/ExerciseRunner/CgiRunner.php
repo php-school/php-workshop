@@ -23,7 +23,7 @@ use PhpSchool\PhpWorkshop\Input\Input;
 use PhpSchool\PhpWorkshop\Output\OutputInterface;
 use PhpSchool\PhpWorkshop\Process\Sandbox;
 use PhpSchool\PhpWorkshop\Process\ProcessInput;
-use PhpSchool\PhpWorkshop\Process\Run;
+use PhpSchool\PhpWorkshop\Process\SandboxExecution;
 use PhpSchool\PhpWorkshop\Result\Cgi\CgiResult;
 use PhpSchool\PhpWorkshop\Result\Cgi\RequestFailure;
 use PhpSchool\PhpWorkshop\Result\Cgi\GenericFailure;
@@ -215,21 +215,21 @@ class CgiRunner implements ExerciseRunnerInterface
         RequestInterface $request,
         string $type,
     ): ResponseInterface {
-        $run = $this->getPhpRun($workingDirectory, $fileName, $request, $scenario->getExposedPorts());
+        $execution = $this->getPhpExecution($workingDirectory, $fileName, $request, $scenario->getExposedPorts());
 
-        $run->start();
+        $execution->start();
         $this->eventDispatcher->dispatch(
             new CgiExecuteEvent(sprintf('cgi.verify.%s.executing', $type), $context, $scenario, $request),
         );
-        $run->wait();
+        $execution->wait();
 
-        if (!$run->isSuccessful()) {
-            throw CodeExecutionException::fromProcess($run->process);
+        if (!$execution->isSuccessful()) {
+            throw CodeExecutionException::fromExecution($execution);
         }
 
         //if no status line, pre-pend 200 OK
-        $output = $run->getOutput();
-        $error = $run->getErrorOutput();
+        $output = $execution->getOutput();
+        $error = $execution->getErrorOutput();
         if (!preg_match('/^HTTP\/([1-9]\d*\.\d) ([1-5]\d{2})(\s+(.+))?\\r\\n/', $output)) {
             $output = "HTTP/1.0 200 OK\r\n" . $output;
         }
@@ -240,7 +240,7 @@ class CgiRunner implements ExerciseRunnerInterface
     /**
      * @param list<int> $exposedPorts
      */
-    private function getPhpRun(string $workingDirectory, string $fileName, RequestInterface $request, array $exposedPorts): Run
+    private function getPhpExecution(string $workingDirectory, string $fileName, RequestInterface $request, array $exposedPorts): SandboxExecution
     {
         $env = [
             'REQUEST_METHOD'  => $request->getMethod(),
@@ -308,14 +308,14 @@ class CgiRunner implements ExerciseRunnerInterface
             $event = $this->eventDispatcher->dispatch(
                 new CgiExecuteEvent('cgi.run.student-execute.pre', $context, $scenario, $request),
             );
-            $run = $this->getPhpRun(
+            $execution = $this->getPhpExecution(
                 $context->getStudentExecutionDirectory(),
                 basename($context->getEntryPoint()),
                 $event->getRequest(),
                 $scenario->getExposedPorts(),
             );
 
-            $run->start();
+            $execution->start();
             $this->eventDispatcher->dispatch(
                 new CgiExecuteEvent(
                     'cgi.run.student.executing',
@@ -325,12 +325,12 @@ class CgiRunner implements ExerciseRunnerInterface
                     ['output' => $output],
                 ),
             );
-            $run->wait(function ($outputType, $outputBuffer) use ($output) {
+            $execution->wait(function ($outputType, $outputBuffer) use ($output) {
                 $output->write($outputBuffer);
             });
             $output->emptyLine();
 
-            if (!$run->isSuccessful()) {
+            if (!$execution->isSuccessful()) {
                 $success = false;
             }
 

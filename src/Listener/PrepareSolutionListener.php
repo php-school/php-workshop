@@ -40,12 +40,12 @@ class PrepareSolutionListener
         //prepare composer deps
         //only install if vendor folder not available
         if (!file_exists(sprintf('%s/vendor', $event->getContext()->getReferenceExecutionDirectory()))) {
-            $process = $this->sandbox->create(
+            $execution = $this->sandbox->create(
                 new ProcessInput('composer', ['install', '--no-interaction'], $event->getContext()->getReferenceExecutionDirectory(), [], []),
             );
 
             try {
-                $process->mustRun();
+                $execution->mustRun();
             } catch (\Symfony\Component\Process\Exception\RuntimeException $e) {
                 throw new RuntimeException('Composer dependencies could not be installed', 0, $e);
             }

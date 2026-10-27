@@ -6,5 +6,5 @@ namespace PhpSchool\PhpWorkshop\Process;
 
 interface Sandbox
 {
-    public function create(ProcessInput $processInput): Run;
+    public function create(ProcessInput $processInput): SandboxExecution;
 }

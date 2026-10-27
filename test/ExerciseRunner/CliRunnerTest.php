@@ -9,7 +9,7 @@ use PhpSchool\PhpWorkshop\ExerciseRunner\Context\TestContext;
 use PhpSchool\PhpWorkshop\ExerciseRunner\EnvironmentManager;
 use PhpSchool\PhpWorkshop\Listener\OutputRunInfoListener;
 use PhpSchool\PhpWorkshop\Process\HostSandbox;
-use PhpSchool\PhpWorkshop\Process\Run;
+use PhpSchool\PhpWorkshop\Process\SandboxExecution;
 use PhpSchool\PhpWorkshop\Output\NullOutput;
 use PhpSchool\PhpWorkshop\Process\ProcessInput;
 use PhpSchool\PhpWorkshop\Process\Sandbox;
@@ -177,7 +177,7 @@ class CliRunnerTest extends TestCase
             /** @var array<ProcessInput> */
             public array $inputs = [];
 
-            public function create(ProcessInput $processInput): Run
+            public function create(ProcessInput $processInput): SandboxExecution
             {
                 $this->inputs[] = $processInput;
 

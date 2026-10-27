@@ -22,7 +22,7 @@ final class HostSandbox implements Sandbox
     }
 
 
-    public function create(ProcessInput $processInput): Run
+    public function create(ProcessInput $processInput): HostExecution
     {
         $executablePath = $this->executableFinder->find($processInput->getExecutable());
 
@@ -30,7 +30,7 @@ final class HostSandbox implements Sandbox
             throw ProcessNotFoundException::fromExecutable($processInput->getExecutable());
         }
 
-        return new Run(new Process(
+        return new HostExecution(new Process(
             [$executablePath, ...$processInput->getArgs()],
             $processInput->getWorkingDirectory(),
             array_merge($this->getDefaultEnv(), $processInput->getEnv()),
