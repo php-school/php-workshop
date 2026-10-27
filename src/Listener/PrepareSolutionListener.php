@@ -9,9 +9,10 @@ use PhpSchool\PhpWorkshop\Exercise\ProvidesSolution;
 use PhpSchool\PhpWorkshop\Exception\RuntimeException;
 use PhpSchool\PhpWorkshop\Process\Sandbox;
 use PhpSchool\PhpWorkshop\Process\ProcessInput;
+use PhpSchool\PhpWorkshop\Process\SandboxExecution;
 
 /**
- * Listener to install composer deps for an exercise solution, from the lock and cache written by ReferencePackages
+ * Listener to install composer deps for an exercise solution, offline when ReferencePackages has warmed the cache
  */
 class PrepareSolutionListener
 {
@@ -39,23 +40,33 @@ class PrepareSolutionListener
 
         //prepare composer deps
         //only install if vendor folder not available
-        if (!file_exists(sprintf('%s/vendor', $event->getContext()->getReferenceExecutionDirectory()))) {
-            $execution = $this->sandbox->create(
-                new ProcessInput(
-                    'composer',
-                    ['install', '--no-interaction'],
-                    $event->getContext()->getReferenceExecutionDirectory(),
-                    //everything is in the cache already, so a miss fails rather than downloading
-                    ['COMPOSER_DISABLE_NETWORK' => '1'],
-                    [],
-                ),
-            );
-
-            try {
-                $execution->mustRun();
-            } catch (\Symfony\Component\Process\Exception\RuntimeException $e) {
-                throw new RuntimeException('Composer dependencies could not be installed, has ReferencePackages been run?', 0, $e);
-            }
+        if (file_exists(sprintf('%s/vendor', $event->getContext()->getReferenceExecutionDirectory()))) {
+            return;
         }
+
+        //offline first, from the cache ReferencePackages warms. Without it, eg. a workshop run from a clone, download
+        $offline = $this->install($event, ['COMPOSER_DISABLE_NETWORK' => '1']);
+        $offline->start();
+        $offline->wait();
+
+        if ($offline->isSuccessful()) {
+            return;
+        }
+
+        try {
+            $this->install($event, [])->mustRun();
+        } catch (\Symfony\Component\Process\Exception\RuntimeException $e) {
+            throw new RuntimeException('Composer dependencies could not be installed', 0, $e);
+        }
+    }
+
+    /**
+     * @param array<string, string> $env
+     */
+    private function install(ExerciseRunnerEvent $event, array $env): SandboxExecution
+    {
+        return $this->sandbox->create(
+            new ProcessInput('composer', ['install', '--no-interaction'], $event->getContext()->getReferenceExecutionDirectory(), $env, []),
+        );
     }
 }
