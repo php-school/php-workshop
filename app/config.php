@@ -135,6 +135,7 @@ return [
             $c->get(ResultAggregator::class),
             $c->get(EventDispatcher::class),
             $c->get(CheckRepository::class),
+            $c->get(Sandbox::class),
         );
     },
     ResultAggregator::class => create(ResultAggregator::class),
@@ -214,7 +215,6 @@ return [
             'docker' => new DockerSandbox(
                 $c->get('basePath'),
                 $c->get('appName'),
-                $c->get('phpschoolGlobalDir') . '/composer-cache',
             ),
             default => new HostSandbox(),
         };

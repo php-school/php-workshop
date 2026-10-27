@@ -4,6 +4,7 @@ namespace PhpSchool\PhpWorkshop\ExerciseRunner\Context;
 
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpSchool\PhpWorkshop\Input\Input;
+use PhpSchool\PhpWorkshop\Process\SandboxHost;
 use PhpSchool\PhpWorkshop\Utils\Path;
 use PhpSchool\PhpWorkshop\Utils\System;
 
@@ -14,9 +15,10 @@ class ExecutionContext
         private string $referenceExecutionDirectory,
         private ExerciseInterface $exercise,
         private Input $input,
+        private SandboxHost $sandboxHost = new SandboxHost(),
     ) {}
 
-    public static function fromInputAndExercise(Input $input, ExerciseInterface $exercise): ExecutionContext
+    public static function fromInputAndExercise(Input $input, ExerciseInterface $exercise, SandboxHost $sandboxHost): ExecutionContext
     {
         $program = $input->hasArgument('program') ? dirname($input->getRequiredArgument('program')) : (string) getcwd();
 
@@ -25,6 +27,7 @@ class ExecutionContext
             System::randomTempDir(),
             $exercise,
             $input,
+            $sandboxHost,
         );
     }
 
@@ -58,6 +61,11 @@ class ExecutionContext
     public function getStudentExecutionDirectory(): string
     {
         return $this->studentExecutionDirectory;
+    }
+
+    public function getSandboxHost(): SandboxHost
+    {
+        return $this->sandboxHost;
     }
 
     public function getReferenceExecutionDirectory(): string

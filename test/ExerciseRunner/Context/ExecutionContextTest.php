@@ -6,6 +6,7 @@ use PhpSchool\PhpWorkshop\Exercise\MockExercise;
 use PhpSchool\PhpWorkshop\ExerciseRunner\Context\ExecutionContext;
 use PhpSchool\PhpWorkshop\ExerciseRunner\Context\NoEntryPoint;
 use PhpSchool\PhpWorkshop\Input\Input;
+use PhpSchool\PhpWorkshop\Process\SandboxHost;
 use PhpSchool\PhpWorkshop\Utils\System;
 use PHPUnit\Framework\TestCase;
 
@@ -90,7 +91,7 @@ class ExecutionContextTest extends TestCase
         $input = new Input('test', ['program' => $temporaryDirectory . '/solution.php']);
         $exercise = new MockExercise();
 
-        $context = ExecutionContext::fromInputAndExercise($input, $exercise);
+        $context = ExecutionContext::fromInputAndExercise($input, $exercise, new SandboxHost('10.0.0.1'));
 
         //check that student execution directory uses the parent directory of the program from the input
         static::assertSame($temporaryDirectory, $context->getStudentExecutionDirectory());
@@ -98,5 +99,7 @@ class ExecutionContextTest extends TestCase
 
         //check that reference execution directory is a random temporary directory
         static::assertTrue(str_starts_with($context->getReferenceExecutionDirectory(), System::tempDir()));
+
+        static::assertSame('10.0.0.1', $context->getSandboxHost()->getAddress());
     }
 }
