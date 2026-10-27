@@ -10,6 +10,7 @@ use PhpSchool\PhpWorkshop\ExerciseRunner\EnvironmentManager;
 use PhpSchool\PhpWorkshop\Listener\OutputRunInfoListener;
 use PhpSchool\PhpWorkshop\Process\HostSandbox;
 use PhpSchool\PhpWorkshop\Process\SandboxExecution;
+use PhpSchool\PhpWorkshop\Process\SandboxHost;
 use PhpSchool\PhpWorkshop\Output\NullOutput;
 use PhpSchool\PhpWorkshop\Process\ProcessInput;
 use PhpSchool\PhpWorkshop\Process\Sandbox;
@@ -182,6 +183,11 @@ class CliRunnerTest extends TestCase
                 $this->inputs[] = $processInput;
 
                 return (new HostSandbox())->create($processInput);
+            }
+
+            public function getHost(): SandboxHost
+            {
+                return new SandboxHost();
             }
         };
         $runner = new CliRunner($this->exercise, $this->eventDispatcher, $sandbox, new EnvironmentManager(new Filesystem(), $this->eventDispatcher));

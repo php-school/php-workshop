@@ -15,6 +15,8 @@ use PhpSchool\PhpWorkshop\Exception\ExerciseNotConfiguredException;
 use PhpSchool\PhpWorkshop\Exception\InvalidArgumentException;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpSchool\PhpWorkshop\ExerciseRunner\Context\ExecutionContext;
+use PhpSchool\PhpWorkshop\Process\HostSandbox;
+use PhpSchool\PhpWorkshop\Process\Sandbox;
 use PhpSchool\PhpWorkshop\ExerciseRunner\RunnerManager;
 use PhpSchool\PhpWorkshop\Input\Input;
 use PhpSchool\PhpWorkshop\Output\OutputInterface;
@@ -43,12 +45,14 @@ class ExerciseDispatcher
      * @param ResultAggregator $results
      * @param EventDispatcher $eventDispatcher
      * @param CheckRepository $checkRepository
+     * @param Sandbox $sandbox Where the code runs, exercises get its host from the context.
      */
     public function __construct(
         private RunnerManager $runnerManager,
         private ResultAggregator $results,
         private EventDispatcher $eventDispatcher,
         private CheckRepository $checkRepository,
+        private Sandbox $sandbox = new HostSandbox(),
     ) {}
 
     /**
@@ -106,7 +110,7 @@ class ExerciseDispatcher
      */
     public function verify(ExerciseInterface $exercise, Input $input): ResultAggregator
     {
-        $context = ExecutionContext::fromInputAndExercise($input, $exercise);
+        $context = ExecutionContext::fromInputAndExercise($input, $exercise, $this->sandbox->getHost());
 
         $runner = $this->runnerManager->getRunner($exercise);
 
@@ -161,7 +165,7 @@ class ExerciseDispatcher
      */
     public function run(ExerciseInterface $exercise, Input $input, OutputInterface $output): bool
     {
-        $context = ExecutionContext::fromInputAndExercise($input, $exercise);
+        $context = ExecutionContext::fromInputAndExercise($input, $exercise, $this->sandbox->getHost());
 
         $runner = $this->runnerManager->getRunner($exercise);
 

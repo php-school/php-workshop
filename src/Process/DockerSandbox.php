@@ -60,6 +60,11 @@ final class DockerSandbox implements Sandbox
         );
     }
 
+    public function getHost(): SandboxHost
+    {
+        return new SandboxHost($this->portsHost);
+    }
+
     public function create(ProcessInput $processInput): DockerExecution
     {
         $isComposer = $processInput->getExecutable() === 'composer';

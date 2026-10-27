@@ -120,6 +120,13 @@ class DockerSandboxTest extends TestCase
         static::assertSame($expected, $process->getCommandLine());
     }
 
+    public function testHostIsWherePortsArePublished(): void
+    {
+        $sandbox = new DockerSandbox('/docker-dir', 'php8appreciate', null, 'bridge', '172.19.0.2');
+
+        static::assertSame('172.19.0.2', $sandbox->getHost()->getAddress());
+    }
+
     public function testCreateWithEnv(): void
     {
         $process = $this->factory()->create(new ProcessInput('php', [], __DIR__, ['SOME_VAR' => 'value'], []))->process;

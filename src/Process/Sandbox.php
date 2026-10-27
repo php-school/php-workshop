@@ -7,4 +7,6 @@ namespace PhpSchool\PhpWorkshop\Process;
 interface Sandbox
 {
     public function create(ProcessInput $processInput): SandboxExecution;
+
+    public function getHost(): SandboxHost;
 }
