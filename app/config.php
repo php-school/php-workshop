@@ -51,6 +51,7 @@ use PhpSchool\PhpWorkshop\Listener\ConfigureCommandListener;
 use PhpSchool\PhpWorkshop\Listener\InitialCodeListener;
 use PhpSchool\PhpWorkshop\Listener\OutputRunInfoListener;
 use PhpSchool\PhpWorkshop\Listener\PrepareSolutionListener;
+use PhpSchool\PhpWorkshop\ReferencePackages;
 use PhpSchool\PhpWorkshop\Listener\RealPathListener;
 use PhpSchool\PhpWorkshop\Listener\RemoveStudentSymlinksListener;
 use PhpSchool\PhpWorkshop\Listener\SelfCheckListener;
@@ -270,6 +271,10 @@ return [
             $c->get(OutputInterface::class),
             $c->get(Color::class),
         );
+    },
+
+    ReferencePackages::class => function (ContainerInterface $c) {
+        return new ReferencePackages($c->get(ExerciseRepository::class), $c->get(Sandbox::class));
     },
 
     //Listeners

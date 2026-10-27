@@ -11,7 +11,7 @@ use PhpSchool\PhpWorkshop\Process\Sandbox;
 use PhpSchool\PhpWorkshop\Process\ProcessInput;
 
 /**
- * Listener to install composer deps for an exercise solution
+ * Listener to install composer deps for an exercise solution, from the lock and cache written by ReferencePackages
  */
 class PrepareSolutionListener
 {
@@ -41,13 +41,20 @@ class PrepareSolutionListener
         //only install if vendor folder not available
         if (!file_exists(sprintf('%s/vendor', $event->getContext()->getReferenceExecutionDirectory()))) {
             $execution = $this->sandbox->create(
-                new ProcessInput('composer', ['install', '--no-interaction'], $event->getContext()->getReferenceExecutionDirectory(), [], []),
+                new ProcessInput(
+                    'composer',
+                    ['install', '--no-interaction'],
+                    $event->getContext()->getReferenceExecutionDirectory(),
+                    //everything is in the cache already, so a miss fails rather than downloading
+                    ['COMPOSER_DISABLE_NETWORK' => '1'],
+                    [],
+                ),
             );
 
             try {
                 $execution->mustRun();
             } catch (\Symfony\Component\Process\Exception\RuntimeException $e) {
-                throw new RuntimeException('Composer dependencies could not be installed', 0, $e);
+                throw new RuntimeException('Composer dependencies could not be installed, has ReferencePackages been run?', 0, $e);
             }
         }
     }
