@@ -49,5 +49,7 @@ class ReferencePackages
             //verifies install from the cache, this copy is never used
             $this->filesystem->remove($directory . '/vendor');
         }
+
+        $this->sandbox->cleanup();
     }
 }

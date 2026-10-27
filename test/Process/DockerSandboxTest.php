@@ -78,10 +78,51 @@ class DockerSandboxTest extends TestCase
 
         $expected = $this->expectedCommand(
             ['--network', 'bridge'],
-            ['-e', 'COMPOSER_HOME=/composer', '-v', __DIR__ . ':/solution', '-v', 'php-school-composer-cache:/composer'],
+            [
+                '-e', 'COMPOSER_HOME=/composer', '-v', __DIR__ . ':/solution', '-v', 'php-school-composer-cache:/composer',
+                '-v', 'VENDOR_VOLUME:/solution/vendor',
+            ],
             ['composer', 'install', '--no-plugins', '--no-scripts'],
         );
-        static::assertSame($expected, $process->getCommandLine());
+        static::assertMatchesRegularExpression(
+            '/^' . str_replace('VENDOR_VOLUME', 'php-school-vendor-[0-9a-f]{12}', preg_quote($expected, '/')) . '$/',
+            $process->getCommandLine(),
+        );
+    }
+
+    public function testRunsAfterComposerGetsItsVendorVolumeReadOnly(): void
+    {
+        $sandbox = new DockerSandbox('/docker-dir', 'php8appreciate', $this->anyFinder());
+
+        $composer = $sandbox->create(new ProcessInput('composer', ['install'], __DIR__, [], []))->process->getCommandLine();
+        preg_match('/php-school-vendor-[0-9a-f]{12}/', $composer, $volume);
+
+        $php = $sandbox->create(new ProcessInput('php', ['solution.php'], __DIR__, [], []))->process->getCommandLine();
+        static::assertStringContainsString("'-v' '" . $volume[0] . ":/solution/vendor:ro'", $php);
+
+        //another folder, eg. a student's own vendor on the cli, is left alone
+        $other = $sandbox->create(new ProcessInput('php', ['solution.php'], '/elsewhere', [], []))->process->getCommandLine();
+        static::assertStringNotContainsString('php-school-vendor-', $other);
+    }
+
+    public function testCleanupForgetsTheVendorVolumes(): void
+    {
+        $sandbox = new DockerSandbox('/docker-dir', 'php8appreciate', $this->anyFinder());
+        $sandbox->create(new ProcessInput('composer', ['install'], __DIR__, [], []));
+
+        $sandbox->cleanup();
+
+        $php = $sandbox->create(new ProcessInput('php', ['solution.php'], __DIR__, [], []))->process->getCommandLine();
+        static::assertStringNotContainsString('php-school-vendor-', $php);
+    }
+
+    private function anyFinder(): ExecutableFinder
+    {
+        $finder = $this->createMock(ExecutableFinder::class);
+        //docker volume rm of a missing volume is harmless, -f ignores it
+        $finder->method('find')->with('docker')->willReturn('docker');
+
+        return $finder;
     }
 
     public function testExposedPortsArePublishedOnLoopbackOnly(): void

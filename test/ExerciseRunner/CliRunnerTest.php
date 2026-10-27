@@ -189,6 +189,8 @@ class CliRunnerTest extends TestCase
             {
                 return new SandboxHost();
             }
+
+            public function cleanup(): void {}
         };
         $runner = new CliRunner($this->exercise, $this->eventDispatcher, $sandbox, new EnvironmentManager(new Filesystem(), $this->eventDispatcher));
 
