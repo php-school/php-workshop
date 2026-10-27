@@ -14,7 +14,6 @@ use PhpSchool\PhpWorkshop\Exercise\ExerciseType;
 use PhpSchool\PhpWorkshop\ExerciseCheck\ComposerExerciseCheck;
 use PhpSchool\PhpWorkshop\ExerciseDispatcher;
 use PhpSchool\PhpWorkshop\ExerciseRepository;
-use PhpSchool\PhpWorkshop\ReferencePackages;
 use PhpSchool\PhpWorkshop\Result\Cgi\CgiResult;
 use PhpSchool\PhpWorkshop\Result\Cli\CliResult;
 use PhpSchool\PhpWorkshop\Result\Failure;
@@ -42,7 +41,6 @@ abstract class WorkshopExerciseTest extends TestCase
 
     private Filesystem $filesystem;
     private string $executionDirectory;
-    private static bool $referencePackagesWarmed = false;
 
     public const SINGLE_FILE_SOLUTION = 'single-file-solution';
     public const DIRECTORY_SOLUTION = 'directory-solution';
@@ -59,14 +57,6 @@ abstract class WorkshopExerciseTest extends TestCase
         $this->container = $container;
         $this->filesystem = new Filesystem();
         $this->executionDirectory = System::randomTempDir();
-
-        //what install/deploy does, once per test run
-        if (!self::$referencePackagesWarmed) {
-            /** @var ReferencePackages $referencePackages */
-            $referencePackages = $this->container->get(ReferencePackages::class);
-            $referencePackages->warm();
-            self::$referencePackagesWarmed = true;
-        }
     }
 
     public function tearDown(): void
