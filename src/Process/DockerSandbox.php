@@ -15,27 +15,30 @@ use Symfony\Component\Process\Process;
 final class DockerSandbox implements Sandbox
 {
     private const TIMEOUT = 30;
+    //a named volume, so it lives on the docker host, which may not be this machine
+    private const COMPOSER_CACHE_VOLUME = 'php-school-composer-cache';
 
     private ExecutableFinder $executableFinder;
     private string $basePath;
     private string $projectName;
-    private string $composerCacheDir;
     private string $portsNetwork;
+    private string $portsHost;
 
     public function __construct(
         string $basePath,
         string $projectName,
-        string $composerCacheDir,
         ?ExecutableFinder $executableFinder = null,
         string $portsNetwork = 'bridge',
+        string $portsHost = '127.0.0.1',
     ) {
         $this->executableFinder = $executableFinder ?? new ExecutableFinder();
         $this->basePath = $basePath;
         $this->projectName = $projectName;
-        $this->composerCacheDir = $composerCacheDir;
         //for exercises that expose ports, eg a server the check connects to. Pass a network without internet access
         //to stop student code reaching out, the published ports still work
         $this->portsNetwork = $portsNetwork;
+        //the address ports are published on, the docker host's private address when it is remote
+        $this->portsHost = $portsHost;
     }
 
     public function getImageName(): string
@@ -63,11 +66,11 @@ final class DockerSandbox implements Sandbox
 
         $args = $processInput->getArgs();
         $mounts = [$processInput->getWorkingDirectory() . ':/solution'];
-        $env = ['COMPOSER_HOME' => '/tmp/composer'];
+        $env = ['COMPOSER_HOME' => '/composer'];
 
         if ($isComposer) {
             //we need to mount a volume for composer cache, and never run package plugins or scripts
-            $mounts[] = $this->composerCacheDir . ':/tmp/composer';
+            $mounts[] = self::COMPOSER_CACHE_VOLUME . ':/composer';
             $args = [...$args, '--no-plugins', '--no-scripts'];
         }
 
@@ -79,7 +82,7 @@ final class DockerSandbox implements Sandbox
             $network = ['--network', $this->portsNetwork];
             foreach ($processInput->getExposedPorts() as $port) {
                 $network[] = '-p';
-                $network[] = '127.0.0.1:' . $port . ':' . $port;
+                $network[] = $this->portsHost . ':' . $port . ':' . $port;
             }
         }
 

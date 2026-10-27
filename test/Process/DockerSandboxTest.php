@@ -10,7 +10,7 @@ use Symfony\Component\Process\ExecutableFinder;
 
 class DockerSandboxTest extends TestCase
 {
-    private function factory(string $portsNetwork = 'bridge'): DockerSandbox
+    private function factory(string $portsNetwork = 'bridge', string $portsHost = '127.0.0.1'): DockerSandbox
     {
         $finder = $this->createMock(ExecutableFinder::class);
         $finder->expects($this->once())
@@ -18,7 +18,7 @@ class DockerSandboxTest extends TestCase
             ->with('docker')
             ->willReturn('/usr/local/bin/docker');
 
-        return new DockerSandbox('/docker-dir', 'PHP8Appreciate', '/composer/cache/dir', $finder, $portsNetwork);
+        return new DockerSandbox('/docker-dir', 'PHP8Appreciate', $finder, $portsNetwork, $portsHost);
     }
 
     /**
@@ -52,7 +52,7 @@ class DockerSandboxTest extends TestCase
             ->with('docker')
             ->willReturn(null);
 
-        $factory = new DockerSandbox('/docker-dir', 'php8appreciate', '/composer/cache/dir', $finder);
+        $factory = new DockerSandbox('/docker-dir', 'php8appreciate', $finder);
         $input = new ProcessInput('composer', [], __DIR__, [], []);
 
         $factory->create($input);
@@ -64,7 +64,7 @@ class DockerSandboxTest extends TestCase
 
         $expected = $this->expectedCommand(
             ['--network', 'none'],
-            ['-e', 'COMPOSER_HOME=/tmp/composer', '-v', __DIR__ . ':/solution'],
+            ['-e', 'COMPOSER_HOME=/composer', '-v', __DIR__ . ':/solution'],
             ['php', 'one', 'two'],
         );
         static::assertSame($expected, $process->getCommandLine());
@@ -78,7 +78,7 @@ class DockerSandboxTest extends TestCase
 
         $expected = $this->expectedCommand(
             ['--network', 'bridge'],
-            ['-e', 'COMPOSER_HOME=/tmp/composer', '-v', __DIR__ . ':/solution', '-v', '/composer/cache/dir:/tmp/composer'],
+            ['-e', 'COMPOSER_HOME=/composer', '-v', __DIR__ . ':/solution', '-v', 'php-school-composer-cache:/composer'],
             ['composer', 'install', '--no-plugins', '--no-scripts'],
         );
         static::assertSame($expected, $process->getCommandLine());
@@ -90,7 +90,7 @@ class DockerSandboxTest extends TestCase
 
         $expected = $this->expectedCommand(
             ['--network', 'bridge', '-p', '127.0.0.1:8000:8000'],
-            ['-e', 'COMPOSER_HOME=/tmp/composer', '-v', __DIR__ . ':/solution'],
+            ['-e', 'COMPOSER_HOME=/composer', '-v', __DIR__ . ':/solution'],
             ['php'],
         );
         static::assertSame($expected, $process->getCommandLine());
@@ -102,7 +102,19 @@ class DockerSandboxTest extends TestCase
 
         $expected = $this->expectedCommand(
             ['--network', 'php-school-sandbox', '-p', '127.0.0.1:8000:8000'],
-            ['-e', 'COMPOSER_HOME=/tmp/composer', '-v', __DIR__ . ':/solution'],
+            ['-e', 'COMPOSER_HOME=/composer', '-v', __DIR__ . ':/solution'],
+            ['php'],
+        );
+        static::assertSame($expected, $process->getCommandLine());
+    }
+
+    public function testExposedPortsArePublishedOnTheGivenHost(): void
+    {
+        $process = $this->factory('bridge', '172.19.0.2')->create(new ProcessInput('php', [], __DIR__, [], [8000]))->process;
+
+        $expected = $this->expectedCommand(
+            ['--network', 'bridge', '-p', '172.19.0.2:8000:8000'],
+            ['-e', 'COMPOSER_HOME=/composer', '-v', __DIR__ . ':/solution'],
             ['php'],
         );
         static::assertSame($expected, $process->getCommandLine());
@@ -114,7 +126,7 @@ class DockerSandboxTest extends TestCase
 
         $expected = $this->expectedCommand(
             ['--network', 'none'],
-            ['-e', 'SOME_VAR=value', '-e', 'COMPOSER_HOME=/tmp/composer', '-v', __DIR__ . ':/solution'],
+            ['-e', 'SOME_VAR=value', '-e', 'COMPOSER_HOME=/composer', '-v', __DIR__ . ':/solution'],
             ['php'],
         );
         static::assertSame($expected, $process->getCommandLine());

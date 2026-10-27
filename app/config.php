@@ -214,7 +214,6 @@ return [
             'docker' => new DockerSandbox(
                 $c->get('basePath'),
                 $c->get('appName'),
-                $c->get('phpschoolGlobalDir') . '/composer-cache',
             ),
             default => new HostSandbox(),
         };
