@@ -83,7 +83,7 @@ final class DockerSandbox implements Sandbox
         $args = $processInput->getArgs();
         $mounts = [$processInput->getWorkingDirectory() . ':/solution'];
 
-        $vendorVolume = $this->findVendorVolume($processInput->getWorkingDirectory());
+        $vendorVolume = $this->vendorVolumes[dirname($processInput->getWorkingDirectory())] ?? null;
         if ($vendorVolume !== null) {
             //only composer writes to it
             $mounts[] = $vendorVolume . ':/solution/vendor' . ($isComposer ? '' : ':ro');
@@ -159,17 +159,6 @@ final class DockerSandbox implements Sandbox
             $processInput->getInput(),
             self::TIMEOUT + 5,
         ));
-    }
-
-    private function findVendorVolume(string $directory): ?string
-    {
-        foreach ($this->vendorVolumes as $folder => $volume) {
-            if (dirname($directory) === $folder) {
-                return $volume;
-            }
-        }
-
-        return null;
     }
 
     private function findDocker(): string
