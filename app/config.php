@@ -498,14 +498,6 @@ return [
                 containerListener(PrepareSolutionListener::class),
             ],
         ],
-        'sandbox-cleanup' => [
-            'verify.finish' => [
-                containerListener(Sandbox::class, 'cleanup'),
-            ],
-            'run.finish' => [
-                containerListener(Sandbox::class, 'cleanup'),
-            ],
-        ],
         //before the code patcher and the checks touch the student's files on the host
         'remove-student-symlinks' => [
             'verify.post.execute' => [

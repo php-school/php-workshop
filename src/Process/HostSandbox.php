@@ -27,8 +27,6 @@ final class HostSandbox implements Sandbox
         return new SandboxHost();
     }
 
-    public function cleanup(): void {}
-
     public function create(ProcessInput $processInput): HostExecution
     {
         $executablePath = $this->executableFinder->find($processInput->getExecutable());

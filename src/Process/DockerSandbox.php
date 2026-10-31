@@ -25,18 +25,21 @@ final class DockerSandbox implements Sandbox
     private string $portsHost;
 
     /**
-     * Folders composer has installed into, and the volume holding their vendor folder, eg. ['/tmp/abc' => 'php-school-vendor-1a2b3c']
-     *
      * @var array<string, string>
      */
-    private array $vendorVolumes = [];
+    private array $vendorVolumes;
 
+    /**
+     * @param array<string, string> $vendorVolumes folder => volume, for runs in that folder or below it, so vendor stays
+     *   on the docker host between runs, eg. ['/tmp/php-school/<student id>' => 'php-school-vendor-<student id>-<exercise>']
+     */
     public function __construct(
         string $basePath,
         string $projectName,
         ?ExecutableFinder $executableFinder = null,
         string $portsNetwork = 'bridge',
         string $portsHost = '127.0.0.1',
+        array $vendorVolumes = [],
     ) {
         $this->executableFinder = $executableFinder ?? new ExecutableFinder();
         $this->basePath = $basePath;
@@ -46,6 +49,7 @@ final class DockerSandbox implements Sandbox
         $this->portsNetwork = $portsNetwork;
         //the address ports are published on, the docker host's private address when it is remote
         $this->portsHost = $portsHost;
+        $this->vendorVolumes = $vendorVolumes;
     }
 
     public function getImageName(): string
@@ -72,34 +76,25 @@ final class DockerSandbox implements Sandbox
         return new SandboxHost($this->portsHost);
     }
 
-    public function cleanup(): void
-    {
-        foreach ($this->vendorVolumes as $volume) {
-            (new Process([$this->findDocker(), 'volume', 'rm', '-f', $volume]))->run();
-        }
-
-        $this->vendorVolumes = [];
-    }
-
     public function create(ProcessInput $processInput): DockerExecution
     {
         $isComposer = $processInput->getExecutable() === 'composer';
 
         $args = $processInput->getArgs();
-        $directory = $processInput->getWorkingDirectory();
-        $mounts = [$directory . ':/solution'];
+        $mounts = [$processInput->getWorkingDirectory() . ':/solution'];
+
+        $vendorVolume = $this->findVendorVolume($processInput->getWorkingDirectory());
+        if ($vendorVolume !== null) {
+            //only composer writes to it
+            $mounts[] = $vendorVolume . ':/solution/vendor' . ($isComposer ? '' : ':ro');
+        }
+
         $env = ['COMPOSER_HOME' => '/composer'];
 
         if ($isComposer) {
             //we need to mount a volume for composer cache, and never run package plugins or scripts
             $mounts[] = self::COMPOSER_CACHE_VOLUME . ':/composer';
             $args = [...$args, '--no-plugins', '--no-scripts'];
-
-            //vendor stays on the docker host until cleanup(), so it is never copied around
-            $this->vendorVolumes[$directory] ??= 'php-school-vendor-' . bin2hex(random_bytes(6));
-            $mounts[] = $this->vendorVolumes[$directory] . ':/solution/vendor';
-        } elseif (isset($this->vendorVolumes[$directory])) {
-            $mounts[] = $this->vendorVolumes[$directory] . ':/solution/vendor:ro';
         }
 
         $network = ['--network', 'none'];
@@ -164,6 +159,17 @@ final class DockerSandbox implements Sandbox
             $processInput->getInput(),
             self::TIMEOUT + 5,
         ));
+    }
+
+    private function findVendorVolume(string $directory): ?string
+    {
+        foreach ($this->vendorVolumes as $folder => $volume) {
+            if (str_starts_with($directory . '/', rtrim($folder, '/') . '/')) {
+                return $volume;
+            }
+        }
+
+        return null;
     }
 
     private function findDocker(): string
