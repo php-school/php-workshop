@@ -2,6 +2,7 @@
 
 namespace PhpSchool\PhpWorkshopTest\Process;
 
+use PhpSchool\PhpWorkshop\Process\DockerExecution;
 use PhpSchool\PhpWorkshop\Process\DockerSandbox;
 use PhpSchool\PhpWorkshop\Process\ProcessInput;
 use PhpSchool\PhpWorkshop\Process\ProcessNotFoundException;
@@ -23,23 +24,57 @@ class DockerSandboxTest extends TestCase
 
     /**
      * @param list<string> $network
-     * @param list<string> $extra env and mount args
-     * @param list<string> $command
+     * @param list<string> $mounts
      */
-    private function expectedCommand(array $network, array $extra, array $command): string
+    private function expectedCreate(string $container, array $network, array $mounts = []): string
     {
         $parts = [
-            '/usr/local/bin/docker', 'run', '--rm', '-i', '--init', '--user', getmyuid() . ':' . getmygid(),
+            '/usr/local/bin/docker', 'create', '--name', $container, '--init', '--user', getmyuid() . ':' . getmygid(),
             ...$network,
-            '--read-only', '--tmpfs', '/tmp:rw,nosuid,nodev,size=64m', '--cap-drop', 'ALL',
+            '--read-only', '--tmpfs', '/tmp:rw,nosuid,nodev,size=64m', '-v', '/solution', '--cap-drop', 'ALL',
             '--security-opt', 'no-new-privileges', '--pids-limit', '64', '--memory', '256m', '--memory-swap', '256m',
             '--cpus', '1',
-            ...$extra,
-            '-w', '/solution', 'php8appreciate-runtime', 'timeout', '-s', 'KILL', '30',
+            ...array_merge(...array_map(fn($mount) => ['-v', $mount], $mounts)),
+            'php8appreciate-runtime', 'sleep', 'infinity',
+        ];
+
+        return implode(' ', array_map(fn($p) => "'$p'", $parts));
+    }
+
+    /**
+     * @param list<string> $env
+     * @param list<string> $command
+     */
+    private function expectedExec(string $container, array $env, array $command): string
+    {
+        $parts = [
+            '/usr/local/bin/docker', 'exec', '-i', ...$env, '-e', 'COMPOSER_HOME=/composer', '-w', '/solution',
+            $container, 'timeout', '-s', 'KILL', '30',
             ...$command,
         ];
 
         return implode(' ', array_map(fn($p) => "'$p'", $parts));
+    }
+
+    private function container(DockerExecution $execution): string
+    {
+        preg_match('/php-school-[0-9a-f]{16}/', $execution->process->getCommandLine(), $matches);
+
+        return $matches[0];
+    }
+
+    /**
+     * @param list<string> $files
+     */
+    private function folder(array $files = ['solution.php']): string
+    {
+        $directory = sys_get_temp_dir() . '/' . bin2hex(random_bytes(4)) . '/' . bin2hex(random_bytes(4));
+        foreach ($files as $file) {
+            @mkdir(dirname($directory . '/' . $file), 0777, true);
+            touch($directory . '/' . $file);
+        }
+
+        return $directory;
     }
 
     public function testCreateThrowsExceptionIfDockerNotFound(): void
@@ -60,50 +95,91 @@ class DockerSandboxTest extends TestCase
 
     public function testCreateIsIsolatedWithNoNetwork(): void
     {
-        $process = $this->factory()->create(new ProcessInput('php', ['one', 'two'], __DIR__, [], []))->process;
+        $directory = $this->folder();
+        $execution = $this->factory()->create(new ProcessInput('php', ['one', 'two'], $directory, [], []));
+        $container = $this->container($execution);
 
-        $expected = $this->expectedCommand(
-            ['--network', 'none'],
-            ['-e', 'COMPOSER_HOME=/composer', '-v', __DIR__ . ':/solution'],
-            ['php', 'one', 'two'],
+        static::assertSame($this->expectedExec($container, [], ['php', 'one', 'two']), $execution->process->getCommandLine());
+        static::assertSame('/docker-dir', $execution->process->getWorkingDirectory());
+        static::assertSame(35.0, $execution->process->getTimeout());
+
+        static::assertSame($this->expectedCreate($container, ['--network', 'none']), $execution->before[0]->getCommandLine());
+        static::assertSame("'/usr/local/bin/docker' 'start' '$container'", $execution->before[1]->getCommandLine());
+        static::assertSame(
+            "tar -c -C '$directory' -- 'solution.php' | '/usr/local/bin/docker' exec -i $container tar -x -m -C /solution",
+            $execution->before[2]->getCommandLine(),
         );
-        static::assertSame($expected, $process->getCommandLine());
-        static::assertSame('/docker-dir', $process->getWorkingDirectory());
-        static::assertSame(35.0, $process->getTimeout());
+        static::assertSame([], $execution->after);
     }
 
-    public function testComposerGetsNetworkCacheAndNoPluginsOrScripts(): void
+    public function testRunsOfAFolderShareAContainerRemovedWithTheSandbox(): void
     {
-        $process = $this->factory()->create(new ProcessInput('composer', ['install'], __DIR__, [], []))->process;
+        $finder = $this->anyFinder();
+        $sandbox = new DockerSandbox('/docker-dir', 'php8appreciate', $finder);
+        $directory = $this->folder();
 
-        $expected = $this->expectedCommand(
-            ['--network', 'bridge'],
-            ['-e', 'COMPOSER_HOME=/composer', '-v', __DIR__ . ':/solution', '-v', 'php-school-composer-cache:/composer'],
-            ['composer', 'install', '--no-plugins', '--no-scripts'],
+        $first = $sandbox->create(new ProcessInput('php', ['one'], $directory, [], []));
+        $second = $sandbox->create(new ProcessInput('php', ['two'], $directory, [], []));
+        $other = $sandbox->create(new ProcessInput('php', ['one'], $this->folder(), [], []));
+
+        static::assertSame($this->container($first), $this->container($second));
+        static::assertSame([], $second->before);
+        static::assertNotSame($this->container($first), $this->container($other));
+    }
+
+    public function testComposerGetsItsOwnContainerWithNetworkCacheAndNoPluginsOrScripts(): void
+    {
+        $directory = $this->folder(['composer.json']);
+        $execution = $this->factory()->create(new ProcessInput('composer', ['install'], $directory, [], []));
+        $container = $this->container($execution);
+
+        static::assertSame(
+            $this->expectedExec($container, [], ['composer', 'install', '--no-plugins', '--no-scripts']),
+            $execution->process->getCommandLine(),
         );
-        static::assertSame($expected, $process->getCommandLine());
+        static::assertSame(
+            $this->expectedCreate($container, ['--network', 'bridge'], ['php-school-composer-cache:/composer']),
+            $execution->before[0]->getCommandLine(),
+        );
+        static::assertSame(
+            "'/usr/local/bin/docker' exec $container tar -c -C /solution composer.lock vendor | tar -x -C '$directory'",
+            $execution->after[0]->getCommandLine(),
+        );
+        static::assertSame("'/usr/local/bin/docker' 'rm' '-f' '-v' '$container'", $execution->after[1]->getCommandLine());
     }
 
     public function testVendorVolumeIsWritableForComposerOnly(): void
     {
-        $sandbox = new DockerSandbox('/docker-dir', 'php8appreciate', $this->anyFinder(), vendorVolumes: ['/tmp/student' => 'vendor-student']);
+        $directory = $this->folder(['composer.json', 'vendor/autoload.php']);
+        $sandbox = new DockerSandbox('/docker-dir', 'php8appreciate', $this->anyFinder(), vendorVolumes: [dirname($directory) => 'vendor-student']);
 
-        $composer = $sandbox->create(new ProcessInput('composer', ['update'], '/tmp/student/abc', [], []))->process;
-        static::assertStringContainsString("'-v' 'vendor-student:/solution/vendor' ", $composer->getCommandLine());
+        $composer = $sandbox->create(new ProcessInput('composer', ['update'], $directory, [], []));
+        static::assertStringContainsString("'-v' 'vendor-student:/solution/vendor' ", $composer->before[0]->getCommandLine());
+        //only the lock comes back, vendor stays in the volume
+        static::assertSame(
+            sprintf(
+                "'/usr/local/bin/docker' exec %s tar -c -C /solution composer.lock  | tar -x -C '%s'; mkdir -p '%s/vendor'",
+                $this->container($composer),
+                $directory,
+                $directory,
+            ),
+            $composer->after[0]->getCommandLine(),
+        );
 
-        $php = $sandbox->create(new ProcessInput('php', ['solution.php'], '/tmp/student/def', [], []))->process;
-        static::assertStringContainsString("'-v' 'vendor-student:/solution/vendor:ro' ", $php->getCommandLine());
+        $php = $sandbox->create(new ProcessInput('php', ['solution.php'], $directory, [], []));
+        static::assertStringContainsString("'-v' 'vendor-student:/solution/vendor:ro' ", $php->before[0]->getCommandLine());
+        static::assertStringContainsString("-- 'composer.json' |", $php->before[2]->getCommandLine());
     }
 
     public function testFoldersOutsideTheVendorVolumesKeepTheirOwnVendor(): void
     {
         $sandbox = new DockerSandbox('/docker-dir', 'php8appreciate', $this->anyFinder(), vendorVolumes: ['/tmp/student' => 'vendor-student']);
 
-        //eg. the reference solution, a sibling folder whose name starts the same, or the listed folder itself
-        foreach (['/tmp/reference/abc', '/tmp/student-2/abc', '/tmp/student'] as $directory) {
-            $process = $sandbox->create(new ProcessInput('composer', ['install'], $directory, [], []))->process;
-            static::assertStringNotContainsString('vendor-student', $process->getCommandLine());
-        }
+        $directory = $this->folder(['solution.php', 'vendor/autoload.php']);
+        $execution = $sandbox->create(new ProcessInput('php', [], $directory, [], []));
+        static::assertStringNotContainsString('vendor-student', $execution->before[0]->getCommandLine());
+        //its contents, as tar can not change the image's vendor folder
+        static::assertStringContainsString("-- 'solution.php' 'vendor/autoload.php' |", $execution->before[2]->getCommandLine());
     }
 
     private function anyFinder(): ExecutableFinder
@@ -114,40 +190,38 @@ class DockerSandboxTest extends TestCase
         return $finder;
     }
 
-    public function testExposedPortsArePublishedOnLoopbackOnly(): void
+    public function testExposedPortsGetTheirOwnContainerPublishedOnLoopbackOnly(): void
     {
-        $process = $this->factory()->create(new ProcessInput('php', [], __DIR__, [], [8000]))->process;
+        $sandbox = $this->factory();
+        $directory = $this->folder();
+        $execution = $sandbox->create(new ProcessInput('php', [], $directory, [], [8000]));
+        $container = $this->container($execution);
 
-        $expected = $this->expectedCommand(
-            ['--network', 'bridge', '-p', '127.0.0.1:8000:8000'],
-            ['-e', 'COMPOSER_HOME=/composer', '-v', __DIR__ . ':/solution'],
-            ['php'],
+        static::assertSame(
+            $this->expectedCreate($container, ['--network', 'bridge', '-p', '127.0.0.1:8000:8000']),
+            $execution->before[0]->getCommandLine(),
         );
-        static::assertSame($expected, $process->getCommandLine());
+        static::assertSame("'/usr/local/bin/docker' 'rm' '-f' '-v' '$container'", $execution->after[0]->getCommandLine());
+
+        $next = $sandbox->create(new ProcessInput('php', [], $directory, [], [8000]));
+        static::assertNotSame($container, $this->container($next));
     }
 
     public function testExposedPortsUseTheGivenNetwork(): void
     {
-        $process = $this->factory('php-school-sandbox')->create(new ProcessInput('php', [], __DIR__, [], [8000]))->process;
+        $execution = $this->factory('php-school-sandbox')->create(new ProcessInput('php', [], $this->folder(), [], [8000]));
 
-        $expected = $this->expectedCommand(
-            ['--network', 'php-school-sandbox', '-p', '127.0.0.1:8000:8000'],
-            ['-e', 'COMPOSER_HOME=/composer', '-v', __DIR__ . ':/solution'],
-            ['php'],
+        static::assertStringContainsString(
+            "'--network' 'php-school-sandbox' '-p' '127.0.0.1:8000:8000'",
+            $execution->before[0]->getCommandLine(),
         );
-        static::assertSame($expected, $process->getCommandLine());
     }
 
     public function testExposedPortsArePublishedOnTheGivenHost(): void
     {
-        $process = $this->factory('bridge', '172.19.0.2')->create(new ProcessInput('php', [], __DIR__, [], [8000]))->process;
+        $execution = $this->factory('bridge', '172.19.0.2')->create(new ProcessInput('php', [], $this->folder(), [], [8000]));
 
-        $expected = $this->expectedCommand(
-            ['--network', 'bridge', '-p', '172.19.0.2:8000:8000'],
-            ['-e', 'COMPOSER_HOME=/composer', '-v', __DIR__ . ':/solution'],
-            ['php'],
-        );
-        static::assertSame($expected, $process->getCommandLine());
+        static::assertStringContainsString("'-p' '172.19.0.2:8000:8000'", $execution->before[0]->getCommandLine());
     }
 
     public function testHostIsWherePortsArePublished(): void
@@ -159,19 +233,17 @@ class DockerSandboxTest extends TestCase
 
     public function testCreateWithEnv(): void
     {
-        $process = $this->factory()->create(new ProcessInput('php', [], __DIR__, ['SOME_VAR' => 'value'], []))->process;
+        $execution = $this->factory()->create(new ProcessInput('php', [], $this->folder(), ['SOME_VAR' => 'value'], []));
 
-        $expected = $this->expectedCommand(
-            ['--network', 'none'],
-            ['-e', 'SOME_VAR=value', '-e', 'COMPOSER_HOME=/composer', '-v', __DIR__ . ':/solution'],
-            ['php'],
+        static::assertSame(
+            $this->expectedExec($this->container($execution), ['-e', 'SOME_VAR=value'], ['php']),
+            $execution->process->getCommandLine(),
         );
-        static::assertSame($expected, $process->getCommandLine());
     }
 
     public function testWithInput(): void
     {
-        $process = $this->factory()->create(new ProcessInput('php', [], __DIR__, [], [], 'someinput'))->process;
+        $process = $this->factory()->create(new ProcessInput('php', [], $this->folder(), [], [], 'someinput'))->process;
 
         static::assertSame('someinput', $process->getInput());
     }
