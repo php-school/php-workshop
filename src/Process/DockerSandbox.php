@@ -24,12 +24,22 @@ final class DockerSandbox implements Sandbox
     private string $portsNetwork;
     private string $portsHost;
 
+    /**
+     * @var array<string, string>
+     */
+    private array $vendorVolumes;
+
+    /**
+     * @param array<string, string> $vendorVolumes folder => volume, for runs in a folder directly inside it, so vendor
+     *   stays on the docker host between runs, eg. ['/tmp/php-school/<student id>' => 'php-school-vendor-<student id>-<exercise>']
+     */
     public function __construct(
         string $basePath,
         string $projectName,
         ?ExecutableFinder $executableFinder = null,
         string $portsNetwork = 'bridge',
         string $portsHost = '127.0.0.1',
+        array $vendorVolumes = [],
     ) {
         $this->executableFinder = $executableFinder ?? new ExecutableFinder();
         $this->basePath = $basePath;
@@ -39,6 +49,7 @@ final class DockerSandbox implements Sandbox
         $this->portsNetwork = $portsNetwork;
         //the address ports are published on, the docker host's private address when it is remote
         $this->portsHost = $portsHost;
+        $this->vendorVolumes = $vendorVolumes;
     }
 
     public function getImageName(): string
@@ -71,6 +82,13 @@ final class DockerSandbox implements Sandbox
 
         $args = $processInput->getArgs();
         $mounts = [$processInput->getWorkingDirectory() . ':/solution'];
+
+        $vendorVolume = $this->vendorVolumes[dirname($processInput->getWorkingDirectory())] ?? null;
+        if ($vendorVolume !== null) {
+            //only composer writes to it
+            $mounts[] = $vendorVolume . ':/solution/vendor' . ($isComposer ? '' : ':ro');
+        }
+
         $env = ['COMPOSER_HOME' => '/composer'];
 
         if ($isComposer) {

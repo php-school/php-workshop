@@ -84,6 +84,36 @@ class DockerSandboxTest extends TestCase
         static::assertSame($expected, $process->getCommandLine());
     }
 
+    public function testVendorVolumeIsWritableForComposerOnly(): void
+    {
+        $sandbox = new DockerSandbox('/docker-dir', 'php8appreciate', $this->anyFinder(), vendorVolumes: ['/tmp/student' => 'vendor-student']);
+
+        $composer = $sandbox->create(new ProcessInput('composer', ['update'], '/tmp/student/abc', [], []))->process;
+        static::assertStringContainsString("'-v' 'vendor-student:/solution/vendor' ", $composer->getCommandLine());
+
+        $php = $sandbox->create(new ProcessInput('php', ['solution.php'], '/tmp/student/def', [], []))->process;
+        static::assertStringContainsString("'-v' 'vendor-student:/solution/vendor:ro' ", $php->getCommandLine());
+    }
+
+    public function testFoldersOutsideTheVendorVolumesKeepTheirOwnVendor(): void
+    {
+        $sandbox = new DockerSandbox('/docker-dir', 'php8appreciate', $this->anyFinder(), vendorVolumes: ['/tmp/student' => 'vendor-student']);
+
+        //eg. the reference solution, a sibling folder whose name starts the same, or the listed folder itself
+        foreach (['/tmp/reference/abc', '/tmp/student-2/abc', '/tmp/student'] as $directory) {
+            $process = $sandbox->create(new ProcessInput('composer', ['install'], $directory, [], []))->process;
+            static::assertStringNotContainsString('vendor-student', $process->getCommandLine());
+        }
+    }
+
+    private function anyFinder(): ExecutableFinder
+    {
+        $finder = $this->createMock(ExecutableFinder::class);
+        $finder->method('find')->with('docker')->willReturn('/usr/local/bin/docker');
+
+        return $finder;
+    }
+
     public function testExposedPortsArePublishedOnLoopbackOnly(): void
     {
         $process = $this->factory()->create(new ProcessInput('php', [], __DIR__, [], [8000]))->process;
