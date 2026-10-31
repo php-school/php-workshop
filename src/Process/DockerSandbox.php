@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace PhpSchool\PhpWorkshop\Process;
 
-use PhpSchool\PhpWorkshop\Utils\Path;
 use Symfony\Component\Process\ExecutableFinder;
 use Symfony\Component\Process\Process;
 
@@ -165,7 +164,7 @@ final class DockerSandbox implements Sandbox
     private function findVendorVolume(string $directory): ?string
     {
         foreach ($this->vendorVolumes as $folder => $volume) {
-            if (dirname($directory) === Path::join($folder)) {
+            if (dirname($directory) === $folder) {
                 return $volume;
             }
         }

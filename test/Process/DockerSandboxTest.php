@@ -86,7 +86,7 @@ class DockerSandboxTest extends TestCase
 
     public function testVendorVolumeIsWritableForComposerOnly(): void
     {
-        $sandbox = new DockerSandbox('/docker-dir', 'php8appreciate', $this->anyFinder(), vendorVolumes: ['/tmp/student/' => 'vendor-student']);
+        $sandbox = new DockerSandbox('/docker-dir', 'php8appreciate', $this->anyFinder(), vendorVolumes: ['/tmp/student' => 'vendor-student']);
 
         $composer = $sandbox->create(new ProcessInput('composer', ['update'], '/tmp/student/abc', [], []))->process;
         static::assertStringContainsString("'-v' 'vendor-student:/solution/vendor' ", $composer->getCommandLine());
