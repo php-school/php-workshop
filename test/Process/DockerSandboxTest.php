@@ -99,8 +99,8 @@ class DockerSandboxTest extends TestCase
     {
         $sandbox = new DockerSandbox('/docker-dir', 'php8appreciate', $this->anyFinder(), vendorVolumes: ['/tmp/student' => 'vendor-student']);
 
-        //eg. the reference solution, or a sibling folder whose name starts the same
-        foreach (['/tmp/reference', '/tmp/student-2'] as $directory) {
+        //eg. the reference solution, a sibling folder whose name starts the same, or the listed folder itself
+        foreach (['/tmp/reference/abc', '/tmp/student-2/abc', '/tmp/student'] as $directory) {
             $process = $sandbox->create(new ProcessInput('composer', ['install'], $directory, [], []))->process;
             static::assertStringNotContainsString('vendor-student', $process->getCommandLine());
         }

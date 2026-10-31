@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace PhpSchool\PhpWorkshop\Process;
 
+use PhpSchool\PhpWorkshop\Utils\Path;
 use Symfony\Component\Process\ExecutableFinder;
 use Symfony\Component\Process\Process;
 
@@ -30,8 +31,8 @@ final class DockerSandbox implements Sandbox
     private array $vendorVolumes;
 
     /**
-     * @param array<string, string> $vendorVolumes folder => volume, for runs in that folder or below it, so vendor stays
-     *   on the docker host between runs, eg. ['/tmp/php-school/<student id>' => 'php-school-vendor-<student id>-<exercise>']
+     * @param array<string, string> $vendorVolumes folder => volume, for runs in a folder directly inside it, so vendor
+     *   stays on the docker host between runs, eg. ['/tmp/php-school/<student id>' => 'php-school-vendor-<student id>-<exercise>']
      */
     public function __construct(
         string $basePath,
@@ -164,7 +165,7 @@ final class DockerSandbox implements Sandbox
     private function findVendorVolume(string $directory): ?string
     {
         foreach ($this->vendorVolumes as $folder => $volume) {
-            if (str_starts_with($directory . '/', rtrim($folder, '/') . '/')) {
+            if (dirname($directory) === Path::join($folder)) {
                 return $volume;
             }
         }
