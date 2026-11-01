@@ -6,8 +6,7 @@ namespace PhpSchool\PhpWorkshop;
 
 use PhpSchool\PhpWorkshop\Exception\RuntimeException;
 use PhpSchool\PhpWorkshop\Exercise\ProvidesSolution;
-use PhpSchool\PhpWorkshop\Process\ProcessInput;
-use PhpSchool\PhpWorkshop\Process\Sandbox;
+use PhpSchool\PhpWorkshop\Process\Composer;
 use Symfony\Component\Filesystem\Filesystem;
 
 /**
@@ -18,7 +17,7 @@ class ReferencePackages
 {
     private Filesystem $filesystem;
 
-    public function __construct(private ExerciseRepository $exerciseRepository, private Sandbox $sandbox)
+    public function __construct(private ExerciseRepository $exerciseRepository, private Composer $composer)
     {
         $this->filesystem = new Filesystem();
     }
@@ -36,12 +35,8 @@ class ReferencePackages
             $this->filesystem->remove($directory . '/vendor');
 
             //keeps a committed composer.lock, or writes one next to the solution. It is copied with it on each verify
-            $execution = $this->sandbox->create(
-                new ProcessInput('composer', ['install', '--no-interaction'], $directory, [], []),
-            );
-
             try {
-                $execution->mustRun();
+                $this->composer->create(['install'], $directory)->mustRun();
             } catch (\Symfony\Component\Process\Exception\RuntimeException $e) {
                 throw new RuntimeException(sprintf('Composer packages for "%s" could not be installed', $exercise->getName()), 0, $e);
             }
