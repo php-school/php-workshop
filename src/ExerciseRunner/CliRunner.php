@@ -229,7 +229,7 @@ class CliRunner implements ExerciseRunnerInterface
 
             $execution->start();
             $this->eventDispatcher->dispatch(
-                new CliExecuteEvent('cli.run.student.executing', $context, $scenario, $args, ['output' => $output]),
+                new CliExecuteEvent('cli.run.student.executing', $context, $scenario, $args, ['output' => $output, 'execution' => $execution]),
             );
             $execution->wait(function ($outputType, $outputBuffer) use ($output) {
                 $output->write($outputBuffer);
@@ -262,7 +262,7 @@ class CliRunner implements ExerciseRunnerInterface
 
         $execution->start();
         $this->eventDispatcher->dispatch(
-            new CliExecuteEvent(sprintf('cli.verify.%s.executing', $type), $context, $scenario, $args),
+            new CliExecuteEvent(sprintf('cli.verify.%s.executing', $type), $context, $scenario, $args, ['execution' => $execution]),
         );
         $execution->wait();
 

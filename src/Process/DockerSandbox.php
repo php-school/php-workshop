@@ -58,19 +58,17 @@ final class DockerSandbox implements Sandbox
         );
     }
 
-    public function getHost(): SandboxHost
-    {
-        return new SandboxHost($this->portsHost);
-    }
-
     public function create(ProcessInput $processInput): DockerExecution
     {
+        $container = 'php-school-' . bin2hex(random_bytes(8));
+
         $network = ['--network', 'none'];
         if (count($processInput->getExposedPorts()) > 0) {
             $network = ['--network', $this->portsNetwork];
             foreach ($processInput->getExposedPorts() as $port) {
+                //no host port, docker picks a free one, see getAddress()
                 $network[] = '-p';
-                $network[] = $this->portsHost . ':' . $port . ':' . $port;
+                $network[] = $this->portsHost . '::' . $port;
             }
         }
 
@@ -86,6 +84,8 @@ final class DockerSandbox implements Sandbox
                 $this->findDocker(),
                 'run',
                 '--rm',
+                '--name',
+                $container,
                 '-i',
                 '--init',
                 '--user',
@@ -124,7 +124,31 @@ final class DockerSandbox implements Sandbox
             null,
             $processInput->getInput(),
             self::TIMEOUT + 5,
-        ));
+        ), [], [], fn(int $port) => $this->getAddress($container, $port));
+    }
+
+    /**
+     * Asks docker which host port it published a container's port on. Waits a little, as the container may still be
+     * starting.
+     */
+    private function getAddress(string $container, int $port): string
+    {
+        for ($try = 0; $try < 20; $try++) {
+            //eg. 127.0.0.1:54321
+            $process = new Process([$this->findDocker(), 'port', $container, (string) $port], $this->basePath);
+            $process->run();
+
+            if ($process->isSuccessful() && trim($process->getOutput()) !== '') {
+                $published = strtok(trim($process->getOutput()), "\n");
+                $host = str_contains($this->portsHost, ':') ? '[' . $this->portsHost . ']' : $this->portsHost;
+
+                return $host . ':' . substr((string) $published, (int) strrpos((string) $published, ':') + 1);
+            }
+
+            usleep(100000);
+        }
+
+        throw new \RuntimeException(sprintf('Port %d of the sandbox was not published', $port));
     }
 
     private function findDocker(): string

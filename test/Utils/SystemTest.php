@@ -34,6 +34,13 @@ class SystemTest extends TestCase
         self::assertSame($expect, System::tempDir('test'));
     }
 
+    public function testFreePortCanBeListenedOn(): void
+    {
+        $server = stream_socket_server('tcp://127.0.0.1:' . System::freePort());
+        self::assertNotFalse($server);
+        fclose($server);
+    }
+
     public function testRandomTempDir(): void
     {
         self::assertTrue(str_starts_with(System::randomTempDir(), realpath(sys_get_temp_dir()) . '/php-school'));

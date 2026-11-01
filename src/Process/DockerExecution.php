@@ -15,11 +15,13 @@ final class DockerExecution implements SandboxExecution
     /**
      * @param list<Process> $before
      * @param list<Process> $after
+     * @param \Closure(int): string $address finds where docker published a port, see getAddress()
      */
     public function __construct(
         public readonly Process $process,
         public readonly array $before = [],
         public readonly array $after = [],
+        private ?\Closure $address = null,
     ) {}
 
     public function start(): void
@@ -63,6 +65,15 @@ final class DockerExecution implements SandboxExecution
     public function getErrorOutput(): string
     {
         return $this->process->getErrorOutput();
+    }
+
+    public function getAddress(int $port): string
+    {
+        if ($this->address === null) {
+            throw new \RuntimeException(sprintf('Port %d is not published', $port));
+        }
+
+        return ($this->address)($port);
     }
 
     private function runAfter(): void

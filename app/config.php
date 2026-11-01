@@ -138,7 +138,6 @@ return [
             $c->get(ResultAggregator::class),
             $c->get(EventDispatcher::class),
             $c->get(CheckRepository::class),
-            $c->get(Sandbox::class),
         );
     },
     ResultAggregator::class => create(ResultAggregator::class),

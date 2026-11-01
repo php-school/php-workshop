@@ -10,7 +10,6 @@ use PhpSchool\PhpWorkshop\ExerciseRunner\EnvironmentManager;
 use PhpSchool\PhpWorkshop\Listener\OutputRunInfoListener;
 use PhpSchool\PhpWorkshop\Process\HostSandbox;
 use PhpSchool\PhpWorkshop\Process\SandboxExecution;
-use PhpSchool\PhpWorkshop\Process\SandboxHost;
 use PhpSchool\PhpWorkshop\Output\NullOutput;
 use PhpSchool\PhpWorkshop\Process\ProcessInput;
 use PhpSchool\PhpWorkshop\Process\Sandbox;
@@ -85,6 +84,28 @@ class CliRunnerTest extends TestCase
 
         $this->assertInstanceOf(CliResult::class, $result);
         $this->assertTrue($result->isSuccessful());
+    }
+
+    public function testExecutingEventsHaveTheExecution(): void
+    {
+        $solution = SingleFileSolution::fromFile(realpath(__DIR__ . '/../res/cli/solution.php'));
+        $this->exercise->setSolution($solution);
+        $this->exercise->setScenario((new CliScenario())->withExecution([1, 2, 3]));
+
+        $executions = [];
+        $this->eventDispatcher->listen(
+            ['cli.verify.reference.executing', 'cli.verify.student.executing', 'cli.run.student.executing'],
+            function (CliExecuteEvent $event) use (&$executions) {
+                $executions[] = $event->getExecution();
+            },
+        );
+
+        $context = TestContext::fromExerciseAndStudentSolution($this->exercise, __DIR__ . '/../res/cli/user.php');
+        $this->runner->verify($context);
+        $this->runner->run($context, new NullOutput());
+
+        $this->assertCount(3, $executions);
+        $this->assertContainsOnlyInstancesOf(SandboxExecution::class, $executions);
     }
 
     public function testSuccessWithSingleSetOfArgsForBC(): void
@@ -183,11 +204,6 @@ class CliRunnerTest extends TestCase
                 $this->inputs[] = $processInput;
 
                 return (new HostSandbox())->create($processInput);
-            }
-
-            public function getHost(): SandboxHost
-            {
-                return new SandboxHost();
             }
         };
         $runner = new CliRunner($this->exercise, $this->eventDispatcher, $sandbox, new EnvironmentManager(new Filesystem(), $this->eventDispatcher));
