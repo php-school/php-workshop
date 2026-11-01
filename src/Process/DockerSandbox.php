@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace PhpSchool\PhpWorkshop\Process;
 
 use PhpSchool\PhpWorkshop\Exercise\Scenario\ExerciseScenario;
+use PhpSchool\PhpWorkshop\Process\Port\FreePortPicker;
+use PhpSchool\PhpWorkshop\Process\Port\PortPicker;
 use Symfony\Component\Process\ExecutableFinder;
 use Symfony\Component\Process\Process;
 

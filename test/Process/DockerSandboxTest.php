@@ -3,7 +3,7 @@
 namespace PhpSchool\PhpWorkshopTest\Process;
 
 use PhpSchool\PhpWorkshop\Process\DockerSandbox;
-use PhpSchool\PhpWorkshop\Process\PortPicker;
+use PhpSchool\PhpWorkshop\Process\Port\PortPicker;
 use PhpSchool\PhpWorkshop\Exercise\Scenario\CliScenario;
 use PhpSchool\PhpWorkshop\Process\ProcessInput;
 use PhpSchool\PhpWorkshop\Process\Workspace;

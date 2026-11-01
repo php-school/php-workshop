@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace PhpSchool\PhpWorkshop\Process;
+namespace PhpSchool\PhpWorkshop\Process\Port;
 
 /**
  * Picks a port, eg. the one an exercise's code listens on, or the one DockerSandbox publishes it on.
