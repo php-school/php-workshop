@@ -1,6 +1,6 @@
 <?php
 
-namespace PhpSchool\PhpWorkshop\Process;
+namespace PhpSchool\PhpWorkshop\Process\Sandbox;
 
 class ProcessInput
 {

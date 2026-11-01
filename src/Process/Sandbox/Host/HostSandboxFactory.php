@@ -2,8 +2,9 @@
 
 declare(strict_types=1);
 
-namespace PhpSchool\PhpWorkshop\Process;
+namespace PhpSchool\PhpWorkshop\Process\Sandbox\Host;
 
+use PhpSchool\PhpWorkshop\Process\Sandbox\SandboxFactory;
 use PhpSchool\PhpWorkshop\Exercise\Scenario\ExerciseScenario;
 use PhpSchool\PhpWorkshop\Process\Port\FreePortPicker;
 use Symfony\Component\Process\ExecutableFinder;

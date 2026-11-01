@@ -1,12 +1,12 @@
 <?php
 
-namespace PhpSchool\PhpWorkshopTest\Process;
+namespace PhpSchool\PhpWorkshopTest\Process\Sandbox\Host;
 
 use PhpSchool\PhpWorkshop\Exercise\Scenario\CliScenario;
-use PhpSchool\PhpWorkshop\Process\ProcessInput;
+use PhpSchool\PhpWorkshop\Process\Sandbox\ProcessInput;
 use PhpSchool\PhpWorkshop\Process\ProcessNotFoundException;
 use Symfony\Component\Process\ExecutableFinder;
-use PhpSchool\PhpWorkshop\Process\HostSandboxFactory;
+use PhpSchool\PhpWorkshop\Process\Sandbox\Host\HostSandboxFactory;
 use PHPUnit\Framework\TestCase;
 
 class HostSandboxTest extends TestCase

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace PhpSchool\PhpWorkshop\Process;
+namespace PhpSchool\PhpWorkshop\Process\Sandbox;
 
 /**
  * Where one solution's code runs. Every execution of it happens here and listens on the same port.

@@ -1,8 +1,8 @@
 <?php
 
-namespace PhpSchool\PhpWorkshopTest\Process;
+namespace PhpSchool\PhpWorkshopTest\Process\Sandbox;
 
-use PhpSchool\PhpWorkshop\Process\ProcessInput;
+use PhpSchool\PhpWorkshop\Process\Sandbox\ProcessInput;
 use PHPUnit\Framework\TestCase;
 
 class ProcessInputTest extends TestCase

@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace PhpSchool\PhpWorkshopTest\Process;
+namespace PhpSchool\PhpWorkshopTest\Process\Sandbox\Docker;
 
-use PhpSchool\PhpWorkshop\Process\DockerSandboxExecution;
+use PhpSchool\PhpWorkshop\Process\Sandbox\Docker\DockerSandboxExecution;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Process\Process;
 

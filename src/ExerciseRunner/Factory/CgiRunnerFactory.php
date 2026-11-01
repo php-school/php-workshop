@@ -13,7 +13,7 @@ use PhpSchool\PhpWorkshop\Exercise\ExerciseType;
 use PhpSchool\PhpWorkshop\ExerciseRunner\CgiRunner;
 use PhpSchool\PhpWorkshop\ExerciseRunner\EnvironmentManager;
 use PhpSchool\PhpWorkshop\ExerciseRunner\ExerciseRunnerInterface;
-use PhpSchool\PhpWorkshop\Process\SandboxFactory;
+use PhpSchool\PhpWorkshop\Process\Sandbox\SandboxFactory;
 
 /**
  * Factory class for `CgiRunner`

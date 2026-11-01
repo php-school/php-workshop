@@ -2,8 +2,10 @@
 
 declare(strict_types=1);
 
-namespace PhpSchool\PhpWorkshop\Process;
+namespace PhpSchool\PhpWorkshop\Process\Sandbox\Docker;
 
+use PhpSchool\PhpWorkshop\Process\Sandbox\ProcessInput;
+use PhpSchool\PhpWorkshop\Process\Sandbox\Sandbox;
 use Symfony\Component\Process\Process;
 
 /**

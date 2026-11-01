@@ -1,11 +1,11 @@
 <?php
 
-namespace PhpSchool\PhpWorkshopTest\Process;
+namespace PhpSchool\PhpWorkshopTest\Process\Sandbox\Docker;
 
-use PhpSchool\PhpWorkshop\Process\DockerSandboxFactory;
+use PhpSchool\PhpWorkshop\Process\Sandbox\Docker\DockerSandboxFactory;
 use PhpSchool\PhpWorkshop\Process\Port\PortPicker;
 use PhpSchool\PhpWorkshop\Exercise\Scenario\CliScenario;
-use PhpSchool\PhpWorkshop\Process\ProcessInput;
+use PhpSchool\PhpWorkshop\Process\Sandbox\ProcessInput;
 use PhpSchool\PhpWorkshop\Process\ProcessNotFoundException;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Process\ExecutableFinder;

@@ -6,8 +6,8 @@ namespace PhpSchool\PhpWorkshop\Event;
 
 use PhpSchool\PhpWorkshop\Exercise\Scenario\CliScenario;
 use PhpSchool\PhpWorkshop\ExerciseRunner\Context\ExecutionContext;
-use PhpSchool\PhpWorkshop\Process\SandboxExecution;
-use PhpSchool\PhpWorkshop\Process\Sandbox;
+use PhpSchool\PhpWorkshop\Process\Sandbox\SandboxExecution;
+use PhpSchool\PhpWorkshop\Process\Sandbox\Sandbox;
 use PhpSchool\PhpWorkshop\Utils\Collection;
 
 /**

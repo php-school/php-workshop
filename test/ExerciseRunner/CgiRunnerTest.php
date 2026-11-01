@@ -9,7 +9,7 @@ use PhpSchool\PhpWorkshop\Exercise\Scenario\CgiScenario;
 use PhpSchool\PhpWorkshop\ExerciseRunner\Context\TestContext;
 use PhpSchool\PhpWorkshop\ExerciseRunner\EnvironmentManager;
 use PhpSchool\PhpWorkshop\Listener\OutputRunInfoListener;
-use PhpSchool\PhpWorkshop\Process\HostSandboxFactory;
+use PhpSchool\PhpWorkshop\Process\Sandbox\Host\HostSandboxFactory;
 use PhpSchool\PhpWorkshopTest\Asset\CgiExerciseImpl;
 use PhpSchool\Terminal\Terminal;
 use PhpSchool\PhpWorkshop\Check\CodeParseCheck;

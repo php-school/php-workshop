@@ -16,7 +16,7 @@ use PhpSchool\PhpWorkshop\ExerciseRunner\EnvironmentManager;
 use PhpSchool\PhpWorkshop\ExerciseRunner\RunnerManager;
 use PhpSchool\PhpWorkshop\Input\Input;
 use PhpSchool\PhpWorkshop\Output\BufferedOutput;
-use PhpSchool\PhpWorkshop\Process\HostSandboxFactory;
+use PhpSchool\PhpWorkshop\Process\Sandbox\Host\HostSandboxFactory;
 use PhpSchool\PhpWorkshop\ResultAggregator;
 use PhpSchool\PhpWorkshop\Solution\SingleFileSolution;
 use PhpSchool\PhpWorkshopTest\Asset\DatabaseExercise;

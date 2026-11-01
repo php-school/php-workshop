@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace PhpSchool\PhpWorkshop\Process;
+namespace PhpSchool\PhpWorkshop\Process\Sandbox;
 
 use PhpSchool\PhpWorkshop\Exercise\Scenario\ExerciseScenario;
 

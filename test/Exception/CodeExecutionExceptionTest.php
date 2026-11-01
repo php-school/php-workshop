@@ -4,7 +4,7 @@ namespace PhpSchool\PhpWorkshopTest\Exception;
 
 use PhpSchool\PhpWorkshop\Exception\CodeExecutionException;
 use PHPUnit\Framework\TestCase;
-use PhpSchool\PhpWorkshop\Process\SandboxExecution;
+use PhpSchool\PhpWorkshop\Process\Sandbox\SandboxExecution;
 
 class CodeExecutionExceptionTest extends TestCase
 {

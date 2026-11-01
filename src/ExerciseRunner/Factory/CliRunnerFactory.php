@@ -13,7 +13,7 @@ use PhpSchool\PhpWorkshop\Exercise\ExerciseType;
 use PhpSchool\PhpWorkshop\ExerciseRunner\CliRunner;
 use PhpSchool\PhpWorkshop\ExerciseRunner\EnvironmentManager;
 use PhpSchool\PhpWorkshop\ExerciseRunner\ExerciseRunnerInterface;
-use PhpSchool\PhpWorkshop\Process\SandboxFactory;
+use PhpSchool\PhpWorkshop\Process\Sandbox\SandboxFactory;
 
 /**
  * Factory class for `CliRunner`

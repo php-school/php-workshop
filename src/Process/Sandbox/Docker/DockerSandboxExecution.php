@@ -2,8 +2,9 @@
 
 declare(strict_types=1);
 
-namespace PhpSchool\PhpWorkshop\Process;
+namespace PhpSchool\PhpWorkshop\Process\Sandbox\Docker;
 
+use PhpSchool\PhpWorkshop\Process\Sandbox\SandboxExecution;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Process\Process;
 
