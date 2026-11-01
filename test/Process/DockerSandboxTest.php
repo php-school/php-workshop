@@ -3,6 +3,8 @@
 namespace PhpSchool\PhpWorkshopTest\Process;
 
 use PhpSchool\PhpWorkshop\Process\DockerSandbox;
+use PhpSchool\PhpWorkshop\Process\PortPicker;
+use PhpSchool\PhpWorkshop\Process\RandomPortPicker;
 use PhpSchool\PhpWorkshop\Process\ProcessInput;
 use PhpSchool\PhpWorkshop\Process\ProcessNotFoundException;
 use PHPUnit\Framework\TestCase;
@@ -12,28 +14,31 @@ class DockerSandboxTest extends TestCase
 {
     private function factory(string $portsNetwork = 'bridge', string $portsHost = '127.0.0.1'): DockerSandbox
     {
+        $ports = new class implements PortPicker {
+            public function pick(): int
+            {
+                return 47213;
+            }
+        };
+
         $finder = $this->createMock(ExecutableFinder::class);
         $finder->expects($this->once())
             ->method('find')
             ->with('docker')
             ->willReturn('/usr/local/bin/docker');
 
-        return new DockerSandbox('/docker-dir', 'PHP8Appreciate', $finder, $portsNetwork, $portsHost);
+        return new DockerSandbox('/docker-dir', 'PHP8Appreciate', $finder, $portsNetwork, $portsHost, $ports);
     }
 
     /**
-     * @param string $commandLine the actual one, for the container name
      * @param list<string> $network
      * @param list<string> $extra env and mount args
      * @param list<string> $command
      */
-    private function expectedCommand(string $commandLine, array $network, array $extra, array $command): string
+    private function expectedCommand(array $network, array $extra, array $command): string
     {
-        //each container gets its own name
-        preg_match('/php-school-[0-9a-f]{16}/', $commandLine, $container);
-
         $parts = [
-            '/usr/local/bin/docker', 'run', '--rm', '--name', $container[0] ?? '', '-i', '--init', '--user', getmyuid() . ':' . getmygid(),
+            '/usr/local/bin/docker', 'run', '--rm', '-i', '--init', '--user', getmyuid() . ':' . getmygid(),
             ...$network,
             '--read-only', '--tmpfs', '/tmp:rw,nosuid,nodev,size=64m', '--cap-drop', 'ALL',
             '--security-opt', 'no-new-privileges', '--pids-limit', '64', '--memory', '256m', '--memory-swap', '256m',
@@ -67,7 +72,6 @@ class DockerSandboxTest extends TestCase
         $process = $this->factory()->create(new ProcessInput('php', ['one', 'two'], __DIR__, [], []))->process;
 
         $expected = $this->expectedCommand(
-            $process->getCommandLine(),
             ['--network', 'none'],
             ['-v', __DIR__ . ':/solution'],
             ['php', 'one', 'two'],
@@ -82,8 +86,7 @@ class DockerSandboxTest extends TestCase
         $process = $this->factory()->create(new ProcessInput('php', [], __DIR__, [], [8000]))->process;
 
         $expected = $this->expectedCommand(
-            $process->getCommandLine(),
-            ['--network', 'bridge', '-p', '127.0.0.1::8000'],
+            ['--network', 'bridge', '-p', '127.0.0.1:47213:8000'],
             ['-v', __DIR__ . ':/solution'],
             ['php'],
         );
@@ -95,8 +98,7 @@ class DockerSandboxTest extends TestCase
         $process = $this->factory('php-school-sandbox')->create(new ProcessInput('php', [], __DIR__, [], [8000]))->process;
 
         $expected = $this->expectedCommand(
-            $process->getCommandLine(),
-            ['--network', 'php-school-sandbox', '-p', '127.0.0.1::8000'],
+            ['--network', 'php-school-sandbox', '-p', '127.0.0.1:47213:8000'],
             ['-v', __DIR__ . ':/solution'],
             ['php'],
         );
@@ -108,33 +110,29 @@ class DockerSandboxTest extends TestCase
         $process = $this->factory('bridge', '172.19.0.2')->create(new ProcessInput('php', [], __DIR__, [], [8000]))->process;
 
         $expected = $this->expectedCommand(
-            $process->getCommandLine(),
-            ['--network', 'bridge', '-p', '172.19.0.2::8000'],
+            ['--network', 'bridge', '-p', '172.19.0.2:47213:8000'],
             ['-v', __DIR__ . ':/solution'],
             ['php'],
         );
         static::assertSame($expected, $process->getCommandLine());
     }
 
-    public function testAddressIsThePortDockerPublishedOnTheGivenHost(): void
+    public function testAddressIsThePickedPortOnTheGivenHost(): void
     {
-        //stands in for `docker port <container> 8000`
-        $docker = tempnam(sys_get_temp_dir(), 'docker');
-        file_put_contents($docker, "#!/bin/sh\necho 172.19.0.2:54321\n");
-        chmod($docker, 0755);
+        $execution = $this->factory('bridge', '172.19.0.2')->create(new ProcessInput('php', [], __DIR__, [], [8000]));
+        static::assertSame('172.19.0.2:47213', $execution->getAddress(8000));
 
-        $finder = $this->createMock(ExecutableFinder::class);
-        $finder->method('find')->with('docker')->willReturn($docker);
+        $execution = $this->factory('bridge', 'fdaa::2')->create(new ProcessInput('php', [], __DIR__, [], [8000]));
+        static::assertStringContainsString("'-p' '[fdaa::2]:47213:8000'", $execution->process->getCommandLine());
+        static::assertSame('[fdaa::2]:47213', $execution->getAddress(8000));
+    }
 
-        $execution = (new DockerSandbox(__DIR__, 'php8appreciate', $finder, 'bridge', '172.19.0.2'))
-            ->create(new ProcessInput('php', [], __DIR__, [], [8000]));
-        static::assertSame('172.19.0.2:54321', $execution->getAddress(8000));
+    public function testRandomPortIsHigh(): void
+    {
+        $port = (new RandomPortPicker())->pick();
 
-        $execution = (new DockerSandbox(__DIR__, 'php8appreciate', $finder, 'bridge', 'fdaa::2'))
-            ->create(new ProcessInput('php', [], __DIR__, [], [8000]));
-        static::assertSame('[fdaa::2]:54321', $execution->getAddress(8000));
-
-        unlink($docker);
+        static::assertGreaterThanOrEqual(20000, $port);
+        static::assertLessThanOrEqual(59999, $port);
     }
 
     public function testCreateWithEnv(): void
@@ -142,7 +140,6 @@ class DockerSandboxTest extends TestCase
         $process = $this->factory()->create(new ProcessInput('php', [], __DIR__, ['SOME_VAR' => 'value'], []))->process;
 
         $expected = $this->expectedCommand(
-            $process->getCommandLine(),
             ['--network', 'none'],
             ['-e', 'SOME_VAR=value', '-v', __DIR__ . ':/solution'],
             ['php'],
