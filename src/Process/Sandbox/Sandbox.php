@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace PhpSchool\PhpWorkshop\Process\Sandbox;
 
+use PhpSchool\PhpWorkshop\ExerciseRunner\Context\ExecutionContext;
+
 /**
  * Where one solution's code runs. Every execution of it happens here and listens on the same port.
  */
@@ -17,7 +19,7 @@ interface Sandbox
     public function getPort(): int;
 
     /**
-     * Once every execution is done, frees the port.
+     * Once every execution is done: the context's solution files are in the directory and the port is free.
      */
-    public function finish(): void;
+    public function finish(ExecutionContext $context): void;
 }

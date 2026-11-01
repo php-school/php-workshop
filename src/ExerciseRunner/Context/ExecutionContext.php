@@ -9,14 +9,21 @@ use PhpSchool\PhpWorkshop\Utils\System;
 
 class ExecutionContext
 {
+    /**
+     * @param list<string> $solutionFiles see getSolutionFiles()
+     */
     public function __construct(
         private string $studentExecutionDirectory,
         private string $referenceExecutionDirectory,
         private ExerciseInterface $exercise,
         private Input $input,
+        private array $solutionFiles = [],
     ) {}
 
-    public static function fromInputAndExercise(Input $input, ExerciseInterface $exercise): ExecutionContext
+    /**
+     * @param list<string> $solutionFiles see getSolutionFiles()
+     */
+    public static function fromInputAndExercise(Input $input, ExerciseInterface $exercise, array $solutionFiles = []): ExecutionContext
     {
         $program = $input->hasArgument('program') ? dirname($input->getRequiredArgument('program')) : (string) getcwd();
 
@@ -25,6 +32,7 @@ class ExecutionContext
             System::randomTempDir(),
             $exercise,
             $input,
+            $solutionFiles,
         );
     }
 
@@ -63,5 +71,15 @@ class ExecutionContext
     public function getReferenceExecutionDirectory(): string
     {
         return $this->referenceExecutionDirectory;
+    }
+
+    /**
+     * The files the checks read from the solutions' directories after they ran, see ReadsSolutionFiles.
+     *
+     * @return list<string> eg. ['db.sqlite']
+     */
+    public function getSolutionFiles(): array
+    {
+        return $this->solutionFiles;
     }
 }

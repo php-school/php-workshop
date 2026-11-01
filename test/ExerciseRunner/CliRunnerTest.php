@@ -6,6 +6,7 @@ use Colors\Color;
 use PhpSchool\PhpWorkshop\Check\CodeExistsCheck;
 use PhpSchool\PhpWorkshop\Exercise\Scenario\CliScenario;
 use PhpSchool\PhpWorkshop\Exercise\Scenario\ExerciseScenario;
+use PhpSchool\PhpWorkshop\ExerciseRunner\Context\ExecutionContext;
 use PhpSchool\PhpWorkshop\ExerciseRunner\Context\TestContext;
 use PhpSchool\PhpWorkshop\ExerciseRunner\EnvironmentManager;
 use PhpSchool\PhpWorkshop\Listener\OutputRunInfoListener;
@@ -236,7 +237,7 @@ class CliRunnerTest extends TestCase
                 return 54321;
             }
 
-            public function finish(): void {}
+            public function finish(ExecutionContext $context): void {}
         };
         $factory = $this->createMock(SandboxFactory::class);
         $factory->method('create')->willReturnCallback(function (string $directory, ExerciseScenario $scenario) use ($sandbox) {

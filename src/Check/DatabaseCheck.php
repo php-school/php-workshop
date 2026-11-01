@@ -11,6 +11,7 @@ use PhpSchool\PhpWorkshop\Event\CliExerciseRunnerEvent;
 use PhpSchool\PhpWorkshop\Event\Event;
 use PhpSchool\PhpWorkshop\Event\EventDispatcher;
 use PhpSchool\PhpWorkshop\Event\ExerciseRunnerEvent;
+use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpSchool\PhpWorkshop\ExerciseCheck\DatabaseExerciseCheck;
 use PhpSchool\PhpWorkshop\Result\Failure;
 use PhpSchool\PhpWorkshop\Result\Success;
@@ -24,7 +25,7 @@ use Symfony\Component\Filesystem\Filesystem;
  * student's solution has been executed, allowing you to first seed the database and then verify the contents of the
  * database.
  */
-class DatabaseCheck implements ListenableCheckInterface
+class DatabaseCheck implements ListenableCheckInterface, ReadsSolutionFiles
 {
     private Filesystem $filesystem;
     private ?string $dbContent = null;
@@ -111,6 +112,11 @@ class DatabaseCheck implements ListenableCheckInterface
                 unset($db);
             }
         });
+    }
+
+    public function getSolutionFiles(ExerciseInterface $exercise): array
+    {
+        return ['db.sqlite'];
     }
 
     private function getPDO(string $path): PDO

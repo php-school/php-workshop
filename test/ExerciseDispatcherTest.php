@@ -6,6 +6,7 @@ use PhpSchool\PhpWorkshop\Check\CheckInterface;
 use PhpSchool\PhpWorkshop\Check\CheckRepository;
 use PhpSchool\PhpWorkshop\Check\ListenableCheckInterface;
 use PhpSchool\PhpWorkshop\Check\PhpLintCheck;
+use PhpSchool\PhpWorkshop\Check\ReadsSolutionFiles;
 use PhpSchool\PhpWorkshop\Check\SimpleCheckInterface;
 use PhpSchool\PhpWorkshop\Event\EventDispatcher;
 use PhpSchool\PhpWorkshop\Event\EventInterface;
@@ -238,6 +239,37 @@ class ExerciseDispatcherTest extends TestCase
 
         $result = $exerciseDispatcher->verify($exercise, $input);
         $this->assertTrue($result->isSuccessful());
+    }
+
+    public function testVerifyGivesTheRunnerTheFilesTheChecksRead(): void
+    {
+        $exercise = new CliExerciseImpl('Some Exercise');
+
+        $check = $this->createMockForIntersectionOfInterfaces([SimpleCheckInterface::class, ReadsSolutionFiles::class]);
+        $check->method('canRun')->willReturn(true);
+        $check->method('getPosition')->willReturn(SimpleCheckInterface::CHECK_AFTER);
+        $check->method('getExerciseInterface')->willReturn(ExerciseInterface::class);
+        $check->method('check')->willReturn(new Success('Success!'));
+        $check->method('getSolutionFiles')->with($exercise)->willReturn(['db.sqlite']);
+
+        $runner = $this->createMock(ExerciseRunnerInterface::class);
+        $runner->method('getRequiredChecks')->willReturn([get_class($check)]);
+        $runner->expects($this->once())
+            ->method('verify')
+            ->with($this->callback(fn(ExecutionContext $context) => $context->getSolutionFiles() === ['db.sqlite']))
+            ->willReturn(new Success('Success!'));
+
+        $runnerManager = $this->createMock(RunnerManager::class);
+        $runnerManager->method('getRunner')->with($exercise)->willReturn($runner);
+
+        $exerciseDispatcher = new ExerciseDispatcher(
+            $runnerManager,
+            new ResultAggregator(),
+            new EventDispatcher(new ResultAggregator()),
+            new CheckRepository([$check]),
+        );
+
+        $exerciseDispatcher->verify($exercise, new Input('app', ['program' => $this->file]));
     }
 
     public function testVerifyOnlyRunsRequiredChecks(): void

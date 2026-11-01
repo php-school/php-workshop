@@ -6,6 +6,7 @@ namespace PhpSchool\PhpWorkshop;
 
 use PhpSchool\PhpWorkshop\Check\CheckRepository;
 use PhpSchool\PhpWorkshop\Check\ListenableCheckInterface;
+use PhpSchool\PhpWorkshop\Check\ReadsSolutionFiles;
 use PhpSchool\PhpWorkshop\Check\PhpLintCheck;
 use PhpSchool\PhpWorkshop\Check\SimpleCheckInterface;
 use PhpSchool\PhpWorkshop\Event\EventDispatcher;
@@ -106,15 +107,16 @@ class ExerciseDispatcher
      */
     public function verify(ExerciseInterface $exercise, Input $input): ResultAggregator
     {
-        $context = ExecutionContext::fromInputAndExercise($input, $exercise);
-
         $runner = $this->runnerManager->getRunner($exercise);
 
         $exercise->defineListeners($this->eventDispatcher);
 
-        foreach ([...$runner->getRequiredChecks(), ...$exercise->getRequiredChecks()] as $requiredCheck) {
+        $requiredChecks = [...$runner->getRequiredChecks(), ...$exercise->getRequiredChecks()];
+        foreach ($requiredChecks as $requiredCheck) {
             $this->requireCheck($requiredCheck);
         }
+
+        $context = ExecutionContext::fromInputAndExercise($input, $exercise, $this->getSolutionFiles($requiredChecks, $exercise));
 
         $this->eventDispatcher->dispatch(new ExerciseRunnerEvent('verify.start', $context));
 
@@ -234,5 +236,24 @@ class ExerciseDispatcher
     public function getChecksToRunAfter(): array
     {
         return $this->checksToRunAfter;
+    }
+
+    /**
+     * The files the required checks read from the solutions after they ran.
+     *
+     * @param array<class-string> $requiredChecks
+     * @return list<string> eg. ['db.sqlite']
+     */
+    private function getSolutionFiles(array $requiredChecks, ExerciseInterface $exercise): array
+    {
+        $files = [];
+        foreach ($requiredChecks as $requiredCheck) {
+            $check = $this->checkRepository->getByClass($requiredCheck);
+            if ($check instanceof ReadsSolutionFiles) {
+                $files = [...$files, ...$check->getSolutionFiles($exercise)];
+            }
+        }
+
+        return $files;
     }
 }
