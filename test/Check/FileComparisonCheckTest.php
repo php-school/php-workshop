@@ -74,6 +74,13 @@ class FileComparisonCheckTest extends TestCase
         $this->assertEquals($failure->getActualValue(), "somegibberish");
     }
 
+    public function testSolutionFilesAreTheFilesToCompare(): void
+    {
+        $exercise = new FileComparisonExercise(['some-file.txt', 'other-file.txt' => ['strip' => '/\d{2}:\d{2}/']]);
+
+        $this->assertSame(['some-file.txt', 'other-file.txt'], $this->check->getSolutionFiles($exercise));
+    }
+
     public function testSuccessIsReturnedIfFilesMatch(): void
     {
         $exercise = new FileComparisonExercise(['some-file.txt']);

@@ -122,8 +122,8 @@ class CgiRunner implements ExerciseRunnerInterface
             ),
         );
 
-        $reference->finish();
-        $student->finish();
+        $reference->finish($context);
+        $student->finish($context);
 
         $this->eventDispatcher->dispatch(new CgiExerciseRunnerEvent('cgi.verify.finish', $context, $scenario));
         return $result;
@@ -340,7 +340,7 @@ class CgiRunner implements ExerciseRunnerInterface
             );
         }
 
-        $student->finish();
+        $student->finish($context);
 
         $this->eventDispatcher->dispatch(new CgiExerciseRunnerEvent('cgi.run.finish', $context, $scenario));
         return $success;

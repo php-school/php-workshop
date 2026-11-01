@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace PhpSchool\PhpWorkshop\Process\Sandbox\Host;
 
+use PhpSchool\PhpWorkshop\ExerciseRunner\Context\ExecutionContext;
 use PhpSchool\PhpWorkshop\Process\ProcessNotFoundException;
 use PhpSchool\PhpWorkshop\Process\Sandbox\ProcessInput;
 use PhpSchool\PhpWorkshop\Process\Sandbox\Sandbox;
@@ -45,7 +46,10 @@ final class HostSandbox implements Sandbox
         return $this->port ?? throw new \RuntimeException('The scenario does not expose a port');
     }
 
-    public function finish(): void {}
+    /**
+     * The code ran in the directory, so the solution files are there already.
+     */
+    public function finish(ExecutionContext $context): void {}
 
     /**
      * Symfony Process inherits the parent env, so we unset every inherited var by setting it to false.

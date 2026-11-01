@@ -6,6 +6,7 @@ namespace PhpSchool\PhpWorkshop\Check;
 
 use InvalidArgumentException;
 use PhpSchool\PhpWorkshop\Exception\SolutionFileDoesNotExistException;
+use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
 use PhpSchool\PhpWorkshop\Exercise\ExerciseType;
 use PhpSchool\PhpWorkshop\ExerciseCheck\FileComparisonExerciseCheck;
 use PhpSchool\PhpWorkshop\ExerciseRunner\Context\ExecutionContext;
@@ -20,7 +21,7 @@ use PhpSchool\PhpWorkshop\Utils\Path;
  * This check verifies that any additional files which should be created by a student, match the ones
  * created by the reference solution.
  */
-class FileComparisonCheck implements SimpleCheckInterface
+class FileComparisonCheck implements SimpleCheckInterface, ReadsSolutionFiles
 {
     /**
      * Return the check's name.
@@ -74,6 +75,20 @@ class FileComparisonCheck implements SimpleCheckInterface
         }
 
         return Success::fromCheck($this);
+    }
+
+    public function getSolutionFiles(ExerciseInterface $exercise): array
+    {
+        if (!$exercise instanceof FileComparisonExerciseCheck) {
+            return [];
+        }
+
+        $files = [];
+        foreach ($exercise->getFilesToCompare() as $key => $file) {
+            $files[] = $this->getOptionsAndFile($key, $file)[1];
+        }
+
+        return $files;
     }
 
     /**

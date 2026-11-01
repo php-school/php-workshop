@@ -121,8 +121,8 @@ class CliRunner implements ExerciseRunnerInterface
             ),
         );
 
-        $reference->finish();
-        $student->finish();
+        $reference->finish($context);
+        $student->finish($context);
 
         $this->eventDispatcher->dispatch(new CliExerciseRunnerEvent('cli.verify.finish', $context, $scenario));
 
@@ -252,7 +252,7 @@ class CliRunner implements ExerciseRunnerInterface
             );
         }
 
-        $student->finish();
+        $student->finish($context);
 
         $this->eventDispatcher->dispatch(new CliExerciseRunnerEvent('cli.run.finish', $context, $scenario));
 

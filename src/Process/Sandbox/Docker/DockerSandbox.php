@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace PhpSchool\PhpWorkshop\Process\Sandbox\Docker;
 
+use PhpSchool\PhpWorkshop\ExerciseRunner\Context\ExecutionContext;
 use PhpSchool\PhpWorkshop\Process\Port\PortPicker;
 use PhpSchool\PhpWorkshop\Process\Sandbox\ProcessInput;
 use PhpSchool\PhpWorkshop\Process\Sandbox\Sandbox;
@@ -99,7 +100,10 @@ final class DockerSandbox implements Sandbox
         return $this->port ?? throw new \RuntimeException('The scenario does not expose a port');
     }
 
-    public function finish(): void
+    /**
+     * The directory is mounted, so the solution files are there already.
+     */
+    public function finish(ExecutionContext $context): void
     {
         if ($this->port !== null) {
             $this->portPicker->release($this->port);

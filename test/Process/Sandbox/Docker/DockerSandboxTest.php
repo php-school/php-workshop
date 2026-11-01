@@ -2,6 +2,7 @@
 
 namespace PhpSchool\PhpWorkshopTest\Process\Sandbox\Docker;
 
+use PhpSchool\PhpWorkshop\ExerciseRunner\Context\TestContext;
 use PhpSchool\PhpWorkshop\Process\Sandbox\Docker\DockerSandboxFactory;
 use PhpSchool\PhpWorkshop\Process\Port\PortPicker;
 use PhpSchool\PhpWorkshop\Exercise\Scenario\CliScenario;
@@ -141,7 +142,7 @@ class DockerSandboxTest extends TestCase
 
     public function testFinishReleasesThePort(): void
     {
-        $this->factory()->create(__DIR__, (new CliScenario())->exposePort())->finish();
+        $this->factory()->create(__DIR__, (new CliScenario())->exposePort())->finish(new TestContext());
 
         static::assertSame([47213], $this->released);
     }

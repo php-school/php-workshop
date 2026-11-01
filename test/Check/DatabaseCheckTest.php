@@ -51,6 +51,7 @@ class DatabaseCheckTest extends TestCase
     {
         $this->assertEquals('Database Verification Check', $this->check->getName());
         $this->assertEquals(DatabaseExerciseCheck::class, $this->check->getExerciseInterface());
+        $this->assertSame(['db.sqlite'], $this->check->getSolutionFiles($this->exercise));
     }
 
     private function getRunnerManager(ExerciseInterface $exercise, EventDispatcher $eventDispatcher): MockObject
