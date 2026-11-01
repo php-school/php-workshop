@@ -4,7 +4,6 @@ namespace PhpSchool\PhpWorkshopTest\Process;
 
 use PhpSchool\PhpWorkshop\Process\DockerSandbox;
 use PhpSchool\PhpWorkshop\Process\PortPicker;
-use PhpSchool\PhpWorkshop\Process\RandomPortPicker;
 use PhpSchool\PhpWorkshop\Process\ProcessInput;
 use PhpSchool\PhpWorkshop\Process\ProcessNotFoundException;
 use PHPUnit\Framework\TestCase;
@@ -125,14 +124,6 @@ class DockerSandboxTest extends TestCase
         $execution = $this->factory('bridge', '[fdaa::2]')->create(new ProcessInput('php', [], __DIR__, [], [8000]));
         static::assertStringContainsString("'-p' '[fdaa::2]:47213:8000'", $execution->process->getCommandLine());
         static::assertSame('[fdaa::2]:47213', $execution->getAddress(8000));
-    }
-
-    public function testRandomPortIsHigh(): void
-    {
-        $port = (new RandomPortPicker())->pick();
-
-        static::assertGreaterThanOrEqual(20000, $port);
-        static::assertLessThanOrEqual(59999, $port);
     }
 
     public function testCreateWithEnv(): void

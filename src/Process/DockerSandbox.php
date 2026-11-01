@@ -40,7 +40,7 @@ final class DockerSandbox implements Sandbox
         //the address ports are published on, the docker host's private address when it is remote. IPv6 in brackets,
         //eg. [fdaa::2]
         $this->portsHost = $portsHost;
-        $this->portPicker = $portPicker ?? new RandomPortPicker();
+        $this->portPicker = $portPicker ?? new FreePortPicker();
     }
 
     public function getImageName(): string

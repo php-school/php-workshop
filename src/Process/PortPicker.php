@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace PhpSchool\PhpWorkshop\Process;
 
 /**
- * Picks the port on the docker host that a container's port is published on. Swap it for one that remembers ports in
- * use when verifies run at the same time on a shared docker host.
+ * Picks a port, eg. the one an exercise's code listens on, or the one DockerSandbox publishes it on. FreePortPicker
+ * when the code runs on this machine, LockPortPicker for a docker host shared by many runs.
  */
 interface PortPicker
 {
