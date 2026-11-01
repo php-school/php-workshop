@@ -10,4 +10,9 @@ namespace PhpSchool\PhpWorkshop\Process\Port;
 interface PortPicker
 {
     public function pick(): int;
+
+    /**
+     * Done with a picked port, eg. its container is removed.
+     */
+    public function release(int $port): void;
 }

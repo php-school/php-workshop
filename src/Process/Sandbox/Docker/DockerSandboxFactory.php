@@ -67,7 +67,7 @@ final class DockerSandboxFactory implements SandboxFactory
     {
         $port = $scenario->exposesPort() ? $this->portPicker->pick() : null;
 
-        return new DockerSandbox($directory, $port, $this->findDocker(), $this->basePath, $this->getImageName(), $this->portsNetwork, $this->portsHost);
+        return new DockerSandbox($directory, $port, $this->findDocker(), $this->basePath, $this->getImageName(), $this->portsNetwork, $this->portsHost, $this->portPicker);
     }
 
     private function findDocker(): string

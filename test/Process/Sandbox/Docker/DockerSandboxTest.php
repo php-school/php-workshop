@@ -12,14 +12,18 @@ use Symfony\Component\Process\ExecutableFinder;
 
 class DockerSandboxTest extends TestCase
 {
+    /**
+     * @var list<int>
+     */
+    private array $released = [];
+
     private function factory(string $portsNetwork = 'bridge', string $portsHost = '127.0.0.1'): DockerSandboxFactory
     {
-        $ports = new class implements PortPicker {
-            public function pick(): int
-            {
-                return 47213;
-            }
-        };
+        $ports = $this->createMock(PortPicker::class);
+        $ports->method('pick')->willReturn(47213);
+        $ports->method('release')->willReturnCallback(function (int $port) {
+            $this->released[] = $port;
+        });
 
         $finder = $this->createMock(ExecutableFinder::class);
         $finder->expects($this->once())
@@ -133,6 +137,13 @@ class DockerSandboxTest extends TestCase
         $execution = $this->factory('bridge', '[fdaa::2]')->create(__DIR__, (new CliScenario())->exposePort())->execute(new ProcessInput('php', [], []));
         static::assertStringContainsString("'-p' '[fdaa::2]:47213:47213'", $execution->process->getCommandLine());
         static::assertSame('[fdaa::2]:47213', $execution->getAddress());
+    }
+
+    public function testFinishReleasesThePort(): void
+    {
+        $this->factory()->create(__DIR__, (new CliScenario())->exposePort())->finish();
+
+        static::assertSame([47213], $this->released);
     }
 
     public function testCreateWithEnv(): void

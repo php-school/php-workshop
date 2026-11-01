@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace PhpSchool\PhpWorkshop\Process\Sandbox\Docker;
 
+use PhpSchool\PhpWorkshop\Process\Port\PortPicker;
 use PhpSchool\PhpWorkshop\Process\Sandbox\ProcessInput;
 use PhpSchool\PhpWorkshop\Process\Sandbox\Sandbox;
 use PhpSchool\PhpWorkshop\Process\Sandbox\SandboxExecution;
@@ -30,6 +31,7 @@ final class DockerSandbox implements Sandbox
         private string $image,
         private string $portsNetwork,
         private string $portsHost,
+        private PortPicker $portPicker,
     ) {}
 
     public function execute(ProcessInput $processInput): SandboxExecution
@@ -95,5 +97,12 @@ final class DockerSandbox implements Sandbox
     public function getPort(): int
     {
         return $this->port ?? throw new \RuntimeException('The scenario does not expose a port');
+    }
+
+    public function finish(): void
+    {
+        if ($this->port !== null) {
+            $this->portPicker->release($this->port);
+        }
     }
 }

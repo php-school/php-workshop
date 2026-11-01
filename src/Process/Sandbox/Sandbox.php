@@ -15,4 +15,9 @@ interface Sandbox
      * The port the code listens on, eg. to pass it in the args. Only when the scenario exposes a port.
      */
     public function getPort(): int;
+
+    /**
+     * Once every execution is done, frees the port.
+     */
+    public function finish(): void;
 }

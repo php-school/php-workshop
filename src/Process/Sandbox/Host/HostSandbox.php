@@ -45,6 +45,8 @@ final class HostSandbox implements Sandbox
         return $this->port ?? throw new \RuntimeException('The scenario does not expose a port');
     }
 
+    public function finish(): void {}
+
     /**
      * Symfony Process inherits the parent env, so we unset every inherited var by setting it to false.
      * We read from getenv() rather than $_ENV, as $_ENV is empty when variables_order does not include E.
