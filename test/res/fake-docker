@@ -1,0 +1,4 @@
+#!/bin/sh
+# docker for DockerSandboxTest: logs its args, and gives an empty archive when one is copied out
+echo "$*" >> "$FAKE_DOCKER_LOG"
+case "$*" in *"tar -c"*) tar -c -T /dev/null ;; esac
