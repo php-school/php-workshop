@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace PhpSchool\PhpWorkshop\Process;
 
+use PhpSchool\PhpWorkshop\Exercise\Scenario\ExerciseScenario;
 use Symfony\Component\Process\ExecutableFinder;
 use Symfony\Component\Process\Process;
 
@@ -21,9 +22,9 @@ final class HostSandbox implements Sandbox
         $this->executableFinder = $executableFinder ?? new ExecutableFinder();
     }
 
-    public function prepare(string $directory, bool $exposePort): Workspace
+    public function prepare(string $directory, ExerciseScenario $scenario): Workspace
     {
-        return new Workspace($directory, $exposePort ? (new FreePortPicker())->pick() : null);
+        return new Workspace($directory, $scenario->exposesPort() ? (new FreePortPicker())->pick() : null);
     }
 
     public function create(Workspace $workspace, ProcessInput $processInput): HostExecution

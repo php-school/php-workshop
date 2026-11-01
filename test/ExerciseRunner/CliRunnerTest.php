@@ -5,6 +5,7 @@ namespace PhpSchool\PhpWorkshopTest\ExerciseRunner;
 use Colors\Color;
 use PhpSchool\PhpWorkshop\Check\CodeExistsCheck;
 use PhpSchool\PhpWorkshop\Exercise\Scenario\CliScenario;
+use PhpSchool\PhpWorkshop\Exercise\Scenario\ExerciseScenario;
 use PhpSchool\PhpWorkshop\ExerciseRunner\Context\TestContext;
 use PhpSchool\PhpWorkshop\ExerciseRunner\EnvironmentManager;
 use PhpSchool\PhpWorkshop\Listener\OutputRunInfoListener;
@@ -229,9 +230,9 @@ class CliRunnerTest extends TestCase
                 return (new HostSandbox())->create($workspace, $processInput);
             }
 
-            public function prepare(string $directory, bool $exposePort): Workspace
+            public function prepare(string $directory, ExerciseScenario $scenario): Workspace
             {
-                return new Workspace($directory, $exposePort ? 54321 : null);
+                return new Workspace($directory, $scenario->exposesPort() ? 54321 : null);
             }
         };
         $runner = new CliRunner($this->exercise, $this->eventDispatcher, $sandbox, new EnvironmentManager(new Filesystem(), $this->eventDispatcher));

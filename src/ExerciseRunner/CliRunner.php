@@ -109,8 +109,8 @@ class CliRunner implements ExerciseRunnerInterface
 
         $this->eventDispatcher->dispatch(new CliExerciseRunnerEvent('cli.verify.start', $context, $scenario));
 
-        $reference = $this->sandbox->prepare($context->getReferenceExecutionDirectory(), $scenario->exposesPort());
-        $student = $this->sandbox->prepare($context->getStudentExecutionDirectory(), $scenario->exposesPort());
+        $reference = $this->sandbox->prepare($context->getReferenceExecutionDirectory(), $scenario);
+        $student = $this->sandbox->prepare($context->getStudentExecutionDirectory(), $scenario);
 
         $result = new CliResult(
             array_map(
@@ -215,7 +215,7 @@ class CliRunner implements ExerciseRunnerInterface
 
         $this->eventDispatcher->dispatch(new CliExerciseRunnerEvent('cli.run.start', $context, $scenario));
 
-        $student = $this->sandbox->prepare($context->getStudentExecutionDirectory(), $scenario->exposesPort());
+        $student = $this->sandbox->prepare($context->getStudentExecutionDirectory(), $scenario);
 
         $success = true;
         foreach ($scenario->getExecutions() as $i => $args) {

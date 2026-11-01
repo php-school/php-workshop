@@ -4,6 +4,7 @@ namespace PhpSchool\PhpWorkshopTest\Process;
 
 use PhpSchool\PhpWorkshop\Process\DockerSandbox;
 use PhpSchool\PhpWorkshop\Process\PortPicker;
+use PhpSchool\PhpWorkshop\Exercise\Scenario\CliScenario;
 use PhpSchool\PhpWorkshop\Process\ProcessInput;
 use PhpSchool\PhpWorkshop\Process\Workspace;
 use PhpSchool\PhpWorkshop\Process\ProcessNotFoundException;
@@ -122,7 +123,7 @@ class DockerSandboxTest extends TestCase
         $ports = $this->createMock(PortPicker::class);
         $ports->method('pick')->willReturn(47213);
 
-        static::assertSame(47213, (new DockerSandbox('/docker-dir', 'php8appreciate', portPicker: $ports))->prepare(__DIR__, true)->port);
+        static::assertSame(47213, (new DockerSandbox('/docker-dir', 'php8appreciate', portPicker: $ports))->prepare(__DIR__, (new CliScenario())->exposePort())->port);
     }
 
     public function testAddressIsTheSamePortOnTheGivenHost(): void

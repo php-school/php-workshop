@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace PhpSchool\PhpWorkshop\Process;
 
+use PhpSchool\PhpWorkshop\Exercise\Scenario\ExerciseScenario;
 use Symfony\Component\Process\ExecutableFinder;
 use Symfony\Component\Process\Process;
 
@@ -62,9 +63,9 @@ final class DockerSandbox implements Sandbox
         );
     }
 
-    public function prepare(string $directory, bool $exposePort): Workspace
+    public function prepare(string $directory, ExerciseScenario $scenario): Workspace
     {
-        return new Workspace($directory, $exposePort ? $this->portPicker->pick() : null);
+        return new Workspace($directory, $scenario->exposesPort() ? $this->portPicker->pick() : null);
     }
 
     public function create(Workspace $workspace, ProcessInput $processInput): DockerExecution

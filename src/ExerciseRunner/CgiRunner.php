@@ -110,8 +110,8 @@ class CgiRunner implements ExerciseRunnerInterface
 
         $this->eventDispatcher->dispatch(new CgiExerciseRunnerEvent('cgi.verify.start', $context, $scenario));
 
-        $reference = $this->sandbox->prepare($context->getReferenceExecutionDirectory(), false);
-        $student = $this->sandbox->prepare($context->getStudentExecutionDirectory(), false);
+        $reference = $this->sandbox->prepare($context->getReferenceExecutionDirectory(), $scenario);
+        $student = $this->sandbox->prepare($context->getStudentExecutionDirectory(), $scenario);
 
         $result = new CgiResult(
             array_map(
@@ -301,7 +301,7 @@ class CgiRunner implements ExerciseRunnerInterface
 
         $this->eventDispatcher->dispatch(new CgiExerciseRunnerEvent('cgi.run.start', $context, $scenario));
 
-        $student = $this->sandbox->prepare($context->getStudentExecutionDirectory(), false);
+        $student = $this->sandbox->prepare($context->getStudentExecutionDirectory(), $scenario);
 
         $success = true;
         foreach ($scenario->getExecutions() as $i => $request) {

@@ -2,6 +2,7 @@
 
 namespace PhpSchool\PhpWorkshopTest\Process;
 
+use PhpSchool\PhpWorkshop\Exercise\Scenario\CliScenario;
 use PhpSchool\PhpWorkshop\Process\ProcessInput;
 use PhpSchool\PhpWorkshop\Process\Workspace;
 use PhpSchool\PhpWorkshop\Process\ProcessNotFoundException;
@@ -44,7 +45,7 @@ class HostSandboxTest extends TestCase
 
     public function testPickedPortIsFreeOnThisMachine(): void
     {
-        $server = stream_socket_server('tcp://127.0.0.1:' . (new HostSandbox())->prepare(__DIR__, true)->port);
+        $server = stream_socket_server('tcp://127.0.0.1:' . (new HostSandbox())->prepare(__DIR__, (new CliScenario())->exposePort())->port);
         static::assertNotFalse($server);
         fclose($server);
     }
