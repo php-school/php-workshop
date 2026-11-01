@@ -22,8 +22,8 @@ use PhpSchool\PhpWorkshop\ExerciseRunner\Context\ExecutionContext;
 use PhpSchool\PhpWorkshop\Input\Input;
 use PhpSchool\PhpWorkshop\Output\OutputInterface;
 use PhpSchool\PhpWorkshop\Process\Sandbox;
+use PhpSchool\PhpWorkshop\Process\SandboxFactory;
 use PhpSchool\PhpWorkshop\Process\ProcessInput;
-use PhpSchool\PhpWorkshop\Process\Workspace;
 use PhpSchool\PhpWorkshop\Process\SandboxExecution;
 use PhpSchool\PhpWorkshop\Result\Cgi\CgiResult;
 use PhpSchool\PhpWorkshop\Result\Cgi\RequestFailure;
@@ -60,7 +60,7 @@ class CgiRunner implements ExerciseRunnerInterface
     public function __construct(
         private CgiExercise $exercise,
         private EventDispatcher $eventDispatcher,
-        private Sandbox $sandbox,
+        private SandboxFactory $sandboxFactory,
         private EnvironmentManager $environmentManager,
     ) {}
 
@@ -110,8 +110,8 @@ class CgiRunner implements ExerciseRunnerInterface
 
         $this->eventDispatcher->dispatch(new CgiExerciseRunnerEvent('cgi.verify.start', $context, $scenario));
 
-        $reference = $this->sandbox->prepare($context->getReferenceExecutionDirectory(), $scenario);
-        $student = $this->sandbox->prepare($context->getStudentExecutionDirectory(), $scenario);
+        $reference = $this->sandboxFactory->create($context->getReferenceExecutionDirectory(), $scenario);
+        $student = $this->sandboxFactory->create($context->getStudentExecutionDirectory(), $scenario);
 
         $result = new CgiResult(
             array_map(
@@ -126,7 +126,7 @@ class CgiRunner implements ExerciseRunnerInterface
         return $result;
     }
 
-    private function doVerify(ExecutionContext $context, CgiScenario $scenario, RequestInterface $request, Workspace $reference, Workspace $student): CgiResultInterface
+    private function doVerify(ExecutionContext $context, CgiScenario $scenario, RequestInterface $request, Sandbox $reference, Sandbox $student): CgiResultInterface
     {
         try {
             /** @var CgiExecuteEvent $event */
@@ -214,12 +214,12 @@ class CgiRunner implements ExerciseRunnerInterface
     private function executePhpFile(
         ExecutionContext $context,
         CgiScenario $scenario,
-        Workspace $workspace,
+        Sandbox $sandbox,
         string $fileName,
         RequestInterface $request,
         string $type,
     ): ResponseInterface {
-        $execution = $this->getPhpExecution($workspace, $fileName, $request);
+        $execution = $this->getPhpExecution($sandbox, $fileName, $request);
 
         $execution->start();
         $this->eventDispatcher->dispatch(
@@ -241,7 +241,7 @@ class CgiRunner implements ExerciseRunnerInterface
         return Message::parseResponse($output);
     }
 
-    private function getPhpExecution(Workspace $workspace, string $fileName, RequestInterface $request): SandboxExecution
+    private function getPhpExecution(Sandbox $sandbox, string $fileName, RequestInterface $request): SandboxExecution
     {
         $env = [
             'REQUEST_METHOD'  => $request->getMethod(),
@@ -271,7 +271,7 @@ class CgiRunner implements ExerciseRunnerInterface
             $content,
         );
 
-        return $this->sandbox->create($workspace, $processInput);
+        return $sandbox->execute($processInput);
     }
 
     /**
@@ -301,7 +301,7 @@ class CgiRunner implements ExerciseRunnerInterface
 
         $this->eventDispatcher->dispatch(new CgiExerciseRunnerEvent('cgi.run.start', $context, $scenario));
 
-        $student = $this->sandbox->prepare($context->getStudentExecutionDirectory(), $scenario);
+        $student = $this->sandboxFactory->create($context->getStudentExecutionDirectory(), $scenario);
 
         $success = true;
         foreach ($scenario->getExecutions() as $i => $request) {

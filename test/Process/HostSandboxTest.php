@@ -4,10 +4,9 @@ namespace PhpSchool\PhpWorkshopTest\Process;
 
 use PhpSchool\PhpWorkshop\Exercise\Scenario\CliScenario;
 use PhpSchool\PhpWorkshop\Process\ProcessInput;
-use PhpSchool\PhpWorkshop\Process\Workspace;
 use PhpSchool\PhpWorkshop\Process\ProcessNotFoundException;
 use Symfony\Component\Process\ExecutableFinder;
-use PhpSchool\PhpWorkshop\Process\HostSandbox;
+use PhpSchool\PhpWorkshop\Process\HostSandboxFactory;
 use PHPUnit\Framework\TestCase;
 
 class HostSandboxTest extends TestCase
@@ -22,10 +21,10 @@ class HostSandboxTest extends TestCase
             ->with('composer')
             ->willReturn(null);
 
-        $factory = new HostSandbox($finder);
+        $factory = new HostSandboxFactory($finder);
         $input = new ProcessInput('composer', [], []);
 
-        $factory->create(new Workspace(__DIR__), $input);
+        $factory->create(__DIR__, new CliScenario())->execute($input);
     }
 
     public function testCreate(): void
@@ -36,25 +35,25 @@ class HostSandboxTest extends TestCase
             ->with('composer')
             ->willReturn('/usr/local/bin/composer');
 
-        $factory = new HostSandbox($finder);
+        $factory = new HostSandboxFactory($finder);
         $input = new ProcessInput('composer', [], []);
 
-        $process = $factory->create(new Workspace(__DIR__), $input)->process;
+        $process = $factory->create(__DIR__, new CliScenario())->execute($input)->process;
         static::assertSame("'/usr/local/bin/composer'", $process->getCommandLine());
     }
 
     public function testPickedPortIsFreeOnThisMachine(): void
     {
-        $server = stream_socket_server('tcp://127.0.0.1:' . (new HostSandbox())->prepare(__DIR__, (new CliScenario())->exposePort())->port);
+        $server = stream_socket_server('tcp://127.0.0.1:' . (new HostSandboxFactory())->create(__DIR__, (new CliScenario())->exposePort())->getPort());
         static::assertNotFalse($server);
         fclose($server);
     }
 
     public function testAddressIsThePortOnThisMachine(): void
     {
-        $execution = (new HostSandbox())->create(new Workspace(__DIR__, 54321), new ProcessInput('php', [], []));
+        $sandbox = (new HostSandboxFactory())->create(__DIR__, (new CliScenario())->exposePort());
 
-        static::assertSame('127.0.0.1:54321', $execution->getAddress());
+        static::assertSame('127.0.0.1:' . $sandbox->getPort(), $sandbox->execute(new ProcessInput('php', [], []))->getAddress());
     }
 
     public function testCreateWithArgs(): void
@@ -65,10 +64,10 @@ class HostSandboxTest extends TestCase
             ->with('composer')
             ->willReturn('/usr/local/bin/composer');
 
-        $factory = new HostSandbox($finder);
+        $factory = new HostSandboxFactory($finder);
         $input = new ProcessInput('composer', ['one', 'two'], []);
 
-        $process = $factory->create(new Workspace(__DIR__), $input)->process;
+        $process = $factory->create(__DIR__, new CliScenario())->execute($input)->process;
         static::assertSame("'/usr/local/bin/composer' 'one' 'two'", $process->getCommandLine());
     }
 
@@ -80,10 +79,10 @@ class HostSandboxTest extends TestCase
             ->with('composer')
             ->willReturn('/usr/local/bin/composer');
 
-        $factory = new HostSandbox($finder);
+        $factory = new HostSandboxFactory($finder);
         $input = new ProcessInput('composer', ['one', 'two'], ['SOME_VAR' => 'value']);
 
-        $process = $factory->create(new Workspace(__DIR__), $input)->process;
+        $process = $factory->create(__DIR__, new CliScenario())->execute($input)->process;
         static::assertSame('value', $process->getEnv()['SOME_VAR']);
     }
 
@@ -92,8 +91,7 @@ class HostSandboxTest extends TestCase
         putenv('PHPSCHOOL_SECRET=secret');
 
         try {
-            $process = (new HostSandbox())->create(
-                new Workspace(__DIR__),
+            $process = (new HostSandboxFactory())->create(__DIR__, new CliScenario())->execute(
                 new ProcessInput('php', ['-r', 'echo json_encode([getenv("PHPSCHOOL_SECRET"), getenv("PATH") !== false]);'], []),
             );
             $process->mustRun();
@@ -112,10 +110,10 @@ class HostSandboxTest extends TestCase
             ->with('composer')
             ->willReturn('/usr/local/bin/composer');
 
-        $factory = new HostSandbox($finder);
+        $factory = new HostSandboxFactory($finder);
         $input = new ProcessInput('composer', [], [], 'someinput');
 
-        $process = $factory->create(new Workspace(__DIR__), $input)->process;
+        $process = $factory->create(__DIR__, new CliScenario())->execute($input)->process;
         static::assertSame('someinput', $process->getInput());
     }
 }

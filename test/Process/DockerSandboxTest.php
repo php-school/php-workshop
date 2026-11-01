@@ -2,18 +2,17 @@
 
 namespace PhpSchool\PhpWorkshopTest\Process;
 
-use PhpSchool\PhpWorkshop\Process\DockerSandbox;
+use PhpSchool\PhpWorkshop\Process\DockerSandboxFactory;
 use PhpSchool\PhpWorkshop\Process\Port\PortPicker;
 use PhpSchool\PhpWorkshop\Exercise\Scenario\CliScenario;
 use PhpSchool\PhpWorkshop\Process\ProcessInput;
-use PhpSchool\PhpWorkshop\Process\Workspace;
 use PhpSchool\PhpWorkshop\Process\ProcessNotFoundException;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Process\ExecutableFinder;
 
 class DockerSandboxTest extends TestCase
 {
-    private function factory(string $portsNetwork = 'bridge', string $portsHost = '127.0.0.1'): DockerSandbox
+    private function factory(string $portsNetwork = 'bridge', string $portsHost = '127.0.0.1'): DockerSandboxFactory
     {
         $ports = new class implements PortPicker {
             public function pick(): int
@@ -28,7 +27,7 @@ class DockerSandboxTest extends TestCase
             ->with('docker')
             ->willReturn('/usr/local/bin/docker');
 
-        return new DockerSandbox('/docker-dir', 'PHP8Appreciate', $finder, $portsNetwork, $portsHost, $ports);
+        return new DockerSandboxFactory('/docker-dir', 'PHP8Appreciate', $finder, $portsNetwork, $portsHost, $ports);
     }
 
     /**
@@ -62,15 +61,15 @@ class DockerSandboxTest extends TestCase
             ->with('docker')
             ->willReturn(null);
 
-        $factory = new DockerSandbox('/docker-dir', 'php8appreciate', $finder);
+        $factory = new DockerSandboxFactory('/docker-dir', 'php8appreciate', $finder);
         $input = new ProcessInput('php', [], []);
 
-        $factory->create(new Workspace(__DIR__), $input);
+        $factory->create(__DIR__, new CliScenario())->execute($input);
     }
 
     public function testCreateIsIsolatedWithNoNetwork(): void
     {
-        $process = $this->factory()->create(new Workspace(__DIR__), new ProcessInput('php', ['one', 'two'], []))->process;
+        $process = $this->factory()->create(__DIR__, new CliScenario())->execute(new ProcessInput('php', ['one', 'two'], []))->process;
 
         $expected = $this->expectedCommand(
             ['--network', 'none'],
@@ -84,10 +83,10 @@ class DockerSandboxTest extends TestCase
 
     public function testExposedPortsArePublishedOnLoopbackOnly(): void
     {
-        $process = $this->factory()->create(new Workspace(__DIR__, 8000), new ProcessInput('php', [], []))->process;
+        $process = $this->factory()->create(__DIR__, (new CliScenario())->exposePort())->execute(new ProcessInput('php', [], []))->process;
 
         $expected = $this->expectedCommand(
-            ['--network', 'bridge', '-p', '127.0.0.1:8000:8000'],
+            ['--network', 'bridge', '-p', '127.0.0.1:47213:47213'],
             ['-v', __DIR__ . ':/solution'],
             ['php'],
         );
@@ -96,10 +95,10 @@ class DockerSandboxTest extends TestCase
 
     public function testExposedPortsUseTheGivenNetwork(): void
     {
-        $process = $this->factory('php-school-sandbox')->create(new Workspace(__DIR__, 8000), new ProcessInput('php', [], []))->process;
+        $process = $this->factory('php-school-sandbox')->create(__DIR__, (new CliScenario())->exposePort())->execute(new ProcessInput('php', [], []))->process;
 
         $expected = $this->expectedCommand(
-            ['--network', 'php-school-sandbox', '-p', '127.0.0.1:8000:8000'],
+            ['--network', 'php-school-sandbox', '-p', '127.0.0.1:47213:47213'],
             ['-v', __DIR__ . ':/solution'],
             ['php'],
         );
@@ -108,10 +107,10 @@ class DockerSandboxTest extends TestCase
 
     public function testExposedPortsArePublishedOnTheGivenHost(): void
     {
-        $process = $this->factory('bridge', '172.19.0.2')->create(new Workspace(__DIR__, 8000), new ProcessInput('php', [], []))->process;
+        $process = $this->factory('bridge', '172.19.0.2')->create(__DIR__, (new CliScenario())->exposePort())->execute(new ProcessInput('php', [], []))->process;
 
         $expected = $this->expectedCommand(
-            ['--network', 'bridge', '-p', '172.19.0.2:8000:8000'],
+            ['--network', 'bridge', '-p', '172.19.0.2:47213:47213'],
             ['-v', __DIR__ . ':/solution'],
             ['php'],
         );
@@ -123,22 +122,22 @@ class DockerSandboxTest extends TestCase
         $ports = $this->createMock(PortPicker::class);
         $ports->method('pick')->willReturn(47213);
 
-        static::assertSame(47213, (new DockerSandbox('/docker-dir', 'php8appreciate', portPicker: $ports))->prepare(__DIR__, (new CliScenario())->exposePort())->port);
+        static::assertSame(47213, (new DockerSandboxFactory('/docker-dir', 'php8appreciate', portPicker: $ports))->create(__DIR__, (new CliScenario())->exposePort())->getPort());
     }
 
     public function testAddressIsTheSamePortOnTheGivenHost(): void
     {
-        $execution = $this->factory('bridge', '172.19.0.2')->create(new Workspace(__DIR__, 47213), new ProcessInput('php', [], []));
+        $execution = $this->factory('bridge', '172.19.0.2')->create(__DIR__, (new CliScenario())->exposePort())->execute(new ProcessInput('php', [], []));
         static::assertSame('172.19.0.2:47213', $execution->getAddress());
 
-        $execution = $this->factory('bridge', '[fdaa::2]')->create(new Workspace(__DIR__, 47213), new ProcessInput('php', [], []));
+        $execution = $this->factory('bridge', '[fdaa::2]')->create(__DIR__, (new CliScenario())->exposePort())->execute(new ProcessInput('php', [], []));
         static::assertStringContainsString("'-p' '[fdaa::2]:47213:47213'", $execution->process->getCommandLine());
         static::assertSame('[fdaa::2]:47213', $execution->getAddress());
     }
 
     public function testCreateWithEnv(): void
     {
-        $process = $this->factory()->create(new Workspace(__DIR__), new ProcessInput('php', [], ['SOME_VAR' => 'value']))->process;
+        $process = $this->factory()->create(__DIR__, new CliScenario())->execute(new ProcessInput('php', [], ['SOME_VAR' => 'value']))->process;
 
         $expected = $this->expectedCommand(
             ['--network', 'none'],
@@ -150,7 +149,7 @@ class DockerSandboxTest extends TestCase
 
     public function testWithInput(): void
     {
-        $process = $this->factory()->create(new Workspace(__DIR__), new ProcessInput('php', [], [], 'someinput'))->process;
+        $process = $this->factory()->create(__DIR__, new CliScenario())->execute(new ProcessInput('php', [], [], 'someinput'))->process;
 
         static::assertSame('someinput', $process->getInput());
     }

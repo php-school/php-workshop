@@ -10,7 +10,7 @@ use Symfony\Component\Process\Process;
 /**
  * The main process plus the docker steps around it, eg. `create` and `cp` before, `rm` after.
  */
-final class DockerExecution implements SandboxExecution
+final class DockerSandboxExecution implements SandboxExecution
 {
     /**
      * @param list<Process> $before

@@ -6,7 +6,7 @@ namespace PhpSchool\PhpWorkshop\Process;
 
 use Symfony\Component\Process\Process;
 
-final class HostExecution implements SandboxExecution
+final class HostSandboxExecution implements SandboxExecution
 {
     public function __construct(public readonly Process $process, private ?int $port = null) {}
 

@@ -4,14 +4,15 @@ declare(strict_types=1);
 
 namespace PhpSchool\PhpWorkshop\Process;
 
-use PhpSchool\PhpWorkshop\Exercise\Scenario\ExerciseScenario;
-
+/**
+ * Where one solution's code runs. Every execution of it happens here and listens on the same port.
+ */
 interface Sandbox
 {
-    public function create(Workspace $workspace, ProcessInput $processInput): SandboxExecution;
+    public function execute(ProcessInput $processInput): SandboxExecution;
 
     /**
-     * Sets up a solution's directory before its runs, with a port free where this sandbox runs it when the scenario exposes one.
+     * The port the code listens on, eg. to pass it in the args. Only when the scenario exposes a port.
      */
-    public function prepare(string $directory, ExerciseScenario $scenario): Workspace;
+    public function getPort(): int;
 }

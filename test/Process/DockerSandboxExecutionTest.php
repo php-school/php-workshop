@@ -4,17 +4,17 @@ declare(strict_types=1);
 
 namespace PhpSchool\PhpWorkshopTest\Process;
 
-use PhpSchool\PhpWorkshop\Process\DockerExecution;
+use PhpSchool\PhpWorkshop\Process\DockerSandboxExecution;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Process\Process;
 
-class DockerExecutionTest extends TestCase
+class DockerSandboxExecutionTest extends TestCase
 {
     public function testStepsRunAroundTheMainProcess(): void
     {
         $log = tempnam(sys_get_temp_dir(), 'steps');
 
-        $execution = new DockerExecution(
+        $execution = new DockerSandboxExecution(
             Process::fromShellCommandline('echo main >> ' . $log),
             [Process::fromShellCommandline('echo before >> ' . $log)],
             [Process::fromShellCommandline('echo after >> ' . $log)],
@@ -31,7 +31,7 @@ class DockerExecutionTest extends TestCase
     {
         $log = tempnam(sys_get_temp_dir(), 'steps');
 
-        $execution = new DockerExecution(
+        $execution = new DockerSandboxExecution(
             Process::fromShellCommandline('exit 1'),
             [],
             [Process::fromShellCommandline('echo after >> ' . $log)],

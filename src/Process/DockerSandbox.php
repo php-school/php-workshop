@@ -4,14 +4,10 @@ declare(strict_types=1);
 
 namespace PhpSchool\PhpWorkshop\Process;
 
-use PhpSchool\PhpWorkshop\Exercise\Scenario\ExerciseScenario;
-use PhpSchool\PhpWorkshop\Process\Port\FreePortPicker;
-use PhpSchool\PhpWorkshop\Process\Port\PortPicker;
-use Symfony\Component\Process\ExecutableFinder;
 use Symfony\Component\Process\Process;
 
 /**
- * Runs processes in a throwaway container built from the workshop's `.docker/runtime/Dockerfile`.
+ * Runs the code in a throwaway container with the solution's directory mounted.
  *
  * The workshop only supplies the image. All isolation flags are set here so a workshop cannot loosen them.
  */
@@ -19,64 +15,26 @@ final class DockerSandbox implements Sandbox
 {
     private const TIMEOUT = 30;
 
-    private ExecutableFinder $executableFinder;
-    private string $basePath;
-    private string $projectName;
-    private string $portsNetwork;
-    private string $portsHost;
-    private PortPicker $portPicker;
-
-    public function __construct(
-        string $basePath,
-        string $projectName,
-        ?ExecutableFinder $executableFinder = null,
-        string $portsNetwork = 'bridge',
-        string $portsHost = '127.0.0.1',
-        ?PortPicker $portPicker = null,
-    ) {
-        $this->executableFinder = $executableFinder ?? new ExecutableFinder();
-        $this->basePath = $basePath;
-        $this->projectName = $projectName;
-        //for exercises that expose ports, eg a server the check connects to. Pass a network without internet access
-        //to stop student code reaching out, the published ports still work
-        $this->portsNetwork = $portsNetwork;
-        //the address ports are published on, the docker host's private address when it is remote. IPv6 in brackets,
-        //eg. [fdaa::2]
-        $this->portsHost = $portsHost;
-        $this->portPicker = $portPicker ?? new FreePortPicker();
-    }
-
-    public function getImageName(): string
-    {
-        return strtolower($this->projectName) . '-runtime';
-    }
-
     /**
-     * The process that builds the runtime image. Run it once on install/deploy, not per request.
+     * @param string $portsNetwork the network when a port is published, see DockerSandboxFactory
+     * @param string $portsHost the address the port is published on, eg. 127.0.0.1
      */
-    public function createBuildProcess(): Process
-    {
-        return new Process(
-            [$this->findDocker(), 'build', '-t', $this->getImageName(), '.docker/runtime'],
-            $this->basePath,
-            null,
-            null,
-            300,
-        );
-    }
+    public function __construct(
+        private string $directory,
+        private ?int $port,
+        private string $docker,
+        private string $basePath,
+        private string $image,
+        private string $portsNetwork,
+        private string $portsHost,
+    ) {}
 
-    public function prepare(string $directory, ExerciseScenario $scenario): Workspace
-    {
-        return new Workspace($directory, $scenario->exposesPort() ? $this->portPicker->pick() : null);
-    }
-
-    public function create(Workspace $workspace, ProcessInput $processInput): DockerExecution
+    public function execute(ProcessInput $processInput): DockerSandboxExecution
     {
         $network = ['--network', 'none'];
-        $port = $workspace->port;
-        if ($port !== null) {
-            //the same port on the docker host, prepare() picked one free there
-            $network = ['--network', $this->portsNetwork, '-p', $this->portsHost . ':' . $port . ':' . $port];
+        if ($this->port !== null) {
+            //the same port on the docker host, the factory picked one free there
+            $network = ['--network', $this->portsNetwork, '-p', $this->portsHost . ':' . $this->port . ':' . $this->port];
         }
 
         $envArgs = [];
@@ -86,9 +44,9 @@ final class DockerSandbox implements Sandbox
         }
 
         //no steps around it yet, create/cp/rm come when files are copied in instead of mounted
-        return new DockerExecution(new Process(
+        return new DockerSandboxExecution(new Process(
             [
-                $this->findDocker(),
+                $this->docker,
                 'run',
                 '--rm',
                 '-i',
@@ -113,10 +71,10 @@ final class DockerSandbox implements Sandbox
                 '1',
                 ...$envArgs,
                 '-v',
-                $workspace->directory . ':/solution',
+                $this->directory . ':/solution',
                 '-w',
                 '/solution',
-                $this->getImageName(),
+                $this->image,
                 //the docker client being killed does not stop the container, so enforce the timeout inside it too
                 'timeout',
                 '-s',
@@ -129,16 +87,11 @@ final class DockerSandbox implements Sandbox
             null,
             $processInput->getInput(),
             self::TIMEOUT + 5,
-        ), [], [], $this->portsHost, $port);
+        ), [], [], $this->portsHost, $this->port);
     }
 
-    private function findDocker(): string
+    public function getPort(): int
     {
-        $dockerPath = $this->executableFinder->find('docker');
-        if ($dockerPath === null) {
-            throw ProcessNotFoundException::fromExecutable('docker');
-        }
-
-        return $dockerPath;
+        return $this->port ?? throw new \RuntimeException('The scenario does not expose a port');
     }
 }

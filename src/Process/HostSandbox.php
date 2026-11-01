@@ -4,11 +4,12 @@ declare(strict_types=1);
 
 namespace PhpSchool\PhpWorkshop\Process;
 
-use PhpSchool\PhpWorkshop\Exercise\Scenario\ExerciseScenario;
-use PhpSchool\PhpWorkshop\Process\Port\FreePortPicker;
 use Symfony\Component\Process\ExecutableFinder;
 use Symfony\Component\Process\Process;
 
+/**
+ * Runs the code straight on this machine, in the solution's directory.
+ */
 final class HostSandbox implements Sandbox
 {
     /**
@@ -16,19 +17,9 @@ final class HostSandbox implements Sandbox
      */
     private const ALLOWED_ENV = ['PATH', 'HOME', 'COMPOSER_HOME'];
 
-    private ExecutableFinder $executableFinder;
+    public function __construct(private string $directory, private ?int $port, private ExecutableFinder $executableFinder) {}
 
-    public function __construct(?ExecutableFinder $executableFinder = null)
-    {
-        $this->executableFinder = $executableFinder ?? new ExecutableFinder();
-    }
-
-    public function prepare(string $directory, ExerciseScenario $scenario): Workspace
-    {
-        return new Workspace($directory, $scenario->exposesPort() ? (new FreePortPicker())->pick() : null);
-    }
-
-    public function create(Workspace $workspace, ProcessInput $processInput): HostExecution
+    public function execute(ProcessInput $processInput): HostSandboxExecution
     {
         $executablePath = $this->executableFinder->find($processInput->getExecutable());
 
@@ -36,13 +27,18 @@ final class HostSandbox implements Sandbox
             throw ProcessNotFoundException::fromExecutable($processInput->getExecutable());
         }
 
-        return new HostExecution(new Process(
+        return new HostSandboxExecution(new Process(
             [$executablePath, ...$processInput->getArgs()],
-            $workspace->directory,
+            $this->directory,
             array_merge($this->getDefaultEnv(), $processInput->getEnv()),
             $processInput->getInput(),
             10,
-        ), $workspace->port);
+        ), $this->port);
+    }
+
+    public function getPort(): int
+    {
+        return $this->port ?? throw new \RuntimeException('The scenario does not expose a port');
     }
 
     /**

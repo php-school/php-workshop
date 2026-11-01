@@ -28,7 +28,7 @@ abstract class ExerciseScenario
 
     /**
      * The code listens on a port, eg. a server the check connects to. The sandbox picks it, listeners get it from the
-     * pre execute events with getWorkspace().
+     * pre execute events with getSandbox()->getPort().
      */
     public function exposePort(): static
     {
