@@ -37,7 +37,8 @@ final class DockerSandbox implements Sandbox
         //for exercises that expose ports, eg a server the check connects to. Pass a network without internet access
         //to stop student code reaching out, the published ports still work
         $this->portsNetwork = $portsNetwork;
-        //the address ports are published on, the docker host's private address when it is remote
+        //the address ports are published on, the docker host's private address when it is remote. IPv6 in brackets,
+        //eg. [fdaa::2]
         $this->portsHost = $portsHost;
         $this->portPicker = $portPicker ?? new RandomPortPicker();
     }
@@ -67,14 +68,11 @@ final class DockerSandbox implements Sandbox
         $addresses = [];
         if (count($processInput->getExposedPorts()) > 0) {
             $network = ['--network', $this->portsNetwork];
-            //eg. [fdaa::2] for an IPv6 address
-            $host = str_contains($this->portsHost, ':') ? '[' . $this->portsHost . ']' : $this->portsHost;
-
             foreach ($processInput->getExposedPorts() as $port) {
                 $hostPort = $this->portPicker->pick();
                 $network[] = '-p';
-                $network[] = $host . ':' . $hostPort . ':' . $port;
-                $addresses[$port] = $host . ':' . $hostPort;
+                $network[] = $this->portsHost . ':' . $hostPort . ':' . $port;
+                $addresses[$port] = $this->portsHost . ':' . $hostPort;
             }
         }
 

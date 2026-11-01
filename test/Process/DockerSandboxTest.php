@@ -122,7 +122,7 @@ class DockerSandboxTest extends TestCase
         $execution = $this->factory('bridge', '172.19.0.2')->create(new ProcessInput('php', [], __DIR__, [], [8000]));
         static::assertSame('172.19.0.2:47213', $execution->getAddress(8000));
 
-        $execution = $this->factory('bridge', 'fdaa::2')->create(new ProcessInput('php', [], __DIR__, [], [8000]));
+        $execution = $this->factory('bridge', '[fdaa::2]')->create(new ProcessInput('php', [], __DIR__, [], [8000]));
         static::assertStringContainsString("'-p' '[fdaa::2]:47213:8000'", $execution->process->getCommandLine());
         static::assertSame('[fdaa::2]:47213', $execution->getAddress(8000));
     }
