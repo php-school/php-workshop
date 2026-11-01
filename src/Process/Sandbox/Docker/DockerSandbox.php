@@ -6,6 +6,7 @@ namespace PhpSchool\PhpWorkshop\Process\Sandbox\Docker;
 
 use PhpSchool\PhpWorkshop\Process\Sandbox\ProcessInput;
 use PhpSchool\PhpWorkshop\Process\Sandbox\Sandbox;
+use PhpSchool\PhpWorkshop\Process\Sandbox\SandboxExecution;
 use Symfony\Component\Process\Process;
 
 /**
@@ -31,7 +32,7 @@ final class DockerSandbox implements Sandbox
         private string $portsHost,
     ) {}
 
-    public function execute(ProcessInput $processInput): DockerSandboxExecution
+    public function execute(ProcessInput $processInput): SandboxExecution
     {
         $network = ['--network', 'none'];
         if ($this->port !== null) {
@@ -45,8 +46,7 @@ final class DockerSandbox implements Sandbox
             $envArgs[] = $key . '=' . $value;
         }
 
-        //no steps around it yet, create/cp/rm come when files are copied in instead of mounted
-        return new DockerSandboxExecution(new Process(
+        return new SandboxExecution(new Process(
             [
                 $this->docker,
                 'run',
@@ -89,7 +89,7 @@ final class DockerSandbox implements Sandbox
             null,
             $processInput->getInput(),
             self::TIMEOUT + 5,
-        ), [], [], $this->portsHost, $this->port);
+        ), $this->portsHost, $this->port);
     }
 
     public function getPort(): int

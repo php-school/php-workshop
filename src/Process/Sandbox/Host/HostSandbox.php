@@ -7,6 +7,7 @@ namespace PhpSchool\PhpWorkshop\Process\Sandbox\Host;
 use PhpSchool\PhpWorkshop\Process\ProcessNotFoundException;
 use PhpSchool\PhpWorkshop\Process\Sandbox\ProcessInput;
 use PhpSchool\PhpWorkshop\Process\Sandbox\Sandbox;
+use PhpSchool\PhpWorkshop\Process\Sandbox\SandboxExecution;
 use Symfony\Component\Process\ExecutableFinder;
 use Symfony\Component\Process\Process;
 
@@ -22,7 +23,7 @@ final class HostSandbox implements Sandbox
 
     public function __construct(private string $directory, private ?int $port, private ExecutableFinder $executableFinder) {}
 
-    public function execute(ProcessInput $processInput): HostSandboxExecution
+    public function execute(ProcessInput $processInput): SandboxExecution
     {
         $executablePath = $this->executableFinder->find($processInput->getExecutable());
 
@@ -30,13 +31,13 @@ final class HostSandbox implements Sandbox
             throw ProcessNotFoundException::fromExecutable($processInput->getExecutable());
         }
 
-        return new HostSandboxExecution(new Process(
+        return new SandboxExecution(new Process(
             [$executablePath, ...$processInput->getArgs()],
             $this->directory,
             array_merge($this->getDefaultEnv(), $processInput->getEnv()),
             $processInput->getInput(),
             10,
-        ), $this->port);
+        ), '127.0.0.1', $this->port);
     }
 
     public function getPort(): int
