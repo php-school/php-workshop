@@ -90,7 +90,6 @@ final class DockerSandbox implements Sandbox
     public function create(ProcessInput $processInput): DockerExecution
     {
         $directory = $processInput->getWorkingDirectory();
-
         $isComposer = $processInput->getExecutable() === 'composer';
 
         //composer needs the internet, and published ports would clash between folders, so they get a container just
