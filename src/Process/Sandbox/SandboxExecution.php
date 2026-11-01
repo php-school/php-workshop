@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace PhpSchool\PhpWorkshop\Process\Sandbox;
 
 /**
- * One run of some code in a sandbox. How many commands that takes is up to the sandbox.
+ * One run of some code in a sandbox.
  */
 interface SandboxExecution
 {
