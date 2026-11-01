@@ -57,24 +57,17 @@ final class DockerSandbox implements Sandbox
         return $this->port ?? throw new \RuntimeException('The scenario does not expose a port');
     }
 
-    /**
-     * The directory is mounted, so the solution files are there already.
-     */
     public function finish(ExecutionContext $context): void
     {
-        try {
-            //the files the code wrote, eg. a database a check reads. tar, as docker cp can not leave out vendor, which
-            //composer filled on this machine
-            Process::fromShellCommandline(
-                sprintf('%s exec %s tar -c -C /solution --exclude=./vendor . | tar -x', escapeshellarg($this->docker), $this->container),
-                $this->directory,
-            )->mustRun();
-        } finally {
-            (new Process([$this->docker, 'rm', '-f', '-v', $this->container]))->run();
+        //the files the checks read, eg. a database. Not mustRun, a file the code did not write fails the check
+        foreach ($context->getSolutionFiles() as $file) {
+            (new Process([$this->docker, 'cp', $this->container . ':/solution/' . $file, $this->directory . '/' . $file]))->run();
+        }
 
-            if ($this->port !== null) {
-                $this->portPicker->release($this->port);
-            }
+        (new Process([$this->docker, 'rm', '-f', '-v', $this->container]))->run();
+
+        if ($this->port !== null) {
+            $this->portPicker->release($this->port);
         }
     }
 }

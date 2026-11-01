@@ -2,7 +2,9 @@
 
 namespace PhpSchool\PhpWorkshopTest\Process\Sandbox\Docker;
 
-use PhpSchool\PhpWorkshop\ExerciseRunner\Context\TestContext;
+use PhpSchool\PhpWorkshop\Exercise\ExerciseInterface;
+use PhpSchool\PhpWorkshop\ExerciseRunner\Context\ExecutionContext;
+use PhpSchool\PhpWorkshop\Input\Input;
 use PhpSchool\PhpWorkshop\Process\Sandbox\Docker\DockerSandboxFactory;
 use PhpSchool\PhpWorkshop\Process\Port\PortPicker;
 use PhpSchool\PhpWorkshop\Exercise\Scenario\CliScenario;
@@ -122,12 +124,13 @@ class DockerSandboxTest extends TestCase
         static::assertSame('172.19.0.2:47213', $sandbox->execute(new ProcessInput('php', [], []))->getAddress());
     }
 
-    public function testFinishCopiesTheFilesOutRemovesTheContainerAndReleasesThePort(): void
+    public function testFinishCopiesTheSolutionFilesOutRemovesTheContainerAndReleasesThePort(): void
     {
-        $this->factory()->create(__DIR__, (new CliScenario())->exposePort())->finish(new TestContext());
+        $context = new ExecutionContext('/student', '/reference', $this->createMock(ExerciseInterface::class), new Input('app'), ['db.sqlite']);
+        $this->factory()->create(__DIR__, (new CliScenario())->exposePort())->finish($context);
 
         static::assertSame(
-            ['exec C tar -c -C /solution --exclude=./vendor .', 'rm -f -v C'],
+            ['cp C:/solution/db.sqlite ' . __DIR__ . '/db.sqlite', 'rm -f -v C'],
             array_slice($this->dockerCalls(), 2),
         );
         static::assertSame([47213], $this->released);
