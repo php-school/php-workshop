@@ -22,4 +22,15 @@ class LockPortPickerTest extends TestCase
         //another run can not take it
         static::assertFalse($locks->createLock('php-school-port-' . $port)->acquire());
     }
+
+    public function testReleasedPortCanBeTakenAgain(): void
+    {
+        $locks = new LockFactory(new InMemoryStore());
+        $picker = new LockPortPicker($locks);
+
+        $port = $picker->pick();
+        $picker->release($port);
+
+        static::assertTrue($locks->createLock('php-school-port-' . $port)->acquire());
+    }
 }

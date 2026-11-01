@@ -26,4 +26,6 @@ final class FreePortPicker implements PortPicker
 
         return (int) substr($name, (int) strrpos($name, ':') + 1);
     }
+
+    public function release(int $port): void {}
 }

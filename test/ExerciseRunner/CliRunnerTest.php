@@ -235,6 +235,8 @@ class CliRunnerTest extends TestCase
             {
                 return 54321;
             }
+
+            public function finish(): void {}
         };
         $factory = $this->createMock(SandboxFactory::class);
         $factory->method('create')->willReturnCallback(function (string $directory, ExerciseScenario $scenario) use ($sandbox) {
