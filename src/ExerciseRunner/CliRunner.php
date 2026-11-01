@@ -237,7 +237,7 @@ class CliRunner implements ExerciseRunnerInterface
 
             $execution->start();
             $this->eventDispatcher->dispatch(
-                new CliExecuteEvent('cli.run.student.executing', $context, $scenario, $args, ['output' => $output, 'execution' => $execution, 'port' => $port]),
+                new CliExecuteEvent('cli.run.student.executing', $context, $scenario, $args, ['output' => $output, 'execution' => $execution]),
             );
             $execution->wait(function ($outputType, $outputBuffer) use ($output) {
                 $output->write($outputBuffer);
@@ -270,7 +270,7 @@ class CliRunner implements ExerciseRunnerInterface
 
         $execution->start();
         $this->eventDispatcher->dispatch(
-            new CliExecuteEvent(sprintf('cli.verify.%s.executing', $type), $context, $scenario, $args, ['execution' => $execution, 'port' => $port]),
+            new CliExecuteEvent(sprintf('cli.verify.%s.executing', $type), $context, $scenario, $args, ['execution' => $execution]),
         );
         $execution->wait();
 
@@ -287,7 +287,7 @@ class CliRunner implements ExerciseRunnerInterface
     private function getPhpExecution(string $workingDirectory, string $fileName, Collection $args, ?int $port): SandboxExecution
     {
         return $this->sandbox->create(
-            new ProcessInput('php', [$fileName, ...$args->getArrayCopy()], $workingDirectory, [], $port === null ? [] : [$port]),
+            new ProcessInput('php', [$fileName, ...$args->getArrayCopy()], $workingDirectory, [], $port),
         );
     }
 

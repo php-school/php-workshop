@@ -7,14 +7,14 @@ class ProcessInput
     /**
      * @param list<string> $args
      * @param array<string, string> $env
-     * @param list<int> $exposedPorts
+     * @param int|null $port the code listens on, eg. 54321
      */
     public function __construct(
         private string $executable,
         private array $args,
         private string $workingDirectory,
         private array $env,
-        private array $exposedPorts,
+        private ?int $port,
         private ?string $input = null,
     ) {}
 
@@ -44,12 +44,9 @@ class ProcessInput
         return $this->env;
     }
 
-    /**
-     * @return list<int>
-     */
-    public function getExposedPorts(): array
+    public function getPort(): ?int
     {
-        return $this->exposedPorts;
+        return $this->port;
     }
 
     public function getInput(): ?string

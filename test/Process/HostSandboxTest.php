@@ -21,7 +21,7 @@ class HostSandboxTest extends TestCase
             ->willReturn(null);
 
         $factory = new HostSandbox($finder);
-        $input = new ProcessInput('composer', [], __DIR__, [], []);
+        $input = new ProcessInput('composer', [], __DIR__, [], null);
 
         $factory->create($input);
     }
@@ -35,7 +35,7 @@ class HostSandboxTest extends TestCase
             ->willReturn('/usr/local/bin/composer');
 
         $factory = new HostSandbox($finder);
-        $input = new ProcessInput('composer', [], __DIR__, [], []);
+        $input = new ProcessInput('composer', [], __DIR__, [], null);
 
         $process = $factory->create($input)->process;
         static::assertSame("'/usr/local/bin/composer'", $process->getCommandLine());
@@ -50,9 +50,9 @@ class HostSandboxTest extends TestCase
 
     public function testAddressIsThePortOnThisMachine(): void
     {
-        $execution = (new HostSandbox())->create(new ProcessInput('php', [], __DIR__, [], [54321]));
+        $execution = (new HostSandbox())->create(new ProcessInput('php', [], __DIR__, [], 54321));
 
-        static::assertSame('127.0.0.1:54321', $execution->getAddress(54321));
+        static::assertSame('127.0.0.1:54321', $execution->getAddress());
     }
 
     public function testCreateWithArgs(): void
@@ -64,7 +64,7 @@ class HostSandboxTest extends TestCase
             ->willReturn('/usr/local/bin/composer');
 
         $factory = new HostSandbox($finder);
-        $input = new ProcessInput('composer', ['one', 'two'], __DIR__, [], []);
+        $input = new ProcessInput('composer', ['one', 'two'], __DIR__, [], null);
 
         $process = $factory->create($input)->process;
         static::assertSame("'/usr/local/bin/composer' 'one' 'two'", $process->getCommandLine());
@@ -79,7 +79,7 @@ class HostSandboxTest extends TestCase
             ->willReturn('/usr/local/bin/composer');
 
         $factory = new HostSandbox($finder);
-        $input = new ProcessInput('composer', ['one', 'two'], __DIR__, ['SOME_VAR' => 'value'], []);
+        $input = new ProcessInput('composer', ['one', 'two'], __DIR__, ['SOME_VAR' => 'value'], null);
 
         $process = $factory->create($input)->process;
         static::assertSame('value', $process->getEnv()['SOME_VAR']);
@@ -91,7 +91,7 @@ class HostSandboxTest extends TestCase
 
         try {
             $process = (new HostSandbox())->create(
-                new ProcessInput('php', ['-r', 'echo json_encode([getenv("PHPSCHOOL_SECRET"), getenv("PATH") !== false]);'], __DIR__, [], []),
+                new ProcessInput('php', ['-r', 'echo json_encode([getenv("PHPSCHOOL_SECRET"), getenv("PATH") !== false]);'], __DIR__, [], null),
             );
             $process->mustRun();
 
@@ -110,7 +110,7 @@ class HostSandboxTest extends TestCase
             ->willReturn('/usr/local/bin/composer');
 
         $factory = new HostSandbox($finder);
-        $input = new ProcessInput('composer', [], __DIR__, [], [], 'someinput');
+        $input = new ProcessInput('composer', [], __DIR__, [], null, 'someinput');
 
         $process = $factory->create($input)->process;
         static::assertSame('someinput', $process->getInput());

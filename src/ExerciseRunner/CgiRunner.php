@@ -265,7 +265,7 @@ class CgiRunner implements ExerciseRunnerInterface
             ],
             $workingDirectory,
             $env,
-            [],
+            null,
             $content,
         );
 

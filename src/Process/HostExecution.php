@@ -8,7 +8,7 @@ use Symfony\Component\Process\Process;
 
 final class HostExecution implements SandboxExecution
 {
-    public function __construct(public readonly Process $process) {}
+    public function __construct(public readonly Process $process, private ?int $port = null) {}
 
     public function start(): void
     {
@@ -40,8 +40,13 @@ final class HostExecution implements SandboxExecution
         return $this->process->getErrorOutput();
     }
 
-    public function getAddress(int $port): string
+    public function getAddress(): string
     {
-        return '127.0.0.1:' . $port;
+        return '127.0.0.1:' . $this->getPort();
+    }
+
+    public function getPort(): int
+    {
+        return $this->port ?? throw new \RuntimeException('The code does not listen on a port');
     }
 }

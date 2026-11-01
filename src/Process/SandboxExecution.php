@@ -28,9 +28,14 @@ interface SandboxExecution
     public function getErrorOutput(): string;
 
     /**
-     * Where to connect to a port the code listens on, once it has started.
+     * Where to connect to the port the code listens on, once it has started.
      *
      * @return string eg. '127.0.0.1:54321'
      */
-    public function getAddress(int $port): string;
+    public function getAddress(): string;
+
+    /**
+     * The port the code listens on, eg. to pass it in the args.
+     */
+    public function getPort(): int;
 }

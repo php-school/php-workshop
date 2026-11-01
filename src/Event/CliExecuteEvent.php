@@ -58,7 +58,7 @@ class CliExecuteEvent extends CliExerciseRunnerEvent
     }
 
     /**
-     * The running program, eg. to connect to a port it listens on with getAddress(). Only on the executing events.
+     * The running program, eg. to connect to the port it listens on with getAddress(). Only on the executing events.
      */
     public function getExecution(): SandboxExecution
     {
@@ -69,7 +69,7 @@ class CliExecuteEvent extends CliExerciseRunnerEvent
     }
 
     /**
-     * The port the program listens on, picked by the sandbox. Only when the scenario exposes a port.
+     * The port the program will listen on, picked by the sandbox, eg. to pass it in the args. Only on the pre events when the scenario exposes a port, after that use getExecution().
      */
     public function getPort(): int
     {

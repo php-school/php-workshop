@@ -40,7 +40,7 @@ final class HostSandbox implements Sandbox
             array_merge($this->getDefaultEnv(), $processInput->getEnv()),
             $processInput->getInput(),
             10,
-        ));
+        ), $processInput->getPort());
     }
 
     /**
