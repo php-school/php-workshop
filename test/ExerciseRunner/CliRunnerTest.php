@@ -5,14 +5,16 @@ namespace PhpSchool\PhpWorkshopTest\ExerciseRunner;
 use Colors\Color;
 use PhpSchool\PhpWorkshop\Check\CodeExistsCheck;
 use PhpSchool\PhpWorkshop\Exercise\Scenario\CliScenario;
+use PhpSchool\PhpWorkshop\Exercise\Scenario\ExerciseScenario;
 use PhpSchool\PhpWorkshop\ExerciseRunner\Context\TestContext;
 use PhpSchool\PhpWorkshop\ExerciseRunner\EnvironmentManager;
 use PhpSchool\PhpWorkshop\Listener\OutputRunInfoListener;
-use PhpSchool\PhpWorkshop\Process\HostSandbox;
-use PhpSchool\PhpWorkshop\Process\SandboxExecution;
+use PhpSchool\PhpWorkshop\Process\Sandbox\Host\HostSandboxFactory;
+use PhpSchool\PhpWorkshop\Process\Sandbox\SandboxExecution;
 use PhpSchool\PhpWorkshop\Output\NullOutput;
-use PhpSchool\PhpWorkshop\Process\ProcessInput;
-use PhpSchool\PhpWorkshop\Process\Sandbox;
+use PhpSchool\PhpWorkshop\Process\Sandbox\ProcessInput;
+use PhpSchool\PhpWorkshop\Process\Sandbox\Sandbox;
+use PhpSchool\PhpWorkshop\Process\Sandbox\SandboxFactory;
 use PhpSchool\PhpWorkshop\Utils\RequestRenderer;
 use PhpSchool\PhpWorkshopTest\Asset\CliExerciseImpl;
 use PhpSchool\Terminal\Terminal;
@@ -42,7 +44,7 @@ class CliRunnerTest extends TestCase
     {
         $this->exercise = new CliExerciseImpl();
         $this->eventDispatcher = new EventDispatcher(new ResultAggregator());
-        $this->runner = new CliRunner($this->exercise, $this->eventDispatcher, new HostSandbox(), new EnvironmentManager(new Filesystem(), $this->eventDispatcher));
+        $this->runner = new CliRunner($this->exercise, $this->eventDispatcher, new HostSandboxFactory(), new EnvironmentManager(new Filesystem(), $this->eventDispatcher));
 
         $this->assertEquals('CLI Program Runner', $this->runner->getName());
     }
@@ -106,6 +108,28 @@ class CliRunnerTest extends TestCase
 
         $this->assertCount(3, $executions);
         $this->assertContainsOnlyInstancesOf(SandboxExecution::class, $executions);
+    }
+
+    public function testSandboxPicksOnePortForEachFolder(): void
+    {
+        $solution = SingleFileSolution::fromFile(realpath(__DIR__ . '/../res/cli/solution.php'));
+        $this->exercise->setSolution($solution);
+        $this->exercise->setScenario((new CliScenario())->exposePort()->withExecution([1, 2, 3])->withExecution([4, 5, 6]));
+
+        $ports = [];
+        $this->eventDispatcher->listen(
+            ['cli.verify.reference-execute.pre', 'cli.verify.student-execute.pre'],
+            function (CliExecuteEvent $event) use (&$ports) {
+                $ports[$event->getName()][] = $event->getSandbox()->getPort();
+            },
+        );
+
+        $context = TestContext::fromExerciseAndStudentSolution($this->exercise, __DIR__ . '/../res/cli/user.php');
+        $this->runner->verify($context);
+
+        //the same port for every run of a folder
+        $this->assertCount(1, array_unique($ports['cli.verify.reference-execute.pre']));
+        $this->assertCount(1, array_unique($ports['cli.verify.student-execute.pre']));
     }
 
     public function testSuccessWithSingleSetOfArgsForBC(): void
@@ -198,15 +222,26 @@ class CliRunnerTest extends TestCase
         $sandbox = new class implements Sandbox {
             /** @var array<ProcessInput> */
             public array $inputs = [];
+            public Sandbox $host;
 
-            public function create(ProcessInput $processInput): SandboxExecution
+            public function execute(ProcessInput $processInput): SandboxExecution
             {
                 $this->inputs[] = $processInput;
 
-                return (new HostSandbox())->create($processInput);
+                return $this->host->execute($processInput);
+            }
+
+            public function getPort(): int
+            {
+                return 54321;
             }
         };
-        $runner = new CliRunner($this->exercise, $this->eventDispatcher, $sandbox, new EnvironmentManager(new Filesystem(), $this->eventDispatcher));
+        $factory = $this->createMock(SandboxFactory::class);
+        $factory->method('create')->willReturnCallback(function (string $directory, ExerciseScenario $scenario) use ($sandbox) {
+            $sandbox->host = (new HostSandboxFactory())->create($directory, $scenario);
+            return $sandbox;
+        });
+        $runner = new CliRunner($this->exercise, $this->eventDispatcher, $factory, new EnvironmentManager(new Filesystem(), $this->eventDispatcher));
 
         $this->exercise->setScenario((new CliScenario())->withExecution([1, 2, 3]));
 

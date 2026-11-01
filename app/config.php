@@ -72,9 +72,9 @@ use PhpSchool\PhpWorkshop\Output\OutputInterface;
 use PhpSchool\PhpWorkshop\Output\StdOutput;
 use PhpSchool\PhpWorkshop\Patch;
 use PhpSchool\PhpWorkshop\Process\Composer;
-use PhpSchool\PhpWorkshop\Process\DockerSandbox;
-use PhpSchool\PhpWorkshop\Process\HostSandbox;
-use PhpSchool\PhpWorkshop\Process\Sandbox;
+use PhpSchool\PhpWorkshop\Process\Sandbox\Docker\DockerSandboxFactory;
+use PhpSchool\PhpWorkshop\Process\Sandbox\Host\HostSandboxFactory;
+use PhpSchool\PhpWorkshop\Process\Sandbox\SandboxFactory;
 use PhpSchool\PhpWorkshop\Result\Cgi\CgiResult;
 use PhpSchool\PhpWorkshop\Result\Cgi\GenericFailure as CgiGenericFailure;
 use PhpSchool\PhpWorkshop\Result\Cgi\RequestFailure as CgiRequestFailure;
@@ -199,27 +199,27 @@ return [
         $manager = new RunnerManager();
         $manager->addFactory(new CliRunnerFactory(
             $c->get(EventDispatcher::class),
-            $c->get(Sandbox::class),
+            $c->get(SandboxFactory::class),
             $c->get(EnvironmentManager::class),
         ));
         $manager->addFactory(new CgiRunnerFactory(
             $c->get(EventDispatcher::class),
-            $c->get(Sandbox::class),
+            $c->get(SandboxFactory::class),
             $c->get(EnvironmentManager::class),
         ));
         $manager->addFactory(new CustomVerifyingRunnerFactory());
         return $manager;
     },
 
-    Sandbox::class => function (ContainerInterface $c) {
+    SandboxFactory::class => function (ContainerInterface $c) {
         $sandbox = getenv('SANDBOX');
 
         return match ($sandbox) {
-            'docker' => new DockerSandbox(
+            'docker' => new DockerSandboxFactory(
                 $c->get('basePath'),
                 $c->get('appName'),
             ),
-            default => new HostSandbox(),
+            default => new HostSandboxFactory(),
         };
     },
 

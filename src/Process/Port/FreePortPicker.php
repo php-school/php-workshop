@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace PhpSchool\PhpWorkshop\Process;
+namespace PhpSchool\PhpWorkshop\Process\Port;
 
 use PhpSchool\PhpWorkshop\Exception\RuntimeException;
 

@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace PhpSchool\PhpWorkshopTest\Process;
+namespace PhpSchool\PhpWorkshopTest\Process\Port;
 
-use PhpSchool\PhpWorkshop\Process\FreePortPicker;
+use PhpSchool\PhpWorkshop\Process\Port\FreePortPicker;
 use PHPUnit\Framework\TestCase;
 
 class FreePortPickerTest extends TestCase

@@ -21,9 +21,10 @@ use PhpSchool\PhpWorkshop\Exercise\Scenario\CgiScenario;
 use PhpSchool\PhpWorkshop\ExerciseRunner\Context\ExecutionContext;
 use PhpSchool\PhpWorkshop\Input\Input;
 use PhpSchool\PhpWorkshop\Output\OutputInterface;
-use PhpSchool\PhpWorkshop\Process\Sandbox;
-use PhpSchool\PhpWorkshop\Process\ProcessInput;
-use PhpSchool\PhpWorkshop\Process\SandboxExecution;
+use PhpSchool\PhpWorkshop\Process\Sandbox\Sandbox;
+use PhpSchool\PhpWorkshop\Process\Sandbox\SandboxFactory;
+use PhpSchool\PhpWorkshop\Process\Sandbox\ProcessInput;
+use PhpSchool\PhpWorkshop\Process\Sandbox\SandboxExecution;
 use PhpSchool\PhpWorkshop\Result\Cgi\CgiResult;
 use PhpSchool\PhpWorkshop\Result\Cgi\RequestFailure;
 use PhpSchool\PhpWorkshop\Result\Cgi\GenericFailure;
@@ -59,7 +60,7 @@ class CgiRunner implements ExerciseRunnerInterface
     public function __construct(
         private CgiExercise $exercise,
         private EventDispatcher $eventDispatcher,
-        private Sandbox $sandbox,
+        private SandboxFactory $sandboxFactory,
         private EnvironmentManager $environmentManager,
     ) {}
 
@@ -109,10 +110,13 @@ class CgiRunner implements ExerciseRunnerInterface
 
         $this->eventDispatcher->dispatch(new CgiExerciseRunnerEvent('cgi.verify.start', $context, $scenario));
 
+        $reference = $this->sandboxFactory->create($context->getReferenceExecutionDirectory(), $scenario);
+        $student = $this->sandboxFactory->create($context->getStudentExecutionDirectory(), $scenario);
+
         $result = new CgiResult(
             array_map(
-                function (RequestInterface $request) use ($context, $scenario) {
-                    return $this->doVerify($context, $scenario, $request);
+                function (RequestInterface $request) use ($context, $scenario, $reference, $student) {
+                    return $this->doVerify($context, $scenario, $request, $reference, $student);
                 },
                 $scenario->getExecutions(),
             ),
@@ -122,7 +126,7 @@ class CgiRunner implements ExerciseRunnerInterface
         return $result;
     }
 
-    private function doVerify(ExecutionContext $context, CgiScenario $scenario, RequestInterface $request): CgiResultInterface
+    private function doVerify(ExecutionContext $context, CgiScenario $scenario, RequestInterface $request, Sandbox $reference, Sandbox $student): CgiResultInterface
     {
         try {
             /** @var CgiExecuteEvent $event */
@@ -132,7 +136,7 @@ class CgiRunner implements ExerciseRunnerInterface
             $solutionResponse = $this->executePhpFile(
                 $context,
                 $scenario,
-                $context->getReferenceExecutionDirectory(),
+                $reference,
                 $this->exercise->getSolution()->getEntryPoint()->getRelativePath(),
                 $event->getRequest(),
                 'reference',
@@ -158,7 +162,7 @@ class CgiRunner implements ExerciseRunnerInterface
             $userResponse = $this->executePhpFile(
                 $context,
                 $scenario,
-                $context->getStudentExecutionDirectory(),
+                $student,
                 basename($context->getEntryPoint()),
                 $event->getRequest(),
                 'student',
@@ -210,12 +214,12 @@ class CgiRunner implements ExerciseRunnerInterface
     private function executePhpFile(
         ExecutionContext $context,
         CgiScenario $scenario,
-        string $workingDirectory,
+        Sandbox $sandbox,
         string $fileName,
         RequestInterface $request,
         string $type,
     ): ResponseInterface {
-        $execution = $this->getPhpExecution($workingDirectory, $fileName, $request, $scenario->getExposedPorts());
+        $execution = $this->getPhpExecution($sandbox, $fileName, $request);
 
         $execution->start();
         $this->eventDispatcher->dispatch(
@@ -237,10 +241,7 @@ class CgiRunner implements ExerciseRunnerInterface
         return Message::parseResponse($output);
     }
 
-    /**
-     * @param list<int> $exposedPorts
-     */
-    private function getPhpExecution(string $workingDirectory, string $fileName, RequestInterface $request, array $exposedPorts): SandboxExecution
+    private function getPhpExecution(Sandbox $sandbox, string $fileName, RequestInterface $request): SandboxExecution
     {
         $env = [
             'REQUEST_METHOD'  => $request->getMethod(),
@@ -266,13 +267,11 @@ class CgiRunner implements ExerciseRunnerInterface
                 '-dhtml_errors=0',
                 '-dexpose_php=0',
             ],
-            $workingDirectory,
             $env,
-            $exposedPorts,
             $content,
         );
 
-        return $this->sandbox->create($processInput);
+        return $sandbox->execute($processInput);
     }
 
     /**
@@ -302,18 +301,15 @@ class CgiRunner implements ExerciseRunnerInterface
 
         $this->eventDispatcher->dispatch(new CgiExerciseRunnerEvent('cgi.run.start', $context, $scenario));
 
+        $student = $this->sandboxFactory->create($context->getStudentExecutionDirectory(), $scenario);
+
         $success = true;
         foreach ($scenario->getExecutions() as $i => $request) {
             /** @var CgiExecuteEvent $event */
             $event = $this->eventDispatcher->dispatch(
                 new CgiExecuteEvent('cgi.run.student-execute.pre', $context, $scenario, $request),
             );
-            $execution = $this->getPhpExecution(
-                $context->getStudentExecutionDirectory(),
-                basename($context->getEntryPoint()),
-                $event->getRequest(),
-                $scenario->getExposedPorts(),
-            );
+            $execution = $this->getPhpExecution($student, basename($context->getEntryPoint()), $event->getRequest());
 
             $execution->start();
             $this->eventDispatcher->dispatch(

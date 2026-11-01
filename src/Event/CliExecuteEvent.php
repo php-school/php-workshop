@@ -6,7 +6,8 @@ namespace PhpSchool\PhpWorkshop\Event;
 
 use PhpSchool\PhpWorkshop\Exercise\Scenario\CliScenario;
 use PhpSchool\PhpWorkshop\ExerciseRunner\Context\ExecutionContext;
-use PhpSchool\PhpWorkshop\Process\SandboxExecution;
+use PhpSchool\PhpWorkshop\Process\Sandbox\SandboxExecution;
+use PhpSchool\PhpWorkshop\Process\Sandbox\Sandbox;
 use PhpSchool\PhpWorkshop\Utils\Collection;
 
 /**
@@ -58,7 +59,7 @@ class CliExecuteEvent extends CliExerciseRunnerEvent
     }
 
     /**
-     * The running program, eg. to connect to a port it listens on with getAddress(). Only on the executing events.
+     * The running program, eg. to connect to the port it listens on with getAddress(). Only on the executing events.
      */
     public function getExecution(): SandboxExecution
     {
@@ -66,6 +67,17 @@ class CliExecuteEvent extends CliExerciseRunnerEvent
         $execution = $this->getParameter('execution');
 
         return $execution;
+    }
+
+    /**
+     * Where the solution runs, eg. to pass its port in the args. Only on the pre events.
+     */
+    public function getSandbox(): Sandbox
+    {
+        /** @var Sandbox $sandbox */
+        $sandbox = $this->getParameter('sandbox');
+
+        return $sandbox;
     }
 
     /**

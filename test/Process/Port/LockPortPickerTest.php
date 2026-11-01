@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace PhpSchool\PhpWorkshopTest\Process;
+namespace PhpSchool\PhpWorkshopTest\Process\Port;
 
-use PhpSchool\PhpWorkshop\Process\LockPortPicker;
+use PhpSchool\PhpWorkshop\Process\Port\LockPortPicker;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Lock\LockFactory;
 use Symfony\Component\Lock\Store\InMemoryStore;

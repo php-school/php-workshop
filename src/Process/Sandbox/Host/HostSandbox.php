@@ -2,11 +2,18 @@
 
 declare(strict_types=1);
 
-namespace PhpSchool\PhpWorkshop\Process;
+namespace PhpSchool\PhpWorkshop\Process\Sandbox\Host;
 
+use PhpSchool\PhpWorkshop\Process\ProcessNotFoundException;
+use PhpSchool\PhpWorkshop\Process\Sandbox\ProcessInput;
+use PhpSchool\PhpWorkshop\Process\Sandbox\Sandbox;
+use PhpSchool\PhpWorkshop\Process\Sandbox\SandboxExecution;
 use Symfony\Component\Process\ExecutableFinder;
 use Symfony\Component\Process\Process;
 
+/**
+ * Runs the code straight on this machine, in the solution's directory.
+ */
 final class HostSandbox implements Sandbox
 {
     /**
@@ -14,14 +21,9 @@ final class HostSandbox implements Sandbox
      */
     private const ALLOWED_ENV = ['PATH', 'HOME', 'COMPOSER_HOME'];
 
-    private ExecutableFinder $executableFinder;
+    public function __construct(private string $directory, private ?int $port, private ExecutableFinder $executableFinder) {}
 
-    public function __construct(?ExecutableFinder $executableFinder = null)
-    {
-        $this->executableFinder = $executableFinder ?? new ExecutableFinder();
-    }
-
-    public function create(ProcessInput $processInput): HostExecution
+    public function execute(ProcessInput $processInput): SandboxExecution
     {
         $executablePath = $this->executableFinder->find($processInput->getExecutable());
 
@@ -29,13 +31,18 @@ final class HostSandbox implements Sandbox
             throw ProcessNotFoundException::fromExecutable($processInput->getExecutable());
         }
 
-        return new HostExecution(new Process(
+        return new SandboxExecution(new Process(
             [$executablePath, ...$processInput->getArgs()],
-            $processInput->getWorkingDirectory(),
+            $this->directory,
             array_merge($this->getDefaultEnv(), $processInput->getEnv()),
             $processInput->getInput(),
             10,
-        ));
+        ), '127.0.0.1', $this->port);
+    }
+
+    public function getPort(): int
+    {
+        return $this->port ?? throw new \RuntimeException('The scenario does not expose a port');
     }
 
     /**

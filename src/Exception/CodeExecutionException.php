@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace PhpSchool\PhpWorkshop\Exception;
 
 use RuntimeException;
-use PhpSchool\PhpWorkshop\Process\SandboxExecution;
+use PhpSchool\PhpWorkshop\Process\Sandbox\SandboxExecution;
 
 /**
  * Represents the situation where some PHP code could not be executed successfully.
