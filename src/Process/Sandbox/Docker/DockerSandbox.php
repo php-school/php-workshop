@@ -12,83 +12,40 @@ use PhpSchool\PhpWorkshop\Process\Sandbox\SandboxExecution;
 use Symfony\Component\Process\Process;
 
 /**
- * Runs the code in a throwaway container with the solution's directory mounted.
- *
- * The workshop only supplies the image. All isolation flags are set here so a workshop cannot loosen them.
+ * Runs the code in the solution's container, see DockerSandboxFactory. Each execution is a `docker exec`.
  */
 final class DockerSandbox implements Sandbox
 {
     private const TIMEOUT = 30;
 
     /**
-     * @param string $portsNetwork the network when a port is published, see DockerSandboxFactory
+     * @param string $container the container's name, eg. php-school-1a2b3c4d5e6f7a8b
      * @param string $portsHost the address the port is published on, eg. 127.0.0.1
      */
     public function __construct(
         private string $directory,
         private ?int $port,
         private string $docker,
-        private string $basePath,
-        private string $image,
-        private string $portsNetwork,
+        private string $container,
         private string $portsHost,
         private PortPicker $portPicker,
     ) {}
 
     public function execute(ProcessInput $processInput): SandboxExecution
     {
-        $network = ['--network', 'none'];
-        if ($this->port !== null) {
-            //the same port on the docker host, the factory picked one free there
-            $network = ['--network', $this->portsNetwork, '-p', $this->portsHost . ':' . $this->port . ':' . $this->port];
-        }
-
         $envArgs = [];
         foreach ($processInput->getEnv() as $key => $value) {
-            $envArgs[] = '-e';
-            $envArgs[] = $key . '=' . $value;
+            array_push($envArgs, '-e', $key . '=' . $value);
         }
 
         return new SandboxExecution(new Process(
             [
-                $this->docker,
-                'run',
-                '--rm',
-                '-i',
-                '--init',
-                '--user',
-                getmyuid() . ':' . getmygid(),
-                ...$network,
-                '--read-only',
-                '--tmpfs',
-                '/tmp:rw,nosuid,nodev,size=64m',
-                '--cap-drop',
-                'ALL',
-                '--security-opt',
-                'no-new-privileges',
-                '--pids-limit',
-                '64',
-                '--memory',
-                '256m',
-                '--memory-swap',
-                '256m',
-                '--cpus',
-                '1',
-                ...$envArgs,
-                '-v',
-                $this->directory . ':/solution',
-                '-w',
-                '/solution',
-                $this->image,
-                //the docker client being killed does not stop the container, so enforce the timeout inside it too
-                'timeout',
-                '-s',
-                'KILL',
-                (string) self::TIMEOUT,
-                $processInput->getExecutable(),
-                ...$processInput->getArgs(),
+                $this->docker, 'exec', '-i', ...$envArgs, $this->container,
+                //the docker client being killed does not stop the process, so enforce the timeout inside it too
+                'timeout', '-s', 'KILL', (string) self::TIMEOUT,
+                $processInput->getExecutable(), ...$processInput->getArgs(),
             ],
-            $this->basePath,
+            $this->directory,
             null,
             $processInput->getInput(),
             self::TIMEOUT + 5,
@@ -100,11 +57,15 @@ final class DockerSandbox implements Sandbox
         return $this->port ?? throw new \RuntimeException('The scenario does not expose a port');
     }
 
-    /**
-     * The directory is mounted, so the solution files are there already.
-     */
     public function finish(ExecutionContext $context): void
     {
+        //the files the checks read, eg. a database. Not mustRun, a file the code did not write fails the check
+        foreach ($context->getSolutionFiles() as $file) {
+            (new Process([$this->docker, 'cp', $this->container . ':/solution/' . $file, $this->directory . '/' . $file]))->run();
+        }
+
+        (new Process([$this->docker, 'rm', '-f', '-v', $this->container]))->run();
+
         if ($this->port !== null) {
             $this->portPicker->release($this->port);
         }

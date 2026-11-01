@@ -1,0 +1,3 @@
+#!/bin/sh
+# docker for DockerSandboxTest: logs its args
+echo "$*" >> "$FAKE_DOCKER_LOG"

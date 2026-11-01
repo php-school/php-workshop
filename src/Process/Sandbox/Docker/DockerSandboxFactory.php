@@ -17,6 +17,9 @@ use Symfony\Component\Process\Process;
  */
 final class DockerSandboxFactory implements SandboxFactory
 {
+    //seconds, longer than every execution of a solution takes. LockPortPicker holds the port as long
+    private const LIFETIME = 300;
+
     private ExecutableFinder $executableFinder;
     private string $basePath;
     private string $projectName;
@@ -63,11 +66,38 @@ final class DockerSandboxFactory implements SandboxFactory
         );
     }
 
+    /**
+     * Starts the solution's container and copies its directory in. Nothing is mounted from this machine, so the docker
+     * host can be another one.
+     */
     public function create(string $directory, ExerciseScenario $scenario): DockerSandbox
     {
+        $docker = $this->findDocker();
         $port = $scenario->exposesPort() ? $this->portPicker->pick() : null;
+        $container = 'php-school-' . bin2hex(random_bytes(8));
 
-        return new DockerSandbox($directory, $port, $this->findDocker(), $this->basePath, $this->getImageName(), $this->portsNetwork, $this->portsHost, $this->portPicker);
+        $network = ['--network', 'none'];
+        if ($port !== null) {
+            //the same port on the docker host, the picker picked one free there
+            $network = ['--network', $this->portsNetwork, '-p', $this->portsHost . ':' . $port . ':' . $port];
+        }
+
+        //all isolation flags are set here so a workshop cannot loosen them. It removes itself after LIFETIME seconds
+        //when the sandbox is never finished, eg. a crash
+        (new Process([
+            $docker, 'run', '-d', '--rm', '--name', $container, '--init', '--user', getmyuid() . ':' . getmygid(),
+            ...$network,
+            '--read-only', '--tmpfs', '/tmp:rw,nosuid,nodev,size=64m', '--cap-drop', 'ALL',
+            '--security-opt', 'no-new-privileges', '--pids-limit', '64', '--memory', '256m', '--memory-swap', '256m',
+            '--cpus', '1',
+            //a volume of its own, so the directory can be copied in
+            '-v', '/solution', '-w', '/solution',
+            $this->getImageName(), 'sleep', (string) self::LIFETIME,
+        ]))->mustRun();
+
+        (new Process([$docker, 'cp', $directory . '/.', $container . ':/solution']))->mustRun();
+
+        return new DockerSandbox($directory, $port, $docker, $container, $this->portsHost, $this->portPicker);
     }
 
     private function findDocker(): string
