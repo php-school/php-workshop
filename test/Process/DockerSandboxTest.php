@@ -3,6 +3,7 @@
 namespace PhpSchool\PhpWorkshopTest\Process;
 
 use PhpSchool\PhpWorkshop\Process\DockerSandbox;
+use PhpSchool\PhpWorkshop\Process\PortPicker;
 use PhpSchool\PhpWorkshop\Process\ProcessInput;
 use PhpSchool\PhpWorkshop\Process\ProcessNotFoundException;
 use PHPUnit\Framework\TestCase;
@@ -12,13 +13,20 @@ class DockerSandboxTest extends TestCase
 {
     private function factory(string $portsNetwork = 'bridge', string $portsHost = '127.0.0.1'): DockerSandbox
     {
+        $ports = new class implements PortPicker {
+            public function pick(): int
+            {
+                return 47213;
+            }
+        };
+
         $finder = $this->createMock(ExecutableFinder::class);
         $finder->expects($this->once())
             ->method('find')
             ->with('docker')
             ->willReturn('/usr/local/bin/docker');
 
-        return new DockerSandbox('/docker-dir', 'PHP8Appreciate', $finder, $portsNetwork, $portsHost);
+        return new DockerSandbox('/docker-dir', 'PHP8Appreciate', $finder, $portsNetwork, $portsHost, $ports);
     }
 
     /**
@@ -77,7 +85,7 @@ class DockerSandboxTest extends TestCase
         $process = $this->factory()->create(new ProcessInput('php', [], __DIR__, [], [8000]))->process;
 
         $expected = $this->expectedCommand(
-            ['--network', 'bridge', '-p', '127.0.0.1:8000:8000'],
+            ['--network', 'bridge', '-p', '127.0.0.1:47213:8000'],
             ['-v', __DIR__ . ':/solution'],
             ['php'],
         );
@@ -89,7 +97,7 @@ class DockerSandboxTest extends TestCase
         $process = $this->factory('php-school-sandbox')->create(new ProcessInput('php', [], __DIR__, [], [8000]))->process;
 
         $expected = $this->expectedCommand(
-            ['--network', 'php-school-sandbox', '-p', '127.0.0.1:8000:8000'],
+            ['--network', 'php-school-sandbox', '-p', '127.0.0.1:47213:8000'],
             ['-v', __DIR__ . ':/solution'],
             ['php'],
         );
@@ -101,18 +109,21 @@ class DockerSandboxTest extends TestCase
         $process = $this->factory('bridge', '172.19.0.2')->create(new ProcessInput('php', [], __DIR__, [], [8000]))->process;
 
         $expected = $this->expectedCommand(
-            ['--network', 'bridge', '-p', '172.19.0.2:8000:8000'],
+            ['--network', 'bridge', '-p', '172.19.0.2:47213:8000'],
             ['-v', __DIR__ . ':/solution'],
             ['php'],
         );
         static::assertSame($expected, $process->getCommandLine());
     }
 
-    public function testHostIsWherePortsArePublished(): void
+    public function testAddressIsThePickedPortOnTheGivenHost(): void
     {
-        $sandbox = new DockerSandbox('/docker-dir', 'php8appreciate', null, 'bridge', '172.19.0.2');
+        $execution = $this->factory('bridge', '172.19.0.2')->create(new ProcessInput('php', [], __DIR__, [], [8000]));
+        static::assertSame('172.19.0.2:47213', $execution->getAddress(8000));
 
-        static::assertSame('172.19.0.2', $sandbox->getHost()->getAddress());
+        $execution = $this->factory('bridge', '[fdaa::2]')->create(new ProcessInput('php', [], __DIR__, [], [8000]));
+        static::assertStringContainsString("'-p' '[fdaa::2]:47213:8000'", $execution->process->getCommandLine());
+        static::assertSame('[fdaa::2]:47213', $execution->getAddress(8000));
     }
 
     public function testCreateWithEnv(): void

@@ -6,6 +6,7 @@ namespace PhpSchool\PhpWorkshop\Event;
 
 use PhpSchool\PhpWorkshop\Exercise\Scenario\CliScenario;
 use PhpSchool\PhpWorkshop\ExerciseRunner\Context\ExecutionContext;
+use PhpSchool\PhpWorkshop\Process\SandboxExecution;
 use PhpSchool\PhpWorkshop\Utils\Collection;
 
 /**
@@ -54,6 +55,17 @@ class CliExecuteEvent extends CliExerciseRunnerEvent
     public function appendArg(string $arg): void
     {
         $this->args = $this->args->append($arg);
+    }
+
+    /**
+     * The running program, eg. to connect to a port it listens on with getAddress(). Only on the executing events.
+     */
+    public function getExecution(): SandboxExecution
+    {
+        /** @var SandboxExecution $execution */
+        $execution = $this->getParameter('execution');
+
+        return $execution;
     }
 
     /**

@@ -39,4 +39,9 @@ final class HostExecution implements SandboxExecution
     {
         return $this->process->getErrorOutput();
     }
+
+    public function getAddress(int $port): string
+    {
+        return '127.0.0.1:' . $port;
+    }
 }

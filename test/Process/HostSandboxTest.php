@@ -41,6 +41,13 @@ class HostSandboxTest extends TestCase
         static::assertSame("'/usr/local/bin/composer'", $process->getCommandLine());
     }
 
+    public function testAddressIsThePortOnThisMachine(): void
+    {
+        $execution = (new HostSandbox())->create(new ProcessInput('php', [], __DIR__, [], [54321]));
+
+        static::assertSame('127.0.0.1:54321', $execution->getAddress(54321));
+    }
+
     public function testCreateWithArgs(): void
     {
         $finder = $this->createMock(ExecutableFinder::class);

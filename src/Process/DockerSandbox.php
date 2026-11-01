@@ -21,6 +21,7 @@ final class DockerSandbox implements Sandbox
     private string $projectName;
     private string $portsNetwork;
     private string $portsHost;
+    private PortPicker $portPicker;
 
     public function __construct(
         string $basePath,
@@ -28,6 +29,7 @@ final class DockerSandbox implements Sandbox
         ?ExecutableFinder $executableFinder = null,
         string $portsNetwork = 'bridge',
         string $portsHost = '127.0.0.1',
+        ?PortPicker $portPicker = null,
     ) {
         $this->executableFinder = $executableFinder ?? new ExecutableFinder();
         $this->basePath = $basePath;
@@ -35,8 +37,10 @@ final class DockerSandbox implements Sandbox
         //for exercises that expose ports, eg a server the check connects to. Pass a network without internet access
         //to stop student code reaching out, the published ports still work
         $this->portsNetwork = $portsNetwork;
-        //the address ports are published on, the docker host's private address when it is remote
+        //the address ports are published on, the docker host's private address when it is remote. IPv6 in brackets,
+        //eg. [fdaa::2]
         $this->portsHost = $portsHost;
+        $this->portPicker = $portPicker ?? new FreePortPicker();
     }
 
     public function getImageName(): string
@@ -58,19 +62,17 @@ final class DockerSandbox implements Sandbox
         );
     }
 
-    public function getHost(): SandboxHost
-    {
-        return new SandboxHost($this->portsHost);
-    }
-
     public function create(ProcessInput $processInput): DockerExecution
     {
         $network = ['--network', 'none'];
+        $ports = [];
         if (count($processInput->getExposedPorts()) > 0) {
             $network = ['--network', $this->portsNetwork];
             foreach ($processInput->getExposedPorts() as $port) {
+                $hostPort = $this->portPicker->pick();
                 $network[] = '-p';
-                $network[] = $this->portsHost . ':' . $port . ':' . $port;
+                $network[] = $this->portsHost . ':' . $hostPort . ':' . $port;
+                $ports[$port] = $hostPort;
             }
         }
 
@@ -124,7 +126,7 @@ final class DockerSandbox implements Sandbox
             null,
             $processInput->getInput(),
             self::TIMEOUT + 5,
-        ));
+        ), [], [], $this->portsHost, $ports);
     }
 
     private function findDocker(): string
