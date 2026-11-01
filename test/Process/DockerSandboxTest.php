@@ -104,9 +104,10 @@ class DockerSandboxTest extends TestCase
         static::assertSame($this->expectedCreate($container, ['--network', 'none']), $execution->before[0]->getCommandLine());
         static::assertSame("'/usr/local/bin/docker' 'start' '$container'", $execution->before[1]->getCommandLine());
         static::assertSame(
-            "'tar' '-c' '-C' '$directory' '--' 'solution.php' | '/usr/local/bin/docker' 'exec' '-i' '$container' 'tar' '-x' '-m' '-C' '/solution'",
+            "find . ! -type d | tar -c -T - | '/usr/local/bin/docker' exec -i $container tar -x -C /solution",
             $execution->before[2]->getCommandLine(),
         );
+        static::assertSame($directory, $execution->before[2]->getWorkingDirectory());
         static::assertSame([], $execution->after);
     }
 
@@ -140,9 +141,10 @@ class DockerSandboxTest extends TestCase
             $execution->before[0]->getCommandLine(),
         );
         static::assertSame(
-            "'/usr/local/bin/docker' 'exec' '$container' 'tar' '-c' '-C' '/solution' 'composer.lock' 'vendor' | 'tar' '-x' '-C' '$directory'",
+            "'/usr/local/bin/docker' exec $container tar -c -C /solution composer.lock vendor | tar -x",
             $execution->after[0]->getCommandLine(),
         );
+        static::assertSame($directory, $execution->after[0]->getWorkingDirectory());
         static::assertSame("'/usr/local/bin/docker' 'rm' '-f' '-v' '$container'", $execution->after[1]->getCommandLine());
     }
 
@@ -153,12 +155,11 @@ class DockerSandboxTest extends TestCase
 
         $composer = $sandbox->create(new ProcessInput('composer', ['update'], $directory, [], []));
         static::assertStringContainsString("'-v' 'vendor-student:/solution/vendor' ", $composer->before[0]->getCommandLine());
-        //vendor stays in the volume, only the folder comes back
-        static::assertStringContainsString("'composer.lock' '--no-recursion' 'vendor' |", $composer->after[0]->getCommandLine());
 
         $php = $sandbox->create(new ProcessInput('php', ['solution.php'], $directory, [], []));
         static::assertStringContainsString("'-v' 'vendor-student:/solution/vendor:ro' ", $php->before[0]->getCommandLine());
-        static::assertStringContainsString("'--' 'composer.json' |", $php->before[2]->getCommandLine());
+        //vendor is already in the volume
+        static::assertStringStartsWith('find . -path ./vendor -prune -o ! -type d -print |', $php->before[2]->getCommandLine());
     }
 
     public function testFoldersOutsideTheVendorVolumesKeepTheirOwnVendor(): void
@@ -168,8 +169,7 @@ class DockerSandboxTest extends TestCase
         $directory = $this->folder(['solution.php', 'vendor/autoload.php']);
         $execution = $sandbox->create(new ProcessInput('php', [], $directory, [], []));
         static::assertStringNotContainsString('vendor-student', $execution->before[0]->getCommandLine());
-        //its contents, as tar can not change the image's vendor folder
-        static::assertStringContainsString("'--' 'solution.php' 'vendor/autoload.php' |", $execution->before[2]->getCommandLine());
+        static::assertStringStartsWith('find . ! -type d |', $execution->before[2]->getCommandLine());
     }
 
     private function anyFinder(): ExecutableFinder

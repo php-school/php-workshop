@@ -90,55 +90,32 @@ final class DockerSandbox implements Sandbox
     public function create(ProcessInput $processInput): DockerExecution
     {
         $directory = $processInput->getWorkingDirectory();
+
         $isComposer = $processInput->getExecutable() === 'composer';
 
-        //composer needs the internet and ports are published when a container is made, so they get a container of
-        //their own. Other runs of a folder share one, removed with the sandbox
+        //composer needs the internet, and published ports would clash between folders, so they get a container just
+        //for the run
         if ($isComposer || count($processInput->getExposedPorts()) > 0) {
             $container = $this->newContainerName();
-            $before = $this->startContainer($container, $processInput);
-            $after = [$this->docker(['rm', '-f', '-v', $container])];
-        } elseif (isset($this->containers[$directory])) {
-            $container = $this->containers[$directory];
-            $before = [];
-            $after = [];
-        } else {
-            $container = $this->containers[$directory] = $this->newContainerName();
-            $before = $this->startContainer($container, $processInput);
-            $after = [];
+            $after = $isComposer ? [$this->copyOut($container, $directory), $this->remove($container)] : [$this->remove($container)];
+
+            return new DockerExecution($this->exec($container, $processInput), $this->start($container, $processInput), $after);
         }
 
-        $args = $processInput->getArgs();
-        if ($isComposer) {
-            //never run package plugins or scripts
-            $args = [...$args, '--no-plugins', '--no-scripts'];
-            array_unshift($after, $this->copyOut($container, $directory));
+        //other runs of a folder share one, removed with the sandbox
+        if (isset($this->containers[$directory])) {
+            return new DockerExecution($this->exec($this->containers[$directory], $processInput));
         }
 
-        $env = [];
-        foreach ([...$processInput->getEnv(), 'COMPOSER_HOME' => '/composer'] as $key => $value) {
-            $env[] = '-e';
-            $env[] = $key . '=' . $value;
-        }
+        $container = $this->containers[$directory] = $this->newContainerName();
 
-        $exec = $this->docker(
-            [
-                'exec', '-i', ...$env, '-w', '/solution', $container,
-                //the docker client being killed does not stop the process, so enforce the timeout inside it too
-                'timeout', '-s', 'KILL', (string) self::TIMEOUT,
-                $processInput->getExecutable(), ...$args,
-            ],
-            $processInput->getInput(),
-            self::TIMEOUT + 5,
-        );
-
-        return new DockerExecution($exec, $before, $after);
+        return new DockerExecution($this->exec($container, $processInput), $this->start($container, $processInput));
     }
 
     public function __destruct()
     {
         foreach ($this->containers as $container) {
-            $this->docker(['rm', '-f', '-v', $container])->run();
+            $this->remove($container)->run();
         }
     }
 
@@ -148,26 +125,24 @@ final class DockerSandbox implements Sandbox
      *
      * @return list<Process>
      */
-    private function startContainer(string $container, ProcessInput $processInput): array
+    private function start(string $container, ProcessInput $processInput): array
     {
         $isComposer = $processInput->getExecutable() === 'composer';
+        $ports = $processInput->getExposedPorts();
         $vendorVolume = $this->vendorVolume($processInput->getWorkingDirectory());
 
-        $options = ['--network', 'none'];
-        if ($isComposer) {
-            //composer downloads packages
-            $options = ['--network', 'bridge', '-v', self::COMPOSER_CACHE_VOLUME . ':/composer'];
-        } elseif (count($processInput->getExposedPorts()) > 0) {
-            $options = ['--network', $this->portsNetwork];
-            foreach ($processInput->getExposedPorts() as $port) {
-                array_push($options, '-p', $this->portsHost . ':' . $port . ':' . $port);
-            }
-        }
+        $network = match (true) {
+            $isComposer => ['--network', 'bridge', '-v', self::COMPOSER_CACHE_VOLUME . ':/composer'],
+            count($ports) > 0 => ['--network', $this->portsNetwork, ...$this->publish($ports)],
+            default => ['--network', 'none'],
+        };
 
-        if ($vendorVolume !== null) {
-            //only composer writes to it
-            array_push($options, '-v', $vendorVolume . ':/solution/vendor' . ($isComposer ? '' : ':ro'));
-        }
+        //only composer writes to it
+        $vendor = match (true) {
+            $vendorVolume === null => [],
+            $isComposer => ['-v', $vendorVolume . ':/solution/vendor'],
+            default => ['-v', $vendorVolume . ':/solution/vendor:ro'],
+        };
 
         return [
             $this->docker([
@@ -176,7 +151,8 @@ final class DockerSandbox implements Sandbox
                 //a volume of its own, so it can be written. It starts as the image's /solution, so a new vendor
                 //volume gets its permissions
                 '-v', '/solution',
-                ...$options,
+                ...$network,
+                ...$vendor,
                 $this->getImageName(), 'sleep', 'infinity',
             ]),
             $this->docker(['start', $container]),
@@ -184,50 +160,68 @@ final class DockerSandbox implements Sandbox
         ];
     }
 
+    private function exec(string $container, ProcessInput $processInput): Process
+    {
+        $args = $processInput->getArgs();
+        if ($processInput->getExecutable() === 'composer') {
+            //never run package plugins or scripts
+            $args = [...$args, '--no-plugins', '--no-scripts'];
+        }
+
+        $env = [];
+        foreach ([...$processInput->getEnv(), 'COMPOSER_HOME' => '/composer'] as $key => $value) {
+            array_push($env, '-e', $key . '=' . $value);
+        }
+
+        return $this->docker(
+            [
+                'exec', '-i', ...$env, '-w', '/solution', $container,
+                //the docker client being killed does not stop the process, so enforce the timeout inside it too
+                'timeout', '-s', 'KILL', (string) self::TIMEOUT,
+                $processInput->getExecutable(), ...$args,
+            ],
+            $processInput->getInput(),
+            self::TIMEOUT + 5,
+        );
+    }
+
     /**
-     * With tar, as docker cp can not write to a read-only container.
+     * With tar, as docker cp can not write to a read-only container. Files only, as tar can not change the folders
+     * the image made, /solution and /solution/vendor. A vendor volume already has vendor.
      */
     private function copyIn(string $container, string $directory): Process
     {
-        //each entry rather than the folders, as tar can not change the image's /solution and /solution/vendor.
-        //A vendor volume already has vendor
-        $files = array_diff(scandir($directory) ?: [], ['.', '..', 'vendor']);
-        if ($this->vendorVolume($directory) === null && is_dir($directory . '/vendor')) {
-            foreach (array_diff(scandir($directory . '/vendor') ?: [], ['.', '..']) as $package) {
-                $files[] = 'vendor/' . $package;
-            }
-        }
+        $find = $this->vendorVolume($directory) === null ? 'find . ! -type d' : 'find . -path ./vendor -prune -o ! -type d -print';
 
-        return $this->pipe(
-            ['tar', '-c', '-C', $directory, '--', ...$files],
-            [$this->findDocker(), 'exec', '-i', $container, 'tar', '-x', '-m', '-C', '/solution'],
+        return Process::fromShellCommandline(
+            sprintf('%s | tar -c -T - | %s exec -i %s tar -x -C /solution', $find, escapeshellarg($this->findDocker()), $container),
+            $directory,
         );
     }
 
     /**
-     * composer.lock for ComposerCheck, and vendor for the runs after. A vendor volume keeps vendor, so only the empty
-     * folder comes back, which ComposerCheck looks for.
+     * composer.lock for ComposerCheck, and vendor for the runs after.
      */
     private function copyOut(string $container, string $directory): Process
     {
-        $vendor = $this->vendorVolume($directory) === null ? ['vendor'] : ['--no-recursion', 'vendor'];
-
-        return $this->pipe(
-            [$this->findDocker(), 'exec', $container, 'tar', '-c', '-C', '/solution', 'composer.lock', ...$vendor],
-            ['tar', '-x', '-C', $directory],
+        return Process::fromShellCommandline(
+            sprintf('%s exec %s tar -c -C /solution composer.lock vendor | tar -x', escapeshellarg($this->findDocker()), $container),
+            $directory,
         );
     }
 
-    /**
-     * @param list<string> $from
-     * @param list<string> $to
-     */
-    private function pipe(array $from, array $to): Process
+    private function remove(string $container): Process
     {
-        //Process escapes each argument
-        $commandLine = (new Process($from))->getCommandLine() . ' | ' . (new Process($to))->getCommandLine();
+        return $this->docker(['rm', '-f', '-v', $container]);
+    }
 
-        return Process::fromShellCommandline($commandLine, $this->basePath);
+    /**
+     * @param list<int> $ports
+     * @return list<string> eg. ['-p', '127.0.0.1:8000:8000']
+     */
+    private function publish(array $ports): array
+    {
+        return array_merge(...array_map(fn(int $port) => ['-p', $this->portsHost . ':' . $port . ':' . $port], $ports));
     }
 
     /**
