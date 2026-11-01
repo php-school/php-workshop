@@ -62,17 +62,17 @@ final class DockerSandbox implements Sandbox
         );
     }
 
-    public function pickPort(): int
+    public function prepare(string $directory, bool $exposePort): Workspace
     {
-        return $this->portPicker->pick();
+        return new Workspace($directory, $exposePort ? $this->portPicker->pick() : null);
     }
 
-    public function create(ProcessInput $processInput): DockerExecution
+    public function create(Workspace $workspace, ProcessInput $processInput): DockerExecution
     {
         $network = ['--network', 'none'];
-        $port = $processInput->getPort();
+        $port = $workspace->port;
         if ($port !== null) {
-            //the same port on the docker host, pickPort() picked one free there
+            //the same port on the docker host, prepare() picked one free there
             $network = ['--network', $this->portsNetwork, '-p', $this->portsHost . ':' . $port . ':' . $port];
         }
 
@@ -110,7 +110,7 @@ final class DockerSandbox implements Sandbox
                 '1',
                 ...$envArgs,
                 '-v',
-                $processInput->getWorkingDirectory() . ':/solution',
+                $workspace->directory . ':/solution',
                 '-w',
                 '/solution',
                 $this->getImageName(),

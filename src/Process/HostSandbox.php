@@ -21,12 +21,12 @@ final class HostSandbox implements Sandbox
         $this->executableFinder = $executableFinder ?? new ExecutableFinder();
     }
 
-    public function pickPort(): int
+    public function prepare(string $directory, bool $exposePort): Workspace
     {
-        return (new FreePortPicker())->pick();
+        return new Workspace($directory, $exposePort ? (new FreePortPicker())->pick() : null);
     }
 
-    public function create(ProcessInput $processInput): HostExecution
+    public function create(Workspace $workspace, ProcessInput $processInput): HostExecution
     {
         $executablePath = $this->executableFinder->find($processInput->getExecutable());
 
@@ -36,11 +36,11 @@ final class HostSandbox implements Sandbox
 
         return new HostExecution(new Process(
             [$executablePath, ...$processInput->getArgs()],
-            $processInput->getWorkingDirectory(),
+            $workspace->directory,
             array_merge($this->getDefaultEnv(), $processInput->getEnv()),
             $processInput->getInput(),
             10,
-        ), $processInput->getPort());
+        ), $workspace->port);
     }
 
     /**

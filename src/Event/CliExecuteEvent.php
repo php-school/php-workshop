@@ -7,6 +7,7 @@ namespace PhpSchool\PhpWorkshop\Event;
 use PhpSchool\PhpWorkshop\Exercise\Scenario\CliScenario;
 use PhpSchool\PhpWorkshop\ExerciseRunner\Context\ExecutionContext;
 use PhpSchool\PhpWorkshop\Process\SandboxExecution;
+use PhpSchool\PhpWorkshop\Process\Workspace;
 use PhpSchool\PhpWorkshop\Utils\Collection;
 
 /**
@@ -69,16 +70,14 @@ class CliExecuteEvent extends CliExerciseRunnerEvent
     }
 
     /**
-     * The port the program will listen on, picked by the sandbox, eg. to pass it in the args. Only on the pre events when the scenario exposes a port, after that use getExecution().
+     * The solution in the sandbox, eg. to pass its port in the args. Only on the pre events.
      */
-    public function getPort(): int
+    public function getWorkspace(): Workspace
     {
-        $port = $this->getParameters()['port'] ?? null;
-        if (!is_int($port)) {
-            throw new \InvalidArgumentException('The scenario does not expose a port');
-        }
+        /** @var Workspace $workspace */
+        $workspace = $this->getParameter('workspace');
 
-        return $port;
+        return $workspace;
     }
 
     /**

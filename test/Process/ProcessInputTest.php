@@ -9,13 +9,11 @@ class ProcessInputTest extends TestCase
 {
     public function testProcessInput(): void
     {
-        $input = new ProcessInput('composer', ['one', 'two'], __DIR__, ['SOME_VAR' => 'value'], null, 'input');
+        $input = new ProcessInput('composer', ['one', 'two'], ['SOME_VAR' => 'value'], 'input');
 
         static::assertSame('composer', $input->getExecutable());
         static::assertSame(['one', 'two'], $input->getArgs());
-        static::assertSame(__DIR__, $input->getWorkingDirectory());
         static::assertSame(['SOME_VAR' => 'value'], $input->getEnv());
-        static::assertNull($input->getPort());
         static::assertSame('input', $input->getInput());
     }
 }

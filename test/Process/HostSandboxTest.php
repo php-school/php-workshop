@@ -3,6 +3,7 @@
 namespace PhpSchool\PhpWorkshopTest\Process;
 
 use PhpSchool\PhpWorkshop\Process\ProcessInput;
+use PhpSchool\PhpWorkshop\Process\Workspace;
 use PhpSchool\PhpWorkshop\Process\ProcessNotFoundException;
 use Symfony\Component\Process\ExecutableFinder;
 use PhpSchool\PhpWorkshop\Process\HostSandbox;
@@ -21,9 +22,9 @@ class HostSandboxTest extends TestCase
             ->willReturn(null);
 
         $factory = new HostSandbox($finder);
-        $input = new ProcessInput('composer', [], __DIR__, [], null);
+        $input = new ProcessInput('composer', [], []);
 
-        $factory->create($input);
+        $factory->create(new Workspace(__DIR__), $input);
     }
 
     public function testCreate(): void
@@ -35,22 +36,22 @@ class HostSandboxTest extends TestCase
             ->willReturn('/usr/local/bin/composer');
 
         $factory = new HostSandbox($finder);
-        $input = new ProcessInput('composer', [], __DIR__, [], null);
+        $input = new ProcessInput('composer', [], []);
 
-        $process = $factory->create($input)->process;
+        $process = $factory->create(new Workspace(__DIR__), $input)->process;
         static::assertSame("'/usr/local/bin/composer'", $process->getCommandLine());
     }
 
     public function testPickedPortIsFreeOnThisMachine(): void
     {
-        $server = stream_socket_server('tcp://127.0.0.1:' . (new HostSandbox())->pickPort());
+        $server = stream_socket_server('tcp://127.0.0.1:' . (new HostSandbox())->prepare(__DIR__, true)->port);
         static::assertNotFalse($server);
         fclose($server);
     }
 
     public function testAddressIsThePortOnThisMachine(): void
     {
-        $execution = (new HostSandbox())->create(new ProcessInput('php', [], __DIR__, [], 54321));
+        $execution = (new HostSandbox())->create(new Workspace(__DIR__, 54321), new ProcessInput('php', [], []));
 
         static::assertSame('127.0.0.1:54321', $execution->getAddress());
     }
@@ -64,9 +65,9 @@ class HostSandboxTest extends TestCase
             ->willReturn('/usr/local/bin/composer');
 
         $factory = new HostSandbox($finder);
-        $input = new ProcessInput('composer', ['one', 'two'], __DIR__, [], null);
+        $input = new ProcessInput('composer', ['one', 'two'], []);
 
-        $process = $factory->create($input)->process;
+        $process = $factory->create(new Workspace(__DIR__), $input)->process;
         static::assertSame("'/usr/local/bin/composer' 'one' 'two'", $process->getCommandLine());
     }
 
@@ -79,9 +80,9 @@ class HostSandboxTest extends TestCase
             ->willReturn('/usr/local/bin/composer');
 
         $factory = new HostSandbox($finder);
-        $input = new ProcessInput('composer', ['one', 'two'], __DIR__, ['SOME_VAR' => 'value'], null);
+        $input = new ProcessInput('composer', ['one', 'two'], ['SOME_VAR' => 'value']);
 
-        $process = $factory->create($input)->process;
+        $process = $factory->create(new Workspace(__DIR__), $input)->process;
         static::assertSame('value', $process->getEnv()['SOME_VAR']);
     }
 
@@ -91,7 +92,8 @@ class HostSandboxTest extends TestCase
 
         try {
             $process = (new HostSandbox())->create(
-                new ProcessInput('php', ['-r', 'echo json_encode([getenv("PHPSCHOOL_SECRET"), getenv("PATH") !== false]);'], __DIR__, [], null),
+                new Workspace(__DIR__),
+                new ProcessInput('php', ['-r', 'echo json_encode([getenv("PHPSCHOOL_SECRET"), getenv("PATH") !== false]);'], []),
             );
             $process->mustRun();
 
@@ -110,9 +112,9 @@ class HostSandboxTest extends TestCase
             ->willReturn('/usr/local/bin/composer');
 
         $factory = new HostSandbox($finder);
-        $input = new ProcessInput('composer', [], __DIR__, [], null, 'someinput');
+        $input = new ProcessInput('composer', [], [], 'someinput');
 
-        $process = $factory->create($input)->process;
+        $process = $factory->create(new Workspace(__DIR__), $input)->process;
         static::assertSame('someinput', $process->getInput());
     }
 }

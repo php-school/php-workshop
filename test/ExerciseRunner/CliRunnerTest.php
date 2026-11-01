@@ -13,6 +13,7 @@ use PhpSchool\PhpWorkshop\Process\SandboxExecution;
 use PhpSchool\PhpWorkshop\Output\NullOutput;
 use PhpSchool\PhpWorkshop\Process\ProcessInput;
 use PhpSchool\PhpWorkshop\Process\Sandbox;
+use PhpSchool\PhpWorkshop\Process\Workspace;
 use PhpSchool\PhpWorkshop\Utils\RequestRenderer;
 use PhpSchool\PhpWorkshopTest\Asset\CliExerciseImpl;
 use PhpSchool\Terminal\Terminal;
@@ -118,7 +119,7 @@ class CliRunnerTest extends TestCase
         $this->eventDispatcher->listen(
             ['cli.verify.reference-execute.pre', 'cli.verify.student-execute.pre'],
             function (CliExecuteEvent $event) use (&$ports) {
-                $ports[$event->getName()][] = $event->getPort();
+                $ports[$event->getName()][] = $event->getWorkspace()->port;
             },
         );
 
@@ -221,16 +222,16 @@ class CliRunnerTest extends TestCase
             /** @var array<ProcessInput> */
             public array $inputs = [];
 
-            public function create(ProcessInput $processInput): SandboxExecution
+            public function create(Workspace $workspace, ProcessInput $processInput): SandboxExecution
             {
                 $this->inputs[] = $processInput;
 
-                return (new HostSandbox())->create($processInput);
+                return (new HostSandbox())->create($workspace, $processInput);
             }
 
-            public function pickPort(): int
+            public function prepare(string $directory, bool $exposePort): Workspace
             {
-                return 54321;
+                return new Workspace($directory, $exposePort ? 54321 : null);
             }
         };
         $runner = new CliRunner($this->exercise, $this->eventDispatcher, $sandbox, new EnvironmentManager(new Filesystem(), $this->eventDispatcher));
