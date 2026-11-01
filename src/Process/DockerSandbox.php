@@ -65,14 +65,14 @@ final class DockerSandbox implements Sandbox
     public function create(ProcessInput $processInput): DockerExecution
     {
         $network = ['--network', 'none'];
-        $addresses = [];
+        $ports = [];
         if (count($processInput->getExposedPorts()) > 0) {
             $network = ['--network', $this->portsNetwork];
             foreach ($processInput->getExposedPorts() as $port) {
                 $hostPort = $this->portPicker->pick();
                 $network[] = '-p';
                 $network[] = $this->portsHost . ':' . $hostPort . ':' . $port;
-                $addresses[$port] = $this->portsHost . ':' . $hostPort;
+                $ports[$port] = $hostPort;
             }
         }
 
@@ -126,7 +126,7 @@ final class DockerSandbox implements Sandbox
             null,
             $processInput->getInput(),
             self::TIMEOUT + 5,
-        ), [], [], $addresses);
+        ), [], [], $this->portsHost, $ports);
     }
 
     private function findDocker(): string

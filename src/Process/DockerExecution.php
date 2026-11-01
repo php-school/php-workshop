@@ -15,13 +15,15 @@ final class DockerExecution implements SandboxExecution
     /**
      * @param list<Process> $before
      * @param list<Process> $after
-     * @param array<int, string> $addresses where each port is published, eg. [54321 => '10.0.0.5:47213']
+     * @param string $host the docker host's address that ports are published on, eg. 10.0.0.5
+     * @param array<int, int> $ports container port => published port on the host, eg. [54321 => 47213]
      */
     public function __construct(
         public readonly Process $process,
         public readonly array $before = [],
         public readonly array $after = [],
-        private array $addresses = [],
+        private string $host = '127.0.0.1',
+        private array $ports = [],
     ) {}
 
     public function start(): void
@@ -69,7 +71,11 @@ final class DockerExecution implements SandboxExecution
 
     public function getAddress(int $port): string
     {
-        return $this->addresses[$port] ?? throw new \RuntimeException(sprintf('Port %d is not published', $port));
+        if (!isset($this->ports[$port])) {
+            throw new \RuntimeException(sprintf('Port %d is not published', $port));
+        }
+
+        return $this->host . ':' . $this->ports[$port];
     }
 
     private function runAfter(): void
