@@ -24,7 +24,7 @@ use Symfony\Component\Filesystem\Filesystem;
  * student's solution has been executed, allowing you to first seed the database and then verify the contents of the
  * database.
  */
-class DatabaseCheck implements ListenableCheckInterface
+class DatabaseCheck implements ListenableCheckInterface, ReadsSolutionFiles
 {
     private Filesystem $filesystem;
     private ?string $dbContent = null;

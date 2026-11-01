@@ -56,19 +56,20 @@ final class DockerSandbox implements Sandbox
         return $this->port ?? throw new \RuntimeException('The scenario does not expose a port');
     }
 
-    public function finish(): void
+    public function finish(bool $copyFilesBack): void
     {
         try {
-            //the files the code wrote, eg. a database a check reads. Files only, so tar leaves the folder's mode alone.
-            //Not vendor, composer runs on this machine
-            Process::fromShellCommandline(
-                sprintf(
-                    "%s exec %s sh -c 'find . -path ./vendor -prune -o ! -type d -print | tar -c -T -' | tar -x",
-                    escapeshellarg($this->docker),
-                    $this->container,
-                ),
-                $this->directory,
-            )->mustRun();
+            if ($copyFilesBack) {
+                //files only, so tar leaves the folder's mode alone. Not vendor, composer runs on this machine
+                Process::fromShellCommandline(
+                    sprintf(
+                        "%s exec %s sh -c 'find . -path ./vendor -prune -o ! -type d -print | tar -c -T -' | tar -x",
+                        escapeshellarg($this->docker),
+                        $this->container,
+                    ),
+                    $this->directory,
+                )->mustRun();
+            }
         } finally {
             (new Process([$this->docker, 'rm', '-f', '-v', $this->container]))->run();
 

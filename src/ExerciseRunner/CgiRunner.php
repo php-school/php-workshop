@@ -122,8 +122,8 @@ class CgiRunner implements ExerciseRunnerInterface
             ),
         );
 
-        $reference->finish();
-        $student->finish();
+        $reference->finish($context->readsSolutionFiles());
+        $student->finish($context->readsSolutionFiles());
 
         $this->eventDispatcher->dispatch(new CgiExerciseRunnerEvent('cgi.verify.finish', $context, $scenario));
         return $result;
@@ -340,7 +340,8 @@ class CgiRunner implements ExerciseRunnerInterface
             );
         }
 
-        $student->finish();
+        //no checks run, so nothing reads the files
+        $student->finish(false);
 
         $this->eventDispatcher->dispatch(new CgiExerciseRunnerEvent('cgi.run.finish', $context, $scenario));
         return $success;

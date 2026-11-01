@@ -20,7 +20,7 @@ use PhpSchool\PhpWorkshop\Utils\Path;
  * This check verifies that any additional files which should be created by a student, match the ones
  * created by the reference solution.
  */
-class FileComparisonCheck implements SimpleCheckInterface
+class FileComparisonCheck implements SimpleCheckInterface, ReadsSolutionFiles
 {
     /**
      * Return the check's name.

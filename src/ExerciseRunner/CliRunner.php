@@ -121,8 +121,8 @@ class CliRunner implements ExerciseRunnerInterface
             ),
         );
 
-        $reference->finish();
-        $student->finish();
+        $reference->finish($context->readsSolutionFiles());
+        $student->finish($context->readsSolutionFiles());
 
         $this->eventDispatcher->dispatch(new CliExerciseRunnerEvent('cli.verify.finish', $context, $scenario));
 
@@ -252,7 +252,8 @@ class CliRunner implements ExerciseRunnerInterface
             );
         }
 
-        $student->finish();
+        //no checks run, so nothing reads the files
+        $student->finish(false);
 
         $this->eventDispatcher->dispatch(new CliExerciseRunnerEvent('cli.run.finish', $context, $scenario));
 

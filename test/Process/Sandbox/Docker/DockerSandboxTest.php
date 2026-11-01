@@ -123,12 +123,20 @@ class DockerSandboxTest extends TestCase
 
     public function testFinishCopiesTheFilesOutRemovesTheContainerAndReleasesThePort(): void
     {
-        $this->factory()->create(__DIR__, (new CliScenario())->exposePort())->finish();
+        $this->factory()->create(__DIR__, (new CliScenario())->exposePort())->finish(true);
 
         static::assertSame(
             ['exec C sh -c find . -path ./vendor -prune -o ! -type d -print | tar -c -T -', 'rm -f -v C'],
             array_slice($this->dockerCalls(), 2),
         );
+        static::assertSame([47213], $this->released);
+    }
+
+    public function testFinishWithoutCopyingFilesBackOnlyRemovesTheContainer(): void
+    {
+        $this->factory()->create(__DIR__, (new CliScenario())->exposePort())->finish(false);
+
+        static::assertSame(['rm -f -v C'], array_slice($this->dockerCalls(), 2));
         static::assertSame([47213], $this->released);
     }
 

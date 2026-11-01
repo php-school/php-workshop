@@ -17,7 +17,9 @@ interface Sandbox
     public function getPort(): int;
 
     /**
-     * Once every execution is done: the files the code wrote are in the directory again and the port is free.
+     * Once every execution is done, frees the port.
+     *
+     * @param bool $copyFilesBack the files the code wrote are needed in the directory, eg. a check reads them
      */
-    public function finish(): void;
+    public function finish(bool $copyFilesBack): void;
 }

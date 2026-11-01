@@ -6,6 +6,7 @@ namespace PhpSchool\PhpWorkshop;
 
 use PhpSchool\PhpWorkshop\Check\CheckRepository;
 use PhpSchool\PhpWorkshop\Check\ListenableCheckInterface;
+use PhpSchool\PhpWorkshop\Check\ReadsSolutionFiles;
 use PhpSchool\PhpWorkshop\Check\PhpLintCheck;
 use PhpSchool\PhpWorkshop\Check\SimpleCheckInterface;
 use PhpSchool\PhpWorkshop\Event\EventDispatcher;
@@ -106,13 +107,15 @@ class ExerciseDispatcher
      */
     public function verify(ExerciseInterface $exercise, Input $input): ResultAggregator
     {
-        $context = ExecutionContext::fromInputAndExercise($input, $exercise);
-
         $runner = $this->runnerManager->getRunner($exercise);
+        $requiredChecks = [...$runner->getRequiredChecks(), ...$exercise->getRequiredChecks()];
+
+        $readsSolutionFiles = array_filter($requiredChecks, fn(string $check) => is_a($check, ReadsSolutionFiles::class, true)) !== [];
+        $context = ExecutionContext::fromInputAndExercise($input, $exercise, $readsSolutionFiles);
 
         $exercise->defineListeners($this->eventDispatcher);
 
-        foreach ([...$runner->getRequiredChecks(), ...$exercise->getRequiredChecks()] as $requiredCheck) {
+        foreach ($requiredChecks as $requiredCheck) {
             $this->requireCheck($requiredCheck);
         }
 

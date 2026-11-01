@@ -45,7 +45,7 @@ final class HostSandbox implements Sandbox
         return $this->port ?? throw new \RuntimeException('The scenario does not expose a port');
     }
 
-    public function finish(): void {}
+    public function finish(bool $copyFilesBack): void {}
 
     /**
      * Symfony Process inherits the parent env, so we unset every inherited var by setting it to false.

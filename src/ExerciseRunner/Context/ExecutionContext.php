@@ -14,9 +14,13 @@ class ExecutionContext
         private string $referenceExecutionDirectory,
         private ExerciseInterface $exercise,
         private Input $input,
+        private bool $readsSolutionFiles = false,
     ) {}
 
-    public static function fromInputAndExercise(Input $input, ExerciseInterface $exercise): ExecutionContext
+    /**
+     * @param bool $readsSolutionFiles a check reads the files the solutions wrote, see ReadsSolutionFiles
+     */
+    public static function fromInputAndExercise(Input $input, ExerciseInterface $exercise, bool $readsSolutionFiles = false): ExecutionContext
     {
         $program = $input->hasArgument('program') ? dirname($input->getRequiredArgument('program')) : (string) getcwd();
 
@@ -25,6 +29,7 @@ class ExecutionContext
             System::randomTempDir(),
             $exercise,
             $input,
+            $readsSolutionFiles,
         );
     }
 
@@ -63,5 +68,13 @@ class ExecutionContext
     public function getReferenceExecutionDirectory(): string
     {
         return $this->referenceExecutionDirectory;
+    }
+
+    /**
+     * A check reads the files the solutions wrote, so the sandbox must copy them back.
+     */
+    public function readsSolutionFiles(): bool
+    {
+        return $this->readsSolutionFiles;
     }
 }
