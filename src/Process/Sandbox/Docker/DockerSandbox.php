@@ -63,14 +63,10 @@ final class DockerSandbox implements Sandbox
     public function finish(ExecutionContext $context): void
     {
         try {
-            //the files the code wrote, eg. a database a check reads. Files only, so tar leaves the folder's mode alone.
-            //Not vendor, composer runs on this machine
+            //the files the code wrote, eg. a database a check reads. tar, as docker cp can not leave out vendor, which
+            //composer filled on this machine
             Process::fromShellCommandline(
-                sprintf(
-                    "%s exec %s sh -c 'find . -path ./vendor -prune -o ! -type d -print | tar -c -T -' | tar -x",
-                    escapeshellarg($this->docker),
-                    $this->container,
-                ),
+                sprintf('%s exec %s tar -c -C /solution --exclude=./vendor . | tar -x', escapeshellarg($this->docker), $this->container),
                 $this->directory,
             )->mustRun();
         } finally {

@@ -95,12 +95,7 @@ final class DockerSandboxFactory implements SandboxFactory
             $this->getImageName(), 'sleep', (string) self::LIFETIME,
         ]))->mustRun();
 
-        //tar, as docker cp can not write to a read-only container. Files only, as tar can not change the folders the
-        //image made, eg. /solution
-        Process::fromShellCommandline(
-            sprintf('find . ! -type d | tar -c -T - | %s exec -i %s tar -x -C /solution', escapeshellarg($docker), $container),
-            $directory,
-        )->mustRun();
+        (new Process([$docker, 'cp', $directory . '/.', $container . ':/solution']))->mustRun();
 
         return new DockerSandbox($directory, $port, $docker, $container, $this->portsHost, $this->portPicker);
     }

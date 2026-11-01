@@ -54,7 +54,7 @@ class DockerSandboxTest extends TestCase
     /**
      * What the fake docker was run with, the random container name as C.
      *
-     * @return list<string> eg. ['run -d --rm --name C ...', 'exec -i C tar -x -C /solution']
+     * @return list<string> eg. ['run -d --rm --name C ...', 'cp /dir/. C:/solution']
      */
     private function dockerCalls(): array
     {
@@ -91,7 +91,7 @@ class DockerSandboxTest extends TestCase
     {
         $this->factory()->create(__DIR__, new CliScenario());
 
-        static::assertSame([$this->expectedRun('--network none'), 'exec -i C tar -x -C /solution'], $this->dockerCalls());
+        static::assertSame([$this->expectedRun('--network none'), 'cp ' . __DIR__ . '/. C:/solution'], $this->dockerCalls());
     }
 
     public function testExposedPortIsPublishedTheSameOnTheGivenNetworkAndHost(): void
@@ -127,7 +127,7 @@ class DockerSandboxTest extends TestCase
         $this->factory()->create(__DIR__, (new CliScenario())->exposePort())->finish(new TestContext());
 
         static::assertSame(
-            ['exec C sh -c find . -path ./vendor -prune -o ! -type d -print | tar -c -T -', 'rm -f -v C'],
+            ['exec C tar -c -C /solution --exclude=./vendor .', 'rm -f -v C'],
             array_slice($this->dockerCalls(), 2),
         );
         static::assertSame([47213], $this->released);
