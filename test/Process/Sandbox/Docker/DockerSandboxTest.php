@@ -12,10 +12,29 @@ use Symfony\Component\Process\ExecutableFinder;
 
 class DockerSandboxTest extends TestCase
 {
+    private const DOCKER = __DIR__ . '/../../../res/fake-docker';
+
+    private string $log;
+
     /**
      * @var list<int>
      */
     private array $released = [];
+
+    public function setUp(): void
+    {
+        $this->log = (string) tempnam(sys_get_temp_dir(), 'docker-log');
+        //Process only passes on env vars that are in $_SERVER too
+        putenv('FAKE_DOCKER_LOG=' . $this->log);
+        $_SERVER['FAKE_DOCKER_LOG'] = $this->log;
+    }
+
+    public function tearDown(): void
+    {
+        putenv('FAKE_DOCKER_LOG');
+        unset($_SERVER['FAKE_DOCKER_LOG']);
+        unlink($this->log);
+    }
 
     private function factory(string $portsNetwork = 'bridge', string $portsHost = '127.0.0.1'): DockerSandboxFactory
     {
@@ -26,33 +45,32 @@ class DockerSandboxTest extends TestCase
         });
 
         $finder = $this->createMock(ExecutableFinder::class);
-        $finder->expects($this->once())
-            ->method('find')
-            ->with('docker')
-            ->willReturn('/usr/local/bin/docker');
+        $finder->method('find')->with('docker')->willReturn(self::DOCKER);
 
         return new DockerSandboxFactory('/docker-dir', 'PHP8Appreciate', $finder, $portsNetwork, $portsHost, $ports);
     }
 
     /**
-     * @param list<string> $network
-     * @param list<string> $extra env and mount args
-     * @param list<string> $command
+     * What the fake docker was run with, the random container name as C.
+     *
+     * @return list<string> eg. ['run -d --rm --name C ...', 'exec -i C tar -x -C /solution']
      */
-    private function expectedCommand(array $network, array $extra, array $command): string
+    private function dockerCalls(): array
     {
-        $parts = [
-            '/usr/local/bin/docker', 'run', '--rm', '-i', '--init', '--user', getmyuid() . ':' . getmygid(),
-            ...$network,
-            '--read-only', '--tmpfs', '/tmp:rw,nosuid,nodev,size=64m', '--cap-drop', 'ALL',
-            '--security-opt', 'no-new-privileges', '--pids-limit', '64', '--memory', '256m', '--memory-swap', '256m',
-            '--cpus', '1',
-            ...$extra,
-            '-w', '/solution', 'php8appreciate-runtime', 'timeout', '-s', 'KILL', '30',
-            ...$command,
-        ];
+        return array_map(
+            fn($line) => (string) preg_replace('/php-school-[0-9a-f]{16}/', 'C', $line),
+            file($this->log, FILE_IGNORE_NEW_LINES) ?: [],
+        );
+    }
 
-        return implode(' ', array_map(fn($p) => "'$p'", $parts));
+    private function expectedRun(string $network): string
+    {
+        return implode(' ', [
+            'run -d --rm --name C --init --user', getmyuid() . ':' . getmygid(), $network,
+            '--read-only --tmpfs /tmp:rw,nosuid,nodev,size=64m --cap-drop ALL --security-opt no-new-privileges',
+            '--pids-limit 64 --memory 256m --memory-swap 256m --cpus 1 -v /solution -w /solution',
+            'php8appreciate-runtime sleep 300',
+        ]);
     }
 
     public function testCreateThrowsExceptionIfDockerNotFound(): void
@@ -65,104 +83,53 @@ class DockerSandboxTest extends TestCase
             ->with('docker')
             ->willReturn(null);
 
-        $factory = new DockerSandboxFactory('/docker-dir', 'php8appreciate', $finder);
-        $input = new ProcessInput('php', [], []);
-
-        $factory->create(__DIR__, new CliScenario())->execute($input);
+        (new DockerSandboxFactory('/docker-dir', 'php8appreciate', $finder))->create(__DIR__, new CliScenario());
     }
 
-    public function testCreateIsIsolatedWithNoNetwork(): void
+    public function testCreateStartsAnIsolatedContainerWithNoNetworkAndCopiesTheDirectoryIn(): void
     {
-        $process = $this->factory()->create(__DIR__, new CliScenario())->execute(new ProcessInput('php', ['one', 'two'], []))->process;
+        $this->factory()->create(__DIR__, new CliScenario());
 
-        $expected = $this->expectedCommand(
-            ['--network', 'none'],
-            ['-v', __DIR__ . ':/solution'],
-            ['php', 'one', 'two'],
+        static::assertSame([$this->expectedRun('--network none'), 'exec -i C tar -x -C /solution'], $this->dockerCalls());
+    }
+
+    public function testExposedPortIsPublishedTheSameOnTheGivenNetworkAndHost(): void
+    {
+        $this->factory('php-school-sandbox', '[fdaa::2]')->create(__DIR__, (new CliScenario())->exposePort());
+
+        static::assertSame($this->expectedRun('--network php-school-sandbox -p [fdaa::2]:47213:47213'), $this->dockerCalls()[0]);
+    }
+
+    public function testExecuteIsAnExecInTheContainer(): void
+    {
+        $sandbox = $this->factory()->create(__DIR__, new CliScenario());
+        $process = $sandbox->execute(new ProcessInput('php', ['one', 'two'], ['SOME_VAR' => 'value'], 'someinput'))->process;
+
+        static::assertSame(
+            "'" . self::DOCKER . "' 'exec' '-i' '-e' 'SOME_VAR=value' 'C' 'timeout' '-s' 'KILL' '30' 'php' 'one' 'two'",
+            preg_replace('/php-school-[0-9a-f]{16}/', 'C', $process->getCommandLine()),
         );
-        static::assertSame($expected, $process->getCommandLine());
-        static::assertSame('/docker-dir', $process->getWorkingDirectory());
+        static::assertSame('someinput', $process->getInput());
         static::assertSame(35.0, $process->getTimeout());
-    }
-
-    public function testExposedPortsArePublishedOnLoopbackOnly(): void
-    {
-        $process = $this->factory()->create(__DIR__, (new CliScenario())->exposePort())->execute(new ProcessInput('php', [], []))->process;
-
-        $expected = $this->expectedCommand(
-            ['--network', 'bridge', '-p', '127.0.0.1:47213:47213'],
-            ['-v', __DIR__ . ':/solution'],
-            ['php'],
-        );
-        static::assertSame($expected, $process->getCommandLine());
-    }
-
-    public function testExposedPortsUseTheGivenNetwork(): void
-    {
-        $process = $this->factory('php-school-sandbox')->create(__DIR__, (new CliScenario())->exposePort())->execute(new ProcessInput('php', [], []))->process;
-
-        $expected = $this->expectedCommand(
-            ['--network', 'php-school-sandbox', '-p', '127.0.0.1:47213:47213'],
-            ['-v', __DIR__ . ':/solution'],
-            ['php'],
-        );
-        static::assertSame($expected, $process->getCommandLine());
-    }
-
-    public function testExposedPortsArePublishedOnTheGivenHost(): void
-    {
-        $process = $this->factory('bridge', '172.19.0.2')->create(__DIR__, (new CliScenario())->exposePort())->execute(new ProcessInput('php', [], []))->process;
-
-        $expected = $this->expectedCommand(
-            ['--network', 'bridge', '-p', '172.19.0.2:47213:47213'],
-            ['-v', __DIR__ . ':/solution'],
-            ['php'],
-        );
-        static::assertSame($expected, $process->getCommandLine());
-    }
-
-    public function testPortsArePickedWithThePortPicker(): void
-    {
-        $ports = $this->createMock(PortPicker::class);
-        $ports->method('pick')->willReturn(47213);
-
-        static::assertSame(47213, (new DockerSandboxFactory('/docker-dir', 'php8appreciate', portPicker: $ports))->create(__DIR__, (new CliScenario())->exposePort())->getPort());
     }
 
     public function testAddressIsTheSamePortOnTheGivenHost(): void
     {
-        $execution = $this->factory('bridge', '172.19.0.2')->create(__DIR__, (new CliScenario())->exposePort())->execute(new ProcessInput('php', [], []));
-        static::assertSame('172.19.0.2:47213', $execution->getAddress());
+        $sandbox = $this->factory('bridge', '172.19.0.2')->create(__DIR__, (new CliScenario())->exposePort());
 
-        $execution = $this->factory('bridge', '[fdaa::2]')->create(__DIR__, (new CliScenario())->exposePort())->execute(new ProcessInput('php', [], []));
-        static::assertStringContainsString("'-p' '[fdaa::2]:47213:47213'", $execution->process->getCommandLine());
-        static::assertSame('[fdaa::2]:47213', $execution->getAddress());
+        static::assertSame(47213, $sandbox->getPort());
+        static::assertSame('172.19.0.2:47213', $sandbox->execute(new ProcessInput('php', [], []))->getAddress());
     }
 
-    public function testFinishReleasesThePort(): void
+    public function testFinishCopiesTheFilesOutRemovesTheContainerAndReleasesThePort(): void
     {
         $this->factory()->create(__DIR__, (new CliScenario())->exposePort())->finish();
 
-        static::assertSame([47213], $this->released);
-    }
-
-    public function testCreateWithEnv(): void
-    {
-        $process = $this->factory()->create(__DIR__, new CliScenario())->execute(new ProcessInput('php', [], ['SOME_VAR' => 'value']))->process;
-
-        $expected = $this->expectedCommand(
-            ['--network', 'none'],
-            ['-e', 'SOME_VAR=value', '-v', __DIR__ . ':/solution'],
-            ['php'],
+        static::assertSame(
+            ['exec C sh -c find . -path ./vendor -prune -o ! -type d -print | tar -c -T -', 'rm -f -v C'],
+            array_slice($this->dockerCalls(), 2),
         );
-        static::assertSame($expected, $process->getCommandLine());
-    }
-
-    public function testWithInput(): void
-    {
-        $process = $this->factory()->create(__DIR__, new CliScenario())->execute(new ProcessInput('php', [], [], 'someinput'))->process;
-
-        static::assertSame('someinput', $process->getInput());
+        static::assertSame([47213], $this->released);
     }
 
     public function testCreateBuildProcess(): void
@@ -170,7 +137,7 @@ class DockerSandboxTest extends TestCase
         $process = $this->factory()->createBuildProcess();
 
         static::assertSame(
-            "'/usr/local/bin/docker' 'build' '-t' 'php8appreciate-runtime' '.docker/runtime'",
+            "'" . self::DOCKER . "' 'build' '-t' 'php8appreciate-runtime' '.docker/runtime'",
             $process->getCommandLine(),
         );
         static::assertSame('/docker-dir', $process->getWorkingDirectory());

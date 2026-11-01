@@ -14,8 +14,8 @@ use Symfony\Component\Lock\LockInterface;
  */
 final class LockPortPicker implements PortPicker
 {
-    //longer than a run can take, so the port is free again when release() is never called, eg. a crash
-    private const LOCK_SECONDS = 60;
+    //as long as a sandbox container lives, so the port is free again when release() is never called, eg. a crash
+    private const LOCK_SECONDS = 300;
 
     /**
      * @var array<int, LockInterface> port => its lock

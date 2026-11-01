@@ -17,7 +17,7 @@ interface Sandbox
     public function getPort(): int;
 
     /**
-     * Once every execution is done, frees the port.
+     * Once every execution is done: the files the code wrote are in the directory again and the port is free.
      */
     public function finish(): void;
 }
