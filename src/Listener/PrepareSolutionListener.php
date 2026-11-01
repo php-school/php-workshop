@@ -7,19 +7,15 @@ namespace PhpSchool\PhpWorkshop\Listener;
 use PhpSchool\PhpWorkshop\Event\ExerciseRunnerEvent;
 use PhpSchool\PhpWorkshop\Exercise\ProvidesSolution;
 use PhpSchool\PhpWorkshop\Exception\RuntimeException;
-use PhpSchool\PhpWorkshop\Process\Sandbox;
-use PhpSchool\PhpWorkshop\Process\ProcessInput;
-use PhpSchool\PhpWorkshop\Process\SandboxExecution;
+use PhpSchool\PhpWorkshop\Process\Composer;
+use Symfony\Component\Process\Process;
 
 /**
  * Listener to install composer deps for an exercise solution, offline when ReferencePackages has warmed the cache
  */
 class PrepareSolutionListener
 {
-    public function __construct(private Sandbox $sandbox)
-    {
-        $this->sandbox = $sandbox;
-    }
+    public function __construct(private Composer $composer) {}
 
     /**
      * @param ExerciseRunnerEvent $event
@@ -63,10 +59,8 @@ class PrepareSolutionListener
     /**
      * @param array<string, string> $env
      */
-    private function install(ExerciseRunnerEvent $event, array $env): SandboxExecution
+    private function install(ExerciseRunnerEvent $event, array $env): Process
     {
-        return $this->sandbox->create(
-            new ProcessInput('composer', ['install', '--no-interaction'], $event->getContext()->getReferenceExecutionDirectory(), $env, []),
-        );
+        return $this->composer->create(['install'], $event->getContext()->getReferenceExecutionDirectory(), $env);
     }
 }

@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace PhpSchool\PhpWorkshopTest;
 
 use PhpSchool\PhpWorkshop\ExerciseRepository;
-use PhpSchool\PhpWorkshop\Process\HostSandbox;
+use PhpSchool\PhpWorkshop\Process\Composer;
 use PhpSchool\PhpWorkshop\ReferencePackages;
 use PhpSchool\PhpWorkshop\Solution\DirectorySolution;
 use PhpSchool\PhpWorkshop\Utils\System;
@@ -25,7 +25,7 @@ class ReferencePackagesTest extends TestCase
         $withPackages = new CliExerciseImpl();
         $withPackages->setSolution(DirectorySolution::fromDirectory($directory));
 
-        (new ReferencePackages(new ExerciseRepository([$withPackages]), new HostSandbox()))->warm();
+        (new ReferencePackages(new ExerciseRepository([$withPackages]), new Composer()))->warm();
 
         $this->assertFileExists($directory . '/composer.lock');
         $this->assertDirectoryDoesNotExist($directory . '/vendor');

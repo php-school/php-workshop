@@ -71,6 +71,7 @@ use PhpSchool\PhpWorkshop\MenuItem\ResetProgress;
 use PhpSchool\PhpWorkshop\Output\OutputInterface;
 use PhpSchool\PhpWorkshop\Output\StdOutput;
 use PhpSchool\PhpWorkshop\Patch;
+use PhpSchool\PhpWorkshop\Process\Composer;
 use PhpSchool\PhpWorkshop\Process\DockerSandbox;
 use PhpSchool\PhpWorkshop\Process\HostSandbox;
 use PhpSchool\PhpWorkshop\Process\Sandbox;
@@ -280,7 +281,7 @@ return [
     },
 
     ReferencePackages::class => function (ContainerInterface $c) {
-        return new ReferencePackages($c->get(ExerciseRepository::class), $c->get(Sandbox::class));
+        return new ReferencePackages($c->get(ExerciseRepository::class), new Composer());
     },
 
     //Listeners
@@ -288,9 +289,7 @@ return [
         return new InitialCodeListener($c->get('currentWorkingDirectory'), $c->get(LoggerInterface::class));
     },
     PrepareSolutionListener::class => function (ContainerInterface $c) {
-        return new PrepareSolutionListener(
-            $c->get(Sandbox::class),
-        );
+        return new PrepareSolutionListener(new Composer());
     },
     CodePatchListener::class => function (ContainerInterface $c) {
         return new CodePatchListener(

@@ -15,8 +15,6 @@ use Symfony\Component\Process\Process;
 final class DockerSandbox implements Sandbox
 {
     private const TIMEOUT = 30;
-    //a named volume, so it lives on the docker host, which may not be this machine
-    private const COMPOSER_CACHE_VOLUME = 'php-school-composer-cache';
 
     private ExecutableFinder $executableFinder;
     private string $basePath;
@@ -24,22 +22,12 @@ final class DockerSandbox implements Sandbox
     private string $portsNetwork;
     private string $portsHost;
 
-    /**
-     * @var array<string, string>
-     */
-    private array $vendorVolumes;
-
-    /**
-     * @param array<string, string> $vendorVolumes folder => volume, for runs in a folder directly inside it, so vendor
-     *   stays on the docker host between runs, eg. ['/tmp/php-school/<student id>' => 'php-school-vendor-<student id>-<exercise>']
-     */
     public function __construct(
         string $basePath,
         string $projectName,
         ?ExecutableFinder $executableFinder = null,
         string $portsNetwork = 'bridge',
         string $portsHost = '127.0.0.1',
-        array $vendorVolumes = [],
     ) {
         $this->executableFinder = $executableFinder ?? new ExecutableFinder();
         $this->basePath = $basePath;
@@ -49,7 +37,6 @@ final class DockerSandbox implements Sandbox
         $this->portsNetwork = $portsNetwork;
         //the address ports are published on, the docker host's private address when it is remote
         $this->portsHost = $portsHost;
-        $this->vendorVolumes = $vendorVolumes;
     }
 
     public function getImageName(): string
@@ -78,30 +65,8 @@ final class DockerSandbox implements Sandbox
 
     public function create(ProcessInput $processInput): DockerExecution
     {
-        $isComposer = $processInput->getExecutable() === 'composer';
-
-        $args = $processInput->getArgs();
-        $mounts = [$processInput->getWorkingDirectory() . ':/solution'];
-
-        $vendorVolume = $this->vendorVolumes[dirname($processInput->getWorkingDirectory())] ?? null;
-        if ($vendorVolume !== null) {
-            //only composer writes to it
-            $mounts[] = $vendorVolume . ':/solution/vendor' . ($isComposer ? '' : ':ro');
-        }
-
-        $env = ['COMPOSER_HOME' => '/composer'];
-
-        if ($isComposer) {
-            //we need to mount a volume for composer cache, and never run package plugins or scripts
-            $mounts[] = self::COMPOSER_CACHE_VOLUME . ':/composer';
-            $args = [...$args, '--no-plugins', '--no-scripts'];
-        }
-
         $network = ['--network', 'none'];
-        if ($isComposer) {
-            //composer needs to download packages
-            $network = ['--network', 'bridge'];
-        } elseif (count($processInput->getExposedPorts()) > 0) {
+        if (count($processInput->getExposedPorts()) > 0) {
             $network = ['--network', $this->portsNetwork];
             foreach ($processInput->getExposedPorts() as $port) {
                 $network[] = '-p';
@@ -110,7 +75,7 @@ final class DockerSandbox implements Sandbox
         }
 
         $envArgs = [];
-        foreach ([...$processInput->getEnv(), ...$env] as $key => $value) {
+        foreach ($processInput->getEnv() as $key => $value) {
             $envArgs[] = '-e';
             $envArgs[] = $key . '=' . $value;
         }
@@ -142,7 +107,8 @@ final class DockerSandbox implements Sandbox
                 '--cpus',
                 '1',
                 ...$envArgs,
-                ...array_merge(...array_map(fn($mount) => ['-v', $mount], $mounts)),
+                '-v',
+                $processInput->getWorkingDirectory() . ':/solution',
                 '-w',
                 '/solution',
                 $this->getImageName(),
@@ -152,7 +118,7 @@ final class DockerSandbox implements Sandbox
                 'KILL',
                 (string) self::TIMEOUT,
                 $processInput->getExecutable(),
-                ...$args,
+                ...$processInput->getArgs(),
             ],
             $this->basePath,
             null,
