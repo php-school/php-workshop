@@ -108,6 +108,28 @@ class CliRunnerTest extends TestCase
         $this->assertContainsOnlyInstancesOf(SandboxExecution::class, $executions);
     }
 
+    public function testSandboxPicksOnePortForEachFolder(): void
+    {
+        $solution = SingleFileSolution::fromFile(realpath(__DIR__ . '/../res/cli/solution.php'));
+        $this->exercise->setSolution($solution);
+        $this->exercise->setScenario((new CliScenario())->exposePort()->withExecution([1, 2, 3])->withExecution([4, 5, 6]));
+
+        $ports = [];
+        $this->eventDispatcher->listen(
+            ['cli.verify.reference-execute.pre', 'cli.verify.student-execute.pre'],
+            function (CliExecuteEvent $event) use (&$ports) {
+                $ports[$event->getName()][] = $event->getPort();
+            },
+        );
+
+        $context = TestContext::fromExerciseAndStudentSolution($this->exercise, __DIR__ . '/../res/cli/user.php');
+        $this->runner->verify($context);
+
+        //the same port for every run of a folder
+        $this->assertCount(1, array_unique($ports['cli.verify.reference-execute.pre']));
+        $this->assertCount(1, array_unique($ports['cli.verify.student-execute.pre']));
+    }
+
     public function testSuccessWithSingleSetOfArgsForBC(): void
     {
         $solution = SingleFileSolution::fromFile(realpath(__DIR__ . '/../res/cli/solution.php'));
@@ -204,6 +226,11 @@ class CliRunnerTest extends TestCase
                 $this->inputs[] = $processInput;
 
                 return (new HostSandbox())->create($processInput);
+            }
+
+            public function pickPort(): int
+            {
+                return 54321;
             }
         };
         $runner = new CliRunner($this->exercise, $this->eventDispatcher, $sandbox, new EnvironmentManager(new Filesystem(), $this->eventDispatcher));

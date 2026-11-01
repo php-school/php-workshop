@@ -21,6 +21,11 @@ final class HostSandbox implements Sandbox
         $this->executableFinder = $executableFinder ?? new ExecutableFinder();
     }
 
+    public function pickPort(): int
+    {
+        return (new FreePortPicker())->pick();
+    }
+
     public function create(ProcessInput $processInput): HostExecution
     {
         $executablePath = $this->executableFinder->find($processInput->getExecutable());

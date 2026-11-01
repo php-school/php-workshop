@@ -85,7 +85,7 @@ class DockerSandboxTest extends TestCase
         $process = $this->factory()->create(new ProcessInput('php', [], __DIR__, [], [8000]))->process;
 
         $expected = $this->expectedCommand(
-            ['--network', 'bridge', '-p', '127.0.0.1:47213:8000'],
+            ['--network', 'bridge', '-p', '127.0.0.1:8000:8000'],
             ['-v', __DIR__ . ':/solution'],
             ['php'],
         );
@@ -97,7 +97,7 @@ class DockerSandboxTest extends TestCase
         $process = $this->factory('php-school-sandbox')->create(new ProcessInput('php', [], __DIR__, [], [8000]))->process;
 
         $expected = $this->expectedCommand(
-            ['--network', 'php-school-sandbox', '-p', '127.0.0.1:47213:8000'],
+            ['--network', 'php-school-sandbox', '-p', '127.0.0.1:8000:8000'],
             ['-v', __DIR__ . ':/solution'],
             ['php'],
         );
@@ -109,21 +109,29 @@ class DockerSandboxTest extends TestCase
         $process = $this->factory('bridge', '172.19.0.2')->create(new ProcessInput('php', [], __DIR__, [], [8000]))->process;
 
         $expected = $this->expectedCommand(
-            ['--network', 'bridge', '-p', '172.19.0.2:47213:8000'],
+            ['--network', 'bridge', '-p', '172.19.0.2:8000:8000'],
             ['-v', __DIR__ . ':/solution'],
             ['php'],
         );
         static::assertSame($expected, $process->getCommandLine());
     }
 
-    public function testAddressIsThePickedPortOnTheGivenHost(): void
+    public function testPortsArePickedWithThePortPicker(): void
     {
-        $execution = $this->factory('bridge', '172.19.0.2')->create(new ProcessInput('php', [], __DIR__, [], [8000]));
-        static::assertSame('172.19.0.2:47213', $execution->getAddress(8000));
+        $ports = $this->createMock(PortPicker::class);
+        $ports->method('pick')->willReturn(47213);
 
-        $execution = $this->factory('bridge', '[fdaa::2]')->create(new ProcessInput('php', [], __DIR__, [], [8000]));
-        static::assertStringContainsString("'-p' '[fdaa::2]:47213:8000'", $execution->process->getCommandLine());
-        static::assertSame('[fdaa::2]:47213', $execution->getAddress(8000));
+        static::assertSame(47213, (new DockerSandbox('/docker-dir', 'php8appreciate', portPicker: $ports))->pickPort());
+    }
+
+    public function testAddressIsTheSamePortOnTheGivenHost(): void
+    {
+        $execution = $this->factory('bridge', '172.19.0.2')->create(new ProcessInput('php', [], __DIR__, [], [47213]));
+        static::assertSame('172.19.0.2:47213', $execution->getAddress(47213));
+
+        $execution = $this->factory('bridge', '[fdaa::2]')->create(new ProcessInput('php', [], __DIR__, [], [47213]));
+        static::assertStringContainsString("'-p' '[fdaa::2]:47213:47213'", $execution->process->getCommandLine());
+        static::assertSame('[fdaa::2]:47213', $execution->getAddress(47213));
     }
 
     public function testCreateWithEnv(): void

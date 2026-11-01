@@ -69,6 +69,19 @@ class CliExecuteEvent extends CliExerciseRunnerEvent
     }
 
     /**
+     * The port the program listens on, picked by the sandbox. Only when the scenario exposes a port.
+     */
+    public function getPort(): int
+    {
+        $port = $this->getParameters()['port'] ?? null;
+        if (!is_int($port)) {
+            throw new \InvalidArgumentException('The scenario does not expose a port');
+        }
+
+        return $port;
+    }
+
+    /**
      * Get the arguments to be passed to the program.
      *
      * @return Collection<int, string>

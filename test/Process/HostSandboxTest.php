@@ -41,6 +41,13 @@ class HostSandboxTest extends TestCase
         static::assertSame("'/usr/local/bin/composer'", $process->getCommandLine());
     }
 
+    public function testPickedPortIsFreeOnThisMachine(): void
+    {
+        $server = stream_socket_server('tcp://127.0.0.1:' . (new HostSandbox())->pickPort());
+        static::assertNotFalse($server);
+        fclose($server);
+    }
+
     public function testAddressIsThePortOnThisMachine(): void
     {
         $execution = (new HostSandbox())->create(new ProcessInput('php', [], __DIR__, [], [54321]));

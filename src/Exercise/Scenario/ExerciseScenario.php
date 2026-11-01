@@ -9,10 +9,7 @@ abstract class ExerciseScenario
      */
     private array $files = [];
 
-    /**
-     * @var list<int>
-     */
-    private array $exposedPorts = [];
+    private bool $exposesPort = false;
 
     public function withFile(string $relativeFileName, string $content): static
     {
@@ -29,18 +26,19 @@ abstract class ExerciseScenario
         return $this->files;
     }
 
-    public function exposePort(int $port): static
+    /**
+     * The code listens on a port, eg. a server the check connects to. The sandbox picks it, listeners get it from the
+     * execute events with getPort().
+     */
+    public function exposePort(): static
     {
-        $this->exposedPorts[] = $port;
+        $this->exposesPort = true;
 
         return $this;
     }
 
-    /**
-     * @return list<int>
-     */
-    public function getExposedPorts(): array
+    public function exposesPort(): bool
     {
-        return $this->exposedPorts;
+        return $this->exposesPort;
     }
 }

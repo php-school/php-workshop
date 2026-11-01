@@ -108,10 +108,14 @@ class CliRunner implements ExerciseRunnerInterface
 
         $this->eventDispatcher->dispatch(new CliExerciseRunnerEvent('cli.verify.start', $context, $scenario));
 
+        //one for each folder, every run in it listens on the same port
+        $referencePort = $this->pickPort($scenario);
+        $studentPort = $this->pickPort($scenario);
+
         $result = new CliResult(
             array_map(
-                function (Collection $args) use ($context, $scenario) {
-                    return $this->doVerify($context, $scenario, $args);
+                function (Collection $args) use ($context, $scenario, $referencePort, $studentPort) {
+                    return $this->doVerify($context, $scenario, $args, $referencePort, $studentPort);
                 },
                 $scenario->getExecutions(),
             ),
@@ -125,12 +129,12 @@ class CliRunner implements ExerciseRunnerInterface
     /**
      * @param Collection<int, string> $args
      */
-    private function doVerify(ExecutionContext $context, CliScenario $scenario, Collection $args): CliResultInterface
+    private function doVerify(ExecutionContext $context, CliScenario $scenario, Collection $args, ?int $referencePort, ?int $studentPort): CliResultInterface
     {
         try {
             /** @var CliExecuteEvent $event */
             $event = $this->eventDispatcher->dispatch(
-                new CliExecuteEvent('cli.verify.reference-execute.pre', $context, $scenario, $args),
+                new CliExecuteEvent('cli.verify.reference-execute.pre', $context, $scenario, $args, ['port' => $referencePort]),
             );
             $solutionOutput = $this->executePhpFile(
                 $context,
@@ -139,6 +143,7 @@ class CliRunner implements ExerciseRunnerInterface
                 $this->exercise->getSolution()->getEntryPoint()->getRelativePath(),
                 $event->getArgs(),
                 'reference',
+                $referencePort,
             );
         } catch (CodeExecutionException $e) {
             $this->eventDispatcher->dispatch(
@@ -156,7 +161,7 @@ class CliRunner implements ExerciseRunnerInterface
         try {
             /** @var CliExecuteEvent $event */
             $event = $this->eventDispatcher->dispatch(
-                new CliExecuteEvent('cli.verify.student-execute.pre', $context, $scenario, $args),
+                new CliExecuteEvent('cli.verify.student-execute.pre', $context, $scenario, $args, ['port' => $studentPort]),
             );
             $userOutput = $this->executePhpFile(
                 $context,
@@ -165,6 +170,7 @@ class CliRunner implements ExerciseRunnerInterface
                 basename($context->getEntryPoint()),
                 $event->getArgs(),
                 'student',
+                $studentPort,
             );
         } catch (CodeExecutionException $e) {
             $this->eventDispatcher->dispatch(
@@ -211,11 +217,13 @@ class CliRunner implements ExerciseRunnerInterface
 
         $this->eventDispatcher->dispatch(new CliExerciseRunnerEvent('cli.run.start', $context, $scenario));
 
+        $port = $this->pickPort($scenario);
+
         $success = true;
         foreach ($scenario->getExecutions() as $i => $args) {
             /** @var CliExecuteEvent $event */
             $event = $this->eventDispatcher->dispatch(
-                new CliExecuteEvent('cli.run.student-execute.pre', $context, $scenario, $args),
+                new CliExecuteEvent('cli.run.student-execute.pre', $context, $scenario, $args, ['port' => $port]),
             );
 
             $args = $event->getArgs();
@@ -224,12 +232,12 @@ class CliRunner implements ExerciseRunnerInterface
                 $context->getStudentExecutionDirectory(),
                 basename($context->getEntryPoint()),
                 $args,
-                $scenario->getExposedPorts(),
+                $port,
             );
 
             $execution->start();
             $this->eventDispatcher->dispatch(
-                new CliExecuteEvent('cli.run.student.executing', $context, $scenario, $args, ['output' => $output, 'execution' => $execution]),
+                new CliExecuteEvent('cli.run.student.executing', $context, $scenario, $args, ['output' => $output, 'execution' => $execution, 'port' => $port]),
             );
             $execution->wait(function ($outputType, $outputBuffer) use ($output) {
                 $output->write($outputBuffer);
@@ -256,13 +264,13 @@ class CliRunner implements ExerciseRunnerInterface
     /**
      * @param Collection<int, string> $args
      */
-    private function executePhpFile(ExecutionContext $context, CliScenario $scenario, string $workingDirectory, string $fileName, Collection $args, string $type): string
+    private function executePhpFile(ExecutionContext $context, CliScenario $scenario, string $workingDirectory, string $fileName, Collection $args, string $type, ?int $port): string
     {
-        $execution = $this->getPhpExecution($workingDirectory, $fileName, $args, $scenario->getExposedPorts());
+        $execution = $this->getPhpExecution($workingDirectory, $fileName, $args, $port);
 
         $execution->start();
         $this->eventDispatcher->dispatch(
-            new CliExecuteEvent(sprintf('cli.verify.%s.executing', $type), $context, $scenario, $args, ['execution' => $execution]),
+            new CliExecuteEvent(sprintf('cli.verify.%s.executing', $type), $context, $scenario, $args, ['execution' => $execution, 'port' => $port]),
         );
         $execution->wait();
 
@@ -275,12 +283,16 @@ class CliRunner implements ExerciseRunnerInterface
 
     /**
      * @param Collection<int, string> $args
-     * @param list<int> $exposedPorts
      */
-    private function getPhpExecution(string $workingDirectory, string $fileName, Collection $args, array $exposedPorts): SandboxExecution
+    private function getPhpExecution(string $workingDirectory, string $fileName, Collection $args, ?int $port): SandboxExecution
     {
         return $this->sandbox->create(
-            new ProcessInput('php', [$fileName, ...$args->getArrayCopy()], $workingDirectory, [], $exposedPorts),
+            new ProcessInput('php', [$fileName, ...$args->getArrayCopy()], $workingDirectory, [], $port === null ? [] : [$port]),
         );
+    }
+
+    private function pickPort(CliScenario $scenario): ?int
+    {
+        return $scenario->exposesPort() ? $this->sandbox->pickPort() : null;
     }
 }

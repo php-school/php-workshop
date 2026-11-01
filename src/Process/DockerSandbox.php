@@ -62,17 +62,19 @@ final class DockerSandbox implements Sandbox
         );
     }
 
+    public function pickPort(): int
+    {
+        return $this->portPicker->pick();
+    }
+
     public function create(ProcessInput $processInput): DockerExecution
     {
         $network = ['--network', 'none'];
-        $ports = [];
         if (count($processInput->getExposedPorts()) > 0) {
             $network = ['--network', $this->portsNetwork];
+            //the same port on the docker host, pickPort() picked one free there
             foreach ($processInput->getExposedPorts() as $port) {
-                $hostPort = $this->portPicker->pick();
-                $network[] = '-p';
-                $network[] = $this->portsHost . ':' . $hostPort . ':' . $port;
-                $ports[$port] = $hostPort;
+                array_push($network, '-p', $this->portsHost . ':' . $port . ':' . $port);
             }
         }
 
@@ -126,7 +128,7 @@ final class DockerSandbox implements Sandbox
             null,
             $processInput->getInput(),
             self::TIMEOUT + 5,
-        ), [], [], $this->portsHost, $ports);
+        ), [], [], $this->portsHost, $processInput->getExposedPorts());
     }
 
     private function findDocker(): string
