@@ -20,7 +20,7 @@ final class LockPortPicker implements PortPicker
 
     public function pick(): int
     {
-        for ($try = 0; $try < 100; $try++) {
+        for ($try = 0; $try < 5; $try++) {
             $port = random_int(20000, 59999);
 
             //not released when this object goes, it expires
